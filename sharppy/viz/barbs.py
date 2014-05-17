@@ -3,11 +3,15 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
+
 def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
     pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
     pen.setWidthF(1.75)
     qp.setPen(pen)
-    wnd = tab.utils.mag(u, v)
+    wnd = np.ceil( tab.utils.mag(u, v) )
     ## check if there are any 50kt triangles needed
     if wnd < 5.:
         point = QtCore.QPoint( origin_x, origin_y )
@@ -41,8 +45,8 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             barby_start = end_y - offset_y1
             flagy_start = end_y - offset_y2
             ## then draw outward perpendicular to the wind barb
-            barbx_end = barbx_start - v_norm * 14
-            barby_end = barby_start - u_norm * 14
+            barbx_end = barbx_start - v_norm * 10
+            barby_end = barby_start - u_norm * 10
             ## draw the barb
             qp.drawLine(barbx_start, barby_start, barbx_end, barby_end)
             qp.drawLine(flagx_start, flagy_start, barbx_end, barby_end)
@@ -51,9 +55,9 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             ## use this as a linear offset from the previous barb,
             ## starting at the end
             if num_flag_barbs > 0:
-                offset = 3. * num_flag_barbs * (i+2)
+                offset = 4. * num_flag_barbs * (i+2)
             else:
-                offset = 3. * i
+                offset = 4. * i
             ## calculate the u nd v offset
             offset_x = u_norm * offset
             offset_y = v_norm * offset
@@ -62,8 +66,8 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             barbx_start = end_x + offset_x
             barby_start = end_y - offset_y
             ## then draw outward perpendicular to the wind barb
-            barbx_end = barbx_start - v_norm * 14
-            barby_end = barby_start - u_norm * 14
+            barbx_end = barbx_start - v_norm * 10
+            barby_end = barby_start - u_norm * 10
             ## draw the barb
             qp.drawLine(barbx_start, barby_start, barbx_end, barby_end)
         
@@ -73,10 +77,11 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             ## draw on top of the full barbs
             if num_flag_barbs > 0:
                 i = i + 1
+                offset = 4. * (num_flag_barbs + 1 + num_full_barbs)
             else:
                 i = i + 1
+                offset = 4. * (num_full_barbs) * i
             ## start at the increment after the last full barb
-            offset = 3. * (num_flag_barbs + num_full_barbs) * i
             ## get the u and v offset
             offset_x = u_norm * offset
             offset_y = v_norm * offset
@@ -85,6 +90,6 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             barbx_start = end_x + offset_x
             barby_start = end_y - offset_y
             ## then draw outward perpendicular to the wind barb
-            barbx_end = barbx_start - v_norm * 7
-            barby_end = barby_start - u_norm * 7
+            barbx_end = barbx_start - v_norm * 5
+            barby_end = barby_start - u_norm * 5
             qp.drawLine(barbx_start, barby_start, barbx_end, barby_end)

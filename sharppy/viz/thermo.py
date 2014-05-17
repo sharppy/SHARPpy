@@ -3,6 +3,9 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
 __all__ = ['backgroundText', 'plotText']
 
 class backgroundText(QtGui.QFrame):

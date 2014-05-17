@@ -5,6 +5,9 @@ import sharppy.sharptab as tab
 from sharppy.sharptab.sars import sars_hail
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
 __all__ = ['backgroundAnalogues', 'plotAnalogues']
 
 class backgroundAnalogues(QtGui.QFrame):

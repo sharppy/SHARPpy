@@ -1,5 +1,8 @@
 import numpy as np
 
+## routine written by Greg Blumberg
+## wblumberg@ou.edu
+
 def sars_supercell():
     return
 

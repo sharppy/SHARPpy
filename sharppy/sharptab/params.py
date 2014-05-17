@@ -8,7 +8,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['DefineParcel', 'Parcel']
 __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
-__all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta']
+__all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta', 'mean_relh']
 __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp']

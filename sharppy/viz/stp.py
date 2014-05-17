@@ -5,6 +5,9 @@ import sharppy.sharptab as tab
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
 __all__ = ['backgroundSTP', 'plotSTP']
 
 class backgroundSTP(QtGui.QFrame):

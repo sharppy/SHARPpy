@@ -4,6 +4,9 @@ import sharppy.sharptab as tab
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
 __all__ = ['backgroundWinds', 'plotWinds']
 
 class backgroundWinds(QtGui.QFrame):

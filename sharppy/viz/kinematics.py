@@ -4,6 +4,9 @@ import sharppy.sharptab as tab
 from sharppy.viz import drawBarb
 from sharppy.sharptab.constants import *
 
+## routine written by Kelton Halbert
+## keltonhalbert@ou.edu
+
 __all__ = ['backgroundKinematics', 'plotKinematics']
 
 class backgroundKinematics(QtGui.QFrame):
