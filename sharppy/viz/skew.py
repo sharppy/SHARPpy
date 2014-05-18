@@ -3,6 +3,8 @@ import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 from sharppy.viz.barbs import drawBarb
 from PySide import QtGui, QtCore
+from PySide.QtGui import *
+from PySide.QtCore import *
 
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
@@ -36,11 +38,8 @@ class backgroundSkewT(QtGui.QWidget):
         self.label_font = QtGui.QFont('Helvetica', 10)
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
         self.in_plot_font = QtGui.QFont('Helvetica', 7)
-    
-    def mouseMoveEvent(self, e):
-        self.pos = QtGui.QMouseEvent.pos(e)
-        self.posx = QtGui.QMouseEvent.x(e)
-        self.posy = QtGui.QMouseEvent.y(e)
+
+
     
     def resizeEvent(self, e):
         '''
@@ -54,8 +53,8 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the background features of a Skew-T.
 
         '''
-        qp = QtGui.QPainter()
-        qp.begin(self)
+        qp = QtGui.QPainter(self)
+        #qp.begin(self)
         for t in range(self.bltmpc-100, self.brtmpc+self.dt+100, self.dt):
             self.draw_isotherm(t, qp)
         for tw in range(-160, 61, 10): self.draw_moist_adiabat(tw, qp)
@@ -68,7 +67,7 @@ class backgroundSkewT(QtGui.QWidget):
             self.draw_isotherm_labels(t, qp)
         for p in range(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
-        qp.end()
+        #qp.end()
 
     def draw_dry_adiabat(self, theta, qp):
         '''
@@ -238,8 +237,8 @@ class backgroundSkewT(QtGui.QWidget):
 
 class plotSkewT(backgroundSkewT):
     def __init__(self, prof, **kwargs):
-        self.prof = prof
         super(plotSkewT, self).__init__()
+        self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
         self.u = prof.u; self.v = prof.v
@@ -249,25 +248,43 @@ class plotSkewT(backgroundSkewT):
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
+        self.rubberBand = None
+        self.setMouseTracking(True)
+        self.readout = QLabel(parent=self)
+        self.readout.setAlignment(QtCore.Qt.AlignCenter)
+        self.readout.setFixedWidth(0)
+        self.readout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  border-style: solid;"
+            "  color: #FFFFFF;}")
+        if not self.rubberBand:
+            self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
+
+    def mouseMoveEvent(self, e):
+        pres = self.pix_to_pres(e.y())
+        self.rubberBand.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
+        self.readout.setFixedWidth(35)
+        self.readout.setText(str(int(pres)))
+        self.readout.move(self.lpad,e.y())
+        self.rubberBand.show()
+    
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
 
         '''
         super(plotSkewT, self).resizeEvent(e)
-    
-    def mouseMoveEvent(self, e):
-        super(plotSkewT, self).mouseMoveEvent(e)
 
     def paintEvent(self, e):
         '''
         Plot the data used in a Skew-T.
 
-        '''
+       '''
         super(plotSkewT, self).paintEvent(e)
-        qp = QtGui.QPainter()
-        qp.begin(self)
+        qp = QtGui.QPainter(self)
+        #qp.begin(self)
         self.drawTitle(qp)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp)
@@ -277,7 +294,7 @@ class plotSkewT(backgroundSkewT):
             self.drawVirtualParcelTrace(qp)
         self.drawBarbs(qp)
         self.draw_effective_layer(qp)
-        qp.end()
+        #qp.end()
 
     def drawBarbs(self, qp):
         i = 0
@@ -302,7 +319,9 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setFont(self.title_font)
         rect0 = QtCore.QRect(self.lpad*3, 0, 150, self.title_height)
+        rect1 = QtCore.QRect(self.lpad*6, 0, 150, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, self.title)
+    
     
     def draw_height(self, h, qp):
         self.hght_font = QtGui.QFont('Helvetica', 9)
@@ -417,3 +436,5 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setFont(self.environment_trace_font)
         qp.drawText(rect, QtCore.Qt.AlignCenter, str(int(label)))
+
+

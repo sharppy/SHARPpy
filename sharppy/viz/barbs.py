@@ -9,7 +9,7 @@ from sharppy.sharptab.constants import *
 
 def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
     pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
-    pen.setWidthF(1.75)
+    pen.setWidthF(1.)
     qp.setPen(pen)
     wnd = np.ceil( tab.utils.mag(u, v) )
     ## check if there are any 50kt triangles needed
