@@ -37,6 +37,9 @@ class backgroundThetae(QtGui.QFrame):
         self.pmax = 1025.; self.pmin = 400.
         self.tmax = 360.; self.tmin = 300.
         self.label_font = QtGui.QFont('Helvetica', 7)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
 
     def resizeEvent(self, e):
         '''
@@ -44,13 +47,13 @@ class backgroundThetae(QtGui.QFrame):
         '''
         self.initUI()
     
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles painting the frame.
         '''
         ## initialize a painter object and draw the frame
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         self.draw_frame(qp)
         ## draw the isobar ticks and the theta-e ticks
         for p in [1000, 900, 800, 700, 600, 500]:
@@ -160,16 +163,23 @@ class plotThetae(backgroundThetae):
         Handles when the window is resized
         '''
         super(plotThetae, self).resizeEvent(e)
+        self.plotData()
     
     def paintEvent(self, e):
+        super(plotThetae, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Handles painting on the frame
         '''
         ## this function handles painting the plot
-        super(plotThetae, self).paintEvent(e)
         ## create a new painter obkect
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the theta-e profile
         self.draw_profile(qp)
         ## end the painter

@@ -32,6 +32,10 @@ class backgroundHodo(QtGui.QFrame):
         self.rings = range(self.ring_increment, 200+self.ring_increment,
                            self.ring_increment)
         self.label_font = QtGui.QFont('Helvetica', 9)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+
 
     def center_hodo(self):
         '''
@@ -49,13 +53,13 @@ class backgroundHodo(QtGui.QFrame):
         '''
         self.initUI()
 
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles painting the frame background.
         '''
         ## initialize a QPainter object.
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the wind speed rings
         for spd in self.rings: self.draw_ring(spd, qp)
         ## draw the frame axes
@@ -195,15 +199,22 @@ class plotHodo(backgroundHodo):
 
         '''
         super(plotHodo, self).resizeEvent(e)
+        self.plotData()
 
     def paintEvent(self, e):
+        super(plotHodo, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Handles the plotting of the data in the frame.
         '''
-        super(plotHodo, self).paintEvent(e)
         ## initialize a QPainter object
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the hodograph
         self.draw_hodo(qp)
         ## draw the storm motion vector

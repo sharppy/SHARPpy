@@ -69,16 +69,6 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         self.initUI()
 
-    def paintEvent(self, e):
-        '''
-        Draw the background features of a Skew-T.
-
-        '''
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        #qp.drawPixmap(0, 0, self.plotBitMap)
-        qp.end()
-
     def draw_dry_adiabat(self, theta, qp):
         '''
         Draw the given moist adiabat.
@@ -303,32 +293,32 @@ class plotSkewT(backgroundSkewT):
 
     def mouseMoveEvent(self, e):
         pres = self.pix_to_pres(e.y())
-        hgt = tab.interp.hght(self.prof, pres)
+        hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, pres) )
         tmp = tab.interp.temp(self.prof, pres)
         dwp = tab.interp.dwpt(self.prof, pres)
         self.rubberBand.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
-        self.presReadout.setFixedWidth(55)
-        self.hghtReadout.setFixedWidth(55)
+        self.presReadout.setFixedWidth(60)
+        self.hghtReadout.setFixedWidth(65)
         self.tmpcReadout.setFixedWidth(45)
         self.dwpcReadout.setFixedWidth(45)
-        self.presReadout.setText(str(int(pres)) + ' hPa')
+        self.presReadout.setText(str(np.around(pres, 1)) + ' hPa')
         try:
-            self.hghtReadout.setText(str(int(hgt)) + ' km')
+            self.hghtReadout.setText(str(np.around(hgt, 1)) + ' km')
         except:
             self.hghtReadout.setText(str(hgt) + ' km')
         try:
-            self.tmpcReadout.setText(str(int(tmp)) + ' C')
+            self.tmpcReadout.setText(str(np.around(tmp, 1)) + ' C')
         except:
             self.tmpcReadout.setText(str(tmp) + ' C')
         try:
-            self.dwpcReadout.setText(str(int(dwp)) + ' C')
+            self.dwpcReadout.setText(str(np.around(dwp, 1)) + ' C')
         except:
             self.dwpcReadout.setText(str(tmp) + ' C')
 
         self.presReadout.move(self.lpad, e.y())
-        self.hghtReadout.move(self.lpad, e.y() - 20)
+        self.hghtReadout.move(self.lpad, e.y() - 15)
         self.tmpcReadout.move(self.brx-self.rpad, e.y())
-        self.dwpcReadout.move(self.brx-self.rpad, e.y() - 20)
+        self.dwpcReadout.move(self.brx-self.rpad, e.y() - 15)
         self.rubberBand.show()
     
     def resizeEvent(self, e):

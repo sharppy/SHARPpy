@@ -41,6 +41,9 @@ class backgroundAnalogues(QtGui.QFrame):
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+        self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
     
     def draw_frame(self, qp):
         '''
@@ -77,13 +80,13 @@ class backgroundAnalogues(QtGui.QFrame):
         '''
         self.initUI()
 
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles drawing the text background.
         '''
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -106,15 +109,22 @@ class plotAnalogues(backgroundAnalogues):
         Handles when the window is resized.
         '''
         super(plotAnalogues, self).resizeEvent(e)
-
+        self.plotData()
+    
     def paintEvent(self, e):
+        super(plotAnalogues, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(1, 1, self.plotBitMap)
+        qp.end()
+
+    def plotData(self):
         '''
         Handles the drawing of the text on the frame.
         '''
-        super(plotAnalogues, self).paintEvent(e)
         ## initialize a QPainter object
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the indices
         self.drawSARS_hail(qp)
         self.drawSARS_tor(qp)

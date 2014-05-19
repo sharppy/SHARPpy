@@ -33,6 +33,9 @@ class backgroundWinds(QtGui.QFrame):
         self.hmax = 16.; self.hmin = 0.
         self.smax = 70.; self.smin = 0.
         self.label_font = QtGui.QFont('Helvetica', 7)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
 
     def resizeEvent(self, e):
         '''
@@ -40,13 +43,13 @@ class backgroundWinds(QtGui.QFrame):
         '''
         self.initUI()
     
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles the paint event. This paints the frame background.
         '''
         ## initialize a QPainter object for drawing
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the background frame
         self.draw_frame(qp)
         ## draw the ticks for the plot.
@@ -169,15 +172,22 @@ class plotWinds(backgroundWinds):
         Handles when the window is resized.
         '''
         super(plotWinds, self).resizeEvent(e)
+        self.plotData()
     
     def paintEvent(self, e):
+        super(plotWinds, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Handles painting the plot data.
         '''
-        super(plotWinds, self).paintEvent(e)
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the wind profile
         self.draw_profile(qp)
         qp.end()

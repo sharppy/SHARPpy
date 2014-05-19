@@ -33,6 +33,9 @@ class backgroundSpeed(QtGui.QFrame):
         ## set the max/min wind speed expected
         self.smax = 140.; self.smin = 0.
         self.label_font = QtGui.QFont('Helvetica', 7)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
 
     def resizeEvent(self, e):
         '''
@@ -40,13 +43,13 @@ class backgroundSpeed(QtGui.QFrame):
         '''
         self.initUI()
     
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles painting the frame.
         '''
         ## initialize a QPainter object
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the background frame
         self.draw_frame(qp)
         ## draw the vertical ticks for wind speed
@@ -122,15 +125,22 @@ class plotSpeed(backgroundSpeed):
         Handles when the window is resized.
         '''
         super(plotSpeed, self).resizeEvent(e)
+        self.plotData()
     
     def paintEvent(self, e):
+        super(plotSpeed, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Handles drawing the data on the frame.
         '''
-        super(plotSpeed, self).paintEvent(e)
         ## initialize a QPainter object
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the wind speed profile
         self.draw_profile(qp)
         qp.end()

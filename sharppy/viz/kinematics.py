@@ -37,6 +37,9 @@ class backgroundKinematics(QtGui.QFrame):
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+        self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
     
     def draw_frame(self, qp):
         '''
@@ -99,13 +102,13 @@ class backgroundKinematics(QtGui.QFrame):
         '''
         self.initUI()
 
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles drawing the text background.
         '''
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -119,6 +122,7 @@ class plotKinematics(backgroundKinematics):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        super(plotKinematics, self).__init__()
         self.prof = prof;
         self.srh1km = prof.srh1km
         self.srh3km = prof.srh3km
@@ -177,19 +181,25 @@ class plotKinematics(backgroundKinematics):
         self.bunkers_left_vec = tab.utils.comp2vec(prof.srwind[2], prof.srwind[3])
         self.upshear = tab.utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
-        super(plotKinematics, self).__init__()
 
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
         '''
         super(plotKinematics, self).resizeEvent(e)
-
+        self.plotData()
+    
     def paintEvent(self, e):
+        super(plotKinematics, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(1, 1, self.plotBitMap)
+        qp.end()
+
+    def plotData(self):
         '''
         Handles the drawing of the text on the frame.
         '''
-        super(plotKinematics, self).paintEvent(e)
         x1 = self.brx / 10
         y1 = self.bry / 19
         origin_x = x1*8.5
@@ -197,7 +207,7 @@ class plotKinematics(backgroundKinematics):
 
         ## initialize a QPainter object
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## draw the indices
         self.drawKinematics(qp)
         self.drawBarbs(qp)

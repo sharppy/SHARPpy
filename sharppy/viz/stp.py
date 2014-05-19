@@ -37,6 +37,9 @@ class backgroundSTP(QtGui.QFrame):
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+        self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
 
     def resizeEvent(self, e):
         '''
@@ -44,13 +47,13 @@ class backgroundSTP(QtGui.QFrame):
         '''
         self.initUI()
     
-    def paintEvent(self, e):
+    def plotBackground(self):
         '''
         Handles painting the frame.
         '''
         ## initialize a painter object and draw the frame
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         self.draw_frame(qp)
         qp.end()
 
@@ -87,15 +90,22 @@ class plotSTP(backgroundSTP):
         Handles when the window is resized
         '''
         super(plotSTP, self).resizeEvent(e)
+        self.plotData()
     
     def paintEvent(self, e):
+        super(plotSTP, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(1, 1, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Handles painting on the frame
         '''
         ## this function handles painting the plot
-        super(plotSTP, self).paintEvent(e)
         ## create a new painter obkect
         qp = QtGui.QPainter()
-        qp.begin(self)
+        qp.begin(self.plotBitMap)
         ## end the painter
         qp.end()
