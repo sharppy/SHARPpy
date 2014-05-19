@@ -128,6 +128,7 @@ class Profile(object):
         self.ebottom, self.etop = params.effective_inflow_layer( self )
        
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
+            self.etopm = ma.masked; self.ebotm = ma.masked
             self.srwind = winds.non_parcel_bunkers_motion( self )
             self.right_esrh = [ma.masked, ma.masked, ma.masked]
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
