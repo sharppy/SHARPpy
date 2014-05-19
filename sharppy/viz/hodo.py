@@ -2,6 +2,8 @@ import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+from PySide.QtGui import *
+from PySide.QtCore import *
 
 
 __all__ = ['backgroundHodo', 'plotHodo']
@@ -174,6 +176,11 @@ class backgroundHodo(QtGui.QFrame):
         yy = self.centery - (v * self.scale)
         return xx, yy
 
+    def pix_to_uv(self, xx, yy):
+        u = (xx - self.centerx) / self.scale
+        v = (self.centery - yy) / self.scale
+        return u, v
+
 
 
 
@@ -192,6 +199,65 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
+        self.setMouseTracking(True)
+        self.wndReadout = QLabel(parent=self)
+        self.srh1kmReadout = QLabel(parent=self)
+        self.srh3kmReadout = QLabel(parent=self)
+        self.esrhReadout = QLabel(parent=self)
+        self.wndReadout.setFixedWidth(0)
+        self.srh1kmReadout.setFixedWidth(0)
+        self.srh3kmReadout.setFixedWidth(0)
+        self.esrhReadout.setFixedWidth(0)
+        self.wndReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #FFFFFF;}")
+        self.srh1kmReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #FF0000;}")
+        self.srh3kmReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #00FF00;}")
+        self.esrhReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #00FFFF;}")
+        self.hband = QRubberBand(QRubberBand.Line, self)
+        self.vband = QRubberBand(QRubberBand.Line, self)
+    
+    def mouseMoveEvent(self, e):
+        u, v = self.pix_to_uv(e.x(), e.y())
+        dir, spd = tab.utils.comp2vec(u,v)
+        srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
+        srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
+        etop, ebot = self.prof.etopm, self.prof.ebotm
+        if etop is np.ma.masked or ebot is np.ma.masked:
+            esrh = np.ma.masked
+            self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
+        else:
+            esrh = tab.winds.helicity(self.prof, ebot, etop, stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
+            self.esrhReadout.setText('effective: ' + str(int(esrh)) + ' m2/s2')
+        self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
+        self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
+        self.wndReadout.setText(str(int(dir)) + '/' + str(np.around(spd, 1)))
+        self.srh1kmReadout.setText('sfc-1km: ' + str(int(srh1km)) + ' m2/s2')
+        self.srh3kmReadout.setText('sfc-3km: ' + str(int(srh3km)) + ' m2/s2')
+        self.wndReadout.setFixedWidth(50)
+        self.srh1kmReadout.setFixedWidth(120)
+        self.srh3kmReadout.setFixedWidth(120)
+        self.esrhReadout.setFixedWidth(120)
+        self.wndReadout.move(1, self.bry-15)
+        self.srh1kmReadout.move(self.brx-130, self.bry-15)
+        self.srh3kmReadout.move(self.brx-130, self.bry-30)
+        self.esrhReadout.move(self.brx-130, self.bry-45)
+        self.hband.show()
+        self.vband.show()
 
     def resizeEvent(self, e):
         '''
