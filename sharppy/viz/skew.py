@@ -248,7 +248,6 @@ class plotSkewT(backgroundSkewT):
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
-        self.rubberBand = None
         self.setMouseTracking(True)
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
@@ -287,9 +286,13 @@ class plotSkewT(backgroundSkewT):
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #00FF00;}")
-        if not self.rubberBand:
-            self.rubberBand = QRubberBand(QRubberBand.Line, self)
+        self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
+    def mousePressEvent(self, e):
+        if self.hasMouseTracking():
+            self.setMouseTracking(False)
+        else:
+            self.setMouseTracking(True)
 
     def mouseMoveEvent(self, e):
         pres = self.pix_to_pres(e.y())

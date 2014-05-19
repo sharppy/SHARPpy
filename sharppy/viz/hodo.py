@@ -231,6 +231,12 @@ class plotHodo(backgroundHodo):
         self.hband = QRubberBand(QRubberBand.Line, self)
         self.vband = QRubberBand(QRubberBand.Line, self)
     
+    def mousePressEvent(self, e):
+        if self.hasMouseTracking():
+            self.setMouseTracking(False)
+        else:
+            self.setMouseTracking(True)
+
     def mouseMoveEvent(self, e):
         u, v = self.pix_to_uv(e.x(), e.y())
         dir, spd = tab.utils.comp2vec(u,v)
