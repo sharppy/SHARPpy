@@ -38,6 +38,27 @@ class backgroundSkewT(QtGui.QWidget):
         self.label_font = QtGui.QFont('Helvetica', 10)
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
         self.in_plot_font = QtGui.QFont('Helvetica', 7)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+    
+    
+    def plotBackground(self):
+        qp = QtGui.QPainter()
+        qp.begin(self.plotBitMap)
+        for t in range(self.bltmpc-100, self.brtmpc+self.dt+100, self.dt):
+            self.draw_isotherm(t, qp)
+        for tw in range(-160, 61, 10): self.draw_moist_adiabat(tw, qp)
+        for theta in range(-70, 350, 20): self.draw_dry_adiabat(theta, qp)
+        for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
+        self.draw_frame(qp)
+        for p in [1000, 850, 700, 500, 300, 200, 100]:
+            self.draw_isobar(p, 1, qp)
+        for t in range(self.bltmpc, self.brtmpc+self.dt, self.dt):
+            self.draw_isotherm_labels(t, qp)
+        for p in range(int(self.pmax), int(self.pmin-50), -50):
+            self.draw_isobar(p, 0, qp)
+        qp.end()
 
 
     
@@ -53,21 +74,10 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the background features of a Skew-T.
 
         '''
-        qp = QtGui.QPainter(self)
-        #qp.begin(self)
-        for t in range(self.bltmpc-100, self.brtmpc+self.dt+100, self.dt):
-            self.draw_isotherm(t, qp)
-        for tw in range(-160, 61, 10): self.draw_moist_adiabat(tw, qp)
-        for theta in range(-70, 350, 20): self.draw_dry_adiabat(theta, qp)
-        for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
-        self.draw_frame(qp)
-        for p in [1000, 850, 700, 500, 300, 200, 100]:
-            self.draw_isobar(p, 1, qp)
-        for t in range(self.bltmpc, self.brtmpc+self.dt, self.dt):
-            self.draw_isotherm_labels(t, qp)
-        for p in range(int(self.pmax), int(self.pmin-50), -50):
-            self.draw_isobar(p, 0, qp)
-        #qp.end()
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        #qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
 
     def draw_dry_adiabat(self, theta, qp):
         '''
@@ -250,24 +260,75 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
         self.rubberBand = None
         self.setMouseTracking(True)
-        self.readout = QLabel(parent=self)
-        self.readout.setAlignment(QtCore.Qt.AlignCenter)
-        self.readout.setFixedWidth(0)
-        self.readout.setStyleSheet("QLabel {"
+        ## create the readout labels
+        self.presReadout = QLabel(parent=self)
+        self.hghtReadout = QLabel(parent=self)
+        self.tmpcReadout = QLabel(parent=self)
+        self.dwpcReadout = QLabel(parent=self)
+        ## set their alignments
+        self.presReadout.setAlignment(QtCore.Qt.AlignCenter)
+        self.hghtReadout.setAlignment(QtCore.Qt.AlignCenter)
+        self.tmpcReadout.setAlignment(QtCore.Qt.AlignCenter)
+        self.dwpcReadout.setAlignment(QtCore.Qt.AlignCenter)
+        ## initialize the width to 0 so that they don't show up
+        ## on initialization
+        self.presReadout.setFixedWidth(0)
+        self.hghtReadout.setFixedWidth(0)
+        self.tmpcReadout.setFixedWidth(0)
+        self.dwpcReadout.setFixedWidth(0)
+        ## set the style sheet for text size, color, etc
+        self.presReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 0px;"
-            "  border-style: solid;"
+            "  font-size: 11px;"
             "  color: #FFFFFF;}")
+        self.hghtReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #FF0000;}")
+        self.tmpcReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #FF0000;}")
+        self.dwpcReadout.setStyleSheet("QLabel {"
+            "  background-color: rgb(0, 0, 0);"
+            "  border-width: 0px;"
+            "  font-size: 11px;"
+            "  color: #00FF00;}")
         if not self.rubberBand:
             self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
 
     def mouseMoveEvent(self, e):
         pres = self.pix_to_pres(e.y())
+        hgt = tab.interp.hght(self.prof, pres)
+        tmp = tab.interp.temp(self.prof, pres)
+        dwp = tab.interp.dwpt(self.prof, pres)
         self.rubberBand.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
-        self.readout.setFixedWidth(35)
-        self.readout.setText(str(int(pres)))
-        self.readout.move(self.lpad,e.y())
+        self.presReadout.setFixedWidth(55)
+        self.hghtReadout.setFixedWidth(55)
+        self.tmpcReadout.setFixedWidth(45)
+        self.dwpcReadout.setFixedWidth(45)
+        self.presReadout.setText(str(int(pres)) + ' hPa')
+        try:
+            self.hghtReadout.setText(str(int(hgt)) + ' km')
+        except:
+            self.hghtReadout.setText(str(hgt) + ' km')
+        try:
+            self.tmpcReadout.setText(str(int(tmp)) + ' C')
+        except:
+            self.tmpcReadout.setText(str(tmp) + ' C')
+        try:
+            self.dwpcReadout.setText(str(int(dwp)) + ' C')
+        except:
+            self.dwpcReadout.setText(str(tmp) + ' C')
+
+        self.presReadout.move(self.lpad, e.y())
+        self.hghtReadout.move(self.lpad, e.y() - 20)
+        self.tmpcReadout.move(self.brx-self.rpad, e.y())
+        self.dwpcReadout.move(self.brx-self.rpad, e.y() - 20)
         self.rubberBand.show()
     
     def resizeEvent(self, e):
@@ -276,15 +337,22 @@ class plotSkewT(backgroundSkewT):
 
         '''
         super(plotSkewT, self).resizeEvent(e)
+        self.plotData()
 
     def paintEvent(self, e):
+        super(plotSkewT, self).paintEvent(e)
+        qp = QtGui.QPainter()
+        qp.begin(self)
+        qp.drawPixmap(0, 0, self.plotBitMap)
+        qp.end()
+    
+    def plotData(self):
         '''
         Plot the data used in a Skew-T.
 
        '''
-        super(plotSkewT, self).paintEvent(e)
-        qp = QtGui.QPainter(self)
-        #qp.begin(self)
+        qp = QtGui.QPainter()
+        qp.begin(self.plotBitMap)
         self.drawTitle(qp)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp)
@@ -294,7 +362,7 @@ class plotSkewT(backgroundSkewT):
             self.drawVirtualParcelTrace(qp)
         self.drawBarbs(qp)
         self.draw_effective_layer(qp)
-        #qp.end()
+        qp.end()
 
     def drawBarbs(self, qp):
         i = 0
