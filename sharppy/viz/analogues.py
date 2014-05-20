@@ -159,20 +159,40 @@ class plotAnalogues(backgroundAnalogues):
                     pen.setColor(QtCore.Qt.magenta)
                     qp.setPen(pen)
                 else:
-                    pass
+                    pen.setColor(QtCore.Qt.white)
+                    qp.setPen(pen)
                 qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     sig_hail_str)
                 qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     match_str)
             else:
-                pen.setColor(QtCore.Qt.white)
-                qp.setPen(pen)
+                pass
             if len(self.matches[0]) == 0:
                 pen.setColor(QtCore.Qt.white)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     'No Quality Matches')
+            else:
+                pen.setColor(QtCore.Qt.white)
+                qp.setPen(pen)
+                qp.setFont(self.match_font)
+                idx  = 0
+                offset = 0
+                for m in self.matches[0]:
+                    rect3 = QtCore.QRect(x1*3+10, y1*(4 + offset), x1, self.match_height)
+                    rect4 = QtCore.QRect(x1*5.5-5, y1*(4 + offset), x1, self.match_height)
+                    size = self.matches[1][idx]
+                    if size > 2.0:
+                        pen.setColor(QtCore.Qt.red)
+                        qp.setPen(pen)
+                    else:
+                        pen.setColor(QtGui.QColor('#06B5FF'))
+                        qp.setPen(pen)
+                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
+                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, str( size ) )
+                    idx += 1
+                    offset += 1
 
     def drawSARS_tor(self, qp):
         '''
