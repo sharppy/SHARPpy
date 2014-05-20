@@ -1232,7 +1232,10 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 def bunkers_storm_motion(prof, **kwargs):
     '''
         Compute the Bunkers Storm Motion for a right moving supercell using a
-        parcel based approach.
+        parcel based approach. This code is consistent with the findings in 
+        Bunkers et. al 2014, using the Effective Inflow Base as the base, and
+        65% of the most unstable parcel equilibrium level height using the 
+        pressure weighted mean wind.
         
         Parameters
         ----------
@@ -1270,11 +1273,11 @@ def bunkers_storm_motion(prof, **kwargs):
     if not pbot:
         pbot, ptop = effective_inflow_layer(prof, 100, -250, mupcl=mupcl)
     base = interp.to_agl(prof, interp.hght(prof, pbot))
-    if mucape > 100. and utils.QC(muel) and base >= 750:
+    if mucape > 100. and utils.QC(muel):
         depth = muel - base
-        htop = base + depth / 2.
-        ptop = interp.pres(prof, interp.to_msl(prof, base + htop))
-        mnu, mnv = winds.mean_wind_npw(prof, pbot, ptop)
+        htop = base + ( depth * (65./100.) )
+        ptop = interp.pres(prof, interp.to_msl(prof, htop))
+        mnu, mnv = winds.mean_wind(prof, pbot, ptop)
         sru, srv = winds.wind_shear(prof, pbot, ptop)
         srmag = utils.mag(sru, srv)
         uchg = d / srmag * srv
