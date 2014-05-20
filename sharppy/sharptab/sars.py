@@ -101,7 +101,7 @@ def sars_hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
         prob_sig_hail = 0
 
 
-    # Find the quality matches
+    # Find the quality matches    
     quality_match_idx = np.where((mumr >= (matmr - range_mumr_t1)) & (mumr <= (matmr + range_mumr_t1)) & \
                                (mucape >= (matcape - range_mucape_t1)) & (mucape <= (matcape + range_mucape_t1)) & \
                                (lr >= (matlr - range_lr_t1)) & (lr <= (matlr + range_lr_t1)) & \

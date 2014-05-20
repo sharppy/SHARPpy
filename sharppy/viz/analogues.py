@@ -155,13 +155,21 @@ class plotAnalogues(backgroundAnalogues):
             rect2 = QtCore.QRect(x1*4, y1*8, x1, self.match_height)
             if self.matches[-3] > 0:
                 qp.setFont(self.match_font)
+                if self.matches[-1]*100. >= 50.:
+                    pen.setColor(QtCore.Qt.magenta)
+                    qp.setPen(pen)
+                else:
+                    pass
                 qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     sig_hail_str)
                 qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     match_str)
             else:
-                pass
+                pen.setColor(QtCore.Qt.white)
+                qp.setPen(pen)
             if len(self.matches[0]) == 0:
+                pen.setColor(QtCore.Qt.white)
+                qp.setPen(pen)
                 qp.setFont(self.match_font)
                 qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     'No Quality Matches')

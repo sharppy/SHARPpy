@@ -138,6 +138,7 @@ class Profile(object):
             self.mean_ebw = [ma.masked, ma.masked, ma.masked]
             self.srw_eff = [ma.masked, ma.masked, ma.masked]
             self.srw_ebw = [ma.masked, ma.masked, ma.masked]
+            self.right_scp = 0.0; self.left_scp = 0.0
         else:
             self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
             self.etopm = interp.to_agl(self, interp.hght(self, self.etop))
@@ -175,9 +176,9 @@ class Profile(object):
         ## calculate upshear and downshear
         self.upshear_downshear = winds.mbe_vectors(self)
         ## calculate the SARS database matches
-        sfc_6km_shear = utils.mag( self.sfc_6km_shear[0], self.sfc_6km_shear[1])
-        sfc_3km_shear = utils.mag( self.sfc_3km_shear[0], self.sfc_3km_shear[1])
-        sfc_9km_shear = utils.mag( self.sfc_9km_shear[0], self.sfc_9km_shear[1])
+        sfc_6km_shear = utils.KTS2MS( utils.mag( self.sfc_6km_shear[0], self.sfc_6km_shear[1]) )
+        sfc_3km_shear = utils.KTS2MS( utils.mag( self.sfc_3km_shear[0], self.sfc_3km_shear[1]) )
+        sfc_9km_shear = utils.KTS2MS( utils.mag( self.sfc_9km_shear[0], self.sfc_9km_shear[1]) )
         h500t = interp.temp(self, 500.)
         lapse_rate = params.lapse_rate( self, 700., 500., pres=True )
         srh3km = self.srh3km[0]
@@ -186,7 +187,7 @@ class Profile(object):
         self.database = os.path.join( os.path.dirname( __file__ ), 'nlist.txt' )
         try:
             self.matches = sars_hail(self.database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
-                sfc_9km_shear, sfc_3km_shear , srh3km)
+                sfc_9km_shear, sfc_3km_shear, srh3km)
         except:
             self.matches = ma.masked
 
