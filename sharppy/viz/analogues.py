@@ -145,7 +145,7 @@ class plotAnalogues(backgroundAnalogues):
             qp.setFont(self.plot_font)
             x1 = self.brx / 6
             y1 = self.bry / 19
-            sig_hail_prob = str( int( self.matches[-1]*100 ))
+            sig_hail_prob = str( int( np.around( self.matches[-1]*100 ) ))
             sig_hail_str = 'SARS: ' + sig_hail_prob + '% SIG'
             num_matches = str( int( self.matches[-3]))
             match_str = '(' + num_matches + ' loose matches)'
