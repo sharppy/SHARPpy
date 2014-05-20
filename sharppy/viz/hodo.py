@@ -240,14 +240,14 @@ class plotHodo(backgroundHodo):
     def mouseMoveEvent(self, e):
         u, v = self.pix_to_uv(e.x(), e.y())
         dir, spd = tab.utils.comp2vec(u,v)
-        srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
-        srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
+        srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=u, stv=v)[0]
+        srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=u, stv=v)[0]
         etop, ebot = self.prof.etopm, self.prof.ebotm
         if etop is np.ma.masked or ebot is np.ma.masked:
             esrh = np.ma.masked
             self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
         else:
-            esrh = tab.winds.helicity(self.prof, ebot, etop, stu=tab.utils.KTS2MS( u ), stv=tab.utils.KTS2MS( v ))[0]
+            esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
             self.esrhReadout.setText('effective: ' + str(int(esrh)) + ' m2/s2')
         self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
         self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
@@ -259,9 +259,9 @@ class plotHodo(backgroundHodo):
         self.srh3kmReadout.setFixedWidth(120)
         self.esrhReadout.setFixedWidth(120)
         self.wndReadout.move(1, self.bry-15)
-        self.srh1kmReadout.move(self.brx-130, self.bry-15)
+        self.srh1kmReadout.move(self.brx-130, self.bry-45)
         self.srh3kmReadout.move(self.brx-130, self.bry-30)
-        self.esrhReadout.move(self.brx-130, self.bry-45)
+        self.esrhReadout.move(self.brx-130, self.bry-15)
         self.hband.show()
         self.vband.show()
 

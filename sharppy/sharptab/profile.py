@@ -146,8 +146,8 @@ class Profile(object):
             depth = ( self.mupcl.elhght - self.ebotm ) / 2
             elh = interp.pres(self, interp.to_msl(self, self.ebotm + depth))
             ## calculate helicity
-            self.right_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=utils.KTS2MS( self.srwind[0] ), stv=utils.KTS2MS( self.srwind[1] ))
-            self.left_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=utils.KTS2MS( self.srwind[2] ), stv=utils.KTS2MS( self.srwind[3] ))
+            self.right_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[0], stv=self.srwind[1])
+            self.left_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[2], stv=self.srwind[3])
             ## calculate mean wind
             self.mean_eff = winds.mean_wind(self, self.ebottom, self.etop )
             self.mean_ebw = winds.mean_wind(self, pbot=self.ebottom, ptop=elh )
@@ -164,8 +164,8 @@ class Profile(object):
             self.left_scp = params.scp( self.mupcl.bplus, self.left_esrh[0], self.ebwspd)
             #self.ship = params.ship()
         ## calculate helicity
-        self.srh1km = winds.helicity(self, 0, 1000., stu=utils.KTS2MS( self.srwind[0] ), stv=utils.KTS2MS( self.srwind[1] ))
-        self.srh3km = winds.helicity(self, 0, 3000., stu=utils.KTS2MS( self.srwind[0] ), stv=utils.KTS2MS( self.srwind[1] ))
+        self.srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
+        self.srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[0], stv=self.srwind[1])
         ## calculate mean srw
         self.srw_1km = winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] )
         self.srw_3km = winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] )

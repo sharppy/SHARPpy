@@ -9,6 +9,7 @@ from sharppy.sharptab.constants import *
 __all__ = ['mean_wind', 'mean_wind_npw', 'mean_wind_old', 'mean_wind_npw_old']
 __all__ += ['sr_wind', 'sr_wind_npw', 'wind_shear', 'helicity', 'max_wind']
 __all__ += ['non_parcel_bunkers_motion', 'corfidi_mcs_motion', 'mbe_vectors']
+__all__ += ['non_parcel_bunkers_motion_experimental']
 
 
 def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
@@ -171,6 +172,61 @@ def wind_shear(prof, pbot=850, ptop=250):
     shu = utop - ubot
     shv = vtop - vbot
     return shu, shv
+
+def non_parcel_bunkers_motion_experimental(prof):
+    '''
+        Compute the Bunkers Storm Motion for a Right Moving Supercell
+        
+        Inputs
+        ------
+        prof : profile object
+        Profile Object
+        
+        Returns
+        -------
+        rstu : number
+        Right Storm Motion U-component
+        rstv : number
+        Right Storm Motion V-component
+        lstu : number
+        Left Storm Motion U-component
+        lstv : number
+        Left Storm Motion V-component
+        
+        '''
+    d = utils.MS2KTS(7.5)     # Deviation value emperically derived as 7.5 m/s
+    ## get the msl height of 500m, 5.5km, and 6.0km above the surface
+    msl500m = interp.to_msl(prof, 500.)
+    msl5500m = interp.to_msl(prof, 5500.)
+    msl6000m = interp.to_msl(prof, 6000.)
+    
+    ## get the pressure of the surface, 500m, 5.5km, and 6.0km levels
+    psfc = prof.pres[prof.sfc]
+    p500m = interp.pres(prof, msl500m)
+    p5500m = interp.pres(prof, msl5500m)
+    p6000m = interp.pres(prof, msl6000m)
+    
+    ## sfc-500m Mean Wind
+    mnu500m, mnv500m = mean_wind(prof, psfc, p500m)
+    
+    ## 5.5km-6.0km Mean Wind
+    mnu5500m_6000m, mnv5500m_6000m = mean_wind(prof, p5500m, p6000m)
+    
+    # shear vector of the two mean winds
+    shru = mnu5500m_6000m - mnu500m
+    shrv = mnv5500m_6000m - mnv500m
+    
+    # SFC-6km Mean Wind
+    mnu6, mnv6 = mean_wind(prof, psfc, p6000m)
+    
+    # Bunkers Right Motion
+    tmp = d / utils.mag(shru, shrv)
+    rstu = mnu6 + (tmp * shrv)
+    rstv = mnv6 - (tmp * shru)
+    lstu = mnu6 - (tmp * shrv)
+    lstv = mnv6 + (tmp * shru)
+    
+    return rstu, rstv, lstu, lstv
 
 
 def non_parcel_bunkers_motion(prof):
