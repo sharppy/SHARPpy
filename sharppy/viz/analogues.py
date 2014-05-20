@@ -184,7 +184,7 @@ class plotAnalogues(backgroundAnalogues):
                     rect4 = QtCore.QRect(x1*5.5-5, y1*(4 + offset), x1, self.match_height)
                     size = self.matches[1][idx]
                     if size > 2.0:
-                        pen.setColor(QtCore.Qt.red)
+                        pen.setColor(QtGui.QColor('#E60000'))
                         qp.setPen(pen)
                     else:
                         pen.setColor(QtGui.QColor('#06B5FF'))
