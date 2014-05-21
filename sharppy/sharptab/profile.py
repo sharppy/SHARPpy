@@ -138,12 +138,12 @@ class Profile(object):
             self.srwind = winds.non_parcel_bunkers_motion( self )
             self.right_esrh = [ma.masked, ma.masked, ma.masked]
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
-            self.eff_shear = [ma.masked, ma.masked]
-            self.ebwd = [ma.masked, ma.masked, ma.masked]
-            self.mean_eff = [ma.masked, ma.masked, ma.masked]
-            self.mean_ebw = [ma.masked, ma.masked, ma.masked]
-            self.srw_eff = [ma.masked, ma.masked, ma.masked]
-            self.srw_ebw = [ma.masked, ma.masked, ma.masked]
+            self.eff_shear = [self.missing, self.missing]
+            self.ebwd = [self.missing, self.missing, self.missing]
+            self.mean_eff = [self.missing, self.missing, self.missing]
+            self.mean_ebw = [self.missing, self.missing, self.missing]
+            self.srw_eff = [self.missing, self.missing, self.missing]
+            self.srw_ebw = [self.missing, self.missing, self.missing]
             self.right_scp = 0.0; self.left_scp = 0.0
             self.stp_cin = 0.0
         else:
@@ -242,6 +242,17 @@ class Profile(object):
         return np.where(~self.tmpc.mask)[0].max()
 
     def get_wetbulb_profile(self):
+        '''
+        Function to calculate the wetbulb profile.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        Array of wet bulb profile
+        '''
         wetbulb = ma.empty(self.pres.shape[0])
         for i in range(len(self.v)):
             wetbulb[i] = thermo.wetbulb( self.pres[i], self.tmpc[i], self.dwpc[i] )
@@ -250,6 +261,17 @@ class Profile(object):
         return wetbulb
 
     def get_theta_profile(self):
+        '''
+        Function to calculate the theta profile.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        Array of theta profile
+        '''
         theta = ma.empty(self.pres.shape[0])
         for i in range(len(self.v)):
             theta[i] = thermo.ctok( thermo.theta(self.pres[i], self.tmpc[i]) )
@@ -258,6 +280,17 @@ class Profile(object):
         return theta
 
     def get_thetae_profile(self):
+        '''
+        Function to calculate the theta-e profile.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        Array of theta-e profile
+        '''
         thetae = ma.empty(self.pres.shape[0])
         for i in range(len(self.v)):
             thetae[i] = thermo.ctok( thermo.thetae(self.pres[i], self.tmpc[i], self.dwpc[i]) )
