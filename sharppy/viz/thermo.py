@@ -146,15 +146,11 @@ class plotText(backgroundText):
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.bry / 17
-        ship = str( np.around( self.prof.ship, 1 ) )
-        stp_fixed = str( np.around( self.prof.stp_fixed, 1 ) )
-        stp_cin = str( np.around( self.prof.stp_cin, 1 ) )
-        try:
-            right_scp = str( np.around( self.prof.right_scp, 1 ) )
-            left_scp = str( np.around( self.prof.left_scp, 1 ) )
-        except:
-            right_scp = str( self.prof.right_scp )
-            left_scp = str( self.prof.left_scp )
+        ship = tab.utils.FLOAT2STR( self.prof.ship, 1 )
+        stp_fixed = tab.utils.FLOAT2STR( self.prof.stp_fixed, 1 )
+        stp_cin = tab.utils.FLOAT2STR( self.prof.stp_cin, 1 )
+        right_scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
+        left_scp = tab.utils.FLOAT2STR( self.prof.left_scp, 1 )
         rect0 = QtCore.QRect(x1*6, y1*10.00+(self.tpad), x1*8, self.severe_height)
         rect1 = QtCore.QRect(x1*6, y1*11.25+(self.tpad), x1*8, self.severe_height)
         rect2 = QtCore.QRect(x1*6, y1*12.50+(self.tpad), x1*8, self.severe_height)
@@ -185,30 +181,30 @@ class plotText(backgroundText):
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
         ## K Index
-        k_idx = str( int( tab.params.k_index( prof ) ) )
+        k_idx = tab.utils.INT2STR( tab.params.k_index( prof ) )
         ## precipitable water
-        pwat = str( np.around( tab.params.precip_water( prof ), 2 ) )
+        pwat = tab.utils.FLOAT2STR( tab.params.precip_water( prof ), 2 )
         ## 0-3km agl lapse rate
-        lapserate_3km = str( np.around( tab.params.lapse_rate( prof, 0., 3000., pres=False ), 1 ) )
+        lapserate_3km = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 0., 3000., pres=False ), 1 )
         ## 3-6km agl lapse rate
-        lapserate_3_6km = str( np.around( tab.params.lapse_rate( prof, 3000., 6000., pres=False ), 1 ) )
+        lapserate_3_6km = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 3000., 6000., pres=False ), 1 )
         ## 850-500mb lapse rate
-        lapserate_850_500 = str( np.around( tab.params.lapse_rate( prof, 850., 500., pres=True ), 1 ) )
+        lapserate_850_500 = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 850., 500., pres=True ), 1 )
         ## 700-500mb lapse rate
-        lapserate_700_500 = str( np.around( tab.params.lapse_rate( prof, 700., 500., pres=True ), 1 ) )
+        lapserate_700_500 = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 700., 500., pres=True ), 1 )
         ## convective temperature
-        convT = str( int( tab.thermo.ctof(tab.params.convective_temp( prof )) ) )
+        convT = tab.utils.INT2STR( tab.thermo.ctof(tab.params.convective_temp( prof ) ) )
         ## sounding forecast surface temperature
-        maxT = str( int( tab.thermo.ctof( tab.params.max_temp( prof ) ) ) )
+        maxT = tab.utils.INT2STR( tab.thermo.ctof( tab.params.max_temp( prof ) ) )
         #fzl = str(int(self.sfcparcel.hght0c))
         ## 100mb mean mixing ratio
-        mean_mixr = str( np.around( tab.params.mean_mixratio( prof ), 1 ) )
+        mean_mixr = tab.utils.FLOAT2STR( tab.params.mean_mixratio( prof ), 1 )
         ## 150mb mean rh
-        low_rh = str( int( tab.params.mean_relh( prof ) ) )
-        mid_rh = str( int( tab.params.mean_relh( prof, pbot=(prof.pres[prof.sfc] - 150),
-            ptop=(prof.pres[prof.sfc] - 350) ) ) )
+        low_rh = tab.utils.INT2STR( tab.params.mean_relh( prof ) )
+        mid_rh = tab.utils.INT2STR( tab.params.mean_relh( prof, pbot=(prof.pres[prof.sfc] - 150),
+            ptop=(prof.pres[prof.sfc] - 350) ) )
         ## calculate the totals totals index
-        totals_totals = str( int( tab.params.t_totals( prof ) ) )
+        totals_totals = tab.utils.INT2STR( tab.params.t_totals( prof ) )
         ## Now we have all the data we could ever want. Time to start drawing
         ## them on the frame.
         ## This starts with the left column.
@@ -260,48 +256,34 @@ class plotText(backgroundText):
         y1 = self.bry / 17
         ## get the indices rounded to the nearest int, conver to strings
         ## Start with the surface based parcel.
-        sfc_bplus = str( int( self.sfcparcel.bplus ) )
-        sfc_bminus = str( int( self.sfcparcel.bminus ) )
-        sfc_lclhght = str( int( self.sfcparcel.lclhght ) )
-        sfc_limax = str( int( self.sfcparcel.li5 ) )
-        ## sometimes the LFC is masked.
-        try:
-            sfc_lfchght = str( int( self.sfcparcel.lfchght ) )
-        except:
-            sfc_lfchght = str(self.sfcparcel.lfchght )
-        sfc_elhght = str( int( self.sfcparcel.elhght ) )
+        sfc_bplus = tab.utils.INT2STR( self.sfcparcel.bplus )
+        sfc_bminus = tab.utils.INT2STR( self.sfcparcel.bminus )
+        sfc_lclhght = tab.utils.INT2STR( self.sfcparcel.lclhght )
+        sfc_limax = tab.utils.INT2STR( self.sfcparcel.li5 )
+        sfc_lfchght = tab.utils.INT2STR( self.sfcparcel.lfchght )
+        sfc_elhght = tab.utils.INT2STR( self.sfcparcel.elhght )
         ## get the forecast surface parvel
-        fcst_bplus = str( int( self.fcstpcl.bplus ) )
-        fcst_bminus = str( int( self.fcstpcl.bminus ) )
-        fcst_lclhght = str( int( self.fcstpcl.lclhght ) )
-        fcst_limax = str( int( self.fcstpcl.li5 ) )
-        ## check and see if the lfc is there
-        try:
-            fcst_lfchght = str( int( self.fcstpcl.lfchght ) )
-        except:
-            fcst_lfchght = str( self.fcstpcl.lfchght )
-        fcst_elhght = str( int( self.fcstpcl.elhght ) )
+        fcst_bplus = tab.utils.INT2STR( self.fcstpcl.bplus )
+        fcst_bminus = tab.utils.INT2STR( self.fcstpcl.bminus )
+        fcst_lclhght = tab.utils.INT2STR( self.fcstpcl.lclhght )
+        fcst_limax = tab.utils.INT2STR( self.fcstpcl.li5 )
+        fcst_lfchght = tab.utils.INT2STR( self.fcstpcl.lfchght )
+        fcst_elhght = tab.utils.INT2STR( self.fcstpcl.elhght )
         ## Now get the mixed layer parcel indices
-        ml_bplus = str( int( self.mlparcel.bplus ) )
-        ml_bminus = str( int( self.mlparcel.bminus ) )
-        ml_lclhght = str( int( self.mlparcel.lclhght ) )
-        ml_limax = str( int( self.mlparcel.li5 ) )
+        ml_bplus = tab.utils.INT2STR( self.mlparcel.bplus )
+        ml_bminus = tab.utils.INT2STR( self.mlparcel.bminus )
+        ml_lclhght = tab.utils.INT2STR( self.mlparcel.lclhght )
+        ml_limax = tab.utils.INT2STR( self.mlparcel.li5 )
         ## check and see if the lfc is there
-        try:
-            ml_lfchght = str( int( self.mlparcel.lfchght ) )
-        except:
-            ml_lfchght = str( self.mlparcel.lfchght )
-        ml_elhght = str( int( self.mlparcel.elhght ) )
+        ml_lfchght = tab.utils.INT2STR( self.mlparcel.lfchght )
+        ml_elhght = tab.utils.INT2STR( self.mlparcel.elhght )
         ## get the most unstable parcel indices
-        mu_bplus = str( int( self.muparcel.bplus ) )
-        mu_bminus = str( int( self.muparcel.bminus ) )
-        mu_lclhght = str( int( self.muparcel.lclhght ) )
-        mu_limax = str( int( self.muparcel.li5 ) )
+        mu_bplus = tab.utils.INT2STR( self.muparcel.bplus )
+        mu_bminus = tab.utils.INT2STR( self.muparcel.bminus )
+        mu_lclhght = tab.utils.INT2STR( self.muparcel.lclhght )
+        mu_limax = tab.utils.INT2STR( self.muparcel.li5 )
         ## make sure the lfc is there
-        try:
-            mu_lfchght = str( int( self.muparcel.lfchght ) )
-        except:
-            mu_lfchght = str( self.muparcel.lfchght )
+        mu_lfchght = tab.utils.INT2STR( self.muparcel.lfchght )
         mu_elhght = str( int( self.muparcel.elhght ) )
 
         ## Now that we have all the data, time to plot the text in their
