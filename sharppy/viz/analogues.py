@@ -145,9 +145,9 @@ class plotAnalogues(backgroundAnalogues):
             qp.setFont(self.plot_font)
             x1 = self.brx / 6
             y1 = self.bry / 19
-            sig_hail_prob = str( int( np.around( self.matches[-1]*100 ) ))
+            sig_hail_prob = tab.utils.INT2STR( np.around( self.matches[-1]*100 ) )
             sig_hail_str = 'SARS: ' + sig_hail_prob + '% SIG'
-            num_matches = str( int( self.matches[-3]))
+            num_matches = tab.utils.INT2STR( self.matches[-3] )
             match_str = '(' + num_matches + ' loose matches)'
             ## draw the matches statistics
             rect0 = QtCore.QRect(x1*4, y1*18, x1, self.plot_height)
