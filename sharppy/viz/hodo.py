@@ -146,10 +146,10 @@ class backgroundHodo(QtGui.QFrame):
         pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        qp.drawText(top_rect, QtCore.Qt.AlignCenter, str(int(spd)))
-        qp.drawText(right_rect, QtCore.Qt.AlignCenter, str(int(spd)))
-        qp.drawText(bottom_rect, QtCore.Qt.AlignCenter, str(int(spd)))
-        qp.drawText(left_rect, QtCore.Qt.AlignCenter, str(int(spd)))
+        qp.drawText(top_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
+        qp.drawText(right_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
+        qp.drawText(bottom_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
+        qp.drawText(left_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
 
     def hodo_to_pix(self, ang, spd):
         '''
@@ -253,12 +253,12 @@ class plotHodo(backgroundHodo):
             self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
         else:
             esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
-            self.esrhReadout.setText('effective: ' + str(int(esrh)) + ' m2/s2')
+            self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
         self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
         self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
-        self.wndReadout.setText(str(int(dir)) + '/' + str(np.around(spd, 1)))
-        self.srh1kmReadout.setText('sfc-1km: ' + str(int(srh1km)) + ' m2/s2')
-        self.srh3kmReadout.setText('sfc-3km: ' + str(int(srh3km)) + ' m2/s2')
+        self.wndReadout.setText(tab.utils.INT2STR(dir) + '/' + tab.utils.FLOAT2STR(spd, 1))
+        self.srh1kmReadout.setText('sfc-1km: ' + tab.utils.INT2STR(srh1km) + ' m2/s2')
+        self.srh3kmReadout.setText('sfc-3km: ' + tab.utils.INT2STR(srh3km) + ' m2/s2')
         self.wndReadout.setFixedWidth(50)
         self.srh1kmReadout.setFixedWidth(120)
         self.srh3kmReadout.setFixedWidth(120)

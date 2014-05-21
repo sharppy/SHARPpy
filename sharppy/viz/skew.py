@@ -133,7 +133,7 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setFont(self.in_plot_font)
         qp.drawLine(x1, y1, x2, y2)
         qp.drawText(rectF, QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter,
-            str(int(w)))
+            tab.utils.INT2STR(w))
 
     def draw_frame(self, qp):
         '''
@@ -165,7 +165,7 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setFont(self.label_font)
         x1 = self.tmpc_to_pix(t, self.pmax)
         qp.drawText(x1-10, self.bry+2, 20, 20,
-                    QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, str(int(t)))
+                    QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
 
     def draw_isotherm(self, t, qp):
         '''
@@ -197,7 +197,7 @@ class backgroundSkewT(QtGui.QWidget):
             qp.drawLine(self.lpad, y1, self.brx, y1)
             qp.drawText(1, y1-20, self.lpad-4, 40,
                         QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-                        str(int(p)))
+                        tab.utils.INT2STR(p))
         else:
             qp.drawLine(self.lpad, y1, self.lpad+offset, y1)
             qp.drawLine(self.brx+self.rpad-offset, y1,
@@ -306,19 +306,10 @@ class plotSkewT(backgroundSkewT):
         self.hghtReadout.setFixedWidth(65)
         self.tmpcReadout.setFixedWidth(45)
         self.dwpcReadout.setFixedWidth(45)
-        self.presReadout.setText(str(np.around(pres, 1)) + ' hPa')
-        try:
-            self.hghtReadout.setText(str(np.around(hgt, 1)) + ' km')
-        except:
-            self.hghtReadout.setText(str(hgt) + ' km')
-        try:
-            self.tmpcReadout.setText(str(np.around(tmp, 1)) + ' C')
-        except:
-            self.tmpcReadout.setText(str(tmp) + ' C')
-        try:
-            self.dwpcReadout.setText(str(np.around(dwp, 1)) + ' C')
-        except:
-            self.dwpcReadout.setText(str(tmp) + ' C')
+        self.presReadout.setText(tab.utils.FLOAT2STR(pres, 1) + ' hPa')
+        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' km')
+        self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
+        self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
 
         self.presReadout.move(self.lpad, e.y())
         self.hghtReadout.move(self.lpad, e.y() - 15)
@@ -401,7 +392,7 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(self.lpad, y1, self.lpad+offset, y1)
             qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
-                str(int(h/1000))+' km')
+                tab.utils.INT2STR(h/1000)+' km')
 
     def draw_effective_layer(self, qp):
         ptop = self.prof.etop; pbot = self.prof.ebottom
@@ -425,9 +416,9 @@ class plotSkewT(backgroundSkewT):
                 text_bot = 'SFC'
             else:
                 text_bot = tab.interp.hght(self.prof, pbot) - sfc
-                text_bot = str( int( text_bot ) ) + 'm'
+                text_bot = tab.utils.INT2STR( text_bot ) + 'm'
             text_top = tab.interp.hght(self.prof, ptop) - sfc
-            text_top = str( int( text_top ) ) + 'm'
+            text_top = tab.utils.INT2STR( text_top ) + 'm'
             qp.drawRect(rect1)
             qp.drawRect(rect2)
             qp.drawRect(rect3)
@@ -440,7 +431,7 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1, y1, x1, y2)
             qp.drawText(rect1, QtCore.Qt.AlignCenter, text_bot)
             qp.drawText(rect2, QtCore.Qt.AlignCenter, text_top)
-            qp.drawText(rect3, QtCore.Qt.AlignCenter, str(int(self.prof.right_esrh[0])))
+            qp.drawText(rect3, QtCore.Qt.AlignCenter, tab.utils.INT2STR(self.prof.right_esrh[0]))
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
@@ -517,6 +508,6 @@ class plotSkewT(backgroundSkewT):
         pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.environment_trace_font)
-        qp.drawText(rect, QtCore.Qt.AlignCenter, str(int(label)))
+        qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
 
 
