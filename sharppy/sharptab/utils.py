@@ -4,9 +4,62 @@ import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab.constants import MISSING, TOL
 
-__all__ = ['MS2KTS', 'KTS2MS', 'MS2MPH', 'MPH2MS', 'MPH2KTS', 'KTS2MPH']
-__all__ += ['M2FT', 'FT2M', 'vec2comp', 'comp2vec', 'mag', 'QC']
+__all__ = ['INT2STR','FLOAT2STR','MS2KTS', 'KTS2MS', 'MS2MPH']
+__all__ += ['MPH2MS', 'MPH2KTS', 'KTS2MPH', 'M2FT', 'FT2M']
+__all__ += ['vec2comp', 'comp2vec', 'mag', 'QC']
 
+def INT2STR(val):
+    '''
+    Convert a value (float or int) into an integer string
+    by rounding to the nearest integer and returning the 
+    string. Used to handle case where value is nan or 
+    masked.
+    
+    Parameters
+    ----------
+    val: float or int
+    
+    Returns
+    -------
+    Val rounded to the nearest int and converted to a string.
+    
+    '''
+    ## if the value is a masked element, just return the
+    ## masked string
+    if val is ma.masked:
+        return str( val )
+    ## if the value is nan, just return the string of the nan
+    elif np.isnan( val ):
+        return str(val)
+    ## otherwise, round it to the nearest int, get rid of the
+    ## decimal point, and convert it to a string
+    else:
+        return str( int( np.around( val, 0 ) ) )
+
+
+def FLOAT2STR(val, precision):
+    '''
+    Convert a value (float or int) into a float string to the 
+    decimal place of a specified precision. Used to handle the
+    case where the value is nan or masked.
+    
+    Parameters
+    ----------
+    val: float or int
+    precision: int
+        used to specify the precision of the resulting rounded value
+    
+    Returns
+    -------
+    val rounded to the nearest specified decimal place and converted
+    to a string.
+    '''
+    if val is ma.masked:
+        return str( val )
+    elif np.isnan( val ):
+        return str( val )
+    else:
+        return str( np.around( val, precision ) )
 
 def MS2KTS(val):
     '''
