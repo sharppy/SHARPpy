@@ -239,34 +239,138 @@ class Parcel(object):
         self.cappres = ma.masked
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
+def ship(mucape, mumr, lr75, h5_temp, shr06):
+    '''
+    Calculate the Sig Hail Parameter (SHIP)
+    
+    Parameters
+    ----------
+    mucape : Most unstable CAPE from parcel class (MUCAPE)
+    mumr : Most unstable parcel mixing ratio (g/kg)
+    lr75 : 700-500 mb lapse rate (C/km)
+    h5_temp : 500 mb temperature (C)
+    shr06 : 0-6 km shear (m/s)
+    
+    Returns
+    -------
+    ship : significant hail parameter (unitless)
+    '''
+    ship = -1. * (mucape * mumr * lr75 * h5_temp * shr06) / 44000000.
+    return ship
+
+def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
+    
+    '''
+        
+    Calculate the Significant Tornado Parameter (w/CIN)
+
+    Parameters
+    ----------
+    mlcape : Mixed-layer CAPE from the parcel class (J/kg)
+    esrh : effective storm relative helicity (m2/s2)
+    ebwd : effective bulk wind difference (m/s)
+    mllcl : mixed-layer lifted condensation level (m)
+    mlcinh : mixed-layer convective inhibition (J/kg)
+    
+    Returns
+    -------
+    stp_cin : significant tornado parameter (unitless)
+    '''
+    cape_term = mlcape / 1500.
+    eshr_term = esrh / 150.
+    
+    if ebwd < 12.:
+        ebwd_term = 0.
+    elif ebwd > 30.:
+        ebwd_term = 1.5
+    else:
+        ebwd_term = ebwd / 12.
+
+    if mllcl < 1000.:
+        lcl_term = 1.0
+    else:
+        lcl_term = ((2000. - mllcl) / 1000.)
+
+    if mlcinh > -50:
+        cinh_term = 1.0
+    else:
+        cinh_term = ((mlcinh + 200.) / 150.)
+
+    stp_cin = cape_term * eshr_term * ebwd_term * lcl_term * cinh_term
+    return stp_cin
+
+
+
+def stp_fixed(sbcape, sblcl, srh01, bwd6):
+    
+    '''
+        
+    Calculate the Significant Tornado Parameter (fixed layer)
+    
+    Parameters
+    ----------
+    sbcape : Surface based CAPE from the parcel class (J/kg)
+    sblcl : Surface based lifted condensation level (LCL) (m)
+    srh01 : Surface to 1 km storm relative helicity (m2/s2)
+    bwd6 : Bulk wind difference between 0 to 6 km (m/s)
+    
+    Returns
+    -------
+    stp_fixed : signifcant tornado parameter (fixed-layer)
+    '''
+    # Calculate CAPE term
+    cape_term = sbcape / 1500.
+    
+    # Calculate SBLCL term
+    if sblcl < 1000.: # less than 1000. meters
+        lcl_term = 1.0
+    elif sblcl > 2000.: # greater than 2000. meters
+        lcl_term = 0.0
+    else:
+        lcl_term = ((2000.-sblcl)/1000.)
+
+    # Calculate 6BWD term
+    if bwd6 > 30.: # greater than 30 m/s
+        bwd6_term = 1.5
+    elif bwd6 < 12.5:
+        bwd6_term = 0.0
+    else:
+        bwd6_term = bwd6/20.
+
+    srh_term = srh01/150.
+
+    stp_fixed = cape_term * lcl_term * srh_term * bwd6_term
+    return stp_fixed
+
+
+
 def scp(mucape, srh, ebwd):
+    
     '''
-        Calculates the Supercell Composite Parameter
-
-        Parameters
-        ----------
-        mucape : number from the parcel class (J/kg)
-        srh : number from the winds.helicity function (m2/s2)
-        ebwd : effective bulk wind difference (m/s)
-
-        Returns
-        -------
-        scp : supercell composite parameter
-
+    Calculates the Supercell Composite Parameter
+    
+    Parameters
+    ----------
+    mucape : Most Unstable CAPE from the parcel class (J/kg)
+    srh : the effective SRH from the winds.helicity function (m2/s2)
+    ebwd : effective bulk wind difference (m/s)
+    
+    Returns
+    -------
+    scp : supercell composite parameter
     '''
-
     if ebwd > 20:
         ebwd = 20.
     elif ebwd < 10:
         ebwd = 0.
-
+    
     muCAPE_term = mucape / 1000.
     esrh_term = srh / 50.
     ebwd_term = ebwd / 20.
-    
-    scp = muCAPE_term * esrh_term * ebwd_term
 
+    scp = muCAPE_term * esrh_term * ebwd_term
     return scp
+
 
 def k_index(prof):
     '''
@@ -1337,3 +1441,224 @@ def convective_temp(prof, **kwargs):
         pcl = parcelx(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
+
+def tei(prof):
+    '''
+    Theta-E Index (TEI)
+    TEI is the difference between the surface theta-e and the minimum theta-e value
+    in the lowest 400 mb AGL
+    
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    tei : theta-e index
+    '''
+    
+    sfc_theta = prof.thetae[prof.get_sfc()]
+    sfc_pres = prof.pres[prof.get_sfc()]
+    top_pres = sfc_pres - 400.
+    
+    layer_idxs = ma.where(prof.pres > top_pres)[0]
+    min_thetae = ma.min(prof.thetae[layer_idxs])
+    
+    tei = sfc_theta - min_thetae
+    return tei
+
+def esp(prof):
+    
+    '''
+    Enhanced Stretching Potential (ESP)
+    This composite parameter identifies areas where low-level buoyancy
+    and steep low-level lapse rates are co-located, which may
+    favor low-level vortex stretching and tornado potential.
+    
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    esp : ESP index
+    '''
+    
+    mlcape = prof.mlpcl.b3km # This is the 0-3 km MLCAPE!!!!
+    lr03 = params.lapse_rate( prof, 0, 3000.) # C/km
+    if lr03 < 7 or mlcape < 250:
+        return 0
+    
+    esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
+    return esp
+
+
+
+def mmp(prof):
+    
+    '''
+    MCS Maintenance Probability (MMP)
+    The probability that a mature MCS will maintain peak intensity
+    for the next hour.
+        
+    This equation was developed using proximity soundings and a regression equation
+    Uses MUCAPE, 3-8 km lapse rate, maximum bulk shear, 3-12 km mean wind speed
+    From Coniglio et. al. 2006 WAF
+    
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    mmp : MMP index (%)
+    
+
+    this part is confusing...the maximum deep shear value
+    
+    is the maximum shear vector magnitude (SVM) between any wind vector
+    
+    in the lowest 1 km and any wind vector in the 6-10 km layer
+    
+    '''
+    lr38 = params.lapse_rate(prof,3000.,8000.)
+    mean_wind_3t12 = winds.mean_wind( prof, pbot=interp.pres(3000.), ptop=interp.pres(12000.))
+    mucape = prof.mupcl.bplus
+    if mucape < 100:
+        return 0.
+    
+    a_0 = 13.0 # unitless
+    a_1 = -4.59*10**-2 # m**-1 * s
+    a_2 = -1.16 # K**-1 * km
+    a_3 = -6.17*10**-4 # J**-1 * kg
+    a_4 = -0.17 # m**-1 * s
+    
+    mmp = 1. / (1. + np.exp(a_0 + (a_1 * max_bulk_shear) + (a_2 * lr38) + (a_3 * mucape) + (a_4 * mean_wind_3t12)))
+    
+    return mmp * 100.
+
+
+
+def wndg(prof):
+    '''
+    Wind Damage Parameter (WNDG)
+    A non-dimensional composite parameter that identifies areas
+    where large CAPE, steep low-level lapse rates,
+    enhanced flow in the low-mid levels, and minimal convective
+    inhibition are co-located.
+    
+    WNDG values > 1 favor an enhanced risk for scattered damaging
+    outflow gusts with multicell thunderstorm clusters, primarily
+    during the afternoon in the summer.
+    
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    wndg : WNDG index
+    '''
+    
+    mlcape = prof.mlpcl.bplus # J/kg
+    lr03 = params.lapse_rate( prof, 0, 3000. ) # C/km
+    mean_wind = winds.mean_wind(prof, pbot=interp.pres(1000.), ptop=interp.pres(3500.)) # needs to be in m/s
+    mlcin = prof.mlpcl.bminus # J/kg
+    
+    if lr03 < 7:
+        lr03 = 0.
+    
+    if mlcin < -50:
+        mlcin = -50.
+    wndg = (mlcape / 2000.) * (lr03 / 9.) * (mean_wind / 15.) * ((50. + mlcin)/40.)
+    
+    return wndg
+
+
+
+def wbz(prof):
+    
+    '''
+    Wet-bulb Zero Level (WBZ)
+    The height where the wetbulb value is 0 C.
+    
+    Parameters
+    ----------
+    prof: Profile object
+
+    Returns
+    -------
+    wbz : wet bulb zero height (m)
+    
+    '''
+    
+    
+    
+    # Needs to interpolate the wet bulb zero profile
+    wetbulb = prof.wetbulb
+    return
+
+def fzl(prof):
+    '''
+    Freezing Level (FZL)
+    The height where the temperature is 0 C.
+
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    fzl : freezing level (m)
+    '''
+    # needs to interpolate to find where the temperature is 0 C
+    
+    return #interp.temp(
+
+
+
+def sig_severe(prof):
+    '''
+    Significant Severe (SigSevere)
+    Craven and Brooks, 2004
+    
+    Parameters
+    ----------
+    prof : Profile object
+    
+    Returns
+    -------
+    sigsevere : significant severe parameter (m3/s3)
+    '''
+    mlcape = prof.mlpcl.bplus
+    shr06 = utils.KTS2MS(prof.sfc_6km_shear)
+
+    sigsevere = mlcape * shr06
+    return sigsevere
+
+
+
+def dgz(prof):
+    '''
+    Dendritic Growth Zone (DGZ)
+    Calculates the height bounds (or pressure bounds) of the dendritic
+    growth zone on the sounding.
+        
+        
+        
+    Parameters
+    ----------
+    prof : Profile object
+        
+        
+        
+    Returns
+    -------
+    dgz : dendretic growth zone with the bounds as a tuple
+    '''
+    
+    
+    
+    # Need to calculate the height of the -12 C layer and the -18 C layer and return it
+    
+    return

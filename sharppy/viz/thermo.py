@@ -146,16 +146,25 @@ class plotText(backgroundText):
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.bry / 17
+        ship = str( np.around( self.prof.ship, 1 ) )
+        stp_fixed = str( np.around( self.prof.stp_fixed, 1 ) )
+        stp_cin = str( np.around( self.prof.stp_cin, 1 ) )
+        try:
+            right_scp = str( np.around( self.prof.right_scp, 1 ) )
+            left_scp = str( np.around( self.prof.left_scp, 1 ) )
+        except:
+            right_scp = str( self.prof.right_scp )
+            left_scp = str( self.prof.left_scp )
         rect0 = QtCore.QRect(x1*6, y1*10.00+(self.tpad), x1*8, self.severe_height)
         rect1 = QtCore.QRect(x1*6, y1*11.25+(self.tpad), x1*8, self.severe_height)
         rect2 = QtCore.QRect(x1*6, y1*12.50+(self.tpad), x1*8, self.severe_height)
         rect3 = QtCore.QRect(x1*6, y1*13.75+(self.tpad), x1*8, self.severe_height)
         rect4 = QtCore.QRect(x1*6, y1*15.00+(self.tpad), x1*8, self.severe_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Supercell = 0.0')
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Left Supercell = 0.0')
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (eff) = 0.0')
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (fix) = 0.0')
-        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sig Hail = 0.0')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Supercell = ' + right_scp)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Left Supercell = ' + left_scp)
+        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (cin) = ' + stp_cin)
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (fix) = ' + stp_fixed)
+        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sig Hail = ' + ship)
     
     def drawIndices(self, qp):
         '''
@@ -254,7 +263,7 @@ class plotText(backgroundText):
         sfc_bplus = str( int( self.sfcparcel.bplus ) )
         sfc_bminus = str( int( self.sfcparcel.bminus ) )
         sfc_lclhght = str( int( self.sfcparcel.lclhght ) )
-        sfc_limax = str( int( self.sfcparcel.li3 ) )
+        sfc_limax = str( int( self.sfcparcel.li5 ) )
         ## sometimes the LFC is masked.
         try:
             sfc_lfchght = str( int( self.sfcparcel.lfchght ) )
@@ -265,7 +274,7 @@ class plotText(backgroundText):
         fcst_bplus = str( int( self.fcstpcl.bplus ) )
         fcst_bminus = str( int( self.fcstpcl.bminus ) )
         fcst_lclhght = str( int( self.fcstpcl.lclhght ) )
-        fcst_limax = str( int( self.fcstpcl.li3 ) )
+        fcst_limax = str( int( self.fcstpcl.li5 ) )
         ## check and see if the lfc is there
         try:
             fcst_lfchght = str( int( self.fcstpcl.lfchght ) )
@@ -276,7 +285,7 @@ class plotText(backgroundText):
         ml_bplus = str( int( self.mlparcel.bplus ) )
         ml_bminus = str( int( self.mlparcel.bminus ) )
         ml_lclhght = str( int( self.mlparcel.lclhght ) )
-        ml_limax = str( int( self.mlparcel.li3 ) )
+        ml_limax = str( int( self.mlparcel.li5 ) )
         ## check and see if the lfc is there
         try:
             ml_lfchght = str( int( self.mlparcel.lfchght ) )
@@ -287,7 +296,7 @@ class plotText(backgroundText):
         mu_bplus = str( int( self.muparcel.bplus ) )
         mu_bminus = str( int( self.muparcel.bminus ) )
         mu_lclhght = str( int( self.muparcel.lclhght ) )
-        mu_limax = str( int( self.muparcel.li3 ) )
+        mu_limax = str( int( self.muparcel.li5 ) )
         ## make sure the lfc is there
         try:
             mu_lfchght = str( int( self.muparcel.lfchght ) )

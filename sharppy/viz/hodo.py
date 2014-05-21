@@ -199,6 +199,11 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
+        self.mean_lcl_el = self.prof.mean_lcl_el
+        self.corfidi_up_u = self.prof.upshear_downshear[0]
+        self.corfidi_up_v = self.prof.upshear_downshear[1]
+        self.corfidi_dn_u = self.prof.upshear_downshear[2]
+        self.corfidi_dn_v = self.prof.upshear_downshear[3]
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
         self.srh1kmReadout = QLabel(parent=self)
@@ -291,8 +296,42 @@ class plotHodo(backgroundHodo):
         self.draw_hodo(qp)
         ## draw the storm motion vector
         self.drawSMV(qp)
+        self.drawCorfidi(qp)
+        self.drawLCLtoEL_MW(qp)
         qp.end()
     
+    def drawLCLtoEL_MW(self, qp):
+        penwidth = 2
+        pen = QtGui.QPen(QtGui.QColor("#B8860B"), penwidth)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        try:
+            mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
+        except:
+            return
+        #center = QtCore.QPointF(mean_u,mean_v)
+        half_length = (8./2.)
+        qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
+        # This probably needs to be checked.
+    
+    def drawCorfidi(self, qp):
+        penwidth = 1
+        pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+    
+        try:
+            up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
+            dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
+        except:
+            return
+        # Calculate the center points of the Corfidi vectors
+        center_up = QtCore.QPointF(up_u, up_v)
+        center_dn = QtCore.QPointF(dn_u, dn_v)
+        ## draw circles around the center point of the Corfidi vectors
+        qp.drawEllipse(center_up, 3, 3)
+        qp.drawEllipse(center_dn, 3, 3)
+
     def drawSMV(self, qp):
         '''
         Draws the storm motion vector.

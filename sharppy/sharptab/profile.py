@@ -91,6 +91,12 @@ class Profile(object):
         self.v.set_fill_value(self.missing)
         self.sfc = self.get_sfc()
         self.top = self.get_top()
+        ## generate the wetbulb profile
+        self.wetbulb = self.get_wetbulb_profile()
+        ## generate the theta profile
+        self.theta = self.get_theta_profile()
+        ## generate theta-e profile
+        self.thetae = self.get_thetae_profile()
         ## generate various parcels
         self.sfcpcl = params.parcelx( self, flag=1 )
         self.fcstpcl = params.parcelx( self, flag=2 )
@@ -139,6 +145,7 @@ class Profile(object):
             self.srw_eff = [ma.masked, ma.masked, ma.masked]
             self.srw_ebw = [ma.masked, ma.masked, ma.masked]
             self.right_scp = 0.0; self.left_scp = 0.0
+            self.stp_cin = 0.0
         else:
             self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
             self.etopm = interp.to_agl(self, interp.hght(self, self.etop))
@@ -162,6 +169,8 @@ class Profile(object):
             #self.stp_cin = params.stp( self.mlpcl, )
             self.right_scp = params.scp( self.mupcl.bplus, self.right_esrh[0], self.ebwspd)
             self.left_scp = params.scp( self.mupcl.bplus, self.left_esrh[0], self.ebwspd)
+            self.stp_cin = params.stp_cin(self.mlpcl.bplus, self.right_esrh[0], self.ebwspd,
+                    self.mlpcl.lclhght, self.mlpcl.bminus)
             #self.ship = params.ship()
         ## calculate helicity
         self.srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
@@ -173,6 +182,11 @@ class Profile(object):
         self.srw_8km = winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] )
         self.srw_4_5km = winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] )
         self.srw_lcl_el = winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] )
+        # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
+        self.srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
+        self.srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])
+        self.srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[0], stv=self.srwind[1])
+
         ## calculate upshear and downshear
         self.upshear_downshear = winds.mbe_vectors(self)
         ## calculate the SARS database matches
@@ -190,6 +204,8 @@ class Profile(object):
                 sfc_9km_shear, sfc_3km_shear, srh3km)
         except:
             self.matches = ma.masked
+        self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], sfc_6km_shear)
+        self.ship = params.ship(mucape, mumr, lapse_rate, h500t, sfc_6km_shear )
 
     def get_sfc(self):
         '''
@@ -224,4 +240,28 @@ class Profile(object):
             
         '''
         return np.where(~self.tmpc.mask)[0].max()
+
+    def get_wetbulb_profile(self):
+        wetbulb = ma.empty(self.pres.shape[0])
+        for i in range(len(self.v)):
+            wetbulb[i] = thermo.wetbulb( self.pres[i], self.tmpc[i], self.dwpc[i] )
+        wetbulb[wetbulb == self.missing] = ma.masked
+        wetbulb.set_fill_value(self.missing)
+        return wetbulb
+
+    def get_theta_profile(self):
+        theta = ma.empty(self.pres.shape[0])
+        for i in range(len(self.v)):
+            theta[i] = thermo.ctok( thermo.theta(self.pres[i], self.tmpc[i]) )
+        theta[theta == self.missing] = ma.masked
+        theta.set_fill_value(self.missing)
+        return theta
+
+    def get_thetae_profile(self):
+        thetae = ma.empty(self.pres.shape[0])
+        for i in range(len(self.v)):
+            thetae[i] = thermo.ctok( thermo.thetae(self.pres[i], self.tmpc[i], self.dwpc[i]) )
+        thetae[thetae == self.missing] = ma.masked
+        thetae.set_fill_value(self.missing)
+        return thetae
 

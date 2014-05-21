@@ -242,12 +242,14 @@ class plotSkewT(backgroundSkewT):
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
         self.u = prof.u; self.v = prof.v
+        self.wetbulb = prof.wetbulb
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
         self.title = kwargs.get('title', '')
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
+        self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.setMouseTracking(True)
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
@@ -347,6 +349,7 @@ class plotSkewT(backgroundSkewT):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         self.drawTitle(qp)
+        self.drawWetBulb(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp)
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
@@ -464,7 +467,25 @@ class plotSkewT(backgroundSkewT):
             if x2 < self.tlx: break
             qp.drawLine( x1, y1, x2, y2 )
 
-
+    def drawWetBulb(self, data, color, qp):
+        '''
+        Draw an environmental trace.
+        '''
+        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        mask1 = data.mask
+        mask2 = self.pres.mask
+        mask = np.maximum(mask1, mask2)
+        data = data[~mask]
+        pres = self.pres[~mask]
+        x = self.tmpc_to_pix(data, pres)
+        y = self.pres_to_pix(pres)
+        for i in range(x.shape[0]-1):
+            if y[i+1] > self.tpad:
+                qp.drawLine(x[i], y[i], x[i+1], y[i+1])
+            else:
+                qp.drawLine(x[i], y[i], x[i+1], self.tpad+2)
+                break
 
     def drawTrace(self, data, color, qp):
         '''

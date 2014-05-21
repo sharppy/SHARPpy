@@ -160,6 +160,9 @@ class plotWinds(backgroundWinds):
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
         self.prof = prof
+        self.srw_0_2km = tab.utils.comp2vec(self.prof.srw_0_2km[0], self.prof.srw_0_2km[1])[1]
+        self.srw_4_6km = tab.utils.comp2vec(self.prof.srw_4_6km[0], self.prof.srw_4_6km[1])[1]
+        self.srw_9_11km = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])[1]
         self.u = prof.u; self.v = prof.v
         ## calculate the storm relative wind from the bunkers motion function
         self.srwind = prof.srwind
@@ -231,5 +234,27 @@ class plotWinds(backgroundWinds):
                 ## draw a line between the two points
                 qp.setPen(pen)
                 qp.drawLine(x1, y1, x2, y2)
-
-
+        
+        # Plot the 0-2 km mean SRW
+        pen = QtGui.QPen(QtGui.QColor("#8B0000"), 2)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.speed_to_pix(self.srw_0_2km); x2 = self.speed_to_pix(self.srw_0_2km)
+        y1 = self.hgt_to_pix(0.0); y2 = self.hgt_to_pix(2.0)
+        qp.drawLine(x1, y1, x2, y2)
+                    
+        # Plot the 4-6 km mean SRW
+        pen = QtGui.QPen(QtGui.QColor("#6495ED"), 2)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.speed_to_pix(self.srw_4_6km); x2 = self.speed_to_pix(self.srw_4_6km)
+        y1 = self.hgt_to_pix(4.0); y2 = self.hgt_to_pix(6.0)
+        qp.drawLine(x1, y1, x2, y2)
+                    
+        # Plot the 9-11 km mean SRW
+        pen = QtGui.QPen(QtGui.QColor("#9400D3"), 2)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
+        y1 = self.hgt_to_pix(9.0); y2 = self.hgt_to_pix(11.0)
+        qp.drawLine(x1, y1, x2, y2)

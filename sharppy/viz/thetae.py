@@ -154,9 +154,8 @@ class plotThetae(backgroundThetae):
         super(plotThetae, self).__init__()
         ## make variables inheritable
         self.prof = prof
+        self.thetae = prof.thetae
         self.pres = prof.pres
-        self.tmpc = prof.tmpc
-        self.dwpc = prof.dwpc
 
     def resizeEvent(self, e):
         '''
@@ -193,30 +192,18 @@ class plotThetae(backgroundThetae):
         '''
         pen = QtGui.QPen(QtGui.QColor("#FF0000"), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
-        ## if there are missing values, get the mask and
-        ## only access the available data
-        try:
-            mask = np.maximum(self.tmpc.mask, self.dwpc.mask)
-            pres = self.pres[~mask]
-            tmpc = self.tmpc[~mask]
-            dwpc = self.dwpc[~mask]
-        ## otherwise, just use the available data
-        except:
-            pres = self.pres
-            tmpc = self.tmpc
-            dwpc = self.dwpc
-        ## loop through each element of the pressure vertical coordinate.
-        ## We loop through self.pres.shape[0] - 2 because we index i+1.
-        for i in range( self.pres.shape[0] - 2 ):
+        mask1 = self.thetae.mask
+        mask2 = self.pres.mask
+        mask = np.maximum(mask1, mask2)
+        pres = self.pres[~mask]
+        thetae = self.thetae[~mask]
+        for i in range( pres.shape[0] ):
             ## we really only want to plot the data in the lowest 500mb
-            if self.pres[i] > 400:
+            if pres[i] > 400:
                 ## get two pressure, temperature, and dewpoint values
                 p1 = pres[i]; p2 = pres[i+1]
-                t1 = tmpc[i]; t2 = tmpc[i+1]
-                td1 = dwpc[i]; td2 = dwpc[i+1]
                 ## get two theta-e values from the above sounding profile data
-                thte1 = tab.thermo.ctok( tab.thermo.thetae(p1, t1, td1) )
-                thte2 = tab.thermo.ctok( tab.thermo.thetae(p2, t2, td2) )
+                thte1 = thetae[i]; thte2 = thetae[i+1]
                 ## convert the theta-e values to x pixel coordinates
                 ## and the pressure values to y pixel coordinates
                 x1 = self.theta_to_pix(thte1); x2 = self.theta_to_pix(thte2)
