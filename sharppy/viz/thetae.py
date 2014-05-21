@@ -104,7 +104,7 @@ class backgroundThetae(QtGui.QFrame):
                 self.brx+self.rpad, y1)
         qp.drawText(0, y1-20, 20, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-                str(int(p)))
+                tab.utils.INT2STR(p))
 
     def draw_thetae(self, t, qp):
         '''
@@ -127,7 +127,7 @@ class backgroundThetae(QtGui.QFrame):
         qp.drawLine(x1, self.bry+self.tpad-offset,
             x1, self.bry+self.rpad)
         qp.drawText(x1+10, self.bry-20, 20, 20,
-            QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, str(int(t)))
+            QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
 
     def pres_to_pix(self, p):
         '''
