@@ -117,7 +117,7 @@ class backgroundWinds(QtGui.QFrame):
             self.brx+self.rpad, y1)
         qp.drawText(0, y1-20, 20, 40,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-            str(int(h)))
+            tab.utils.INT2STR(h))
 
     def draw_speed(self, s, qp):
         '''
