@@ -284,7 +284,7 @@ class plotText(backgroundText):
         mu_limax = tab.utils.INT2STR( self.muparcel.li5 )
         ## make sure the lfc is there
         mu_lfchght = tab.utils.INT2STR( self.muparcel.lfchght )
-        mu_elhght = str( int( self.muparcel.elhght ) )
+        mu_elhght = tab.utils.INT2STR( self.muparcel.elhght )
 
         ## Now that we have all the data, time to plot the text in their
         ## respective columns.

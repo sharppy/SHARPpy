@@ -1145,8 +1145,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             pe3 = pelast
             while interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                 pe3 -= 5
-            pcl.elpres = pe3
             pcl.elhght = interp.to_agl(prof, interp.hght(prof, pe3))
+            pcl.elpres = pe3
             pcl.mplpres = ma.masked
             pcl.limax = -li_max
             pcl.limaxpres = li_maxpres
@@ -1193,7 +1193,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     if not utils.QC(pcl.bplus): pcl.bplus = totp
     
     # Calculate BRN if available
-    pcl = bulk_rich(prof, pcl)
+    bulk_rich(prof, pcl)
     
     # Save params
     if pcl.bplus == 0: pcl.bminus = 0.
@@ -1237,7 +1237,7 @@ def bulk_rich(prof, pcl):
         pcl.brn = ma.masked
         pcl.brnu = ma.masked
         pcl.brnv = ma.masked
-        return pcl
+    #return pcl
     
     # Calculate the lowest 500m mean wind
     p = interp.pres(prof, interp.hght(prof, pbot)+500.)

@@ -307,11 +307,10 @@ class plotHodo(backgroundHodo):
         qp.setPen(pen)
         try:
             mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
+            half_length = (8./2.)
+            qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
         except:
             return
-        #center = QtCore.QPointF(mean_u,mean_v)
-        half_length = (8./2.)
-        qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
         # This probably needs to be checked.
     
     def drawCorfidi(self, qp):

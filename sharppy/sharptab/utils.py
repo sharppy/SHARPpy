@@ -34,7 +34,7 @@ def INT2STR(val):
     ## otherwise, round it to the nearest int, get rid of the
     ## decimal point, and convert it to a string
     else:
-        return str( int( np.around( val, 0 ) ) )
+        return str( int( round( val, 0 ) ) )
 
 
 def FLOAT2STR(val, precision):
@@ -59,7 +59,7 @@ def FLOAT2STR(val, precision):
     elif np.isnan( val ):
         return str( val )
     else:
-        return str( np.around( val, precision ) )
+        return str( round( val, precision ) )
 
 def MS2KTS(val):
     '''
