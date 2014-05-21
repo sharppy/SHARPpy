@@ -243,48 +243,38 @@ class plotKinematics(backgroundKinematics):
         srh1km = str(np.int(self.srh1km[0]))
         srh3km = str(np.int(self.srh3km[0]))
         
-        sfc1km = str(np.int(tab.utils.mag(self.sfc_1km_shear[0], self.sfc_1km_shear[1])))
-        sfc3km = str(np.int(tab.utils.mag(self.sfc_3km_shear[0], self.sfc_3km_shear[1])))
-        sfc6km = str(np.int(tab.utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])))
-        sfc8km = str(np.int(tab.utils.mag(self.sfc_8km_shear[0], self.sfc_8km_shear[1])))
-        lcl_el = str(np.int(tab.utils.mag(self.lcl_el_shear[0], self.lcl_el_shear[1])))
+        sfc1km = tab.utils.INT2STR(tab.utils.mag(self.sfc_1km_shear[0], self.sfc_1km_shear[1]))
+        sfc3km = tab.utils.INT2STR(tab.utils.mag(self.sfc_3km_shear[0], self.sfc_3km_shear[1]))
+        sfc6km = tab.utils.INT2STR(tab.utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1]))
+        sfc8km = tab.utils.INT2STR(tab.utils.mag(self.sfc_8km_shear[0], self.sfc_8km_shear[1]))
+        lcl_el = tab.utils.INT2STR(tab.utils.mag(self.lcl_el_shear[0], self.lcl_el_shear[1]))
         
-        mean_1km = str(np.int(self.mean_1km[0])) + '/' + str(np.int(self.mean_1km[1]))
-        mean_3km = str(np.int(self.mean_3km[0])) + '/' + str(np.int(self.mean_3km[1]))
-        mean_6km = str(np.int(self.mean_6km[0])) + '/' + str(np.int(self.mean_6km[1]))
-        mean_8km = str(np.int(self.mean_8km[0])) + '/' + str(np.int(self.mean_8km[1]))
-        mean_lcl_el = str(np.int(self.mean_lcl_el[0])) + '/' + str(np.int(self.mean_lcl_el[1]))
+        mean_1km = tab.utils.INT2STR(self.mean_1km[0]) + '/' + tab.utils.INT2STR(self.mean_1km[1])
+        mean_3km = tab.utils.INT2STR(self.mean_3km[0]) + '/' + tab.utils.INT2STR(self.mean_3km[1])
+        mean_6km = tab.utils.INT2STR(self.mean_6km[0]) + '/' + tab.utils.INT2STR(self.mean_6km[1])
+        mean_8km = tab.utils.INT2STR(self.mean_8km[0]) + '/' + tab.utils.INT2STR(self.mean_8km[1])
+        mean_lcl_el = tab.utils.INT2STR(self.mean_lcl_el[0]) + '/' + tab.utils.INT2STR(self.mean_lcl_el[1])
         
-        srw_1km = str(np.int(self.srw_1km[0])) + '/' + str(np.int(self.srw_1km[1]))
-        srw_3km = str(np.int(self.srw_3km[0])) + '/' + str(np.int(self.srw_3km[1]))
-        srw_6km = str(np.int(self.srw_6km[0])) + '/' + str(np.int(self.srw_6km[1]))
-        srw_8km = str(np.int(self.srw_8km[0])) + '/' + str(np.int(self.srw_8km[1]))
-        srw_lcl_el = str(np.int(self.srw_lcl_el[0])) + '/' + str(np.int(self.srw_lcl_el[1]))
-        srw_4_5km = str(np.int(self.srw_4_5km[0])) + '/' + str(np.int(self.srw_4_5km[1])) + ' kt'
+        srw_1km = tab.utils.INT2STR(self.srw_1km[0]) + '/' + tab.utils.INT2STR(self.srw_1km[1])
+        srw_3km = tab.utils.INT2STR(self.srw_3km[0]) + '/' + tab.utils.INT2STR(self.srw_3km[1])
+        srw_6km = tab.utils.INT2STR(self.srw_6km[0]) + '/' + tab.utils.INT2STR(self.srw_6km[1])
+        srw_8km = tab.utils.INT2STR(self.srw_8km[0]) + '/' + tab.utils.INT2STR(self.srw_8km[1])
+        srw_lcl_el = tab.utils.INT2STR(self.srw_lcl_el[0]) + '/' + tab.utils.INT2STR(self.srw_lcl_el[1])
+        srw_4_5km = tab.utils.INT2STR(self.srw_4_5km[0]) + '/' + tab.utils.INT2STR(self.srw_4_5km[1]) + ' kt'
         
+        esrh = tab.utils.INT2STR(self.esrh[0])
+        eff_lr = tab.utils.INT2STR(tab.utils.mag(self.eff_shear[0], self.eff_shear[1]))
+        efbwd = tab.utils.INT2STR(tab.utils.mag(self.ebwd[0], self.ebwd[1]))
+        mean_eff = tab.utils.INT2STR(self.mean_eff[0]) + '/' + tab.utils.INT2STR(self.mean_eff[1])
+        mean_ebw = tab.utils.INT2STR(self.mean_ebw[0]) + '/' + tab.utils.INT2STR(self.mean_ebw[1])
+        srw_eff = tab.utils.INT2STR(self.srw_eff[0]) + '/' + tab.utils.INT2STR(self.srw_eff[1])
+        srw_ebw = tab.utils.INT2STR(self.srw_ebw[0]) + '/' + tab.utils.INT2STR(self.srw_ebw[1])
         
-        try:
-            esrh = str(np.int(self.esrh[0]))
-            eff_lr = str(np.int(tab.utils.mag(self.eff_shear[0], self.eff_shear[1])))
-            efbwd = str(np.int(tab.utils.mag(self.ebwd[0], self.ebwd[1])))
-            mean_eff = str(np.int(self.mean_eff[0])) + '/' + str(np.int(self.mean_eff[1]))
-            mean_ebw = str(np.int(self.mean_ebw[0])) + '/' + str(np.int(self.mean_ebw[1]))
-            srw_eff = str(np.int(self.srw_eff[0])) + '/' + str(np.int(self.srw_eff[1]))
-            srw_ebw = str(np.int(self.srw_ebw[0])) + '/' + str(np.int(self.srw_ebw[1]))
-        except:
-            esrh = str(self.esrh[0])
-            eff_lr = str(self.eff_shear[0])
-            efbwd = str(self.ebwd[0])
-            mean_eff = str(self.mean_eff[0]) + '/' + str(self.mean_eff[1])
-            mean_ebw = str(self.mean_ebw[0]) + '/' + str(self.mean_ebw[1])
-            srw_eff = str(self.srw_eff[0]) + '/' + str(self.srw_eff[1])
-            srw_ebw = str(self.srw_ebw[0]) + '/' + str(self.srw_ebw[1])
-        
-        brn_shear = str(int(self.brn_shear)) + ' m2/s2'
-        bunkers_left = str(int(self.bunkers_left_vec[0])) + '/' + str(int(self.bunkers_left_vec[1])) + ' kt'
-        bunkers_right = str(int(self.bunkers_right_vec[0])) + '/' + str(int(self.bunkers_right_vec[1])) + ' kt'
-        upshear = str(int(self.upshear[0])) + '/' + str(int(self.upshear[1])) + ' kt'
-        downshear = str(int(self.downshear[0])) + '/' + str(int(self.downshear[1])) + ' kt'
+        brn_shear = tab.utils.INT2STR(self.brn_shear) + ' m2/s2'
+        bunkers_left = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_left_vec[1]) + ' kt'
+        bunkers_right = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_right_vec[1]) + ' kt'
+        upshear = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(self.upshear[1]) + ' kt'
+        downshear = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(self.downshear[1]) + ' kt'
         
         ## sfc-1km
         rect0 = QtCore.QRect(x1*3, y1*1+self.tpad, x1, self.label_height)
