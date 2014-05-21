@@ -90,7 +90,7 @@ class backgroundSpeed(QtGui.QFrame):
             pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             qp.drawText(x1-2, self.bry+10, 15, 10,
-                QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, str(int(s)))
+                QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, tab.utils.INT2STR(s))
 
     def pres_to_pix(self, p):
         '''
