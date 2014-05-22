@@ -322,14 +322,13 @@ class plotHodo(backgroundHodo):
         try:
             up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
             dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
+            center_up = QtCore.QPointF(up_u, up_v)
+            center_dn = QtCore.QPointF(dn_u, dn_v)
+            ## draw circles around the center point of the Corfidi vectors
+            qp.drawEllipse(center_up, 3, 3)
+            qp.drawEllipse(center_dn, 3, 3)
         except:
             return
-        # Calculate the center points of the Corfidi vectors
-        center_up = QtCore.QPointF(up_u, up_v)
-        center_dn = QtCore.QPointF(dn_u, dn_v)
-        ## draw circles around the center point of the Corfidi vectors
-        qp.drawEllipse(center_up, 3, 3)
-        qp.drawEllipse(center_dn, 3, 3)
 
     def drawSMV(self, qp):
         '''

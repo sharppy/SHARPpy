@@ -389,7 +389,10 @@ def corfidi_mcs_motion(prof):
 
     '''
     # Compute the tropospheric (850hPa-300hPa) mean wind
-    mnu1, mnv1 = mean_wind_npw(prof, pbot=850., ptop=300.)
+    if prof.pres[ prof.sfc ] < 850:
+         mnu1, mnv1 = mean_wind_npw(prof, pbot=prof.pres[prof.sfc], ptop=300.)
+    else:
+        mnu1, mnv1 = mean_wind_npw(prof, pbot=850., ptop=300.)
 
     # Compute the low-level (SFC-1500m) mean wind
     p_1p5km = interp.pres(prof, interp.to_msl(prof, 1500.))
