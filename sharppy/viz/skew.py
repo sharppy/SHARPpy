@@ -5,6 +5,8 @@ from sharppy.viz.barbs import drawBarb
 from PySide import QtGui, QtCore
 from PySide.QtGui import *
 from PySide.QtCore import *
+from PySide.QtOpenGL import *
+import datetime
 
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
@@ -46,10 +48,12 @@ class backgroundSkewT(QtGui.QWidget):
     def plotBackground(self):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        for t in range(self.bltmpc-100, self.brtmpc+self.dt+100, self.dt):
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
+        for t in range(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm(t, qp)
-        for tw in range(-160, 61, 10): self.draw_moist_adiabat(tw, qp)
-        for theta in range(-70, 350, 20): self.draw_dry_adiabat(theta, qp)
+        for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
+        for theta in range(self.bltmpc, 300, 20): self.draw_dry_adiabat(theta, qp)
         for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
         for p in [1000, 850, 700, 500, 300, 200, 100]:
@@ -339,6 +343,8 @@ class plotSkewT(backgroundSkewT):
        '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         self.drawTitle(qp)
         self.drawWetBulb(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
