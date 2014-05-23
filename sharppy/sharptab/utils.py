@@ -24,17 +24,10 @@ def INT2STR(val):
     Val rounded to the nearest int and converted to a string.
     
     '''
-    ## if the value is a masked element, just return the
-    ## masked string
-    if val is ma.masked:
-        return str( val )
-    ## if the value is nan, just return the string of the nan
-    elif np.isnan( val ):
-        return str(val)
-    ## otherwise, round it to the nearest int, get rid of the
-    ## decimal point, and convert it to a string
-    else:
+    try:
         return str( int( round( val, 0 ) ) )
+    except:
+        return str(val)
 
 
 def FLOAT2STR(val, precision):
@@ -54,12 +47,10 @@ def FLOAT2STR(val, precision):
     val rounded to the nearest specified decimal place and converted
     to a string.
     '''
-    if val is ma.masked:
-        return str( val )
-    elif np.isnan( val ):
-        return str( val )
-    else:
+    try:
         return str( round( val, precision ) )
+    except:
+        return str( val )
 
 def MS2KTS(val):
     '''

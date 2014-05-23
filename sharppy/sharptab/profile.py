@@ -131,7 +131,7 @@ class Profile(object):
         self.mean_8km = winds.mean_wind(self, pbot=sfc, ptop=p8km)
         self.mean_lcl_el = winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres)
         ## generate other indices
-        self.ebottom, self.etop = params.effective_inflow_layer( self )
+        self.ebottom, self.etop = params.effective_inflow_layer( self, mupcl=self.mupcl )
        
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.etopm = ma.masked; self.ebotm = ma.masked
