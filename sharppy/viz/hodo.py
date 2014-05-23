@@ -62,6 +62,8 @@ class backgroundHodo(QtGui.QFrame):
         ## initialize a QPainter object.
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the wind speed rings
         for spd in self.rings: self.draw_ring(spd, qp)
         ## draw the frame axes
@@ -292,6 +294,8 @@ class plotHodo(backgroundHodo):
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the hodograph
         self.draw_hodo(qp)
         ## draw the storm motion vector

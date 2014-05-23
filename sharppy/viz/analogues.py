@@ -87,6 +87,8 @@ class backgroundAnalogues(QtGui.QFrame):
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -125,6 +127,8 @@ class plotAnalogues(backgroundAnalogues):
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the indices
         self.drawSARS_hail(qp)
         self.drawSARS_tor(qp)
@@ -190,7 +194,7 @@ class plotAnalogues(backgroundAnalogues):
                         pen.setColor(QtGui.QColor('#06B5FF'))
                         qp.setPen(pen)
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
-                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, str( size ) )
+                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, str( format(size, '.2f' ) ) )
                     idx += 1
                     offset += 1
 

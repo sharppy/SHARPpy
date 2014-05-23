@@ -50,6 +50,8 @@ class backgroundWinds(QtGui.QFrame):
         ## initialize a QPainter object for drawing
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the background frame
         self.draw_frame(qp)
         ## draw the ticks for the plot.
@@ -191,6 +193,8 @@ class plotWinds(backgroundWinds):
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the wind profile
         self.draw_profile(qp)
         qp.end()

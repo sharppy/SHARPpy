@@ -54,6 +54,8 @@ class backgroundThetae(QtGui.QFrame):
         ## initialize a painter object and draw the frame
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         self.draw_frame(qp)
         ## draw the isobar ticks and the theta-e ticks
         for p in [1000, 900, 800, 700, 600, 500]:
@@ -179,6 +181,8 @@ class plotThetae(backgroundThetae):
         ## create a new painter obkect
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the theta-e profile
         self.draw_profile(qp)
         ## end the painter

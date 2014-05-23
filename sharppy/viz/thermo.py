@@ -2,6 +2,7 @@ import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import datetime
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -86,6 +87,8 @@ class backgroundText(QtGui.QFrame):
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -127,6 +130,8 @@ class plotText(backgroundText):
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the indices
         self.drawConvectiveIndices(qp)
         self.drawIndices(qp)

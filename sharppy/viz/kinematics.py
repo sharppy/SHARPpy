@@ -109,6 +109,8 @@ class backgroundKinematics(QtGui.QFrame):
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -208,6 +210,8 @@ class plotKinematics(backgroundKinematics):
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the indices
         self.drawKinematics(qp)
         self.drawBarbs(qp)

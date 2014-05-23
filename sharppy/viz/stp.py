@@ -54,6 +54,8 @@ class backgroundSTP(QtGui.QFrame):
         ## initialize a painter object and draw the frame
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         self.draw_frame(qp)
         qp.end()
 
@@ -107,5 +109,7 @@ class plotSTP(backgroundSTP):
         ## create a new painter obkect
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
         ## end the painter
         qp.end()
