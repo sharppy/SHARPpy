@@ -353,7 +353,9 @@ class plotSkewT(backgroundSkewT):
             self.draw_height(h, qp)
         if self.pcl is not None:
             self.drawVirtualParcelTrace(qp)
+        qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
+        qp.setRenderHint(qp.Antialiasing)
         self.draw_effective_layer(qp)
         qp.end()
 

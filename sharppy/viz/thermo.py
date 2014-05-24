@@ -107,6 +107,35 @@ class plotText(backgroundText):
         self.fcstpcl = prof.fcstpcl
         self.muparcel = prof.mupcl
         self.prof = prof;
+        
+        
+        ## either get or calculate the indices, round to the nearest int, and
+        ## convert them to strings.
+        ## K Index
+        self.k_idx = tab.utils.INT2STR( prof.k_idx )
+        ## precipitable water
+        self.pwat = tab.utils.FLOAT2STR( prof.pwat, 2 )
+        ## 0-3km agl lapse rate
+        self.lapserate_3km = tab.utils.FLOAT2STR( prof.lapserate_3km, 1 )
+        ## 3-6km agl lapse rate
+        self.lapserate_3_6km = tab.utils.FLOAT2STR( prof.lapserate_3_6km, 1 )
+        ## 850-500mb lapse rate
+        self.lapserate_850_500 = tab.utils.FLOAT2STR( prof.lapserate_850_500, 1 )
+        ## 700-500mb lapse rate
+        self.lapserate_700_500 = tab.utils.FLOAT2STR( prof.lapserate_700_500, 1 )
+        ## convective temperature
+        self.convT = tab.utils.INT2STR( prof.convT )
+        ## sounding forecast surface temperature
+        self.maxT = tab.utils.INT2STR( prof.maxT )
+        #fzl = str(int(self.sfcparcel.hght0c))
+        ## 100mb mean mixing ratio
+        self.mean_mixr = tab.utils.FLOAT2STR( prof.mean_mixr, 1 )
+        ## 150mb mean rh
+        self.low_rh = tab.utils.INT2STR( prof.low_rh )
+        self.mid_rh = tab.utils.INT2STR( prof.mid_rh )
+        ## calculate the totals totals index
+        self.totals_totals = tab.utils.INT2STR( prof.totals_totals )
+        
         super(plotText, self).__init__()
 
     def resizeEvent(self, e):
@@ -182,34 +211,7 @@ class plotText(backgroundText):
         y1 = self.bry / 17
         rpad = 5
         tpad = 5
-        prof = self.prof
-        ## either get or calculate the indices, round to the nearest int, and
-        ## convert them to strings.
-        ## K Index
-        k_idx = tab.utils.INT2STR( tab.params.k_index( prof ) )
-        ## precipitable water
-        pwat = tab.utils.FLOAT2STR( tab.params.precip_water( prof ), 2 )
-        ## 0-3km agl lapse rate
-        lapserate_3km = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 0., 3000., pres=False ), 1 )
-        ## 3-6km agl lapse rate
-        lapserate_3_6km = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 3000., 6000., pres=False ), 1 )
-        ## 850-500mb lapse rate
-        lapserate_850_500 = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 850., 500., pres=True ), 1 )
-        ## 700-500mb lapse rate
-        lapserate_700_500 = tab.utils.FLOAT2STR( tab.params.lapse_rate( prof, 700., 500., pres=True ), 1 )
-        ## convective temperature
-        convT = tab.utils.INT2STR( tab.thermo.ctof(tab.params.convective_temp( prof ) ) )
-        ## sounding forecast surface temperature
-        maxT = tab.utils.INT2STR( tab.thermo.ctof( tab.params.max_temp( prof ) ) )
-        #fzl = str(int(self.sfcparcel.hght0c))
-        ## 100mb mean mixing ratio
-        mean_mixr = tab.utils.FLOAT2STR( tab.params.mean_mixratio( prof ), 1 )
-        ## 150mb mean rh
-        low_rh = tab.utils.INT2STR( tab.params.mean_relh( prof ) )
-        mid_rh = tab.utils.INT2STR( tab.params.mean_relh( prof, pbot=(prof.pres[prof.sfc] - 150),
-            ptop=(prof.pres[prof.sfc] - 350) ) )
-        ## calculate the totals totals index
-        totals_totals = tab.utils.INT2STR( tab.params.t_totals( prof ) )
+
         ## Now we have all the data we could ever want. Time to start drawing
         ## them on the frame.
         ## This starts with the left column.
@@ -222,23 +224,23 @@ class plotText(backgroundText):
         rect5 = QtCore.QRect(rpad, y1*14, x1*8, self.label_height)
         rect6 = QtCore.QRect(rpad, y1*15, x1*8, self.label_height)
         rect7 = QtCore.QRect(rpad, y1*16, x1*8, self.label_height+self.tpad)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + pwat + 'in')
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MeanW = ' + mean_mixr + 'g/kg')
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'LowRH = ' + low_rh + '%')
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MidRH = ' + mid_rh + '%')
-        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sfc-3km AGL LR = ' + lapserate_3km + ' C/km')
-        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '3-6km AGL LR = ' + lapserate_3_6km + ' C/km')
-        qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '850-500mb LR = ' + lapserate_850_500 + ' C/km')
-        qp.drawText(rect7, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '700-500mb LR = ' + lapserate_700_500 + ' C/km')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + self.pwat + 'in')
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MeanW = ' + self.mean_mixr + 'g/kg')
+        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'LowRH = ' + self.low_rh + '%')
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MidRH = ' + self.mid_rh + '%')
+        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sfc-3km AGL LR = ' + self.lapserate_3km + ' C/km')
+        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '3-6km AGL LR = ' + self.lapserate_3_6km + ' C/km')
+        qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '850-500mb LR = ' + self.lapserate_850_500 + ' C/km')
+        qp.drawText(rect7, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '700-500mb LR = ' + self.lapserate_700_500 + ' C/km')
     ## middle-left column
         rect0 = QtCore.QRect(x1*3.5, y1*5+self.tpad*2, x1*4, self.label_height)
         rect1 = QtCore.QRect(x1*3.5, y1*6+self.tpad*2, x1*4, self.label_height)
         rect2 = QtCore.QRect(x1*3.5, y1*7+self.tpad*2, x1*4, self.label_height)
         rect3 = QtCore.QRect(x1*3.5, y1*8+self.tpad*2, x1*4, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'K = ' + k_idx)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'TT = ' + totals_totals)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'ConvT = ' + convT + 'F')
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'maxT = ' + maxT + 'F')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'K = ' + self.k_idx)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'TT = ' + self.totals_totals)
+        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'ConvT = ' + self.convT + 'F')
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'maxT = ' + self.maxT + 'F')
     ## middle-right column
     #qp.drawText((x1*15), 70, 60, 20,
     #        QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
