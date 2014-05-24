@@ -467,7 +467,9 @@ class plotSkewT(backgroundSkewT):
         Draw an environmental trace.
         '''
         pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
+        qp.setBrush(brush)
         mask1 = data.mask
         mask2 = self.pres.mask
         mask = np.maximum(mask1, mask2)
@@ -475,12 +477,13 @@ class plotSkewT(backgroundSkewT):
         pres = self.pres[~mask]
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
-        for i in range(x.shape[0]-1):
-            if y[i+1] > self.tpad:
-                qp.drawLine(x[i], y[i], x[i+1], y[i+1])
-            else:
-                qp.drawLine(x[i], y[i], x[i+1], self.tpad+2)
+        path = QPainterPath()
+        path.moveTo(x[0], y[0])
+        for i in range(1, x.shape[0]):
+            if y[i] <= self.tpad:
                 break
+            path.lineTo(x[i], y[i])
+        qp.drawPath(path)
 
     def drawTrace(self, data, color, qp):
         '''
@@ -488,20 +491,24 @@ class plotSkewT(backgroundSkewT):
 
         '''
         pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
+        qp.setBrush(brush)
         mask1 = data.mask
         mask2 = self.pres.mask
         mask = np.maximum(mask1, mask2)
         data = data[~mask]
         pres = self.pres[~mask]
+        path = QPainterPath()
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
-        for i in range(x.shape[0]-1):
-            if y[i+1] > self.tpad:
-                qp.drawLine(x[i], y[i], x[i+1], y[i+1])
-            else:
-                qp.drawLine(x[i], y[i], x[i+1], self.tpad+2)
+        path.moveTo(x[0], y[0])
+        for i in range(1, x.shape[0]):
+            if y[i] <= self.tpad:
                 break
+            else:
+                path.lineTo(x[i], y[i])
+        qp.drawPath(path)
         label = (1.8 * data[0]) + 32.
         pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)

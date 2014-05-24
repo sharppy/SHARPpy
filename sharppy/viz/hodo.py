@@ -31,7 +31,7 @@ class backgroundHodo(QtGui.QFrame):
         self.brx = self.wid; self.bry = self.hgt
         self.center_hodo()
         self.ring_increment = 10
-        self.rings = range(self.ring_increment, 200+self.ring_increment,
+        self.rings = range(self.ring_increment, 100+self.ring_increment,
                            self.ring_increment)
         self.label_font = QtGui.QFont('Helvetica', 9)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
