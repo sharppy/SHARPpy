@@ -355,7 +355,7 @@ class plotSkewT(backgroundSkewT):
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
         if self.pcl is not None:
-            self.drawVirtualParcelTrace(qp)
+            self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
@@ -447,29 +447,19 @@ class plotSkewT(backgroundSkewT):
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
     
-    def drawVirtualParcelTrace(self,qp):
+    def drawVirtualParcelTrace(self, ttrace, ptrace, qp):
         ''' Draw the trace of supplied parcel '''
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
-        p = self.pcl.pres
-        t = self.pcl.tmpc
-        td = self.pcl.dwpc
-        x1 = self.tmpc_to_pix(tab.thermo.virtemp(p, t, td), p)
-        y1 = self.pres_to_pix(p)
-        p2, t2 = tab.thermo.drylift(p, t, td)
-        x2 = self.tmpc_to_pix(tab.thermo.virtemp(p2, t2, t2), p2)
-        y2 = self.pres_to_pix(p2)
         path = QPainterPath()
-        path.moveTo(x1, y1)
-        path.lineTo(x2, y2)
-        for i in range(int(p2 + self.dp), int(self.pmin-1), int(self.dp)):
-            t3 = tab.thermo.wetlift(p2, t2, float(i))
-            x2 = self.tmpc_to_pix(tab.thermo.virtemp(i, t3, t3), float(i))
-            y2 = self.pres_to_pix(float(i))
-            if x2 < self.tlx: break
-            path.lineTo(x2, y2)
+        yvals = self.pres_to_pix(ptrace)
+        xvals = self.tmpc_to_pix(ttrace, ptrace)
+        path.moveTo(xvals[0], yvals[0])
+        for i in range(1, len(yvals)):
+            x = xvals[i]; y = yvals[i]
+            path.lineTo(x, y)
         qp.drawPath(path)
 
     def drawWetBulb(self, data, color, qp):

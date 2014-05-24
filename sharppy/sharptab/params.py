@@ -200,6 +200,8 @@ class Parcel(object):
         self.pres = ma.masked
         self.tmpc = ma.masked
         self.dwpc = ma.masked
+        self.ptrace = ma.masked
+        self.ttrace = ma.masked
         self.blayer = ma.masked
         self.tlayer = ma.masked
         self.entrain = 0.
@@ -823,6 +825,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.pres = pres
     pcl.tmpc = tmpc
     pcl.dwpc = dwpc
+    ptrace = []
+    ttrace = []
     cap_strength = -9999.
     cap_strengthpres = -9999.
     li_max = -9999.
@@ -854,6 +858,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
     tp1 = thermo.virtemp(pres, tmpc, dwpc)
+    ttrace.append(tp1)
+    ptrace.append(pe1)
     
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
@@ -862,6 +868,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     te2 = interp.vtmp(prof, pe2)
     pcl.lclpres = pe2
     pcl.lclhght = interp.to_agl(prof, h2)
+    ptrace.append(pe2)
+    ttrace.append(thermo.virtemp(pe2, tp2, tp2))
     
     # Calculate lifted parcel theta for use in iterative CINH loop below
     # RECALL: lifted parcel theta is CONSTANT from LPL to LCL
@@ -929,6 +937,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         tp2 = thermo.wetlift(pe1, tp1, pe2)
         tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
         tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
+        ptrace.append(pe2)
+        ttrace.append(thermo.virtemp(pe2, tp2, tp2))
         lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
         
@@ -1197,6 +1207,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     
     # Save params
     if pcl.bplus == 0: pcl.bminus = 0.
+    pcl.ptrace = np.array(ptrace)
+    pcl.ttrace = np.array(ttrace)
     return pcl
 
 
