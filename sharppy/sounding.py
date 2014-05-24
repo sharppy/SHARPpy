@@ -40,25 +40,6 @@ if sys.argv[1] != "test":
     sound_data = StringIO( data )
     p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", skip_header=6, skip_footer=96, unpack=True )
     prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd )
-        
-    oldurl = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/' + obstring2 +'_OBS/' + str( sys.argv[1] ).upper() + '.txt')
-    data = oldurl.read()
-    sound_data = StringIO( data )
-    p2, h2, T2, Td2, wdir2, wspd2 = np.genfromtxt( sound_data, delimiter=',', comments="%", skip_header=6, skip_footer=96, unpack=True )
-    prof2 = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2 )
-        
-    t_str = str( obs24 )
-    year = t_str[2:4]
-    month = t_str[5:7]
-    day = t_str[8:10]
-    hour = t_str[11:13]
-    obstring2 = year + month + day + hour
-        
-    oldurl = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/' + obstring2 +'_OBS/' + str( sys.argv[1] ).upper() + '.txt')
-    data = oldurl.read()
-    sound_data = StringIO( data )
-    p2, h2, T2, Td2, wdir2, wspd2 = np.genfromtxt( sound_data, delimiter=',', comments="%", skip_header=6, skip_footer=96, unpack=True )
-    prof3 = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2 )
 
 else:
 	sound = '''
