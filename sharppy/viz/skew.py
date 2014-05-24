@@ -52,7 +52,7 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setRenderHint(qp.TextAntialiasing)
         for t in range(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm(t, qp)
-        for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
+        #for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
         for theta in range(self.bltmpc, 300, 20): self.draw_dry_adiabat(theta, qp)
         for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
@@ -83,17 +83,20 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setPen(pen)
         dt = -10
         presvals = np.arange(int(self.pmax), int(self.pmin)+dt, dt)
-        thetas = tab.thermo.theta(presvals, theta)
         thetas = ((theta + ZEROCNK) / ((1000. / presvals)**ROCP)) - ZEROCNK
-        for t, p in zip(thetas, presvals):
-            x = self.tmpc_to_pix(t, p)
-            y = self.pres_to_pix(p)
+        xvals = self.tmpc_to_pix(thetas, presvals)
+        yvals = self.pres_to_pix(presvals)
+        path = QPainterPath()
+        for i in range( len(presvals) ):
+            p = presvals[i]
+            x = xvals[i]
+            y = yvals[i]
             if p == self.pmax:
                 x2 = x; y2 = y
+                path.moveTo(x, y)
             else:
-                x1 = x2; y1 = y2
-                x2 = x; y2 = y
-                qp.drawLine(x1, y1, x2, y2)
+                path.lineTo(x, y)
+        qp.drawPath(path)
 
     def draw_moist_adiabat(self, tw, qp):
         '''
@@ -103,8 +106,8 @@ class backgroundSkewT(QtGui.QWidget):
         pen = QtGui.QPen(QtGui.QColor("#663333"), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        dt = -10
-        for p in range(int(self.pmax), int(self.pmin)+dt, dt):
+        dp = -10
+        for p in range(int(self.pmax), int(self.pmin)+dp, dp):
             t = tab.thermo.wetlift(1000., tw, p)
             x = self.tmpc_to_pix(t, p)
             y = self.pres_to_pix(p)
@@ -364,18 +367,18 @@ class plotSkewT(backgroundSkewT):
         mask1 = self.u.mask
         mask2 = self.pres.mask
         mask = np.maximum(mask1, mask2)
-        pres = self.pres[~mask][::1]
-        u = self.u[~mask][::1]
-        v = self.v[~mask][::1]
-        for p in pres:
-            y = self.pres_to_pix(p)
+        pres = self.pres[~mask]
+        u = self.u[~mask]
+        v = self.v[~mask]
+        yvals = self.pres_to_pix(pres)
+        for y in yvals:
             if y >= self.tly:
                 uu = u[i]
                 vv = v[i]
                 drawBarb( qp, self.barbx, y, uu, vv )
-                i = i + 1
+                i += 1
             else:
-                pass
+                break
 
     def drawTitle(self, qp):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
@@ -447,7 +450,9 @@ class plotSkewT(backgroundSkewT):
     def drawVirtualParcelTrace(self,qp):
         ''' Draw the trace of supplied parcel '''
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
+        brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
+        qp.setBrush(brush)
         p = self.pcl.pres
         t = self.pcl.tmpc
         td = self.pcl.dwpc
@@ -456,15 +461,16 @@ class plotSkewT(backgroundSkewT):
         p2, t2 = tab.thermo.drylift(p, t, td)
         x2 = self.tmpc_to_pix(tab.thermo.virtemp(p2, t2, t2), p2)
         y2 = self.pres_to_pix(p2)
-        qp.drawLine( x1, y1, x2, y2 )
+        path = QPainterPath()
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y2)
         for i in range(int(p2 + self.dp), int(self.pmin-1), int(self.dp)):
-            x1 = x2
-            y1 = y2
             t3 = tab.thermo.wetlift(p2, t2, float(i))
             x2 = self.tmpc_to_pix(tab.thermo.virtemp(i, t3, t3), float(i))
             y2 = self.pres_to_pix(float(i))
             if x2 < self.tlx: break
-            qp.drawLine( x1, y1, x2, y2 )
+            path.lineTo(x2, y2)
+        qp.drawPath(path)
 
     def drawWetBulb(self, data, color, qp):
         '''
