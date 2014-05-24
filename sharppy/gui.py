@@ -4,7 +4,7 @@ from PySide import QtGui, QtCore
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
-from sharppy.sounding import prof, prof2, prof3, plot_title
+from sharppy.sounding import prof, plot_title
 from sharppy.sharptab import params
 
 
@@ -24,16 +24,7 @@ grid.setVerticalSpacing(2)
 centralWidget.setLayout(grid)
 
 
-# Handle the Upper Left and define the command line args to get previous data
-if len( sys.argv ) > 2:
-    if str( sys.argv[2] ) == '--diff=12':
-        sound2 = plotSkewT(prof2, pcl=prof2.mupcl, temp_color="#9F0101", dewp_color="#019B06")
-        sound2.setContentsMargins(0, 0, 0, 0)
-        grid.addWidget(sound2, 0, 0, 3, 1)
-    if str( sys.argv[2] ) == '--diff=24':
-        sound3 = plotSkewT(prof3, pcl=prof2.mupcl, temp_color="#9F0101", dewp_color="#019B06")
-        sound3.setContentsMargins(0, 0, 0, 0)
-        grid.addWidget(sound3, 0, 0, 3, 1)
+# Handle the Upper Left
 ## plot the main sounding
 #print prof.right_scp, prof.left_scp
 brand = 'Oklahoma Weather Lab'
@@ -86,16 +77,16 @@ grid.addWidget(urparent, 0, 1, 3, 1)
 
 # Handle the Text Areas
 text = QtGui.QFrame()
-text.setStyleSheet("QFrame {"
+text.setStyleSheet("QWidget {"
                    "  background-color: rgb(0, 0, 0);"
                    "  border-width: 2px;"
                    "  border-style: solid;"
                    "  border-color: #3399CC;}")
 grid3 = QtGui.QGridLayout()
 grid3.setHorizontalSpacing(0)
+grid3.setContentsMargins(0, 0, 0, 0)
 convective = plotText(prof)
 #convective = QtGui.QFrame()
-grid3.setContentsMargins(0, 0, 0, 0)
 #kinematic = QtGui.QFrame()
 kinematic = plotKinematics(prof)
 SARS = plotAnalogues(prof)
