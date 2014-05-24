@@ -32,7 +32,7 @@ class backgroundHodo(QtGui.QFrame):
         self.center_hodo()
         self.ring_increment = 10
         self.rings = range(self.ring_increment, 100+self.ring_increment,
-                           self.ring_increment)
+            self.ring_increment)
         self.label_font = QtGui.QFont('Helvetica', 9)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
@@ -206,6 +206,11 @@ class plotHodo(backgroundHodo):
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
         self.corfidi_dn_v = self.prof.upshear_downshear[3]
+        self.bunkers_right_vec = tab.utils.comp2vec(self.prof.srwind[0], self.prof.srwind[1])
+        self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
+        self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
+        self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
+        self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
         self.srh1kmReadout = QLabel(parent=self)
@@ -315,8 +320,23 @@ class plotHodo(backgroundHodo):
             qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
         except:
             return
-        # This probably needs to be checked.
-    
+        # This probably needs to be checked. 
+
+        color = QtGui.QColor('#000000')
+        color.setAlpha(0)
+        pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        v_offset=5; h_offset = 1; width = 40; hght = 12;
+        
+        mw_rect = QtCore.QRectF(mean_u+h_offset, mean_v+v_offset, width, hght)
+        qp.drawRect(mw_rect)
+        
+        pen = QtGui.QPen(QtGui.QColor("#B8860B"))
+        qp.setPen(pen)
+        qp.setFont(self.label_font)
+        mw_str = tab.utils.INT2STR(self.mean_lcl_el_vec[0]) + '/' + tab.utils.INT2STR(self.mean_lcl_el_vec[1])
+        qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
+
     def drawCorfidi(self, qp):
         penwidth = 1
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
@@ -333,6 +353,26 @@ class plotHodo(backgroundHodo):
             qp.drawEllipse(center_dn, 3, 3)
         except:
             return
+        color = QtGui.QColor('#000000')
+        color.setAlpha(0)
+        pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        v_offset=3; h_offset = 1; width = 60; hght = 10;
+        
+        up_rect = QtCore.QRectF(up_u+h_offset, up_v+v_offset, width, hght)
+        dn_rect = QtCore.QRectF(dn_u+h_offset, dn_v+v_offset, width, hght)
+        qp.drawRect(up_rect)
+        qp.drawRect(dn_rect) 
+        ## now make the pen white and draw text using
+        ## the invisible rectangles
+        pen = QtGui.QPen(QtGui.QColor("#00BFFF"))
+        qp.setPen(pen)
+        qp.setFont(self.label_font)
+        up_stuff = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(self.upshear[1])
+        dn_stuff = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(self.downshear[1])
+        qp.drawText(up_rect, QtCore.Qt.AlignCenter, "UP=" + up_stuff)
+        qp.drawText(dn_rect, QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
+
 
     def drawSMV(self, qp):
         '''
@@ -388,6 +428,24 @@ class plotHodo(backgroundHodo):
             ## draw lines showing the effective inflow layer
             qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
             qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
+        color = QtGui.QColor('#000000')
+        color.setAlpha(0)
+        pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        h_offset = 2; v_offset=5; width = 55; hght = 12;
+        rm_rect = QtCore.QRectF(ruu+h_offset, rvv+v_offset, width, hght)
+        lm_rect = QtCore.QRectF(luu+h_offset, lvv+v_offset, width, hght)
+        qp.drawRect(rm_rect)
+        qp.drawRect(lm_rect) 
+        ## now make the pen white and draw text using
+        ## the invisible rectangles
+        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
+        qp.setPen(pen)
+        qp.setFont(self.label_font)
+        rm_stuff = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_right_vec[1])
+        lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_left_vec[1])
+        qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
+        qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
 
     def draw_hodo(self, qp):
         '''
