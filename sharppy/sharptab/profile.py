@@ -130,6 +130,38 @@ class Profile(object):
         self.mean_6km = winds.mean_wind(self, pbot=sfc, ptop=p6km)
         self.mean_8km = winds.mean_wind(self, pbot=sfc, ptop=p8km)
         self.mean_lcl_el = winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres)
+        
+        
+        ## calculate thermodynamic window indiced
+        ## either get or calculate the indices, round to the nearest int, and
+        ## convert them to strings.
+        ## K Index
+        self.k_idx = params.k_index( self )
+        ## precipitable water
+        self.pwat = params.precip_water( self )
+        ## 0-3km agl lapse rate
+        self.lapserate_3km = params.lapse_rate( self, 0., 3000., pres=False )
+        ## 3-6km agl lapse rate
+        self.lapserate_3_6km = params.lapse_rate( self, 3000., 6000., pres=False )
+        ## 850-500mb lapse rate
+        self.lapserate_850_500 = params.lapse_rate( self, 850., 500., pres=True )
+        ## 700-500mb lapse rate
+        self.lapserate_700_500 = params.lapse_rate( self, 700., 500., pres=True )
+        ## convective temperature
+        self.convT = thermo.ctof( params.convective_temp( self ) )
+        ## sounding forecast surface temperature
+        self.maxT = thermo.ctof( params.max_temp( self ) )
+        #fzl = str(int(self.sfcparcel.hght0c))
+        ## 100mb mean mixing ratio
+        self.mean_mixr = params.mean_mixratio( self )
+        ## 150mb mean rh
+        self.low_rh = params.mean_relh( self )
+        self.mid_rh = params.mean_relh( self, pbot=(self.pres[self.sfc] - 150),
+            ptop=(self.pres[self.sfc] - 350) )
+        ## calculate the totals totals index
+        self.totals_totals = params.t_totals( self )
+        
+        
         ## generate other indices
         self.ebottom, self.etop = params.effective_inflow_layer( self, mupcl=self.mupcl )
        
