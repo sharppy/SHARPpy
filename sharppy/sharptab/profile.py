@@ -65,6 +65,7 @@ class Profile(object):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
         self.logp = np.log10(self.pres.copy())
+        self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
         if 'wdir' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'))
             self.wspd = ma.asanyarray(kwargs.get('wspd'))
@@ -94,7 +95,7 @@ class Profile(object):
         ## generate the wetbulb profile
         self.wetbulb = self.get_wetbulb_profile()
         ## generate the theta profile
-        self.theta = self.get_theta_profile()
+        #self.theta = self.get_theta_profile()
         ## generate theta-e profile
         self.thetae = self.get_thetae_profile()
         ## generate various parcels

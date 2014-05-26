@@ -117,13 +117,7 @@ def vtmp(prof, p):
     Virtual tmperature (C) at the given pressure
 
     '''
-    t = temp(prof, p)
-    td = dwpt(prof, p)
-    try:
-        vt = [thermo.virtemp(pp, tt, tdtd) for pp,tt,tdtd in zip(p, t, td)]
-        return ma.asarray(vt)
-    except TypeError:
-        return thermo.virtemp(p, t, td)
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.vtmp[::-1])
 
 
 def components(prof, p):

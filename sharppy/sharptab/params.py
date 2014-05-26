@@ -774,6 +774,187 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
     ind = np.where(np.fabs(mt - mt.max()) < TOL)[0]
     return p[ind[0]]
 
+def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
+    '''        
+        Lifts the specified parcel, calculates various levels and parameters from
+        the profile object. B+/B- are calculated based on the specified layer. 
+        
+        This is a convenience function for effective_inflow_layer and convective_temp, 
+        as well as any function that needs to lift a parcel in an iterative process.
+        This function is a stripped back version of the parcelx function, that only
+        handles bplus and bminus. The intention is to reduce the computation time in
+        the iterative functions by reducing the calculations needed.
+        
+        For full parcel objects, use the parcelx function.
+        
+        !! All calculations use the virtual temperature correction unless noted. !!
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        pbot : number (optional; default surface)
+        Pressure of the bottom level (hPa)
+        ptop : number (optional; default 400 hPa)
+        Pressure of the top level (hPa)
+        pres : number (optional)
+        Pressure of parcel to lift (hPa)
+        tmpc : number (optional)
+        Temperature of parcel to lift (C)
+        dwpc : number (optional)
+        Dew Point of parcel to lift (C)
+        dp : negative integer (optional; default = -1)
+        The pressure increment for the interpolated sounding
+        exact : bool (optional; default = False)
+        Switch to choose between using the exact data (slower) or using
+        interpolated sounding at 'dp' pressure levels (faster)
+        flag : number (optional; default = 5)
+        Flag to determine what kind of parcel to create; See DefineParcel for
+        flag values
+        lplvals : lifting parcel layer object (optional)
+        Contains the necessary parameters to describe a lifting parcel
+        
+        Returns
+        -------
+        pcl : parcel object
+        Parcel Object
+    
+    '''
+    flag = kwargs.get('flag', 5)
+    pcl = Parcel(pbot=pbot, ptop=ptop)
+    pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
+    if prof.pres.compressed().shape[0] < 1: return pcl
+    
+    # Variables
+    pres = kwargs.get('pres', pcl.lplvals.pres)
+    tmpc = kwargs.get('tmpc', pcl.lplvals.tmpc)
+    dwpc = kwargs.get('dwpc', pcl.lplvals.dwpc)
+    pcl.pres = pres
+    pcl.tmpc = tmpc
+    pcl.dwpc = dwpc
+    totp = 0.
+    totn = 0.
+    tote = 0.
+    cinh_old = 0.
+    
+    # See if default layer is specified
+    if not pbot:
+        pbot = prof.pres[prof.sfc]
+        pcl.blayer = pbot
+        pcl.pbot = pbot
+    if not ptop:
+        ptop = prof.pres[prof.pres.shape[0]-1]
+        pcl.tlayer = ptop
+        pcl.ptop = ptop
+    
+    # Make sure this is a valid layer
+    if pbot > pres:
+        pbot = pres
+        pcl.blayer = pbot
+    if type(interp.vtmp(prof, pbot)) == type(ma.masked): return ma.masked
+    if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
+    
+    # Begin with the Mixing Layer
+    pe1 = pbot
+    h1 = interp.hght(prof, pe1)
+    tp1 = thermo.virtemp(pres, tmpc, dwpc)
+    
+    # Lift parcel and return LCL pres (hPa) and LCL temp (C)
+    pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
+    blupper = pe2
+    h2 = interp.hght(prof, pe2)
+    te2 = interp.vtmp(prof, pe2)
+    
+    # Calculate lifted parcel theta for use in iterative CINH loop below
+    # RECALL: lifted parcel theta is CONSTANT from LPL to LCL
+    theta_parcel = thermo.theta(pe2, tp2, 1000.)
+    
+    # Environmental theta and mixing ratio at LPL
+    bltheta = thermo.theta(pres, interp.temp(prof, pres), 1000.)
+    blmr = thermo.mixratio(pres, dwpc)
+    
+    # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
+    # This will be done in 'dp' increments and will use the virtual
+    # temperature correction where possible
+    pp = np.arange(pbot, blupper+dp, dp)
+    hh = interp.hght(prof, pp)
+    tmp_env_theta = thermo.theta(pp, interp.temp(prof, pp), 1000.)
+    tmp_env_dwpt = interp.dwpt(prof, pp)
+    tv_env = thermo.virtemp(pp, tmp_env_theta, tmp_env_dwpt)
+    tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
+    tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
+    
+    lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
+    totn = lyre[lyre < 0].sum()
+    if not totn: totn = 0.
+    
+    # Move the bottom layer to the top of the boundary layer
+    if pbot > pe2:
+        pbot = pe2
+        pcl.blayer = pbot
+
+    
+    # Find lowest observation in layer
+    lptr = ma.where(pbot > prof.pres)[0].min()
+    uptr = ma.where(ptop < prof.pres)[0].max()
+    
+    # START WITH INTERPOLATED BOTTOM LAYER
+    # Begin moist ascent from lifted parcel LCL (pe2, tp2)
+    pe1 = pbot
+    h1 = interp.hght(prof, pe1)
+    te1 = interp.vtmp(prof, pe1)
+    tp1 = thermo.wetlift(pe2, tp2, pe1)
+    lyre = 0
+    lyrlast = 0
+    for i in range(lptr, prof.pres.shape[0]):
+        if not utils.QC(prof.tmpc[i]): continue
+        pe2 = prof.pres[i]
+        h2 = prof.hght[i]
+        te2 = prof.vtmp[i]
+        tp2 = thermo.wetlift(pe1, tp1, pe2)
+        tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
+        tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
+        lyrlast = lyre
+        lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
+        
+        # Add layer energy to total positive if lyre > 0
+        if lyre > 0: totp += lyre
+        # Add layer energy to total negative if lyre < 0, only up to EL
+        else:
+            if pe2 > 500.: totn += lyre
+
+        tote += lyre
+        pelast = pe1
+        pe1 = pe2
+        h1 = h2
+        te1 = te2
+        tp1 = tp2
+        # Is this the top of the specified layer
+        if i >= uptr and not utils.QC(pcl.bplus):
+            pe3 = pe1
+            h3 = h1
+            te3 = te1
+            tp3 = tp1
+            lyrf = lyre
+            if lyrf > 0:
+                pcl.bplus = totp - lyrf
+                pcl.bminus = totn
+            else:
+                pcl.bplus = totp
+                if pe2 > 500.: pcl.bminus = totn + lyrf
+                else: pcl.bminus = totn
+            pe2 = ptop
+            h2 = interp.hght(prof, pe2)
+            te2 = interp.vtmp(prof, pe2)
+            tp2 = thermo.wetlift(pe3, tp3, pe2)
+            tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / thermo.ctok(te3)
+            tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
+            lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+            if lyrf > 0: pcl.bplus += lyrf
+            else:
+                if pe2 > 500.: pcl.bminus += lyrf
+            if pcl.bplus == 0: pcl.bminus = 0.
+    return pcl
 
 def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     '''
@@ -854,7 +1035,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
     
     # Begin with the Mixing Layer
-    te1 = interp.vtmp(prof, pres)
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
     tp1 = thermo.virtemp(pres, tmpc, dwpc)
@@ -933,7 +1113,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
-        te2 = interp.vtmp(prof, pe2)
+        te2 = prof.vtmp[i]
         tp2 = thermo.wetlift(pe1, tp1, pe2)
         tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
         tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
@@ -1308,15 +1488,15 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
         try:
             mupcl = prof.mupcl
         except:
-            mulplvals = DefineParcel(prof, flag=3, pres=400)
-            mupcl = parcelx(prof, lplvals=mulplvals)
+            mulplvals = DefineParcel(prof, flag=3, pres=300)
+            mupcl = cape(prof, lplvals=mulplvals)
     mucape = mupcl.bplus
     mucinh = mupcl.bminus
     
     # Scenario where shallow buoyancy present for a parcel with
     # lesser theta near the ground
     mu2lplvals = DefineParcel(prof, 3, pres=300)
-    mu2pcl = parcelx(prof, lplvals=mu2lplvals)
+    mu2pcl = cape(prof, lplvals=mu2lplvals)
     if mu2pcl.bplus > mucape:
         mucape = mu2pcl.bplus
         mucinh = mu2pcl.bminus
@@ -1326,7 +1506,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     if mucape >= ecape and mucinh > ecinh:
         # Begin at surface and search upward for effective surface
         for i in range(prof.sfc, prof.top):
-            pcl = parcelx(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
+            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
             if pcl.bplus >= ecape and pcl.bminus > ecinh:
                 pbot = prof.pres[i]
                 break
@@ -1334,7 +1514,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
         bptr = i
         # Keep searching upward for the effective top
         for i in range(bptr+1, prof.top):
-            pcl = parcelx(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
+            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
             if pcl.bplus < ecape or pcl.bminus <= ecinh:
                 j = 1
                 while not utils.QC(prof.dwpc[i-j]) and \
@@ -1432,7 +1612,7 @@ def convective_temp(prof, **kwargs):
         Convective Temperature (float) in degrees C
         
         '''
-    mincinh = kwargs.get('mincinh', -1.)
+    mincinh = kwargs.get('mincinh', -5.)
     mmr = mean_mixratio(prof)
     pres = kwargs.get('pres', prof.pres[prof.sfc])
     tmpc = kwargs.get('tmpc', prof.tmpc[prof.sfc])
@@ -1440,17 +1620,17 @@ def convective_temp(prof, **kwargs):
     
     # Do a quick search to fine whether to continue. If you need to heat
     # up more than 25C, don't compute.
-    pcl = parcelx(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
+    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
     if pcl.bplus == 0. or pcl.bminus < mincinh: return ma.masked
     
     excess = dwpc - tmpc
     if excess > 0: tmpc = tmpc + excess + 4.
-    pcl = parcelx(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
+    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
     if pcl.bplus == 0.: pcl.bminus = ma.masked
     while pcl.bminus < mincinh:
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
-        pcl = parcelx(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
+        pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
 

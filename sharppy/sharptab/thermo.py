@@ -82,7 +82,7 @@ def thalvl(theta, t):
 
     t = t + ZEROCNK
     theta = theta + ZEROCNK
-    return 1000. / ((theta / t)**(1./ROCP))
+    return 1000. / (np.power((theta / t),(1./ROCP)))
 
 
 def theta(p, t, p2=1000.):
@@ -103,9 +103,7 @@ def theta(p, t, p2=1000.):
     Potential temperature (C)
 
     '''
-    p = np.ma.asanyarray(p)
-    p2 = p2 * np.ones(p.shape, dtype=np.float64)
-    return ((t + ZEROCNK) * (p2 / p)**ROCP) - ZEROCNK
+    return ((t + ZEROCNK) * np.power((p2 / p),ROCP)) - ZEROCNK
 
 
 def thetaw(p, t, td):
@@ -215,7 +213,7 @@ def wobf(t):
     npol = 1 + t * (-8.841660499999999e-3 + t * ( 1.4714143e-4
            + t * (-9.671989000000001e-7 + t * (-3.2607217e-8
            + t * (-3.8598073e-10)))))
-    npol = 15.13 / (npol**4)
+    npol = 15.13 / (np.power(npol,4))
 
     ppol = t * (4.9618922e-07 + t * (-6.1059365e-09 +
           t * (3.9401551e-11 + t * (-1.2588129e-13 +
@@ -256,8 +254,9 @@ def satlift(p, thetam):
     eor = 999
     while np.fabs(eor) - 0.1 > 0:
         if eor == 999:                  # First Pass
-            pwrp = (p / 1000.)**ROCP
+            pwrp = np.power((p / 1000.),ROCP)
             t1 = (thetam + ZEROCNK) * pwrp - ZEROCNK
+            val = wobf(np.array([t1, thetam]))
             e1 = wobf(t1) - wobf(thetam)
             rate = 1
         else:                           # Successive Passes
@@ -338,7 +337,7 @@ def vappres(t):
     pol = t * (4.3884180e-09 + (t * (-2.988388e-11 + pol)))
     pol = t * (7.8736169e-05 + (t * (-6.111796e-07 + pol)))
     pol = 0.99999683 + (t * (-9.082695e-03 + pol))
-    return 6.1078 / pol**8
+    return 6.1078 / np.power(pol,8)
 
 
 def mixratio(p, t):
@@ -380,7 +379,7 @@ def temp_at_mixrat(w, p):
     Temperature (C) of air at given mixing ratio and pressure
     '''
     x = np.log10(w * p / (622. + w))
-    x = (10.**((c1 * x) + c2) - c3 + (c4 * (10**(c5 * x) - c6)**2)) - ZEROCNK
+    x = (np.power(10.,((c1 * x) + c2)) - c3 + (c4 * np.power((np.power(10,(c5 * x)) - c6),2))) - ZEROCNK
     return x
 
 
