@@ -511,42 +511,37 @@ def inferred_temp_adv(prof, lat=None):
     if lat != None:
         omega = (2. * np.pi) / (86164.)
         f = 2. * omega * np.sin(np.radians(lat)) # Units: (s**-1)
-        multiplier = (f / (9.81)) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
+        multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
     else:
         # If you can't pass the latitude of the profile point, use this calculation (approximate)
         multiplier = ((10.**-4) / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
     
     pressures = np.arange(prof.pres[prof.get_sfc()], 100, -100) # Units: mb
-    
-    pressure_bounds = []
+    temps = thermo.ctok(interp.temp(prof, pressures))
+    heights = interp.hght(prof, pressures)
     temp_adv = np.empty(len(pressures) - 1)
+    dirs = interp.vec(prof, pressures)[0]
+    pressure_bounds = np.empty((len(pressures) - 1, 2))
     for i in range(1, len(pressures)):
         bottom_pres = pressures[i-1]
         top_pres = pressures[i]
-        
-        if bottom_pres == 0:
-            sfc_idx = prof.get_sfc()
-            bottom_pres = prof.pres[sfc_idx]
-        
         # Get the temperatures from both levels (in Kelvin)
-        btemp = interp.temp(prof, bottom_pres) + 273.15
-        ttemp = interp.temp(prof, top_pres) + 273.15
+        btemp = temps[i-1]
+        ttemp = temps[i]
+        # Get the two heights of the top and bottom layer
+        bhght = heights[i-1] # Units: meters
+        thght = heights[i] # Units: meters
+        bottom_wdir = dirs[i-1] # Meteorological degrees (degrees from north)
+        top_wdir = dirs[i] # same units as top_wdir
         
         # Calculate the average temperature
-        avg_temp = (btemp + ttemp) / 2.
+        print ttemp, btemp
+        avg_temp = (ttemp + btemp) * 2.
         
         # Calculate the mean wind between the two levels (this is assumed to be geostrophic)
         mean_u, mean_v = winds.mean_wind(prof, pbot=bottom_pres, ptop=top_pres)
-        
         mean_wdir, mean_wspd = utils.comp2vec(mean_u, mean_v) # Wind speed is in knots here
         mean_wspd = utils.KTS2MS(mean_wspd) # Convert this geostrophic wind speed to m/s
-        
-        # Get the two heights of the top and bottom layer
-        bhght = interp.hght(prof, bottom_pres) # Units: meters
-        thght = interp.hght(prof, top_pres) # Units: meters
-        
-        top_wdir = interp.vec(prof, top_pres)[0] # Meteorological degrees (degrees from north)
-        bottom_wdir = interp.vec(prof, bottom_pres)[0] # same units as top_wdir
         
         # Here we calculate the change in wind direction with height (thanks to Andrew Mackenzie for help with this)
         # The sign of d_theta will dictate whether or not it is warm or cold advection
@@ -560,13 +555,13 @@ def inferred_temp_adv(prof, lat=None):
         d_theta = top_wdir - 180.
         
         # Here we calculate t_adv (which is -V_g * del(T) or the local change in temperature term)
+        # K/s  s * rad/m * deg   m^2/s^2          K        degrees / m
         t_adv = multiplier * np.power(mean_wspd,2) * avg_temp * (d_theta / (thght - bhght)) # Units: Kelvin / seconds
         
         # Append the pressure bounds so the person knows the pressure
-        pressure_bounds.append((bottom_pres, top_pres))
+        pressure_bounds[i-1, :] = bottom_pres, top_pres
         temp_adv[i-1] = t_adv*60.*60. # Converts Kelvin/seconds to Kelvin/hour (or Celsius/hour)
-    
-    pressure_bounds = np.asarray(pressure_bounds)
+
     return temp_adv, pressure_bounds
 
 
