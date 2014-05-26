@@ -231,7 +231,7 @@ class Profile(object):
         srh3km = self.srh3km[0]
         mucape = self.mupcl.bplus
         mumr = thermo.mixratio(self.mupcl.pres, self.mupcl.dwpc)
-        self.database = os.path.join( os.path.dirname( __file__ ), 'nlist.txt' )
+        self.database = 'sars_hail.txt'
         try:
             self.matches = sars_hail(self.database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
                 sfc_9km_shear, sfc_3km_shear, srh3km)

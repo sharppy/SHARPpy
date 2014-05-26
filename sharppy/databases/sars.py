@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 ## routine written by Greg Blumberg
 ## wblumberg@ou.edu
@@ -25,6 +26,7 @@ def sars_hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
         num_sig_reports - number of significant hail reports (>= 2 inches)
         prob_sig_hail - SARS sig. hail probability
     '''
+    database_fn = os.path.join( os.path.dirname( __file__ ), database_fn )
 
     hail_database = np.loadtxt(database_fn, skiprows=1, dtype=str)
     
