@@ -4,7 +4,6 @@ import os
 import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import utils, winds, params, interp, thermo, watch_type
-from sharppy.sharptab.inferred_temp_adv import inferred_temp_adv
 from sharppy.sharptab.sars import sars_hail
 from sharppy.sharptab.constants import MISSING
 
@@ -243,7 +242,7 @@ class Profile(object):
         watch_types = watch_type.possible_watch(self)
         self.watch_type = watch_types[0][0]
         self.watch_type_color = watch_types[1][0]
-        self.inf_temp_adv = inferred_temp_adv(self)
+        self.inf_temp_adv = params.inferred_temp_adv(self)
 
     def get_sfc(self):
         '''
