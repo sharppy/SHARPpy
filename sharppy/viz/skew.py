@@ -72,6 +72,9 @@ class backgroundSkewT(QtGui.QWidget):
 
         '''
         self.initUI()
+    
+    def wheelEvent(self, e):
+        self.update()
 
     def draw_dry_adiabat(self, theta, qp):
         '''
@@ -297,6 +300,9 @@ class plotSkewT(backgroundSkewT):
             "  color: #00FF00;}")
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
+    def wheelEvent(self, e):
+        pass
+    
     def mousePressEvent(self, e):
         if self.hasMouseTracking():
             self.setMouseTracking(False)
@@ -331,6 +337,12 @@ class plotSkewT(backgroundSkewT):
         '''
         super(plotSkewT, self).resizeEvent(e)
         self.plotData()
+    
+    def wheelEvent(self, e):
+        super(plotSkewT, self).wheelEvent(e)
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
 
     def paintEvent(self, e):
         super(plotSkewT, self).paintEvent(e)
@@ -338,6 +350,10 @@ class plotSkewT(backgroundSkewT):
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
         qp.end()
+    
+    def clearData(self):
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''
