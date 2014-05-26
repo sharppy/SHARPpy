@@ -3,7 +3,7 @@ from __future__ import division
 import os
 import numpy as np
 import numpy.ma as ma
-from sharppy.sharptab import utils, winds, params, interp, thermo
+from sharppy.sharptab import utils, winds, params, interp, thermo, watch_type
 from sharppy.sharptab.sars import sars_hail
 from sharppy.sharptab.constants import MISSING
 
@@ -239,6 +239,9 @@ class Profile(object):
             self.matches = ma.masked
         self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], sfc_6km_shear)
         self.ship = params.ship(mucape, mumr, lapse_rate, h500t, sfc_6km_shear )
+        watch_types = watch_type.possible_watch(self)
+        self.watch_type = watch_types[0][0]
+        self.watch_type_color = watch_types[1][0]
 
     def get_sfc(self):
         '''
@@ -328,6 +331,7 @@ class Profile(object):
         for i in range(len(self.v)):
             thetae[i] = thermo.ctok( thermo.thetae(self.pres[i], self.tmpc[i], self.dwpc[i]) )
         thetae[thetae == self.missing] = ma.masked
+        
         thetae.set_fill_value(self.missing)
         return thetae
 

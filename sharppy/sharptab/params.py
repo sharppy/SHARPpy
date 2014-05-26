@@ -1636,21 +1636,21 @@ def convective_temp(prof, **kwargs):
 
 def tei(prof):
     '''
-    Theta-E Index (TEI)
-    TEI is the difference between the surface theta-e and the minimum theta-e value
-    in the lowest 400 mb AGL
+        Theta-E Index (TEI)
+        TEI is the difference between the surface theta-e and the minimum theta-e value
+        in the lowest 400 mb AGL
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        tei : theta-e index
+        '''
     
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    tei : theta-e index
-    '''
-    
-    sfc_theta = prof.thetae[prof.get_sfc()]
-    sfc_pres = prof.pres[prof.get_sfc()]
+    sfc_theta = prof.thetae[prof.sfc]
+    sfc_pres = prof.pres[prof.sfc]
     top_pres = sfc_pres - 400.
     
     layer_idxs = ma.where(prof.pres > top_pres)[0]
@@ -1662,23 +1662,23 @@ def tei(prof):
 def esp(prof):
     
     '''
-    Enhanced Stretching Potential (ESP)
-    This composite parameter identifies areas where low-level buoyancy
-    and steep low-level lapse rates are co-located, which may
-    favor low-level vortex stretching and tornado potential.
-    
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    esp : ESP index
-    '''
+        Enhanced Stretching Potential (ESP)
+        This composite parameter identifies areas where low-level buoyancy
+        and steep low-level lapse rates are co-located, which may
+        favor low-level vortex stretching and tornado potential.
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        esp : ESP index
+        '''
     
     mlcape = prof.mlpcl.b3km # This is the 0-3 km MLCAPE!!!!
-    lr03 = params.lapse_rate( prof, 0, 3000.) # C/km
-    if lr03 < 7 or mlcape < 250:
+    lr03 = prof.lapserate_3km # C/km
+    if lr03 < 7. or mlcape < 250.:
         return 0
     
     esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
@@ -1689,32 +1689,34 @@ def esp(prof):
 def mmp(prof):
     
     '''
-    MCS Maintenance Probability (MMP)
-    The probability that a mature MCS will maintain peak intensity
-    for the next hour.
+        MCS Maintenance Probability (MMP)
+        The probability that a mature MCS will maintain peak intensity
+        for the next hour.
         
-    This equation was developed using proximity soundings and a regression equation
-    Uses MUCAPE, 3-8 km lapse rate, maximum bulk shear, 3-12 km mean wind speed
-    From Coniglio et. al. 2006 WAF
-    
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    mmp : MMP index (%)
-    
-
-    this part is confusing...the maximum deep shear value
-    
-    is the maximum shear vector magnitude (SVM) between any wind vector
-    
-    in the lowest 1 km and any wind vector in the 6-10 km layer
-    
-    '''
-    lr38 = params.lapse_rate(prof,3000.,8000.)
-    mean_wind_3t12 = winds.mean_wind( prof, pbot=interp.pres(3000.), ptop=interp.pres(12000.))
+        This equation was developed using proximity soundings and a regression equation
+        Uses MUCAPE, 3-8 km lapse rate, maximum bulk shear, 3-12 km mean wind speed
+        From Coniglio et. al. 2006 WAF
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        mmp : MMP index (%)
+        
+        
+        this part is confusing...the maximum deep shear value
+        
+        is the maximum shear vector magnitude (SVM) between any wind vector
+        
+        in the lowest 1 km and any wind vector in the 6-10 km layer
+        
+        '''
+    lr38 = lapse_rate(prof,3000.,8000.)
+    plower = interp.pres(prof, interp.to_msl(prof, 3000.))
+    pupper = interp.pres(prof, interp.to_msl(prof, 12000.))
+    mean_wind_3t12 = winds.mean_wind( prof, pbot=plower, ptop=pupper)
     mucape = prof.mupcl.bplus
     if mucape < 100:
         return 0.
@@ -1733,24 +1735,24 @@ def mmp(prof):
 
 def wndg(prof):
     '''
-    Wind Damage Parameter (WNDG)
-    A non-dimensional composite parameter that identifies areas
-    where large CAPE, steep low-level lapse rates,
-    enhanced flow in the low-mid levels, and minimal convective
-    inhibition are co-located.
-    
-    WNDG values > 1 favor an enhanced risk for scattered damaging
-    outflow gusts with multicell thunderstorm clusters, primarily
-    during the afternoon in the summer.
-    
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    wndg : WNDG index
-    '''
+        Wind Damage Parameter (WNDG)
+        A non-dimensional composite parameter that identifies areas
+        where large CAPE, steep low-level lapse rates,
+        enhanced flow in the low-mid levels, and minimal convective
+        inhibition are co-located.
+        
+        WNDG values > 1 favor an enhanced risk for scattered damaging
+        outflow gusts with multicell thunderstorm clusters, primarily
+        during the afternoon in the summer.
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        wndg : WNDG index
+        '''
     
     mlcape = prof.mlpcl.bplus # J/kg
     lr03 = params.lapse_rate( prof, 0, 3000. ) # C/km
@@ -1767,90 +1769,114 @@ def wndg(prof):
     return wndg
 
 
-
-def wbz(prof):
-    
-    '''
-    Wet-bulb Zero Level (WBZ)
-    The height where the wetbulb value is 0 C.
-    
-    Parameters
-    ----------
-    prof: Profile object
-
-    Returns
-    -------
-    wbz : wet bulb zero height (m)
-    
-    '''
-    
-    
-    
-    # Needs to interpolate the wet bulb zero profile
-    wetbulb = prof.wetbulb
-    return
-
-def fzl(prof):
-    '''
-    Freezing Level (FZL)
-    The height where the temperature is 0 C.
-
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    fzl : freezing level (m)
-    '''
-    # needs to interpolate to find where the temperature is 0 C
-    
-    return #interp.temp(
-
-
-
 def sig_severe(prof):
     '''
-    Significant Severe (SigSevere)
-    Craven and Brooks, 2004
-    
-    Parameters
-    ----------
-    prof : Profile object
-    
-    Returns
-    -------
-    sigsevere : significant severe parameter (m3/s3)
-    '''
+        Significant Severe (SigSevere)
+        Craven and Brooks, 2004
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        sigsevere : significant severe parameter (m3/s3)
+        '''
     mlcape = prof.mlpcl.bplus
     shr06 = utils.KTS2MS(prof.sfc_6km_shear)
-
+    
     sigsevere = mlcape * shr06
     return sigsevere
 
-
-
-def dgz(prof):
+def dcape(prof):
     '''
-    Dendritic Growth Zone (DGZ)
-    Calculates the height bounds (or pressure bounds) of the dendritic
-    growth zone on the sounding.
+        Downdraft CAPE (DCAPE)
+        Calculates the downdraft CAPE value using the parcel with the lowest Theta-E
+        value found in the lowest 400 mb of the sounding.  Lifting this wetbulb parcel to the surface
+        moist adiabatically and then calculating the energy is how this is calculated.
         
+        Note: this function does not compare well to SPC
         
+        Parameters
+        ----------
+        prof : Profile object
         
-    Parameters
-    ----------
-    prof : Profile object
+        Returns
+        -------
+        dcape : downdraft CAPE (J/kg)
+        '''
+    
+    sfc_pres = prof.pres[prof.get_sfc()]
+    prof_thetae = prof.thetae
+    prof_wetbulb = prof.wetbulb
+    idx = np.where(prof.pres > sfc_pres - 400.)[0]
+    min_idx = np.ma.argmin(prof_thetae[idx])
+    downdraft_t1 = prof_wetbulb[min_idx]
+    downdraft_p1 = prof.pres[min_idx]
+    downdraft_z1 = prof.hght[min_idx]
+    downdraft_td1 = prof.dwpc[min_idx]
+    env_tv1 = prof.tmpc[min_idx]
+    #downdraft_q = thermo.mixratio(downdraft_p1, downdraft_t1)
+    
+    dp = 1
+    dcape_plus = 0
+    dcape_minus = 0
+    for downdraft_p2 in np.arange(downdraft_p1, sfc_pres + dp, dp):
+        downdraft_t2 = thermo.wetlift(downdraft_p1, downdraft_t1, downdraft_p2)
+        downdraft_z2 = interp.hght(prof, downdraft_p2)
+        downdraft_td2 = downdraft_t2
         
+        env_tv2 = interp.temp(prof, downdraft_p2)
         
+        delta_z = downdraft_z2 - downdraft_z1
+        g = 9.81 # m/s^2
         
-    Returns
-    -------
-    dgz : dendretic growth zone with the bounds as a tuple
+        dn1 = thermo.virtemp(downdraft_p1, downdraft_t1, downdraft_td1)
+        dn2 = thermo.virtemp(downdraft_p2, downdraft_t2, downdraft_td2)
+        #dn1 = virtemp(downdraft_p1, downdraft_t1, downdraft_q)
+        #dn2 = virtemp(downdraft_p2, downdraft_t2, downdraft_q)
+        env1 = virtemp(downdraft_p1, env_tv1, interp.dwpt(prof, downdraft_p1))
+        env2 = virtemp(downdraft_p2, env_tv2, interp.dwpt(prof, downdraft_p2))
+        
+        buoyancy_1 = (thermo.ctok(dn1) - thermo.ctok(env1)) / (thermo.ctok(env1))
+        buoyancy_2 = (thermo.ctok(dn2) - thermo.ctok(env2)) / (thermo.ctok(env2))
+        
+        d_dcape = (g * (delta_z/2.) * (buoyancy_1 + buoyancy_2))
+        if d_dcape >= 0:
+            dcape_plus = dcape_plus + d_dcape
+        else:
+            dcape_minus = dcape_minus + d_dcape
+        env_tv1 = env_tv2
+        downdraft_t1 = downdraft_t2
+        downdraft_p1 = downdraft_p2
+        downdraft_z1 = downdraft_z2
+    
+    return dcape_plus + dcape_minus
+
+def downrush_temp(prof):
     '''
+        Downrush Temperature (DTEMP)
+        
+        This is the surface temperature of the hypothetical downdraft used in the
+        DCAPE calculation.
+        
+        Parameters
+        ----------
+        prof : Profile object
+        
+        Returns
+        -------
+        dtemp : downdraft temperature (F)
+        '''
     
+    sfc_pres = prof.pres[prof.get_sfc()]
+    prof_thetae = prof.thetae
+    prof_wetbulb = prof.wetbulb
+    idx = np.where(prof.pres > sfc_pres - 400.)[0]
+    min_idx = np.ma.argmin(prof_thetae[idx])
+    downdraft_inital_temp = prof_wetbulb[idx][min_idx]
+    downdraft_q = thermo.mixratio(prof.pres[min_idx], downdraft_inital_temp)
+    downdraft_inital_temp = thermo.virtemp(prof.pres[min_idx], downdraft_inital_temp, downdraft_q)
+    downdraft_t = thermo.wetlift(prof.pres[idx][min_idx], downdraft_inital_temp, sfc_pres)
     
-    
-    # Need to calculate the height of the -12 C layer and the -18 C layer and return it
-    
-    return
+    return thermo.ctof(downdraft_t), prof.pres[min_idx]
