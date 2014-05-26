@@ -4,7 +4,7 @@ import os
 import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import utils, winds, params, interp, thermo, watch_type
-from sharppy.sharptab.sars import sars_hail
+from sharppy.databases.sars import sars_hail
 from sharppy.sharptab.constants import MISSING
 
 

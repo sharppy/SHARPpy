@@ -20,7 +20,7 @@ setup(
     license = "BSD",
     keywords = "meteorology soundings analysis",
     url = "",
-    packages=['sharppy', 'sharppy.sharptab', 'sharppy.viz'],
+    packages=['sharppy', 'sharppy.sharptab', 'sharppy.viz', 'sharppy.databases'],
     package_data={'': ['*.md', '*.txt', '*.png']},
     include_package_data=True,
     long_description="",
