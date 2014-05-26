@@ -514,7 +514,9 @@ def inferred_temp_adv(prof, lat=None):
         multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
     else:
         # If you can't pass the latitude of the profile point, use this calculation (approximate)
-        multiplier = ((10.**-4) / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
+        omega = (2. * np.pi) / (86164.)
+        f = 2. * omega * np.sin(np.radians(45))
+        multiplier = ((f) / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
     
     pressures = np.arange(prof.pres[prof.get_sfc()], 100, -100) # Units: mb
     temps = thermo.ctok(interp.temp(prof, pressures))
@@ -535,7 +537,6 @@ def inferred_temp_adv(prof, lat=None):
         top_wdir = dirs[i] # same units as top_wdir
         
         # Calculate the average temperature
-        print ttemp, btemp
         avg_temp = (ttemp + btemp) * 2.
         
         # Calculate the mean wind between the two levels (this is assumed to be geostrophic)
