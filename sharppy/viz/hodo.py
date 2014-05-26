@@ -47,6 +47,29 @@ class backgroundHodo(QtGui.QFrame):
         self.centerx = self.wid / 2; self.centery = self.hgt / 2
         self.hodomag = 160.
         self.scale = (self.brx - self.tlx) / self.hodomag
+    
+    def wheelEvent(self, e):
+        '''
+        Handeles the zooming of the hodograph window
+        '''
+        ## get the new scaling magnitude
+        new_mag = self.hodomag + e.delta() / 5
+        ## make sure the user doesn't zoom out of
+        ## bounds to prevent drawing issues
+        if new_mag >= 40. and new_mag <= 200.:
+            self.hodomag = new_mag
+        ## if it is out of bounds, do nothing
+        else:
+            self.hodomag = self.hodomag
+        ## get the maximum speed value in the frame for the ring increment.
+        ## this is to help reduce drawing resources
+        max_uv = int(self.pix_to_uv(self.brx, 0)[0])
+        self.rings = range(self.ring_increment, max_uv+self.ring_increment,
+                           self.ring_increment)
+        ## reassign the new scale
+        self.scale = (self.brx - self.tlx) / self.hodomag
+        ## update
+        self.update()
 
     def resizeEvent(self, e):
         '''
@@ -243,6 +266,13 @@ class plotHodo(backgroundHodo):
         self.hband = QRubberBand(QRubberBand.Line, self)
         self.vband = QRubberBand(QRubberBand.Line, self)
     
+    
+    def wheelEvent(self, e):
+        super(plotHodo, self).wheelEvent(e)
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+    
     def mousePressEvent(self, e):
         if self.hasMouseTracking():
             self.setMouseTracking(False)
@@ -291,6 +321,14 @@ class plotHodo(backgroundHodo):
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
         qp.end()
+    
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''
