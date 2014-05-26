@@ -83,7 +83,7 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setPen(pen)
         dt = -10
         presvals = np.arange(int(self.pmax), int(self.pmin)+dt, dt)
-        thetas = ((theta + ZEROCNK) / ((1000. / presvals)**ROCP)) - ZEROCNK
+        thetas = ((theta + ZEROCNK) / (np.power((1000. / presvals),ROCP))) - ZEROCNK
         xvals = self.tmpc_to_pix(thetas, presvals)
         yvals = self.pres_to_pix(presvals)
         path = QPainterPath()
@@ -314,7 +314,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(45)
         self.dwpcReadout.setFixedWidth(45)
         self.presReadout.setText(tab.utils.FLOAT2STR(pres, 1) + ' hPa')
-        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' km')
+        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
         self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
         self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
 
