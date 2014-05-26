@@ -256,7 +256,6 @@ def satlift(p, thetam):
         if eor == 999:                  # First Pass
             pwrp = np.power((p / 1000.),ROCP)
             t1 = (thetam + ZEROCNK) * pwrp - ZEROCNK
-            val = wobf(np.array([t1, thetam]))
             e1 = wobf(t1) - wobf(thetam)
             rate = 1
         else:                           # Successive Passes
