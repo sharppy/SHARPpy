@@ -29,11 +29,13 @@ class backgroundSkewT(QtGui.QWidget):
         self.brx = self.wid ; self.bry = self.hgt
         self.pmax = 1050.; self.pmin = 100.
         self.barbx = self.brx + self.rpad / 2
-        self.log_pmax = np.log(1050.); self.log_pmin = np.log(self.pmin)
+        self.log_pmax = np.log(self.pmax); self.log_pmin = np.log(self.pmin)
         self.bltmpc = -50; self.brtmpc = 50; self.dt = 10
         self.xskew = 100 / 3.
         self.xrange = self.brtmpc - self.bltmpc
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
+        self.centert = (self.brtmpc - self.bltmpc) / 2.
+        self.centerp = self.pix_to_pres(self.hgt/2.)
         self.title_font = QtGui.QFont('Helvetica', 14)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.title_height = self.title_metrics.height()
@@ -50,15 +52,15 @@ class backgroundSkewT(QtGui.QWidget):
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
-        for t in range(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
+        for t in np.arange(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm(t, qp)
         #for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
-        for theta in range(self.bltmpc, 300, 20): self.draw_dry_adiabat(theta, qp)
+        for theta in np.arange(self.bltmpc, 300, 20): self.draw_dry_adiabat(theta, qp)
         for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
         for p in [1000, 850, 700, 500, 300, 200, 100]:
             self.draw_isobar(p, 1, qp)
-        for t in range(self.bltmpc, self.brtmpc+self.dt, self.dt):
+        for t in np.arange(self.bltmpc, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm_labels(t, qp)
         for p in range(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
@@ -74,6 +76,51 @@ class backgroundSkewT(QtGui.QWidget):
         self.initUI()
     
     def wheelEvent(self, e):
+        cursor_y = e.y()
+        cursor_p = self.centerp
+        cursor_t = self.centert
+        ## set the upper and lower zoom rate based
+        ## on the distance from the ma value displayed
+        rate_upperp = np.log10(self.pmax - cursor_p)
+        rate_lowerp = np.log10(cursor_p - self.pmin)
+        rate_uppert = rate_upperp * 8
+        rate_lowert = rate_lowerp * 8
+        ## use the rate to give a delta
+        deltap_upper = e.delta() / rate_upperp
+        deltap_lower = e.delta() / rate_lowerp
+        deltat_upper = e.delta() / rate_uppert
+        deltat_lower = e.delta() / rate_lowert
+        ## change the vertical bounds
+        new_pmin = self.pmin - deltap_lower
+        new_pmax = self.pmax + deltap_upper
+        ## change the horizontal bounds
+        new_tmin = self.bltmpc - deltat_lower
+        new_tmax = self.brtmpc + deltat_upper
+        ## make sure that the vertical zooming
+        ## doesn't go out of bounds
+        if new_pmin <= self.centerp - 100. and new_pmin >= 100.:
+            self.pmin = new_pmin
+        else:
+            self.pmin = self.pmin
+        if new_pmax >= self.centerp + 100. and new_pmax <= 1050.:
+            self.pmax = new_pmax
+        else:
+            self.pmax = self.pmax
+        ## make sure that the horizontal zooming
+        ## doesn't go out of bounds
+        if new_tmin <= cursor_t - 20. and new_tmin > -50:
+            self.bltmpc = new_tmin
+        else:
+            self.bltmpc = self.bltmpc
+        if new_tmax >= cursor_t + 20. and new_tmax < 50:
+            self.brtmpc = new_tmax
+        else:
+            self.brtmpc = self.brtmpc
+        self.log_pmin = np.log(self.pmin)
+        self.log_pmax = np.log(self.pmax)
+        self.xrange = self.brtmpc - self.bltmpc
+        #self.xskew = self.xrange / 3.
+        self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
         self.update()
 
     def draw_dry_adiabat(self, theta, qp):
@@ -84,21 +131,18 @@ class backgroundSkewT(QtGui.QWidget):
         pen = QtGui.QPen(QtGui.QColor("#333333"), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        dt = -10
-        presvals = np.arange(int(self.pmax), int(self.pmin)+dt, dt)
+        dp = -10
+        presvals = np.arange(int(self.pmax), int(self.pmin)+dp, dp)
         thetas = ((theta + ZEROCNK) / (np.power((1000. / presvals),ROCP))) - ZEROCNK
         xvals = self.tmpc_to_pix(thetas, presvals)
         yvals = self.pres_to_pix(presvals)
         path = QPainterPath()
-        for i in range( len(presvals) ):
+        path.moveTo(xvals[0], yvals[0])
+        for i in range(1, len(presvals) ):
             p = presvals[i]
             x = xvals[i]
             y = yvals[i]
-            if p == self.pmax:
-                x2 = x; y2 = y
-                path.moveTo(x, y)
-            else:
-                path.lineTo(x, y)
+            path.lineTo(x, y)
         qp.drawPath(path)
 
     def draw_moist_adiabat(self, tw, qp):
@@ -246,7 +290,7 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    def __init__(self, prof, **kwargs):
+    def __init__(self, prof, proflist=None, stdev=None, **kwargs):
         super(plotSkewT, self).__init__()
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
@@ -299,9 +343,6 @@ class plotSkewT(backgroundSkewT):
             "  font-size: 11px;"
             "  color: #00FF00;}")
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
-
-    def wheelEvent(self, e):
-        pass
     
     def mousePressEvent(self, e):
         if self.hasMouseTracking():
@@ -328,6 +369,8 @@ class plotSkewT(backgroundSkewT):
         self.hghtReadout.move(self.lpad, e.y() - 15)
         self.tmpcReadout.move(self.brx-self.rpad, e.y())
         self.dwpcReadout.move(self.brx-self.rpad, e.y() - 15)
+        self.centerp = self.pix_to_pres(e.y())
+        self.centert = tmp
         self.rubberBand.show()
     
     def resizeEvent(self, e):
@@ -352,6 +395,10 @@ class plotSkewT(backgroundSkewT):
         qp.end()
     
     def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
     
