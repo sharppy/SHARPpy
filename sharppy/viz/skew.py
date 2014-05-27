@@ -84,7 +84,7 @@ class backgroundSkewT(QtGui.QWidget):
         rate_upperp = np.log10(self.pmax - cursor_p)
         rate_lowerp = np.log10(cursor_p - self.pmin)
         rate_uppert = rate_upperp * 8
-        rate_lowert = rate_lowerp * 8
+        rate_lowert = rate_lowerp * 5
         ## use the rate to give a delta
         deltap_upper = e.delta() / rate_upperp
         deltap_lower = e.delta() / rate_lowerp
@@ -101,25 +101,24 @@ class backgroundSkewT(QtGui.QWidget):
         if new_pmin <= self.centerp - 100. and new_pmin >= 100.:
             self.pmin = new_pmin
         else:
-            self.pmin = self.pmin
+            self.pmin = np.floor(self.pmin)
         if new_pmax >= self.centerp + 100. and new_pmax <= 1050.:
             self.pmax = new_pmax
         else:
-            self.pmax = self.pmax
+            self.pmax = int(self.pmax)
         ## make sure that the horizontal zooming
         ## doesn't go out of bounds
         if new_tmin <= cursor_t - 20. and new_tmin > -50:
             self.bltmpc = new_tmin
         else:
-            self.bltmpc = self.bltmpc
+            self.bltmpc = np.floor(self.bltmpc)
         if new_tmax >= cursor_t + 20. and new_tmax < 50:
             self.brtmpc = new_tmax
         else:
-            self.brtmpc = self.brtmpc
+            self.brtmpc = int(self.brtmpc)
         self.log_pmin = np.log(self.pmin)
         self.log_pmax = np.log(self.pmax)
-        self.xrange = self.brtmpc - self.bltmpc
-        #self.xskew = self.xrange / 3.
+        self.xrange = int(self.brtmpc) - int(self.bltmpc)
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
         self.update()
 
@@ -228,7 +227,7 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         x1 = self.tmpc_to_pix(t, self.pmax)
         x2 = self.tmpc_to_pix(t, self.pmin)
-        if t in [0, -20]:
+        if int(t) in [0, -20]:
             pen = QtGui.QPen(QtGui.QColor("#0000FF"), 1)
         else:
             pen = QtGui.QPen(QtGui.QColor("#555555"), 1)
