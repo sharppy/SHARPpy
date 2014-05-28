@@ -295,13 +295,13 @@ class plotSkewT(backgroundSkewT):
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
-        self.pcl = kwargs.get('pcl', None)
-        self.proflist = kwargs.get('proflist', None)
         self.dew_stdev = prof.dew_stdev
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
         self.logp = np.log10(prof.pres)
+        self.pcl = kwargs.get('pcl', None)
+        self.proflist = kwargs.get('proflist', None)
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
@@ -420,7 +420,7 @@ class plotSkewT(backgroundSkewT):
             for profile in self.proflist:
                 self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
                 self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
-        self.drawWetBulb(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp)
+        self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
@@ -536,35 +536,13 @@ class plotSkewT(backgroundSkewT):
             path.lineTo(x, y)
         qp.drawPath(path)
 
-    def drawWetBulb(self, data, color, qp):
-        '''
-        Draw an environmental trace.
-        '''
-        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.NoBrush)
-        qp.setPen(pen)
-        qp.setBrush(brush)
-        mask1 = data.mask
-        mask2 = self.pres.mask
-        mask = np.maximum(mask1, mask2)
-        data = data[~mask]
-        pres = self.pres[~mask]
-        x = self.tmpc_to_pix(data, pres)
-        y = self.pres_to_pix(pres)
-        path = QPainterPath()
-        path.moveTo(x[0], y[0])
-        for i in range(1, x.shape[0]):
-            if y[i] <= self.tpad:
-                break
-            path.lineTo(x[i], y[i])
-        qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, p=None, stdev=None):
+    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None):
         '''
         Draw an environmental trace.
 
         '''
-        pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
