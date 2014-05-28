@@ -41,6 +41,7 @@ if sys.argv[1] != "test":
     p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", skip_header=6, skip_footer=96, unpack=True )
     prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd )
 
+
 else:
 	sound = '''
 	  966.0,    345,   21.6,   19.7,     89,  15.19,    160,      7,  297.7,  341.9,  300.4
