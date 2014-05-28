@@ -72,10 +72,10 @@ def possible_watch(prof):
     # PDS Tornado Watch if STP(eff) >= 4 and MUCINH < 50. (Uncapped EF-4, EF-5 potential)
     mucinh = prof.mupcl.bminus
     stp_eff = prof.stp_cin
-    if mucinh < 50 and stp_eff >= 4:
+    if mucinh > -50 and stp_eff >= 4:
         watch_types.append("PDS TOR")
         colors.append("#FF0000")
-    elif mucinh < 50 and stp_eff >= 1:
+    elif mucinh > -50 and stp_eff >= 1:
         watch_types.append("TOR")
         colors.append("#FF0000")
         # Tornado Watch if STP(eff) >= 1 and MUCINH < 50. or SARS detects tornadoes?
