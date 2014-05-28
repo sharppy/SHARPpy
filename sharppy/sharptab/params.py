@@ -1460,8 +1460,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     
     # Save params
     if pcl.bplus == 0: pcl.bminus = 0.
-    pcl.ptrace = np.array(ptrace)
-    pcl.ttrace = np.array(ttrace)
+    pcl.ptrace = np.ma.asarray(ptrace)
+    pcl.ttrace = np.ma.asarray(ttrace)
     return pcl
 
 

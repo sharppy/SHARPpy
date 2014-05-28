@@ -263,11 +263,13 @@ def generic_interp_pres(p, pres, field):
     if ma.isMaskedArray(pres):
         not_masked1 = ~pres.mask
     else:
-        not_masked1 = np.ones(pres.shape)
+        not_masked1 = np.empty(pres.shape)
+        not_masked1[:] = True
     if ma.isMaskedArray(field):
         not_masked2 = ~field.mask
     else:
-        not_masked2 = np.ones(field.shape)
+        not_masked2 = np.empty(field.shape)
+        not_masked2[:] = True
     not_masked = not_masked1 * not_masked2
     return np.interp(p, pres[not_masked], field[not_masked], left=ma.masked,
                      right=ma.masked)
