@@ -55,7 +55,7 @@ class backgroundSkewT(QtGui.QWidget):
         for t in np.arange(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm(t, qp)
         #for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
-        for theta in np.arange(self.bltmpc, 300, 20): self.draw_dry_adiabat(theta, qp)
+        for theta in np.arange(self.bltmpc, 80, 20): self.draw_dry_adiabat(theta, qp)
         for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
         for p in [1000, 850, 700, 500, 300, 200, 100]:
@@ -289,7 +289,7 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    def __init__(self, prof, proflist=None, stdev=None, **kwargs):
+    def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__()
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
@@ -298,6 +298,7 @@ class plotSkewT(backgroundSkewT):
         self.wetbulb = prof.wetbulb
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
+        self.proflist = kwargs.get('proflist', None)
         self.title = kwargs.get('title', '')
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
@@ -411,6 +412,10 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         self.drawTitle(qp)
+        if self.proflist is not None:
+            for profile in self.proflist:
+                self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
+                self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
         self.drawWetBulb(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp)
@@ -547,7 +552,7 @@ class plotSkewT(backgroundSkewT):
             path.lineTo(x[i], y[i])
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp):
+    def drawTrace(self, data, color, qp, p=None):
         '''
         Draw an environmental trace.
 
@@ -557,10 +562,15 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setBrush(brush)
         mask1 = data.mask
-        mask2 = self.pres.mask
+        if p is not None:
+            mask2 = p.mask
+            pres = p
+        else:
+            mask2 = self.pres.mask
+            pres = self.pres
         mask = np.maximum(mask1, mask2)
         data = data[~mask]
-        pres = self.pres[~mask]
+        pres = pres[~mask]
         path = QPainterPath()
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
