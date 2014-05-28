@@ -516,14 +516,17 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1, y1, x1, y2)
             qp.drawText(rect1, QtCore.Qt.AlignCenter, text_bot)
             qp.drawText(rect2, QtCore.Qt.AlignCenter, text_top)
-            qp.drawText(rect3, QtCore.Qt.AlignCenter, tab.utils.INT2STR(self.prof.right_esrh[0]))
+            qp.drawText(rect3, QtCore.Qt.AlignCenter,
+                tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
     
-    def drawVirtualParcelTrace(self, ttrace, ptrace, qp):
-        ''' Draw the trace of supplied parcel '''
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
+    def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1):
+        '''
+        Draw a parcel trace.
+        '''
+        pen = QtGui.QPen(QtCore.Qt.white, width, QtCore.Qt.DashLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
@@ -584,11 +587,11 @@ class plotSkewT(backgroundSkewT):
         qp.setFont(self.environment_trace_font)
         qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
 
-    def drawSTDEV(self, pres, data, stdev, color, qp):
+    def drawSTDEV(self, pres, data, stdev, color, qp, width=1):
         '''
         Draw the error bars on the profile.
         '''
-        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
