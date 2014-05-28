@@ -87,6 +87,8 @@ class Profile(object):
             self.tmp_stdev = ma.asanyarray(kwargs.get('tmp_stdev'))
             self.dew_stdev[self.dew_stdev == self.missing] = ma.masked
             self.tmp_stdev[self.tmp_stdev == self.missing] = ma.masked
+            self.dew_stdev.set_fill_value(self.missing)
+            self.tmp_stdev.set_fill_value(self.missing)
         elif not 'tmp_stdev' in kwargs:
             self.dew_stdev = None
             self.tmp_stdev = None
