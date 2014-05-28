@@ -82,6 +82,14 @@ class Profile(object):
             self.u[self.v.mask] = ma.masked
             self.v[self.u.mask] = ma.masked
             self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
+        if 'tmp_stdev' in kwargs:
+            self.dew_stdev = ma.asanyarray(kwargs.get('dew_stdev'))
+            self.tmp_stdev = ma.asanyarray(kwargs.get('tmp_stdev'))
+            self.dew_stdev[self.dew_stdev == self.missing] = ma.masked
+            self.tmp_stdev[self.tmp_stdev == self.missing] = ma.masked
+        elif not 'tmp_stdev' in kwargs:
+            self.dew_stdev = None
+            self.tmp_stdev = None
         self.pres.set_fill_value(self.missing)
         self.hght.set_fill_value(self.missing)
         self.tmpc.set_fill_value(self.missing)
