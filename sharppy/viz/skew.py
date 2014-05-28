@@ -291,14 +291,18 @@ class backgroundSkewT(QtGui.QWidget):
 class plotSkewT(backgroundSkewT):
     def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__()
+        ## get the profile data
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
+        self.pcl = kwargs.get('pcl', None)
+        self.proflist = kwargs.get('proflist', None)
+        self.dew_stdev = prof.dew_stdev
+        self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
         self.logp = np.log10(prof.pres)
-        self.pcl = kwargs.get('pcl', None)
-        self.proflist = kwargs.get('proflist', None)
+        ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
@@ -417,8 +421,8 @@ class plotSkewT(backgroundSkewT):
                 self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
                 self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
         self.drawWetBulb(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp)
-        self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp)
-        self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp)
+        self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
+        self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
         if self.pcl is not None:
@@ -473,6 +477,9 @@ class plotSkewT(backgroundSkewT):
                 tab.utils.INT2STR(h/1000)+' km')
 
     def draw_effective_layer(self, qp):
+        '''
+        Draw the bounds of the effective inflow layer.
+        '''
         ptop = self.prof.etop; pbot = self.prof.ebottom
         len = 15
         text_offset = 10
@@ -552,7 +559,7 @@ class plotSkewT(backgroundSkewT):
             path.lineTo(x[i], y[i])
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, p=None):
+    def drawTrace(self, data, color, qp, p=None, stdev=None):
         '''
         Draw an environmental trace.
 
@@ -571,6 +578,8 @@ class plotSkewT(backgroundSkewT):
         mask = np.maximum(mask1, mask2)
         data = data[~mask]
         pres = pres[~mask]
+        if stdev is not None:
+            stdev = stdev[~mask]
         path = QPainterPath()
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
@@ -579,7 +588,11 @@ class plotSkewT(backgroundSkewT):
             if y[i] <= self.tpad:
                 break
             else:
+                qp.save()
                 path.lineTo(x[i], y[i])
+                if stdev is not None:
+                    self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
+                qp.restore()
         qp.drawPath(path)
         label = (1.8 * data[0]) + 32.
         pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
@@ -593,4 +606,26 @@ class plotSkewT(backgroundSkewT):
         qp.setFont(self.environment_trace_font)
         qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
 
+    def drawSTDEV(self, pres, data, stdev, color, qp):
+        '''
+        Draw the error bars on the profile.
+        '''
+        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(QtCore.Qt.NoBrush)
+        qp.setPen(pen)
+        qp.setBrush(brush)
+        path = QPainterPath()
+        offset = 5.
+        x = self.tmpc_to_pix(data, pres)
+        y = self.pres_to_pix(pres)
+        err_left = self.tmpc_to_pix(data - stdev, pres)
+        err_right = self.tmpc_to_pix(data + stdev, pres)
+        path.moveTo(err_left, y)
+        path.lineTo(err_left, y-offset)
+        path.lineTo(err_left, y+offset)
+        path.moveTo(err_left, y)
+        path.lineTo(err_right, y)
+        path.lineTo(err_right, y-offset)
+        path.lineTo(err_right, y+offset)
+        qp.drawPath(path)
 
