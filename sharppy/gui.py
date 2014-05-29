@@ -27,8 +27,7 @@ centralWidget.setLayout(grid)
 ## plot the main sounding
 #print prof.right_scp, prof.left_scp
 brand = 'Oklahoma Weather Lab'
-err = np.random.randint(3, high=5, size=(prof.tmpc.shape[0]))
-sound = plotSkewT(prof, stdev=err, pcl=prof.mupcl, title=plot_title, brand=brand)
+sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
 grid.addWidget(sound, 0, 0, 3, 1)
 
