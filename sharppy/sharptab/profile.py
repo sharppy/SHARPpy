@@ -118,6 +118,7 @@ class Profile(object):
         self.get_sars()
         ## get the possible watch type
         self.get_watch()
+        self.get_traj()
 
     def get_sfc(self):
         '''
@@ -479,3 +480,30 @@ class Profile(object):
         watch_types = watch_type.possible_watch(self)
         self.watch_type = watch_types[0][0]
         self.watch_type_color = watch_types[1][0]
+
+    def get_traj(self):
+        '''
+        Function to compute the storm slinky profile using
+        the trajectory model.
+        
+        self.slinky_traj - the list containing the position vector for the updraft
+        self.updraft_tilt - the updraft tilt (an angle) with respect to the horizon
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        '''
+    
+        parcel = self.mupcl
+        slinky = params.parcelTraj(self, parcel)
+    
+        if slinky == None:
+            self.slinky_traj = None
+            self.updraft_tilt = None
+        else:
+            self.slinky_traj = slinky[0]
+            self.updraft_tilt = slinky[1]

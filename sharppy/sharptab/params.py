@@ -848,6 +848,101 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
     ind = np.where(np.fabs(mt - mt.max()) < TOL)[0]
     return p[ind[0]]
 
+def parcelTraj(prof, parcel, smu=None, smv=None):
+    '''
+        Parcel Trajectory Routine (Storm Slinky)
+        
+        This routine is a simple 3D thermodynamic parcel trajectory model that
+        takes a thermodynamic profile and a parcel trace and computes the
+        trajectory of a parcel that is lifted to its LFC, then given a 5 m/s
+        nudge upwards, and then left to accelerate up to the EL.
+        
+        This parcel is assumed to be moving horizontally via the storm motion vector, which
+        if not supplied is taken to be the Bunkers Right Mover storm motion vector.
+        As the parcel accelerates upwards, it is advected by the storm relative winds.
+        The environmental winds are assumed to be steady-state.
+        
+        This simulates the path a parcel in a storm updraft would take using pure parcel theory.
+        
+        Parameters
+        ----------
+        prof : Profile object
+        parcel : parcel object
+        smu: optional (storm motion vector u)
+        smv: optional (storm motion vector v)
+        
+        Returns
+        -------
+        pos_vector : a list of tuples, where each element of the list is a location of the parcel in time
+        theta : the tilt of the updraft measured by the angle of the updraft with respect to the horizon
+        '''
+    
+    t_parcel = parcel.ttrace # temperature
+    p_parcel = parcel.ptrace # mb
+    elhght = parcel.elhght # meter
+    elpres = parcel.elpres # meter
+    
+    y_0 = 0 # meter
+    x_0 = 0 # meter
+    z_0 = parcel.lfchght # meter
+    p_0 = parcel.lfcpres # meter
+    print p_0, z_0
+    
+    g = 9.8 # m/s**2
+    t_0 = 0 # seconds
+    w_0 = 5 # m/s (the initial parcel nudge)
+    u_0 = 0 # m/s
+    v_0 = 0 # m/s (initial parcel location, which is storm motion relative)
+    
+    delta_t = 25 # the trajectory increment
+    pos_vector = [(x_0,y_0,z_0)]
+    speed_vector = [(u_0, v_0, w_0)]
+    
+    if smu==None or smv==None:
+        smu = prof.srwind[0] # Expected to be in knots
+        smv = prof.srwind[1] # Is expected to be in knots
+    if z_0 > elhght:
+        return
+    while z_0 < elhght:
+        t_1 = delta_t + t_0 # the time step increment
+        
+        # Compute the vertical acceleration
+        env_tempv = interp.vtmp(prof, p_0) + 273.15
+        pcl_tempv = interp.generic_interp_pres(np.log10(p_0), np.log10(p_parcel.copy())[::-1], t_parcel[::-1]) + 273.15
+        accel = g * ((pcl_tempv - env_tempv) / env_tempv)
+        
+        # Compute the vertical displacement
+        z_1 = (.5 * accel * np.power(t_1 - t_0, 2)) + (w_0 * (t_1 - t_0)) + z_0
+        w_1 = accel * (t_1 - t_0) + w_0
+        
+        # Compute the parcel-relative winds
+        u, v = interp.components(prof, p_0)
+        u_0 = utils.KTS2MS(u - smu)
+        v_0 = utils.KTS2MS(v - smv)
+        
+        # Compute the horizontal displacements
+        x_1 = u_0 * (t_1 - t_0) + x_0
+        y_1 = v_0 * (t_1 - t_0) + y_0
+        
+        pos_vector.append((x_1, y_1, z_1))
+        speed_vector.append((u_0, v_0, w_1))
+        
+        # Update parcel position
+        z_0 = z_1
+        y_0 = y_1
+        x_0 = x_1
+        t_0 = t_1
+        p_0 = interp.pres(prof, interp.to_msl(prof, z_1))
+        
+        # Update parcel vertical velocity
+        w_0 = w_1
+    
+    # Compute the angle tilt of the updraft
+    r = np.sqrt(np.power(pos_vector[-1][0], 2) + np.power(pos_vector[-1][1], 2))
+    theta = np.rad2deg(np.arctan(pos_vector[-1][2]))
+    
+    return pos_vector, theta
+
 def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     '''        
         Lifts the specified parcel, calculates various levels and parameters from
