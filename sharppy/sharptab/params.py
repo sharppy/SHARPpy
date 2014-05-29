@@ -938,8 +938,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     
     # Compute the angle tilt of the updraft
     r = np.sqrt(np.power(pos_vector[-1][0], 2) + np.power(pos_vector[-1][1], 2))
-    theta = np.rad2deg(np.arctan(pos_vector[-1][2]))
-    
+    theta = np.degrees(np.arctan2(pos_vector[-1][2],r))
     return pos_vector, theta
 
 def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
