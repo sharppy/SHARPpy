@@ -886,7 +886,6 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     x_0 = 0 # meter
     z_0 = parcel.lfchght # meter
     p_0 = parcel.lfcpres # meter
-    print p_0, z_0
     
     g = 9.8 # m/s**2
     t_0 = 0 # seconds
