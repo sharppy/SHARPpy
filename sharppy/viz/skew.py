@@ -418,8 +418,9 @@ class plotSkewT(backgroundSkewT):
         self.drawTitle(qp)
         if self.proflist is not None:
             for profile in self.proflist:
-                self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
-                self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres, width=1)
+                self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres, width=1)
+                self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
@@ -522,11 +523,11 @@ class plotSkewT(backgroundSkewT):
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
     
-    def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1):
+    def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1, color="#FFFFFF"):
         '''
         Draw a parcel trace.
         '''
-        pen = QtGui.QPen(QtCore.Qt.white, width, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.DashLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)

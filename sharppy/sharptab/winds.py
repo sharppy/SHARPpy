@@ -308,8 +308,8 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
     plower = interp.pres(prof, lower)
     pupper = interp.pres(prof, upper)
     if exact:
-        ind1 = np.where(plower > prof.pres)[0].min()
-        ind2 = np.where(pupper < prof.pres)[0].max()
+        ind1 = np.where(plower >= prof.pres)[0].min()
+        ind2 = np.where(pupper <= prof.pres)[0].max()
         u1, v1 = interp.components(prof, plower)
         u2, v2 = interp.components(prof, pupper)
         u = np.concatenate([[u1], prof.u[ind1:ind2+1].compressed(), [u2]])
