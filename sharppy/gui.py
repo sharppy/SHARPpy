@@ -5,7 +5,6 @@ from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.sounding import prof, plot_title
-from sharppy.sharptab import params
 
 
 # Setup Application
@@ -28,7 +27,8 @@ centralWidget.setLayout(grid)
 ## plot the main sounding
 #print prof.right_scp, prof.left_scp
 brand = 'Oklahoma Weather Lab'
-sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
+err = np.random.randint(3, high=5, size=(prof.tmpc.shape[0]))
+sound = plotSkewT(prof, stdev=err, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
 grid.addWidget(sound, 0, 0, 3, 1)
 
@@ -61,7 +61,7 @@ speed_vs_height = plotSpeed( prof )
 speed_vs_height.setObjectName("svh")
 inferred_temp_advection = plotAdvection(prof)
 hodo = plotHodo(prof.hght, prof.u, prof.v, prof=prof)
-storm_slinky = plotSlinky()
+storm_slinky = plotSlinky(prof)
 thetae_vs_pressure = plotThetae(prof)
 srwinds_vs_height = plotWinds(prof)
 watch_type = plotWatch(prof)
