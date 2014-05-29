@@ -537,7 +537,10 @@ class plotSkewT(backgroundSkewT):
         path.moveTo(xvals[0], yvals[0])
         for i in range(1, len(yvals)):
             x = xvals[i]; y = yvals[i]
-            path.lineTo(x, y)
+            if y <= self.tpad:
+                break
+            else:
+                path.lineTo(x, y)
         qp.drawPath(path)
 
 
