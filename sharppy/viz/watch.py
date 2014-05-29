@@ -31,7 +31,7 @@ class backgroundWatch(QtGui.QFrame):
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.title_height = self.title_metrics.height()
         self.plot_height = self.plot_metrics.height()
-        self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()  
 
@@ -53,7 +53,7 @@ class backgroundWatch(QtGui.QFrame):
         
         ## draw the borders in white
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
-        qp.drawLine(self.brx-3, self.tly, self.brx-3, self.bry)
+        qp.drawLine(self.brx, self.tly, self.brx, self.bry)
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
