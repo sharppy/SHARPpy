@@ -517,8 +517,9 @@ def inferred_temp_adv(prof, lat=None):
         omega = (2. * np.pi) / (86164.)
         f = 2. * omega * np.sin(np.radians(35.))
         multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
-    
-    pressures = np.arange(prof.pres[prof.get_sfc()], 100, -100) # Units: mb
+    dp = -100
+    pres_idx = np.where(prof.pres >= 100.)[0]
+    pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp) # Units: mb
     temps = thermo.ctok(interp.temp(prof, pressures))
     heights = interp.hght(prof, pressures)
     temp_adv = np.empty(len(pressures) - 1)
