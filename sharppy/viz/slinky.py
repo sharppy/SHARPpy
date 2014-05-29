@@ -32,7 +32,7 @@ class backgroundSlinky(QtGui.QFrame):
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.title_height = self.title_metrics.height()
         self.plot_height = self.plot_metrics.height()
-        self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()  
 
