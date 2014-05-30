@@ -1499,15 +1499,15 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 pcl.lfchght = pcl.lclhght
         
         # EL Possibility
-        if lyre <= 0. and lyrlast >= 0. and not utils.QC(pcl.elpres):
+        if lyre <= 0. and lyrlast >= 0.:
             tp3 = tp1
             te3 = te1
             pe2 = pe1
             pe3 = pelast
             while interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                 pe3 -= 5
-            pcl.elhght = interp.to_agl(prof, interp.hght(prof, pe3))
             pcl.elpres = pe3
+            pcl.elhght = interp.to_agl(prof, interp.hght(prof, pcl.elpres))
             pcl.mplpres = ma.masked
             pcl.limax = -li_max
             pcl.limaxpres = li_maxpres
