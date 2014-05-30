@@ -1473,29 +1473,33 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         else: pcl.b6km = 0.
         
         # LFC Possibility
-        if lyre >= 0. and lyrlast <= 0.:
+        if lyre >= 0. and lyrlast <= 0. and not utils.QC(pcl.lfcpres):
             tp3 = tp1
             te3 = te1
             pe2 = pe1
             pe3 = pelast
-            while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
-                pe3 -= 5
+            if interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                 pcl.lfcpres = pe3
                 pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
-                cinh_old = totn
-                tote = 0.
-                pcl.elpres = ma.masked
-                li_max = -9999.
-                if cap_strength < 0.: cap_strength = 0.
-                pcl.cap = cap_strength
-                pcl.cappres = cap_strengthpres
-                # Hack to force LFC to be at least at the LCL
-                if pcl.lfcpres > pcl.lclpres:
-                    pcl.lfcpres = pcl.lclpres
-                    pcl.lfchght = pcl.lclhght
+            else:
+                while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
+                    pe3 -= 5
+                    pcl.lfcpres = pe3
+                    pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
+                    cinh_old = totn
+                    tote = 0.
+                    pcl.elpres = ma.masked
+                    li_max = -9999.
+                    if cap_strength < 0.: cap_strength = 0.
+                    pcl.cap = cap_strength
+                    pcl.cappres = cap_strengthpres
+            # Hack to force LFC to be at least at the LCL
+            if pcl.lfcpres >= pcl.lclpres:
+                pcl.lfcpres = pcl.lclpres
+                pcl.lfchght = pcl.lclhght
         
         # EL Possibility
-        if lyre <= 0. and lyrlast >= 0.:
+        if lyre <= 0. and lyrlast >= 0. and not utils.QC(pcl.elpres):
             tp3 = tp1
             te3 = te1
             pe2 = pe1
