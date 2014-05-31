@@ -47,7 +47,7 @@ def possible_watch(prof):
     #
     # This function looks at the current SHARPPY profile (prof)
     # and creates a list of possible watch types from this profile
-    # using critera for the different watches, as well as some 
+    # using critera for the different watches, as well as some
     # subjectively determined thresholds.
     #
     # (it would be nice if someone made a database of soundings and watch types
@@ -65,10 +65,10 @@ def possible_watch(prof):
     # - Fire Weather Watch
     # - Excessive Heat Watch
     # - Freeze Watch
-
+    
     watch_types = []
     colors = []
-
+    
     # PDS Tornado Watch if STP(eff) >= 4 and MUCINH < 50. (Uncapped EF-4, EF-5 potential)
     mucinh = prof.mupcl.bminus
     stp_eff = prof.stp_cin
@@ -78,18 +78,32 @@ def possible_watch(prof):
     elif mucinh > -50 and stp_eff >= 1:
         watch_types.append("TOR")
         colors.append("#FF0000")
-        # Tornado Watch if STP(eff) >= 1 and MUCINH < 50. or SARS detects tornadoes?
-
-    #wdng = prof.wdng
-    # SVR Watch if SARS mean hail size is > 1 inch or WDNG > 1.
-    #if wdng > 1:
-    #    watch_types.append("SVR")
-    #    colors.append('#FFFF00')
-
+    # Tornado Watch if STP(eff) >= 1 and MUCINH < 50. or SARS detects tornadoes?
+    
+    # SVR Watch if SHIP is > 1 inch.
+    downshear = utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
+    if prof.ship >= 4 or (downshear[1] > 60 and prof.mid_rh<40 and prof.mupcl.bplus > 3000):
+        # Checking for large hail and high wind potential via derecho
+        # looking for strong downdrafts via evaporative cooling
+        watch_types.append('PDS SVR')
+        colors.append("#FFFF00")
+    elif prof.ship > 1:
+        watch_types.append("SVR")
+        colors.append('#FFFF00')
+    
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
     # This is trying to capture the ingredients of moisture and advection speed, but cannot
     # handle precipitation efficiency or vertical motion
-
+    pw_climo_flag = prof.pwv_flag
+    pwat = prof.pwat
+    upshear = utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
+    if pw_climo_flag >= 2 and upshear[1] < 25:
+        watch_types.append("FLASH FLOOD")
+        colors.append("#5FFB17")
+    elif pwat > 1.3 and upshear[1] < 25:
+        watch_types.append("FLASH FLOOD")
+        colors.append("#5FFB17")
+    
     # Blizzard Watch if sfc winds > 35 mph and precip type detects snow
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
     if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 32:
@@ -101,17 +115,17 @@ def possible_watch(prof):
     if wind_chill(prof) < -20.:
         watch_types.append("WIND CHILL")
         colors.append("#3366FF")
-
+    
     # Fire WX Watch (sfc RH < 30% and sfc_wind speed > 15 mph)
     if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
         watch_types.append("FIRE WEATHER")
         colors.append("#FF9900")
-
+    
     # Excessive Heat Watch (if Max_temp > 105 F and sfc dewpoint > 75 F)
     if prof.dwpc[prof.get_sfc()] > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
-
+    
     # Freeze Watch (checks to see if dewpoint is below freezing and temperature isn't and wind speeds are low)
     if prof.dwpc[prof.get_sfc()] < 32. and prof.tmpc[prof.get_sfc()] > 32. and prof.wspd[prof.get_sfc()] < 5.:
         watch_types.append("FREEZE")
@@ -119,5 +133,6 @@ def possible_watch(prof):
     
     watch_types.append("NONE")
     colors.append("#FFCC33")
-
+    
     return np.asarray(watch_types), np.asarray(colors)
+
