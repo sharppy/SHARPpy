@@ -163,7 +163,7 @@ class plotSpeed(backgroundSpeed):
         trop_level_color = QtGui.QColor("#00FFFF")
         ## initialize a pen starting with the low level color,
         ## thickness of 2, solid line.
-        pen = QtGui.QPen(low_level_color, 2)
+        pen = QtGui.QPen(low_level_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the data mask
         try:
