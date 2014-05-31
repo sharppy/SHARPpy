@@ -1,4 +1,5 @@
 from sharppy.sharptab import params
+from datetime import datetime
 import numpy as np
 import os
 
@@ -82,7 +83,7 @@ def get_stdev_pwv(station):
     stdev_pwv = pwv_stdevs[station_idx, 3:][0].astype(np.float)
     return stdev_pwv
 
-def pwv_climo(prof, station, month):
+def pwv_climo(prof, station, month=None):
     # month is an integer from 1-12
     # station_id_3 is the station ID (lower case)
     # prof is the profile object
@@ -98,6 +99,9 @@ def pwv_climo(prof, station, month):
     # If the returned value is -x, the PWV lies outside -x standard deviations of the mean
     # If the returned value is 0, the PWV lies within 1 standard deviation of the mean
     #
+    
+    if not month:
+        month = datetime.now().month
 
     # Calculate the PWV up to 300 mb so it's consistent with the PWV Climo
     pwv_300 = params.precip_water(prof, pbot=None, ptop=300)
