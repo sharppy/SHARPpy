@@ -177,7 +177,9 @@ class plotSlinky(backgroundSlinky):
             x = i[0]
             y = i[1]
             z = i[2]
-            if z < 3000:
+            if z == self.slinky_traj[-1][2]:
+                pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
+            elif z < 3000:
                 pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 6000:
                 pen = QtGui.QPen(mid_level_color, 1, QtCore.Qt.SolidLine)
@@ -185,11 +187,8 @@ class plotSlinky(backgroundSlinky):
                 pen = QtGui.QPen(upper_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 12000:
                 pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
-            elif z == self.slinky_traj[-1][2]:
-                pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
             else:
                 continue
-            
             qp.setPen(pen)
             xx, yy = self.xy_to_pix(x,y)
             center = QtCore.QPointF(xx, yy)
