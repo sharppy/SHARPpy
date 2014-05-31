@@ -268,9 +268,6 @@ class plotText(backgroundText):
         --------
         qp: QtGui.QPainter object
         '''
-        ## initialize a white pen with width 2 as a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
         qp.setFont(self.label_font)
         ## make the initial x point relatice to the width of the frame.
         x1 = self.brx / 10
@@ -290,7 +287,31 @@ class plotText(backgroundText):
         rect5 = QtCore.QRect(rpad, y1*14, x1*8, self.label_height)
         rect6 = QtCore.QRect(rpad, y1*15, x1*8, self.label_height)
         rect7 = QtCore.QRect(rpad, y1*16, x1*8, self.label_height+self.tpad)
+        if self.prof.pwv_flag == -3:
+            color = QtGui.QColor('#DA9167')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        elif self.prof.pwv_flag == -2:
+            color = QtGui.QColor('#FFE1B7')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        elif self.prof.pwv_flag == -1:
+            color = QtGui.QColor('#FFFFD5')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        elif self.prof.pwv_flag == 0:
+            color = QtGui.QColor('#FFFFFF')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        elif self.prof.pwv_flag == 1:
+            color = QtGui.QColor('#D6FFD6')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        elif self.prof.pwv_flag == 2:
+            color = QtGui.QColor('#A4CDA4')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        else:
+            color = QtGui.QColor('#008000')
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + self.pwat + 'in')
+        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MeanW = ' + self.mean_mixr + 'g/kg')
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'LowRH = ' + self.low_rh + '%')
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MidRH = ' + self.mid_rh + '%')
