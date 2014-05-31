@@ -36,10 +36,14 @@ if sys.argv[1] != "test":
 
         
     url = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/LATEST/' + str( sys.argv[1] ).upper() + '.txt')
-    data = url.read()
-    plot_title = data[9:26] + ' (Observed)'
-    sound_data = StringIO( data )
-    p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", skip_header=6, skip_footer=96, unpack=True )
+    data = np.array(url.read().split('\n'))
+    title_idx = np.where( data == '%TITLE%')[0][0]
+    start_idx = np.where( data == '%RAW%' )[0] + 1
+    finish_idx = np.where( data == '%END%')[0]
+    plot_title = data[title_idx + 1][9:26] + ' (Observed)'
+    full_data = '\n'.join(data[start_idx : finish_idx][:])
+    sound_data = StringIO( full_data )
+    p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
     prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd)
 
 
