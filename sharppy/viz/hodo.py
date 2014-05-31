@@ -495,12 +495,12 @@ class plotHodo(backgroundHodo):
         ## check for masked daata
         try:
             mask = np.maximum(self.u.mask, self.v.mask)
-            z = self.hght[~mask]
+            z = tab.interp.to_agl(self.prof, self.hght[~mask])
             u = self.u[~mask]
             v = self.v[~mask]
         ## otherwise the data is fine
         except:
-            z = self.hght
+            z = tab.interp.to_agl(self.prof, self.hght )
             u = self.u
             v = self.v
         ## convert the u and v values to x and y pixels

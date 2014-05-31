@@ -168,7 +168,7 @@ class plotSpeed(backgroundSpeed):
         ## if there are missing values, get the data mask
         try:
             mask = np.maximum(self.u.mask, self.v.mask)
-            hgt = self.hght[~mask]
+            hgt = tab.interp.to_agl(self.prof, self.hght[~mask])
             pres = self.pres[~mask]
             u = self.u[~mask]
             v = self.v[~mask]
@@ -176,7 +176,7 @@ class plotSpeed(backgroundSpeed):
             spd = np.sqrt( u**2 + v**2 )
         ## otherwise, the data is fine.
         except:
-            hgt = self.hght
+            hgt = tab.interp.to_agl(self.prof, self.hght)
             pres = self.pres
             u = self.u; v = self.v
             ## calculate the windspeed
