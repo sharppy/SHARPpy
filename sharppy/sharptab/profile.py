@@ -61,6 +61,7 @@ class Profile(object):
         self.hght = ma.asanyarray(kwargs.get('hght'))
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'))
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'))
+        self.location = kwargs.get('location')
         self.pres[self.pres == self.missing] = ma.masked
         self.hght[self.hght == self.missing] = ma.masked
         self.tmpc[self.tmpc == self.missing] = ma.masked
@@ -118,6 +119,7 @@ class Profile(object):
         ## calculate the SARS database matches
         self.get_sars()
         ## get the possible watch type
+        self.get_PWV_loc()
         self.get_watch()
         self.get_traj()
 
@@ -508,3 +510,18 @@ class Profile(object):
         else:
             self.slinky_traj = slinky[0]
             self.updraft_tilt = slinky[1]
+
+    def get_PWV_loc(self):
+        '''
+        Function to compute the location of the current PWV with respect to
+        it's sounding climatology from Bunkers.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        '''
+        self.pwv_flag = pwv_climo(self, self.location, month=None)

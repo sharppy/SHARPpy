@@ -40,11 +40,11 @@ if sys.argv[1] != "test":
     title_idx = np.where( data == '%TITLE%')[0][0]
     start_idx = np.where( data == '%RAW%' )[0] + 1
     finish_idx = np.where( data == '%END%')[0]
-    plot_title = data[title_idx + 1][9:26] + ' (Observed)'
+    plot_title = data[title_idx + 1] + ' (Observed)'
     full_data = '\n'.join(data[start_idx : finish_idx][:])
     sound_data = StringIO( full_data )
     p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-    prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd)
+    prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd, location=sys.argv[1])
 
 
 else:
