@@ -166,27 +166,32 @@ class plotSlinky(backgroundSlinky):
         rect0 = QtCore.QRect(self.brx-30, self.tly+2, 30, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, str(round(self.updraft_tilt,0)) + ' deg  ')
 
-    def plotSlinky(self, qp):        
+    def plotSlinky(self, qp):
         low_level_color = QtGui.QColor("#FF0000")
         mid_level_color = QtGui.QColor("#00FF00")
         upper_level_color = QtGui.QColor("#FFFF00")
         trop_level_color = QtGui.QColor("#00FFFF")
         
-        pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
         for i in self.slinky_traj[::-1]:
             x = i[0]
             y = i[1]
             z = i[2]
-            if z < 3000:     
+            if z < 3000:
                 pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 6000:
                 pen = QtGui.QPen(mid_level_color, 1, QtCore.Qt.SolidLine)
-            elif z < 9000:    
+            elif z < 9000:
                 pen = QtGui.QPen(upper_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 12000:
                 pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+            elif z == self.slinky_traj[-1][2]:
+                pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
+            else:
+                continue
+            
             qp.setPen(pen)
             xx, yy = self.xy_to_pix(x,y)
             center = QtCore.QPointF(xx, yy)
-            qp.drawEllipse(center, 6, 6) 
+            qp.drawEllipse(center, 6, 6)
 
