@@ -343,8 +343,14 @@ class plotKinematics(backgroundKinematics):
         ## bunkers motion
         rect0 = QtCore.QRect(x1*5, y1*14+self.tpad, x1, self.label_height)
         rect1 = QtCore.QRect(x1*5, y1*15+self.tpad, x1, self.label_height)
+        pen = QtGui.QPen(QtGui.QColor('#0099CC'), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, bunkers_right)
+        pen = QtGui.QPen(QtGui.QColor('#FF6666'), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, bunkers_left)
+        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         ## upshear and downshear vectors
         rect0 = QtCore.QRect(x1*5, y1*17+self.bpad, x1, self.label_height)
         rect1 = QtCore.QRect(x1*5, y1*18+self.bpad, x1, self.label_height)
