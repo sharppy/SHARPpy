@@ -713,7 +713,7 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
         p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask],prof.pres[ind1:ind2+1][mask], [ptop]])
         totd = dwpt.sum() / 2.
         totp = p.sum() / 2.
-        num = ind2
+        num = float(len(dwpt)) / 2.
         w = thermo.mixratio(totp/num, totd/num)
     
     else:
@@ -761,7 +761,7 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
         mask = ~theta.mask
         theta = np.concatenate([[theta1], theta[mask], theta[mask], [theta2]])
         tott = theta.sum() / 2.
-        num = ind2
+        num = float(len(theta)) / 2.
         thta = tott / num
     else:
         dp = -1
