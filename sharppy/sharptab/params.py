@@ -1484,7 +1484,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         else: pcl.b6km = 0.
         
         # LFC Possibility
-        if lyre >= 0. and lyrlast <= 0. and not utils.QC(pcl.lfcpres):
+        if lyre >= 0. and lyrlast <= 0.:
             tp3 = tp1
             te3 = te1
             pe2 = pe1
