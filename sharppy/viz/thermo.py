@@ -175,8 +175,9 @@ class plotText(backgroundText):
         '''
         ## initialize a pen to draw with.
         pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
         qp.setFont(self.severe_font)
+        color_list = [QtGui.QColor('#993333'), QtGui.QColor('#FFFFFF'),
+            QtGui.QColor('#CC6600'), QtCore.Qt.yellow, QtCore.Qt.red, QtCore.Qt.magenta]
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.bry / 17
@@ -190,10 +191,75 @@ class plotText(backgroundText):
         rect2 = QtCore.QRect(x1*6, y1*12.50+(self.tpad), x1*8, self.severe_height)
         rect3 = QtCore.QRect(x1*6, y1*13.75+(self.tpad), x1*8, self.severe_height)
         rect4 = QtCore.QRect(x1*6, y1*15.00+(self.tpad), x1*8, self.severe_height)
+        if float(right_scp) < 1:
+            pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
+        elif float(right_scp) < 2:
+            pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
+        elif float(right_scp) < 5:
+            pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
+        elif float(right_scp) < 10:
+            pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
+        elif float(right_scp) < 20:
+            pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Supercell = ' + right_scp)
+        if float(left_scp) < 0.5:
+            pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
+        elif float(left_scp) < 1:
+            pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
+        elif float(left_scp) < 15:
+            pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
+        elif float(left_scp) < 20:
+            pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
+        elif float(left_scp) < 30:
+            pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Left Supercell = ' + left_scp)
+        if float(stp_cin) < 0.5:
+            pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
+        elif float(stp_cin) < 2:
+            pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
+        elif float(stp_cin) < 3.5:
+            pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
+        elif float(stp_cin) < 5:
+            pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
+        elif float(stp_cin) < 7:
+            pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (cin) = ' + stp_cin)
+        if float(stp_fixed) < 1:
+            pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 2:
+            pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 4:
+            pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 6:
+            pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 10:
+            pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (fix) = ' + stp_fixed)
+        if float(stp_fixed) < 0.5:
+            pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 1:
+            pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 1.5:
+            pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 2:
+            pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
+        elif float(stp_fixed) < 4:
+            pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sig Hail = ' + ship)
     
     def drawIndices(self, qp):
