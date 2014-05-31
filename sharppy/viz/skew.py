@@ -537,7 +537,7 @@ class plotSkewT(backgroundSkewT):
         path.moveTo(xvals[0], yvals[0])
         for i in range(1, len(yvals)):
             x = xvals[i]; y = yvals[i]
-            if y <= self.tpad:
+            if y < self.tpad:
                 break
             else:
                 path.lineTo(x, y)
@@ -570,7 +570,7 @@ class plotSkewT(backgroundSkewT):
         y = self.pres_to_pix(pres)
         path.moveTo(x[0], y[0])
         for i in range(1, x.shape[0]):
-            if y[i] <= self.tpad:
+            if y[i] < self.tpad:
                 break
             else:
                 qp.save()

@@ -1,6 +1,6 @@
+from sharppy.sharptab import params
 import numpy as np
 import os
-from sharppy.sharptab import params
 
 def get_mean_pwv(station):
     '''
