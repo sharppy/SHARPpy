@@ -100,9 +100,9 @@ def possible_watch(prof):
     if pw_climo_flag >= 2 and upshear[1] < 25:
         watch_types.append("FLASH FLOOD")
         colors.append("#5FFB17")
-    elif pwat > 1.3 and upshear[1] < 25:
-        watch_types.append("FLASH FLOOD")
-        colors.append("#5FFB17")
+    #elif pwat > 1.3 and upshear[1] < 25:
+    #    watch_types.append("FLASH FLOOD")
+    #    colors.append("#5FFB17")
     
     # Blizzard Watch if sfc winds > 35 mph and precip type detects snow
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
