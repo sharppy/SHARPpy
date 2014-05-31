@@ -78,7 +78,7 @@ class DefineParcel(object):
             self.presval = kwargs.get('pres', 100)
             self.__ml(prof, **kwargs)
         elif flag == 5:
-            self.presval = kwargs.get('pres', prof.pres[prof.sfc] - 100)
+            self.presval = kwargs.get('pres', prof.pres[prof.sfc])
             self.__user(prof, **kwargs)
         elif flag == 6:
             self.presval = kwargs.get('pres', 100)
@@ -108,7 +108,8 @@ class DefineParcel(object):
         self.desc = 'Forecast Surface Parcel'
         self.tmpc = max_temp(prof)
         self.pres = prof.pres[prof.sfc]
-        self.dwpc = thermo.temp_at_mixrat(mean_mixratio(prof), self.pres)
+        pbot = self.pres; ptop = self.pres - 100.
+        self.dwpc = thermo.temp_at_mixrat(mean_mixratio(prof, pbot, ptop, exact=True), self.pres)
     
     
     def __mu(self, prof, **kwargs):
@@ -135,9 +136,9 @@ class DefineParcel(object):
         pbot = prof.pres[prof.sfc]
         ptop = pbot - self.presval
         self.pres = pbot
-        mtheta = mean_theta(prof, pbot, ptop)
+        mtheta = mean_theta(prof, pbot, ptop, exact=True)
         self.tmpc = thermo.theta(1000., mtheta, self.pres)
-        mmr = mean_mixratio(prof, pbot, ptop)
+        mmr = mean_mixratio(prof, pbot, ptop, exact=True)
         self.dwpc = thermo.temp_at_mixrat(mmr, self.pres)
     
     
@@ -299,6 +300,8 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
         cinh_term = ((mlcinh + 200.) / 150.)
 
     stp_cin = cape_term * eshr_term * ebwd_term * lcl_term * cinh_term
+    if stp_cin is np.ma.masked:
+        stp_cin = 0.0
     return stp_cin
 
 
@@ -621,8 +624,8 @@ def max_temp(prof, mixlayer=100):
         
         '''
     mixlayer = prof.pres[prof.sfc] - mixlayer
-    temp = thermo.ctok(interp.temp(prof, mixlayer))
-    return thermo.ktoc(temp * (prof.pres[prof.sfc] / mixlayer)**ROCP) + 2
+    temp = thermo.ctok(interp.temp(prof, mixlayer)) + 2
+    return thermo.ktoc(temp * (prof.pres[prof.sfc] / mixlayer)**ROCP)
 
 
 def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
@@ -706,15 +709,19 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
         dwpt1 = interp.dwpt(prof, pbot)
         dwpt2 = interp.dwpt(prof, ptop)
         mask = ~prof.dwpc.mask[ind1:ind2+1] * ~prof.pres.mask[ind1:ind2+1]
-        dwpt = np.concatenate([[dwpt1], prof.dwpc[ind1:ind2+1][mask],
-                               [dwpt2]])
-        p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask], [ptop]])
+        dwpt = np.concatenate([[dwpt1], prof.dwpc[ind1:ind2+1][mask], prof.dwpc[ind1:ind2+1][mask], [dwpt2]])
+        p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask],prof.pres[ind1:ind2+1][mask], [ptop]])
+        totd = dwpt.sum() / 2.
+        totp = p.sum() / 2.
+        num = ind2
+        w = thermo.mixratio(totp/num, totd/num)
+    
     else:
         dp = -1
         p = np.arange(pbot, ptop+dp, dp)
         dwpt = interp.dwpt(prof, p)
-    w = thermo.mixratio(p, dwpt)
-    return ma.average(w, weights=p)
+        w = ma.average(thermo.mixratio(p, dwpt))
+    return w
 
 
 def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
@@ -748,18 +755,21 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
     if exact:
         ind1 = np.where(pbot > prof.pres)[0].min()
         ind2 = np.where(ptop < prof.pres)[0].max()
-        theta1 = thermo.theta(interp.pres(prof, pbot), interp.temp(prof, pbot))
-        theta2 = thermo.theta(interp.pres(prof, ptop), interp.temp(prof, ptop))
-        theta = thermo.theta(prof.pres[ind1:ind2+1], prof.tmpc[ind1:ind2+1])
+        theta1 = thermo.theta(pbot, interp.temp(prof, pbot))
+        theta2 = thermo.theta(ptop, interp.temp(prof, ptop))
+        theta = thermo.theta(prof.pres[ind1:ind2+1],  prof.tmpc[ind1:ind2+1])
         mask = ~theta.mask
-        theta = np.concatenate([[theta1], theta[mask], [theta2]])
-        p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask], [ptop]])
+        theta = np.concatenate([[theta1], theta[mask], theta[mask], [theta2]])
+        tott = theta.sum() / 2.
+        num = ind2
+        thta = tott / num
     else:
         dp = -1
         p = np.arange(pbot, ptop+dp, dp)
         temp = interp.temp(prof, p)
         theta = thermo.theta(p, temp)
-    return ma.average(theta, weights=p)
+        thta = ma.average(theta, weights=p)
+    return thta
 
 
 def lapse_rate(prof, lower, upper, pres=True):
@@ -1265,8 +1275,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm30c = hgtm30c
     
     # Find lowest observation in layer
-    lptr = ma.where(pbot > prof.pres)[0].min()
-    uptr = ma.where(ptop < prof.pres)[0].max()
+    lptr = ma.where(pbot >= prof.pres)[0].min()
+    uptr = ma.where(ptop <= prof.pres)[0].max()
     
     # START WITH INTERPOLATED BOTTOM LAYER
     # Begin moist ascent from lifted parcel LCL (pe2, tp2)
@@ -1288,6 +1298,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         ttrace.append(thermo.virtemp(pe2, tp2, tp2))
         lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
+
         
         # Add layer energy to total positive if lyre > 0
         if lyre > 0: totp += lyre
@@ -1783,7 +1794,7 @@ def convective_temp(prof, **kwargs):
         Convective Temperature (float) in degrees C
         
         '''
-    mincinh = kwargs.get('mincinh', -5.)
+    mincinh = kwargs.get('mincinh', 0.)
     mmr = mean_mixratio(prof)
     pres = kwargs.get('pres', prof.pres[prof.sfc])
     tmpc = kwargs.get('tmpc', prof.tmpc[prof.sfc])
