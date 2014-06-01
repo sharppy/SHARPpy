@@ -251,7 +251,6 @@ class Profile(object):
         self.fcstpcl = params.parcelx( self, flag=2 )
         self.mupcl = params.parcelx( self, flag=3 )
         self.mlpcl = params.parcelx( self, flag=4 )
-        ## get the effective inflow layer
         self.ebottom, self.etop = params.effective_inflow_layer( self, mupcl=self.mupcl )
         self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
         self.etopm = interp.to_agl(self, interp.hght(self, self.etop))

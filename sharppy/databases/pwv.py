@@ -37,9 +37,14 @@ def get_mean_pwv(station):
     pwv_means = np.loadtxt(os.path.dirname( __file__) + '/PW-mean-inches.txt', skiprows=0, dtype=str, delimiter=',')
     sites = pwv_means[1:, id_index]
     ## get the index of the user supplied station - add 1 to account for the header
-    station_idx = np.where( sites == station )[0] + 1
-    ## get the PWV
-    mean_pwv = pwv_means[station_idx, 3:][0].astype(np.float)
+    
+    station_idx = np.where( sites == station )[0]
+    if len(station_idx) == 0:
+        mean_pwv = np.ma.masked
+    else:
+        station_idx = station_idx + 1
+        ## get the PWV
+        mean_pwv = pwv_means[station_idx, 3:][0].astype(np.float)
     return mean_pwv
 
 def get_stdev_pwv(station):
@@ -78,9 +83,13 @@ def get_stdev_pwv(station):
     pwv_stdevs = np.loadtxt(os.path.dirname( __file__) + '/PW-stdev-inches.txt', skiprows=0, dtype=str, delimiter=',')
     sites = pwv_stdevs[1:, id_index]
     ## get the index of the user supplied station - add 1 to account for the header
-    station_idx = np.where( sites == station )[0] + 1
-    ## get the PWV
-    stdev_pwv = pwv_stdevs[station_idx, 3:][0].astype(np.float)
+    station_idx = np.where( sites == station )[0]
+    if len(station_idx) == 0:
+        stdev_pwv = np.ma.masked
+    else:
+        station_idx = station_idx + 1
+        ## get the PWV
+        stdev_pwv = pwv_stdevs[station_idx, 3:][0].astype(np.float)
     return stdev_pwv
 
 def pwv_climo(prof, station, month=None):
@@ -110,6 +119,8 @@ def pwv_climo(prof, station, month=None):
     # Load in the PWV mean and standard deviations
     pwv_means = get_mean_pwv(station)
     pwv_stds = get_stdev_pwv(station)
+    if pwv_means is np.ma.masked:
+        return 0
     
     month_mean = float(pwv_means[month])
     month_std = float(pwv_stds[month])
