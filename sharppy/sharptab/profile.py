@@ -252,8 +252,11 @@ class Profile(object):
         self.mupcl = params.parcelx( self, flag=3 )
         self.mlpcl = params.parcelx( self, flag=4 )
         self.ebottom, self.etop = params.effective_inflow_layer( self, mupcl=self.mupcl )
-        self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
-        self.etopm = interp.to_agl(self, interp.hght(self, self.etop))
+        if self.etop is ma.masked or self.ebottom is ma.masked:
+            self.ebotm = ma.masked; self.etopm = ma.masked
+        else:
+            self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
+            self.etopm = interp.to_agl(self, interp.hght(self, self.etop))
 
     def get_kinematics(self):
         '''
@@ -295,12 +298,12 @@ class Profile(object):
         if self.etop is ma.masked or self.ebottom is ma.masked:
             self.etopm = ma.masked; self.ebotm = ma.masked
             self.srwind = winds.non_parcel_bunkers_motion( self )
-            self.eff_shear = [self.missing, self.missing]
-            self.ebwd = [self.missing, self.missing, self.missing]
-            self.mean_eff = [self.missing, self.missing, self.missing]
-            self.mean_ebw = [self.missing, self.missing, self.missing]
-            self.srw_eff = [self.missing, self.missing, self.missing]
-            self.srw_ebw = [self.missing, self.missing, self.missing]
+            self.eff_shear = [MISSING, MISSING]
+            self.ebwd = [MISSING, MISSING, MISSING]
+            self.mean_eff = [MISSING, MISSING, MISSING]
+            self.mean_ebw = [MISSING, MISSING, MISSING]
+            self.srw_eff = [MISSING, MISSING, MISSING]
+            self.srw_ebw = [MISSING, MISSING, MISSING]
             self.right_esrh = [ma.masked, ma.masked, ma.masked]
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
         else:
