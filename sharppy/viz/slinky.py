@@ -171,8 +171,9 @@ class plotSlinky(backgroundSlinky):
         mid_level_color = QtGui.QColor("#00FF00")
         upper_level_color = QtGui.QColor("#FFFF00")
         trop_level_color = QtGui.QColor("#00FFFF")
-        
         pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+        if self.slinky_traj is np.ma.masked:
+            return
         for i in self.slinky_traj[::-1]:
             x = i[0]
             y = i[1]

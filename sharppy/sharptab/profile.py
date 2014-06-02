@@ -507,8 +507,8 @@ class Profile(object):
         slinky = params.parcelTraj(self, parcel)
     
         if slinky == None:
-            self.slinky_traj = None
-            self.updraft_tilt = None
+            self.slinky_traj = ma.masked
+            self.updraft_tilt = ma.masked
         else:
             self.slinky_traj = slinky[0]
             self.updraft_tilt = slinky[1]
