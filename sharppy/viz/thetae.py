@@ -128,7 +128,7 @@ class backgroundThetae(QtGui.QFrame):
         qp.drawLine(x1, 0, x1, 0+offset)
         qp.drawLine(x1, self.bry+self.tpad-offset,
             x1, self.bry+self.rpad)
-        qp.drawText(x1+10, self.bry-20, 20, 20,
+        qp.drawText(x1, self.bry-20, 15, 20,
             QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
 
     def pres_to_pix(self, p):
@@ -164,6 +164,10 @@ class plotThetae(backgroundThetae):
         Handles when the window is resized
         '''
         super(plotThetae, self).resizeEvent(e)
+        idx = np.where( self.pres > 400. )[0]
+        self.tmin = self.thetae[idx].min() - 10.
+        self.tmax = self.thetae[idx].max() + 10.
+        self.update()
         self.plotData()
     
     def paintEvent(self, e):
