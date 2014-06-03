@@ -31,7 +31,7 @@ class backgroundWinds(QtGui.QFrame):
         ## minimum/maximum height (km) and wind values.
         ## used in converting to pixel units
         self.hmax = 16.; self.hmin = 0.
-        self.smax = 70.; self.smin = 0.
+        self.smax = 80.; self.smin = 0.
         self.label_font = QtGui.QFont('Helvetica', 7)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
@@ -82,11 +82,11 @@ class backgroundWinds(QtGui.QFrame):
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        zero = self.speed_to_pix(20.)
+        zero = self.speed_to_pix(15.)
         qp.drawLine( zero, self.bry, zero, self.tly)
         lower = self.hgt_to_pix(8.)
         upper = self.hgt_to_pix(16.)
-        classic1 = self.speed_to_pix(45.)
+        classic1 = self.speed_to_pix(40.)
         classic2 = self.speed_to_pix(70.)
         pen = QtGui.QPen(QtGui.QColor("#B1019A"), 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
