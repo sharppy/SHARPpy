@@ -83,7 +83,7 @@ class backgroundSTP(QtGui.QFrame):
         texts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
         for i in range(len(y_ticks)):
-            pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
+            pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
             color = QtGui.QColor('#000000')
@@ -172,7 +172,10 @@ class plotSTP(backgroundSTP):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         ef = self.stp_to_pix(self.stp_cin)
-        color = QtGui.QColor('#996600')
+        if ef < 3:
+            color = QtGui.QColor('#996600')
+        else:
+            color = QtGui.QColor('#FF0000')
         pen = QtGui.QPen(color, 1.5, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(0, ef, self.wid, ef)
