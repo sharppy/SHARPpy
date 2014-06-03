@@ -2,7 +2,7 @@ import numpy as np
 import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from sharppy.sharptab.sars import sars_hail
+from sharppy.databases.sars import sars_hail
 from sharppy.sharptab.constants import *
 
 ## routine written by Kelton Halbert
