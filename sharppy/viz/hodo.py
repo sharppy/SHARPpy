@@ -345,6 +345,7 @@ class plotHodo(backgroundHodo):
         self.drawSMV(qp)
         self.drawCorfidi(qp)
         self.drawLCLtoEL_MW(qp)
+        self.drawCriticalAngle(qp)
         qp.end()
     
     def drawLCLtoEL_MW(self, qp):
@@ -484,6 +485,49 @@ class plotHodo(backgroundHodo):
         lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_left_vec[1])
         qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
         qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
+
+    def drawCriticalAngle(self, qp):
+        '''
+        Plot the critical angle on the hodograph and show the value in the hodograph.
+        --------
+        qp : QtGui.QPainter object
+        '''
+
+        if self.ptop is np.ma.masked and self.pbottom is np.ma.masked:
+            pass
+        elif self.prof.pres[self.prof.get_sfc()] == self.pbottom:
+            # There is an effective inflow layer at the surface so draw the critical angle line
+            ca_color = QtGui.QColor("#FF00FF")
+            pres_500m = tab.interp.pres(self.prof, tab.interp.to_msl(self.prof, 500))
+            u500, v500 = tab.interp.components(self.prof, pres_500m)
+            sfc_u, sfc_v = tab.interp.components(self.prof, self.prof.pres[self.prof.get_sfc()])
+            sfc_u_pix, sfc_v_pix = self.uv_to_pix(sfc_u,sfc_v)
+            u500_pix, v500_pix = self.uv_to_pix(u500, v500)
+            pen = QtGui.QPen(ca_color, 1.0, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(sfc_u_pix, sfc_v_pix, u500_pix, v500_pix)
+            vec1_u, vec1_v = u500 - sfc_u, v500 - sfc_v
+            try:
+                mask = np.maximum( self.u, self.v )
+                rstu,rstv,lstu,lstv = self.srwind
+                rstu = rstu[~mask]; rstv = rstv[~mask]
+            except:
+                rstu,rstv,lstu,lstv = self.srwind
+    
+            vec2_u, vec2_v = rstu - sfc_u, rstv - sfc_v
+            vec_1_mag = np.sqrt(np.power(vec1_u, 2) + np.power(vec1_v, 2))
+            vec_2_mag = np.sqrt(np.power(vec2_u, 2) + np.power(vec2_v, 2))
+            dot = vec1_u * vec2_u + vec1_v * vec2_v
+            angle = np.degrees(np.arccos(dot / (vec_1_mag * vec_2_mag)))
+            ca_text_color = QtGui.QColor("#00FFFF")
+            pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.setFont(QtGui.QFont('Helvetica', 11))
+            offset = 10
+            rect = QtCore.QRectF(15, self.bry-36, 140, 12)
+            qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + str(int(round(angle,0))))
+    
+
 
     def draw_hodo(self, qp):
         '''
