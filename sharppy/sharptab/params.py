@@ -2043,13 +2043,23 @@ def dcape(prof):
     sfc_pres = prof.pres[prof.get_sfc()]
     prof_thetae = prof.thetae
     prof_wetbulb = prof.wetbulb
+    mask1 = prof_thetae.mask
+    mask2 = prof_wetbulb.mask
+    mask3 = prof.pres.mask
+    mask = np.maximum( mask1, mask2, mask3 )
+    prof_thetae = prof_thetae[~mask]
+    prof_wetbulb = prof_wetbulb[~mask]
+    pres = prof.pres[~mask]
+    hght = prof.hght[~mask]
+    dwpc = prof.dwpc[~mask]
+    tmpc = prof.tmpc[~mask]
     idx = np.where(prof.pres > sfc_pres - 400.)[0]
     min_idx = np.ma.argmin(prof_thetae[idx])
     downdraft_t1 = prof_wetbulb[min_idx]
-    downdraft_p1 = prof.pres[min_idx]
-    downdraft_z1 = prof.hght[min_idx]
-    downdraft_td1 = prof.dwpc[min_idx]
-    env_tv1 = prof.tmpc[min_idx]
+    downdraft_p1 = pres[min_idx]
+    downdraft_z1 = hght[min_idx]
+    downdraft_td1 = dwpc[min_idx]
+    env_tv1 = tmpc[min_idx]
     #downdraft_q = thermo.mixratio(downdraft_p1, downdraft_t1)
     
     dp = 1
