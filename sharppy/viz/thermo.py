@@ -135,6 +135,13 @@ class plotText(backgroundText):
         self.mid_rh = tab.utils.INT2STR( prof.mid_rh )
         ## calculate the totals totals index
         self.totals_totals = tab.utils.INT2STR( prof.totals_totals )
+        self.dcape = tab.utils.INT2STR( prof.dcape )
+        self.drush = tab.utils.INT2STR( prof.drush )
+        self.sigsevere = tab.utils.INT2STR( prof.sig_severe )
+        self.mmp = tab.utils.FLOAT2STR( prof.mmp, 2 )
+        self.esp = tab.utils.FLOAT2STR( prof.esp, 1 )
+        self.wndg = tab.utils.FLOAT2STR( prof.wndg, 1 )
+        self.tei = tab.utils.INT2STR( prof.tei )
         
         super(plotText, self).__init__()
 
@@ -283,10 +290,12 @@ class plotText(backgroundText):
         rect1 = QtCore.QRect(rpad, y1*6+self.tpad*2, x1*4, self.label_height)
         rect2 = QtCore.QRect(rpad, y1*7+self.tpad*2, x1*4, self.label_height)
         rect3 = QtCore.QRect(rpad, y1*8+self.tpad*2, x1*4, self.label_height)
-        rect4 = QtCore.QRect(rpad, y1*13, x1*8, self.label_height)
-        rect5 = QtCore.QRect(rpad, y1*14, x1*8, self.label_height)
-        rect6 = QtCore.QRect(rpad, y1*15, x1*8, self.label_height)
-        rect7 = QtCore.QRect(rpad, y1*16, x1*8, self.label_height+self.tpad)
+        rect4 = QtCore.QRect(rpad, y1*9+self.tpad*2, x1*8, self.label_height+self.tpad)
+        rect5 = QtCore.QRect(rpad, y1*10+self.tpad*2, x1*8, self.label_height+self.tpad)
+        rect6 = QtCore.QRect(rpad, y1*13, x1*8, self.label_height)
+        rect7 = QtCore.QRect(rpad, y1*14, x1*8, self.label_height)
+        rect8 = QtCore.QRect(rpad, y1*15, x1*8, self.label_height)
+        rect9 = QtCore.QRect(rpad, y1*16, x1*8, self.label_height+self.tpad)
         if self.prof.pwv_flag == -3:
             color = QtGui.QColor('#DA9167')
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
@@ -315,23 +324,32 @@ class plotText(backgroundText):
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MeanW = ' + self.mean_mixr + 'g/kg')
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'LowRH = ' + self.low_rh + '%')
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MidRH = ' + self.mid_rh + '%')
-        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sfc-3km AGL LR = ' + self.lapserate_3km + ' C/km')
-        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '3-6km AGL LR = ' + self.lapserate_3_6km + ' C/km')
-        qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '850-500mb LR = ' + self.lapserate_850_500 + ' C/km')
-        qp.drawText(rect7, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '700-500mb LR = ' + self.lapserate_700_500 + ' C/km')
-    ## middle-left column
+        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'DCAPE = ' + self.dcape)
+        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'DownT = ' + self.drush + 'F')
+        qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Sfc-3km AGL LR = ' + self.lapserate_3km + ' C/km')
+        qp.drawText(rect7, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '3-6km AGL LR = ' + self.lapserate_3_6km + ' C/km')
+        qp.drawText(rect8, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '850-500mb LR = ' + self.lapserate_850_500 + ' C/km')
+        qp.drawText(rect9, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '700-500mb LR = ' + self.lapserate_700_500 + ' C/km')
+        ## middle-left column
         rect0 = QtCore.QRect(x1*3.5, y1*5+self.tpad*2, x1*4, self.label_height)
         rect1 = QtCore.QRect(x1*3.5, y1*6+self.tpad*2, x1*4, self.label_height)
         rect2 = QtCore.QRect(x1*3.5, y1*7+self.tpad*2, x1*4, self.label_height)
         rect3 = QtCore.QRect(x1*3.5, y1*8+self.tpad*2, x1*4, self.label_height)
+        rect4 = QtCore.QRect(x1*3.5, y1*9+self.tpad*2, x1*4, self.label_height)
+        rect5 = QtCore.QRect(x1*3.5, y1*10+self.tpad*2, x1*4, self.label_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'K = ' + self.k_idx)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'TT = ' + self.totals_totals)
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'ConvT = ' + self.convT + 'F')
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'maxT = ' + self.maxT + 'F')
-    ## middle-right column
-    #qp.drawText((x1*15), 70, 60, 20,
-    #        QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
-    #        'FZL = ' + fzl)
+        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'ESP = ' + self.esp)
+        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'MMP = ' + self.mmp)
+        ## middle-right column
+        rect0 = QtCore.QRect(x1*6, y1*5+self.tpad*2, x1*4, self.label_height)
+        rect1 = QtCore.QRect(x1*6, y1*6+self.tpad*2, x1*4, self.label_height)
+        rect2 = QtCore.QRect(x1*6, y1*8+self.tpad*2, x1*4, self.label_height)
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'WNDG = ' + self.wndg)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'TEI = ' + self.tei)
+        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SigSvr = ' + self.sigsevere + ' m3/s3')
 
     
     def drawConvectiveIndices(self, qp):

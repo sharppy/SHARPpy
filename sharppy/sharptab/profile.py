@@ -122,6 +122,7 @@ class Profile(object):
         self.get_PWV_loc()
         self.get_watch()
         self.get_traj()
+        self.get_indices()
 
     def get_sfc(self):
         '''
@@ -300,6 +301,7 @@ class Profile(object):
             self.srwind = winds.non_parcel_bunkers_motion( self )
             self.eff_shear = [MISSING, MISSING]
             self.ebwd = [MISSING, MISSING, MISSING]
+            self.ebwspd = MISSING
             self.mean_eff = [MISSING, MISSING, MISSING]
             self.mean_ebw = [MISSING, MISSING, MISSING]
             self.srw_eff = [MISSING, MISSING, MISSING]
@@ -398,6 +400,7 @@ class Profile(object):
         self.totals_totals = params.t_totals( self )
         ## calculate the inferred temperature advection
         self.inf_temp_adv = params.inferred_temp_adv(self)
+
 
     def get_severe(self):
         '''
@@ -527,3 +530,12 @@ class Profile(object):
         None
         '''
         self.pwv_flag = pwv_climo(self, self.location, month=None)
+
+    def get_indices(self):
+        self.tei = params.tei(self)
+        self.esp = params.esp(self)
+        self.mmp = params.mmp(self)
+        self.wndg = params.wndg(self)
+        self.sig_severe = params.sig_severe(self)
+        self.dcape = params.dcape(self)
+        self.drush = params.downrush_temp(self)

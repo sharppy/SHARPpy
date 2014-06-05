@@ -1869,7 +1869,7 @@ def esp(prof):
 
 
 def mmp(prof):
-    
+
     '''
         MCS Maintenance Probability (MMP)
         The probability that a mature MCS will maintain peak intensity
@@ -1887,22 +1887,33 @@ def mmp(prof):
         -------
         mmp : MMP index (%)
         
-        
-        this part is confusing...the maximum deep shear value
-        
-        is the maximum shear vector magnitude (SVM) between any wind vector
-        
-        in the lowest 1 km and any wind vector in the 6-10 km layer
-        
+        Note:
+        Per Mike Coniglio (personal comm.), the maximum deep shear value is computed by
+        computing the shear vector between all the wind vectors
+        in the lowest 1 km and all the wind vectors in the 6-10 km layer.
+        The maximum speed shear from this is the max_bulk_shear value (m/s).
         '''
-    lr38 = lapse_rate(prof,3000.,8000.)
+    
+    agl_hght = interp.to_agl(prof, prof.hght)
+    lowest_idx = np.where(agl_hght <= 1000)[0]
+    highest_idx = np.where((agl_hght >= 6000) & (agl_hght < 10000))[0]
+    possible_shears = np.empty((len(lowest_idx),len(highest_idx)))
+    pbots = interp.pres(prof, interp.to_msl(prof, agl_hght[lowest_idx]))
+    ptops = interp.pres(prof, interp.to_msl(prof, agl_hght[highest_idx]))
+    for b in range(len(pbots)):
+        for t in range(len(ptops)):
+            u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
+            possible_shears[b,t] = utils.comp2vec(u_shear, v_shear)[1]
+    max_bulk_shear = np.nanmax(possible_shears.flatten())
+    lr38 = lapse_rate(prof, 3000., 8000., pres=False)
     plower = interp.pres(prof, interp.to_msl(prof, 3000.))
     pupper = interp.pres(prof, interp.to_msl(prof, 12000.))
     mean_wind_3t12 = winds.mean_wind( prof, pbot=plower, ptop=pupper)
+    mean_wind_3t12 = utils.mag(mean_wind_3t12[0], mean_wind_3t12[1])
     mucape = prof.mupcl.bplus
     if mucape < 100:
         return 0.
-    
+
     a_0 = 13.0 # unitless
     a_1 = -4.59*10**-2 # m**-1 * s
     a_2 = -1.16 # K**-1 * km
@@ -1910,8 +1921,9 @@ def mmp(prof):
     a_4 = -0.17 # m**-1 * s
     
     mmp = 1. / (1. + np.exp(a_0 + (a_1 * max_bulk_shear) + (a_2 * lr38) + (a_3 * mucape) + (a_4 * mean_wind_3t12)))
-    
-    return mmp * 100.
+
+    return mmp
+
 
 
 
@@ -1937,8 +1949,11 @@ def wndg(prof):
         '''
     
     mlcape = prof.mlpcl.bplus # J/kg
-    lr03 = params.lapse_rate( prof, 0, 3000. ) # C/km
-    mean_wind = winds.mean_wind(prof, pbot=interp.pres(1000.), ptop=interp.pres(3500.)) # needs to be in m/s
+    lr03 = lapse_rate( prof, 0, 3000., pres=False ) # C/km
+    bot = interp.pres( prof, interp.to_msl( prof, 1000. ) )
+    top = interp.pres( prof, interp.to_msl( prof, 3500. ) )
+    mean_wind = winds.mean_wind(prof, pbot=bot, ptop=top) # needs to be in m/s
+    mean_wind = utils.mag(mean_wind[0], mean_wind[1])
     mlcin = prof.mlpcl.bminus # J/kg
     
     if lr03 < 7:
@@ -1965,7 +1980,8 @@ def sig_severe(prof):
         sigsevere : significant severe parameter (m3/s3)
         '''
     mlcape = prof.mlpcl.bplus
-    shr06 = utils.KTS2MS(prof.sfc_6km_shear)
+    sfc_6km_shear = utils.mag(prof.sfc_6km_shear[0], prof.sfc_6km_shear[1])
+    shr06 = utils.KTS2MS(sfc_6km_shear)
     
     sigsevere = mlcape * shr06
     return sigsevere
@@ -2015,10 +2031,8 @@ def dcape(prof):
         
         dn1 = thermo.virtemp(downdraft_p1, downdraft_t1, downdraft_td1)
         dn2 = thermo.virtemp(downdraft_p2, downdraft_t2, downdraft_td2)
-        #dn1 = virtemp(downdraft_p1, downdraft_t1, downdraft_q)
-        #dn2 = virtemp(downdraft_p2, downdraft_t2, downdraft_q)
-        env1 = virtemp(downdraft_p1, env_tv1, interp.dwpt(prof, downdraft_p1))
-        env2 = virtemp(downdraft_p2, env_tv2, interp.dwpt(prof, downdraft_p2))
+        env1 = thermo.virtemp(downdraft_p1, env_tv1, interp.dwpt(prof, downdraft_p1))
+        env2 = thermo.virtemp(downdraft_p2, env_tv2, interp.dwpt(prof, downdraft_p2))
         
         buoyancy_1 = (thermo.ctok(dn1) - thermo.ctok(env1)) / (thermo.ctok(env1))
         buoyancy_2 = (thermo.ctok(dn2) - thermo.ctok(env2)) / (thermo.ctok(env2))
@@ -2061,6 +2075,6 @@ def downrush_temp(prof):
     downdraft_inital_temp = thermo.virtemp(prof.pres[min_idx], downdraft_inital_temp, downdraft_q)
     downdraft_t = thermo.wetlift(prof.pres[idx][min_idx], downdraft_inital_temp, sfc_pres)
     
-    return thermo.ctof(downdraft_t), prof.pres[min_idx]
+    return thermo.ctof(downdraft_t)
 
 
