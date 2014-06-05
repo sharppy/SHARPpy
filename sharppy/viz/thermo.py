@@ -183,8 +183,8 @@ class plotText(backgroundText):
         ## initialize a pen to draw with.
         pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
         qp.setFont(self.severe_font)
-        color_list = [QtGui.QColor('#993333'), QtGui.QColor('#FFFFFF'),
-            QtGui.QColor('#CC6600'), QtCore.Qt.yellow, QtCore.Qt.red, QtCore.Qt.magenta]
+        color_list = [QtGui.QColor('#A05030'), QtGui.QColor('#D0A020'),
+             QtCore.Qt.yellow, QtGui.QColor("#FF4000"), QtCore.Qt.red, QtCore.Qt.magenta]
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.bry / 17
@@ -198,6 +198,7 @@ class plotText(backgroundText):
         rect2 = QtCore.QRect(x1*6, y1*12.50+(self.tpad), x1*8, self.severe_height)
         rect3 = QtCore.QRect(x1*6, y1*13.75+(self.tpad), x1*8, self.severe_height)
         rect4 = QtCore.QRect(x1*6, y1*15.00+(self.tpad), x1*8, self.severe_height)
+        
         if float(right_scp) < 1:
             pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
         elif float(right_scp) < 2:
@@ -226,6 +227,7 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Left Supercell = ' + left_scp)
+        
         if float(stp_cin) < 0.5:
             pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
         elif float(stp_cin) < 2:
@@ -240,6 +242,7 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (cin) = ' + stp_cin)
+        
         if float(stp_fixed) < 1:
             pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
         elif float(stp_fixed) < 2:
@@ -254,15 +257,17 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'STP (fix) = ' + stp_fixed)
-        if float(stp_fixed) < 0.5:
+       
+        # These thresholds are based off of the 10, 25, 50, 75, 90th percentiles of the SARS SHIP column
+        if float(ship) < 0.3:
             pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
-        elif float(stp_fixed) < 1:
+        elif float(ship) < 6:
             pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
-        elif float(stp_fixed) < 1.5:
+        elif float(ship) < 1.1:
             pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
-        elif float(stp_fixed) < 2:
+        elif float(ship) < 1.9:
             pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
-        elif float(stp_fixed) < 4:
+        elif float(ship) < 2.7:
             pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
         else:
             pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
