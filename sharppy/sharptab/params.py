@@ -1866,7 +1866,43 @@ def esp(prof):
     esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
     return esp
 
+def sherb(prof, effective=False):
+    '''
+        Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter
 
+        A composite parameter designed to assist forecasters in the High-Shear
+        Low CAPE (HSLC) environment.  This allows better discrimination 
+        between significant severe and non-severe convection in HSLC enviroments.
+
+        It can detect significant tornadoes and significant winds.  Values above
+        1 are more likely associated with significant severe.
+
+        See Sherburn et. al. 2014 WAF for more information
+
+        Parameters
+        ----------
+        prof : Profile object
+        effective : True or False...designates whether or not we use the effective computation or not
+
+        Returns
+        -------
+        sherb : an integer for the SHERB parameter
+        
+        sherb will be MISSING value if effective=True and there is no effective layer 
+        '''
+
+    lr03 = lapse_rate(prof, 0, 3000, pres=False)
+    lr75 = lapse_rate(prof, 700, 500, pres=True)
+    if effective == False:
+        p3km = interp.pres(prof, interp.to_msl(prof, 3000))
+        sfc_pres = prof.pres[prof.get_sfc()]
+        shear = utils.KTS2MS(winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km))
+        sherb = ( shear / 26. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
+    else:
+        shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
+        sherb = ( shear / 27. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
+
+    return sherb
 
 def mmp(prof):
     
