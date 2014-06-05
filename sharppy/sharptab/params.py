@@ -1860,10 +1860,10 @@ def esp(prof):
     
     mlcape = prof.mlpcl.b3km # This is the 0-3 km MLCAPE!!!!
     lr03 = prof.lapserate_3km # C/km
-    if lr03 < 7. or mlcape < 250.:
+    if lr03 < 7. or prof.mlpcl.bplus < 250.:
         return 0
-    
     esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
+    
     return esp
 
 def sherb(prof, effective=False):
@@ -1930,6 +1930,11 @@ def mmp(prof):
         The maximum speed shear from this is the max_bulk_shear value (m/s).
         '''
     
+    mucape = prof.mupcl.bplus
+
+    if mucape < 100.:
+        return 0.
+
     agl_hght = interp.to_agl(prof, prof.hght)
     lowest_idx = np.where(agl_hght <= 1000)[0]
     highest_idx = np.where((agl_hght >= 6000) & (agl_hght < 10000))[0]
@@ -1940,15 +1945,13 @@ def mmp(prof):
         for t in range(len(ptops)):
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
             possible_shears[b,t] = utils.comp2vec(u_shear, v_shear)[1]
-    max_bulk_shear = np.nanmax(possible_shears.flatten())
+    max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.flatten()))
     lr38 = lapse_rate(prof, 3000., 8000., pres=False)
     plower = interp.pres(prof, interp.to_msl(prof, 3000.))
     pupper = interp.pres(prof, interp.to_msl(prof, 12000.))
     mean_wind_3t12 = winds.mean_wind( prof, pbot=plower, ptop=pupper)
-    mean_wind_3t12 = utils.mag(mean_wind_3t12[0], mean_wind_3t12[1])
+    mean_wind_3t12 = utils.KTS2MS(utils.mag(mean_wind_3t12[0], mean_wind_3t12[1]))
     mucape = prof.mupcl.bplus
-    if mucape < 100:
-        return 0.
 
     a_0 = 13.0 # unitless
     a_1 = -4.59*10**-2 # m**-1 * s
@@ -1957,11 +1960,8 @@ def mmp(prof):
     a_4 = -0.17 # m**-1 * s
     
     mmp = 1. / (1. + np.exp(a_0 + (a_1 * max_bulk_shear) + (a_2 * lr38) + (a_3 * mucape) + (a_4 * mean_wind_3t12)))
-
+    
     return mmp
-
-
-
 
 def wndg(prof):
     '''
@@ -1989,7 +1989,7 @@ def wndg(prof):
     bot = interp.pres( prof, interp.to_msl( prof, 1000. ) )
     top = interp.pres( prof, interp.to_msl( prof, 3500. ) )
     mean_wind = winds.mean_wind(prof, pbot=bot, ptop=top) # needs to be in m/s
-    mean_wind = utils.mag(mean_wind[0], mean_wind[1])
+    mean_wind = utils.KTS2MS(utils.mag(mean_wind[0], mean_wind[1]))
     mlcin = prof.mlpcl.bminus # J/kg
     
     if lr03 < 7:
@@ -2038,6 +2038,8 @@ def dcape(prof):
         Returns
         -------
         dcape : downdraft CAPE (J/kg)
+        ttrace : downdraft parcel trace temperature (C)
+        ptrace : downdraft parcel trace pressure (mb)
         '''
     
     sfc_pres = prof.pres[prof.get_sfc()]
@@ -2051,7 +2053,10 @@ def dcape(prof):
     downdraft_td1 = prof.dwpc[min_idx]
     env_tv1 = prof.tmpc[min_idx]
     #downdraft_q = thermo.mixratio(downdraft_p1, downdraft_t1)
-    
+   
+    ttrace = [downdraft_t1]
+    ptrace = [downdraft_p1]
+
     dp = 1
     dcape_plus = 0
     dcape_minus = 0
@@ -2059,7 +2064,8 @@ def dcape(prof):
         downdraft_t2 = thermo.wetlift(downdraft_p1, downdraft_t1, downdraft_p2)
         downdraft_z2 = interp.hght(prof, downdraft_p2)
         downdraft_td2 = downdraft_t2
-        
+        ttrace.append(downdraft_t2)
+        ptrace.append(downdraft_p2)
         env_tv2 = interp.temp(prof, downdraft_p2)
         
         delta_z = downdraft_z2 - downdraft_z1
@@ -2083,7 +2089,7 @@ def dcape(prof):
         downdraft_p1 = downdraft_p2
         downdraft_z1 = downdraft_z2
     
-    return dcape_plus + dcape_minus
+    return dcape_plus + dcape_minus, np.asarray(ttrace), np.asarray(ptrace)
 
 def downrush_temp(prof):
     '''

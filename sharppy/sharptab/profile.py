@@ -537,5 +537,5 @@ class Profile(object):
         self.mmp = params.mmp(self)
         self.wndg = params.wndg(self)
         self.sig_severe = params.sig_severe(self)
-        self.dcape = params.dcape(self)
+        self.dcape, self.dpcl_ttrace, self.dpcl_ptrace = params.dcape(self)
         self.drush = params.downrush_temp(self)

@@ -299,6 +299,8 @@ class plotSkewT(backgroundSkewT):
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
+        self.dpcl_ttrace = prof.dpcl_ttrace
+        self.dpcl_ptrace = prof.dpcl_ptrace
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
@@ -428,6 +430,7 @@ class plotSkewT(backgroundSkewT):
             self.draw_height(h, qp)
         if self.pcl is not None:
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
+        self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FFFFFF")
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
@@ -542,7 +545,6 @@ class plotSkewT(backgroundSkewT):
             else:
                 path.lineTo(x, y)
         qp.drawPath(path)
-
 
     def drawTrace(self, data, color, qp, width=3, p=None, stdev=None):
         '''
