@@ -430,7 +430,7 @@ class plotSkewT(backgroundSkewT):
             self.draw_height(h, qp)
         if self.pcl is not None:
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
-        self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FFFFFF")
+        self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
@@ -459,9 +459,8 @@ class plotSkewT(backgroundSkewT):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
-        rect0 = QtCore.QRect(self.lpad*3, 0, 150, self.title_height)
-        rect1 = QtCore.QRect(self.lpad*6, 0, 150, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, self.title)
+        rect0 = QtCore.QRect(self.lpad, 0, 150, self.title_height)
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, self.title)
     
     
     def draw_height(self, h, qp):
