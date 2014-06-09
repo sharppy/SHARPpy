@@ -26,7 +26,7 @@ class backgroundText(QtGui.QFrame):
             "  border-style: solid;"
             "  border-color: #3399CC;}")
         self.label_font = QtGui.QFont('Helvetica')
-        self.label_font.setPointSize(8
+        self.label_font.setPointSize(8)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.label_height = self.label_metrics.height()
         self.severe_font = QtGui.QFont('Helvetica')
