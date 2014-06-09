@@ -53,13 +53,13 @@ class backgroundText(QtGui.QFrame):
         x1 = self.brx / 8
         y1 = self.bry / 17
         ## draw the header for the indices
-        rect0 = QtCore.QRect(x1*0, self.tpad, x1*2, self.label_height)
-        rect1 = QtCore.QRect(x1*1, self.tpad, x1*2, self.label_height)
-        rect2 = QtCore.QRect(x1*2, self.tpad, x1*2, self.label_height)
-        rect3 = QtCore.QRect(x1*3, self.tpad, x1*2, self.label_height)
-        rect4 = QtCore.QRect(x1*4, self.tpad, x1*2, self.label_height)
-        rect5 = QtCore.QRect(x1*5, self.tpad, x1*2, self.label_height)
-        rect6 = QtCore.QRect(x1*6, self.tpad, x1*2, self.label_height)
+        rect0 = QtCore.QRect(x1*0, 1, x1*2, self.label_height)
+        rect1 = QtCore.QRect(x1*1, 1, x1*2, self.label_height)
+        rect2 = QtCore.QRect(x1*2, 1, x1*2, self.label_height)
+        rect3 = QtCore.QRect(x1*3, 1, x1*2, self.label_height)
+        rect4 = QtCore.QRect(x1*4, 1, x1*2, self.label_height)
+        rect5 = QtCore.QRect(x1*5, 1, x1*2, self.label_height)
+        rect6 = QtCore.QRect(x1*6, 1, x1*2, self.label_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'PCL')
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'CAPE')
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'CINH')
@@ -68,7 +68,7 @@ class backgroundText(QtGui.QFrame):
         qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'LFC')
         qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'EL')
         ## draw lines seperating the indices
-        qp.drawLine( 0, y1+self.tpad-1, self.brx, y1+self.tpad-1 )
+        qp.drawLine( 0, y1, self.brx, y1 )
         qp.drawLine( 0, y1*5+self.tpad, self.brx, y1*5+self.tpad )
         qp.drawLine( 0, y1*13-self.tpad, x1*4.5, y1*13-self.tpad )
         qp.drawLine( x1*4.5, self.bry, x1*4.5, y1*10  )
