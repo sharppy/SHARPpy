@@ -204,7 +204,6 @@ class plotText(backgroundText):
         qp.setFont(self.label_font)
         ## make the initial x point relatice to the width of the frame.
         x1 = self.brx / 10
-        y1 = self.bry / 17
         rpad = 5
         tpad = 5
 
@@ -212,37 +211,35 @@ class plotText(backgroundText):
         ## them on the frame.
         ## This starts with the left column.
         
-        rect0 = QtCore.QRect(rpad, y1*6, x1*4, self.label_height)
-
-        if self.prof.pwv_flag == -3:
-            color = QtGui.QColor('#DA9167')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        elif self.prof.pwv_flag == -2:
-            color = QtGui.QColor('#FFE1B7')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        elif self.prof.pwv_flag == -1:
-            color = QtGui.QColor('#FFFFD5')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        elif self.prof.pwv_flag == 0:
-            color = QtGui.QColor('#FFFFFF')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        elif self.prof.pwv_flag == 1:
-            color = QtGui.QColor('#D6FFD6')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        elif self.prof.pwv_flag == 2:
-            color = QtGui.QColor('#A4CDA4')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        else:
-            color = QtGui.QColor('#008000')
-            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + self.pwat + 'in')
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
+        #if self.prof.pwv_flag == -3:
+        #    color = QtGui.QColor('#DA9167')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #elif self.prof.pwv_flag == -2:
+        #    color = QtGui.QColor('#FFE1B7')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #elif self.prof.pwv_flag == -1:
+        #    color = QtGui.QColor('#FFFFD5')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #elif self.prof.pwv_flag == 0:
+        #    color = QtGui.QColor('#FFFFFF')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #elif self.prof.pwv_flag == 1:
+        #    color = QtGui.QColor('#D6FFD6')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #elif self.prof.pwv_flag == 2:
+        #    color = QtGui.QColor('#A4CDA4')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #else:
+        #    color = QtGui.QColor('#008000')
+        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        #qp.setPen(pen)
+        #qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + self.pwat + 'in')
+        #pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        #qp.setPen(pen)
         
-        y1 = self.bry / 17 * 7
-        texts = ['MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
-        indices = [self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
+        y1 = self.bry / 17 * 6
+        texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
+        indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
@@ -274,6 +271,7 @@ class plotText(backgroundText):
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
             y1 += (self.label_height-2)
         qp.drawLine(0, y1+2, self.brx, y1+2)
+        qp.drawLine(x1*7-5, y1+2, x1*7-5, self.bry )
 
     
     def drawConvectiveIndices(self, qp):
