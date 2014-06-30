@@ -33,6 +33,7 @@ class backgroundText(QtGui.QFrame):
         self.label_height = self.severe_metrics.height()
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
+        self.ylast = self.label_height
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
@@ -169,7 +170,7 @@ class plotText(backgroundText):
              QtCore.Qt.yellow, QtGui.QColor("#FF4000"), QtCore.Qt.red, QtCore.Qt.magenta]
         ## needs to be coded.
         x1 = self.brx / 10
-        y1 = self.bry / 17 * 12 + self.tpad
+        y1 = self.ylast + self.tpad
         ship = tab.utils.FLOAT2STR( self.prof.ship, 1 )
         stp_fixed = tab.utils.FLOAT2STR( self.prof.stp_fixed, 1 )
         stp_cin = tab.utils.FLOAT2STR( self.prof.stp_cin, 1 )
@@ -237,24 +238,16 @@ class plotText(backgroundText):
         #pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         #qp.setPen(pen)
         
-        y1 = self.bry / 17 * 6
+        y1 = self.ylast + self.tpad
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
         indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
             y1 += (self.label_height-2)
-        
-        y1 = self.bry / 17 * 12 + self.tpad
-        texts = ['Sfc-3km AGL LR = ', '3-6km AGL LR = ', '850-500mb LR = ', '700-500mb LR = ']
-        indices = [self.lapserate_3km + ' C/km', self.lapserate_3_6km + ' C/km', self.lapserate_850_500 + ' C/km', self.lapserate_700_500 + ' C/km']
-        for text, index in zip(texts, indices):
-            rect = QtCore.QRect(rpad, y1, x1*8, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height-2)
 
         ## middle-left column
-        y1 = self.bry / 17 * 6
+        y1 = self.ylast + self.tpad
         texts = ['K = ', 'TT = ', 'ConvT = ', 'maxT = ', 'ESP = ', 'MMP = ']
         indices = [self.k_idx, self.totals_totals, self.convT + 'F', self.maxT + 'F', self.esp, self.mmp]
         for text, index in zip(texts, indices):
@@ -263,17 +256,26 @@ class plotText(backgroundText):
             y1 += (self.label_height-2)
 
         ## middle-right column
-        y1 = self.bry / 17 * 6
+        y1 = self.ylast + self.tpad
         texts = ['WNDG = ', 'TEI = ', '', '', '', 'SigSvr = ']
         indices = [self.wndg, self.tei, '', '', '', self.sigsevere + ' m3/s3']
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*6, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
             y1 += (self.label_height-2)
+            self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
         qp.drawLine(x1*7-5, y1+2, x1*7-5, self.bry )
 
-    
+        y1 = self.ylast + self.tpad
+        texts = ['Sfc-3km AGL LR = ', '3-6km AGL LR = ', '850-500mb LR = ', '700-500mb LR = ']
+        indices = [self.lapserate_3km + ' C/km', self.lapserate_3_6km + ' C/km', self.lapserate_850_500 + ' C/km', self.lapserate_700_500 + ' C/km']
+        for text, index in zip(texts, indices):
+            rect = QtCore.QRect(rpad, y1, x1*8, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
+            y1 += (self.label_height-2)
+
+
     def drawConvectiveIndices(self, qp):
         '''
         This handles the drawing of the parcel indices.
@@ -287,7 +289,7 @@ class plotText(backgroundText):
         ## make the initial x pixel coordinate relative to the frame
         ## width.
         x1 = self.brx / 8
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         ## get the indices rounded to the nearest int, conver to strings
         ## Start with the surface based parcel.
         sfc_bplus = tab.utils.INT2STR( self.sfcparcel.bplus )
@@ -330,47 +332,48 @@ class plotText(backgroundText):
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height - 2)
         ## CAPE
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_bplus, fcst_bplus, ml_bplus, mu_bplus]
         for text in texts:
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
         ## CINH
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_bminus, fcst_bminus, ml_bminus, mu_bminus]
         for text in texts:
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
         ## LCL
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_lclhght, fcst_lclhght, ml_lclhght, mu_lclhght]
         for text in texts:
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
         ## LI
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_limax, fcst_limax, ml_limax, mu_limax]
         for text in texts:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
         ## LFC
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_lfchght, fcst_lfchght, ml_lfchght, mu_lfchght]
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
         ## EL
-        y1 = self.bry / 17 + self.tpad
+        y1 = self.ylast + self.tpad
         texts = [sfc_elhght, fcst_elhght, ml_elhght, mu_elhght]
         for text in texts:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height-2)
+            self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
 
 
