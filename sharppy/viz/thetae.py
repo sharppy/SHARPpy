@@ -4,13 +4,11 @@ import sharppy.sharptab as tab
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
-## routine written by Kelton Halbert
+## routine written by Kelton Halbert - OU School of Meteorology
 ## keltonhalbert@ou.edu
 
 __all__ = ['backgroundThetae', 'plotThetae']
 
-## routine written by Kelton Halbert
-## keltonhalbert@ou.edu
 
 class backgroundThetae(QtGui.QFrame):
     '''

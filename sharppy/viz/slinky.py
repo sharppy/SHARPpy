@@ -6,6 +6,9 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundSlinky', 'plotSlinky']
 
+## Written by Greg Blumberg - CIMMS
+## wblumberg@ou.edu
+
 class backgroundSlinky(QtGui.QFrame):
     '''
     Draw the background frame and lines for the Storm Slinky plot frame

@@ -1,7 +1,10 @@
 import numpy as np
 import os
 
-## routine written by Greg Blumberg
+## original database and code provided by
+## Ryan Jewell - NOAA Storm Prediction Center
+
+## Routine implemented in Python by Greg Blumberg - CIMMS
 ## wblumberg@ou.edu
 
 def sars_supercell():
@@ -90,7 +93,6 @@ def sars_hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
                                (shr6 >= (matshr6 - range_shr6)) & (shr6 <= (matshr6 + range_shr6)) & \
                                (shr9 >= (matshr9 - range_shr9)) & (shr9 <= (matshr9 + range_shr9)) & \
                                (shr3 >= (matshr3 - range_shr3)) & (shr3 <= (matshr3 + range_shr3)))[0]
-
     num_loose_matches = float(len(loose_match_idx))
     hail_sizes = np.asarray(hail_database[:,2], dtype=float)
     num_sig_reports = float(len(np.where(hail_sizes[loose_match_idx] >= 2.)[0]))
@@ -112,7 +114,6 @@ def sars_hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
                                (shr9 >= (matshr9 - range_shr9_t1)) & (shr9 <= (matshr9 + range_shr9_t1)) & \
                                (shr3 >= (matshr3 - range_shr3_t1)) & (shr3 <= (matshr3 + range_shr3_t1)) & \
                                (srh >= (matsrh - range_srh_t1)) & (srh <= (matsrh + range_srh_t1)))[0]
-    
     quality_match_dates = hail_database[quality_match_idx,0]
     quality_match_sizes = np.asarray(hail_database[quality_match_idx,2], dtype=float)
 
@@ -120,6 +121,5 @@ def sars_hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
     max_quality_matches = 15
     quality_match_dates = quality_match_dates[:max_quality_matches]
     quality_match_sizes = quality_match_sizes[:max_quality_matches]
-    
     return quality_match_dates, quality_match_sizes, num_loose_matches, num_sig_reports, prob_sig_hail
 

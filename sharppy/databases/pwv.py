@@ -3,6 +3,12 @@ from datetime import datetime
 import numpy as np
 import os
 
+## written by Greg Blumberg - CIMMS
+## and
+## Kelton Halbert - University of Oklaho,a
+## wblumberg@ou.edu
+## keltonhalbert@ou.edu
+
 def get_mean_pwv(station):
     '''
     Function to get the mean precipitable water vapor (inches) values
@@ -17,6 +23,9 @@ def get_mean_pwv(station):
     -------
     mean_pwv: 1D Array of float values corresponding to the mean PWV
     Jan - December.
+    
+    Written by Greg Blumberg
+    and Kelton Halbert.
     
     '''
     ## a rudimentary check to see what type of station identifier
@@ -64,6 +73,9 @@ def get_stdev_pwv(station):
         from the mean PWV
         Jan - December.
         
+        Written by Greg Blumberg
+        and Kelton Halbert.
+        
         '''
     ## a rudimentary check to see what type of station identifier
     ## was passed through
@@ -93,21 +105,25 @@ def get_stdev_pwv(station):
     return stdev_pwv
 
 def pwv_climo(prof, station, month=None):
-    # month is an integer from 1-12
-    # station_id_3 is the station ID (lower case)
-    # prof is the profile object
+    '''
+    month is an integer from 1-12
+    station_id_3 is the station ID (lower case)
+    prof is the profile object
 
-    # This function uses the PWV climatology databases provided by Matt Bunker (NWS/UNR)
-    # and accepts a SHARPPY profile object, the station name, and the month
-    # and returns to the user a number indicating where in the distribution the profile's PWV
-    # value lies.  This function is used in SHARPPY to help provide the user climatological  
-    # context of the PWV index they are viewing.
-    #
-    # x can equal 0, 1, 2, or 3
-    # If the returned value is x, the PWV lies outside +x standard deviations of the mean
-    # If the returned value is -x, the PWV lies outside -x standard deviations of the mean
-    # If the returned value is 0, the PWV lies within 1 standard deviation of the mean
-    #
+    This function uses the PWV climatology databases provided by Matt Bunker (NWS/UNR)
+    and accepts a SHARPPY profile object, the station name, and the month
+    and returns to the user a number indicating where in the distribution the profile's PWV
+    value lies.  This function is used in SHARPPY to help provide the user climatological
+    context of the PWV index they are viewing.
+    
+    x can equal 0, 1, 2, or 3
+    If the returned value is x, the PWV lies outside +x standard deviations of the mean
+    If the returned value is -x, the PWV lies outside -x standard deviations of the mean
+    If the returned value is 0, the PWV lies within 1 standard deviation of the mean
+    
+    Written by Greg Blumberg
+    and Kelton Halbert.
+    '''
     
     if not month:
         month = datetime.now().month

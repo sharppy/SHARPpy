@@ -4,11 +4,14 @@ import sharppy.sharptab as tab
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
+## Written by Kelton Halbert - OU School of Meteorology
+## and Greg Blumberg - CIMMS
+
 __all__ = ['backgroundWatch', 'plotWatch']
 
 class backgroundWatch(QtGui.QFrame):
     '''
-    Draw the background frame and lines for the Theta-E plot frame
+    Draw the background frame and lines for the watch plot frame
     '''
     def __init__(self):
         super(backgroundWatch, self).__init__()
@@ -57,18 +60,19 @@ class backgroundWatch(QtGui.QFrame):
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
-        y1 = self.bry / 13
-        rect0 = QtCore.QRect(0, 5, self.brx, self.title_height)
+        y1 = self.bry / 13.
+        pad = self.bry / 100.
+        rect0 = QtCore.QRect(0, pad*4, self.brx, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Psbl Watch Type')
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        qp.drawLine(0, y1*2, self.brx, y1*2)
+        qp.drawLine(0, pad*4 + (self.title_height + 3), self.brx, pad*4 + (self.title_height + 3))
     
     def plotBackground(self):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        qp.setRenderHint(qp.Antialiasing)
-        qp.setRenderHint(qp.TextAntialiasing)
+        #qp.setRenderHint(qp.Antialiasing)
+        #qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -112,8 +116,8 @@ class plotWatch(backgroundWatch):
         pen = QtGui.QPen(QtGui.QColor(self.watch_type_color), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
         qp.setFont(self.plot_font)
-        rect0 = QtCore.QRect(4,4,4,5)
-        rect0 = QtCore.QRect(2, 65, self.brx, self.title_height)
+        centery = self.bry / 2.
+        rect0 = QtCore.QRect(0, centery, self.brx, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.watch_type)
         qp.end()
 

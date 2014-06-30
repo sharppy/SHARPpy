@@ -2042,13 +2042,12 @@ def dcape(prof):
         ptrace : downdraft parcel trace pressure (mb)
         '''
     
-    sfc_pres = prof.pres[prof.get_sfc()]
+    sfc_pres = prof.pres[prof.sfc]
     prof_thetae = prof.thetae
     prof_wetbulb = prof.wetbulb
     mask1 = prof_thetae.mask
-    mask2 = prof_wetbulb.mask
-    mask3 = prof.pres.mask
-    mask = np.maximum( mask1, mask2, mask3 )
+    mask2 = prof.pres.mask
+    mask = np.maximum( mask1, mask2 )
     prof_thetae = prof_thetae[~mask]
     prof_wetbulb = prof_wetbulb[~mask]
     pres = prof.pres[~mask]
@@ -2062,7 +2061,6 @@ def dcape(prof):
     downdraft_z1 = hght[min_idx]
     downdraft_td1 = dwpc[min_idx]
     env_tv1 = tmpc[min_idx]
-    #downdraft_q = thermo.mixratio(downdraft_p1, downdraft_t1)
    
     ttrace = [downdraft_t1]
     ptrace = [downdraft_p1]
@@ -2079,7 +2077,7 @@ def dcape(prof):
         env_tv2 = interp.temp(prof, downdraft_p2)
         
         delta_z = downdraft_z2 - downdraft_z1
-        g = 9.81 # m/s^2
+        g = G # m/s^2
         
         dn1 = thermo.virtemp(downdraft_p1, downdraft_t1, downdraft_td1)
         dn2 = thermo.virtemp(downdraft_p2, downdraft_t2, downdraft_td2)
@@ -2090,6 +2088,7 @@ def dcape(prof):
         buoyancy_2 = (thermo.ctok(dn2) - thermo.ctok(env2)) / (thermo.ctok(env2))
         
         d_dcape = (g * (delta_z/2.) * (buoyancy_1 + buoyancy_2))
+        
         if d_dcape >= 0:
             dcape_plus = dcape_plus + d_dcape
         else:
@@ -2117,7 +2116,7 @@ def downrush_temp(prof):
         dtemp : downdraft temperature (F)
         '''
     
-    sfc_pres = prof.pres[prof.get_sfc()]
+    sfc_pres = prof.pres[prof.sfc]
     prof_thetae = prof.thetae
     prof_wetbulb = prof.wetbulb
     idx = np.where(prof.pres > sfc_pres - 400.)[0]

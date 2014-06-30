@@ -161,4 +161,4 @@ else:
 	   15.0,  28467,  -44.9,  -74.9,      2,   0.10,  -9999.00,  -999.00,  757.8,  758.8,  757.8'''
 	sound_data = StringIO( sound )
 	p2, h2, T2, Td2, Rh2, mix, wdir2, wspd2, thta, thte, thtv = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-	test = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2 )
+	test = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2, location='OUN' )
