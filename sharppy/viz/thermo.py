@@ -26,11 +26,8 @@ class backgroundText(QtGui.QFrame):
             "  border-style: solid;"
             "  border-color: #3399CC;}")
         self.label_font = QtGui.QFont('Helvetica', 10)
-        self.severe_font = QtGui.QFont('Helvetica', 12)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.severe_metrics = QtGui.QFontMetrics( self.severe_font )
         self.label_height = self.label_metrics.height()
-        self.label_height = self.severe_metrics.height()
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
         self.ylast = self.label_height
@@ -194,7 +191,7 @@ class plotText(backgroundText):
                 pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label + index)
-            y1 += (self.label_height-1)
+            y1 += (self.label_height)
     
     def drawIndices(self, qp):
         '''
@@ -244,7 +241,7 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
 
         ## middle-left column
         y1 = self.ylast + self.tpad
@@ -253,7 +250,7 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*3.5, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
 
         ## middle-right column
         y1 = self.ylast + self.tpad
@@ -262,7 +259,7 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*6, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
         qp.drawLine(x1*7-5, y1+2, x1*7-5, self.bry )
@@ -273,7 +270,7 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(rpad, y1, x1*8, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
 
 
     def drawConvectiveIndices(self, qp):
@@ -330,49 +327,49 @@ class plotText(backgroundText):
         for text in texts:
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height - 2)
+            y1 += (self.label_height)
         ## CAPE
         y1 = self.ylast + self.tpad
         texts = [sfc_bplus, fcst_bplus, ml_bplus, mu_bplus]
         for text in texts:
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
         ## CINH
         y1 = self.ylast + self.tpad
         texts = [sfc_bminus, fcst_bminus, ml_bminus, mu_bminus]
         for text in texts:
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
         ## LCL
         y1 = self.ylast + self.tpad
         texts = [sfc_lclhght, fcst_lclhght, ml_lclhght, mu_lclhght]
         for text in texts:
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
         ## LI
         y1 = self.ylast + self.tpad
         texts = [sfc_limax, fcst_limax, ml_limax, mu_limax]
         for text in texts:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
         ## LFC
         y1 = self.ylast + self.tpad
         texts = [sfc_lfchght, fcst_lfchght, ml_lfchght, mu_lfchght]
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
         ## EL
         y1 = self.ylast + self.tpad
         texts = [sfc_elhght, fcst_elhght, ml_elhght, mu_elhght]
         for text in texts:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height-2)
+            y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
 
