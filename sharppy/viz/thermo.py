@@ -25,11 +25,11 @@ class backgroundText(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-        self.label_font = QtGui.QFont('Helvetica', 10)
-        self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.label_height = self.label_metrics.lineSpacing()
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
+        self.label_font = QtGui.QFont('Helvetica', 10)
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
         self.wid = self.size().width()
         self.hgt = self.size().height()
