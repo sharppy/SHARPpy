@@ -27,7 +27,7 @@ class backgroundText(QtGui.QFrame):
             "  border-color: #3399CC;}")
         self.label_font = QtGui.QFont('Helvetica', 10)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.label_height = self.label_metrics.height()
+        self.label_height = self.label_metrics.lineSpacing()
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
         self.ylast = self.label_height
@@ -372,6 +372,7 @@ class plotText(backgroundText):
             y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
+        print self.label_height, self.label_metrics.height()
 
 
 
