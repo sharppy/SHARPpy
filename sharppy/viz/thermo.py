@@ -372,7 +372,7 @@ class plotText(backgroundText):
             y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
-        print self.label_height, self.label_metrics.height()
+        print self.label_height, self.label_metrics.xHeight()
 
 
 
