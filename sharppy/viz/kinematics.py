@@ -224,13 +224,13 @@ class plotKinematics(backgroundKinematics):
         x1 = self.brx / 10
         y1 = self.bry / 19
         origin_x = x1*8.
-        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000')
-        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6')
         pen = QtGui.QPen(QtGui.QColor('#0A74C6'), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        rect0 = QtCore.QRect(x1*7, self.ylast + self.label_height, x1*2, self.label_height)
+        rect0 = QtCore.QRect(x1*7, self.ylast + self.tpad, x1*2, self.label_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '1km & 6km AGL\nWind Barbs' )
+        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000')
+        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6')
     
     
     def drawKinematics(self, qp):
