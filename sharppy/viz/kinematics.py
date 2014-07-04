@@ -25,14 +25,17 @@ class backgroundKinematics(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-        self.label_font = QtGui.QFont('Helvetica', 10)
-        self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.label_height = self.label_metrics.height()
-        self.severe_font = QtGui.QFont('Helvetica', 12)
-        self.severe_metrics = QtGui.QFontMetrics( self.severe_font )
-        self.severe_height = self.severe_metrics.height()
         self.lpad = 5; self.rpad = 5
-        self.tpad = 10; self.bpad = 5
+        self.tpad = 5; self.bpad = 5
+        if self.physicalDpiX() > 75:
+            fsize = 8
+        else:
+            fsize = 10
+        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.label_height = self.label_metrics.xHeight() + self.tpad
+        self.ylast = self.label_height
+        self.barby = 0
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
@@ -51,50 +54,52 @@ class backgroundKinematics(QtGui.QFrame):
         qp.setFont(self.label_font)
         ## make the initial x value relative to the width of the frame
         x1 = self.brx / 10
-        y1 = self.bry / 19
-        ## draw the header for the indices
-        rect0 = QtCore.QRect(x1*1, 5, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*3, 5, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*5, 5, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*7, 5, x1, self.label_height)
-        rect4 = QtCore.QRect(x1*9-self.rpad, 5, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '')
+        y1 = self.ylast + self.tpad
+        ## draw the header
+        rect1 = QtCore.QRect(x1*3, 3, x1, self.label_height)
+        rect2 = QtCore.QRect(x1*5, 3, x1, self.label_height)
+        rect3 = QtCore.QRect(x1*7, 3, x1, self.label_height)
+        rect4 = QtCore.QRect(x1*9-self.rpad, 3, x1, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'SRH (m2/s2)')
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Shear (kt)')
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'MnWind')
         qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'SRW')
-        ## draw the column static text
-        rect0 = QtCore.QRect(self.lpad, y1*1+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(self.lpad, y1*2+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(self.lpad, y1*3+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(self.lpad, y1*5+self.tpad, x1, self.label_height)
-        rect4 = QtCore.QRect(self.lpad, y1*6+self.tpad, x1, self.label_height)
-        rect5 = QtCore.QRect(self.lpad, y1*7+self.tpad, x1, self.label_height)
-        rect6 = QtCore.QRect(self.lpad, y1*8+self.tpad, x1, self.label_height)
-        rect7 = QtCore.QRect(self.lpad, y1*10+self.tpad, x1, self.label_height)
-        rect8 = QtCore.QRect(self.lpad, y1*11+self.tpad, x1, self.label_height)
-        rect9 = QtCore.QRect(self.lpad, y1*13+self.tpad, x1, self.label_height)
-        rect10 = QtCore.QRect(self.lpad, y1*14+self.tpad, x1, self.label_height)
-        rect11 = QtCore.QRect(self.lpad, y1*15+self.tpad, x1, self.label_height)
-        rect12 = QtCore.QRect(self.lpad, y1*17+self.bpad, x1, self.label_height)
-        rect13 = QtCore.QRect(self.lpad, y1*18+self.bpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SFC-1km')
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SFC-3km')
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Eff Inflow Layer')
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SFC-6km')
-        qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SFC-8km')
-        qp.drawText(rect5, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'LCL-EL (Cloud Layer)')
-        qp.drawText(rect6, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Eff Shear (EBWD)')
-        qp.drawText(rect7, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'BRN Shear = ')
-        qp.drawText(rect8, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '4-6km SR Wind = ')
-        qp.drawText(rect9, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, '...Storm Motion Vectors...')
-        qp.drawText(rect10, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Bunkers Right = ')
-        qp.drawText(rect11, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Bunkers Left = ')
-        qp.drawText(rect12, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Corfidi Downshear = ')
-        qp.drawText(rect13, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Corfidi Upshear = ')
-        
+        ## left column
+        ## first block
+        texts = ['SFC-1km', 'SFC-3km', 'Eff Inflow Layer',]
+        for text in texts:
+            rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
+            y1 += self.label_height
+        self.ylast = y1
+        ## second block
+        texts = ['SFC-6km', 'SFC-8km','LCL-EL (Cloud Layer)', 'Eff Shear (EBWD)']
+        y1 = self.ylast + self.tpad
+        for text in texts:
+            rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
+            y1 += self.label_height
+        self.ylast = y1
+        ## third block
+        texts = ['BRN Shear = ', '4-6km SR Wind = ']
+        y1 = self.ylast + self.tpad
+        for text in texts:
+            rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
+            y1 += self.label_height
+        self.ylast = y1
+        ## fourth block
+        texts = ['...Storm Motion Vectors...', 'Bunkers Right = ', 'Bunkers Left = ', 'Corfidi Downshear = ', 'Corfidi Upshear = ']
+        y1 = self.ylast + self.tpad
+        self.barby = y1
+        for text in texts:
+            rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
+            y1 += self.label_height
+        self.ylast = self.label_height
+
         ## draw lines seperating the indices
-        qp.drawLine( 0, (self.bry/17)+4, self.brx, (self.bry/17)+4 )
+        qp.drawLine( 0, self.ylast+2, self.brx, self.ylast+2 )
     
     def resizeEvent(self, e):
         '''
@@ -109,8 +114,6 @@ class backgroundKinematics(QtGui.QFrame):
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        qp.setRenderHint(qp.Antialiasing)
-        qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
         self.draw_frame(qp)
         qp.end()
@@ -220,14 +223,13 @@ class plotKinematics(backgroundKinematics):
     def drawBarbs(self, qp):
         x1 = self.brx / 10
         y1 = self.bry / 19
-        origin_x = x1*8.5
-        origin_y = y1*14
-        drawBarb(qp, origin_x, origin_y, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000')
-        drawBarb(qp, origin_x, origin_y, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6')
+        origin_x = x1*8.
+        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000')
+        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6')
         pen = QtGui.QPen(QtGui.QColor('#0A74C6'), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        rect0 = QtCore.QRect(x1*7, y1*18, x1*2, self.label_height)
+        rect0 = QtCore.QRect(x1*7, self.ylast + self.label_height, x1*2, self.label_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '1km & 6km AGL\nWind Barbs' )
     
     
@@ -242,7 +244,7 @@ class plotKinematics(backgroundKinematics):
         qp.setPen(pen)
         qp.setFont(self.label_font)
         x1 = self.brx / 10
-        y1 = self.bry / 19
+        y1 = self.ylast + self.tpad
         ## format the text
         srh1km = str(np.int(self.srh1km[0]))
         srh3km = str(np.int(self.srh3km[0]))
@@ -281,79 +283,92 @@ class plotKinematics(backgroundKinematics):
         downshear = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(self.downshear[1]) + ' kt'
         
         ## sfc-1km
-        rect0 = QtCore.QRect(x1*3, y1*1+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*1+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*1+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*1+self.tpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srh1km)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, sfc1km)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_1km)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_1km)
+        texts = [srh1km, sfc1km, mean_1km, srw_1km]
+        count = 3
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += self.label_height
+        self.ylast = y1
         ## sfc-3km
-        rect0 = QtCore.QRect(x1*3, y1*2+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*2+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*2+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*2+self.tpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srh3km)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, sfc3km)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_3km)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_3km)
+        texts = [srh3km, sfc3km, mean_3km, srw_3km]
+        count = 3
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += self.label_height
+        self.ylast = y1
         ## Effective Inflow Layer
-        rect0 = QtCore.QRect(x1*3, y1*3+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*3+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*3+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*3+self.tpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, esrh)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, eff_lr)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_eff)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_eff)
+        texts = [esrh, eff_lr, mean_eff, srw_eff]
+        count = 3
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += (self.label_height + self.tpad)
+        self.ylast = y1
         ## sfc-6km
-        rect1 = QtCore.QRect(x1*5, y1*5+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*5+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*5+self.tpad, x1, self.label_height)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, sfc6km)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_6km)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_6km)
+        texts = [sfc6km, mean_6km, srw_6km]
+        count = 5
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += self.label_height
+        self.ylast = y1
         ## sfc-8km
-        rect1 = QtCore.QRect(x1*5, y1*6+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*6+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*6+self.tpad, x1, self.label_height)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, sfc8km)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_8km)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_8km)
+        texts = [sfc8km, mean_8km, srw_8km]
+        count = 5
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += self.label_height
+        self.ylast = y1
         ## LCL-EL
-        rect1 = QtCore.QRect(x1*5, y1*7+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*7+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*7+self.tpad, x1, self.label_height)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, lcl_el)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_lcl_el)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_lcl_el)
+        texts = [lcl_el, mean_lcl_el, srw_lcl_el]
+        count = 5
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += self.label_height
+        self.ylast = y1
         ## Effective Shear
-        rect1 = QtCore.QRect(x1*5, y1*8+self.tpad, x1, self.label_height)
-        rect2 = QtCore.QRect(x1*7, y1*8+self.tpad, x1, self.label_height)
-        rect3 = QtCore.QRect(x1*9, y1*8+self.tpad, x1, self.label_height)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, efbwd)
-        qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, mean_ebw)
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_ebw)
+        texts = [efbwd, mean_ebw, srw_ebw]
+        count = 5
+        for text in texts:
+            rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            count += 2
+        y1 += (self.label_height + self.tpad)
+        self.ylast = y1
         ## BRN Shear and 4-6km SR Wind
-        rect0 = QtCore.QRect(x1*5, y1*10+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*11+self.tpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, brn_shear)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, srw_4_5km)
+        texts = [brn_shear, srw_4_5km]
+        for text in texts:
+            rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            y1 += self.label_height
+        self.ylast = y1
+        y1 += (self.label_height + self.tpad)
         ## bunkers motion
-        rect0 = QtCore.QRect(x1*5, y1*14+self.tpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*15+self.tpad, x1, self.label_height)
-        pen = QtGui.QPen(QtGui.QColor('#0099CC'), 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, bunkers_right)
-        pen = QtGui.QPen(QtGui.QColor('#FF6666'), 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, bunkers_left)
+        texts = [bunkers_right, bunkers_left]
+        colors =[QtGui.QColor('#0099CC'), QtGui.QColor('#FF6666')]
+        for text, color in zip(texts, colors):
+            rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            y1 += self.label_height
+        self.ylast = y1
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## upshear and downshear vectors
-        rect0 = QtCore.QRect(x1*5, y1*17+self.bpad, x1, self.label_height)
-        rect1 = QtCore.QRect(x1*5, y1*18+self.bpad, x1, self.label_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, downshear)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, upshear)
+        texts = [downshear, upshear]
+        for text in texts:
+            rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
+            y1 += self.label_height
 
