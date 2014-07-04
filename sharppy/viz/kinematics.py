@@ -91,7 +91,7 @@ class backgroundKinematics(QtGui.QFrame):
         ## fourth block
         texts = ['...Storm Motion Vectors...', 'Bunkers Right = ', 'Bunkers Left = ', 'Corfidi Downshear = ', 'Corfidi Upshear = ']
         y1 = self.ylast + self.tpad
-        self.barby = y1
+        self.barby = y1 + self.tpad
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
