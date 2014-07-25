@@ -422,7 +422,8 @@ class Profile(object):
         -------
         None
         '''
-        self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], self.sfc_6km_shear)
+        wspd = utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])
+        self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], wspd)
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
             self.stp_cin = 0.0
