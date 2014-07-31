@@ -14,10 +14,16 @@ class backgroundAnalogues(QtGui.QFrame):
     Handles drawing the background frame.
     '''
     def __init__(self):
+        ''' Calls the initUI function to initialize
+            the background frame
+        '''
         super(backgroundAnalogues, self).__init__()
         self.initUI()
 
     def initUI(self):
+        '''
+        Initializes the frame.
+        '''
         ## initialize fram variables such as size,
         ## padding, etc.
         self.setStyleSheet("QFrame {"
@@ -63,7 +69,7 @@ class backgroundAnalogues(QtGui.QFrame):
     
     def draw_frame(self, qp):
         '''
-        Draws the background frame and the text headers for indices.
+        Draws the background frame and the text headers.
         '''
         ## initialize a white pen with thickness 1 and a solid line
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
@@ -123,9 +129,13 @@ class backgroundAnalogues(QtGui.QFrame):
 
 class plotAnalogues(backgroundAnalogues):
     '''
-    Handles plotting the indices in the frame.
+    Handles plotting inside the frame.
     '''
     def __init__(self, prof):
+        '''
+        Takes a profile object and gets the hail
+        and supercell matches from that.
+        '''
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
@@ -142,6 +152,10 @@ class plotAnalogues(backgroundAnalogues):
         self.plotData()
     
     def paintEvent(self, e):
+        '''
+        Handles drawing the QPixmap onto the
+        widget.
+        '''
         super(plotAnalogues, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -150,19 +164,19 @@ class plotAnalogues(backgroundAnalogues):
 
     def plotData(self):
         '''
-        Handles the drawing of the text on the frame.
+        Handles the drawing of the matches onto the QPixmap.
         '''
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         ## draw the indices
         self.drawSARS_hail(qp)
-        self.drawSARS_tor(qp)
+        self.drawSARS_supercell(qp)
         qp.end()
     
     def drawSARS_hail(self, qp):
         '''
-        This handles the severe indices, such as STP, sig hail, etc.
+        This draws the SARS hail matches.
         ---------
         qp: QtGui.QPainter object
         '''
@@ -247,9 +261,9 @@ class plotAnalogues(backgroundAnalogues):
                     ## add to the running vertical sum
                     self.ylast += (self.match_height)
 
-    def drawSARS_tor(self, qp):
+    def drawSARS_supercell(self, qp):
         '''
-        This handles the severe indices, such as STP, sig hail, etc.
+        This handles the SARS supercell matches.
         ---------
         qp: QtGui.QPainter object
         '''
@@ -268,7 +282,7 @@ class plotAnalogues(backgroundAnalogues):
             
             ## get various data to be plotted
             sig_tor_prob = tab.utils.INT2STR( np.around( self.sup_matches[-1]*100 ) )
-            sig_tor_str = 'SARS: ' + sig_tor_prob + '% SIG'
+            sig_tor_str = 'SARS: ' + sig_tor_prob + '% TOR'
             num_matches = tab.utils.INT2STR( self.sup_matches[-3] )
             match_str = '(' + num_matches + ' loose matches)'
             
