@@ -132,6 +132,7 @@ class plotAnalogues(backgroundAnalogues):
         ## profile itself.
         self.prof = prof
         self.hail_matches = prof.matches
+        self.sup_matches = prof.supercell_matches
         super(plotAnalogues, self).__init__()
 
     def resizeEvent(self, e):
@@ -284,13 +285,13 @@ class plotAnalogues(backgroundAnalogues):
                     pen.setColor(QtCore.Qt.white)
                     qp.setPen(pen)
                 ## draw the text
-                rect0 = QtCore.QRect(x1*4, self.ylast, x1, self.match_height)
+                rect0 = QtCore.QRect(x1*1, self.ylast, x1, self.match_height)
                 qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
-                    sig_hail_str)
+                    sig_tor_str)
                 ## since we start at the bottom and move up, subtract the height instead of add
                 self.ylast -= (self.match_height + self.bpad)
                     
-                rect1 = QtCore.QRect(x1*4, self.ylast, x1, self.match_height)
+                rect1 = QtCore.QRect(x1*1, self.ylast, x1, self.match_height)
                 qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     match_str)
             ## If not, don't do anything
@@ -303,7 +304,7 @@ class plotAnalogues(backgroundAnalogues):
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## draw the text 2/5 from the top
-                rect2 = QtCore.QRect(x1*4, self.bry * (2./5.), x1, self.match_height)
+                rect2 = QtCore.QRect(x1*1, self.bry * (2./5.), x1, self.match_height)
                 qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     'No Quality Matches')
             ## if there are more than 0 quality matches...
@@ -317,19 +318,22 @@ class plotAnalogues(backgroundAnalogues):
                 ## loop through each of the matches
                 for m in self.sup_matches[0]:
                     ## these are the rectangles that matches will plot inside of
-                    rect3 = QtCore.QRect(x1*3+10, self.ylast, x1, self.match_height)
-                    rect4 = QtCore.QRect(x1*5.5-5, self.ylast, x1, self.match_height)
+                    rect3 = QtCore.QRect(self.lpad, self.ylast, x1, self.match_height)
+                    rect4 = QtCore.QRect(self.lpad + x1 + 30, self.ylast, x1, self.match_height)
                     ## hail size used for setting the color
-                    size = self.sup_matches[1][idx]
-                    if size >= 2.0:
+                    type = self.sup_matches[1][idx]
+                    if type == 'SIGTOR':
                         pen.setColor(QtGui.QColor('#E60000'))
+                        qp.setPen(pen)
+                    elif type == 'WEAKTOR':
+                        pen.setColor(QtGui.QColor('#06B5FF'))
                         qp.setPen(pen)
                     else:
                         pen.setColor(QtGui.QColor('#06B5FF'))
                         qp.setPen(pen)
                     ## draw the text
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
-                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, str( format(size, '.2f' ) ) )
+                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, type )
                     idx += 1
                     ## add to the running vertical sum
                     self.ylast += (self.match_height)

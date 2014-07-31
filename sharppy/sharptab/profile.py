@@ -472,12 +472,11 @@ class Profile(object):
                 sfc_9km_shear, sfc_3km_shear, srh3km)
         except:
             self.matches = ma.masked
-        print "SUPERCELL MATCHES:"
         self.supercell_matches = sars_supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), srh3km)
         
 
-        print self.supercell_matches
-        stop
+
+
 
     def get_watch(self):
         '''
