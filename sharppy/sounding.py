@@ -203,4 +203,4 @@ else:
 '''
 	sound_data = StringIO( sound )
 	p2, h2, T2, Td2, wdir2, wspd2 = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-	test = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2, location='OUN' )
+	test = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2, location='OAX' )
