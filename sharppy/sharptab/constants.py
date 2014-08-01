@@ -1,7 +1,7 @@
 ''' Frequently used meteorological constants '''
 
 __all__ = ['MISSING', 'ROCP', 'ZEROCNK', 'G', 'TOL', 'WHITE', 'RED',
-           'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN']
+           'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN', 'LBLUE']
 
 # Meteorological Constants
 MISSING = -9999.0       # Missing Flag
@@ -17,4 +17,5 @@ YELLOW = '#FFFF00'
 MAGENTA = '#E700DF'
 DBROWN = '#775000'
 LBROWN = '#996600'
+LBLUE = '#06B5FF'
 
