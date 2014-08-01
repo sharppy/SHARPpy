@@ -1,7 +1,7 @@
 ''' Frequently used meteorological constants '''
 
 __all__ = ['MISSING', 'ROCP', 'ZEROCNK', 'G', 'TOL', 'WHITE', 'RED',
-           'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN', 'LBLUE']
+           'ORANGE', 'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN', 'LBLUE']
 
 # Meteorological Constants
 MISSING = -9999.0       # Missing Flag
@@ -12,7 +12,8 @@ TOL = 1e-10             # Floating Point Tolerance
 
 #colors
 WHITE = '#FFFFFF'
-RED = '#BF0000'
+RED = '#FF0000'
+ORANGE = '#FF4000'
 YELLOW = '#FFFF00'
 MAGENTA = '#E700DF'
 DBROWN = '#775000'
