@@ -11,36 +11,50 @@ __all__ = ['backgroundText', 'plotText']
 
 class backgroundText(QtGui.QFrame):
     '''
-    Handles drawing the background frame.
+    Handles drawing the background frame onto a QPixmap.
+    Inherits a QtGui.QFrame Object.
     '''
     def __init__(self):
         super(backgroundText, self).__init__()
         self.initUI()
 
     def initUI(self):
-        ## initialize fram variables such as size,
-        ## padding, etc.
+        '''
+        Initializes frame variables such as padding,
+        width, height, etc, as well as the QPixmap
+        that contains the frame drawing.
+        '''
+        ## set the frame stylesheet
         self.setStyleSheet("QFrame {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
+        ## set the frame padding
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
+        ## do a DPI check to make sure
+        ## the text is sized properly!
         if self.physicalDpiX() > 75:
             fsize = 8
         else:
             fsize = 10
+        ## set the font, get the metrics and height of the font
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.label_height = self.label_metrics.xHeight() + self.tpad
+        ## the self.ylast variable is used as a running sum for
+        ## text placement.
         self.ylast = self.label_height
+        ## set the height/width variables
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+        ## initialize the QPixmap that will be drawn on.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
+        ## plot the background frame
         self.plotBackground()
     
     def draw_frame(self, qp):
@@ -51,9 +65,13 @@ class backgroundText(QtGui.QFrame):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
+        ## set the horizontal grid to be the width of the frame
+        ## divided into 8 spaces
         x1 = self.brx / 8
         y1 = 1
-        ## draw the header for the indices
+        ## draw the header and the indices using a loop.
+        ## This loop is a 'horizontal' loop that will plot
+        ## the text for a row, keeping the vertical placement constant.
         count = 0
         titles = ['PCL', 'CAPE', 'CINH', 'LCL', 'LI', 'LFC', 'EL']
         for title in titles:
@@ -70,7 +88,8 @@ class backgroundText(QtGui.QFrame):
 
     def plotBackground(self):
         '''
-        Handles drawing the text background.
+        Handles drawing the text background onto
+        the QPixmap.
         '''
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
@@ -83,8 +102,23 @@ class backgroundText(QtGui.QFrame):
 class plotText(backgroundText):
     '''
     Handles plotting the indices in the frame.
+    Inherits a backgroundText Object that contains
+    a QPixmap with the frame drawn on it. All drawing
+    gets done on this QPixmap, and then the QPixmap
+    gets rendered by the paintEvent function.
     '''
     def __init__(self, prof):
+        '''
+        Initialize the data from a Profile object passed to 
+        this class. It then takes the data it needs from the
+        Profile object and converts them into strings that
+        can be used to draw the text in the frame.
+        
+        Parameters
+        ----------
+        prof: a Profile Object
+        
+        '''
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
@@ -134,11 +168,26 @@ class plotText(backgroundText):
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
+        
+        Parametes
+        ---------
+        e: an Event Object
         '''
         super(plotText, self).resizeEvent(e)
         self.plotData()
     
     def paintEvent(self, e):
+        '''
+        Handles when the window gets painted.
+        This renders the QPixmap that the backgroundText
+        Object contians. For the actual drawing of the data,
+        see the plotData function.
+        
+        Parametes
+        ---------
+        e: an Event Object
+        
+        '''
         super(plotText, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -147,7 +196,8 @@ class plotText(backgroundText):
 
     def plotData(self):
         '''
-        Handles the drawing of the text on the frame.
+        Handles the drawing of the text onto the QPixmap.
+        This is where the actual data gets plotted/drawn.
         '''
         ## initialize a QPainter object
         qp = QtGui.QPainter()
@@ -161,14 +211,16 @@ class plotText(backgroundText):
     def drawSevere(self, qp):
         '''
         This handles the severe indices, such as STP, sig hail, etc.
-        ---------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         ## initialize a pen to draw with.
         pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
         qp.setFont(self.label_font)
-        color_list = [QtGui.QColor('#A05030'), QtGui.QColor('#D0A020'),
-             QtCore.Qt.yellow, QtGui.QColor("#FF4000"), QtCore.Qt.red, QtCore.Qt.magenta]
+        color_list = [QtGui.QColor(LBROWN), QtGui.QColor(DBROWN), QtGui.QColor(YELLOW), QtGui.QColor(ORANGE), QtGui.QColor(RED), QtGui.QColor(MAGENTA)]
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
@@ -199,9 +251,12 @@ class plotText(backgroundText):
     
     def drawIndices(self, qp):
         '''
-        Draw the non-parcel indices.
-        --------
+        Draws the non-parcel indices.
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         qp.setFont(self.label_font)
         ## make the initial x point relatice to the width of the frame.
@@ -239,6 +294,8 @@ class plotText(backgroundText):
         #pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         #qp.setPen(pen)
         
+        ## draw the first column of text using a loop, keeping the horizontal
+        ## placement constant.
         y1 = self.ylast + self.tpad
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
         indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
@@ -267,7 +324,8 @@ class plotText(backgroundText):
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
         qp.drawLine(x1*7-5, y1+2, x1*7-5, self.bry )
-
+        
+        ## lapserate window
         y1 = self.ylast + self.tpad
         texts = ['Sfc-3km AGL LR = ', '3-6km AGL LR = ', '850-500mb LR = ', '700-500mb LR = ']
         indices = [self.lapserate_3km + ' C/km', self.lapserate_3_6km + ' C/km', self.lapserate_850_500 + ' C/km', self.lapserate_700_500 + ' C/km']
@@ -280,8 +338,11 @@ class plotText(backgroundText):
     def drawConvectiveIndices(self, qp):
         '''
         This handles the drawing of the parcel indices.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         ## initialize a white pen with thickness 2 and a solid line
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
