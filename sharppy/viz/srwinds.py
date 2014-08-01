@@ -12,6 +12,7 @@ __all__ = ['backgroundWinds', 'plotWinds']
 class backgroundWinds(QtGui.QFrame):
     '''
     Handles the plotting of the frame boarders and ticks.
+    Draws the frame onto a QPixmap.
     '''
     def __init__(self):
         super(backgroundWinds, self).__init__()
@@ -19,6 +20,9 @@ class backgroundWinds(QtGui.QFrame):
 
 
     def initUI(self):
+        '''
+        Initializes the frame attributes and QPixmap.
+        '''
         ## initialize plot window variables,
         ## such as width, height, padding, and
         ## min/max axes variables
@@ -32,7 +36,13 @@ class backgroundWinds(QtGui.QFrame):
         ## used in converting to pixel units
         self.hmax = 16.; self.hmin = 0.
         self.smax = 80.; self.smin = 0.
-        self.label_font = QtGui.QFont('Helvetica', 7)
+        ## do a DPI check for font sizing
+        if self.physicalDpiX() > 75:
+            fsize = 6
+        else:
+            fsize = 7
+        self.label_font = QtGui.QFont('Helvetica', fsize)
+        ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
@@ -45,7 +55,7 @@ class backgroundWinds(QtGui.QFrame):
     
     def plotBackground(self):
         '''
-        Handles the paint event. This paints the frame background.
+        This paints the frame background onto the QPixmap.
         '''
         ## initialize a QPainter object for drawing
         qp = QtGui.QPainter()
@@ -65,8 +75,11 @@ class backgroundWinds(QtGui.QFrame):
     def draw_frame(self, qp):
         '''
         Draws the background frame.
-        ------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         ## initialize a new pen with white color, thickness of 2, solid line.
         pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
@@ -100,13 +113,15 @@ class backgroundWinds(QtGui.QFrame):
     def draw_height(self, h, qp):
         '''
         Draw background height ticks in km.
-        ---------
+        
+        Parameters
+        ----------
         h: height in km
         qp: QtGui.QPainter object
         
         '''
         ## initialize a pen with color white, thickness 1, solid line
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert the height value to pixel coordinates
@@ -124,13 +139,15 @@ class backgroundWinds(QtGui.QFrame):
     def draw_speed(self, s, qp):
         '''
         Draw background speed ticks.
-        --------
+        
+        Parameters
+        ----------
         s: windpeed
         qp: QtGui.QPainter object
         
         '''
         ## initialize a pen with white color, thickness 1, solid line
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert wind speed values to pixel values
@@ -144,6 +161,11 @@ class backgroundWinds(QtGui.QFrame):
     def hgt_to_pix(self, h):
         '''
         Function to convert a height value (km) to a Y pixel.
+        
+        Parameters
+        ----------
+        h: height in km
+        
         '''
         scl1 = self.hmax - self.hmin
         scl2 = self.hmin + h
@@ -152,13 +174,32 @@ class backgroundWinds(QtGui.QFrame):
     def speed_to_pix(self, s):
         '''
         Function to convert a wind speed value to a X pixel.
+        
+        Parameters
+        ----------
+        s: speed in kts
         '''
         scl1 = self.smax - self.smin
         scl2 = self.smax - s
         return self.bry - (scl2 / scl1) * (self.bry - self.rpad)
 
 class plotWinds(backgroundWinds):
+    '''
+    Draws the storm relative winds vs. height.
+    Inherits from the backgroundWinds class that 
+    contains the QPixmap with the background frame
+    drawn on it.
+    '''
     def __init__(self, prof):
+        '''
+        Initializes the data from the Profile object
+        used to draw the profile.
+        
+        Parameters
+        ----------
+        prof: a Profile object
+        
+        '''
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
         self.prof = prof
@@ -175,11 +216,25 @@ class plotWinds(backgroundWinds):
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         super(plotWinds, self).resizeEvent(e)
         self.plotData()
     
     def paintEvent(self, e):
+        '''
+        Handles the painting of the QPixmap onto
+        the QWidget.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
         super(plotWinds, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -188,7 +243,8 @@ class plotWinds(backgroundWinds):
     
     def plotData(self):
         '''
-        Handles painting the plot data.
+        Handles painting the plot data onto the
+        QPixmap.
         '''
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
@@ -202,11 +258,14 @@ class plotWinds(backgroundWinds):
     def draw_profile(self, qp):
         '''
         Draws the storm relative wind profile.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         ## initialize a pen with a red color, thickness of 2, solid line
-        pen = QtGui.QPen(QtGui.QColor("#FF0000"), 2)
+        pen = QtGui.QPen(QtGui.QColor(RED), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the mask
         try:
