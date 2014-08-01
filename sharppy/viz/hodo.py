@@ -11,7 +11,8 @@ __all__ = ['backgroundHodo', 'plotHodo']
 
 class backgroundHodo(QtGui.QFrame):
     '''
-    Handles the plotting of the backgroun frame.
+    Handles the plotting of the backgroun frame onto
+    a QPixmap. Inherits from the QtGui.QFrame object.
     '''
     def __init__(self):
         super(backgroundHodo, self).__init__()
@@ -50,7 +51,12 @@ class backgroundHodo(QtGui.QFrame):
     
     def wheelEvent(self, e):
         '''
-        Handeles the zooming of the hodograph window
+        Handeles the zooming of the hodograph window.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         ## get the new scaling magnitude
         new_mag = self.hodomag + e.delta() / 5
@@ -74,13 +80,18 @@ class backgroundHodo(QtGui.QFrame):
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
+        
+        Parameters
+        ----------
+        e: an Event object
 
         '''
         self.initUI()
 
     def plotBackground(self):
         '''
-        Handles painting the frame background.
+        Handles painting the frame background onto the
+        QPixmap.
         '''
         ## initialize a QPainter object.
         qp = QtGui.QPainter()
@@ -97,12 +108,14 @@ class backgroundHodo(QtGui.QFrame):
     def draw_frame(self, qp):
         '''
         Draw frame around object.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
 
         '''
         ## initialize a white pen to draw the frame
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 2)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame borders
@@ -114,12 +127,14 @@ class backgroundHodo(QtGui.QFrame):
     def draw_axes(self, qp):
         '''
         Draw the X, Y Axes.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
 
         '''
         ## initialize a white pen to draw the frame axes
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 2)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame axes
@@ -129,7 +144,9 @@ class backgroundHodo(QtGui.QFrame):
     def draw_ring(self, spd, qp):
         '''
         Draw a range ring.
-        --------
+        
+        Parameters
+        ----------
         spd: wind speed
         qp: QtGui.QPainter object
 
@@ -179,7 +196,9 @@ class backgroundHodo(QtGui.QFrame):
     def hodo_to_pix(self, ang, spd):
         '''
         Function to convert a (direction, speed) to (x, y) coordinates.
-        --------
+        
+        Parameters
+        ----------
         ang: wind direction
         spd: wind speed
 
@@ -192,7 +211,9 @@ class backgroundHodo(QtGui.QFrame):
     def uv_to_pix(self, u, v):
         '''
         Function to convert (u, v) to (x, y) coordinates.
-        --------
+        
+        Parameters
+        ----------
         u: the u wind component
         v: the v wind component
 
@@ -202,6 +223,15 @@ class backgroundHodo(QtGui.QFrame):
         return xx, yy
 
     def pix_to_uv(self, xx, yy):
+        '''
+        Function to convert (x,y) to (u,v) coordinates.
+        
+        Parameters
+        ----------
+        xx: the x pixel value
+        yy: the y pixel value
+        
+        '''
         u = (xx - self.centerx) / self.scale
         v = (self.centery - yy) / self.scale
         return u, v
@@ -211,9 +241,13 @@ class backgroundHodo(QtGui.QFrame):
 
 class plotHodo(backgroundHodo):
     '''
-    Plots the data on the hodograph.
+    Plots the data on the hodograph. Inherits from the backgroundHodo
+    class that plots the background frame onto a QPixmap.
     '''
     def __init__(self, hght, u, v, **kwargs):
+        '''
+        Initialize the data used in the class.
+        '''
         super(plotHodo, self).__init__()
         ## initialize the variables needed to plot the hodo.
         self.hght = hght
@@ -234,6 +268,7 @@ class plotHodo(backgroundHodo):
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+        ## the following is used for the dynamic readout
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
         self.srh1kmReadout = QLabel(parent=self)
@@ -243,6 +278,8 @@ class plotHodo(backgroundHodo):
         self.srh1kmReadout.setFixedWidth(0)
         self.srh3kmReadout.setFixedWidth(0)
         self.esrhReadout.setFixedWidth(0)
+        ## these stylesheets have to be set for
+        ## each readout
         self.wndReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 0px;"
@@ -268,22 +305,54 @@ class plotHodo(backgroundHodo):
     
     
     def wheelEvent(self, e):
+        '''
+        Handles the zooming of the hodograph.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
         super(plotHodo, self).wheelEvent(e)
         self.clearData()
         self.plotBackground()
         self.plotData()
     
     def mousePressEvent(self, e):
+        '''
+        Handles when the mouse is pressed.
+        Used to set the storm motion vector.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
         if self.hasMouseTracking():
             self.setMouseTracking(False)
         else:
             self.setMouseTracking(True)
 
     def mouseMoveEvent(self, e):
+        '''
+        Handles the tracking of the mouse to
+        provide the dynamic readouts.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
+        ## convert the location of the mouse to u,v space
         u, v = self.pix_to_uv(e.x(), e.y())
+        ## get the direction and speed from u,v
         dir, spd = tab.utils.comp2vec(u,v)
+        ## calculate the storm relative helicity for a storm motion
+        ## vector with a u,v at the mouse pointer
         srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=u, stv=v)[0]
         srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=u, stv=v)[0]
+        ## do some sanity checks to prevent crashing if there is no
+        ## effective inflow layer
         etop, ebot = self.prof.etopm, self.prof.ebotm
         if etop is np.ma.masked or ebot is np.ma.masked:
             esrh = np.ma.masked
@@ -291,31 +360,48 @@ class plotHodo(backgroundHodo):
         else:
             esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
             self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
+        ## set the crosshair in the window
         self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
         self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
+        ## set the readout texts
         self.wndReadout.setText(tab.utils.INT2STR(dir) + '/' + tab.utils.FLOAT2STR(spd, 1))
         self.srh1kmReadout.setText('sfc-1km: ' + tab.utils.INT2STR(srh1km) + ' m2/s2')
         self.srh3kmReadout.setText('sfc-3km: ' + tab.utils.INT2STR(srh3km) + ' m2/s2')
+        ## set the readout width
         self.wndReadout.setFixedWidth(50)
         self.srh1kmReadout.setFixedWidth(120)
         self.srh3kmReadout.setFixedWidth(120)
         self.esrhReadout.setFixedWidth(120)
+        ## place the readout
         self.wndReadout.move(1, self.bry-15)
         self.srh1kmReadout.move(self.brx-130, self.bry-45)
         self.srh3kmReadout.move(self.brx-130, self.bry-30)
         self.esrhReadout.move(self.brx-130, self.bry-15)
+        ## show the crosshair
         self.hband.show()
         self.vband.show()
 
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
+        
+        Parameters
+        ----------
+        e: an Event object
 
         '''
         super(plotHodo, self).resizeEvent(e)
         self.plotData()
 
     def paintEvent(self, e):
+        '''
+        Handles painting the QPixmap onto the QWidget frame.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -324,15 +410,14 @@ class plotHodo(backgroundHodo):
     
     def clearData(self):
         '''
-        Handles the clearing of the pixmap
-        in the frame.
+        Clears/resets the base QPixmap.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''
-        Handles the plotting of the data in the frame.
+        Handles the plotting of the data in the QPixmap.
         '''
         ## initialize a QPainter object
         qp = QtGui.QPainter()
@@ -349,6 +434,14 @@ class plotHodo(backgroundHodo):
         qp.end()
     
     def drawLCLtoEL_MW(self, qp):
+        '''
+        Draws the LCL to EL mean wind onto the hodo.
+        
+        Parameters
+        ----------
+        qp: a QPainter object
+        
+        '''
         penwidth = 2
         pen = QtGui.QPen(QtGui.QColor("#B8860B"), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
@@ -377,6 +470,14 @@ class plotHodo(backgroundHodo):
         qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
 
     def drawCorfidi(self, qp):
+        '''
+        Draw the Corfidi upshear/downshear vectors
+        
+        Parameters
+        ----------
+        qp: a QPainter object
+        
+        '''
         penwidth = 1
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
@@ -416,12 +517,15 @@ class plotHodo(backgroundHodo):
     def drawSMV(self, qp):
         '''
         Draws the storm motion vector.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
         ## set a pen with white color, width 1, solid line.
         penwidth = 1
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), penwidth)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## check and make sure there is no missing data
@@ -489,7 +593,9 @@ class plotHodo(backgroundHodo):
     def drawCriticalAngle(self, qp):
         '''
         Plot the critical angle on the hodograph and show the value in the hodograph.
-        --------
+        
+        Parameters
+        ----------
         qp : QtGui.QPainter object
         '''
 
@@ -532,7 +638,9 @@ class plotHodo(backgroundHodo):
     def draw_hodo(self, qp):
         '''
         Plot the Hodograph.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
 
         '''
