@@ -11,11 +11,13 @@ __all__ = ['backgroundAnalogues', 'plotAnalogues']
 
 class backgroundAnalogues(QtGui.QFrame):
     '''
-    Handles drawing the background frame.
+    Handles drawing the background frame for the
+    SARS window.
     '''
     def __init__(self):
         ''' Calls the initUI function to initialize
-            the background frame
+            the background frame. Inherits from the
+            QtGui.QFrame Object.
         '''
         super(backgroundAnalogues, self).__init__()
         self.initUI()
@@ -23,9 +25,11 @@ class backgroundAnalogues(QtGui.QFrame):
     def initUI(self):
         '''
         Initializes the frame.
+        
+        The frame is drawn on a QPixmap, 
+        and is not rendered visible in this function.
         '''
-        ## initialize fram variables such as size,
-        ## padding, etc.
+        ## set the frame stylesheet
         self.setStyleSheet("QFrame {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 1px;"
@@ -56,7 +60,7 @@ class backgroundAnalogues(QtGui.QFrame):
         ## where in pixel space the last line of text ends
         self.ylast = self.tpad
         self.text_start = 0
-        ## set the window metrics
+        ## set the window metrics (height, width)
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
@@ -102,7 +106,7 @@ class backgroundAnalogues(QtGui.QFrame):
         rect2 = QtCore.QRect(x1*4, self.ylast, x1, self.plot_height)
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'SGFNT HAIL')
-        ## Add to the tunning sum once more for future text
+        ## Add to the running sum once more for future text
         self.ylast += (self.title_height)
         ## the hail and supercell windows both need to have a vertical starting reference
         self.text_start = self.ylast
@@ -118,6 +122,8 @@ class backgroundAnalogues(QtGui.QFrame):
     def plotBackground(self):
         '''
         Handles drawing the text background.
+        
+        This draws onto a QPixmap.
         '''
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
@@ -129,12 +135,24 @@ class backgroundAnalogues(QtGui.QFrame):
 
 class plotAnalogues(backgroundAnalogues):
     '''
-    Handles plotting inside the frame.
+    Handles the non-background plotting
+    of the SARS window. This inherits a
+    backgroundAnalogues Object that
+    takes care of drawing the frame
+    background onto a QPixmap. This will
+    inherit that QPixmap and continue 
+    drawing on it, finally rendering the
+    QPixmap via the function paintEvent.
     '''
     def __init__(self, prof):
         '''
-        Takes a profile object and gets the hail
-        and supercell matches from that.
+        Initializes the data needed for drawing the
+        data onto the QPixmap. 
+        
+        Parameters
+        ----------
+        prof: a Profile object
+        
         '''
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
@@ -147,14 +165,26 @@ class plotAnalogues(backgroundAnalogues):
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         super(plotAnalogues, self).resizeEvent(e)
+        ## if the window is resized, replot the data
+        ## in the QPixmap.
         self.plotData()
     
     def paintEvent(self, e):
         '''
         Handles drawing the QPixmap onto the
         widget.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         super(plotAnalogues, self).paintEvent(e)
         qp = QtGui.QPainter()
@@ -164,60 +194,90 @@ class plotAnalogues(backgroundAnalogues):
 
     def plotData(self):
         '''
-        Handles the drawing of the matches onto the QPixmap.
+        Handles the drawing of the SARS
+        matches onto the QPixmap.
         '''
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        ## draw the indices
-        self.drawSARS_hail(qp)
-        self.drawSARS_supercell(qp)
+        ## draw the matches
+        self.drawSARS(qp, type='HAIL')
+        self.drawSARS(qp, type='TOR')
         qp.end()
     
-    def drawSARS_hail(self, qp):
+    def drawSARS(self, qp, **kwargs):
         '''
-        This draws the SARS hail matches.
-        ---------
-        qp: QtGui.QPainter object
+        This draws the SARS matches.
+        
+        Parameters
+        ----------
+        qp: a QtGui.QPainter Object
+        type: A string for the type of 
+            SARS matches. 'HAIL' for 
+            hail matches and 'TOR' for 
+            supercell matches.
         '''
+        x1 = self.brx / 6
+        ## get the type of matches, and determine
+        ## which side of the frame the matches will
+        ## be plotted in.
+        type = kwargs.get('type', 'HAIL')
+        if type == 'TOR':
+            self.matches = self.sup_matches
+            sigstr = 'TOR'
+            ## this is the horizontal placement
+            ## of the text in the frame. Valid
+            ## integers are from 0-6.
+            place = 1
+            ## the quality match date [0] and the type/size
+            ## [1] palcement are set in this tuple.
+            place2 = (self.lpad, self.lpad + x1 + 30)
+        else:
+            self.matches = self.hail_matches
+            sigstr = 'SIG'
+            ## this is the horizontal placement
+            ## of the text in the frame. Valid
+            ## integers are from 0-6.
+            place = 4
+            ## the quality match date [0] and the type/size
+            ## [1] palcement are set in this tuple.
+            place2 = (x1*3+10, x1*5.5-5)
         ## if there are no matches, leave the function to prevent crashing
-        if self.hail_matches is np.ma.masked:
+        if self.matches is np.ma.masked:
             return
         else:
-            ## set the pen, font, and starting text positions
+            ## set the pen, font
             pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.plot_font)
-            x1 = self.brx / 6
-            y1 = self.bry / 19
             ## self.ylast has to be this way in order to plot relative to the bottom
             self.ylast = (self.bry - self.bpad*3)
             
             ## get various data to be plotted
-            sig_hail_prob = tab.utils.INT2STR( np.around( self.hail_matches[-1]*100 ) )
-            sig_hail_str = 'SARS: ' + sig_hail_prob + '% SIG'
-            num_matches = tab.utils.INT2STR( self.hail_matches[-3] )
+            sig_prob = tab.utils.INT2STR( np.around( self.matches[-1]*100 ) )
+            sig_str = 'SARS: ' + sig_prob + '% ' + sigstr
+            num_matches = tab.utils.INT2STR( self.matches[-3] )
             match_str = '(' + num_matches + ' loose matches)'
             
             ## if there are more than 0 loose matches, draw
             ## draw the match statistics
-            if self.hail_matches[-3] > 0:
+            if self.matches[-3] > 0:
                 qp.setFont(self.match_font)
                 ## set the color of the font
-                if self.hail_matches[-1]*100. >= 50.:
+                if self.matches[-1]*100. >= 50.:
                     pen.setColor(QtCore.Qt.magenta)
                     qp.setPen(pen)
                 else:
                     pen.setColor(QtCore.Qt.white)
                     qp.setPen(pen)
                 ## draw the text
-                rect0 = QtCore.QRect(x1*4, self.ylast, x1, self.match_height)
+                rect0 = QtCore.QRect(x1*place, self.ylast, x1, self.match_height)
                 qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
-                            sig_hail_str)
+                            sig_str)
                 ## since we start at the bottom and move up, subtract the height instead of add
                 self.ylast -= (self.match_height + self.bpad)
                 
-                rect1 = QtCore.QRect(x1*4, self.ylast, x1, self.match_height)
+                rect1 = QtCore.QRect(x1*place, self.ylast, x1, self.match_height)
                 qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     match_str)
             ## If not, don't do anything
@@ -225,12 +285,12 @@ class plotAnalogues(backgroundAnalogues):
                 pass
             
             ## if there are no quality matches, let the gui know
-            if len(self.hail_matches[0]) == 0:
+            if len(self.matches[0]) == 0:
                 pen.setColor(QtCore.Qt.white)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## draw the text 2/5 from the top
-                rect2 = QtCore.QRect(x1*4, self.bry * (2./5.), x1, self.match_height)
+                rect2 = QtCore.QRect(x1*place, self.bry * (2./5.), x1, self.match_height)
                 qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
                     'No Quality Matches')
             ## if there are more than 0 quality matches...
@@ -242,118 +302,34 @@ class plotAnalogues(backgroundAnalogues):
                 self.ylast = self.text_start
                 idx  = 0
                 ## loop through each of the matches
-                for m in self.hail_matches[0]:
+                for m in self.matches[0]:
                     ## these are the rectangles that matches will plot inside of
-                    rect3 = QtCore.QRect(x1*3+10, self.ylast, x1, self.match_height)
-                    rect4 = QtCore.QRect(x1*5.5-5, self.ylast, x1, self.match_height)
-                    ## hail size used for setting the color
-                    size = self.hail_matches[1][idx]
-                    if size >= 2.0:
-                        pen.setColor(QtGui.QColor('#E60000'))
-                        qp.setPen(pen)
+                    rect3 = QtCore.QRect(place2[0], self.ylast, x1, self.match_height)
+                    rect4 = QtCore.QRect(place2[1], self.ylast, x1, self.match_height)
+                    ## size or type is used for setting the color
+                    size = self.matches[1][idx]
+                    if type == 'TOR':
+                        size_str = str(size)
+                        if type == 'SIGTOR':
+                            pen.setColor(QtGui.QColor(RED))
+                            qp.setPen(pen)
+                        elif type == 'WEAKTOR':
+                            pen.setColor(QtGui.QColor(LBLUE))
+                            qp.setPen(pen)
+                        else:
+                            pen.setColor(QtGui.QColor(LBROWN))
+                            qp.setPen(pen)
                     else:
-                        pen.setColor(QtGui.QColor('#06B5FF'))
-                        qp.setPen(pen)
+                        if size >= 2.0:
+                            pen.setColor(QtGui.QColor(RED))
+                            qp.setPen(pen)
+                        else:
+                            pen.setColor(QtGui.QColor(LBLUE))
+                            qp.setPen(pen)
+                        size_str = str( format(size, '.2f' ) )
                     ## draw the text
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
-                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, str( format(size, '.2f' ) ) )
+                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
                     idx += 1
                     ## add to the running vertical sum
                     self.ylast += (self.match_height)
-
-    def drawSARS_supercell(self, qp):
-        '''
-        This handles the SARS supercell matches.
-        ---------
-        qp: QtGui.QPainter object
-        '''
-        ## if there are no matches, leave the function to prevent crashing
-        if self.sup_matches is np.ma.masked:
-            return
-        else:
-            ## set the pen, font, and starting text positions
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            qp.setFont(self.plot_font)
-            x1 = self.brx / 6
-            y1 = self.bry / 19
-            ## self.ylast has to be this way in order to plot relative to the bottom
-            self.ylast = (self.bry - self.bpad*3)
-            
-            ## get various data to be plotted
-            sig_tor_prob = tab.utils.INT2STR( np.around( self.sup_matches[-1]*100 ) )
-            sig_tor_str = 'SARS: ' + sig_tor_prob + '% TOR'
-            num_matches = tab.utils.INT2STR( self.sup_matches[-3] )
-            match_str = '(' + num_matches + ' loose matches)'
-            
-            ## if there are more than 0 loose matches, draw
-            ## draw the match statistics
-            if self.sup_matches[-3] > 0:
-                qp.setFont(self.match_font)
-                ## set the color of the font
-                if self.sup_matches[-1]*100. >= 50.:
-                    pen.setColor(QtCore.Qt.magenta)
-                    qp.setPen(pen)
-                else:
-                    pen.setColor(QtCore.Qt.white)
-                    qp.setPen(pen)
-                ## draw the text
-                rect0 = QtCore.QRect(x1*1, self.ylast, x1, self.match_height)
-                qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
-                    sig_tor_str)
-                ## since we start at the bottom and move up, subtract the height instead of add
-                self.ylast -= (self.match_height + self.bpad)
-                    
-                rect1 = QtCore.QRect(x1*1, self.ylast, x1, self.match_height)
-                qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
-                    match_str)
-            ## If not, don't do anything
-            else:
-                pass
-            
-            ## if there are no quality matches, let the gui know
-            if len(self.sup_matches[0]) == 0:
-                pen.setColor(QtCore.Qt.white)
-                qp.setPen(pen)
-                qp.setFont(self.match_font)
-                ## draw the text 2/5 from the top
-                rect2 = QtCore.QRect(x1*1, self.bry * (2./5.), x1, self.match_height)
-                qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
-                    'No Quality Matches')
-            ## if there are more than 0 quality matches...
-            else:
-                pen.setColor(QtCore.Qt.white)
-                qp.setPen(pen)
-                qp.setFont(self.match_font)
-                ## start the vertical sum at the reference point
-                self.ylast = self.text_start
-                idx  = 0
-                ## loop through each of the matches
-                for m in self.sup_matches[0]:
-                    ## these are the rectangles that matches will plot inside of
-                    rect3 = QtCore.QRect(self.lpad, self.ylast, x1, self.match_height)
-                    rect4 = QtCore.QRect(self.lpad + x1 + 30, self.ylast, x1, self.match_height)
-                    ## hail size used for setting the color
-                    type = self.sup_matches[1][idx]
-                    if type == 'SIGTOR':
-                        pen.setColor(QtGui.QColor('#E60000'))
-                        qp.setPen(pen)
-                    elif type == 'WEAKTOR':
-                        pen.setColor(QtGui.QColor('#06B5FF'))
-                        qp.setPen(pen)
-                    else:
-                        pen.setColor(QtGui.QColor('#06B5FF'))
-                        qp.setPen(pen)
-                    ## draw the text
-                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
-                    qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, type )
-                    idx += 1
-                    ## add to the running vertical sum
-                    self.ylast += (self.match_height)
-
-
-
-
-
-
-
