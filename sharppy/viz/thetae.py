@@ -12,7 +12,10 @@ __all__ = ['backgroundThetae', 'plotThetae']
 
 class backgroundThetae(QtGui.QFrame):
     '''
-    Draw the background frame and lines for the Theta-E plot frame
+    Draw the background frame and lines for the Theta-E plot.
+    Draws the background on a QPixmap.
+    
+    Inherits a QtGui.QFrame Object
     '''
     def __init__(self):
         super(backgroundThetae, self).__init__()
@@ -20,6 +23,10 @@ class backgroundThetae(QtGui.QFrame):
 
 
     def initUI(self):
+        '''
+        Initializes window variables and the QPixmap
+        that gets drawn on.
+        '''
         ## window configuration settings,
         ## sich as padding, width, height, and
         ## min/max plot axes
@@ -34,20 +41,33 @@ class backgroundThetae(QtGui.QFrame):
         ## to pixel coordinates.
         self.pmax = 1025.; self.pmin = 400.
         self.tmax = 360.; self.tmin = 300.
-        self.label_font = QtGui.QFont('Helvetica', 7)
+        ## do a DPI check for the font size
+        if self.physicalDpiX() > 75:
+            fsize = 6
+        else:
+            fsize = 7
+        self.label_font = QtGui.QFont('Helvetica', fsize)
+        ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
+        ## and draw the background
         self.plotBackground()
 
     def resizeEvent(self, e):
         '''
-        Handles the event the window is resized
+        Handles the event the window is resized.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         self.initUI()
     
     def plotBackground(self):
         '''
-        Handles painting the frame.
+        Handles the drawing of the background onto
+        the QPixmap.
         '''
         ## initialize a painter object and draw the frame
         qp = QtGui.QPainter()
@@ -65,6 +85,9 @@ class backgroundThetae(QtGui.QFrame):
     def draw_frame(self, qp):
         '''
         Draw the background frame.
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
@@ -83,15 +106,16 @@ class backgroundThetae(QtGui.QFrame):
 
     def draw_isobar(self, p, qp):
         '''
-        Draw background isobars.
+        Draw background isobar ticks.
         
-        ---------
+        Parameters
+        ----------
         p: pressure in hPa or mb
         qp: QtGui.QPainter object
         
         '''
         ## set a new pen with a white color and solid line of thickness 1
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert the pressure to pixel coordinates
@@ -108,14 +132,16 @@ class backgroundThetae(QtGui.QFrame):
 
     def draw_thetae(self, t, qp):
         '''
-        Draw background Theta-E.
-        ---------
+        Draw background Theta-E ticks.
+        
+        Parameters
+        ----------
         t: Theta-E in degrees Kelvin
         qp: QtGui.QPainter object
         
         '''
         ## set a new pen with a white color, thickness one, solid line
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert theta-E to pixel values
@@ -132,6 +158,11 @@ class backgroundThetae(QtGui.QFrame):
     def pres_to_pix(self, p):
         '''
         Function to convert a pressure value (hPa) to a Y pixel.
+        
+        Parameters
+        ----------
+        p: pressure in hPa or mb
+        
         '''
         scl1 = self.pmax - self.pmin
         scl2 = self.pmax - p
@@ -140,6 +171,11 @@ class backgroundThetae(QtGui.QFrame):
     def theta_to_pix(self, t):
         '''
         Function to convert a Theta-E value (K) to a X pixel.
+        
+        Parameters
+        ----------
+        t: temperature in Kelvin
+        
         '''
         scl1 = self.tmax - self.tmin
         scl2 = self.tmax - t
@@ -147,19 +183,33 @@ class backgroundThetae(QtGui.QFrame):
 
 class plotThetae(backgroundThetae):
     '''
-    Plot the data on the frame. Inherits the background class that
-    plots the frame.
+    Draws the theta-E window. Inherits from the backgroundThetae
+    class that handles plotting of the frame. Draws the contours
+    to the QPixmap inherited by the backgroundThetae class.
     '''
     def __init__(self, prof):
+        '''
+        Initializes the data needed from the Profile object.
+        
+        Parameters
+        ----------
+        prof: a Profile object
+        
+        '''
         super(plotThetae, self).__init__()
-        ## make variables inheritable
+        ## set the varables for pressure and thetae
         self.prof = prof
         self.thetae = prof.thetae
         self.pres = prof.pres
 
     def resizeEvent(self, e):
         '''
-        Handles when the window is resized
+        Handles when the window is resized.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
         '''
         super(plotThetae, self).resizeEvent(e)
         idx = np.where( self.pres > 400. )[0]
@@ -169,6 +219,14 @@ class plotThetae(backgroundThetae):
         self.plotData()
     
     def paintEvent(self, e):
+        '''
+        Draws the QPixmap onto the QWidget.
+        
+        Parameters
+        ----------
+        e: an Event object
+        
+        '''
         super(plotThetae, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -177,7 +235,7 @@ class plotThetae(backgroundThetae):
     
     def plotData(self):
         '''
-        Handles painting on the frame
+        Plots the data onto the QPixmap.
         '''
         ## this function handles painting the plot
         ## create a new painter obkect
@@ -193,10 +251,13 @@ class plotThetae(backgroundThetae):
     def draw_profile(self, qp):
         '''
         Draw the Theta-E v. Pres profile.
-        --------
+        
+        Parameters
+        ----------
         qp: QtGui.QPainter object
+        
         '''
-        pen = QtGui.QPen(QtGui.QColor("#FF0000"), 2)
+        pen = QtGui.QPen(QtGui.QColor(RED), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         mask1 = self.thetae.mask
         mask2 = self.pres.mask
