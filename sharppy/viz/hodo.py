@@ -13,6 +13,10 @@ class backgroundHodo(QtGui.QFrame):
     '''
     Handles the plotting of the backgroun frame onto
     a QPixmap. Inherits from the QtGui.QFrame object.
+    Unlike most plotting classes in SHARPPy, this class
+    will not call the function to draw the background.
+    This is so that the background can be redrawn when 
+    the hodograph gets centered on a vector.
     '''
     def __init__(self):
         super(backgroundHodo, self).__init__()
@@ -30,24 +34,43 @@ class backgroundHodo(QtGui.QFrame):
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
-        self.center_hodo()
+        ## set default center to the origin
+        self.point = (0,0)
+        self.hodomag = 160.
+        self.centerx = self.wid / 2; self.centery = self.hgt / 2
+        self.scale = (self.brx - self.tlx) / self.hodomag
+        ## ring increment
         self.ring_increment = 10
         self.rings = range(self.ring_increment, 100+self.ring_increment,
             self.ring_increment)
         self.label_font = QtGui.QFont('Helvetica', 9)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
-        self.plotBackground()
 
 
-    def center_hodo(self):
+    def center_hodo(self, point):
         '''
-        Center the hodograph in the window. Can/Should be overwritten.
+        Center the hodograph in the window. It will either center it about
+        the origin, about the mean wind vector, or the storm motion vector.
+        
+        Parameters
+        ----------
+        point: A (u,v) vector that the hodograph is to be centered on.
 
         '''
-        self.centerx = self.wid / 2; self.centery = self.hgt / 2
-        self.hodomag = 160.
-        self.scale = (self.brx - self.tlx) / self.hodomag
+        ## modify the center based on an offset from the origin
+        centerx = self.wid / 2; centery = self.hgt / 2
+        point = self.uv_to_pix(point[0], point[1])
+        ## if the function was called but the center hasn't changed in pixel space,
+        ## just leave the center as is
+        if self.point == point:
+            self.centerx = self.centerx
+            self.centery = self.centery
+        ## otherwise, offset the hodograph center
+        else:
+            self.point = point
+            diffx = centerx - point[0]; diffy = centery - point[1]
+            self.centerx += diffx; self.centery += diffy
     
     def wheelEvent(self, e):
         '''
@@ -315,7 +338,6 @@ class plotHodo(backgroundHodo):
         '''
         super(plotHodo, self).wheelEvent(e)
         self.clearData()
-        self.plotBackground()
         self.plotData()
     
     def mousePressEvent(self, e):
@@ -419,6 +441,10 @@ class plotHodo(backgroundHodo):
         '''
         Handles the plotting of the data in the QPixmap.
         '''
+        ## center the hodograph on the mean wind vector
+        self.center_hodo(self.mean_lcl_el)
+        ## draw the background
+        self.plotBackground()
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
