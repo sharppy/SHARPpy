@@ -268,39 +268,31 @@ class plotText(backgroundText):
         ## them on the frame.
         ## This starts with the left column.
         
-        #if self.prof.pwv_flag == -3:
-        #    color = QtGui.QColor('#DA9167')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #elif self.prof.pwv_flag == -2:
-        #    color = QtGui.QColor('#FFE1B7')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #elif self.prof.pwv_flag == -1:
-        #    color = QtGui.QColor('#FFFFD5')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #elif self.prof.pwv_flag == 0:
-        #    color = QtGui.QColor('#FFFFFF')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #elif self.prof.pwv_flag == 1:
-        #    color = QtGui.QColor('#D6FFD6')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #elif self.prof.pwv_flag == 2:
-        #    color = QtGui.QColor('#A4CDA4')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #else:
-        #    color = QtGui.QColor('#008000')
-        #    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        #qp.setPen(pen)
-        #qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'PW = ' + self.pwat + 'in')
-        #pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
-        #qp.setPen(pen)
+        if self.prof.pwv_flag == -3:
+            color = QtGui.QColor('#DA9167')
+        elif self.prof.pwv_flag == -2:
+            color = QtGui.QColor('#FFE1B7')
+        elif self.prof.pwv_flag == -1:
+            color = QtGui.QColor('#FFFFD5')
+        elif self.prof.pwv_flag == 0:
+            color = QtGui.QColor('#FFFFFF')
+        elif self.prof.pwv_flag == 1:
+            color = QtGui.QColor('#D6FFD6')
+        elif self.prof.pwv_flag == 2:
+            color = QtGui.QColor('#A4CDA4')
+        else:
+            color = QtGui.QColor('#008000')
         
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
+        colors = [color, QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE)]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
         indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
-        for text, index in zip(texts, indices):
+        for text, index, c in zip(texts, indices, colors):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
+            pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
             y1 += (self.label_height)
 
