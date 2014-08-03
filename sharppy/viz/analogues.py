@@ -231,7 +231,7 @@ class plotAnalogues(backgroundAnalogues):
             place = 1
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
-            place2 = (self.lpad, self.lpad + x1 + 30)
+            place2 = (self.lpad, (self.brx/2.) - x1 * 3./4.)
         else:
             self.matches = self.hail_matches
             sigstr = 'SIG'
@@ -309,24 +309,24 @@ class plotAnalogues(backgroundAnalogues):
                     ## size or type is used for setting the color
                     size = self.matches[1][idx]
                     if type == 'TOR':
-                        size_str = str(size)
-                        if type == 'SIGTOR':
+                        size_str = size[:-3]
+                        if size.startswith('SIG'):
                             pen.setColor(QtGui.QColor(RED))
                             qp.setPen(pen)
-                        elif type == 'WEAKTOR':
+                        elif size.startswith('WEAK'):
                             pen.setColor(QtGui.QColor(LBLUE))
                             qp.setPen(pen)
-                        else:
+                        elif size.startswith('NON'):
                             pen.setColor(QtGui.QColor(LBROWN))
                             qp.setPen(pen)
                     else:
+                        size_str = str( format(size, '.2f' ) )
                         if size >= 2.0:
                             pen.setColor(QtGui.QColor(RED))
                             qp.setPen(pen)
                         else:
                             pen.setColor(QtGui.QColor(LBLUE))
                             qp.setPen(pen)
-                        size_str = str( format(size, '.2f' ) )
                     ## draw the text
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
