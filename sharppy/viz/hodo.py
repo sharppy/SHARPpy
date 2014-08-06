@@ -278,6 +278,7 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
+        self.centered = kwargs.get('centered', (0,0))
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -442,7 +443,7 @@ class plotHodo(backgroundHodo):
         Handles the plotting of the data in the QPixmap.
         '''
         ## center the hodograph on the mean wind vector
-        self.center_hodo(self.mean_lcl_el)
+        self.center_hodo(self.centered)
         ## draw the background
         self.plotBackground()
         ## initialize a QPainter object
