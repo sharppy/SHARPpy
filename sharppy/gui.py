@@ -10,7 +10,7 @@ from sharppy.sounding import prof, plot_title
 # Setup Application
 app = QtGui.QApplication(sys.argv)
 mainWindow = QtGui.QMainWindow()
-mainWindow.setGeometry(50, 50, 1180, 800)
+mainWindow.setGeometry(0, 0, 1180, 800)
 title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
 title += 'in Python'
 mainWindow.setWindowTitle(title)
@@ -59,7 +59,7 @@ ur.setLayout(grid2)
 speed_vs_height = plotSpeed( prof )
 speed_vs_height.setObjectName("svh")
 inferred_temp_advection = plotAdvection(prof)
-hodo = plotHodo(prof.hght, prof.u, prof.v, prof=prof)
+hodo = plotHodo(prof.hght, prof.u, prof.v, prof=prof, centered=prof.mean_lcl_el)
 storm_slinky = plotSlinky(prof)
 thetae_vs_pressure = plotThetae(prof)
 srwinds_vs_height = plotWinds(prof)
@@ -98,8 +98,8 @@ grid3.addWidget(kinematic, 0, 1)
 grid3.addWidget(SARS, 0, 2)
 grid3.addWidget(stp, 0, 3)
 grid.addWidget(text, 3, 0, 1, 2)
-#pixmap = QtGui.QPixmap.grabWidget(mainWindow)
-#pixmap.save('skewt.png', 'PNG', 100)
+pixmap = QtGui.QPixmap.grabWidget(mainWindow)
+pixmap.save('skewt.png', 'PNG', 100)
 mainWindow.show()
 
 app.exec_()
