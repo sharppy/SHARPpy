@@ -666,7 +666,7 @@ class plotHodo(backgroundHodo):
             qp.setPen(pen)
             qp.setFont(self.critical_font)
             offset = 10
-            rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height)
+            rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
             qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + str(int(round(angle,0))))
     
 
