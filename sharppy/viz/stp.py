@@ -32,7 +32,7 @@ class backgroundSTP(QtGui.QFrame):
             fsize = 7
         else:
             fsize = 8
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
+        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
         self.box_font = QtGui.QFont('Helvetica', fsize)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
