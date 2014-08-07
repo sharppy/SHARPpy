@@ -258,6 +258,7 @@ def ship(mucape, mumr, lr75, h5_temp, shr06):
     -------
     ship : significant hail parameter (unitless)
     '''
+
     ship = -1. * (mucape * mumr * lr75 * h5_temp * shr06) / 44000000.
     return ship
 
@@ -296,6 +297,8 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 
     if mlcinh > -50:
         cinh_term = 1.0
+    elif np.abs(mlcinh) > 250:
+        cinh_term = 0
     else:
         cinh_term = ((mlcinh + 200.) / 150.)
 
@@ -323,8 +326,6 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
     -------
     stp_fixed : signifcant tornado parameter (fixed-layer)
     '''
-    # Calculate CAPE term
-    cape_term = sbcape / 1500.
     
     # Calculate SBLCL term
     if sblcl < 1000.: # less than 1000. meters
@@ -336,15 +337,17 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
 
     # Calculate 6BWD term
     if bwd6 > 30.: # greater than 30 m/s
-        bwd6_term = 1.5
+        bwd6 = 30
     elif bwd6 < 12.5:
-        bwd6_term = 0.0
-    else:
-        bwd6_term = bwd6/20.
+        bwd6 = 0.0
+    
+    bwd6_term = bwd6 / 20.
 
-    srh_term = srh01/150.
+    cape_term = sbcape / 1500.
+    srh_term = srh01 / 150.
 
     stp_fixed = cape_term * lcl_term * srh_term * bwd6_term
+   
     return stp_fixed
 
 
@@ -364,11 +367,12 @@ def scp(mucape, srh, ebwd):
     -------
     scp : supercell composite parameter
     '''
+
     if ebwd > 20:
         ebwd = 20.
     elif ebwd < 10:
         ebwd = 0.
-    
+     
     muCAPE_term = mucape / 1000.
     esrh_term = srh / 50.
     ebwd_term = ebwd / 20.

@@ -262,7 +262,7 @@ class plotSTP(backgroundSTP):
             prob = .42
             color = QtGui.QColor(RED)
         else:
-            prob = np.ma.masked
+            prob = 0.06
             color = QtGui.QColor(DBROWN)
         return prob, color
     
@@ -295,7 +295,7 @@ class plotSTP(backgroundSTP):
             prob = .26
             color = QtGui.QColor(YELLOW)
         else:
-            prob = np.ma.masked
+            prob = 0.0
             color = QtGui.QColor(DBROWN)
         return prob, color
 
@@ -398,10 +398,7 @@ class plotSTP(backgroundSTP):
             self.stpc = 0
         elif self.stpc > 11.:
             self.stpc = 11.
-        if self.stpc < 3:
-            color = QtGui.QColor('#996600')
-        else:
-            color = QtGui.QColor('#FF0000')
+        prob, color = self.stpc_prob(self.stpc) 
         ef = self.stp_to_pix(self.stpc)
         pen = QtGui.QPen(color, 1.5, QtCore.Qt.SolidLine)
         qp.setPen(pen)
