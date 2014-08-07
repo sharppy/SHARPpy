@@ -48,7 +48,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.in_plot_font = QtGui.QFont('Helvetica', fsize)
         self.esrh_font = QtGui.QFont('Helvetica', fsize + 2)
         self.esrh_metrics = QtGui.QFontMetrics( self.esrh_font )
-        self.esrh_height = self.esrh_metrics.xHeight() + 6
+        self.esrh_height = self.esrh_metrics.xHeight() + 9
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
