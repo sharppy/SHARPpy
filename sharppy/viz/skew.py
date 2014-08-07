@@ -36,12 +36,19 @@ class backgroundSkewT(QtGui.QWidget):
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
         self.centert = (self.brtmpc - self.bltmpc) / 2.
         self.centerp = self.pix_to_pres(self.hgt/2.)
+        if self.physicalDpiX() > 75:
+            fsize = 6
+        else:
+            fsize = 7
         self.title_font = QtGui.QFont('Helvetica', 14)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
-        self.title_height = self.title_metrics.height()
-        self.label_font = QtGui.QFont('Helvetica', 10)
+        self.title_height = self.title_metrics.xHeight() + 5
+        self.label_font = QtGui.QFont('Helvetica', fsize + 2)
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
-        self.in_plot_font = QtGui.QFont('Helvetica', 7)
+        self.in_plot_font = QtGui.QFont('Helvetica', fsize)
+        self.esrh_font = QtGui.QFont('Helvetica', fsize + 2)
+        self.esrh_metrics = QtGui.QFontMetrics( self.esrh_font )
+        self.esrh_height = self.esrh_metrics.xHeight() + 9
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
@@ -490,11 +497,12 @@ class plotSkewT(backgroundSkewT):
             pass
         else:
             x1 = self.tmpc_to_pix(-20, 1000)
+            x2 = self.tmpc_to_pix(-33, 1000)
             y1 = self.pres_to_pix(pbot)
             y2 = self.pres_to_pix(ptop)
-            rect1 = QtCore.QRectF(x1-60, y1+4, 40, 15)
-            rect2 = QtCore.QRectF(x1-60, y2-15, 40, 15)
-            rect3 = QtCore.QRectF(x1-15, y2-15, 40, 15)
+            rect1 = QtCore.QRectF(x2, y1+4, 25, self.esrh_height)
+            rect2 = QtCore.QRectF(x2, y2-self.esrh_height, 50, self.esrh_height)
+            rect3 = QtCore.QRectF(x1-15, y2-self.esrh_height, 50, self.esrh_height)
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
             qp.setPen(pen)
@@ -512,14 +520,13 @@ class plotSkewT(backgroundSkewT):
             qp.drawRect(rect3)
             pen = QtGui.QPen(QtGui.QColor('#04DBD8'), 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            font = QtGui.QFont('Helvetica', 9, QtGui.QFont.Bold)
-            qp.setFont(font)  
+            qp.setFont(self.esrh_font)
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
-            qp.drawText(rect1, QtCore.Qt.AlignCenter, text_bot)
-            qp.drawText(rect2, QtCore.Qt.AlignCenter, text_top)
-            qp.drawText(rect3, QtCore.Qt.AlignCenter,
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
