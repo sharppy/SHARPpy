@@ -40,11 +40,11 @@ class backgroundAnalogues(QtGui.QFrame):
         self.tpad = 5; self.bpad = 5
         ## take care of dynamically sizing the text based on DPI
         if self.physicalDpiX() > 75:
-            fsize = 7
+            fsize = 8
         else:
             fsize = 10
         ## set various fonts
-        self.title_font = QtGui.QFont('Helvetica', fsize + 3)
+        self.title_font = QtGui.QFont('Helvetica', fsize + 4)
         self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
         self.match_font = QtGui.QFont('Helvetica', fsize)
         ## get the metrics on the fonts. This is used to get their size.
