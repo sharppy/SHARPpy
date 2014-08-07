@@ -43,7 +43,13 @@ class backgroundHodo(QtGui.QFrame):
         self.ring_increment = 10
         self.rings = range(self.ring_increment, 100+self.ring_increment,
             self.ring_increment)
-        self.label_font = QtGui.QFont('Helvetica', 9)
+        if self.physicalDpiX() > 75:
+            fsize = 7
+        else:
+            fsize = 9
+        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.label_height = self.label_metrics.xheight() + 5
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
 
