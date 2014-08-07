@@ -28,11 +28,11 @@ class backgroundSTP(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-        self.plot_font = QtGui.QFont('Helvetica', 11)
         if self.physicalDpiX() > 75:
             fsize = 7
         else:
             fsize = 8
+        self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
         self.box_font = QtGui.QFont('Helvetica', fsize)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
