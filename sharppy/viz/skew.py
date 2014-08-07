@@ -517,7 +517,7 @@ class plotSkewT(backgroundSkewT):
             pen = QtGui.QPen(QtGui.QColor('#04DBD8'), 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             font = QtGui.QFont('Helvetica', 9, QtGui.QFont.Bold)
-            qp.setFont(font)  
+            qp.setFont(self.in_plot_font)
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
