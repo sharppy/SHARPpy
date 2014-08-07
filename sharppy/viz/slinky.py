@@ -113,8 +113,8 @@ class backgroundSlinky(QtGui.QFrame):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         ## draw the frame
-        self.draw_frame(qp)
         self.draw_axes(qp)
+        self.draw_frame(qp)
         qp.end()
 
     def xy_to_pix(self, x, y):
