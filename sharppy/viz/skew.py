@@ -497,7 +497,7 @@ class plotSkewT(backgroundSkewT):
             pass
         else:
             x1 = self.tmpc_to_pix(-20, 1000)
-            x2 = self.tmpc_to_pix(-30, 1000)
+            x2 = self.tmpc_to_pix(-33, 1000)
             y1 = self.pres_to_pix(pbot)
             y2 = self.pres_to_pix(ptop)
             rect1 = QtCore.QRectF(x2, y1+4, 25, self.esrh_height)
