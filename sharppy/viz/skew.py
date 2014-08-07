@@ -42,7 +42,7 @@ class backgroundSkewT(QtGui.QWidget):
             fsize = 7
         self.title_font = QtGui.QFont('Helvetica', 14)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
-        self.title_height = self.title_metrics.xHeight() + 5
+        self.title_height = self.title_metrics.xHeight() + 6
         self.label_font = QtGui.QFont('Helvetica', fsize + 2)
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
         self.in_plot_font = QtGui.QFont('Helvetica', fsize)
