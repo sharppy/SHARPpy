@@ -7,6 +7,7 @@ from sharppy.sharptab.constants import *
 ## Written by Kelton Halbert - OU School of Meteorology
 ## and Greg Blumberg - CIMMS
 
+
 __all__ = ['backgroundWatch', 'plotWatch']
 
 class backgroundWatch(QtGui.QFrame):
@@ -28,8 +29,12 @@ class backgroundWatch(QtGui.QFrame):
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
-        self.title_font = QtGui.QFont('Helvetica', 12)
-        self.plot_font = QtGui.QFont('Helvetica', 12)
+        if self.physicalDpiX() > 75:
+            fsize = 10
+        else:
+            fsize = 12
+        self.title_font = QtGui.QFont('Helvetica', fsize)
+        self.plot_font = QtGui.QFont('Helvetica', fsize)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.title_height = self.title_metrics.height()
