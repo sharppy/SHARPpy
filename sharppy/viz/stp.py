@@ -197,7 +197,7 @@ class plotSTP(backgroundSTP):
             color = QtGui.QColor(YELLOW)
         elif cape >= 4000.:
             prob = .16
-            color = QtGui.QColor(YELLOW)
+            color = QtGui.QColor(WHITE)
         else:
             prob = np.ma.masked
             color = QtGui.QColor(DBROWN)
@@ -242,7 +242,7 @@ class plotSTP(backgroundSTP):
             color = QtGui.QColor(DBROWN)
         elif esrh >= 100. and esrh < 200.:
             prob = .08
-            color = QtGui.QColor(DBROWN)
+            color = QtGui.QColor(LBROWN)
         elif esrh >= 200. and esrh < 300:
             prob = .14
             color = QtGui.QColor(WHITE)
