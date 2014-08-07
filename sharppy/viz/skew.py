@@ -47,6 +47,8 @@ class backgroundSkewT(QtGui.QWidget):
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
         self.in_plot_font = QtGui.QFont('Helvetica', fsize)
         self.esrh_font = QtGui.QFont('Helvetica', fsize + 2)
+        self.esrh_metrics = QtGui.QFontMetrics( self.esrh_font )
+        self.esrh_height = self.esrh_metrics.xHeight() + 5
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
@@ -495,11 +497,12 @@ class plotSkewT(backgroundSkewT):
             pass
         else:
             x1 = self.tmpc_to_pix(-20, 1000)
+            x2 = self.tmpc_to_pix(-30, 1000)
             y1 = self.pres_to_pix(pbot)
             y2 = self.pres_to_pix(ptop)
-            rect1 = QtCore.QRectF(x1-60, y1+4, 25, 20)
-            rect2 = QtCore.QRectF(x1-60, y2-15, 50, 20)
-            rect3 = QtCore.QRectF(x1-15, y2-15, 50, 20)
+            rect1 = QtCore.QRectF(x2, y1+4, 25, self.esrh_height)
+            rect2 = QtCore.QRectF(x2, y2-self.esrh_height, 50, self.esrh_height)
+            rect3 = QtCore.QRectF(x1-15, y2-self.esrh_height, 50, self.esrh_height)
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
             qp.setPen(pen)
@@ -521,9 +524,9 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
-            qp.drawText(rect1, QtCore.Qt.AlignCenter, text_bot)
-            qp.drawText(rect2, QtCore.Qt.AlignCenter, text_top)
-            qp.drawText(rect3, QtCore.Qt.AlignCenter,
+            qp.drawText(rect1, QtCore.Qt.AlignLeft, text_bot)
+            qp.drawText(rect2, QtCore.Qt.AlignLeft, text_top)
+            qp.drawText(rect3, QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
