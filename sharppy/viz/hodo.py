@@ -49,7 +49,7 @@ class backgroundHodo(QtGui.QFrame):
             fsize = 9
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.label_height = self.label_metrics.xheight() + 5
+        self.label_height = self.label_metrics.xHeight() + 5
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
 
