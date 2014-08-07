@@ -56,11 +56,11 @@ class backgroundKinematics(QtGui.QFrame):
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
         ## draw the header
-        rect1 = QtCore.QRect(x1*3, 3, x1, self.label_height)
+        rect1 = QtCore.QRect(x1*2, 3, x1, self.label_height)
         rect2 = QtCore.QRect(x1*5, 3, x1, self.label_height)
         rect3 = QtCore.QRect(x1*7, 3, x1, self.label_height)
         rect4 = QtCore.QRect(x1*9-self.rpad, 3, x1, self.label_height)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'SRH (m2/s2)')
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'SRH (m2/s2)')
         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Shear (kt)')
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'MnWind')
         qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'SRW')
