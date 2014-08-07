@@ -44,7 +44,7 @@ class backgroundAnalogues(QtGui.QFrame):
         else:
             fsize = 10
         ## set various fonts
-        self.title_font = QtGui.QFont('Helvetica', fsize + 4)
+        self.title_font = QtGui.QFont('Helvetica', fsize + 3)
         self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
         self.match_font = QtGui.QFont('Helvetica', fsize)
         ## get the metrics on the fonts. This is used to get their size.
