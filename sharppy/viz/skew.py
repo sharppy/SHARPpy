@@ -524,9 +524,9 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
-            qp.drawText(rect1, QtCore.Qt.AlignLeft, text_bot)
-            qp.drawText(rect2, QtCore.Qt.AlignLeft, text_top)
-            qp.drawText(rect3, QtCore.Qt.AlignLeft,
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
