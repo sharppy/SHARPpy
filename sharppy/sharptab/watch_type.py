@@ -127,7 +127,7 @@ def possible_watch(prof):
         colors.append("#CC33CC")
     
     # Freeze Watch (checks to see if dewpoint is below freezing and temperature isn't and wind speeds are low)
-    if prof.dwpc[prof.get_sfc()] < 32. and prof.tmpc[prof.get_sfc()] > 32. and prof.wspd[prof.get_sfc()] < 5.:
+    if thermo.ctof(prof.dwpc[prof.get_sfc()]) < 32. and thermo.ctof(prof.tmpc[prof.get_sfc()]) > 32. and prof.wspd[prof.get_sfc()] < 5.:
         watch_types.append("FREEZE")
         colors.append("#3366FF")
     
