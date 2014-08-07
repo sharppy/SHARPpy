@@ -88,11 +88,6 @@ class backgroundSpeed(QtGui.QFrame):
         x1 = self.speed_to_pix(s)
         ## draw a dashed line of constant wind speed value
         qp.drawLine(x1, self.bry, x1, self.tly)
-        if s > 0:
-            pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.DashLine)
-            qp.setPen(pen)
-            qp.drawText(x1-5, self.bry+10, 20, 10,
-                QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, tab.utils.INT2STR(s))
 
     def pres_to_pix(self, p):
         '''
