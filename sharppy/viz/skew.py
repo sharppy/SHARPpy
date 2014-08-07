@@ -38,7 +38,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.centerp = self.pix_to_pres(self.hgt/2.)
         if self.physicalDpiX() > 75:
             fsize = 6
-            fsizet = 12
+            fsizet = 10
         else:
             fsize = 7
             fsizet = 14
