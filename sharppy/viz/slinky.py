@@ -55,7 +55,7 @@ class backgroundSlinky(QtGui.QFrame):
 
         '''
         self.centerx = self.wid / 2; self.centery = self.hgt / 2
-        self.mag = 6000.*1.7
+        self.mag = 7000.*1.7
         self.scale = (self.brx - self.tlx) / self.mag
 
     def resizeEvent(self, e):
@@ -252,7 +252,7 @@ class plotSlinky(backgroundSlinky):
         if self.slinky_traj is np.ma.masked:
             return
         ## loop through the parcel tradjectory in reverse
-        for tradj in self.slinky_traj[::-1]:
+        for tradj in self.slinky_traj[:]:
             ## get the x, y, and z location of the updraft at each height
             x = tradj[0]
             y = tradj[1]
@@ -274,5 +274,5 @@ class plotSlinky(backgroundSlinky):
             qp.setPen(pen)
             xx, yy = self.xy_to_pix(x,y)
             center = QtCore.QPointF(xx, yy)
-            qp.drawEllipse(center, 6, 6)
+            qp.drawEllipse(center, 5, 5)
 
