@@ -2051,7 +2051,7 @@ def dcape(prof):
     prof_wetbulb = prof.wetbulb
     mask1 = prof_thetae.mask
     mask2 = prof.pres.mask
-    mask = np.maximum( mask1, mask2 )
+    mask = np.maximum( mask1, mask2 ) 
     prof_thetae = prof_thetae[~mask]
     prof_wetbulb = prof_wetbulb[~mask]
     pres = prof.pres[~mask]
@@ -2059,12 +2059,12 @@ def dcape(prof):
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
     idx = np.where(prof.pres > sfc_pres - 400.)[0]
-    min_idx = np.ma.argmin(prof_thetae[idx])
-    downdraft_t1 = prof_wetbulb[min_idx]
-    downdraft_p1 = pres[min_idx]
-    downdraft_z1 = hght[min_idx]
-    downdraft_td1 = dwpc[min_idx]
-    env_tv1 = tmpc[min_idx]
+    min_idx = np.ma.argmin(prof_thetae[idx]) # Find the minimum thetae value in the lowest 400 mb.
+    downdraft_t1 = prof_wetbulb[min_idx] # The downdraft parcel trace temperature
+    downdraft_p1 = pres[min_idx] # The downdraft parcel trace pressure
+    downdraft_z1 = hght[min_idx] # The downdraft parcel trace height
+    downdraft_td1 = dwpc[min_idx] # The downdraft parcel trace dew point
+    env_tv1 = tmpc[min_idx] # The environmental temperature trace
    
     ttrace = [downdraft_t1]
     ptrace = [downdraft_p1]
@@ -2072,7 +2072,9 @@ def dcape(prof):
     dp = 1
     dcape_plus = 0
     dcape_minus = 0
-    for downdraft_p2 in np.arange(downdraft_p1, sfc_pres + dp, dp):
+    #print downdraft_p1, sfc_pres, np.arange(downdraft_p1, sfc_pres + dp, dp)
+    print pres[:min_idx+1][::-1]
+    for downdraft_p2 in pres[:min_idx][::-1]:
         downdraft_t2 = thermo.wetlift(downdraft_p1, downdraft_t1, downdraft_p2)
         downdraft_z2 = interp.hght(prof, downdraft_p2)
         downdraft_td2 = downdraft_t2
@@ -2081,18 +2083,18 @@ def dcape(prof):
         env_tv2 = interp.temp(prof, downdraft_p2)
         
         delta_z = downdraft_z2 - downdraft_z1
-        g = G # m/s^2
         
         dn1 = thermo.virtemp(downdraft_p1, downdraft_t1, downdraft_td1)
         dn2 = thermo.virtemp(downdraft_p2, downdraft_t2, downdraft_td2)
         env1 = thermo.virtemp(downdraft_p1, env_tv1, interp.dwpt(prof, downdraft_p1))
         env2 = thermo.virtemp(downdraft_p2, env_tv2, interp.dwpt(prof, downdraft_p2))
-        
+        print '-------------------------------------'
+        print dn1, dn2, env1, env2, downdraft_p1, downdraft_p2
         buoyancy_1 = (thermo.ctok(dn1) - thermo.ctok(env1)) / (thermo.ctok(env1))
         buoyancy_2 = (thermo.ctok(dn2) - thermo.ctok(env2)) / (thermo.ctok(env2))
-        
-        d_dcape = (g * (delta_z/2.) * (buoyancy_1 + buoyancy_2))
-        
+        print delta_z, buoyancy_1, buoyancy_2 
+        d_dcape = (G * (delta_z/2.) * (buoyancy_1 + buoyancy_2))
+        print d_dcape
         if d_dcape >= 0:
             dcape_plus = dcape_plus + d_dcape
         else:
