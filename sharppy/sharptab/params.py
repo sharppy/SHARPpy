@@ -1853,7 +1853,14 @@ def tei(prof):
         Theta-E Index (TEI)
         TEI is the difference between the surface theta-e and the minimum theta-e value
         in the lowest 400 mb AGL
-        
+       
+        Note: This is the definition of TEI on the SPC help page,
+        but these calculations do not match up with the TEI values online.
+        The TEI values online are more consistent with the max Theta-E
+        minus the minimum Theta-E found in the lowest 400 mb AGL.
+
+        This is what our TEI calculation shall be for the time being.
+
         Parameters
         ----------
         prof : Profile object
@@ -1867,10 +1874,12 @@ def tei(prof):
     sfc_pres = prof.pres[prof.sfc]
     top_pres = sfc_pres - 400.
     
-    layer_idxs = ma.where(prof.pres > top_pres)[0]
+    layer_idxs = ma.where(prof.pres >= top_pres)[0]
     min_thetae = ma.min(prof.thetae[layer_idxs])
-    
-    tei = sfc_theta - min_thetae
+    max_thetae = ma.max(prof.thetae[layer_idxs])
+
+    #tei = sfc_theta - min_thetae
+    tei = max_thetae - min_thetae
     return tei
 
 def esp(prof):
@@ -2086,7 +2095,7 @@ def dcape(prof):
     hght = prof.hght[~mask]
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
-    idx = np.where(prof.pres > sfc_pres - 400.)[0]
+    idx = np.where(prof.pres >= sfc_pres - 400.)[0]
     min_idx = np.ma.argmin(prof_thetae[idx]) # Find the minimum thetae value in the lowest 400 mb.
     downdraft_t1 = prof_wetbulb[min_idx] # The downdraft parcel trace temperature
     downdraft_p1 = pres[min_idx] # The downdraft parcel trace pressure
