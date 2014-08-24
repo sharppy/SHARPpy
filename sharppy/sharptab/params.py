@@ -242,7 +242,7 @@ class Parcel(object):
         self.cappres = ma.masked
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
-def ship(mucape, mumr, lr75, h5_temp, shr06):
+def ship(mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     '''
     Calculate the Sig Hail Parameter (SHIP)
     
@@ -253,13 +253,41 @@ def ship(mucape, mumr, lr75, h5_temp, shr06):
     lr75 : 700-500 mb lapse rate (C/km)
     h5_temp : 500 mb temperature (C)
     shr06 : 0-6 km shear (m/s)
-    
+    frz_lvl : freezing level (m)
+
     Returns
     -------
     ship : significant hail parameter (unitless)
-    '''
+    
+    Ryan Jewell (SPC) helped in correcting this equation as the SPC
+    sounding help page version did not have the correct information
+    how SHIP was calculated.
 
-    ship = -1. * (mucape * mumr * lr75 * h5_temp * shr06) / 44000000.
+    '''
+    if shr06 > 27:
+        shr06 = 27.
+    elif shr06 < 7:
+        shr06 = 7.
+
+    if mumr > 13.6:
+        mumr = 13.6
+    elif mumr < 11.:
+        mumr = 11.
+
+    if h5_temp > -5.5:
+        h5_temp = -5.5
+
+    ship = -1. * (mucape * mumr * lr75 * h5_temp * shr06) / 42000000.
+    
+    if mucape < 1300:
+        ship = ship*(mucape/1300.)
+    
+    if lr75 < 5.8:
+        ship = ship*(lr75/5.8)
+
+    if frz_lvl < 2400:
+        ship = ship * (frz_lvl/2400.)
+    
     return ship
 
 def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
