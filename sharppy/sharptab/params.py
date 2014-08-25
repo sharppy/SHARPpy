@@ -261,7 +261,7 @@ def ship(mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     
     Ryan Jewell (SPC) helped in correcting this equation as the SPC
     sounding help page version did not have the correct information
-    how SHIP was calculated.
+    of how SHIP was calculated.
 
     '''
     if shr06 > 27:
@@ -296,6 +296,8 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
         
     Calculate the Significant Tornado Parameter (w/CIN)
 
+    From Thompson et al. 2004
+
     Parameters
     ----------
     mlcape : Mixed-layer CAPE from the parcel class (J/kg)
@@ -303,20 +305,21 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
     ebwd : effective bulk wind difference (m/s)
     mllcl : mixed-layer lifted condensation level (m)
     mlcinh : mixed-layer convective inhibition (J/kg)
-    
+   
     Returns
     -------
     stp_cin : significant tornado parameter (unitless)
+    
     '''
     cape_term = mlcape / 1500.
     eshr_term = esrh / 150.
     
-    if ebwd < 12.:
+    if ebwd < 10.:
         ebwd_term = 0.
     elif ebwd > 30.:
         ebwd_term = 1.5
     else:
-        ebwd_term = ebwd / 12.
+        ebwd_term  = ebwd / 20.
 
     if mllcl < 1000.:
         lcl_term = 1.0
@@ -328,11 +331,12 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
     elif np.abs(mlcinh) > 250:
         cinh_term = 0
     else:
-        cinh_term = ((mlcinh + 200.) / 150.)
+        cinh_term = ((mlcinh + 250.) / 200.)
 
     stp_cin = cape_term * eshr_term * ebwd_term * lcl_term * cinh_term
-    if stp_cin is np.ma.masked:
+    if stp_cin is np.ma.masked or stp_cin < 0:
         stp_cin = 0.0
+
     return stp_cin
 
 
@@ -342,14 +346,16 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
     '''
         
     Calculate the Significant Tornado Parameter (fixed layer)
-    
+   
+    From Thompson et al. 2003
+
     Parameters
     ----------
     sbcape : Surface based CAPE from the parcel class (J/kg)
     sblcl : Surface based lifted condensation level (LCL) (m)
     srh01 : Surface to 1 km storm relative helicity (m2/s2)
     bwd6 : Bulk wind difference between 0 to 6 km (m/s)
-    
+
     Returns
     -------
     stp_fixed : signifcant tornado parameter (fixed-layer)
@@ -385,6 +391,8 @@ def scp(mucape, srh, ebwd):
     '''
     Calculates the Supercell Composite Parameter
     
+    From Thompson et al. 2004
+    
     Parameters
     ----------
     mucape : Most Unstable CAPE from the parcel class (J/kg)
@@ -394,6 +402,7 @@ def scp(mucape, srh, ebwd):
     Returns
     -------
     scp : supercell composite parameter
+    
     '''
 
     if ebwd > 20:
