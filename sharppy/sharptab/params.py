@@ -296,7 +296,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
         
     Calculate the Significant Tornado Parameter (w/CIN)
 
-    From Thompson et al. 2004
+    From Thompson et al. 2012 WAF, page 1139
 
     Parameters
     ----------
@@ -314,7 +314,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
     cape_term = mlcape / 1500.
     eshr_term = esrh / 150.
     
-    if ebwd < 10.:
+    if ebwd < 12.5:
         ebwd_term = 0.
     elif ebwd > 30.:
         ebwd_term = 1.5
@@ -323,15 +323,17 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 
     if mllcl < 1000.:
         lcl_term = 1.0
+    elif mllcl > 2000.
+        lcl_term = 0.0
     else:
         lcl_term = ((2000. - mllcl) / 1000.)
 
     if mlcinh > -50:
         cinh_term = 1.0
-    elif np.abs(mlcinh) > 250:
+    elif mlcinh < -200:
         cinh_term = 0
     else:
-        cinh_term = ((mlcinh + 250.) / 200.)
+        cinh_term = ((mlcinh + 200.) / 150.)
 
     stp_cin = cape_term * eshr_term * ebwd_term * lcl_term * cinh_term
     if stp_cin is np.ma.masked or stp_cin < 0:
