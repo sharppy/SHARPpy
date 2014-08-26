@@ -323,7 +323,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 
     if mllcl < 1000.:
         lcl_term = 1.0
-    elif mllcl > 2000.
+    elif mllcl > 2000.:
         lcl_term = 0.0
     else:
         lcl_term = ((2000. - mllcl) / 1000.)
