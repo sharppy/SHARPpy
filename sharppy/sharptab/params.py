@@ -8,7 +8,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['DefineParcel', 'Parcel', 'inferred_temp_advection']
 __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
-__all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta', 'mean_relh']
+__all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta', 'mean_thetae', 'mean_relh']
 __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp']
@@ -766,6 +766,57 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
         w = ma.average(thermo.mixratio(p, dwpt))
     return w
 
+def mean_thetae(prof, pbot=None, ptop=None, dp=-1, exact=False):
+    '''
+        Calculates the mean theta-e from a profile object within the
+        specified layer.
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        pbot : number (optional; default surface)
+        Pressure of the bottom level (hPa)
+        ptop : number (optional; default 400 hPa)
+        Pressure of the top level (hPa)
+        dp : negative integer (optional; default = -1)
+        The pressure increment for the interpolated sounding
+        exact : bool (optional; default = False)
+        Switch to choose between using the exact data (slower) or using
+        interpolated sounding at 'dp' pressure levels (faster)
+        
+        Returns
+        -------
+        Mean Theta-E
+        
+        '''
+    if not pbot: pbot = prof.pres[prof.sfc]
+    if not ptop: ptop = prof.pres[prof.sfc] - 100.
+    if not utils.QC(interp.temp(prof, pbot)): pbot = prof.pres[prof.sfc]
+    if not utils.QC(interp.temp(prof, ptop)): return ma.masked
+    if exact:
+        ind1 = np.where(pbot > prof.pres)[0].min()
+        ind2 = np.where(ptop < prof.pres)[0].max()
+        thetae1 = thermo.thetae(pbot, interp.temp(prof, pbot), interp.dwpt(prof, pbot))
+        thetae2 = thermo.thetae(ptop, interp.temp(prof, ptop), interp.dwpt(prof, pbot))
+        thetae = np.ma.empty(prof.pres[ind1:ind2+1].shape)
+        for i in np.arange(0, len(thetae), 1):
+            thetae[i] = thermo.thetae(prof.pres[ind1:ind2+1][i],  prof.tmpc[ind1:ind2+1][i], prof.dwpc[ind1:ind2+1][i])
+        mask = ~thetae.mask
+        thetae = np.concatenate([[thetae1], thetae[mask], thetae[mask], [thetae2]])
+        tott = thetae.sum() / 2.
+        num = float(len(thetae)) / 2.
+        thtae = tott / num
+    else:
+        dp = -1
+        p = np.arange(pbot, ptop+dp, dp)
+        temp = interp.temp(prof, p)
+        dwpt = interp.dwpt(prof, p)
+        thetae = np.empty(p.shape)
+        for i in np.arange(0, len(thetae), 1):
+            thetae[i] = thermo.thetae(p[i], temp[i], dwpt[i])
+        thtae = ma.average(thetae, weights=p)
+    return thtae
 
 def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
@@ -2077,11 +2128,15 @@ def sig_severe(prof):
 def dcape(prof):
     '''
         Downdraft CAPE (DCAPE)
-        Calculates the downdraft CAPE value using the parcel with the lowest Theta-E
-        value found in the lowest 400 mb of the sounding.  Lifting this wetbulb parcel to the surface
-        moist adiabatically and then calculating the energy is how this is calculated.
         
-        Note: this function does not compare well to SPC
+        Adapted from John Hart's (SPC) DCAPE code in NSHARP
+
+        Calculates the downdraft CAPE value using the downdraft parcel source found in the lowest
+        400 mb of the sounding.  This downdraft parcel is found by identifying the minimum 100 mb layer 
+        averaged Theta-E.
+
+        Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
+        correction) and the energy accumulated is called the DCAPE.
         
         Parameters
         ----------
@@ -2092,6 +2147,7 @@ def dcape(prof):
         dcape : downdraft CAPE (J/kg)
         ttrace : downdraft parcel trace temperature (C)
         ptrace : downdraft parcel trace pressure (mb)
+        dtemp : downrush temperature (C)
         '''
     
     sfc_pres = prof.pres[prof.sfc]
@@ -2107,79 +2163,56 @@ def dcape(prof):
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
     idx = np.where(prof.pres >= sfc_pres - 400.)[0]
-    min_idx = np.ma.argmin(prof_thetae[idx]) # Find the minimum thetae value in the lowest 400 mb.
-    downdraft_t1 = prof_wetbulb[min_idx] # The downdraft parcel trace temperature
-    downdraft_p1 = pres[min_idx] # The downdraft parcel trace pressure
-    downdraft_z1 = hght[min_idx] # The downdraft parcel trace height
-    downdraft_td1 = dwpc[min_idx] # The downdraft parcel trace dew point
-    env_tv1 = tmpc[min_idx] # The environmental temperature trace
-   
-    ttrace = [downdraft_t1]
-    ptrace = [downdraft_p1]
 
-    dp = 1
-    dcape_plus = 0
-    dcape_minus = 0
-    #print downdraft_p1, sfc_pres, np.arange(downdraft_p1, sfc_pres + dp, dp)
-    print pres[:min_idx+1][::-1]
-    for downdraft_p2 in pres[:min_idx][::-1]:
-        downdraft_t2 = thermo.wetlift(downdraft_p1, downdraft_t1, downdraft_p2)
-        downdraft_z2 = interp.hght(prof, downdraft_p2)
-        downdraft_td2 = downdraft_t2
-        ttrace.append(downdraft_t2)
-        ptrace.append(downdraft_p2)
-        env_tv2 = interp.temp(prof, downdraft_p2)
-        
-        delta_z = downdraft_z2 - downdraft_z1
-        
-        dn1 = thermo.virtemp(downdraft_p1, downdraft_t1, downdraft_td1)
-        dn2 = thermo.virtemp(downdraft_p2, downdraft_t2, downdraft_td2)
-        env1 = thermo.virtemp(downdraft_p1, env_tv1, interp.dwpt(prof, downdraft_p1))
-        env2 = thermo.virtemp(downdraft_p2, env_tv2, interp.dwpt(prof, downdraft_p2))
-        print '-------------------------------------'
-        print dn1, dn2, env1, env2, downdraft_p1, downdraft_p2
-        buoyancy_1 = (thermo.ctok(dn1) - thermo.ctok(env1)) / (thermo.ctok(env1))
-        buoyancy_2 = (thermo.ctok(dn2) - thermo.ctok(env2)) / (thermo.ctok(env2))
-        print delta_z, buoyancy_1, buoyancy_2 
-        d_dcape = (G * (delta_z/2.) * (buoyancy_1 + buoyancy_2))
-        print d_dcape
-        if d_dcape >= 0:
-            dcape_plus = dcape_plus + d_dcape
-        else:
-            dcape_minus = dcape_minus + d_dcape
-        env_tv1 = env_tv2
-        downdraft_t1 = downdraft_t2
-        downdraft_p1 = downdraft_p2
-        downdraft_z1 = downdraft_z2
-    
-    return dcape_plus + dcape_minus, np.asarray(ttrace), np.asarray(ptrace)
+    # Find the minimum average theta-e in a 100 mb layer
+    mine = 1000.0
+    minp = -999.0
+    for i in idx:
+        thta_e_mean = mean_thetae(prof, pbot=pres[i], ptop=pres[i]-100.)
+        if utils.QC(thta_e_mean) and thta_e_mean < mine:
+            minp = pres[i] - 50.
+            mine = thta_e_mean
 
-def downrush_temp(prof):
-    '''
-        Downrush Temperature (DTEMP)
-        
-        This is the surface temperature of the hypothetical downdraft used in the
-        DCAPE calculation.
-        
-        Parameters
-        ----------
-        prof : Profile object
-        
-        Returns
-        -------
-        dtemp : downdraft temperature (F)
-        '''
-    
-    sfc_pres = prof.pres[prof.sfc]
-    prof_thetae = prof.thetae
-    prof_wetbulb = prof.wetbulb
-    idx = np.where(prof.pres > sfc_pres - 400.)[0]
-    min_idx = np.ma.argmin(prof_thetae[idx])
-    downdraft_inital_temp = prof_wetbulb[idx][min_idx]
-    downdraft_q = thermo.mixratio(prof.pres[min_idx], downdraft_inital_temp)
-    downdraft_inital_temp = thermo.virtemp(prof.pres[min_idx], downdraft_inital_temp, downdraft_q)
-    downdraft_t = thermo.wetlift(prof.pres[idx][min_idx], downdraft_inital_temp, sfc_pres)
-    
-    return thermo.ctof(downdraft_t)
+    upper = minp
+    uptr = np.where(pres >= upper)[0]
+    uptr = uptr[-1]
 
+    # Define parcel starting point
+    tp1 = thermo.wetbulb(upper, interp.temp(prof, upper), interp.dwpt(prof, upper))
+    pe1 = upper
+    te1 = interp.temp(prof, pe1)
+    h1 = interp.hght(prof, pe1)
+    tote = 0
+    lyre = 0
+
+    # To keep track of the parcel trace from the downdraft
+    ttrace = [tp1] 
+    ptrace = [upper]
+
+    # Lower the parcel to the surface moist adiabatically and compute
+    # total energy (DCAPE)
+    for i in np.arange(uptr, prof.sfc-1, -1):
+        pe2 = pres[i]
+        te2 = tmpc[i]
+        h2 = hght[i]
+        tp2 = thermo.wetlift(pe1, tp1, pe2)
+
+        if utils.QC(te1) and utils.QC(te2):
+            tdef1 = (tp1 - te1) / (thermo.ctok(te1))
+            tdef2 = (tp2 - te2) / (thermo.ctok(te2))
+            lyrlast = lyre
+            lyre = 9.8 * (tdef1 + tdef2) / 2.0 * (h2 - h1)
+            tote += lyre
+        
+        ttrace.append(tp2)
+        ptrace.append(pe2)
+
+        pe1 = pe2
+        te1 = te2
+        h1 = h2
+        tp1 = tp2
+
+    drtemp = tp2 # Downrush temp in Celsius
+
+    return tote, np.asarray(ttrace), np.asarray(ptrace)
 
