@@ -307,19 +307,19 @@ class plotText(backgroundText):
         ## This starts with the left column.
         
         if self.prof.pwv_flag == -3:
-            color = QtGui.QColor('#DA9167')
+            color = QtGui.QColor('#FF7F00')
         elif self.prof.pwv_flag == -2:
-            color = QtGui.QColor('#FFE1B7')
+            color = QtGui.QColor('#EE9A00')
         elif self.prof.pwv_flag == -1:
-            color = QtGui.QColor('#FFFFD5')
+            color = QtGui.QColor('#FFDAB9')
         elif self.prof.pwv_flag == 0:
             color = QtGui.QColor('#FFFFFF')
         elif self.prof.pwv_flag == 1:
-            color = QtGui.QColor('#D6FFD6')
+            color = QtGui.QColor('#98FB98')
         elif self.prof.pwv_flag == 2:
-            color = QtGui.QColor('#A4CDA4')
+            color = QtGui.QColor('#66CD00')
         else:
-            color = QtGui.QColor('#008000')
+            color = QtGui.QColor('#00FF00')
         
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.

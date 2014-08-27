@@ -157,7 +157,6 @@ class plotSTP(backgroundSTP):
         self.mllcl = prof.mlpcl.lclhght
         self.esrh = prof.right_esrh[0]
         self.ebwd = prof.ebwspd
-        print "EBWD:",prof.ebwd
         self.stpc = prof.stp_cin
         self.stpf = prof.stp_fixed
         ## get the probabilities
