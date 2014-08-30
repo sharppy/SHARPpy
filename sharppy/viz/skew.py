@@ -440,6 +440,7 @@ class plotSkewT(backgroundSkewT):
         if self.pcl is not None:
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
         self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
+        self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
@@ -487,6 +488,38 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(h/1000)+' km')
+
+    def draw_parcel_levels(self, qp):
+        xbounds = [37,41]
+        x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+        lclp = self.pcl.lclpres
+        lfcp = self.pcl.lfcpres
+        elp = self.pcl.elpres
+        # Plot LCL
+        if lclp is not np.ma.masked:
+            y = self.pres_to_pix(lclp)
+            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
+        # Plot LFC
+        if lfcp is not np.ma.masked:
+            y = self.pres_to_pix(lfcp)
+            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
+        # Plot EL
+        if elp is not np.ma.masked and elp != lclp:
+            y = self.pres_to_pix(elp)
+            pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
+                   
 
     def draw_effective_layer(self, qp):
         '''
