@@ -11,7 +11,7 @@ ZEROCNK = 273.15        # Zero Celsius in Kelvins
 G = 9.80665             # Gravity
 TOL = 1e-10             # Floating Point Tolerance
 
-#colors
+# Color code constants for easy access
 WHITE = '#FFFFFF'
 RED = '#FF0000'
 ORANGE = '#FF4000'
