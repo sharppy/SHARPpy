@@ -439,7 +439,7 @@ class plotSkewT(backgroundSkewT):
             self.draw_height(h, qp)
         if self.pcl is not None:
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
-        self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
+            self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
@@ -490,6 +490,8 @@ class plotSkewT(backgroundSkewT):
                 tab.utils.INT2STR(h/1000)+' km')
 
     def draw_parcel_levels(self, qp):
+        if self.pcl is None:
+            return
         xbounds = [37,41]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         lclp = self.pcl.lclpres
