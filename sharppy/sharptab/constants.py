@@ -2,7 +2,7 @@
 
 __all__ = ['MISSING', 'ROCP', 'ZEROCNK', 'G', 'TOL', 'WHITE', 'RED',
            'ORANGE', 'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN', 'LBLUE',
-           'CYAN']
+           'CYAN', 'BLACK']
 
 # Meteorological Constants
 MISSING = -9999.0       # Missing Flag
