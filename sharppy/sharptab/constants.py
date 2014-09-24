@@ -13,6 +13,7 @@ TOL = 1e-10             # Floating Point Tolerance
 
 # Color code constants for easy access
 WHITE = '#FFFFFF'
+BLACK = '#000000'
 RED = '#FF0000'
 ORANGE = '#FF4000'
 YELLOW = '#FFFF00'
