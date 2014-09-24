@@ -1,5 +1,5 @@
 from StringIO import StringIO
-from sharppy.sharptab.profile import Profile
+import sharppy.sharptab.profile as profile
 import urllib
 import time as gmtime
 import datetime
@@ -44,7 +44,8 @@ if sys.argv[1] != "test":
     full_data = '\n'.join(data[start_idx : finish_idx][:])
     sound_data = StringIO( full_data )
     p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-    prof = Profile( pres=p, hght=h, tmpc=T, dwpc=Td, wdir=wdir, wspd=wspd, location=sys.argv[1])
+    prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
+                                wdir=wdir, wspd=wspd, location=sys.argv[1])
 
 
 else:
@@ -203,4 +204,5 @@ else:
 '''
 	sound_data = StringIO( sound )
 	p2, h2, T2, Td2, wdir2, wspd2 = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-	test = Profile( pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2, wspd=wspd2, location='OAX' )
+	test = profile.create_profile(profile='convective',  pres=p2, hght=h2, tmpc=T2, dwpc=Td2, wdir=wdir2,
+                                  wspd=wspd2, location='OAX' )

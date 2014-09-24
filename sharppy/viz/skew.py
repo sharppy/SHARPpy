@@ -308,8 +308,6 @@ class plotSkewT(backgroundSkewT):
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
-        self.dpcl_ttrace = prof.dpcl_ttrace
-        self.dpcl_ptrace = prof.dpcl_ptrace
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
@@ -438,8 +436,10 @@ class plotSkewT(backgroundSkewT):
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
         if self.pcl is not None:
+            self.dpcl_ttrace = self.prof.dpcl_ttrace
+            self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
-        self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
+            self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
@@ -490,6 +490,8 @@ class plotSkewT(backgroundSkewT):
                 tab.utils.INT2STR(h/1000)+' km')
 
     def draw_parcel_levels(self, qp):
+        if self.pcl is None:
+            return
         xbounds = [37,41]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         lclp = self.pcl.lclpres
