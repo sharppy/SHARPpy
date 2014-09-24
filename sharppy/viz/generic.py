@@ -1,5 +1,7 @@
 __author__ = 'Kelton Halbert'
 
+__all__ = ['backgroundGeneric', 'plotGeneric']
+
 import numpy as np
 from sharppy.sharptab.constants import *
 from PySide import QtGui, QtCore
@@ -7,12 +9,13 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtOpenGL import *
 
-class backgroundGeneric(QtGui.QWidget):
+class backgroundGeneric(QtGui.QFrame):
     """
     A generic class for drawing the background of a widget.
     """
 
     def __init__(self, **kwargs):
+        super(backgroundGeneric, self).__init__()
         self.initUI(**kwargs)
 
     def initUI(self, **kwargs):
@@ -25,7 +28,7 @@ class backgroundGeneric(QtGui.QWidget):
 
         ## initialize the frame variables
         self.lpad = 0.; self.rpad = 0.
-        self.bpad = 0.; self.tpad = 0.
+        self.bpad = 20.; self.tpad = 0.
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
@@ -40,7 +43,7 @@ class backgroundGeneric(QtGui.QWidget):
         self.borderColor = kwargs.get('border', WHITE)
 
         ## initialize the QPixmap that everything gets drawn on
-        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap = QtGui.QPixmap(self.size().width(), self.size().height())
         self.plotBitMap.fill(QtCore.Qt.black)
 
         ## and draw the background
@@ -112,19 +115,9 @@ class backgroundGeneric(QtGui.QWidget):
         """
 
         ## initialize a new pen and brush
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        qp.setPen(pen)
-        qp.setBrush(brush)
-
-        ## draw the background color
-        qp.drawRect(0, 0, self.brx, self.bry)
-
-        ## change the pen to white
         pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-
-        ## draw the border
+        ## draw the borders in white
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
         qp.drawLine(self.brx, self.tly, self.brx, self.bry)
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
@@ -165,10 +158,8 @@ class plotGeneric(backgroundGeneric):
         ## set some object variables
         self.x = x; self.y = y
         self.color = kwargs.get('color', RED)
-        self.width = kwargs.get('width', 1)
+        self.width = kwargs.get('width', 2)
         ## reset the x and y limits based on the data given
-        super(plotGeneric, self).set_xlim( self.x.min(), self.x.max())
-        super(plotGeneric, self).set_xlim( self.y.min(), self.y.max())
 
     def resizeEvent(self, e):
         """
@@ -178,6 +169,11 @@ class plotGeneric(backgroundGeneric):
         :return: None
         """
         super(plotGeneric, self).resizeEvent(e)
+        ## update the min and max bounds based on the data
+        self.set_xlim( self.x.min()-10, self.x.max()+10)
+        self.set_ylim( self.y.min(), self.y.max())
+        ## you have to call update after setting the variables
+        self.update()
         self.plotData()
 
     def paintEvent(self, e):
@@ -189,6 +185,7 @@ class plotGeneric(backgroundGeneric):
         :return: None
         """
 
+        super(backgroundGeneric, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
@@ -250,4 +247,6 @@ class plotGeneric(backgroundGeneric):
 
             ## if we are outside our bounds, stop drawing
             else:
-                break
+                continue
+        qp.drawPath(path)
+
