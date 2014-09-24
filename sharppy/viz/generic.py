@@ -77,31 +77,31 @@ class backgroundGeneric(QtGui.QWidget):
         self.initUI()
 
     def x_to_pix(self, x):
-        '''
+        """
         Scale an x coordinate value to pixel space and return it.
 
         :param x: An x coordinate value
         :return: x converted to pixel space
-        '''
+        """
 
         scl1 = self.xmax - self.xmin
         scl2 = self.xmax - x
         return self.bry - (scl2 / scl1) * (self.bry - self.tpad)
 
     def y_to_pix(self, y):
-        '''
+        """
         Scale a y coordinate value to pixel space and return it.
 
         :param y: A y coordinate value
         :return: y converted to pixel space
-        '''
+        """
 
         scl1 = self.ymax - self.ymin
         scl2 = self.ymax - y
         return self.bry - (scl2 / scl1 ) * ( self.bry - self.tpad)
 
     def draw_frame(self, qp):
-        '''
+        """
         Draws the background frame for the widget. The background
         frame includes the background color and the frame border.
         This is primarily used in the initUI function and is not
@@ -109,7 +109,7 @@ class backgroundGeneric(QtGui.QWidget):
 
         :param qp: QtGui.QPainter object
         :return: None
-        '''
+        """
 
         ## initialize a new pen and brush
         pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
@@ -131,57 +131,63 @@ class backgroundGeneric(QtGui.QWidget):
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
     def set_xlim(self, xmin, xmax):
-        '''
+        """
         Set the range of values for the x axis.
 
         :param xmin: The minimum x axis value
         :param xmax: The maximum x axis value
         :return: None
-        '''
+        """
 
         self.xmin = xmin; self.xmax = xmax
 
     def set_ylim(self, ymin, ymax):
-        '''
+        """
         Set the range of values for the y axis.
 
         :param ymin: The minimum y axis value
         :param ymax: The maximum y axis value
         :return: None
-        '''
+        """
 
         self.ymin = ymin; self.ymax = ymax
 
 
 class plotGeneric(backgroundGeneric):
-    '''
+    """
     A generic object to plot the foreground of a plot.
     This inherits from the Background Class that holds
     frame constants, getters, and setters.
-    '''
+    """
     def __init__(self, x, y, **kwargs):
-        super(backgroundGeneric, self).__init__(**kwargs)
+        ## construct the super object
+        super(plotGeneric, self).__init__(**kwargs)
+        ## set some object variables
         self.x = x; self.y = y
         self.color = kwargs.get('color', RED)
         self.width = kwargs.get('width', 1)
+        ## reset the x and y limits based on the data given
+        super(plotGeneric, self).set_xlim( self.x.min(), self.x.max())
+        super(plotGeneric, self).set_xlim( self.y.min(), self.y.max())
 
     def resizeEvent(self, e):
-        '''
+        """
         Handles the resizing of the frame
 
         :param e: an Event object
         :return: None
-        '''
+        """
         super(plotGeneric, self).resizeEvent(e)
+        self.plotData()
 
     def paintEvent(self, e):
-        '''
+        """
         Handles the paint event and calls the functions
-        to draw the frame.
+        to draw on the frame.
 
         :param e: an Event object
         :return: None
-        '''
+        """
 
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -189,7 +195,10 @@ class plotGeneric(backgroundGeneric):
         qp.end()
 
     def plotData(self):
-
+        """
+        Plot the data on the frame.
+        :return: None
+        """
         ## create a new painter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
@@ -200,11 +209,12 @@ class plotGeneric(backgroundGeneric):
         qp.end()
 
     def draw_lines(self, qp):
-        '''
+        """
         Draw the line profile on the widget
-        :param qp:
-        :return:
-        '''
+
+        :param qp: QtGui.QPainter object
+        :return: None
+        """
         ## initialize a new pen
         pen = QtGui.QPen(QtGui.QColor(self.color), self.width)
         pen.setStyle(QtCore.Qt.SolidLine)
@@ -233,10 +243,10 @@ class plotGeneric(backgroundGeneric):
             if y[i] > self.ymin and y[i] < self.ymax:
                 xp = x[i]; yp = y[i]
                 ## convert from unit space to pixel space
-                x1 = self.x_to_pix(x1)
-                y1 = self.y_to_pix(y1)
+                x1 = self.x_to_pix(xp)
+                y1 = self.y_to_pix(yp)
                 ## set the pen and draw a line between the two points
-                path.lineTo(x, y)
+                path.lineTo(x1, y1)
 
             ## if we are outside our bounds, stop drawing
             else:
