@@ -4,6 +4,7 @@ __all__ = ['backgroundGeneric', 'plotGeneric']
 
 import numpy as np
 from sharppy.sharptab.constants import *
+import sharppy.sharptab as tab
 from PySide import QtGui, QtCore
 from PySide.QtGui import *
 from PySide.QtCore import *
@@ -16,9 +17,20 @@ class backgroundGeneric(QtGui.QFrame):
 
     def __init__(self, **kwargs):
         super(backgroundGeneric, self).__init__()
-        self.initUI(**kwargs)
 
-    def initUI(self, **kwargs):
+        ## set the xtick and ytick ranges
+        self.xticks = kwargs.get('xticks', None)
+        self.yticks = kwargs.get('yticks', None)
+
+        ## initialize background and border color
+        self.backgroundColor = kwargs.get('background', BLACK)
+        self.borderColor = kwargs.get('border', WHITE)
+
+        self.label_font = QtGui.QFont('Helvetica', 7)
+
+        self.initUI()
+
+    def initUI(self):
         """
         Initialize the user interface. This will set necessary constants
         such as margins, min/max axes values, font sizes, etc.
@@ -38,16 +50,10 @@ class backgroundGeneric(QtGui.QFrame):
         self.xmin = 0.; self.xmax = 100.
         self.ymin = 0.; self.ymax = 100.
 
-        ## initialize background and border color
-        self.backgroundColor = kwargs.get('background', BLACK)
-        self.borderColor = kwargs.get('border', WHITE)
 
         ## initialize the QPixmap that everything gets drawn on
         self.plotBitMap = QtGui.QPixmap(self.size().width(), self.size().height())
-        self.plotBitMap.fill(QtCore.Qt.black)
-
-        ## and draw the background
-        self.plotBackground()
+        self.plotBitMap.fill(QtGui.QColor(self.backgroundColor))
 
     def plotBackground(self):
         """
@@ -64,6 +70,9 @@ class backgroundGeneric(QtGui.QFrame):
         qp.setRenderHint(qp.TextAntialiasing)
         ## draw background frame
         self.draw_frame(qp)
+        ## draw the x and y tick axes
+        self.draw_xticks(qp)
+        self.draw_yticks(qp)
         ## end the painter
         qp.end()
 
@@ -115,13 +124,71 @@ class backgroundGeneric(QtGui.QFrame):
         """
 
         ## initialize a new pen and brush
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(self.borderColor), 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the borders in white
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
         qp.drawLine(self.brx, self.tly, self.brx, self.bry)
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
+
+    def draw_xticks(self, qp):
+        """
+        Dray the xtick labels for the frame.
+
+        :param qp: a QtGui.QPainter object
+        :return: None
+        """
+        ## if there are no specified ticks, don't draw them.
+        if self.xticks is None:
+            return
+
+        ## initialize a pen with the same color as the border
+        pen = QtGui.QPen(QtGui.QColor(self.borderColor), 2, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        ## set the font
+        qp.setFont(self.label_font)
+
+        ticks = self.xticks
+        for tick in ticks:
+            ## convert to pixel space
+            x = self.x_to_pix(tick)
+            ## draw a line of 5 pc as the tick
+            qp.drawLine(x, self.bry, x, self.bry - 5.)
+            ## draw the text for the tick
+            qp.drawText(x, self.bry - 10., 0, 0,
+                QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
+                tab.utils.INT2STR(tick))
+
+    def draw_yticks(self, qp):
+        """
+        Dray the ytick labels for the frame.
+
+        :param qp: a QtGui.QPainter object
+        :return: None
+        """
+        ## if there are no ticks, don't draw them.
+        if self.yticks is None:
+            return
+
+        ## initialize a pen with the same color as teh border
+        pen = QtGui.QPen(QtGui.QColor(self.borderColor), 2, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        ## set the font
+        qp.setFont(self.label_font)
+
+        ## loop over the ticks
+        ticks = self.yticks
+        for tick in ticks:
+            ## convert to pixel space
+            y = self.y_to_pix(tick)
+            ## draw a line of length 5px as the tick
+            qp.drawLine(0, y, 5, y)
+            ## draw the text for the tick
+            qp.drawText(10, y, 0, 0,
+                QtCore.Qt.TextDontClip | QtCore.Qt.AlignVCenter,
+                tab.utils.INT2STR(tick))
+
 
     def set_xlim(self, xmin, xmax):
         """
@@ -159,6 +226,8 @@ class plotGeneric(backgroundGeneric):
         self.x = x; self.y = y
         self.color = kwargs.get('color', RED)
         self.width = kwargs.get('width', 2)
+        self.xaxislimit = kwargs.get('xlim', (self.x.min()-10, self.x.max()+10))
+        self.yaxislimit = kwargs.get('ylim', (self.y.min(), self.y.max()))
         ## reset the x and y limits based on the data given
 
     def resizeEvent(self, e):
@@ -170,10 +239,10 @@ class plotGeneric(backgroundGeneric):
         """
         super(plotGeneric, self).resizeEvent(e)
         ## update the min and max bounds based on the data
-        self.set_xlim( self.x.min()-10, self.x.max()+10)
-        self.set_ylim( self.y.min(), self.y.max())
+        self.set_xlim( self.xaxislimit[0], self.xaxislimit[1])
+        self.set_ylim( self.yaxislimit[0], self.yaxislimit[1])
         ## you have to call update after setting the variables
-        self.update()
+        self.plotBackground()
         self.plotData()
 
     def paintEvent(self, e):
