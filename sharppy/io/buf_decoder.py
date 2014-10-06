@@ -4,15 +4,15 @@ import numpy as np
 from datetime import datetime
 
 class BufkitFile(object):
-
+    
     def __init__(self, filename):
         self.filename = filename
         self.dates = []
         self.__readFile()
         self.num_profiles = 0
-
+    
     def __readFile(self):
-        # Try to open the file.  This is a dirty hack right now until 
+        # Try to open the file.  This is a dirty hack right now until
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
@@ -42,7 +42,7 @@ class BufkitFile(object):
                 self.stim = float(data[i+2].split()[2])
                 print self.stim, self.station
                 print data[i]
-            if 'CFRL HGHT' in data[i] and new_record == False:
+            if data[i].find('HGHT') >= 0 and new_record == False:
                 # we've found a new data chunk
                 new_record = True
                 begin_idx = i+1
@@ -54,7 +54,9 @@ class BufkitFile(object):
                 # We've found the end of the last data chunk of the file
                 new_record = False
                 data_idxs.append((begin_idx, i))
-        
+            elif new_record == True:
+                print data[i]
+        data_idxs = data_idxs[1:]
         # Make arrays to store the data
         self.profile_length = len(data[data_idxs[0][0]: data_idxs[0][1]])/2
         self.numProfiles = len(self.dates)
@@ -69,7 +71,10 @@ class BufkitFile(object):
         for i in range(len(data_idxs)):
             data_stuff = data[data_idxs[i][0]: data_idxs[i][1]]
             for j in np.arange(0, self.profile_length*2,2):
-                self.hght[i,j/2] = float(data_stuff[j+1].split()[1])
+                if len(data_stuff[j+1].split()) == 1:
+                    self.hght[i,j/2] = float(data_stuff[j+1].split()[0])
+                else:
+                    self.hght[i,j/2] = float(data_stuff[j+1].split()[1])
                 self.tmpc[i,j/2] = float(data_stuff[j].split()[1])
                 self.dwpc[i,j/2] = float(data_stuff[j].split()[3])
                 self.pres[i,j/2] = float(data_stuff[j].split()[0])
@@ -78,7 +83,7 @@ class BufkitFile(object):
     
     def getNumProfiles(self):
         return self.numProfiles
-
+    
     def getProfileLength(self):
         return self.profile_length
 
