@@ -85,7 +85,7 @@ def possible_watch(prof):
     stp_eff = prof.stp_cin
     stp_fixed = prof.stp_fixed
     if stp_eff >= 3 and stp_fixed >= 3 and prof.srh1km >= 200 and prof.right_esrh >= 200 and prof.srw_4_6km >= 15.0 and \
-        prof.sfc_8km_shear > 45.0 and prof.sbpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
+        prof.sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebottom == 0:
         watch_types.append("PDS TOR")
         colors.append("#FF0000")
