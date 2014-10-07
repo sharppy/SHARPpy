@@ -92,11 +92,11 @@ def possible_watch(prof):
     elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebottom == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.srw_4_6km >= 15.0 or prof.sfc_8km_shear) >= 40 and \
+    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.srw_4_6km >= 15.0 or prof.sfc_8km_shear >= 40) and \
         prof.mlpcl.bminus > -50 and prof.ebottom == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.low_rh + prof.mid_rh)/2. >= 60 and lr1 >= 5.0 and \
+    elif (stp_eff >= 1 or stp_fixed >= 1) and ((prof.low_rh + prof.mid_rh)/2. >= 60) and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebottom == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
