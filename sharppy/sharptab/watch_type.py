@@ -84,28 +84,32 @@ def possible_watch(prof):
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
     stp_eff = prof.stp_cin
     stp_fixed = prof.stp_fixed
-    if stp_eff >= 3 and stp_fixed >= 3 and prof.srh1km >= 200 and prof.right_esrh >= 200 and prof.srw_4_6km >= 15.0 and \
-        prof.sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
-        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
+    srw_4_6km = utils.mag(prof.srw_4_6km[0],prof.srw_4_6km[1])
+    sfc_8km_shear = utils.mag(prof.sfc_8km_shear[0],prof.sfc_8km_shear[1])
+    right_esrh = prof.right_esrh[0]
+    srh1km = prof.srh1km[0]
+    if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and right_esrh >= 200 and srw_4_6km >= 15.0 and \
+        sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
+        prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("PDS TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebottom == 0:
+    elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebotm == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.srw_4_6km >= 15.0 or prof.sfc_8km_shear >= 40) and \
-        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
+    elif (stp_eff >= 1 or stp_fixed >= 1) and (srw_4_6km >= 15.0 or sfc_8km_shear >= 40) and \
+        prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and ((prof.low_rh + prof.mid_rh)/2. >= 60) and lr1 >= 5.0 and \
-        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
+        prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebottom == 0:
-        watch_types.append("mrgl TOR")
+    elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebotm == 0.:
+        watch_types.append("MRGL TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 0.5 and prof.right_esrh >= 150) or (stp_fixed >= 0.5 and prof.srh1km >= 150) and \
-        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
-        watch_types.append("mrgl TOR")
+    elif (stp_eff >= 0.5 and prof.right_esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
+        prof.mlpcl.bminus > -50 and prof.ebotm == 0.:
+        watch_types.append("MRGL TOR")
         colors.append("#FF0000")
 
     #SVR LOGIC
