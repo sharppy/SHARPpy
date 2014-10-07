@@ -30,6 +30,10 @@ def get_mean_pwv(station):
     '''
     ## a rudimentary check to see what type of station identifier
     ## was passed through
+
+    if station == None:
+        return np.ma.masked
+
     if len(station) == 4:
         id_index = 0
         station = station.upper()
@@ -79,6 +83,8 @@ def get_stdev_pwv(station):
         '''
     ## a rudimentary check to see what type of station identifier
     ## was passed through
+    if station == None:
+        return 0
     if len(station) == 4:
         id_index = 0
         station = station.upper()
