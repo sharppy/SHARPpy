@@ -66,30 +66,62 @@ def possible_watch(prof):
     # - Excessive Heat Watch
     # - Freeze Watch
     
+    """
+        Updated on 10/6/2014 - Added Rich Thompson's code
+    
+        Requires these calculations to already be in the profile object:
+        STP_EFF
+        MLCAPE
+        SHIP
+
+    """
+        
     watch_types = []
     colors = []
     
-    # PDS Tornado Watch if STP(eff) >= 4 and MUCINH < 50. (Uncapped EF-4, EF-5 potential)
-    mucinh = prof.mupcl.bminus
+
+    """BEGIN RICH'S DECISION TREE CODE"""
+    lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
     stp_eff = prof.stp_cin
-    if mucinh > -50 and stp_eff >= 4:
+    stp_fixed = prof.stp_fixed
+    if stp_eff >= 3 and stp_fixed >= 3 and prof.srh1km >= 200 and prof.right_esrh >= 200 and prof.srw_4_6km >= 15.0 and \
+        prof.sfc_8km_shear > 45.0 and prof.sbpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
+        prof.mlpcl.bminus > -50 and self.ebottom == 0:
         watch_types.append("PDS TOR")
         colors.append("#FF0000")
-    elif mucinh > -50 and stp_eff >= 1:
+    elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and self.ebottom == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
-    # Tornado Watch if STP(eff) >= 1 and MUCINH < 50. or SARS detects tornadoes?
-    
-    # SVR Watch if SHIP is > 1 inch.
-    downshear = utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
-    if prof.ship >= 4 or (downshear[1] > 60 and prof.mid_rh<40 and prof.mupcl.bplus > 3000):
-        # Checking for large hail and high wind potential via derecho
-        # looking for strong downdrafts via evaporative cooling
-        watch_types.append('PDS SVR')
+    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.srw_4_6km >= 15.0 or prof.sfc_8km_shear) >= 40 and \
+        prof.mlpcl.bminus > -50 and self.ebottom == 0:
+        watch_types.append("TOR")
+        colors.append("#FF0000")
+    elif (stp_eff >= 1 or stp_fixed >= 1) and (prof.low_rh + prof.mid_rh)/2. >= 60 and lr1 >= 5.0 and \
+        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
+        watch_types.append("TOR")
+        colors.append("#FF0000")
+    elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebottom == 0:
+        watch_types.append("mrgl TOR")
+        colors.append("#FF0000")
+    elif (stp_eff >= 0.5 and prof.right_esrh >= 150) or (stp_fixed >= 0.5 and prof.srh1km >= 150) and \
+        prof.mlpcl.bminus > -50 and prof.ebottom == 0:
+        watch_types.append("mrgl TOR")
+        colors.append("#FF0000")
+
+    #SVR LOGIC
+    if (stp_fixed >= 1.0 or prof.right_scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
         colors.append("#FFFF00")
-    elif prof.ship > 1:
         watch_types.append("SVR")
-        colors.append('#FFFF00')
+    elif prof.right_scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
+        colors.append("#FFFF00")
+        watch_types.append("SVR")
+    elif prof.sig_severe >= 30000 and prof.mmp >= 0.6 and prof.mupcl.bminus >= -50:
+        colors.append("#FFFF00")
+        watch_types.append("SVR")
+    elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or prof.right_scp >= 0.5):
+        colors.append("#0099CC")
+        watch_types.append("MRGL SVR")
+    """END RICH'S CODE"""
     
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
     # This is trying to capture the ingredients of moisture and advection speed, but cannot
@@ -122,7 +154,7 @@ def possible_watch(prof):
         colors.append("#FF9900")
     
     # Excessive Heat Watch (if Max_temp > 105 F and sfc dewpoint > 75 F)
-    if prof.dwpc[prof.get_sfc()] > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
+    if thermo.ctof(prof.dwpc[prof.get_sfc()]) > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
     
