@@ -4,15 +4,15 @@ import numpy as np
 from datetime import datetime
 
 class BufkitFile(object):
-
+    
     def __init__(self, filename):
         self.filename = filename
         self.dates = []
         self.__readFile()
         self.num_profiles = 0
-
+    
     def __readFile(self):
-        # Try to open the file.  This is a dirty hack right now until 
+        # Try to open the file.  This is a dirty hack right now until
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
@@ -83,7 +83,7 @@ class BufkitFile(object):
     
     def getNumProfiles(self):
         return self.numProfiles
-
+    
     def getProfileLength(self):
         return self.profile_length
 

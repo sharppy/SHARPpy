@@ -2,7 +2,7 @@
 
 __all__ = ['MISSING', 'ROCP', 'ZEROCNK', 'G', 'TOL', 'WHITE', 'RED',
            'ORANGE', 'YELLOW', 'MAGENTA', 'DBROWN', 'LBROWN', 'LBLUE',
-           'CYAN']
+           'CYAN', 'BLACK']
 
 # Meteorological Constants
 MISSING = -9999.0       # Missing Flag
@@ -13,6 +13,7 @@ TOL = 1e-10             # Floating Point Tolerance
 
 # Color code constants for easy access
 WHITE = '#FFFFFF'
+BLACK = '#000000'
 RED = '#FF0000'
 ORANGE = '#FF4000'
 YELLOW = '#FFFF00'

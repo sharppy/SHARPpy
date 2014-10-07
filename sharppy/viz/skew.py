@@ -6,7 +6,6 @@ from PySide import QtGui, QtCore
 from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtOpenGL import *
-import datetime
 
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
