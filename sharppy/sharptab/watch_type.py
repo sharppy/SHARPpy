@@ -29,11 +29,11 @@ def init_phase(prof):
         below_5km_idx = np.ma.where((prof.hght[1:] < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]    
    
     # Compute the RH at the top and bottom of 50 mb layers
-    rh = thermo.relh(prof.pres[1:][below_5km_idx], prof.tmpc[1:][below_5km_idx], prof.dwpc[1:][below_5km_idx]):
+    rh = thermo.relh(prof.pres[1:][below_5km_idx], prof.tmpc[1:][below_5km_idx], prof.dwpc[1:][below_5km_idx])
     new_pres = prof.pres[1:][below_5km_idx] + 50.
     new_temp = interp.temp(prof, new_pres)
     new_dwpt = interp.dwpt(prof, new_pres)
-    rh_plus50 = thermo.relh(new_pres, new_temp, new_dwpt):
+    rh_plus50 = thermo.relh(new_pres, new_temp, new_dwpt)
     
     # Find layers where the RH is >80% at the top and bottom
     layers_idx = np.ma.where((rh_plus50 > 80) & (rh > 80))[0]
