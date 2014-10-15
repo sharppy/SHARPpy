@@ -1,22 +1,66 @@
 from sharppy.sharptab import *
 import numpy as np
 
+## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
+## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu
+
 def wind_chill(prof):
+    '''
+        Surface Wind Chill Equation
+
+        Computes wind chill at the surface data point in the profile object
+        using the equation found at:
+
+        www.nws.noaa.gov/os/windchill/index.shtml
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        wind_chill : wind chill value in (F)
+    '''
     # Needs to be tested
-    # Equation from www.nws.noaa.gov/os/windchill/index.shtml
-    #
+
     sfc_temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
 
-    wind_chill = 35.74 + (0.6215*sfc_temp) - (35.75*(sfc_wspd**0.16))\
-               + 0.4275 * (sfc_temp) * (sfc_wspd**0.16)
+    wind_chill = 35.74 + (0.6215*sfc_temp) - (35.75*(sfc_wspd**0.16)) + \
+                 0.4275 * (sfc_temp) * (sfc_wspd**0.16)
     return wind_chill
 
 def init_phase(prof):
     '''
-        Determine the initial phase of any precipitation source in the profile.
+        Inital Precipitation Phase
 
-        '''
+        This function determines the initial phase of any precipitation source in the profile.
+        It does this either by finding a source of precipitation by searching for the highest 50 mb 
+        layer that has a relative humidity greater than 80 percent at the top and the bottom
+        of the layer.  This layer may be found either in the lowest 5 km of the profile, and if
+        an OMEG profile is specified in the profile object, it will search for the layers with
+        upward motion.
+
+        The precipitation type is determined by using a.) the interpolated temperature in the middle
+        of the precipitation source layer and b.) set temperature thresholds to determine the 
+        precipitation type.  The type may be "Rain", "Freezing Rain", "ZR/S Mix", or "Snow".
+
+        Parameters
+        ----------
+        prof : Profile object (omega profile optional)
+
+        Returns
+        -------
+        plevel : the pressure level of the precipitation source (mb)
+        phase : the phase type of the precipitation (int)
+                phase == 0 for "Rain"
+                phase == 1 for "Freezing Rain" or "ZR/S Mix"
+                phase == 3 for "Snow"
+        tmp : the temperature at the level that is the precipitation source
+        st : a string naming the precipitation type
+
+    '''
+    # Needs to be tested
 
     plevel = 0
     phase = -1
@@ -63,13 +107,39 @@ def init_phase(prof):
     else:
         st = "N/A"
 
-    return plevel, phase, st
+    return plevel, phase, tmp, st
 
-def posneg_temperature(prof, start):
-    return
+def posneg_temperature(prof, start=-1):
+    '''
+        Positive/Negative Temperature profile
 
-def posneg_wetbulb(prof, start):
+        Description:
+        This routine calculates the positive (above 0 C) and negative (below 0 C)
+        areas of the temperature profile starting from a specified pressure (start).
+        If the specified pressure is not given, this routine calls init_phase()
+        to obtain the pressure level the precipitation expected to fall begins at.
 
+        This is an routine considers only the temperature profile as opposed to the wet-bulb
+        profile.
+
+        Parameters
+        ----------
+        prof : Profile object
+        start : the pressure level the precpitation originates from (found by calling init_phase())
+
+        Returns
+        -------
+        pos : the positive area (> 0 C) of the temperature profile in J/kg
+        neg : the negative area (< 0 C) of the temperature profile in J/kg
+        top : the top of the precipitation layer pressure in mb
+        bot : the bottom of the precipitation layer pressure in mb
+
+    '''
+    # Needs to be tested
+
+    # If there is no sounding, don't compute anything
+    if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
+        return np.masked, np.masked, np.masked, np.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -85,27 +155,14 @@ def posneg_wetbulb(prof, start):
     else:
         upper = start
 
-    # Something needs to be done here to get the right uptr
-    # I don't want to duplicate this loop
-    '''
-        i=numlvl-1;
-        while(sndg[i][pIndex] < upper) {
-            i--;
-            if (i < 0) {
-                fprintf(stderr,
-                 "Warning: posneg_temp: Could not find a pressure greater than %.2f\n",
-                   upper);
-                fprintf(stderr, "Using %.2f as the upper level.\n",
-                  sndg[0][pIndex]);
-                i = 0;
-                break;
-                }
-        }
-        uptr = i;
-        if (sndg[i][pIndex] == upper)
-            uptr--;
-    '''
-    # Start with the upper layer
+    # Find the level where the pressure is just greater than the upper pressure
+    idxs = np.where(prof.pres > upper)[0]
+    if len(idxs) == 0:
+        uptr = 0
+    else:
+        uptr = idxs[-1]
+
+    # Start with the top layer
     pe1 = upper;
     h1 =  interp.hght(prof, pe1);
     te1 = wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
@@ -116,10 +173,10 @@ def posneg_wetbulb(prof, start):
     for i in np.arange(uptr, lptr-1, -1):
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
-        te2 = thermo.wetbulb(pe2, interp.temp(prof, pe2), interp.dwpt(prof, pe2))
+        te2 = interp.temp(prof, pe2)
         tp2 = 0
-        tdef1 = (0 - te1) / (te1 + 273.15);
-        tdef2 = (0 - te2) / (te2 + 273.15);
+        tdef1 = (0 - te1) / thermo.ctok(te1);
+        tdef2 = (0 - te2) / thermo.ctok(te2);
         lyrlast = lyre;
         lyre = 9.8 * (tdef1 + tdef2) / 2.0 * (h2 - h1);
 
@@ -161,10 +218,191 @@ def posneg_wetbulb(prof, start):
 
     return pos, neg, top, bot
 
-def best_guess_precip(struct):
-    return
+
+def posneg_wetbulb(prof, start=-1):
+    '''
+        Positive/Negative Wetbulb profile
+
+        Description:
+        This routine calculates the positive (above 0 C) and negative (below 0 C)
+        areas of the wet bulb profile starting from a specified pressure (start).
+        If the specified pressure is not given, this routine calls init_phase()
+        to obtain the pressure level the precipitation expected to fall begins at.
+
+        This is an routine considers the wet-bulb profile instead of the temperature profile
+        in case the profile beneath the profile beneath the falling precipitation becomes saturated.
+
+        Parameters
+        ----------
+        prof : Profile object
+        start : the pressure level the precpitation originates from (found by calling init_phase())
+
+        Returns
+        -------
+        pos : the positive area (> 0 C) of the wet-bulb profile in J/kg
+        neg : the negative area (< 0 C) of the wet-bulb profile in J/kg
+        top : the top of the precipitation layer pressure in mb
+        bot : the bottom of the precipitation layer pressure in mb
+
+    '''
+    # Needs to be tested
+
+    # If there is no sounding, don't compute anything
+    if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
+        return np.masked, np.masked, np.masked, np.masked
+
+    # Find lowest obs in layer
+    lower = prof.pres[prof.get_sfc()]
+    lptr  = prof.get_sfc()
+
+    # Find the highest obs in the layer
+    if start == -1:
+        lvl, phase, st = init_phase(prof)
+        if lvl > 0:
+            upper = lvl
+        else:
+            upper = 500.
+    else:
+        upper = start
+
+    # Find the level where the pressure is just greater than the upper pressure
+    idxs = np.where(prof.pres > upper)[0]
+    if len(idxs) == 0:
+        uptr = 0
+    else:
+        uptr = idxs[-1]
+
+    # Start with the upper layer
+    pe1 = upper;
+    h1 =  interp.hght(prof, pe1);
+    te1 = wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
+    tp1 = 0
+
+    totp = totn = tote = ptop = pbot = lyrlast = 0
+
+    for i in np.arange(uptr, lptr-1, -1):
+        pe2 = prof.pres[i]
+        h2 = prof.hght[i]
+        te2 = thermo.wetbulb(pe2, interp.temp(prof, pe2), interp.dwpt(prof, pe2))
+        tp2 = 0
+        tdef1 = (0 - te1) / thermo.ctok(te1);
+        tdef2 = (0 - te2) / thermo.ctok(te2);
+        lyrlast = lyre;
+        lyre = 9.8 * (tdef1 + tdef2) / 2.0 * (h2 - h1);
+
+        # Has a warm layer been found yet?
+        if te2 > 0:
+            if warmlayer == 0:
+                warmlayer = 1
+                ptop = pe2
+
+        # Has a cold layer been found yet?
+        if te2 < 0:
+            if warmlayer == 1 and coldlayer == 0:
+                coldlayer = 1
+                pbot = pe2
+
+        if warmlayer > 0:
+            if lyre > 0:
+                totp += lyre
+            else:
+                totn += lyre
+            tote += lyre
+
+        pelast = pe1
+        pe1 = pe2
+        h1 = h2
+        te1 = te2
+        tp1 = tp2
+    
+    if warmlayer == 1 and coldlayer == 1:
+        pos = totp
+        neg = totn
+        top = ptop
+        bot = pbot
+    else:
+        neg = 0
+        pos = 0
+        bot = 0
+        top = 0
+
+    return pos, neg, top, bot
+
+def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos):
+    '''
+        Best Guess Precipitation type
+
+        Description:
+        This algorithm utilizes the output from the init_phase() and posneg_temperature()
+        functions to make a best guess at the preciptation type one would observe
+        at the surface given a thermodynamic profile.
+
+        Precipitation Types Supported:
+        - None
+        - Rain
+        - Snow
+        - Sleet and Snow
+        - Sleet
+        - Freezing Rain/Drizzle
+        - Unknown
+
+        Parameters
+        ----------
+        prof : Profile object
+        init_phase : the initial phase of the precipitation (int) (see 2nd value returned from init_phase())
+        init_lvl : the inital level of the precipitation source (mb) (see 1st value returned from init_phase())
+        init_temp : the inital level of the precipitation source (C) (see 3rd value returned from init_phase())
+        tpos : the positive area (> 0 C) in the temperature profile (J/kg)
+
+        Returns
+        -------
+        precip_type : a string containing the best guess precipitation type
+    '''
+    # Needs to be tested
+
+    precip_type = None
+
+    # Case: No precip
+    if init_phase < 0:
+        precip_type = "None."
+
+    # Case: Always too warm - Rain
+    elif init_phase == 0 and tneg >=0 and prof.tmpc[prof.get_sfc()] > 0:
+        precip_type = "Rain."
+
+    # Case: always too cold
+    elif init_phase == 3 and tpos <= 0 and prof.tmpc[prof.get_sfc()] <= 0:
+        precip_type = "Snow."
+
+    # Case: ZR too warm at sfc - Rain
+    elif init_phase == 1 and tpos <= 0 and prof.tmpc[prof.get_sfc()] > 0:
+        precip_type = "Rain."
+
+    # Case: non-snow init...always too cold - Initphase & sleet
+    elif init_phase == 1 and tpos <= 0 and prof.tmpc[prof.get_sfc()] <= 0:
+        if interp.to_agl(prof, interp.hght(prof, init_lvl)) >= 3000:
+            if init_temp <= -4:
+                precip_type = "Sleet and Snow."
+            else:
+                precip_type = "Sleet."
+        else:
+            precip_type = "Freezing Rain/Drizzle."
+
+    # Case: Snow...but warm at sfc
+    elif init_phase == 3 and tpos <= 0 and prof.tmpc[prof.get_sfc()] > 0:
+        if prof.tmpc[prof.get_sfc()] > 4:
+            precip_type = "Rain."
+        else:
+            precip_type = "Snow."
+    else:
+        precip_type = "Unknown."
+
+    return precip_type
 
 def precip_type(prof):
+    '''
+        OLD PROPOSED FUNCTION
+    '''
     #
     # This function looks at the current SHARPPY profile (prof)
     # and makes a single guess of the precipitation type associated with
@@ -196,42 +434,51 @@ def precip_type(prof):
     return
 
 def possible_watch(prof):
-    #
-    # This function looks at the current SHARPPY profile (prof)
-    # and creates a list of possible watch types from this profile
-    # using critera for the different watches, as well as some
-    # subjectively determined thresholds.
-    #
-    # (it would be nice if someone made a database of soundings and watch types
-    # to find which indices corresponded to which types of watches)
-    #
-    # Watch types covered in this code:
-    # - Tornado Watch
-    # - PDS Tornado Watch
-    # - Severe Thunderstorm Watch
-    # - PDS Severe Thunderstorm Watch
-    # - Flash Flood Watch
-    # - Blizzard Watch
-    # - Winter Storm Watch
-    # - Wind Chill Watch
-    # - Fire Weather Watch
-    # - Excessive Heat Watch
-    # - Freeze Watch
-    
-    """
-        Updated on 10/6/2014 - Added Rich Thompson's code
-    
-        Requires these calculations to already be in the profile object:
-        STP_EFF
-        MLCAPE
-        SHIP
+    '''
+        Possible Weather/Hazard/Watch Type
+        
+        This function generates a list of possible significant weather types
+        one can expect given a Profile object. (Currently works only for ConvectiveProfile.)
 
-    """
+        These possible weather types are computed via fuzzy logic through set thresholds that
+        have been found through a.) analyzing ingredients within the profile and b.) combining those ingredients
+        with forecasting experience to produce a suggestion of what hazards may exist.
+
+        This function has not been formally verified and is not meant to be comprehensive nor
+        a source of strict guidance for weather forecasters.  As always, the raw data is to be 
+        consulted.
+
+        This code base is continually under development.
+
+        Wx Categories (ranked in terms of severity):
+        - PDS TOR
+        - TOR
+        - MRGL TOR
+        - SVR
+        - MRGL SVR
+        - FLASH FLOOD
+        - BLIZZARD
+        - WINTER STORM
+        - WIND CHILL
+        - FIRE WEATHER
+        - EXCESSIVE HEAT
+        - FREEZE
+    
+        Suggestions for thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
+
+        Parameters
+        ----------
+        prof : ConvectiveProfile object
+
+        Returns
+        -------
+        watch_types :  a list of strings containing the weather types in code
+        colors : a list of the HEX colors corresponding to each weather type
+    '''
         
     watch_types = []
     colors = []
     
-
     """BEGIN RICH'S DECISION TREE CODE"""
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
     stp_eff = prof.stp_cin
@@ -297,14 +544,15 @@ def possible_watch(prof):
     if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 32:
         watch_types.append("BLIZZARD")
         colors.append("#3366FF")
-    # Winter Storm Watch if precip type is snow, ice, or sleet
+
+    # Winter Storm Watch if precip type is snow, ice, or sleet - needs to be implemented
     
     # Wind Chill Watch (if wind chill gets below -20 F)
     if wind_chill(prof) < -20.:
         watch_types.append("WIND CHILL")
         colors.append("#3366FF")
     
-    # Fire WX Watch (sfc RH < 30% and sfc_wind speed > 15 mph)
+    # Fire WX Watch (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
     if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
         watch_types.append("FIRE WEATHER")
         colors.append("#FF9900")
@@ -315,7 +563,7 @@ def possible_watch(prof):
         colors.append("#CC33CC")
     
     # Freeze Watch (checks to see if dewpoint is below freezing and temperature isn't and wind speeds are low)
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) < 32. and thermo.ctof(prof.tmpc[prof.get_sfc()]) > 32. and prof.wspd[prof.get_sfc()] < 5.:
+    if thermo.ctof(prof.dwpc[prof.get_sfc()]) < 30. and thermo.ctof(prof.tmpc[prof.get_sfc()]) < 40. and prof.wspd[prof.get_sfc()] < 5.:
         watch_types.append("FREEZE")
         colors.append("#3366FF")
     
