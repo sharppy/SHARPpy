@@ -40,8 +40,6 @@ class BufkitFile(object):
                 self.slon = float(data[i+1].split()[5])
                 self.selv = float(data[i+1].split()[8])
                 self.stim = float(data[i+2].split()[2])
-                print self.stim, self.station
-                print data[i]
             if data[i].find('HGHT') >= 0 and new_record == False:
                 # we've found a new data chunk
                 new_record = True
