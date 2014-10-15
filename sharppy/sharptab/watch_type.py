@@ -164,8 +164,8 @@ def posneg_temperature(prof, start=-1):
 
     # Start with the top layer
     pe1 = upper;
-    h1 =  interp.hght(prof, pe1);
-    te1 = wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
+    h1 =  interp.hght(prof, pe1)
+    te1 = interp.temp(prof, pe1)
     tp1 = 0
 
     totp = totn = tote = ptop = pbot = lyrlast = 0
@@ -275,7 +275,7 @@ def posneg_wetbulb(prof, start=-1):
     # Start with the upper layer
     pe1 = upper;
     h1 =  interp.hght(prof, pe1);
-    te1 = wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
+    te1 = thermo.wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
     tp1 = 0
 
     totp = totn = tote = ptop = pbot = lyrlast = 0
@@ -562,8 +562,8 @@ def possible_watch(prof):
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
     
-    # Freeze Watch (checks to see if dewpoint is below freezing and temperature isn't and wind speeds are low)
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) < 30. and thermo.ctof(prof.tmpc[prof.get_sfc()]) < 40. and prof.wspd[prof.get_sfc()] < 5.:
+    # Freeze Watch (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
+    if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
         watch_types.append("FREEZE")
         colors.append("#3366FF")
     
