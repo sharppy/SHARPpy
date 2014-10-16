@@ -242,6 +242,31 @@ class Parcel(object):
         self.cappres = ma.masked
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
+def dgz(prof):
+    '''
+        Dendritic Growth Zone Levels
+    
+        This function finds the pressure levels for the dendritic 
+        growth zone (from -12 C to -17 C).
+
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        
+        Returns
+        -------
+        pbot : number
+        Pressure of the bottom level (hPa)
+        ptop : number 
+        Pressure of the top level (hPa)
+    '''
+
+    pbot = temp_lvl(prof, -12)
+    ptop = temp_lvl(prof, -17)
+
+    return pbot, ptop
+
 def ship(mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     '''
     Calculate the Sig Hail Parameter (SHIP)
@@ -1923,6 +1948,8 @@ def tei(prof):
 
         This is what our TEI calculation shall be for the time being.
 
+        REQUIRES: Nothing
+
         Parameters
         ----------
         prof : Profile object
@@ -1944,24 +1971,35 @@ def tei(prof):
     tei = max_thetae - min_thetae
     return tei
 
-def esp(prof):
+def esp(prof, **kwargs):
     
     '''
         Enhanced Stretching Potential (ESP)
         This composite parameter identifies areas where low-level buoyancy
         and steep low-level lapse rates are co-located, which may
         favor low-level vortex stretching and tornado potential.
-        
+       
+        REQUIRES: 0-3 km MLCAPE (from MLPCL)
+
         Parameters
         ----------
         prof : Profile object
-        
+        mlpcl : Mixed-Layer Parcel
+
         Returns
         -------
         esp : ESP index
         '''
+     
+    mlpcl = kwargs.get('mlpcl', None)
+    if not mlpcl:
+        try:
+            mlpcl = prof.mlpcl
+        except:
+            mllplvals = DefineParcel(prof, flag=3, pres=300)
+            mlpcl = cape(prof, lplvals=mllplvals)
+    mlcape = mlpcl.b3km
     
-    mlcape = prof.mlpcl.b3km # This is the 0-3 km MLCAPE!!!!
     lr03 = prof.lapserate_3km # C/km
     if lr03 < 7. or prof.mlpcl.bplus < 250.:
         return 0
@@ -1969,7 +2007,7 @@ def esp(prof):
     
     return esp
 
-def sherb(prof, effective=False):
+def sherb(prof, **kwargs):
     '''
         Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter
 
@@ -1982,32 +2020,99 @@ def sherb(prof, effective=False):
 
         See Sherburn et. al. 2014 WAF for more information
 
+        REQUIRES (if effective==True): The effective inflow layer be defined
+
         Parameters
         ----------
         prof : Profile object
-        effective : True or False...use the effective layer computation or not
+        effective : (optional) True or False...use the effective layer computation or not
                     the effective bulk wind difference (prof.ebwd) must exist first
+        ebottom : (optional) bottom of the effective inflow layer (mb)
+        etop : (optional) top of the effective inflow layer (mb)
+        mupcl : (optional) Most-Unstable Parcel
+
         Returns
         -------
         sherb : an integer for the SHERB parameter
-        
-        sherb will be MISSING value if effective=True and there is no effective layer 
+                if effective==True and an effective inflow layer cannot be found,
+                this function returns prof.missing
+
         '''
+
+    effective = kwargs.get('effective', False)
+    ebottom = kwargs.get('ebottom', None)
+    etop = kwargs.get('etop', None)
 
     lr03 = lapse_rate(prof, 0, 3000, pres=False)
     lr75 = lapse_rate(prof, 700, 500, pres=True)
+
     if effective == False:
         p3km = interp.pres(prof, interp.to_msl(prof, 3000))
         sfc_pres = prof.pres[prof.get_sfc()]
         shear = utils.KTS2MS(winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km))
         sherb = ( shear / 26. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
     else:
+        if hasattr(prof, 'ebwd'):
+            # If the Profile object has the attribute "ebwd"
+            shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
+
+        elif (ebottom is None) or (etop is None) or (hasattr(prof, 'ebottom') or \
+           hasattr(prof, 'etop')):
+            # if the effective inflow layer hasn't been specified or doesn't exist in the Profile object
+            # we need to calculate it
+            ebottom, etop = effective_inflow_layer( prof, mupcl=self.mupcl )
+            if ebottom is np.masked or etop is np.masked:
+                # If the inflow layer doesn't exist, return missing
+                return prof.missing
+            if hasattr(prof, 'mupcl') or kwargs.get('mupcl', None) is None:
+                # If the mupcl attribute doesn't exist in the Profile
+                # or the mupcl hasn't been passed as an argument
+                # compute the mupcl
+                mulplvals = DefineParcel(prof, flag=3, pres=300)
+                mupcl = cape(prof, lplvals=mulplvals)
+            else:
+                # Grab the mupcl 
+                mupcl = prof.mupcl
+
+            # Find the Effective Bulk Wind Difference
+            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
+            depth = ( mupcl.elhght - ebotm ) / 2
+            elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
+            ebwd = winds.wind_shear(prof, pbot=ebottom, ptop=elh)
+        elif ebottom is not None and etop is not None:
+            # if ebottom and etop are specified by the keyword arguments
+            ebottom = prof.ebottom
+            etop = prof.etop
+            if ebottom is np.masked or etop is np.masked:
+                # if they're masked, then return missing
+                return prof.missing
+            if hasattr(prof, 'mupcl') or kwargs.get('mupcl', None) is None:
+                # If the mupcl attribute doesn't exist in the Profile
+                # or the mupcl hasn't been passed as an argument
+                # compute the mupcl
+                mulplvals = DefineParcel(prof, flag=3, pres=300)
+                mupcl = cape(prof, lplvals=mulplvals)
+            else:
+                # Grab the mupcl 
+                mupcl = prof.mupcl
+
+            # Find the Effective Bulk Wind Difference
+            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
+            depth = ( mupcl.elhght - ebotm ) / 2
+            elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
+            ebwd = winds.wind_shear(prof, pbot=ebottom, ptop=elh)
+        else:
+            # If there's no way to compute the effective SHERB
+            # because there's no information about how to get the
+            # inflow layer, return missing.
+            return prof.missing
+        
         shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
         sherb = ( shear / 27. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
 
     return sherb
 
-def mmp(prof):
+def mmp(prof, **kwargs):
 
     '''
         MCS Maintenance Probability (MMP)
@@ -2018,6 +2123,8 @@ def mmp(prof):
         Uses MUCAPE, 3-8 km lapse rate, maximum bulk shear, 3-12 km mean wind speed
         From Coniglio et. al. 2006 WAF
         
+        REQUIRES: MUCAPE (J/kg) 
+
         Parameters
         ----------
         prof : Profile object
@@ -2033,7 +2140,14 @@ def mmp(prof):
         The maximum speed shear from this is the max_bulk_shear value (m/s).
         '''
     
-    mucape = prof.mupcl.bplus
+    mupcl = kwargs.get('mupcl', None)
+    if not mupcl:
+        try:
+            mupcl = prof.mupcl
+        except:
+            mulplvals = DefineParcel(prof, flag=3, pres=300)
+            mupcl = cape(prof, lplvals=mulplvals)
+    mucape = mupcl.bplus
 
     if mucape < 100.:
         return 0.
@@ -2054,7 +2168,6 @@ def mmp(prof):
     pupper = interp.pres(prof, interp.to_msl(prof, 12000.))
     mean_wind_3t12 = winds.mean_wind( prof, pbot=plower, ptop=pupper)
     mean_wind_3t12 = utils.KTS2MS(utils.mag(mean_wind_3t12[0], mean_wind_3t12[1]))
-    mucape = prof.mupcl.bplus
 
     a_0 = 13.0 # unitless
     a_1 = -4.59*10**-2 # m**-1 * s
@@ -2066,7 +2179,7 @@ def mmp(prof):
     
     return mmp
 
-def wndg(prof):
+def wndg(prof, **kwargs):
     '''
         Wind Damage Parameter (WNDG)
         A non-dimensional composite parameter that identifies areas
@@ -2078,16 +2191,27 @@ def wndg(prof):
         outflow gusts with multicell thunderstorm clusters, primarily
         during the afternoon in the summer.
         
+        REQUIRES: MLCAPE (J/kg), MLCIN (J/kg)
+
         Parameters
         ----------
         prof : Profile object
-        
+        mlpcl : (optional) mixed-layer parcel
+
         Returns
         -------
         wndg : WNDG index
         '''
     
-    mlcape = prof.mlpcl.bplus # J/kg
+    mlpcl = kwargs.get('mlpcl', None)
+    if not mlpcl:
+        try:
+            mlpcl = prof.mlpcl
+        except:
+            mllplvals = DefineParcel(prof, flag=3, pres=300)
+            mlpcl = cape(prof, lplvals=mllplvals)
+    mlcape = mlpcl.bplus
+
     lr03 = lapse_rate( prof, 0, 3000., pres=False ) # C/km
     bot = interp.pres( prof, interp.to_msl( prof, 1000. ) )
     top = interp.pres( prof, interp.to_msl( prof, 3500. ) )
@@ -2105,21 +2229,43 @@ def wndg(prof):
     return wndg
 
 
-def sig_severe(prof):
+def sig_severe(prof, **kwargs):
     '''
         Significant Severe (SigSevere)
         Craven and Brooks, 2004
         
+        REQUIRES: MLCAPE (J/kg), 0-6km Shear (kts)
+
         Parameters
         ----------
         prof : Profile object
-        
+        mlpcl : (optional) Mixed-Layer Parcel
+
         Returns
         -------
         sigsevere : significant severe parameter (m3/s3)
-        '''
-    mlcape = prof.mlpcl.bplus
-    sfc_6km_shear = utils.mag(prof.sfc_6km_shear[0], prof.sfc_6km_shear[1])
+    '''
+     
+    mlpcl = kwargs.get('mlpcl', None)
+    sfc6shr = kwargs.get('sfc6shr', None)
+    if not mlpcl:
+        try:
+            mlpcl = prof.mlpcl
+        except:
+            mllplvals = DefineParcel(prof, flag=3, pres=300)
+            mlpcl = cape(prof, lplvals=mllplvals)
+    mlcape = mlpcl.bplus
+
+    if not sfc6shr:
+        try:
+            sfc_6km_shear = prof.sfc_6km_shear
+        except:
+            sfc = self.pres[self.sfc]
+            height = 6000.
+            p6km = interp.pres(self, interp.to_msl(self, heights))
+            sfc_6km_shear = winds.wind_shear(self, pbot=sfc, ptop=p8km) 
+
+    sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
     
     sigsevere = mlcape * shr06
@@ -2137,6 +2283,8 @@ def dcape(prof):
 
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
         correction) and the energy accumulated is called the DCAPE.
+
+        REQUIRES: Nothing
         
         Parameters
         ----------
@@ -2216,7 +2364,7 @@ def dcape(prof):
 
     return tote, np.asarray(ttrace), np.asarray(ptrace)
 
-def precip_eff(prof, pbot=1000, ptop=700):
+def precip_eff(prof, **kwargs):
     '''
         Precipitation Efficiency
 
@@ -2233,16 +2381,27 @@ def precip_eff(prof, pbot=1000, ptop=700):
         Parameters
         ----------
         prof : Profile object
-        pbot : the bottom pressure of the RH layer (mb)
-        ptop : the top pressure of the RH layer (mb)
+               if the Profile object does not have a pwat attribute
+               this function will perform the calculation.
+        pwat : (optional) precomputed precipitable water vapor (inch)
+        pbot : (optional) the bottom pressure of the RH layer (mb)
+        ptop : (optional) the top pressure of the RH layer (mb)
 
         Returns
         -------
         precip_efficency : the PE value (units inches)
 
     '''
+    
+    pw = kwargs.get('pwat', None)
+    pbot = kwargs.get('pbot', 1000)
+    ptop = kwargs.get('ptop', 700)
 
-    pw = precip_water(prof)
+    if pw is None or hasattr(prof, 'pwat'):
+        pw = precip_water(prof)
+    else:
+        pw = prof.pwat
+
     mean_rh = mean_relh(prof, pbot=pbot, ptop=ptop) / 100.
 
     return pw*mean_rh
