@@ -267,15 +267,15 @@ def dgz(prof):
 
     return pbot, ptop
 
-def ship(mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
+def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     '''
     Calculate the Sig Hail Parameter (SHIP)
     
     Parameters
     ----------
-    mucape : Most unstable CAPE from parcel class (MUCAPE)
-    mumr : Most unstable parcel mixing ratio (g/kg)
-    lr75 : 700-500 mb lapse rate (C/km)
+    prof : Profile object
+    mupcl : (optional) Most-Unstable Parcel 
+    lr75 : 700 - 500 mb lapse rate (C/km)
     h5_temp : 500 mb temperature (C)
     shr06 : 0-6 km shear (m/s)
     frz_lvl : freezing level (m)
@@ -289,6 +289,42 @@ def ship(mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     of how SHIP was calculated.
 
     '''
+      
+    mupcl = kwargs.get('mupcl', None)
+    sfc6shr = kwargs.get('sfc6shr', None)
+    frz_lvl = kwargs.get('frz_lvl', None)
+    h5_temp = kwargs.get('h5_temp', None)
+    lr75 = kwargs.get('lr75', None)
+
+    if not mupcl:
+        try:
+            mupcl = prof.mupcl
+        except:
+            mulplvals = DefineParcel(prof, flag=3, pres=300)
+            mupcl = cape(prof, lplvals=mulplvals)
+    mucape = mupcl.bplus
+    mumr = thermo.mixratio(mupcl.pres, mupcl.dwpc)
+
+    if not frz_lvl:
+        frz_lvl = interp.hght(prof, temp_lvl(prof, 0))
+
+    if not h5_temp:
+        h5_temp = interp.temp(prof, 500.)
+
+    if not lr75:
+        lr75 = lapse_rate(prof, 700., 500., pres=True)
+
+    if not sfc6shr:
+        try:
+            sfc_6km_shear = prof.sfc_6km_shear
+        except:
+            sfc = prof.pres[prof.sfc]
+            p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
+            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p8km) 
+    
+    sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
+    shr06 = utils.KTS2MS(sfc_6km_shear)
+    
     if shr06 > 27:
         shr06 = 27.
     elif shr06 < 7:
@@ -1996,12 +2032,11 @@ def esp(prof, **kwargs):
         try:
             mlpcl = prof.mlpcl
         except:
-            mllplvals = DefineParcel(prof, flag=3, pres=300)
-            mlpcl = cape(prof, lplvals=mllplvals)
+            mlpcl = parcelx(prof, flag=4)
     mlcape = mlpcl.b3km
     
     lr03 = prof.lapserate_3km # C/km
-    if lr03 < 7. or prof.mlpcl.bplus < 250.:
+    if lr03 < 7. or mlpcl.bplus < 250.:
         return 0
     esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
     
@@ -2056,51 +2091,33 @@ def sherb(prof, **kwargs):
             # If the Profile object has the attribute "ebwd"
             shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
 
-        elif (ebottom is None) or (etop is None) or (hasattr(prof, 'ebottom') or \
-           hasattr(prof, 'etop')):
-            # if the effective inflow layer hasn't been specified or doesn't exist in the Profile object
-            # we need to calculate it
-            ebottom, etop = effective_inflow_layer( prof, mupcl=self.mupcl )
+        elif ((not ebottom) or (not etop)) or \
+             ((not hasattr(prof, 'ebottom') or not hasattr(prof, 'etop'))):
+            # if the effective inflow layer hasn't been specified via the function arguments
+            # or doesn't exist in the Profile object we need to calculate it, but we need mupcl
+            if ebottom is None or etop is None:
+                #only calculate ebottom and etop if they're not supplied by the kwargs
+                if not hasattr(prof, 'mupcl') or not kwargs.get('mupcl', None):
+                    # If the mupcl attribute doesn't exist in the Profile
+                    # or the mupcl hasn't been passed as an argument
+                    # compute the mupcl
+                    mulplvals = DefineParcel(prof, flag=3, pres=300)
+                    mupcl = cape(prof, lplvals=mulplvals)
+                else:
+                    mupcl = prof.mupcl
+           
+                # Calculate the effective inflow layer
+                ebottom, etop = effective_inflow_layer( prof, mupcl=mupcl )
+            
             if ebottom is np.masked or etop is np.masked:
                 # If the inflow layer doesn't exist, return missing
                 return prof.missing
-            if hasattr(prof, 'mupcl') or kwargs.get('mupcl', None) is None:
-                # If the mupcl attribute doesn't exist in the Profile
-                # or the mupcl hasn't been passed as an argument
-                # compute the mupcl
-                mulplvals = DefineParcel(prof, flag=3, pres=300)
-                mupcl = cape(prof, lplvals=mulplvals)
             else:
-                # Grab the mupcl 
-                mupcl = prof.mupcl
-
-            # Find the Effective Bulk Wind Difference
-            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
-            depth = ( mupcl.elhght - ebotm ) / 2
-            elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
-            ebwd = winds.wind_shear(prof, pbot=ebottom, ptop=elh)
-        elif ebottom is not None and etop is not None:
-            # if ebottom and etop are specified by the keyword arguments
-            ebottom = prof.ebottom
-            etop = prof.etop
-            if ebottom is np.masked or etop is np.masked:
-                # if they're masked, then return missing
-                return prof.missing
-            if hasattr(prof, 'mupcl') or kwargs.get('mupcl', None) is None:
-                # If the mupcl attribute doesn't exist in the Profile
-                # or the mupcl hasn't been passed as an argument
-                # compute the mupcl
-                mulplvals = DefineParcel(prof, flag=3, pres=300)
-                mupcl = cape(prof, lplvals=mulplvals)
-            else:
-                # Grab the mupcl 
-                mupcl = prof.mupcl
-
-            # Find the Effective Bulk Wind Difference
-            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
-            depth = ( mupcl.elhght - ebotm ) / 2
-            elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
-            ebwd = winds.wind_shear(prof, pbot=ebottom, ptop=elh)
+                # Calculate the Effective Bulk Wind Difference
+                ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
+                depth = ( mupcl.elhght - ebotm ) / 2
+                elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
+                ebwd = winds.wind_shear(prof, pbot=ebottom, ptop=elh)
         else:
             # If there's no way to compute the effective SHERB
             # because there's no information about how to get the
@@ -2208,7 +2225,7 @@ def wndg(prof, **kwargs):
         try:
             mlpcl = prof.mlpcl
         except:
-            mllplvals = DefineParcel(prof, flag=3, pres=300)
+            mllplvals = DefineParcel(prof, flag=4)
             mlpcl = cape(prof, lplvals=mllplvals)
     mlcape = mlpcl.bplus
 
@@ -2217,7 +2234,7 @@ def wndg(prof, **kwargs):
     top = interp.pres( prof, interp.to_msl( prof, 3500. ) )
     mean_wind = winds.mean_wind(prof, pbot=bot, ptop=top) # needs to be in m/s
     mean_wind = utils.KTS2MS(utils.mag(mean_wind[0], mean_wind[1]))
-    mlcin = prof.mlpcl.bminus # J/kg
+    mlcin = mlpcl.bminus # J/kg
     
     if lr03 < 7:
         lr03 = 0.
@@ -2252,7 +2269,7 @@ def sig_severe(prof, **kwargs):
         try:
             mlpcl = prof.mlpcl
         except:
-            mllplvals = DefineParcel(prof, flag=3, pres=300)
+            mllplvals = DefineParcel(prof, flag=4)
             mlpcl = cape(prof, lplvals=mllplvals)
     mlcape = mlpcl.bplus
 
@@ -2260,10 +2277,9 @@ def sig_severe(prof, **kwargs):
         try:
             sfc_6km_shear = prof.sfc_6km_shear
         except:
-            sfc = self.pres[self.sfc]
-            height = 6000.
-            p6km = interp.pres(self, interp.to_msl(self, heights))
-            sfc_6km_shear = winds.wind_shear(self, pbot=sfc, ptop=p8km) 
+            sfc = prof.pres[prof.sfc]
+            p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
+            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p8km) 
 
     sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
@@ -2284,8 +2300,6 @@ def dcape(prof):
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
         correction) and the energy accumulated is called the DCAPE.
 
-        REQUIRES: Nothing
-        
         Parameters
         ----------
         prof : Profile object
@@ -2397,7 +2411,7 @@ def precip_eff(prof, **kwargs):
     pbot = kwargs.get('pbot', 1000)
     ptop = kwargs.get('ptop', 700)
 
-    if pw is None or hasattr(prof, 'pwat'):
+    if pw is None or not hasattr(prof, 'pwat'):
         pw = precip_water(prof)
     else:
         pw = prof.pwat
