@@ -692,7 +692,7 @@ def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
         
         Returns
         -------
-        Mean Mixing Ratio
+        Mean Relative Humidity
         
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
@@ -1985,8 +1985,8 @@ def sherb(prof, effective=False):
         Parameters
         ----------
         prof : Profile object
-        effective : True or False...designates whether or not we use the effective computation or not
-
+        effective : True or False...use the effective layer computation or not
+                    the effective bulk wind difference (prof.ebwd) must exist first
         Returns
         -------
         sherb : an integer for the SHERB parameter
@@ -2216,3 +2216,33 @@ def dcape(prof):
 
     return tote, np.asarray(ttrace), np.asarray(ptrace)
 
+def precip_eff(prof, pbot=1000, ptop=700):
+    '''
+        Precipitation Efficiency
+
+        This calculation comes from Noel and Dobur 2002, published
+        in NWA Digest Vol 26, No 34.
+
+        The calculation multiplies the PW from the whole atmosphere
+        by the 1000 - 700 mb mean relative humidity (in decimal form)
+
+        Values on the SPC Mesoanalysis range from 0 to 2.6.
+
+        Larger values means that the precipitation is more efficient.
+
+        Parameters
+        ----------
+        prof : Profile object
+        pbot : the bottom pressure of the RH layer (mb)
+        ptop : the top pressure of the RH layer (mb)
+
+        Returns
+        -------
+        precip_efficency : the PE value (units inches)
+
+    '''
+
+    pw = precip_water(prof)
+    mean_rh = mean_relh(prof, pbot=pbot, ptop=ptop) / 100.
+
+    return pw*mean_rh
