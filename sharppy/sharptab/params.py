@@ -257,9 +257,9 @@ def dgz(prof):
         Returns
         -------
         pbot : number
-        Pressure of the bottom level (hPa)
+        Pressure of the bottom level (mb)
         ptop : number 
-        Pressure of the top level (hPa)
+        Pressure of the top level (mb)
     '''
 
     pbot = temp_lvl(prof, -12)
@@ -777,7 +777,57 @@ def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
     rh = thermo.relh(p, tmp, dwpt)
     return ma.average(rh, weights=p)
 
-
+def mean_omega(prof, pbot=None, ptop=None, dp=-1, exact=False):
+    '''
+        Calculates the mean omega from a profile object within the
+        specified layer.
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        pbot : number (optional; default surface)
+        Pressure of the bottom level (hPa)
+        ptop : number (optional; default 400 hPa)
+        Pressure of the top level (hPa)
+        dp : negative integer (optional; default = -1)
+        The pressure increment for the interpolated sounding
+        exact : bool (optional; default = False)
+        Switch to choose between using the exact data (slower) or using
+        interpolated sounding at 'dp' pressure levels (faster)
+        
+        Returns
+        -------
+        Mean Omega
+        
+        '''
+    if hasattr(prof, 'omeg'): 
+        if prof.omeg.all() is np.ma.masked:
+            return prof.missing
+    else:
+        return prof.missing
+    if not pbot: pbot = prof.pres[prof.sfc]
+    if not ptop: ptop = prof.pres[prof.sfc] - 100.
+    if not utils.QC(interp.omeg(prof, pbot)): pbot = prof.pres[prof.sfc]
+    if not utils.QC(interp.omeg(prof, ptop)): return ma.masked
+    if exact:
+        # This condition of the if statement is not tested
+        ind1 = np.where(pbot > prof.pres)[0].min()
+        ind2 = np.where(ptop < prof.pres)[0].max()
+        omeg1 = interp.omeg(prof, pbot)
+        omeg2 = interp.omeg(prof, ptop)
+        omeg = omeg[ind1:ind2+1]
+        mask = ~omeg.mask
+        omeg = np.concatenate([[omeg1], omeg[mask], omeg[mask], [omeg2]])
+        tott = omeg.sum() / 2.
+        num = float(len(omeg)) / 2.
+        thta = tott / num
+    else:
+        dp = -1
+        p = np.arange(pbot, ptop+dp, dp)
+        omeg = interp.omeg(prof, p)
+        omeg = ma.average(omeg, weights=p)
+    return omeg
 
 def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
@@ -2419,3 +2469,33 @@ def precip_eff(prof, **kwargs):
     mean_rh = mean_relh(prof, pbot=pbot, ptop=ptop) / 100.
 
     return pw*mean_rh
+
+def pbl_top(prof):
+    '''
+        Planetary Boundary Layer Depth
+        Adapted from NSHARP
+
+        Calculates the planetary boundary layer depth by calculating the 
+        virtual potential temperature of the surface parcel + .5 K, and then searching
+        for the location above the surface where the virtual potential temperature of the profile
+        is greater than the surface virtual potential temperature.
+
+        While this routine suggests a parcel lift, this Python adaptation does not use loop
+        like parcelx().
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        ppbl_top : the pressure that corresponds to the top of the PBL
+    '''
+
+    thetav = thermo.theta(prof.pres, thermo.virtemp(prof.pres, prof.tmpc, prof.dwpc))
+    level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
+
+    return prof.pres[level]
+
+
+

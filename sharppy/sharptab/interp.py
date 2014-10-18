@@ -52,6 +52,27 @@ def hght(prof, p):
     # this requirement.
     return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.hght[::-1])
 
+def omeg(prof, p):
+    '''
+    Interpolates the given data to calculate a omega at a given pressure
+
+    Parameters
+    ----------
+    prof : profile object
+        Profile object
+    p : number, numpy array
+        Pressure (hPa) of the level for which temperature is desired
+
+    Returns
+    -------
+    Omega (microbars/second) at the given pressure
+
+    '''
+    # Note: numpy's interpoloation routine expects the interpoloation
+    # routine to be in ascending order. Because pressure decreases in the
+    # vertical, we must reverse the order of the two arrays to satisfy
+    # this requirement.
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.omeg[::-1])
 
 def temp(prof, p):
     '''
