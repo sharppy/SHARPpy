@@ -85,12 +85,3 @@ class BufkitFile(object):
     def getProfileLength(self):
         return self.profile_length
 
-
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/namm_p%236.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/RAP/15/rap_c34.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/HRRR/15/hrrr_c34.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/12/gfs3_c34.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/09/sref_end.buf')
-#print d.pres
-#print d.hght.shape
-#print (d.dates)
