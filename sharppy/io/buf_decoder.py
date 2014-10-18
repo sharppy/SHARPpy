@@ -135,8 +135,6 @@ class BufkitFile(object):
     def getProfileLength(self):
         return self.profile_length
 
-<<<<<<< HEAD
-=======
     def getMemberNames(self):
         return self.member_names
 
@@ -151,4 +149,3 @@ class BufkitFile(object):
 #print d.pres
 #print d.hght.shape
 #print (d.dates)
->>>>>>> 29d3218d44de9959624749c3246d12c3d13c1324
