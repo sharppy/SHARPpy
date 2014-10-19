@@ -13,4 +13,5 @@ from slinky import *
 from advection import *
 from stp import *
 from barbs import *
+from winter import *
 __all__ = []
