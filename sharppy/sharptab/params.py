@@ -705,7 +705,8 @@ def temp_lvl(prof, temp):
         ind = ind.min()
     except:
         ind = ind1[-1]
-    return np.exp(np.interp(temp, [prof.tmpc[ind+1], prof.tmpc[ind]],
+
+    return np.power(10, np.interp(temp, [prof.tmpc[ind+1], prof.tmpc[ind]],
                             [prof.logp[ind+1], prof.logp[ind]]))
 
 
