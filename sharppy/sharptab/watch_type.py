@@ -65,16 +65,16 @@ def init_phase(prof):
     plevel = 0
     phase = -1
 
-    if prof.omega.all() is not ma.masked:
+    if prof.omeg.all() is np.ma.masked:
         # No vertical velocity data to be used
-        below_5km_idx = np.ma.where(prof.hght[1:] < interp.to_msl(prof, 5000.))[0]
+        below_5km_idx = np.ma.where(prof.hght[prof.get_sfc():] < interp.to_msl(prof, 5000.))[0]
     else:
         # Use the VV to find the source of precip.
-        below_5km_idx = np.ma.where((prof.hght[1:] < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]    
-   
+        below_5km_idx = np.ma.where((prof.hght[prof.get_sfc():] < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]    
+    
     # Compute the RH at the top and bottom of 50 mb layers
-    rh = thermo.relh(prof.pres[1:][below_5km_idx], prof.tmpc[1:][below_5km_idx], prof.dwpc[1:][below_5km_idx])
-    new_pres = prof.pres[1:][below_5km_idx] + 50.
+    rh = thermo.relh(prof.pres[prof.get_sfc():][below_5km_idx], prof.tmpc[prof.get_sfc():][below_5km_idx], prof.dwpc[prof.get_sfc():][below_5km_idx])
+    new_pres = prof.pres[prof.get_sfc():][below_5km_idx] - 50.
     new_temp = interp.temp(prof, new_pres)
     new_dwpt = interp.dwpt(prof, new_pres)
     rh_plus50 = thermo.relh(new_pres, new_temp, new_dwpt)
@@ -83,8 +83,9 @@ def init_phase(prof):
     layers_idx = np.ma.where((rh_plus50 > 80) & (rh > 80))[0]
 
     if len(layers_idx) == 0:
+        # Found no precipitation source layers
         st = "N/A"
-        return plevel, phase, st
+        return prof.missing, phase, prof.missing, st
 
     # Find the highest layer up via the largest index
     top_most_layer = np.ma.max(layers_idx)
@@ -136,7 +137,7 @@ def posneg_temperature(prof, start=-1):
 
     '''
     # Needs to be tested
-
+    
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
         return np.masked, np.masked, np.masked, np.masked
@@ -168,7 +169,7 @@ def posneg_temperature(prof, start=-1):
     te1 = interp.temp(prof, pe1)
     tp1 = 0
 
-    totp = totn = tote = ptop = pbot = lyrlast = 0
+    warmlayer = coldlayer = lyre = totp = totn = tote = ptop = pbot = lyrlast = 0
 
     for i in np.arange(uptr, lptr-1, -1):
         pe2 = prof.pres[i]
@@ -278,7 +279,7 @@ def posneg_wetbulb(prof, start=-1):
     te1 = thermo.wetbulb(pe1, interp.temp(prof, pe1), interp.dwpt(prof, pe1))
     tp1 = 0
 
-    totp = totn = tote = ptop = pbot = lyrlast = 0
+    warmlayer = coldlayer = lyre = totp = totn = tote = ptop = pbot = lyrlast = 0
 
     for i in np.arange(uptr, lptr-1, -1):
         pe2 = prof.pres[i]
@@ -328,7 +329,7 @@ def posneg_wetbulb(prof, start=-1):
 
     return pos, neg, top, bot
 
-def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos):
+def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
     '''
         Best Guess Precipitation type
 

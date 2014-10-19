@@ -3,6 +3,51 @@ import sys
 import numpy as np
 from datetime import datetime
 
+'''
+    Bufkit Decoders
+    Written by Greg Blumberg (OU/CIMMS) and Kelton Halbert (OU)
+
+    This class acts to decode .buf files (not .buz files, which are compressed
+    .buf files).  It's used by the SHARPpy GUI to decode model forecast soundings
+    in the Bufkit format.
+
+    To use this file, you'll need to initate a BufkitFile Object:
+
+    buf_file = BufkitFile(<path_to_file>)
+
+    The file passed to the object can either be a URL or local file.
+
+    The BufkitFile object will read in various attributes from the Bufkit file provided
+    such as station elevation, latitude, longitude, WMO ID, and the forecast dates the 
+    file covers.  Here are the attributes that describe the file:
+
+    filename - the filename
+    dates - a list of the datetime objects for each forecast hour
+    member_names - a list of the member names (if length == 1, only one model member exists)
+    num_profiles - number of profiles for each member (same length as dates)
+    station - the station name provided by the file
+    wmo_id - the WMO ID
+    slat - the station latitude (decimal degrees)
+    slon - the station longitude (decimal degrees)
+    selv - the station elevation above mean sea level (meters)
+
+    The BufkitFile object will hold these data variables from the Bufkit file as attributes:
+
+    tmpc - temperature profiles (Celsius)
+    dwpc - dewpoint profiles (Celsius)
+    pres - pressure profiles (millibar)
+    hght - height profiles (meters)
+    wspd - wind speed profiles (knots)
+    wdir - wind direction profiles (degrees from North)
+    omeg - omega (pressure vertical velocity in microbars/second)
+
+    If the Bufkit file has multiple model members (i.e. SREF or ensemble files),
+    the file will parse those out.  The shape of the data (i.e. tmpc) in this file will then be:
+    (ensemble member, numProfiles, height).
+
+    If only one model member exists (i.e. RAP, GFS) the shape will be: (1, numProfiles, height)
+'''
+
 class BufkitFile(object):
     
     def __init__(self, filename):
