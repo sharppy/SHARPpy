@@ -184,14 +184,3 @@ class BufkitFile(object):
     def getMemberNames(self):
         return self.member_names
 
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/namm_p%236.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/RAP/15/rap_oun.buf')
-#print d.hght.shape
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/HRRR/15/hrrr_c34.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/12/gfs3_c34.buf')
-#d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/21/sref_oun.buf')
-#print d.hght.shape
-#print d.getMemberNames()
-#print d.pres
-#print d.hght.shape
-#print (d.dates)

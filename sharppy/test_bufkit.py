@@ -216,6 +216,8 @@ profs = []
 
 if model == "GFS":
     d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + model + '/' + time + '/' + model.lower() + '3_' + station.lower() + '.buf')
+#elif model == "NAM"
+#    d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + model + '/' + time + '/' + model.lower() + '3_' + station.lower() + '.buf')
 else:
     d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + model + '/' + time + '/' + model.lower() + '_' + station.lower() + '.buf')
 

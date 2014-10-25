@@ -4,6 +4,7 @@ from PySide import QtGui, QtCore
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
+from sharppy.viz import plotWinter, plotFire
 from sharppy.sounding import prof, plot_title
 
 
@@ -93,9 +94,10 @@ convective = plotText(prof)
 kinematic = plotKinematics(prof)
 SARS = plotAnalogues(prof)
 stp = plotSTP(prof)
+winter = plotFire(prof)
 grid3.addWidget(convective, 0, 0)
 grid3.addWidget(kinematic, 0, 1)
-grid3.addWidget(SARS, 0, 2)
+grid3.addWidget(winter, 0, 2)
 grid3.addWidget(stp, 0, 3)
 grid.addWidget(text, 3, 0, 1, 2)
 pixmap = QtGui.QPixmap.grabWidget(mainWindow)
