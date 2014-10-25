@@ -632,7 +632,7 @@ def inferred_temp_adv(prof, lat=None):
     temp_adv = np.empty(len(pressures) - 1)
     dirs = interp.vec(prof, pressures)[0]
     pressure_bounds = np.empty((len(pressures) - 1, 2))
-    for i in range(1, len(pressures)):
+    for i in xrange(1, len(pressures)):
         bottom_pres = pressures[i-1]
         top_pres = pressures[i]
         # Get the temperatures from both levels (in Kelvin)
@@ -1289,7 +1289,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tp1 = thermo.wetlift(pe2, tp2, pe1)
     lyre = 0
     lyrlast = 0
-    for i in range(lptr, prof.pres.shape[0]):
+    for i in xrange(lptr, prof.pres.shape[0]):
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
@@ -1389,8 +1389,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.pres = pres
     pcl.tmpc = tmpc
     pcl.dwpc = dwpc
-    ptrace = []
-    ttrace = []
     cap_strength = -9999.
     cap_strengthpres = -9999.
     li_max = -9999.
@@ -1421,8 +1419,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
     tp1 = thermo.virtemp(pres, tmpc, dwpc)
-    ttrace.append(tp1)
-    ptrace.append(pe1)
+    ttrace = [tp1]
+    ptrace = [pe1]
     
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
@@ -1492,7 +1490,10 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tp1 = thermo.wetlift(pe2, tp2, pe1)
     lyre = 0
     lyrlast = 0
-    for i in range(lptr, prof.pres.shape[0]):
+
+    #ttrace_lcl = np.empty(len(xrange(lptr, prof.pres.shape[0])))
+    #ptrace_lcl = np.empty(len(xrange(lptr, prof.pres.shape[0])))
+    for i in xrange(lptr, prof.pres.shape[0]):
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
@@ -1893,7 +1894,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     ptop = ma.masked
     if mucape >= ecape and mucinh > ecinh:
         # Begin at surface and search upward for effective surface
-        for i in range(prof.sfc, prof.top):
+        for i in xrange(prof.sfc, prof.top):
             pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
             if pcl.bplus >= ecape and pcl.bminus > ecinh:
                 pbot = prof.pres[i]
@@ -1901,7 +1902,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
         if not utils.QC(pbot): return ma.masked, ma.masked
         bptr = i
         # Keep searching upward for the effective top
-        for i in range(bptr+1, prof.top):
+        for i in xrange(bptr+1, prof.top):
             pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
             if pcl.bplus < ecape or pcl.bminus <= ecinh:
                 j = 1
@@ -2226,8 +2227,8 @@ def mmp(prof, **kwargs):
     possible_shears = np.empty((len(lowest_idx),len(highest_idx)))
     pbots = interp.pres(prof, interp.to_msl(prof, agl_hght[lowest_idx]))
     ptops = interp.pres(prof, interp.to_msl(prof, agl_hght[highest_idx]))
-    for b in range(len(pbots)):
-        for t in range(len(ptops)):
+    for b in xrange(len(pbots)):
+        for t in xrange(len(ptops)):
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
             possible_shears[b,t] = utils.comp2vec(u_shear, v_shear)[1]
     max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.flatten()))
@@ -2404,7 +2405,7 @@ def dcape(prof):
 
     # Lower the parcel to the surface moist adiabatically and compute
     # total energy (DCAPE)
-    for i in np.arange(uptr, -1, -1):
+    for i in xrange(uptr, -1, -1):
         pe2 = pres[i]
         te2 = tmpc[i]
         h2 = hght[i]

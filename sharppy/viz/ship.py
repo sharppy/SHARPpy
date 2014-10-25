@@ -89,7 +89,7 @@ class backgroundSHIP(QtGui.QFrame):
         qp.setFont(y_ticks_font)
         texts = ['5', '4', '3', '2', '1', '0', ' ']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in range(len(y_ticks)):
+        for i in xrange(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -115,7 +115,7 @@ class backgroundSHIP(QtGui.QFrame):
         texts = ['<= 1.5\"', '>= 2.5\"']
         ef = self.ship_to_pix(ef)
         qp.setFont(QtGui.QFont('Helvetica', 10))
-        for i in range(ef.shape[0]):
+        for i in xrange(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
             pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)

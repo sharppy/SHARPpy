@@ -239,7 +239,7 @@ class plotFire(backgroundFire):
                 'BL max = ' + tab.utils.INT2STR(self.maxwindpbl[1]) + '/' + tab.utils.INT2STR(self.maxwindpbl[0])]
         sep = self.moswindsep
         y1 = self.start_data_y1 + 6
-        for i in range(len(label)):
+        for i in xrange(len(label)):
             if i == 3:
                 color, fontsize = self.getMaxWindFormat()
             else:
@@ -259,7 +259,7 @@ class plotFire(backgroundFire):
                 'PW = ' + tab.utils.FLOAT2STR(self.pwat,2) + ' in']
 
         y1 = self.start_data_y1 + 6
-        for i in range(len(label)): 
+        for i in xrange(len(label)): 
             if i == 0:
                 color, fontsize = self.getSfcRHFormat()
             elif i == 1 or i == 2:
