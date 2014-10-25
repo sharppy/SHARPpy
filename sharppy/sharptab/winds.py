@@ -356,6 +356,10 @@ def max_wind(prof, lower, upper, all=False):
     pupper = interp.pres(prof, upper)
     ind1 = np.where(plower > prof.pres)[0].min()
     ind2 = np.where(pupper < prof.pres)[0].max()
+    if len(prof.wspd[ind1:ind2+1]) == 0:
+        maxu, maxv =  utils.vec2comp([prof.wdir[ind1]], [prof.wspd[ind1]])
+        return maxu, maxv, prof.pres[ind1]
+
     inds = np.where(np.fabs(prof.wspd[ind1:ind2+1] -
                     prof.wspd[ind1:ind2+1].max()) < TOL)[0]
     inds += ind1
