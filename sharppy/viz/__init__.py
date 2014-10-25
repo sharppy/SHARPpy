@@ -14,8 +14,6 @@ from advection import *
 from stp import *
 from barbs import *
 from winter import *
-<<<<<<< HEAD
 from fire import *
-=======
->>>>>>> 24ec32bc8124002472dd279d1af35fec2f96abce
+from ship import *
 __all__ = []
