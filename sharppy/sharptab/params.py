@@ -2404,7 +2404,7 @@ def dcape(prof):
 
     # Lower the parcel to the surface moist adiabatically and compute
     # total energy (DCAPE)
-    for i in np.arange(uptr, prof.sfc-1, -1):
+    for i in np.arange(uptr, -1, -1):
         pe2 = pres[i]
         te2 = tmpc[i]
         h2 = hght[i]
@@ -2424,7 +2424,6 @@ def dcape(prof):
         te1 = te2
         h1 = h2
         tp1 = tp2
-
     drtemp = tp2 # Downrush temp in Celsius
 
     return tote, np.asarray(ttrace), np.asarray(ptrace)
