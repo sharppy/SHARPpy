@@ -170,6 +170,7 @@ class BufkitFile(object):
         self.wdir = np.asarray(self.wdir)
         self.wspd = np.asarray(self.wspd)
         self.omeg = np.asarray(self.omeg)
+        f.close()
 
     def getNumMembers(self):
         return self.num_members
