@@ -39,7 +39,6 @@ def fosberg(prof):
     fmph = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
 
     rh = thermo.relh(prof.pres[prof.sfc], prof.tmpc[prof.sfc], prof.dwpc[prof.sfc])
-    print rh, tmpf, fmph
     if (rh <= 10):
         em = 0.03229 + 0.281073*rh - 0.000578*rh*tmpf
     elif (10 < rh <= 50):
@@ -52,6 +51,5 @@ def fosberg(prof):
     fmdc = 1 - 2*em30 + 1.5*em30*em30 - 0.5*em30*em30*em30
 
     param = (fmdc*np.sqrt(1+u_sq))/0.3002
-    print em, em30, u_sq, fmdc
 
     return param
