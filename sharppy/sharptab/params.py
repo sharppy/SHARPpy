@@ -1491,9 +1491,13 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     lyre = 0
     lyrlast = 0
 
-    #ttrace_lcl = np.empty(len(xrange(lptr, prof.pres.shape[0])))
-    #ptrace_lcl = np.empty(len(xrange(lptr, prof.pres.shape[0])))
-    for i in xrange(lptr, prof.pres.shape[0]):
+
+    iter_ranges = np.arange(lptr, prof.pres.shape[0])
+    ttraces = ma.zeros(len(iter_ranges))
+    ptraces = ma.zeros(len(iter_ranges))
+    ttraces[:] = ptraces[:] = ma.masked
+
+    for i in iter_ranges:
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
@@ -1501,8 +1505,9 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         tp2 = thermo.wetlift(pe1, tp1, pe2)
         tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
         tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
-        ptrace.append(pe2)
-        ttrace.append(thermo.virtemp(pe2, tp2, tp2))
+
+        ptraces[i-iter_ranges[0]] = pe2
+        ttraces[i-iter_ranges[0]] = thermo.virtemp(pe2, tp2, tp2)
         lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
 
@@ -1776,8 +1781,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     
     # Save params
     if pcl.bplus == 0: pcl.bminus = 0.
-    pcl.ptrace = np.ma.asarray(ptrace)
-    pcl.ttrace = np.ma.asarray(ttrace)
+    pcl.ptrace = ma.concatenate((ptrace, ptraces))
+    pcl.ttrace = ma.concatenate((ttrace, ttraces))
     return pcl
 
 
@@ -2405,7 +2410,11 @@ def dcape(prof):
 
     # Lower the parcel to the surface moist adiabatically and compute
     # total energy (DCAPE)
-    for i in xrange(uptr, -1, -1):
+    iter_ranges = xrange(uptr, -1, -1)
+    ttraces = ma.zeros(len(iter_ranges))
+    ptraces = ma.zeros(len(iter_ranges))
+    ttraces[:] = ptraces[:] = ma.masked
+    for i in iter_ranges:
         pe2 = pres[i]
         te2 = tmpc[i]
         h2 = hght[i]
@@ -2417,9 +2426,9 @@ def dcape(prof):
             lyrlast = lyre
             lyre = 9.8 * (tdef1 + tdef2) / 2.0 * (h2 - h1)
             tote += lyre
-        
-        ttrace.append(tp2)
-        ptrace.append(pe2)
+
+        ttraces[i] = tp2
+        ptraces[i] = pe2
 
         pe1 = pe2
         te1 = te2
@@ -2427,7 +2436,7 @@ def dcape(prof):
         tp1 = tp2
     drtemp = tp2 # Downrush temp in Celsius
 
-    return tote, np.asarray(ttrace), np.asarray(ptrace)
+    return tote, ma.concatenate((ttrace, ttraces)), ma.concatenate((ptrace, ptraces))
 
 def precip_eff(prof, **kwargs):
     '''
