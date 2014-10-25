@@ -303,25 +303,29 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         Negative Helicity (m2/s2)
 
     '''
-    lower = interp.to_msl(prof, lower)
-    upper = interp.to_msl(prof, upper)
-    plower = interp.pres(prof, lower)
-    pupper = interp.pres(prof, upper)
-    if exact:
-        ind1 = np.where(plower >= prof.pres)[0].min()
-        ind2 = np.where(pupper <= prof.pres)[0].max()
-        u1, v1 = interp.components(prof, plower)
-        u2, v2 = interp.components(prof, pupper)
-        u = np.concatenate([[u1], prof.u[ind1:ind2+1].compressed(), [u2]])
-        v = np.concatenate([[v1], prof.v[ind1:ind2+1].compressed(), [v2]])
+    if lower != upper:
+        lower = interp.to_msl(prof, lower)
+        upper = interp.to_msl(prof, upper)
+        plower = interp.pres(prof, lower)
+        pupper = interp.pres(prof, upper)
+        if exact:
+            ind1 = np.where(plower >= prof.pres)[0].min()
+            ind2 = np.where(pupper <= prof.pres)[0].max()
+            u1, v1 = interp.components(prof, plower)
+            u2, v2 = interp.components(prof, pupper)
+            u = np.concatenate([[u1], prof.u[ind1:ind2+1].compressed(), [u2]])
+            v = np.concatenate([[v1], prof.v[ind1:ind2+1].compressed(), [v2]])
+        else:
+            ps = np.arange(plower, pupper+dp, dp)
+            u, v = interp.components(prof, ps)
+        sru = utils.KTS2MS(u - stu)
+        srv = utils.KTS2MS(v - stv)
+        layers = (sru[1:] * srv[:-1]) - (sru[:-1] * srv[1:])
+        phel = layers[layers > 0].sum()
+        nhel = layers[layers < 0].sum()
     else:
-        ps = np.arange(plower, pupper+dp, dp)
-        u, v = interp.components(prof, ps)
-    sru = utils.KTS2MS(u - stu)
-    srv = utils.KTS2MS(v - stv)
-    layers = (sru[1:] * srv[:-1]) - (sru[:-1] * srv[1:])
-    phel = layers[layers > 0].sum()
-    nhel = layers[layers < 0].sum()
+        phel = nhel = 0
+        
     return phel+nhel, phel, nhel
 
 
