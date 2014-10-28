@@ -89,7 +89,7 @@ class backgroundSTP(QtGui.QFrame):
         qp.setFont(y_ticks_font)
         texts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', ' ']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in range(len(y_ticks)):
+        for i in xrange(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
@@ -115,7 +115,7 @@ class backgroundSTP(QtGui.QFrame):
         texts = ['EF4+', 'EF3', 'EF2', 'EF1', 'EF0', 'NONTOR']
         ef = self.stp_to_pix(ef)
         qp.setFont(QtGui.QFont('Helvetica', 8))
-        for i in range(ef.shape[0]):
+        for i in xrange(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
             pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)

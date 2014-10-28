@@ -41,7 +41,7 @@ class backgroundHodo(QtGui.QFrame):
         self.scale = (self.brx - self.tlx) / self.hodomag
         ## ring increment
         self.ring_increment = 10
-        self.rings = range(self.ring_increment, 100+self.ring_increment,
+        self.rings = xrange(self.ring_increment, 100+self.ring_increment,
             self.ring_increment)
         if self.physicalDpiX() > 75:
             fsize = 7
@@ -102,7 +102,7 @@ class backgroundHodo(QtGui.QFrame):
         ## get the maximum speed value in the frame for the ring increment.
         ## this is to help reduce drawing resources
         max_uv = int(self.pix_to_uv(self.brx, 0)[0])
-        self.rings = range(self.ring_increment, max_uv+self.ring_increment,
+        self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
                            self.ring_increment)
         ## reassign the new scale
         self.scale = (self.brx - self.tlx) / self.hodomag
@@ -704,7 +704,7 @@ class plotHodo(backgroundHodo):
         pen.setStyle(QtCore.Qt.SolidLine)
         ## loop through the profile. Loop through shape - 1 since
         ## i + 1 is indexed
-        for i in range(xx.shape[0]-1):
+        for i in xrange(xx.shape[0]-1):
             ## draw the hodograph in the lowest 3km
             if z[i] < 3000:
                 if z[i+1] < 3000:

@@ -68,7 +68,7 @@ class backgroundWinds(QtGui.QFrame):
         ## height is in km.
         for h in [2,4,6,8,10,12,14]:
             self.draw_height(h, qp)
-        for s in range(0,100,10):
+        for s in xrange(0,100,10):
             self.draw_speed(s, qp)
         qp.end()
 

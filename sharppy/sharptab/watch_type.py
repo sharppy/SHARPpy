@@ -542,7 +542,7 @@ def possible_watch(prof):
     
     # Blizzard Watch if sfc winds > 35 mph and precip type detects snow
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
-    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 32:
+    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0:
         watch_types.append("BLIZZARD")
         colors.append("#3366FF")
 

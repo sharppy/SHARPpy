@@ -64,13 +64,13 @@ class backgroundSkewT(QtGui.QWidget):
             self.draw_isotherm(t, qp)
         #for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
         for theta in np.arange(self.bltmpc, 80, 20): self.draw_dry_adiabat(theta, qp)
-        for w in [2] + range(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
+        for w in [2] + np.arange(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
         for p in [1000, 850, 700, 500, 300, 200, 100]:
             self.draw_isobar(p, 1, qp)
         for t in np.arange(self.bltmpc, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm_labels(t, qp)
-        for p in range(int(self.pmax), int(self.pmin-50), -50):
+        for p in xrange(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
         qp.end()
 
@@ -145,7 +145,7 @@ class backgroundSkewT(QtGui.QWidget):
         yvals = self.pres_to_pix(presvals)
         path = QPainterPath()
         path.moveTo(xvals[0], yvals[0])
-        for i in range(1, len(presvals) ):
+        for i in xrange(1, len(presvals) ):
             p = presvals[i]
             x = xvals[i]
             y = yvals[i]
@@ -161,7 +161,7 @@ class backgroundSkewT(QtGui.QWidget):
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         dp = -10
-        for p in range(int(self.pmax), int(self.pmin)+dp, dp):
+        for p in xrange(int(self.pmax), int(self.pmin)+dp, dp):
             t = tab.thermo.wetlift(1000., tw, p)
             x = self.tmpc_to_pix(t, p)
             y = self.pres_to_pix(p)
@@ -580,7 +580,7 @@ class plotSkewT(backgroundSkewT):
         yvals = self.pres_to_pix(ptrace)
         xvals = self.tmpc_to_pix(ttrace, ptrace)
         path.moveTo(xvals[0], yvals[0])
-        for i in range(1, len(yvals)):
+        for i in xrange(1, len(yvals)):
             x = xvals[i]; y = yvals[i]
             if y < self.tpad:
                 break
@@ -613,7 +613,7 @@ class plotSkewT(backgroundSkewT):
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
         path.moveTo(x[0], y[0])
-        for i in range(1, x.shape[0]):
+        for i in xrange(1, x.shape[0]):
             if y[i] < self.tpad:
                 break
             else:

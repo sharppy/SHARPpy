@@ -68,7 +68,7 @@ class backgroundWatch(QtGui.QFrame):
         y1 = self.bry / 13.
         pad = self.bry / 100.
         rect0 = QtCore.QRect(0, pad*4, self.brx, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Psbl Wx Type')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Psbl Haz. Type')
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(0, pad*4 + (self.title_height + 3), self.brx, pad*4 + (self.title_height + 3))

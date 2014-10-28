@@ -28,7 +28,7 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
         num_full_barbs = int( wnd / 10. ) % 5
         num_half_barbs = int( wnd / 5. ) % 2
         ## draw the flag barbs
-        for i in range(num_flag_barbs):
+        for i in xrange(num_flag_barbs):
             ## use this as a linear offset from the previous barb,
             ## starting at the end
             offset1 = 4. * i
@@ -51,7 +51,7 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             qp.drawLine(barbx_start, barby_start, barbx_end, barby_end)
             qp.drawLine(flagx_start, flagy_start, barbx_end, barby_end)
         
-        for i in range(num_full_barbs):
+        for i in xrange(num_full_barbs):
             ## use this as a linear offset from the previous barb,
             ## starting at the end
             if num_flag_barbs > 0:
@@ -72,7 +72,7 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             qp.drawLine(barbx_start, barby_start, barbx_end, barby_end)
         
         ## draw the half barbs
-        for i in range(num_half_barbs):
+        for i in xrange(num_half_barbs):
             ## this time we want to index from 1 so that we don't
             ## draw on top of the full barbs
             if num_flag_barbs > 0:
