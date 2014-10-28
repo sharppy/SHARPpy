@@ -6,6 +6,7 @@ import datetime
 import sys
 import numpy as np
 
+
 ## get the current utc time and format it into
 ## a string that can be used for the SPC url.
 if sys.argv[1] != "test":

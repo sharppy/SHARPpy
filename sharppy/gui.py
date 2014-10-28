@@ -1,10 +1,10 @@
 import sys
-import numpy as np
 from PySide import QtGui, QtCore
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.sounding import prof, plot_title
+
 
 
 # Setup Application
@@ -88,8 +88,6 @@ grid3.setHorizontalSpacing(0)
 grid3.setContentsMargins(0, 0, 0, 0)
 text.setLayout(grid3)
 convective = plotText(prof)
-#convective = QtGui.QFrame()
-#kinematic = QtGui.QFrame()
 kinematic = plotKinematics(prof)
 SARS = plotAnalogues(prof)
 stp = plotSTP(prof)
