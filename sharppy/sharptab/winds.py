@@ -325,7 +325,7 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         nhel = layers[layers < 0].sum()
     else:
         phel = nhel = 0
-        
+
     return phel+nhel, phel, nhel
 
 
@@ -364,8 +364,8 @@ def max_wind(prof, lower, upper, all=False):
         maxu, maxv =  utils.vec2comp([prof.wdir[ind1]], [prof.wspd[ind1]])
         return maxu, maxv, prof.pres[ind1]
 
-    inds = np.where(np.fabs(prof.wspd[ind1:ind2+1] -
-                    prof.wspd[ind1:ind2+1].max()) < TOL)[0]
+    inds = np.where((np.fabs(prof.wspd[ind1:ind2+1] -
+                    np.nanmax(prof.wspd[ind1:ind2+1]))) < TOL)[0]
     inds += ind1
     inds.sort()
     maxu, maxv =  utils.vec2comp(prof.wdir[inds], prof.wspd[inds])
