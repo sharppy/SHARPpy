@@ -55,9 +55,7 @@ class BufkitFile(object):
         self.dates = []
         self.dates_loaded = False
         self.member_names = []
-        print "Start2"
         self.__readFile()
-        print "End2"
         self.num_profiles = 0
  
     def parseBUF(self, text):
