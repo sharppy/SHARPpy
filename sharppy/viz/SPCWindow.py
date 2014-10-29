@@ -5,12 +5,13 @@ from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
 from PySide.QtCore import *
 from PySide.QtGui import *
+from sharppy.io.buf_decoder import BufkitFile
 from PySide.QtWebKit import *
 import datetime as date
 from subprocess import call
 from StringIO import StringIO
 import sharppy.sharptab.profile as profile
-import datetime
+from datetime import datetime
 import urllib
 import numpy as np
 
@@ -27,11 +28,14 @@ class SkewApp(QWidget):
         self.loc = kwargs.get("location")
         self.changeflag = True
         self.swap_inset = False
+        self.d = None
         self.current_index = 0
         self.inset = "S"
         self.profs = []
-        self.prof, self.plot_title = self.__observedProf()
-
+        if self.model == "Observed":
+            self.prof, self.plot_title = self.__observedProf()
+        else:
+            self.__modelProf()
         self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
@@ -121,6 +125,21 @@ class SkewApp(QWidget):
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
 
+    def __modelProf(self):
+        if self.model == "GFS":
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
+                + self.model.lower() + '3_k' + self.loc.lower() + '.buf')
+        else:
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
+                + self.model.lower() + '_k' + self.loc.lower() + '.buf')
+
+        for i in range(len(d.wdir[0]))[:]:
+            print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+            self.profs.append(profile.create_profile(profile='convective', hght = d.hght[0][i],
+                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+        self.d = d
+
+
     def clearWidgets(self):
         self.sound.deleteLater()
 
@@ -142,7 +161,9 @@ class SkewApp(QWidget):
             self.winter.deleteLater()
 
     def initData(self):
-        self.profs.append(self.prof)
+        self.prof = self.profs[self.current_index]
+        self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
+                + "  (" + self.run + "Z  " + self.model + ")"
 
         #plot_title = self.station + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') + "  (" + self.time + "Z  " + self.model + ")"
         #name = datetime.strftime(self.d.dates[self.current_index], '%Y%m%d.%H%M.') + self.time + self.model + '.' + self.station
