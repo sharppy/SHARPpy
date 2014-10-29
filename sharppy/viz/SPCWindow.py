@@ -30,6 +30,7 @@ class SkewApp(QWidget):
         self.current_index = 0
         self.inset = "S"
         self.profs = []
+        self.prof, self.plot_title = self.__observedProf()
 
         self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
@@ -37,12 +38,11 @@ class SkewApp(QWidget):
         brand = 'Oklahoma Weather Lab'
         self.setWindowTitle(title)
         self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
-        #centralWidget = QFrame()
         self.grid = QGridLayout()
+        self.grid.setContentsMargins(1,1,1,1)
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(2)
         self.setLayout(self.grid)
-        #self.setCentralWidget(centralWidget)
 
         self.urparent = QFrame()
         self.urparent_grid = QGridLayout()
@@ -135,18 +135,19 @@ class SkewApp(QWidget):
 
         self.convective.deleteLater()
         self.kinematic.deleteLater()
-        self.SARS.deleteLater()
+        if self.inset == "S":
+            self.SARS.deleteLater()
         self.stp.deleteLater()
-        self.winter.deleteLater()
+        if self.inset == "W":
+            self.winter.deleteLater()
 
     def initData(self):
-        self.prof, plot_title = self.__observedProf()
         self.profs.append(self.prof)
 
         #plot_title = self.station + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') + "  (" + self.time + "Z  " + self.model + ")"
         #name = datetime.strftime(self.d.dates[self.current_index], '%Y%m%d.%H%M.') + self.time + self.model + '.' + self.station
 
-        self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=plot_title, brand=self.brand)
+        self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand)
 
         self.speed_vs_height = plotSpeed( self.prof )
         self.speed_vs_height.setObjectName("svh")
@@ -199,8 +200,6 @@ class SkewApp(QWidget):
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
             self.swap_inset = False
-        print self.swap_inset, self.inset
-
 
     def keyPressEvent(self, e):
         key = e.key()
@@ -228,108 +227,3 @@ class SkewApp(QWidget):
         if key == Qt.Key_S:
             self.swap_inset = True
             self.update()
-
-    def create_window(self):
-        prof, plot_title = self.__observedProf()
-
-        ## create an empty widget window
-        self.setGeometry(0, 0, 1180, 800)
-
-        ## window title
-        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
-        title += 'in Python'
-        self.setWindowTitle(title)
-        self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
-
-        ## set the layout as a grid
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(0)
-        grid.setVerticalSpacing(2)
-        self.setLayout(grid)
-
-        ## set the brand and place the sounding in the window
-        sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title)
-        sound.setContentsMargins(0, 0, 0, 0)
-        grid.addWidget(sound, 0, 0, 3, 1)
-
-        # Handle the Upper Right
-        urparent = QFrame()
-        urparent_grid = QGridLayout()
-        urparent_grid.setContentsMargins(0, 0, 0, 0)
-        urparent.setLayout(urparent_grid)
-        ur = QFrame()
-        ur.setStyleSheet("QFrame {"
-                         "  background-color: rgb(0, 0, 0);"
-                         "  border-width: 0px;"
-                         "  border-style: solid;"
-                         "  border-color: rgb(255, 255, 255);"
-                         "  margin: 0px;}")
-
-        ## set the "brand" name
-        brand = QLabel('HOOT - Oklahoma Weather Lab')
-        brand.setAlignment(Qt.AlignRight)
-        brand.setStyleSheet("QFrame {"
-                            "  background-color: rgb(0, 0, 0);"
-                            "  text-align: right;"
-                            "  font-size: 11px;"
-                            "  color: #FFFFFF;}")
-
-        ## create a grid to put the stuff in
-        grid2 = QGridLayout()
-        grid2.setHorizontalSpacing(0)
-        grid2.setVerticalSpacing(0)
-        grid2.setContentsMargins(0, 0, 0, 0)
-        ur.setLayout(grid2)
-
-        ## construct the data plots
-        speed_vs_height = plotSpeed( prof )
-        speed_vs_height.setObjectName("svh")
-        inferred_temp_advection = plotAdvection(prof)
-        hodo = plotHodo(prof.hght, prof.u, prof.v, prof=prof, centered=prof.mean_lcl_el)
-        storm_slinky = plotSlinky(prof)
-        thetae_vs_pressure = plotThetae(prof)
-        srwinds_vs_height = plotWinds(prof)
-        watch_type = plotWatch(prof)
-
-        ## add them to the grid
-        grid2.addWidget(speed_vs_height, 0, 0, 11, 3)
-        grid2.addWidget(inferred_temp_advection, 0, 3, 11, 2)
-        grid2.addWidget(hodo, 0, 5, 8, 24)
-        grid2.addWidget(storm_slinky, 8, 5, 3, 6)
-        grid2.addWidget(thetae_vs_pressure, 8, 11, 3, 6)
-        grid2.addWidget(srwinds_vs_height, 8, 17, 3, 6)
-        grid2.addWidget(watch_type, 8, 23, 3, 6)
-        ## add the brand and upper right window to the parent grid
-        urparent_grid.addWidget(brand, 0, 0, 1, 0)
-        urparent_grid.addWidget(ur, 1, 0, 50, 0)
-        ## add the parent upper right to the main grid
-        grid.addWidget(urparent, 0, 1, 3, 1)
-
-        # Handle the Text Areas
-        text = QFrame()
-        text.setStyleSheet("QWidget {"
-                           "  background-color: rgb(0, 0, 0);"
-                           "  border-width: 2px;"
-                           "  border-style: solid;"
-                           "  border-color: #3399CC;}")
-
-        ## create the layout
-        grid3 = QGridLayout()
-        grid3.setHorizontalSpacing(0)
-        grid3.setContentsMargins(0, 0, 0, 0)
-        text.setLayout(grid3)
-
-        ## construct the plot objects
-        convective = plotText(prof)
-        kinematic = plotKinematics(prof)
-        SARS = plotAnalogues(prof)
-        stp = plotSTP(prof)
-
-        ## add them to the text grid
-        grid3.addWidget(convective, 0, 0)
-        grid3.addWidget(kinematic, 0, 1)
-        grid3.addWidget(SARS, 0, 2)
-        grid3.addWidget(stp, 0, 3)
-
-        ## add the text grid to the main grid
-        grid.addWidget(text, 3, 0, 1, 2)
