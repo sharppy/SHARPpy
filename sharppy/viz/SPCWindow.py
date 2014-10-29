@@ -34,6 +34,7 @@ class SkewApp(QWidget):
         self.profs = []
         if self.model == "Observed":
             self.prof, self.plot_title = self.__observedProf()
+            self.profs.append(self.prof)
         else:
             self.__modelProf()
         self.setGeometry(0, 0, 1180, 800)
@@ -162,11 +163,9 @@ class SkewApp(QWidget):
 
     def initData(self):
         self.prof = self.profs[self.current_index]
-        self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
+        if self.model != "Observed":
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
                 + "  (" + self.run + "Z  " + self.model + ")"
-
-        #plot_title = self.station + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') + "  (" + self.time + "Z  " + self.model + ")"
-        #name = datetime.strftime(self.d.dates[self.current_index], '%Y%m%d.%H%M.') + self.time + self.model + '.' + self.station
 
         self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand)
 
