@@ -128,10 +128,10 @@ class SkewApp(QWidget):
     def __modelProf(self):
         if self.model == "GFS":
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '3_k' + self.loc.lower() + '.buf')
+                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
         else:
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '_k' + self.loc.lower() + '.buf')
+                + self.model.lower() + '_' + self.loc.lower() + '.buf')
 
         for i in range(len(d.wdir[0]))[:]:
             print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
