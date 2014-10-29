@@ -594,7 +594,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask], [ptop]])
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         dwpt = interp.dwpt(prof, p)
     w = thermo.mixratio(p, dwpt)
     return (((w[:-1]+w[1:])/2 * (p[:-1]-p[1:])) * 0.00040173).sum()
@@ -626,7 +626,7 @@ def inferred_temp_adv(prof, lat=None):
         multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
     dp = -100
     pres_idx = np.where(prof.pres >= 100.)[0]
-    pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp) # Units: mb
+    pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp, dtype=type(prof.pres[prof.get_sfc()])) # Units: mb
     temps = thermo.ctok(interp.temp(prof, pressures))
     heights = interp.hght(prof, pressures)
     temp_adv = np.empty(len(pressures) - 1)
@@ -772,7 +772,7 @@ def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
         p = np.concatenate([[pbot], prof.pres[ind1:ind2+1][mask], [ptop]])
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         tmp = interp.temp(prof, p)
         dwpt = interp.dwpt(prof, p)
     rh = thermo.relh(p, tmp, dwpt)
@@ -825,7 +825,7 @@ def mean_omega(prof, pbot=None, ptop=None, dp=-1, exact=False):
         thta = tott / num
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         omeg = interp.omeg(prof, p)
         omeg = ma.average(omeg, weights=p)
     return omeg
@@ -873,7 +873,7 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
     
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         dwpt = interp.dwpt(prof, p)
         w = ma.average(thermo.mixratio(p, dwpt))
     return w
@@ -921,7 +921,7 @@ def mean_thetae(prof, pbot=None, ptop=None, dp=-1, exact=False):
         thtae = tott / num
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         temp = interp.temp(prof, p)
         dwpt = interp.dwpt(prof, p)
         thetae = np.empty(p.shape)
@@ -971,7 +971,7 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
         thta = tott / num
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         temp = interp.temp(prof, p)
         theta = thermo.theta(p, temp)
         thta = ma.average(theta, weights=p)
@@ -1056,7 +1056,7 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
         p = np.concatenate([[pbot], p[mask], [ptop]])
     else:
         dp = -1
-        p = np.arange(pbot, ptop+dp, dp)
+        p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
         t = interp.temp(prof, p)
         d = interp.dwpt(prof, p)
     p2, t2 = thermo.drylift(p, t, d)
@@ -1259,7 +1259,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
-    pp = np.arange(pbot, blupper+dp, dp)
+    pp = np.arange(pbot, blupper+dp, dp, dtype=type(pbot))
     hh = interp.hght(prof, pp)
     tmp_env_theta = thermo.theta(pp, interp.temp(prof, pp), 1000.)
     tmp_env_dwpt = interp.dwpt(prof, pp)
@@ -1443,7 +1443,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
-    pp = np.arange(pbot, blupper+dp, dp)
+    pp = np.arange(pbot, blupper+dp, dp, dtype=type(pbot))
     hh = interp.hght(prof, pp)
     tmp_env_theta = thermo.theta(pp, interp.temp(prof, pp), 1000.)
     tmp_env_dwpt = interp.dwpt(prof, pp)
@@ -2436,7 +2436,7 @@ def dcape(prof):
         tp1 = tp2
     drtemp = tp2 # Downrush temp in Celsius
 
-    return tote, ma.concatenate((ttrace, ttraces)), ma.concatenate((ptrace, ptraces))
+    return tote, ma.concatenate((ttrace, ttraces[::-1])), ma.concatenate((ptrace, ptraces[::-1]))
 
 def precip_eff(prof, **kwargs):
     '''
