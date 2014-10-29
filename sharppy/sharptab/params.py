@@ -1061,7 +1061,7 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
         d = interp.dwpt(prof, p)
     p2, t2 = thermo.drylift(p, t, d)
     mt = thermo.wetlift(p2, t2, 1000.)
-    ind = np.where(np.fabs(mt - mt.max()) < TOL)[0]
+    ind = np.where(np.fabs(mt - np.nanmax(mt)) < TOL)[0]
     return p[ind[0]]
 
 def parcelTraj(prof, parcel, smu=None, smv=None):
