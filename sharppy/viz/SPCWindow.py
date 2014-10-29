@@ -43,15 +43,12 @@ class Thread(QThread):
         return prof
 
     def __modelProf(self):
-        pool = Pool(processes=4)
         if self.model == "GFS":
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
                 + self.model.lower() + '3_' + self.loc.lower() + '.buf')
         else:
-            print "Start"
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
                 + self.model.lower() + '_' + self.loc.lower() + '.buf')
-            print "End"
         self.d = d
 
         for i in range(len(d.wdir[0]))[:]:
@@ -178,19 +175,6 @@ class SkewApp(QWidget):
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
 
-    def __modelProf(self):
-        if self.model == "GFS":
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
-        else:
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '_' + self.loc.lower() + '.buf')
-
-        for i in range(len(d.wdir[0]))[:]:
-            print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-            self.profs.append(profile.create_profile(profile='convective', hght = d.hght[0][i],
-                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-        self.d = d
 
 
     def clearWidgets(self):
