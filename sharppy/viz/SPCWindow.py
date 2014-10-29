@@ -1,4 +1,4 @@
-__author__ = 'keltonhalbert'
+__authors__ = ['keltonhalbert','gregblumberg']
 
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
@@ -55,7 +55,7 @@ class SkewApp(QWidget):
                          "  border-style: solid;"
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
-        self.brand = QLabel('HOOT - Oklahoma Weather Lab')
+        self.brand = QLabel('SHARPpy Beta')
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
@@ -266,7 +266,7 @@ class SkewApp(QWidget):
                          "  margin: 0px;}")
 
         ## set the "brand" name
-        brand = QLabel('HOOT - Oklahoma Weather Lab')
+        brand = QLabel('SHARPpy Beta')
         brand.setAlignment(Qt.AlignRight)
         brand.setStyleSheet("QFrame {"
                             "  background-color: rgb(0, 0, 0);"
