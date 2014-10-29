@@ -70,7 +70,7 @@ class MainWindow(QWidget):
         self.right_map_frame.setLayout(self.right_layout)
 
         ## create dropdown menus
-        self.model_dropdown = self.dropdown_menu(['Observed', 'GFS', 'NAM', 'NAM 4km', 'RAP', 'HRRR', 'SREF'])
+        self.model_dropdown = self.dropdown_menu(['Observed', 'GFS', 'NAM', 'NAM4KM', 'RAP', 'HRRR', 'SREF'])
         self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
         runs = []
         for i in range(0,24):
@@ -130,7 +130,7 @@ class MainWindow(QWidget):
         """
         # Create and fill a QWebView
         view = QWebView()
-        view.setUrl(QUrl('observed.html'))
+        view.setUrl(QUrl(self.model.lower() + '.html'))
         view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
         view.linkClicked.connect(self.map_link)
 
@@ -202,6 +202,7 @@ class MainWindow(QWidget):
         Get the user's model selection
         """
         self.model = self.model_dropdown.currentText()
+        self.view.setUrl(self.model.lower() + '.html')
 
     def get_run(self):
         """
