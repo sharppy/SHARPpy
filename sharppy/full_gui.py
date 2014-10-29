@@ -72,7 +72,10 @@ class MainWindow(QWidget):
         ## create dropdown menus
         self.model_dropdown = self.dropdown_menu(['Observed', 'GFS', 'NAM', 'NAM 4km', 'RAP', 'HRRR', 'SREF'])
         self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
-        self.run_dropdown = self.dropdown_menu(["00Z"])
+        runs = []
+        for i in range(0,24):
+            runs.append(str(i).zfill(2) + "Z")
+        self.run_dropdown = self.dropdown_menu(runs)
 
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
