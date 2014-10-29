@@ -2,7 +2,7 @@ __author__ = 'keltonhalbert'
 
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
-from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
+from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
 from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
@@ -10,21 +10,81 @@ import datetime as date
 from subprocess import call
 from StringIO import StringIO
 import sharppy.sharptab.profile as profile
+import datetime
 import urllib
 import numpy as np
 
-class SkewApp(QFrame):
+class SkewApp(QWidget):
     """
     Create a skewT window app
     """
 
     def __init__(self, **kwargs):
+        super(SkewApp, self).__init__()
         self.model = kwargs.get("model")
         self.prof_time = kwargs.get("prof_time")
         self.run = kwargs.get("run", None)
         self.loc = kwargs.get("location")
-        self.create_window()
+        self.changeflag = True
+        self.swap_inset = False
+        self.current_index = 0
+        self.inset = "S"
+        self.profs = []
 
+        self.setGeometry(0, 0, 1180, 800)
+        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
+        title += 'in Python'
+        brand = 'Oklahoma Weather Lab'
+        self.setWindowTitle(title)
+        self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
+        #centralWidget = QFrame()
+        self.grid = QGridLayout()
+        self.grid.setHorizontalSpacing(0)
+        self.grid.setVerticalSpacing(2)
+        self.setLayout(self.grid)
+        #self.setCentralWidget(centralWidget)
+
+        self.urparent = QFrame()
+        self.urparent_grid = QGridLayout()
+        self.urparent_grid.setContentsMargins(0, 0, 0, 0)
+        self.urparent.setLayout(self.urparent_grid)
+        self.ur = QFrame()
+        self.ur.setStyleSheet("QFrame {"
+                         "  background-color: rgb(0, 0, 0);"
+                         "  border-width: 0px;"
+                         "  border-style: solid;"
+                         "  border-color: rgb(255, 255, 255);"
+                         "  margin: 0px;}")
+        self.brand = QLabel('HOOT - Oklahoma Weather Lab')
+        self.brand.setAlignment(Qt.AlignRight)
+        self.brand.setStyleSheet("QFrame {"
+                             "  background-color: rgb(0, 0, 0);"
+                             "  text-align: right;"
+                             "  font-size: 11px;"
+                             "  color: #FFFFFF;}")
+        self.grid2 = QGridLayout()
+        self.grid2.setHorizontalSpacing(0)
+        self.grid2.setVerticalSpacing(0)
+        self.grid2.setContentsMargins(0, 0, 0, 0)
+        self.ur.setLayout(self.grid2)
+        self.urparent_grid.addWidget(self.brand, 0, 0, 1, 0)
+        self.urparent_grid.addWidget(self.ur, 1, 0, 50, 0)
+        self.grid.addWidget(self.urparent, 0, 1, 3, 1)
+
+         # Handle the Text Areas
+        self.text = QFrame()
+        self.text.setStyleSheet("QWidget {"
+                            "  background-color: rgb(0, 0, 0);"
+                            "  border-width: 2px;"
+                            "  border-style: solid;"
+                            "  border-color: #3399CC;}")
+        self.grid3 = QGridLayout()
+        self.grid3.setHorizontalSpacing(0)
+        self.grid3.setContentsMargins(0, 0, 0, 0)
+        self.text.setLayout(self.grid3)
+        self.setUpdatesEnabled(True)
+
+        self.initData()
 
     def __observedProf(self):
         """
@@ -61,25 +121,131 @@ class SkewApp(QFrame):
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
 
+    def clearWidgets(self):
+        self.sound.deleteLater()
+
+        self.speed_vs_height.deleteLater()
+        self.inferred_temp_advection.deleteLater()
+        self.hodo.deleteLater()
+        self.storm_slinky.deleteLater()
+        self.thetae_vs_pressure.deleteLater()
+        self.srwinds_vs_height.deleteLater()
+        self.watch_type.deleteLater()
+
+
+        self.convective.deleteLater()
+        self.kinematic.deleteLater()
+        self.SARS.deleteLater()
+        self.stp.deleteLater()
+        self.winter.deleteLater()
+
+    def initData(self):
+        self.prof, plot_title = self.__observedProf()
+        self.profs.append(self.prof)
+
+        #plot_title = self.station + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') + "  (" + self.time + "Z  " + self.model + ")"
+        #name = datetime.strftime(self.d.dates[self.current_index], '%Y%m%d.%H%M.') + self.time + self.model + '.' + self.station
+
+        self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=plot_title, brand=self.brand)
+
+        self.speed_vs_height = plotSpeed( self.prof )
+        self.speed_vs_height.setObjectName("svh")
+        self.inferred_temp_advection = plotAdvection(self.prof)
+        self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof)
+
+        self.storm_slinky = plotSlinky(self.prof)
+        self.thetae_vs_pressure = plotThetae(self.prof)
+        self.srwinds_vs_height = plotWinds(self.prof)
+        self.watch_type = plotWatch(self.prof)
+
+        self.convective = plotText(self.prof)
+        self.kinematic = plotKinematics(self.prof)
+        self.SARS = plotAnalogues(self.prof)
+        self.stp = plotSTP(self.prof)
+        self.winter = plotWinter(self.prof)
+
+    def paintEvent(self, e):
+        if self.changeflag:
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)
+            self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
+            self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
+            self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
+            self.grid2.addWidget(self.storm_slinky, 8, 5, 3, 6)
+            self.grid2.addWidget(self.thetae_vs_pressure, 8, 11, 3, 6)
+            self.grid2.addWidget(self.srwinds_vs_height, 8, 17, 3, 6)
+            self.grid2.addWidget(self.watch_type, 8, 23, 3, 6)
+
+
+            self.grid3.addWidget(self.convective, 0, 0)
+            self.grid3.addWidget(self.kinematic, 0, 1)
+            if self.inset == "S":
+                self.grid3.addWidget(self.SARS, 0, 2)
+            elif self.inset == "W":
+                self.grid3.addWidget(self.winter, 0, 2)
+            self.grid3.addWidget(self.stp, 0, 3)
+            self.grid.addWidget(self.text, 3, 0, 1, 2)
+            self.changeflag = False
+
+        if self.swap_inset and self.inset == "S":
+            self.inset = "W"
+            self.SARS.deleteLater()
+            self.winter = plotWinter(self.prof)
+            self.grid3.addWidget(self.winter, 0, 2)
+            self.swap_inset = False
+
+        elif self.swap_inset and self.inset == "W":
+            self.inset = "S"
+            self.winter.deleteLater()
+            self.SARS = plotAnalogues(self.prof)
+            self.grid3.addWidget(self.SARS, 0, 2)
+            self.swap_inset = False
+        print self.swap_inset, self.inset
+
+
+    def keyPressEvent(self, e):
+        key = e.key()
+        length = len(self.profs)
+        if key == Qt.Key_Right:
+            if self.current_index != length - 1:
+                self.current_index += 1
+            else:
+                self.current_index = 0
+            self.changeflag = True
+            self.clearWidgets()
+            self.initData()
+            self.update()
+
+        if key == Qt.Key_Left:
+            if self.current_index != 0:
+                self.current_index -= 1
+            elif self.current_index == 0:
+                self.current_index = length -1
+            self.changeflag = True
+            self.clearWidgets()
+            self.initData()
+            self.update()
+
+        if key == Qt.Key_S:
+            self.swap_inset = True
+            self.update()
 
     def create_window(self):
         prof, plot_title = self.__observedProf()
 
         ## create an empty widget window
-        self.skewWindow = QWidget()
-        self.skewWindow.setGeometry(0, 0, 1180, 800)
+        self.setGeometry(0, 0, 1180, 800)
 
         ## window title
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
-        self.skewWindow.setWindowTitle(title)
-        self.skewWindow.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
+        self.setWindowTitle(title)
+        self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
 
         ## set the layout as a grid
         grid = QGridLayout()
         grid.setHorizontalSpacing(0)
         grid.setVerticalSpacing(2)
-        self.skewWindow.setLayout(grid)
+        self.setLayout(grid)
 
         ## set the brand and place the sounding in the window
         sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title)
@@ -167,5 +333,3 @@ class SkewApp(QFrame):
 
         ## add the text grid to the main grid
         grid.addWidget(text, 3, 0, 1, 2)
-
-        return self.skewWindow
