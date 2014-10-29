@@ -219,11 +219,8 @@ class MainWindow(QWidget):
         self.prof_time = self.profile_list.currentItem().text()
 
     def skewApp(self):
-        self.skew = QWidget()
-        layout = QVBoxLayout()
         self.skew = SkewApp(model=self.model, location=self.loc,
             prof_time=self.prof_time, run=self.run)
-        layout.addWidget(self.skew)
         self.skew.show()
 
 if __name__ == '__main__':
