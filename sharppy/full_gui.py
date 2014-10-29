@@ -6,6 +6,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
+import sys
 from subprocess import call
 from StringIO import StringIO
 import sharppy.sharptab.profile as profile
@@ -27,8 +28,6 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__(**kwargs)
 
         ## create a threading pool
-        self.threadpool = QThreadPool()
-        self.threadpool.setMaxThreadCount(10)
         self.delta = date.timedelta(hours=12)
         ## default the sounding location to none
         self.loc = None
@@ -110,8 +109,8 @@ class MainWindow(QWidget):
         This function does some date magic
         """
         current_time = date.datetime.utcnow()
-        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month) + str(current_time.day) + "00",
-                                    "%Y%m%d%H")
+        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month) +
+                                            str(current_time.day) + "00", "%Y%m%d%H")
         if current_time.hour >= 12:
             time = today_00Z + self.delta
         else:
@@ -230,4 +229,4 @@ class MainWindow(QWidget):
 if __name__ == '__main__':
     win = MainWindow()
     win.show()
-    app.exec_()
+    sys.exit(app.exec_())
