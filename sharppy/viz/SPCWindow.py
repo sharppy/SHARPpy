@@ -53,7 +53,7 @@ class Thread(QThread):
 
         for i in range(len(d.wdir[0]))[:]:
             print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-            self.profs.append(profile.create_profile(profile='convective', hght = d.hght[0][i],
+            self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
                 tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
 
     def run(self):

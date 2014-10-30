@@ -285,7 +285,7 @@ class plotWinter(backgroundWinter):
             y1 += self.label_height+sep
 
         y1 = self.layers_y1 + self.label_height+sep
-        if self.dgz_meanomeg == self.prof.missing:
+        if self.dgz_meanomeg == 10*self.prof.missing:
             omeg = 'N/A'
         else:
             omeg = str(round(self.dgz_meanomeg,0)) + ' ub/s'
