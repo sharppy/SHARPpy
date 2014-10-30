@@ -2,6 +2,7 @@ import numpy as np
 import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+import sharppy.databases.inset_data as inset_data
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
@@ -87,7 +88,8 @@ class backgroundSHIP(QtGui.QFrame):
         ytick_fontsize = 10
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
-        texts = ['5', '4', '3', '2', '1', '0', ' ']
+        ship_inset_data = inset_data.shipData()
+        texts = ship_inset_data['ship_ytexts']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
         for i in xrange(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
@@ -106,13 +108,11 @@ class backgroundSHIP(QtGui.QFrame):
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
-        ef = [[0.2, 0.3, 0.2, 0.9, 1.2],
-              [1.1, 1.4, 0.8, 2.8, 4.0]] # <= 1.5"
-        ef = np.array(ef)
+        ef = ship_inset_data['ship_dist']
         width = self.brx / 3.7
         spacing = self.brx / 3
         center = np.arange(spacing, self.brx, spacing)
-        texts = ['<= 1.5\"', '>= 2.5\"']
+        texts = ship_inset_data['ship_xtexts']
         ef = self.ship_to_pix(ef)
         qp.setFont(QtGui.QFont('Helvetica', 10))
         for i in xrange(ef.shape[0]):

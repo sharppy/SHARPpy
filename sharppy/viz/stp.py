@@ -2,6 +2,7 @@ import numpy as np
 import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+import sharppy.databases.inset_data as inset_data
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
@@ -87,7 +88,8 @@ class backgroundSTP(QtGui.QFrame):
         ytick_fontsize = 10
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
-        texts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', ' ']
+        stp_inset_data = inset_data.stpData()
+        texts = stp_inset_data['stp_ytexts']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
         for i in xrange(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
@@ -102,17 +104,11 @@ class backgroundSTP(QtGui.QFrame):
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
-        ef = [[1.2, 2.6, 5.3, 8.3, 11.0], #ef4
-              [0.2, 1.0, 2.4, 4.5, 8.4], #ef3
-              [0.0, 0.6, 1.7, 3.7, 5.6], #ef2
-              [0.0, 0.3, 1.2, 2.6, 4.5], #ef1
-              [0.0, 0.1, 0.8, 2.0, 3.7], # ef-0
-              [0.0, 0.0, 0.2, 0.7, 1.7]] #nontor
-        ef = np.array(ef)
+        ef = stp_inset_data['ef']
         width = self.brx / 14
         spacing = self.brx / 7
         center = np.arange(spacing, self.brx, spacing)
-        texts = ['EF4+', 'EF3', 'EF2', 'EF1', 'EF0', 'NONTOR']
+        texts = stp_inset_data['stp_xtexts']
         ef = self.stp_to_pix(ef)
         qp.setFont(QtGui.QFont('Helvetica', 8))
         for i in xrange(ef.shape[0]):

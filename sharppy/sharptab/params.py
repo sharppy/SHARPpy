@@ -198,25 +198,25 @@ class Parcel(object):
         
         '''
     def __init__(self, **kwargs):
-        self.pres = ma.masked
-        self.tmpc = ma.masked
-        self.dwpc = ma.masked
-        self.ptrace = ma.masked
-        self.ttrace = ma.masked
-        self.blayer = ma.masked
+        self.pres = ma.masked # Parcel beginning pressure (mb)
+        self.tmpc = ma.masked # Parcel beginning temperature (C)
+        self.dwpc = ma.masked # Parcel beginning dewpoint (C)
+        self.ptrace = ma.masked # Parcel trace pressure (mb)
+        self.ttrace = ma.masked # Parcel trace temperature (C)
+        self.blayer = ma.masked 
         self.tlayer = ma.masked
         self.entrain = 0.
-        self.lclpres = ma.masked
-        self.lclhght = ma.masked
-        self.lfcpres = ma.masked
-        self.lfchght = ma.masked
-        self.elpres = ma.masked
-        self.elhght = ma.masked
+        self.lclpres = ma.masked # Parcel LCL pressure (mb)
+        self.lclhght = ma.masked # Parcel LCL height (m AGL)
+        self.lfcpres = ma.masked # Parcel LFC pressure (mb)
+        self.lfchght = ma.masked # Parcel LFC height (m AGL)
+        self.elpres = ma.masked # Parcel EL pressure (mb)
+        self.elhght = ma.masked # Parcel EL height (m AGL)
         self.mplpres = ma.masked
         self.mplhght = ma.masked
-        self.bplus = ma.masked
-        self.bminus = ma.masked
-        self.bfzl = ma.masked
+        self.bplus = ma.masked # Parcel CAPE (J/kg)
+        self.bminus = ma.masked # Parcel CIN (J/kg)
+        self.bfzl = ma.masked # Parcel CAPE up to freezing level (J/kg)
         self.b3km = ma.masked
         self.b6km = ma.masked
         self.p0c = ma.masked

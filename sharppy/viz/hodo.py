@@ -286,6 +286,7 @@ class plotHodo(backgroundHodo):
         self.u = u; self.v = v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
+        self.bndy = kwargs.get('bndy', False) # sets whether or not the cursor acts as the boundary
         self.prof = kwargs.get('prof', None)
         self.centered = kwargs.get('centered', (0,0))
         self.srwind = self.prof.srwind
@@ -346,9 +347,10 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        super(plotHodo, self).wheelEvent(e)
-        self.clearData()
-        self.plotData()
+        if self.bndy == False:
+            super(plotHodo, self).wheelEvent(e)
+            self.clearData()
+            self.plotData()
     
     def mousePressEvent(self, e):
         '''
@@ -375,43 +377,44 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        ## convert the location of the mouse to u,v space
-        u, v = self.pix_to_uv(e.x(), e.y())
-        ## get the direction and speed from u,v
-        dir, spd = tab.utils.comp2vec(u,v)
-        ## calculate the storm relative helicity for a storm motion
-        ## vector with a u,v at the mouse pointer
-        srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=u, stv=v)[0]
-        srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=u, stv=v)[0]
-        ## do some sanity checks to prevent crashing if there is no
-        ## effective inflow layer
-        etop, ebot = self.prof.etopm, self.prof.ebotm
-        if etop is np.ma.masked or ebot is np.ma.masked:
-            esrh = np.ma.masked
-            self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
-        else:
-            esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
-            self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
-        ## set the crosshair in the window
-        self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
-        self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
-        ## set the readout texts
-        self.wndReadout.setText(tab.utils.INT2STR(dir) + '/' + tab.utils.FLOAT2STR(spd, 1))
-        self.srh1kmReadout.setText('sfc-1km: ' + tab.utils.INT2STR(srh1km) + ' m2/s2')
-        self.srh3kmReadout.setText('sfc-3km: ' + tab.utils.INT2STR(srh3km) + ' m2/s2')
-        ## set the readout width
-        self.wndReadout.setFixedWidth(50)
-        self.srh1kmReadout.setFixedWidth(120)
-        self.srh3kmReadout.setFixedWidth(120)
-        self.esrhReadout.setFixedWidth(120)
-        ## place the readout
-        self.wndReadout.move(1, self.bry-15)
-        self.srh1kmReadout.move(self.brx-130, self.bry-45)
-        self.srh3kmReadout.move(self.brx-130, self.bry-30)
-        self.esrhReadout.move(self.brx-130, self.bry-15)
-        ## show the crosshair
-        self.hband.show()
-        self.vband.show()
+        if self.bndy == False:
+            ## convert the location of the mouse to u,v space
+            u, v = self.pix_to_uv(e.x(), e.y())
+            ## get the direction and speed from u,v
+            dir, spd = tab.utils.comp2vec(u,v)
+            ## calculate the storm relative helicity for a storm motion
+            ## vector with a u,v at the mouse pointer
+            srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=u, stv=v)[0]
+            srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=u, stv=v)[0]
+            ## do some sanity checks to prevent crashing if there is no
+            ## effective inflow layer
+            etop, ebot = self.prof.etopm, self.prof.ebotm
+            if etop is np.ma.masked or ebot is np.ma.masked:
+                esrh = np.ma.masked
+                self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
+            else:
+                esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
+                self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
+            ## set the crosshair in the window
+            self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
+            self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
+            ## set the readout texts
+            self.wndReadout.setText(tab.utils.INT2STR(dir) + '/' + tab.utils.FLOAT2STR(spd, 1))
+            self.srh1kmReadout.setText('sfc-1km: ' + tab.utils.INT2STR(srh1km) + ' m2/s2')
+            self.srh3kmReadout.setText('sfc-3km: ' + tab.utils.INT2STR(srh3km) + ' m2/s2')
+            ## set the readout width
+            self.wndReadout.setFixedWidth(50)
+            self.srh1kmReadout.setFixedWidth(120)
+            self.srh3kmReadout.setFixedWidth(120)
+            self.esrhReadout.setFixedWidth(120)
+            ## place the readout
+            self.wndReadout.move(1, self.bry-15)
+            self.srh1kmReadout.move(self.brx-130, self.bry-45)
+            self.srh3kmReadout.move(self.brx-130, self.bry-30)
+            self.esrhReadout.move(self.brx-130, self.bry-15)
+            ## show the crosshair
+            self.hband.show()
+            self.vband.show()
 
     def resizeEvent(self, e):
         '''
