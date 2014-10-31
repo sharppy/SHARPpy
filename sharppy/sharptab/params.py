@@ -2466,8 +2466,6 @@ def dcape(prof):
         h1 = h2
         tp1 = tp2
     drtemp = tp2 # Downrush temp in Celsius
-    print tote
-    stop
 
     return tote, ma.concatenate((ttrace, ttraces[::-1])), ma.concatenate((ptrace, ptraces[::-1]))
 
