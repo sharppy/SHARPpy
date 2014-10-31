@@ -11,7 +11,8 @@ __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
 __all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta', 'mean_thetae', 'mean_relh']
 __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
-__all__ += ['convective_temp']
+__all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
+__all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
 
 
 class DefineParcel(object):
@@ -2381,6 +2382,36 @@ def dcape(prof):
     hght = prof.hght[~mask]
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
+    """
+    i = len(prof.tmpc) - 1
+    while(prof.pres[i] < prof.pres[prof.sfc] - 400 ):
+        i = i-1
+    p5 = i
+    if prof.pres[i] == prof.pres[prof.sfc] - 400:
+        p5 = p5-1
+
+    # Find the minimum average theta-e in a 100 mb layer
+    mine = 1000.0
+    minp = -999.0
+    for i in xrange(0, p5+1, 1):
+        if utils.QC(prof.dwpc[i]) and utils.QC(interp.temp(prof, prof.pres[i]+100)):
+            thta_e_mean = mean_thetae(prof, pbot=pres[i], ptop=pres[i]-100.)
+            if utils.QC(thta_e_mean) and (thta_e_mean < mine):
+                mine = thta_e_mean
+                minp = prof.pres[i] - 50.0
+    if minp < 0:
+        return prof.missing, [-9999], [-9999]
+
+    upper = minp
+    i = len(prof.tmpc) - 1
+    while(prof.pres[i] < upper):
+        i = i - 1
+    uptr = i 
+    if prof.pres[i] == upper:
+        uptr = uptr - 1
+    print "REAL CODE:", uptr
+    print "REAL CODE UPPER: ", upper
+    """
     idx = np.where(prof.pres >= sfc_pres - 400.)[0]
 
     # Find the minimum average theta-e in a 100 mb layer
@@ -2395,7 +2426,7 @@ def dcape(prof):
     upper = minp
     uptr = np.where(pres >= upper)[0]
     uptr = uptr[-1]
-
+    
     # Define parcel starting point
     tp1 = thermo.wetbulb(upper, interp.temp(prof, upper), interp.dwpt(prof, upper))
     pe1 = upper
@@ -2435,6 +2466,8 @@ def dcape(prof):
         h1 = h2
         tp1 = tp2
     drtemp = tp2 # Downrush temp in Celsius
+    print tote
+    stop
 
     return tote, ma.concatenate((ttrace, ttraces[::-1])), ma.concatenate((ptrace, ptraces[::-1]))
 

@@ -6,8 +6,8 @@ import sharppy.databases.inset_data as inset_data
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
-## routine written by Kelton Halbert
-## keltonhalbert@ou.edu
+## routine written by Kelton Halbert and Greg Blumberg
+## keltonhalbert@ou.edu and wblumberg@ou.edu
 
 __all__ = ['backgroundSHIP', 'plotSHIP']
 

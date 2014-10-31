@@ -6,14 +6,14 @@ import sharppy.databases.inset_data as inset_data
 from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
-## routine written by Kelton Halbert
-## keltonhalbert@ou.edu
+## routine written by Kelton Halbert and Greg Blumberg
+## keltonhalbert@ou.edu and wblumberg@ou.edu
 
 __all__ = ['backgroundSTP', 'plotSTP']
 
 class backgroundSTP(QtGui.QFrame):
     '''
-    Draw the background frame and lines for the Theta-E plot frame
+    Draw the background frame and lines for the STP plot frame
     '''
     def __init__(self):
         super(backgroundSTP, self).__init__()
