@@ -109,8 +109,8 @@ class MainWindow(QWidget):
         This function does some date magic
         """
         current_time = date.datetime.utcnow()
-        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month) +
-                                            str(current_time.day) + "00", "%Y%m%d%H")
+        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month).zfill(2) +
+                                            str(current_time.day).zfill(2) + "00", "%Y%m%d%H")
         if current_time.hour >= 12:
             time = today_00Z + self.delta
         else:
