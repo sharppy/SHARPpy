@@ -6,4 +6,4 @@ import interp
 import winds
 import params
 import watch_type
-__all__ = ['contants', 'utils', 'profile', 'params', 'thermo', 'interp', 'winds', 'sars', 'watch_type']
+__all__ = ['constants', 'utils', 'profile', 'params', 'thermo', 'interp', 'winds', 'sars', 'watch_type']
