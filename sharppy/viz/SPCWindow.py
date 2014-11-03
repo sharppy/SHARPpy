@@ -6,14 +6,59 @@ from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinte
 from PySide.QtCore import *
 from PySide.QtGui import *
 from sharppy.io.buf_decoder import BufkitFile
-from PySide.QtWebKit import *
-import datetime as date
-from subprocess import call
 from StringIO import StringIO
 import sharppy.sharptab.profile as profile
 from datetime import datetime
 import urllib
 import numpy as np
+from multiprocessing import Pool
+
+import copy_reg
+import types
+
+def _reduce_method(meth):
+    return (getattr,(meth.__self__,meth.__func__.__name__))
+copy_reg.pickle(types.MethodType,_reduce_method)
+
+def unwrap_self_f(args):
+    return Thread.make_profile(*args)
+
+class Thread(QThread):
+    def __init__(self, **kwargs):
+        super(Thread, self).__init__()
+        self.model = kwargs.get("model")
+        self.runtime = kwargs.get("run")
+        self.loc = kwargs.get("loc")
+        self.profs = []
+        self.d = None
+
+    def returnData(self):
+        return self.profs, self.d
+
+    def make_profile(self, i):
+        d = self.d
+        prof = profile.create_profile(profile='convective', hght = d.hght[0][i],
+                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i],
+                wspd=d.wspd[0][i], wdir=d.wdir[0][i])
+        return prof
+
+    def __modelProf(self):
+        if self.model == "GFS":
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
+        else:
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+                + self.model.lower() + '_' + self.loc.lower() + '.buf')
+        self.d = d
+
+        for i in range(len(d.wdir[0]))[:]:
+            print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+            self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
+                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+
+    def run(self):
+        self.__modelProf()
+
 
 class SkewApp(QWidget):
     """
@@ -36,7 +81,11 @@ class SkewApp(QWidget):
             self.prof, self.plot_title = self.__observedProf()
             self.profs.append(self.prof)
         else:
-            self.__modelProf()
+            self.thread = Thread(model=self.model, loc=self.loc, run=self.run)
+            self.thread.start()
+            while not self.thread.isFinished():
+                QCoreApplication.processEvents()
+            self.profs, self.d = self.thread.returnData()
         self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
@@ -126,19 +175,6 @@ class SkewApp(QWidget):
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
 
-    def __modelProf(self):
-        if self.model == "GFS":
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
-        else:
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.run[:-1] + '/'
-                + self.model.lower() + '_' + self.loc.lower() + '.buf')
-
-        for i in range(len(d.wdir[0]))[:]:
-            print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-            self.profs.append(profile.create_profile(profile='convective', hght = d.hght[0][i],
-                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-        self.d = d
 
 
     def clearWidgets(self):

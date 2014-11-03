@@ -162,7 +162,6 @@ class BufkitFile(object):
             self.omeg.append(omeg)
             self.numProfiles = numProfiles
             self.profile_length = profile_length
-
         self.hght = np.asarray(self.hght)
         self.pres = np.asarray(self.pres)
         self.tmpc = np.asarray(self.tmpc)
@@ -170,7 +169,7 @@ class BufkitFile(object):
         self.wdir = np.asarray(self.wdir)
         self.wspd = np.asarray(self.wspd)
         self.omeg = np.asarray(self.omeg)
-        f.close()
+        #f.close()
 
     def getNumMembers(self):
         return self.num_members

@@ -147,7 +147,6 @@ class plotWinter(backgroundWinter):
         # DGZ data
         self.dgz_pbot = prof.dgz_pbot
         self.dgz_ptop = prof.dgz_ptop
-        print 'dgz: ',self.dgz_pbot, self.dgz_ptop
         self.dgz_zbot = tab.utils.M2FT(tab.interp.hght(prof, self.dgz_pbot))
         self.dgz_ztop = tab.utils.M2FT(tab.interp.hght(prof, self.dgz_ptop))
         self.dgz_depth = self.dgz_ztop - self.dgz_zbot
@@ -289,7 +288,7 @@ class plotWinter(backgroundWinter):
             y1 += self.label_height+sep
 
         y1 = self.layers_y1 + self.label_height+sep
-        if self.dgz_meanomeg == self.prof.missing:
+        if self.dgz_meanomeg == 10*self.prof.missing:
             omeg = 'N/A'
         else:
             omeg = str(round(self.dgz_meanomeg,0)) + ' ub/s'

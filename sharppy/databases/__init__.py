@@ -1,3 +1,4 @@
 import sars
 import pwv
-__all__ = ['sars', 'pwv']
+import inset_data
+__all__ = ['sars', 'pwv', 'inset_data']
