@@ -215,7 +215,10 @@ class plotWinter(backgroundWinter):
         qp.end()
     
     def drawOPRH(self, qp):
-        pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
+        if self.oprh < -.1:
+            pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
+        else:
+            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(0, self.oprh_y1, self.wid, self.label_height)
