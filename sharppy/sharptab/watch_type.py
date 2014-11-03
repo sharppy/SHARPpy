@@ -492,7 +492,7 @@ def possible_watch(prof):
         sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("PDS TOR")
-        colors.append("#FF0000")
+        colors.append(constants.MAGENTA)
     elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebotm == 0:
         watch_types.append("TOR")
         colors.append("#FF0000")
