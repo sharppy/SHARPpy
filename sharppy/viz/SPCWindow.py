@@ -89,7 +89,7 @@ class SkewApp(QWidget):
         self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
-        brand = 'Oklahoma Weather Lab'
+        brand = 'SHARPpy Beta'
         self.setWindowTitle(title)
         self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
         self.grid = QGridLayout()
