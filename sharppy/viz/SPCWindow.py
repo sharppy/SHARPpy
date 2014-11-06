@@ -109,7 +109,7 @@ class SkewApp(QWidget):
                          "  border-style: solid;"
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
-        self.brand = QLabel('HOOT - Oklahoma Weather Lab')
+        self.brand = QLabel('SHARPpy Beta')
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
