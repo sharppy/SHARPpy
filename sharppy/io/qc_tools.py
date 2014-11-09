@@ -12,7 +12,7 @@ def numMasked(arr):
 
 def areProfileArrayLengthEqual(prof):
     if not (len(prof.pres) == len(prof.hght) == len(prof.tmpc) == len(prof.dwpc) ==\
-            len(prof.wdir) == len(prof.wspd) == len(prof.u) == len(prof.v)):
+            len(prof.wdir) == len(prof.wspd) == len(prof.u) == len(prof.v) == len(prof.omeg)):
         raiseError("Arrays passed to the Profile object have unequal lengths.", AssertionError)
  
 def isPRESValid(pres):
