@@ -74,13 +74,16 @@ def isPRESValid(pres):
 
         Returns
         -------
-        True/False: True if the pressure array length is > 0 and
-                    if the pressure array is decreasing as the indices increase.
+        True/False: True If:
+                        1.) pressure array length is > 1
+                        2.) pressure array is not filled with masked values 
+                        3.) if the pressure array is decreasing with the index
+                            and there are no repeat values.
     '''
-    idx = np.ma.argsort(pres)[::-1]
-    idx2 = np.ma.where(pres <= 0)[0]
+    idx_diff = np.ma.diff(pres)
+    neg_pres = np.ma.where(pres <= 0)[0]
     num_ok, total = numMasked(pres)
-    if pres.all() == pres[idx].all() and len(idx2) == 0 and num_ok > 0:
+    if np.all(idx_diff < 0) and len(neg_pres) == 0 and num_ok > 1:
         return True
     else:
         return False
@@ -99,13 +102,16 @@ def isHGHTValid(hght):
 
         Returns
         -------
-        True/False: True if the height array length is > 0 and
-                    if the height array is increasing with the index.
+        True/False: True If:
+                        1.) height array length is > 0
+                        2.) height array is not filled with masked values 
+                        3.) if the height array is increasing with the index
+                            and there are no repeat values.
     '''
-    idx = np.ma.argsort(hght)
+    idx_diff = np.ma.diff(hght)
     idx2 = np.ma.where(hght < 0)[0]
     num_ok, total = numMasked(hght)
-    if hght.all() == hght[idx].all() and len(idx2) == 0 and num_ok > 0:
+    if np.all(idx_diff > 0) and len(idx2) == 0 and num_ok > 1:
         return True
     else:
         return False
