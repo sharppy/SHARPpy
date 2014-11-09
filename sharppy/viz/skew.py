@@ -444,6 +444,8 @@ class plotSkewT(backgroundSkewT):
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
         self.draw_effective_layer(qp)
+        if self.prof.omeg.count() != 0:
+            self.draw_omega_profile(qp)
         qp.end()
 
     def drawBarbs(self, qp):
@@ -520,7 +522,59 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x[0], y, x[1], y)
             rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
-                   
+
+    def omeg_to_pix(self, omeg):
+        plus10_bound = -49
+        minus10_bound = -41
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        x1_0 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        if omeg > 0:
+            return ((x1_0 - x1_10)/(0.-10.)) * omeg + x1_0    
+        elif omeg < 0:
+            return ((x1_0 - x1_m10)/(0.+10.)) * omeg + x1_0 
+        else:
+            return x1_0
+
+    def draw_omega_profile(self, qp):
+        plus10_bound = -49
+        minus10_bound = -41
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        y1_m10 = self.pres_to_pix(1000)
+        y2_m10 = self.pres_to_pix(111)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
+        qp.setPen(pen)
+        qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        y1_10 = self.pres_to_pix(1000)
+        y2_10 = self.pres_to_pix(111)
+        qp.drawLine(x1_10, y1_10, x1_10, y2_10)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        y1 = self.pres_to_pix(1000)
+        y2 = self.pres_to_pix(111)
+        qp.drawLine(x1, y1, x1, y2)
+        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
+        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
+        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+        for i in range(len(self.prof.omeg)):
+            pres_y = self.pres_to_pix(self.prof.pres[i])
+            if self.prof.omeg[i] == np.ma.masked:
+                continue
+            if self.prof.omeg[i] > 0:
+                pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)
+            elif self.prof.omeg[i] < 0:
+                pen = QtGui.QPen(QtGui.QColor("#FF6666"), 1.5, QtCore.Qt.SolidLine)
+            else:
+                pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)                
+            x2 = self.omeg_to_pix(self.prof.omeg[i]*10.)
+            qp.drawLine(x1, pres_y, x2, pres_y)
+
 
     def draw_effective_layer(self, qp):
         '''
