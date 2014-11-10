@@ -70,10 +70,10 @@ def init_phase(prof):
 
     if np.all(prof.omeg == np.ma.masked) and np.all(prof.omeg >= 1):
         # No VV levels, need to look for saturated levels
-        below_5km_idx = np.ma.where(prof.hght[prof.get_sfc():] < interp.to_msl(prof, 5000.))[0]
+        below_5km_idx = np.ma.where(prof.hght < interp.to_msl(prof, 5000.))[0]
     else:
         # Use the VV to find the source of precip.
-        below_5km_idx = np.ma.where((prof.hght[prof.get_sfc():] < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]    
+        below_5km_idx = np.ma.where((prof.hght < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]
     
     # Compute the RH at the top and bottom of 50 mb layers
     rh = thermo.relh(prof.pres[prof.get_sfc():][below_5km_idx], prof.tmpc[prof.get_sfc():][below_5km_idx], prof.dwpc[prof.get_sfc():][below_5km_idx])
