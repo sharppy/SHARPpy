@@ -138,7 +138,66 @@ class SkewApp(QWidget):
         self.text.setLayout(self.grid3)
         self.setUpdatesEnabled(True)
 
+        self.menuBar()
         self.initData()
+
+
+    def menuBar(self):
+
+        self.bar = QMenuBar()
+        self.filemenu = self.bar.addMenu("File")
+        selectdata = QAction("Select Data...", self)
+        saveimg = QAction("Save as image...", self)
+        exit = QAction("Exit", self)
+        pref = QAction("Preferences", self)
+        self.filemenu.addAction(selectdata)
+        self.filemenu.addAction(saveimg)
+        saveimg.triggered.connect(self.saveimage)
+        self.filemenu.addAction(pref)
+        self.filemenu.addSeparator()
+        self.filemenu.addAction(exit)
+        self.insetsmenu = self.bar.addMenu("Insets")
+        sars = QAction("SARS", self)
+        stpstats = QAction("STP Stats", self)
+        winter = QAction("Winter", self)
+        fire = QAction("Fire", self)
+        vrot = QAction("VROT", self)
+        self.insetsmenu.addAction(sars)
+        self.insetsmenu.addAction(stpstats)
+        self.insetsmenu.addAction(winter)
+        self.insetsmenu.addAction(fire)
+        self.insetsmenu.addAction(vrot)
+        self.insetsmenu.addSeparator()
+        self.insetsmenu.addAction(sars)
+        self.insetsmenu.addAction(stpstats)
+        self.insetsmenu.addAction(winter)
+        self.insetsmenu.addAction(fire)
+        self.insetsmenu.addAction(vrot)
+        self.cursormenu = self.bar.addMenu("Cursor")
+
+        storm_motion = QAction("Storm Motion", self)
+        boundary = QAction("Boundary Motion", self)
+        strm_mot = self.cursormenu.addAction(storm_motion)
+        bndy_mot = self.cursormenu.addAction(boundary)
+        self.helpmenu = self.bar.addMenu("Help")
+        about = QAction("About", self)
+        about.triggered.connect(self.aboutbox)
+        self.helpmenu.addAction(about)
+
+    def saveimage(self):
+        fileName = QFileDialog.getSaveFileName(self, "Save Image", '~/')
+        pixmap = QPixmap.grabWidget(self)
+        pixmap.save(fileName[0], 'PNG', 100)
+
+
+
+    def aboutbox(self):
+
+        msgBox = QMessageBox()
+        msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
+                       "Python\n\n(C) 2014 by Kelton Halbert and Greg Blumberg")
+        msgBox.exec_()
+
 
     def __observedProf(self):
         """
