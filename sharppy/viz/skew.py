@@ -563,7 +563,7 @@ class plotSkewT(backgroundSkewT):
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
         for i in range(len(self.prof.omeg)):
             pres_y = self.pres_to_pix(self.prof.pres[i])
-            if self.prof.omeg[i] == np.ma.masked:
+            if self.prof.omeg[i] == np.ma.masked or self.prof.pres[i] < 111:
                 continue
             if self.prof.omeg[i] > 0:
                 pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)
