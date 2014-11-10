@@ -1068,7 +1068,8 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
 def parcelTraj(prof, parcel, smu=None, smv=None):
     '''
         Parcel Trajectory Routine (Storm Slinky)
-        
+        Coded by Greg Blumberg
+
         This routine is a simple 3D thermodynamic parcel trajectory model that
         takes a thermodynamic profile and a parcel trace and computes the
         trajectory of a parcel that is lifted to its LFC, then given a 5 m/s
