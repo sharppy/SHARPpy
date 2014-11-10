@@ -4,6 +4,7 @@ import numpy as np
 """
 def shipData():
 	# FOR THE SHIP INSET BOX/WHISKER
+    # Developed interally by Ryan Jewell (SPC)
 	ship_ytexts = ['5', '4', '3', '2', '1', '0', ' ']
 	ship_xtexts = ['<= 1.5\"', '>= 2.5\"']
 	ship_dist = [[0.2, 0.3, 0.2, 0.9, 1.2],
@@ -18,7 +19,8 @@ def shipData():
 
 def stpData():
 	# FOR THE STP INSET BOX/WHISKER
-	stp_ytexts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', ' ']
+	# From Thompson et al. 2012 WAF
+    stp_ytexts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', ' ']
 	stp_xtexts = ['EF4+', 'EF3', 'EF2', 'EF1', 'EF0', 'NONTOR']
 	ef = [[1.2, 2.6, 5.3, 8.3, 11.0], #ef4
 	      [0.2, 1.0, 2.4, 4.5, 8.4], #ef3
@@ -36,7 +38,8 @@ def stpData():
 
 def condSTPData():
 	# For the CONDITIONAL STP VS EF INSET (LINE PLOT)
-	ef1plus = np.asarray([15.3, 28.0, 36.1, 47.8, 52.3, 54.4, 60.3, 61.6, 61.2, 73.2, 73.4])
+	# Provided by Bryan Smith (SPC) and Rich Thompson (SPC)
+    ef1plus = np.asarray([15.3, 28.0, 36.1, 47.8, 52.3, 54.4, 60.3, 61.6, 61.2, 73.2, 73.4])
 	ef2plus = np.asarray([2.7, 6.6, 6.5, 13.8, 14.9, 17.5, 21.8, 31.5, 33.3, 46.2, 53.1])
 	ef3plus = np.asarray([0, 1.2, 1.2, 2.7, 2.7, 4.1, 7.3, 10.0, 13.2, 25.8, 39.1])
 	ef4plus = np.asarray([0, 0, 0, 0, 0.2, .1, 1.5, 2.3, 6.2, 9.7, 17.2])
@@ -55,7 +58,8 @@ def condSTPData():
 
 def vrotData():
 	# For the VROT plot
-	xtexts = ['0-9.9', '10-19.9', '20-29.9', '30-39.9', '40-49.9', '50-59.9', '60-69.9', '70-79.9', '80-89.9', '90-99.9', '100-109.9']
+	# Provided by Bryan Smith (SPC) and Rich Thompson (SPC)
+    xtexts = ['0-9.9', '10-19.9', '20-29.9', '30-39.9', '40-49.9', '50-59.9', '60-69.9', '70-79.9', '80-89.9', '90-99.9', '100-109.9']
 	ytexts = ['0', '10', '20', '30', '40', '50', '60', '70']	
 	ef01 = [100.0, 98.6, 95.3, 91.0, 80.2, 61.9, 42.1, 29.1, 16.3, 5.6, 0.0]
 	ef23 = [0.0, 1.0, 4.7, 9.0, 19.3, 36.5, 51.1, 62.8, 65.1, 50.0, 25.0]

@@ -65,8 +65,11 @@ def init_phase(prof):
     plevel = 0
     phase = -1
 
-    if prof.omeg.all() is np.ma.masked:
-        # No vertical velocity data to be used
+    avail = np.ma.where((utils.QC(prof.omeg)) & (prof.omeg < 1))[0]
+
+
+    if np.all(prof.omeg == np.ma.masked) and np.all(prof.omeg >= 1):
+        # No VV levels, need to look for saturated levels
         below_5km_idx = np.ma.where(prof.hght[prof.get_sfc():] < interp.to_msl(prof, 5000.))[0]
     else:
         # Use the VV to find the source of precip.
@@ -395,6 +398,19 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
             precip_type = "Rain."
         else:
             precip_type = "Snow."
+   
+    # Case: Warm layer.
+    elif tpos > 0:
+        x1 = tpos
+        y1 = -tneg
+        y2 = (0.62 * x1) + 60.0
+        if y1 > y2:
+            precip_type = "Sleet."
+        else:
+            if prof.tmpc[prof.get_sfc()] <= 0:
+                precip_type = "Freezing Rain."
+            else:
+                precip_type = "Rain."
     else:
         precip_type = "Unknown."
 
