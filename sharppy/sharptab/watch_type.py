@@ -65,25 +65,32 @@ def init_phase(prof):
     plevel = 0
     phase = -1
 
-    avail = np.ma.where((utils.QC(prof.omeg)) & (prof.omeg < 1))[0]
+    # First, determine whether VVELS are available.  If they are,  
+    # use them to determine level where precipitation will develop.
+    avail = np.ma.where(prof.omeg < 10)[0]
 
+    hght_agl = interp.to_agl(prof, prof.hght)
+    if len(avail) < 5:
+        # No VVELS...must look for saturated level 
+        # Find the highest near-saturated 50mb layer below 5km agl
+        below_5km_idx = np.ma.where((hght_agl < 5000.) &\
+                                    (hght_agl >= 0))[0]
 
-    if np.all(prof.omeg == np.ma.masked) and np.all(prof.omeg >= 1):
-        # No VV levels, need to look for saturated levels
-        below_5km_idx = np.ma.where(prof.hght < interp.to_msl(prof, 5000.))[0]
     else:
         # Use the VV to find the source of precip.
-        below_5km_idx = np.ma.where((prof.hght < interp.to_msl(prof, 5000.)) & (prof.omeg <= 0))[0]
-    
+        below_5km_idx = np.ma.where((hght_agl < 5000.) &\
+                                    (hght_agl >= 0) &\
+                                    (prof.omeg <= 0))[0]
+
     # Compute the RH at the top and bottom of 50 mb layers
-    rh = thermo.relh(prof.pres[prof.get_sfc():][below_5km_idx], prof.tmpc[prof.get_sfc():][below_5km_idx], prof.dwpc[prof.get_sfc():][below_5km_idx])
-    new_pres = prof.pres[prof.get_sfc():][below_5km_idx] - 50.
+    rh = thermo.relh(prof.pres, prof.tmpc, prof.dwpc)[below_5km_idx]
+    sats = np.ma.where(rh > 80)[0]
+    new_pres = prof.pres[below_5km_idx][sats] + 50.
     new_temp = interp.temp(prof, new_pres)
     new_dwpt = interp.dwpt(prof, new_pres)
     rh_plus50 = thermo.relh(new_pres, new_temp, new_dwpt)
-    
     # Find layers where the RH is >80% at the top and bottom
-    layers_idx = np.ma.where((rh_plus50 > 80) & (rh > 80))[0]
+    layers_idx = np.ma.where(rh_plus50 > 80)[0]
 
     if len(layers_idx) == 0:
         # Found no precipitation source layers
@@ -384,6 +391,7 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
 
     # Case: non-snow init...always too cold - Initphase & sleet
     elif init_phase == 1 and tpos <= 0 and prof.tmpc[prof.get_sfc()] <= 0:
+        print interp.to_agl(prof, interp.hght(prof, init_lvl))
         if interp.to_agl(prof, interp.hght(prof, init_lvl)) >= 3000:
             if init_temp <= -4:
                 precip_type = "Sleet and Snow."
