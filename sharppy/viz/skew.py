@@ -436,7 +436,9 @@ class plotSkewT(backgroundSkewT):
 
         if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
             idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
-            self.drawTrace(self.prof.tmpc[idx], QtGui.QColor("#F5D800"), qp, p=self.prof.pres[idx], label=False)
+            pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
+            tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
+            self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
 
