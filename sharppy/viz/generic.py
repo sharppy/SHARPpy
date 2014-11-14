@@ -28,6 +28,9 @@ class backgroundGeneric(QtGui.QFrame):
 
         self.label_font = QtGui.QFont('Helvetica', 7)
 
+        self.xmin = 0; self.xmax = 100
+        self.ymin = 0; self.ymax=100
+        self.title = kwargs.get("title", None)
         self.initUI()
 
     def initUI(self):
@@ -45,11 +48,6 @@ class backgroundGeneric(QtGui.QFrame):
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
-
-        ## set the default min/max axes range.
-        self.xmin = 0.; self.xmax = 100.
-        self.ymin = 0.; self.ymax = 100.
-
 
         ## initialize the QPixmap that everything gets drawn on
         self.plotBitMap = QtGui.QPixmap(self.size().width(), self.size().height())
@@ -73,9 +71,9 @@ class backgroundGeneric(QtGui.QFrame):
         ## draw the x and y tick axes
         self.draw_xticks(qp)
         self.draw_yticks(qp)
-        ## end the painter
         qp.end()
-
+        if self.title is not None:
+            self.draw_text(self.xmin + (self.xmax - self.xmin)/2, self.ymax - (self.ymax / 3), self.title)
 
     def resizeEvent(self, e):
         """
@@ -131,6 +129,32 @@ class backgroundGeneric(QtGui.QFrame):
         qp.drawLine(self.brx, self.tly, self.brx, self.bry)
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
+
+    def draw_text(self, x, y, text, fontsize=12, color=WHITE, linewidth=1, font="Helvetica"):
+        """
+        Draw text on the widget.
+        :return:
+        """
+        ## initialize a painter and paint on the bitmap
+        qp = QtGui.QPainter()
+        qp.begin(self.plotBitMap)
+        qp.setRenderHint(qp.Antialiasing)
+        qp.setRenderHint(qp.TextAntialiasing)
+
+        ## initialize a pen
+        text_font = QtGui.QFont(font, fontsize)
+        pen = QtGui.QPen(QtGui.QColor(color), linewidth, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.setFont(text_font)
+
+        ## convert the x,y values to pixel space
+        xx = self.x_to_pix(x)
+        yy = self.y_to_pix(y)
+        print xx, yy, x, y, self.xmax, self.ymax
+        rect0 = QtCore.QRect(xx, yy, self.brx, self.bry)
+        ##qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+        qp.drawText(xx, yy, 0, 0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+        qp.end()
 
     def draw_xticks(self, qp):
         """
@@ -228,6 +252,9 @@ class plotGeneric(backgroundGeneric):
         self.width = kwargs.get('width', 2)
         self.xaxislimit = kwargs.get('xlim', (self.x.min()-10, self.x.max()+10))
         self.yaxislimit = kwargs.get('ylim', (self.y.min(), self.y.max()))
+        ## update the min and max bounds based on the data
+        self.set_xlim( self.xaxislimit[0], self.xaxislimit[1])
+        self.set_ylim( self.yaxislimit[0], self.yaxislimit[1])
         ## reset the x and y limits based on the data given
 
     def resizeEvent(self, e):
@@ -238,9 +265,6 @@ class plotGeneric(backgroundGeneric):
         :return: None
         """
         super(plotGeneric, self).resizeEvent(e)
-        ## update the min and max bounds based on the data
-        self.set_xlim( self.xaxislimit[0], self.xaxislimit[1])
-        self.set_ylim( self.yaxislimit[0], self.yaxislimit[1])
         ## you have to call update after setting the variables
         self.plotBackground()
         self.plotData()

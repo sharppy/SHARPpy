@@ -1,7 +1,7 @@
 __author__ = 'keltonhalbert'
 
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
-from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
+from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics, plotGeneric
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
 from PySide.QtCore import *
 from PySide.QtGui import *
@@ -12,16 +12,6 @@ from datetime import datetime
 import urllib
 import numpy as np
 from multiprocessing import Pool
-
-import copy_reg
-import types
-
-def _reduce_method(meth):
-    return (getattr,(meth.__self__,meth.__func__.__name__))
-copy_reg.pickle(types.MethodType,_reduce_method)
-
-def unwrap_self_f(args):
-    return Thread.make_profile(*args)
 
 class Thread(QThread):
     def __init__(self, **kwargs):
@@ -270,7 +260,10 @@ class SkewApp(QWidget):
         self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof)
 
         self.storm_slinky = plotSlinky(self.prof)
-        self.thetae_vs_pressure = plotThetae(self.prof)
+        self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
+                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
+                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
+
         self.srwinds_vs_height = plotWinds(self.prof)
         self.watch_type = plotWatch(self.prof)
 
