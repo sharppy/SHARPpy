@@ -327,17 +327,14 @@ class SkewApp(QWidget):
             self.grid3.addWidget(self.kinematic, 0, 1)
             if self.inset == "S":
                 self.grid3.addWidget(self.SARS, 0, 2)
-                self.grid.addWidget(self.sound, 0, 0, 3, 1)
-
             elif self.inset == "W":
                 self.grid3.addWidget(self.winter, 0, 2)
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
-                self.grid.addWidget(self.sound, 0, 0, 3, 1)
-
             elif self.inset == "H":
                 self.grid3.addWidget(self.ship, 0, 2)
 
             self.grid3.addWidget(self.stp, 0, 3)
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)
             self.grid.addWidget(self.text, 3, 0, 1, 2)
             self.changeflag = False
 
@@ -346,8 +343,8 @@ class SkewApp(QWidget):
             self.SARS.deleteLater()
             self.winter = plotWinter(self.prof)
             self.grid3.addWidget(self.winter, 0, 2)
+            self.sound.deleteLater()
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
-
             self.grid.addWidget(self.sound, 0, 0, 3, 1)            
             self.swap_inset = False
 
@@ -356,8 +353,8 @@ class SkewApp(QWidget):
             self.winter.deleteLater()
             self.ship = plotSHIP(self.prof)
             self.grid3.addWidget(self.ship, 0, 2)
+            self.sound.deleteLater()
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
-
             self.grid.addWidget(self.sound, 0, 0, 3, 1)               
             self.swap_inset = False
 
@@ -366,8 +363,8 @@ class SkewApp(QWidget):
             self.ship.deleteLater()
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
+            self.sound.deleteLater()
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
-
             self.grid.addWidget(self.sound, 0, 0, 3, 1)               
             self.swap_inset = False        
 
