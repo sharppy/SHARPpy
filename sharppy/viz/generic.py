@@ -150,7 +150,6 @@ class backgroundGeneric(QtGui.QFrame):
         ## convert the x,y values to pixel space
         xx = self.x_to_pix(x)
         yy = self.y_to_pix(y)
-        print xx, yy, x, y, self.xmax, self.ymax
         rect0 = QtCore.QRect(xx, yy, self.brx, self.bry)
         ##qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
         qp.drawText(xx, yy, 0, 0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
