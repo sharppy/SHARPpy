@@ -169,7 +169,7 @@ class backgroundWinds(QtGui.QFrame):
         '''
         scl1 = self.hmax - self.hmin
         scl2 = self.hmin + h
-        return self.bry - (scl2 / scl1) * (self.bry - self.tpad)
+        return (self.bry - 2) - (scl2 / scl1) * (self.bry - self.tpad)
 
     def speed_to_pix(self, s):
         '''
@@ -284,7 +284,7 @@ class plotWinds(backgroundWinds):
                 ## get the height and winds at two consecutive heights
                 ## don't forget to convert the height from meters to
                 ## kilometers; divide by 1000
-                hgt1 = hgt[i] / 1000; hgt2 = hgt[i+1] / 1000
+                hgt1 = (hgt[i] - self.prof.hght[self.prof.sfc]) / 1000; hgt2 = (hgt[i+1] - self.prof.hght[self.prof.sfc]) / 1000
                 sru1 = sru[i]; sru2 = sru[i+1]
                 srv1 = srv[i]; srv2 = srv[i+1]
                 ## calculate the storm relative wind speed

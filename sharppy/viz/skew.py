@@ -310,6 +310,7 @@ class plotSkewT(backgroundSkewT):
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
+        self.plotdgz = kwargs.get('dgz', False)
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
@@ -431,7 +432,15 @@ class plotSkewT(backgroundSkewT):
                 self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
+
+        if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
+            idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
+            self.drawTrace(self.prof.tmpc[idx], QtGui.QColor("#F5D800"), qp, p=self.prof.pres[idx], label=False)
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
+
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
+
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
         if self.pcl is not None:
@@ -443,7 +452,8 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
-        self.draw_effective_layer(qp)
+        if self.plotdgz is False:
+            self.draw_effective_layer(qp)
         if self.prof.omeg.count() != 0:
             self.draw_omega_profile(qp)
         qp.end()
@@ -489,6 +499,21 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(h/1000)+' km')
+
+    def draw_sig_levels(self, qp, plevel=1000, color="#FFFFFF"):
+        if not tab.utils.QC(plevel):
+            return
+        xbounds = [37,45]
+        z = tab.utils.M2FT(tab.interp.hght(self.prof, plevel))
+
+        x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+        y = self.pres_to_pix(plevel)
+        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(x[0], y, x[1], y)
+        rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
+        
 
     def draw_parcel_levels(self, qp):
         if self.pcl is None:
@@ -642,7 +667,7 @@ class plotSkewT(backgroundSkewT):
                 path.lineTo(x, y)
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None):
+    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None, label=True):
         '''
         Draw an environmental trace.
 
@@ -677,17 +702,18 @@ class plotSkewT(backgroundSkewT):
                     self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
                 qp.restore()
         qp.drawPath(path)
-        label = (1.8 * data[0]) + 32.
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        qp.setPen(pen)
-        qp.setBrush(brush)
-        rect = QtCore.QRectF(x[0]-8, y[0]+4, 16, 12)
-        qp.drawRect(rect)
-        pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        qp.setFont(self.environment_trace_font)
-        qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
+        if label is True:
+            label = (1.8 * data[0]) + 32.
+            pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
+            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+            qp.setPen(pen)
+            qp.setBrush(brush)
+            rect = QtCore.QRectF(x[0]-8, y[0]+4, 16, 12)
+            qp.drawRect(rect)
+            pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.setFont(self.environment_trace_font)
+            qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
 
     def drawSTDEV(self, pres, data, stdev, color, qp, width=1):
         '''

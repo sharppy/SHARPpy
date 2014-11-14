@@ -248,7 +248,8 @@ def dgz(prof):
         Dendritic Growth Zone Levels
     
         This function finds the pressure levels for the dendritic 
-        growth zone (from -12 C to -17 C).
+        growth zone (from -12 C to -17 C).  If either temperature cannot be found,
+        it is set to be the surface pressure.
 
         Parameters
         ----------
@@ -265,6 +266,11 @@ def dgz(prof):
 
     pbot = temp_lvl(prof, -12)
     ptop = temp_lvl(prof, -17)
+
+    if not utils.QC(pbot):
+        pbot = prof.pres[prof.sfc]
+    if not utils.QC(ptop):
+        ptop = prof.pres[prof.sfc]
 
     return pbot, ptop
 

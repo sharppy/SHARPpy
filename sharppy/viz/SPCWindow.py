@@ -275,7 +275,6 @@ class SkewApp(QWidget):
 
     def paintEvent(self, e):
         if self.changeflag:
-            self.grid.addWidget(self.sound, 0, 0, 3, 1)
             self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
             self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
             self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
@@ -289,8 +288,13 @@ class SkewApp(QWidget):
             self.grid3.addWidget(self.kinematic, 0, 1)
             if self.inset == "S":
                 self.grid3.addWidget(self.SARS, 0, 2)
+                self.grid.addWidget(self.sound, 0, 0, 3, 1)
+
             elif self.inset == "W":
                 self.grid3.addWidget(self.winter, 0, 2)
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+                self.grid.addWidget(self.sound, 0, 0, 3, 1)
+
             self.grid3.addWidget(self.stp, 0, 3)
             self.grid.addWidget(self.text, 3, 0, 1, 2)
             self.changeflag = False
@@ -300,6 +304,9 @@ class SkewApp(QWidget):
             self.SARS.deleteLater()
             self.winter = plotWinter(self.prof)
             self.grid3.addWidget(self.winter, 0, 2)
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)            
             self.swap_inset = False
 
         elif self.swap_inset and self.inset == "W":
@@ -307,6 +314,9 @@ class SkewApp(QWidget):
             self.winter.deleteLater()
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)               
             self.swap_inset = False
 
     def keyPressEvent(self, e):
