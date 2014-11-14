@@ -9,7 +9,7 @@ from sharppy.sharptab.constants import *
 __all__ = ['mean_wind', 'mean_wind_npw', 'mean_wind_old', 'mean_wind_npw_old']
 __all__ += ['sr_wind', 'sr_wind_npw', 'wind_shear', 'helicity', 'max_wind']
 __all__ += ['non_parcel_bunkers_motion', 'corfidi_mcs_motion', 'mbe_vectors']
-__all__ += ['non_parcel_bunkers_motion_experimental']
+__all__ += ['non_parcel_bunkers_motion_experimental', 'critical_angle']
 
 
 def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
@@ -440,6 +440,39 @@ def mbe_vectors(prof):
     '''
     return corfidi_mcs_motion(prof)
 
+def critical_angle(prof, stu=0, stv=0):
+    '''
+    Calculates the critical angle (degrees) as specified by Esterheld and Giuliano (2008).
+    If the critical angle is 90 degrees, this indicates that the lowest 500 meters of 
+    the storm is experiencing pure streamwise vorticity.
 
+    Parameters
+    ----------
+    prof : profile object
+        Profile Object
+    stu : number (optional; default = 0)
+        U-component of storm-motion
+    stv : number (optional; default = 0)
+        V-component of storm-motion
 
+    Returns
+    -------
+    angle : number
+        Critical Angle (degrees)
+    '''
+    if not utils.QC(stu) or not utils.QC(stv):
+        return ma.masked
 
+    pres_500m = interp.pres(prof, interp.to_msl(prof, 500))
+    u500, v500 = interp.components(prof, pres_500m)
+    sfc_u, sfc_v = interp.components(prof, prof.pres[prof.sfc])
+
+    vec1_u, vec1_v = u500 - sfc_u, v500 - sfc_v    
+    vec2_u, vec2_v = stu - sfc_u, stv - sfc_v
+    vec_1_mag = np.sqrt(np.power(vec1_u, 2) + np.power(vec1_v, 2))
+    vec_2_mag = np.sqrt(np.power(vec2_u, 2) + np.power(vec2_v, 2))
+
+    dot = vec1_u * vec2_u + vec1_v * vec2_v
+    angle = np.degrees(np.arccos(dot / (vec_1_mag * vec_2_mag)))
+
+    return angle

@@ -2,6 +2,7 @@
 from __future__ import division
 import numpy as np
 import numpy.ma as ma
+from sharppy.sharptab.utils import *
 from sharppy.sharptab.constants import *
 
 __all__ = ['drylift', 'thalvl', 'lcltemp', 'theta', 'wobf']
@@ -152,7 +153,9 @@ def thetae(p, t, td):
 
 def virtemp(p, t, td):
     '''
-    Returns the virtual temperature (C) of a parcel.
+    Returns the virtual temperature (C) of a parcel.  If 
+    td is masked, then it returns the temperature passed to the 
+    function.
 
     Parameters
     ----------
@@ -168,10 +171,14 @@ def virtemp(p, t, td):
     Virtual temperature (C)
 
     '''
+    
     tk = t + ZEROCNK
     w = 0.001 * mixratio(p, td)
-    return (tk * (1. + w / eps) / (1. + w)) - ZEROCNK
-
+    vt = (tk * (1. + w / eps) / (1. + w)) - ZEROCNK
+    if not QC(vt):
+        return t
+    else:
+        return vt
 
 def relh(p, t, td):
     '''

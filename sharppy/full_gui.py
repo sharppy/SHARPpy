@@ -119,6 +119,8 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.right_map_frame, 0, 1, 1, 1)
         self.left_data_frame.setMaximumWidth(200)
 
+        self.menuBar()
+
     def __date(self):
         """
         This function does some date magic to get the current date nearest to 00Z or 12Z
@@ -133,6 +135,45 @@ class MainWindow(QWidget):
             time = today_00Z
 
         return time
+
+    def menuBar(self):
+
+        self.bar = QMenuBar()
+        self.filemenu = self.bar.addMenu("File")
+        opendata = QAction("Open", self, shortcut=QKeySequence("Ctrl+O"))
+        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
+        pref = QAction("Preferences", self)
+        self.filemenu.addAction(opendata)
+        opendata.triggered.connect(self.openFile)
+        self.filemenu.addAction(exit)
+        exit.triggered.connect(self.exitApp)        
+        self.filemenu.addAction(pref)
+        self.filemenu.addAction(exit)
+        self.helpmenu = self.bar.addMenu("Help")
+        about = QAction("About", self)
+        about.triggered.connect(self.aboutbox)
+        self.helpmenu.addAction(about)
+
+    def exitApp(self):
+        self.close()
+
+    def openFile(self):
+        fname, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
+        print fname
+        self.model = "Archive"
+        self.location = None
+        self.prof_time = None
+        self.run = None
+        self.skew = SkewApp(model=self.model, location=self.loc,
+            prof_time=self.prof_time, run=self.run, path=fname)
+        self.skew.show()
+
+    def aboutbox(self):
+
+        msgBox = QMessageBox()
+        msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
+                       "Python\n\n(C) 2014 by Kelton Halbert and Greg Blumberg")
+        msgBox.exec_()
 
     def create_map_view(self):
         """
@@ -348,6 +389,7 @@ class MainWindow(QWidget):
         self.skew = SkewApp(model=self.model, location=self.loc,
             prof_time=self.prof_time, run=self.run)
         self.skew.show()
+
 
 if __name__ == '__main__':
     win = MainWindow()

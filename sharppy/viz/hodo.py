@@ -659,18 +659,13 @@ class plotHodo(backgroundHodo):
             except:
                 rstu,rstv,lstu,lstv = self.srwind
     
-            vec2_u, vec2_v = rstu - sfc_u, rstv - sfc_v
-            vec_1_mag = np.sqrt(np.power(vec1_u, 2) + np.power(vec1_v, 2))
-            vec_2_mag = np.sqrt(np.power(vec2_u, 2) + np.power(vec2_v, 2))
-            dot = vec1_u * vec2_u + vec1_v * vec2_v
-            angle = np.degrees(np.arccos(dot / (vec_1_mag * vec_2_mag)))
             ca_text_color = QtGui.QColor("#00FFFF")
             pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.critical_font)
             offset = 10
             rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
-            qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + str(int(round(angle,0))))
+            qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
     
 
 
