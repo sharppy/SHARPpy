@@ -65,9 +65,9 @@ def init_phase(prof):
     plevel = 0
     phase = -1
 
-    # First, determine whether VVELS are available.  If they are,  
+    # First, determine whether Upward VVELS are available.  If they are,  
     # use them to determine level where precipitation will develop.
-    avail = np.ma.where(prof.omeg < 10)[0]
+    avail = np.ma.where(prof.omeg < .1)[0]
 
     hght_agl = interp.to_agl(prof, prof.hght)
     if len(avail) < 5:
