@@ -202,7 +202,6 @@ class SkewApp(QWidget):
         ## read in the file
         data = np.array(arch_file.read().split('\n'))
         arch_file.close()
-        print data
         ## necessary index points
         title_idx = np.where( data == '%TITLE%')[0][0]
         start_idx = np.where( data == '%RAW%' )[0] + 1
