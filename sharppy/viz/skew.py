@@ -311,6 +311,7 @@ class plotSkewT(backgroundSkewT):
         self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
         self.plotdgz = kwargs.get('dgz', False)
+        self.interpWinds = kwargs.get('interpWinds', True)
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
@@ -459,22 +460,31 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
     def drawBarbs(self, qp):
-        i = 0
-        mask1 = self.u.mask
-        mask2 = self.pres.mask
-        mask = np.maximum(mask1, mask2)
-        pres = self.pres[~mask]
-        u = self.u[~mask]
-        v = self.v[~mask]
-        yvals = self.pres_to_pix(pres)
-        for y in yvals:
-            if y >= self.tly:
-                uu = u[i]
-                vv = v[i]
+        if self.interpWinds is False:
+            i = 0
+            mask1 = self.u.mask
+            mask2 = self.pres.mask
+            mask = np.maximum(mask1, mask2)
+            pres = self.pres[~mask]
+            u = self.u[~mask]
+            v = self.v[~mask]
+            yvals = self.pres_to_pix(pres)
+            for y in yvals:
+                if y >= self.tly:
+                    uu = u[i]
+                    vv = v[i]
+                    drawBarb( qp, self.barbx, y, uu, vv )
+                    i += 1
+                else:
+                    break
+        else:
+            for p in np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40):
+                uu, vv = tab.interp.components(self.prof, p)
+                if not tab.utils.QC(uu):
+                    continue
+                y = self.pres_to_pix(p)
                 drawBarb( qp, self.barbx, y, uu, vv )
-                i += 1
-            else:
-                break
+
 
     def drawTitle(self, qp):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)

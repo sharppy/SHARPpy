@@ -109,9 +109,8 @@ def isHGHTValid(hght):
                             and there are no repeat values.
     '''
     idx_diff = np.ma.diff(hght)
-    idx2 = np.ma.where(hght < 0)[0]
     num_ok, total = numMasked(hght)
-    if np.all(idx_diff > 0) and len(idx2) == 0 and num_ok > 1:
+    if np.all(idx_diff > 0) and num_ok > 1:
         return True
     else:
         return False

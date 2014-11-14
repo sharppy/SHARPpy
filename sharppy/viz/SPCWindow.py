@@ -1,8 +1,9 @@
-__author__ = 'keltonhalbert'
+__author__ = 'keltonhalbert, wblumberg'
 
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
+from sharppy.viz import plotSHIP
 from PySide.QtCore import *
 from PySide.QtGui import *
 from sharppy.io.buf_decoder import BufkitFile
@@ -68,9 +69,10 @@ class SkewApp(QWidget):
     def __init__(self, **kwargs):
         super(SkewApp, self).__init__()
         self.model = kwargs.get("model")
-        self.prof_time = kwargs.get("prof_time")
-        self.run = kwargs.get("run", None)
+        self.prof_time = kwargs.get("prof_time", None)
+        self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
+        self.link = kwargs.get("path", None)
         self.changeflag = True
         self.swap_inset = False
         self.d = None
@@ -80,6 +82,9 @@ class SkewApp(QWidget):
         if self.model == "Observed":
             self.prof, self.plot_title = self.__observedProf()
             self.profs.append(self.prof)
+        elif self.model == "Archive":
+            self.prof, self.plot_title = self.__archiveProf()
+            self.profs.append(self.prof)            
         else:
             self.thread = Thread(model=self.model, loc=self.loc, run=self.run)
             self.thread.start()
@@ -185,11 +190,9 @@ class SkewApp(QWidget):
         self.helpmenu.addAction(about)
 
     def saveimage(self):
-        fileName = QFileDialog.getSaveFileName(self, "Save Image", '~/')
+        fileName = QFileDialog.getSaveFileName(self, "Save Image", '/home')
         pixmap = QPixmap.grabWidget(self)
         pixmap.save(fileName[0], 'PNG', 100)
-
-
 
     def aboutbox(self):
 
@@ -198,6 +201,37 @@ class SkewApp(QWidget):
                        "Python\n\n(C) 2014 by Kelton Halbert and Greg Blumberg")
         msgBox.exec_()
 
+    def __archiveProf(self):
+        """
+        Get the archive sounding based on the user's selections
+        """
+        ## construct the URL
+        print self.link
+        arch_file = open(self.link, 'r')
+        print self.link
+        ## read in the file
+        data = np.array(arch_file.read().split('\n'))
+        arch_file.close()
+        print data
+        ## necessary index points
+        title_idx = np.where( data == '%TITLE%')[0][0]
+        start_idx = np.where( data == '%RAW%' )[0] + 1
+        finish_idx = np.where( data == '%END%')[0]
+
+        ## create the plot title
+        plot_title = data[title_idx + 1].upper() + ' (User Selected)'
+
+        ## put it all together for StringIO
+        full_data = '\n'.join(data[start_idx : finish_idx][:])
+        sound_data = StringIO( full_data )
+
+        ## read the data into arrays
+        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+
+        ## construct the Profile object
+        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
+                                wdir=wdir, wspd=wspd, location=self.loc)
+        return prof, plot_title
 
     def __observedProf(self):
         """
@@ -246,19 +280,23 @@ class SkewApp(QWidget):
         self.thetae_vs_pressure.deleteLater()
         self.srwinds_vs_height.deleteLater()
         self.watch_type.deleteLater()
-
-
         self.convective.deleteLater()
         self.kinematic.deleteLater()
+
         if self.inset == "S":
             self.SARS.deleteLater()
         self.stp.deleteLater()
         if self.inset == "W":
             self.winter.deleteLater()
+        if self.inset == "F":
+            self.fire.deleteLater()
+        if self.inset == "H":
+            self.ship.deleteLater()
 
     def initData(self):
         self.prof = self.profs[self.current_index]
-        if self.model != "Observed":
+
+        if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
                 + "  (" + self.run + "Z  " + self.model + ")"
 
@@ -279,6 +317,7 @@ class SkewApp(QWidget):
         self.SARS = plotAnalogues(self.prof)
         self.stp = plotSTP(self.prof)
         self.winter = plotWinter(self.prof)
+        self.ship = plotSHIP(self.prof)
 
     def paintEvent(self, e):
         if self.changeflag:
@@ -302,6 +341,9 @@ class SkewApp(QWidget):
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
                 self.grid.addWidget(self.sound, 0, 0, 3, 1)
 
+            elif self.inset == "H":
+                self.grid3.addWidget(self.ship, 0, 2)
+
             self.grid3.addWidget(self.stp, 0, 3)
             self.grid.addWidget(self.text, 3, 0, 1, 2)
             self.changeflag = False
@@ -317,14 +359,24 @@ class SkewApp(QWidget):
             self.swap_inset = False
 
         elif self.swap_inset and self.inset == "W":
-            self.inset = "S"
+            self.inset = "H"
             self.winter.deleteLater()
+            self.ship = plotSHIP(self.prof)
+            self.grid3.addWidget(self.ship, 0, 2)
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)               
+            self.swap_inset = False
+
+        elif self.swap_inset and self.inset == "H":
+            self.inset = "S"
+            self.ship.deleteLater()
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
 
             self.grid.addWidget(self.sound, 0, 0, 3, 1)               
-            self.swap_inset = False
+            self.swap_inset = False        
 
     def keyPressEvent(self, e):
         key = e.key()
