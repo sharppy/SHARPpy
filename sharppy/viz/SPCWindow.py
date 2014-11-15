@@ -42,10 +42,24 @@ class Thread(QThread):
                 + self.model.lower() + '_' + self.loc.lower() + '.buf')
         self.d = d
 
-        for i in range(len(d.wdir[0]))[:]:
-            print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-            self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
-                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+        if self.model == "SREF":
+            for i in range(len(d.wdir[0]))[:]:
+                profs = []
+                for j in range(len(d.wdir)):
+                    print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                    if j == 0:
+                        profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
+                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+                    else:
+                        profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
+                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+                self.profs.append(profs)
+        else:
+            for i in range(len(d.wdir[0]))[:]:
+                print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
+                    tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+
 
     def run(self):
         self.__modelProf()
@@ -283,13 +297,18 @@ class SkewApp(QWidget):
             self.ship.deleteLater()
 
     def initData(self):
-        self.prof = self.profs[self.current_index]
 
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
                 + "  (" + self.run + "Z  " + self.model + ")"
 
-        self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand)
+        if self.model == "SREF":
+            self.prof = self.profs[self.current_index][0]
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:])
+        else:
+            self.prof = self.profs[self.current_index]
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand)
 
         self.speed_vs_height = plotSpeed( self.prof )
         self.speed_vs_height.setObjectName("svh")
@@ -328,7 +347,11 @@ class SkewApp(QWidget):
                 self.grid3.addWidget(self.SARS, 0, 2)
             elif self.inset == "W":
                 self.grid3.addWidget(self.winter, 0, 2)
-                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+                if self.model == "SREF":
+                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=True)
+                else:
+                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
             elif self.inset == "H":
                 self.grid3.addWidget(self.ship, 0, 2)
 
@@ -343,7 +366,11 @@ class SkewApp(QWidget):
             self.winter = plotWinter(self.prof)
             self.grid3.addWidget(self.winter, 0, 2)
             self.sound.deleteLater()
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=True)
+            else:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
             self.grid.addWidget(self.sound, 0, 0, 3, 1)            
             self.swap_inset = False
 
@@ -353,8 +380,12 @@ class SkewApp(QWidget):
             self.ship = plotSHIP(self.prof)
             self.grid3.addWidget(self.ship, 0, 2)
             self.sound.deleteLater()
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
-            self.grid.addWidget(self.sound, 0, 0, 3, 1)               
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=False)
+            else:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)
             self.swap_inset = False
 
         elif self.swap_inset and self.inset == "H":
@@ -363,7 +394,11 @@ class SkewApp(QWidget):
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
             self.sound.deleteLater()
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=False)
+            else:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
             self.grid.addWidget(self.sound, 0, 0, 3, 1)               
             self.swap_inset = False        
 
