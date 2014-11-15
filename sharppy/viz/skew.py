@@ -430,7 +430,7 @@ class plotSkewT(backgroundSkewT):
             for profile in self.proflist:
                 self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres, width=1)
                 self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres, width=1)
-                self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
+                #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
