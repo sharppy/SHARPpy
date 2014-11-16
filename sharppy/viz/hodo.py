@@ -56,7 +56,6 @@ class backgroundHodo(QtGui.QFrame):
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
 
-
     def center_hodo(self, point):
         '''
         Center the hodograph in the window. It will either center it about
@@ -287,6 +286,10 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.bndy = kwargs.get('bndy', False) # sets whether or not the cursor acts as the boundary
+        self.bndy_spd = kwargs.get('bndy_spd', 0)
+        self.bndy_dir = kwargs.get('bndy_dir', 0)
+        self.bndy_u, self.bndy_v = tab.utils.vec2comp(self.bndy_dir, self.bndy_spd)
+        self.bndy_ori = kwargs.get('bndy_ori', 20)
         self.prof = kwargs.get('prof', None)
         self.centered = kwargs.get('centered', (0,0))
         self.srwind = self.prof.srwind
@@ -308,6 +311,7 @@ class plotHodo(backgroundHodo):
         self.srh1kmReadout = QLabel(parent=self)
         self.srh3kmReadout = QLabel(parent=self)
         self.esrhReadout = QLabel(parent=self)
+
         self.wndReadout.setFixedWidth(0)
         self.srh1kmReadout.setFixedWidth(0)
         self.srh3kmReadout.setFixedWidth(0)
@@ -336,8 +340,96 @@ class plotHodo(backgroundHodo):
             "  color: #00FFFF;}")
         self.hband = QRubberBand(QRubberBand.Line, self)
         self.vband = QRubberBand(QRubberBand.Line, self)
-    
-    
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.popupmenu=QMenu("Cursor Type:")
+
+        nocurs = QAction(self)
+        nocurs.setText("No Cursor")
+        nocurs.triggered.connect(self.setNoCursor)
+        self.popupmenu.addAction(nocurs)
+
+        storm_motion = QAction(self)
+        storm_motion.setText("Strm Motion Cursor")
+        storm_motion.triggered.connect(self.setStormMotionCursor)
+        self.popupmenu.addAction(storm_motion)
+
+        bnd = QAction(self)
+        bnd.setText("Bndy Cursor")
+        bnd.triggered.connect(self.setBndyCursor)
+        self.popupmenu.addAction(bnd)
+
+        self.popupmenu.addSeparator()
+
+        norm = QAction(self)
+        norm.setText("Normal")
+        norm.triggered.connect(self.setNormalCenter)        
+        self.popupmenu.addAction(norm)
+
+        sr = QAction(self)
+        sr.setText("Storm Relative")
+        sr.triggered.connect(self.setSRCenter)       
+        self.popupmenu.addAction(sr)
+
+        mw = QAction(self)
+        mw.setText("Mean Wind")
+        mw.triggered.connect(self.setMWCenter)
+        self.popupmenu.addAction(mw)
+
+    def setBndyCursor(self):
+        self.setMouseTracking(True)
+        self.bndy = True
+        self.plotBndy()
+        self.wndReadout.hide()
+        self.srh1kmReadout.hide()
+        self.srh3kmReadout.show()
+        self.esrhReadout.hide()
+
+    def setNoCursor(self):
+        self.setMouseTracking(False)
+        self.hband.hide()
+        self.vband.hide()
+        self.clearData()
+        self.plotData()
+        self.update()
+        self.wndReadout.hide()
+        self.srh1kmReadout.hide()
+        self.srh3kmReadout.hide()
+        self.esrhReadout.hide()
+
+    def setStormMotionCursor(self):
+        self.setMouseTracking(True)
+        self.unsetCursor()
+        self.bndy = False  
+        self.wndReadout.show()
+        self.srh1kmReadout.show()
+        self.srh3kmReadout.show()
+        self.esrhReadout.show()      
+
+    def showCursorMenu(self, pos):
+        self.popupmenu.popup(self.mapToGlobal(pos))
+
+    def setNormalCenter(self):
+        self.centered = (0, 0)
+        self.clearData()
+        self.plotData()
+        self.update()
+
+    def setMWCenter(self):
+        self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
+        self.clearData()
+        self.plotData()
+        self.update()
+
+
+    def setSRCenter(self):
+        rstu,rstv,lstu,lstv = self.srwind
+        self.centered = (rstu, rstv)
+        self.clearData()
+        self.plotData()
+        self.update()
+
     def wheelEvent(self, e):
         '''
         Handles the zooming of the hodograph.
@@ -351,7 +443,13 @@ class plotHodo(backgroundHodo):
             super(plotHodo, self).wheelEvent(e)
             self.clearData()
             self.plotData()
-    
+        else:
+            if e.delta() < 0:
+                self.bndy_ori -= 5
+            else:
+                self.bndy_ori += 5
+            self.plotBndy()
+
     def mousePressEvent(self, e):
         '''
         Handles when the mouse is pressed.
@@ -362,10 +460,86 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        if self.hasMouseTracking():
-            self.setMouseTracking(False)
+        if self.bndy == False:
+            if self.hasMouseTracking():
+                self.setMouseTracking(False)
+            else:
+                self.setMouseTracking(True)
         else:
-            self.setMouseTracking(True)
+            if self.hasMouseTracking():
+                qp = QtGui.QPainter()
+                self.bndy_u, self.bndy_v = self.pix_to_uv(e.x(), e.y())
+                y1 = 400*np.sin(np.radians(self.bndy_ori)) + e.y()
+                x1 = 400*np.cos(np.radians(self.bndy_ori)) + e.x()
+                y2 = e.y() - 400*np.sin(np.radians(self.bndy_ori))
+                x2 = e.x() - 400*np.cos(np.radians(self.bndy_ori))
+                penwidth = 2
+
+                # Plot the actual boundary 
+                boundary_color = QtGui.QColor("#CC9900")
+                pen = QtGui.QPen(boundary_color, penwidth)
+                qp.begin(self.plotBitMap)
+                qp.setRenderHint(qp.Antialiasing)
+                qp.setRenderHint(qp.TextAntialiasing)
+                qp.setPen(pen)
+                qp.drawLine(x1, y1, x2, y2)
+                center_rm = QtCore.QPointF(e.x(),e.y())
+                qp.setPen(pen)
+                pen = QtGui.QPen(boundary_color, 50)
+                pen.setStyle(QtCore.Qt.SolidLine)
+                qp.drawEllipse(center_rm, 3, 3)
+
+                # Plot the shear vector
+                shear_color = QtGui.QColor("#0099CC")
+                pen = QtGui.QPen(shear_color, penwidth)
+                qp.setPen(pen)
+                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+                qp.drawLine(e.x(), e.y(), x2, y2)
+                dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+                qp.drawText(3, self.bry-30, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + 'kts')
+
+                # Plot the 9-11 km Storm Relative Winds
+                srw_color = QtGui.QColor("#FF00FF")
+                pen = QtGui.QPen(srw_color, penwidth)
+                qp.setPen(pen)
+                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                qp.drawLine(e.x(), e.y(), x2, y2)
+                dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                qp.drawText(3, self.bry-15, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + 'kts')
+
+                qp.end()
+                self.update()
+                self.setMouseTracking(False)
+            else:
+                self.clearData()
+                self.plotData()
+                self.update()               
+                self.setMouseTracking(True)
+
+    def plotBndy(self):
+        length = 40
+        y1 = length*np.sin(np.radians(self.bndy_ori))
+        x1 = length*np.cos(np.radians(self.bndy_ori))
+        penwidth = 2
+
+        top_x_pix = x1 + length/2
+        top_y_pix = y1 + length/2
+        bot_x_pix = length/2 - x1
+        bot_y_pix = length/2 - y1
+
+        pixmap = QPixmap(length,length)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter(pixmap)
+        boundary_color = QtGui.QColor("#CC9900")
+        pen = QtGui.QPen(boundary_color, penwidth)
+        painter.setPen(pen)
+        painter.drawLine(top_x_pix, top_y_pix, bot_x_pix, bot_y_pix)
+        center_rm = QtCore.QPointF(length/2, length/2)
+        pen = QtGui.QPen(boundary_color, 2)
+        painter.setPen(pen)
+        painter.drawEllipse(center_rm, 3, 3)
+        painter.end()
+        self.setCursor(pixmap)
 
     def mouseMoveEvent(self, e):
         '''
@@ -415,6 +589,17 @@ class plotHodo(backgroundHodo):
             ## show the crosshair
             self.hband.show()
             self.vband.show()
+        else:
+            self.hband.hide()
+            self.vband.hide()
+            u, v = self.pix_to_uv(e.x(), e.y())
+
+            ## get the direction and speed from u,v
+            dir, spd = tab.utils.comp2vec(u,v)
+            self.srh3kmReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
+            self.srh3kmReadout.setFixedWidth(120)
+            self.srh3kmReadout.move(self.brx-130, self.bry-30)
+
 
     def resizeEvent(self, e):
         '''
