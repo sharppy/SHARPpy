@@ -482,7 +482,7 @@ class plotSkewT(backgroundSkewT):
         else:
             for p in np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40):
                 uu, vv = tab.interp.components(self.prof, p)
-                if not tab.utils.QC(uu) or np.isnan(uu):
+                if not tab.utils.QC(uu) or np.isnan(uu) or p < self.pmin:
                     continue
                 y = self.pres_to_pix(p)
                 drawBarb( qp, self.barbx, y, uu, vv )

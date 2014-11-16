@@ -385,9 +385,14 @@ class plotHodo(backgroundHodo):
         self.srh1kmReadout.hide()
         self.srh3kmReadout.show()
         self.esrhReadout.hide()
+        self.clearData()
+        self.plotData()
+        self.update()
 
     def setNoCursor(self):
         self.setMouseTracking(False)
+        self.bndy = False          
+        self.unsetCursor()
         self.hband.hide()
         self.vband.hide()
         self.clearData()
@@ -406,6 +411,9 @@ class plotHodo(backgroundHodo):
         self.srh1kmReadout.show()
         self.srh3kmReadout.show()
         self.esrhReadout.show()      
+        self.clearData()
+        self.plotData()
+        self.update()
 
     def showCursorMenu(self, pos):
         self.popupmenu.popup(self.mapToGlobal(pos))
@@ -469,12 +477,14 @@ class plotHodo(backgroundHodo):
             if self.hasMouseTracking():
                 qp = QtGui.QPainter()
                 self.bndy_u, self.bndy_v = self.pix_to_uv(e.x(), e.y())
+                self.bndy_dir, self.bndy_spd = tab.utils.comp2vec(self.bndy_u, self.bndy_v)
                 y1 = 400*np.sin(np.radians(self.bndy_ori)) + e.y()
                 x1 = 400*np.cos(np.radians(self.bndy_ori)) + e.x()
                 y2 = e.y() - 400*np.sin(np.radians(self.bndy_ori))
                 x2 = e.x() - 400*np.cos(np.radians(self.bndy_ori))
                 penwidth = 2
-
+                width = 300
+                hght = 14
                 # Plot the actual boundary 
                 boundary_color = QtGui.QColor("#CC9900")
                 pen = QtGui.QPen(boundary_color, penwidth)
@@ -490,24 +500,77 @@ class plotHodo(backgroundHodo):
                 qp.drawEllipse(center_rm, 3, 3)
 
                 # Plot the shear vector
+                width = 150
+                qp = self.setBlackPen(qp)
+                rect = QtCore.QRectF(3, self.bry-35, width, hght)
+                qp.drawRect(rect) 
                 shear_color = QtGui.QColor("#0099CC")
                 pen = QtGui.QPen(shear_color, penwidth)
+                qp.setFont(self.critical_font)
                 qp.setPen(pen)
                 x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
-                qp.drawText(3, self.bry-30, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + 'kts')
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
 
                 # Plot the 9-11 km Storm Relative Winds
+                width = 200
+                qp = self.setBlackPen(qp)
+                rect = QtCore.QRectF(3, self.bry-20, width, hght)
+                qp.drawRect(rect) 
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
                 x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
-                qp.drawText(3, self.bry-15, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + 'kts')
+                if spd >= 70:
+                    supercell_type = "LP"
+                elif spd < 70 and spd > 40:
+                    supercell_type = "Classic"
+                else:
+                    supercell_type = "HP"
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
+                
+                # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
+                norm_Shear, mode_Shear, norm_Wind, norm_Mode = self.calculateStormMode()
+ 
+                if tab.utils.QC(norm_Wind):
+                    width = 80
+                    qp = self.setBlackPen(qp)
+                    rect = QtCore.QRectF(3, self.bry-80, width, hght)
+                    qp.drawRect(rect)
+                    color = QtGui.QColor(YELLOW)
+                    pen = QtGui.QPen(color, penwidth)
+                    qp.setPen(pen)
+                    qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "...Storm Mode...")
+                    
+                    width = 270
+                    qp = self.setBlackPen(qp)
+                    rect = QtCore.QRectF(3, self.bry-50, width, hght)
+                    qp.drawRect(rect)
+                    if norm_Wind < 6:
+                        color = QtGui.QColor(RED)
+                    else:
+                        color = QtGui.QColor(MAGENTA)
+                    pen = QtGui.QPen(color, penwidth)
+                    qp.setPen(pen)
+                    qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "From Cloud Layer Wind - Bndy Diff (" + tab.utils.INT2STR(norm_Wind) + " m/s): " + norm_Mode)
+                    width = 200
+                    
+                    qp = self.setBlackPen(qp)
+                    rect = QtCore.QRectF(3, self.bry-65, width, hght)
+                    qp.drawRect(rect)
+                    if norm_Shear < 15:
+                        color = QtGui.QColor(RED)
+                    else:
+                        color = QtGui.QColor(MAGENTA)
+                    pen = QtGui.QPen(color, penwidth)
+                    qp.setPen(pen)
+                    qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "From Bndy 0-6 km Shr Diff (" + tab.utils.INT2STR(norm_Shear) + " m/s): " + mode_Shear)
 
                 qp.end()
+
                 self.update()
                 self.setMouseTracking(False)
             else:
@@ -516,8 +579,44 @@ class plotHodo(backgroundHodo):
                 self.update()               
                 self.setMouseTracking(True)
 
+    def setBlackPen(self, qp):
+        color = QtGui.QColor('#000000')
+        color.setAlphaF(.5)
+        pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        qp.setPen(pen)
+        qp.setBrush(brush)
+        return qp
+
+    def calculateStormMode(self):
+        """
+            Logic based off of some of the key findings in Dial et al. (2010)
+        """
+        dir_06shear, mag_06shear = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+        norm_shear = mag_06shear * np.sin( np.radians( dir_06shear - (self.bndy_ori + 90)) )
+        norm_shear = np.abs(tab.utils.KTS2MS(norm_shear))
+        if norm_shear < 15: # M/S
+            shear_mode = "Linear/Mixed"
+        else:
+            shear_mode = "Discrete"
+
+        if not tab.utils.QC(self.mean_lcl_el[0]) or (self.mean_lcl_el[0] == 1 and self.mean_lcl_el[1] == 1):
+            wind_mode = np.ma.masked
+            wind_diff = np.ma.masked
+        else:
+            dir_cloud, mag_cloud = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+            norm_cloudmotion = mag_cloud * np.sin( np.radians( dir_cloud - (self.bndy_ori + 90) ) )
+            wind_diff = tab.utils.KTS2MS(np.abs(norm_cloudmotion) - self.bndy_spd)
+            if wind_diff > 6: # M/S
+                wind_mode = "Discrete"
+            else:
+                wind_mode = "Linear/Mixed"
+
+        return norm_shear, shear_mode, wind_diff, wind_mode
+
     def plotBndy(self):
         length = 40
+        print self.bndy_ori
         y1 = length*np.sin(np.radians(self.bndy_ori))
         x1 = length*np.cos(np.radians(self.bndy_ori))
         penwidth = 2
@@ -654,7 +753,8 @@ class plotHodo(backgroundHodo):
         self.drawSMV(qp)
         self.drawCorfidi(qp)
         self.drawLCLtoEL_MW(qp)
-        self.drawCriticalAngle(qp)
+        if self.bndy is False:
+            self.drawCriticalAngle(qp)
         qp.end()
     
     def drawLCLtoEL_MW(self, qp):
@@ -843,13 +943,14 @@ class plotHodo(backgroundHodo):
                 rstu = rstu[~mask]; rstv = rstv[~mask]
             except:
                 rstu,rstv,lstu,lstv = self.srwind
-    
+            qp = self.setBlackPen(qp)
+            rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
+            qp.drawRect(rect)     
             ca_text_color = QtGui.QColor("#00FFFF")
             pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.critical_font)
             offset = 10
-            rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
             qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
     
 

@@ -157,14 +157,15 @@ class SkewApp(QWidget):
         self.filemenu = self.bar.addMenu("File")
         selectdata = QAction("Select Data...", self)
         saveimg = QAction("Save as image...", self)
-        exit = QAction("Exit", self)
+        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
+        self.filemenu.addAction(exit)
+        exit.triggered.connect(self.exitApp)  
         pref = QAction("Preferences", self)
         self.filemenu.addAction(selectdata)
         self.filemenu.addAction(saveimg)
         saveimg.triggered.connect(self.saveimage)
         self.filemenu.addAction(pref)
         self.filemenu.addSeparator()
-        self.filemenu.addAction(exit)
         self.insetsmenu = self.bar.addMenu("Insets")
         sars = QAction("SARS", self)
         stpstats = QAction("STP Stats", self)
@@ -212,7 +213,6 @@ class SkewApp(QWidget):
         ## construct the URL
         print self.link
         arch_file = open(self.link, 'r')
-        print self.link
         ## read in the file
         data = np.array(arch_file.read().split('\n'))
         arch_file.close()
@@ -296,11 +296,14 @@ class SkewApp(QWidget):
         if self.inset == "H":
             self.ship.deleteLater()
 
+    def exitApp(self):
+        self.close()
+
     def initData(self):
 
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_index], '%Y%m%d/%H%M') \
-                + "  (" + self.run + "Z  " + self.model + ")"
+                + "  (" + self.run + "  " + self.model + ")"
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_index][0]
