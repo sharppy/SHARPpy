@@ -16,5 +16,6 @@ from barbs import *
 from winter import *
 from fire import *
 from ship import *
+from stpef import *
 from SPCWindow import *
 __all__ = []

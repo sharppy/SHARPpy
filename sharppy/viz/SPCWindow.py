@@ -157,7 +157,7 @@ class SkewApp(QWidget):
         self.filemenu = self.bar.addMenu("File")
         selectdata = QAction("Select Data...", self)
         saveimg = QAction("Save as image...", self)
-        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
+        exit = QAction("Close Window", self, shortcut=QKeySequence("Ctrl+W"))
         self.filemenu.addAction(exit)
         exit.triggered.connect(self.exitApp)  
         pref = QAction("Preferences", self)
