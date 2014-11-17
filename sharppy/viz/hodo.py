@@ -289,7 +289,6 @@ class plotHodo(backgroundHodo):
         self.bndy_spd = kwargs.get('bndy_spd', 0)
         self.bndy_dir = kwargs.get('bndy_dir', 0)
         self.bndy_u, self.bndy_v = tab.utils.vec2comp(self.bndy_dir, self.bndy_spd)
-        self.bndy_ori = kwargs.get('bndy_ori', 20)
         self.prof = kwargs.get('prof', None)
         self.centered = kwargs.get('centered', (0,0))
         self.srwind = self.prof.srwind
@@ -344,43 +343,59 @@ class plotHodo(backgroundHodo):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
         self.popupmenu=QMenu("Cursor Type:")
+        ag = QtGui.QActionGroup(self, exclusive=True)
 
         nocurs = QAction(self)
         nocurs.setText("No Cursor")
+        nocurs.setCheckable(True)
+        nocurs.setChecked(True)
         nocurs.triggered.connect(self.setNoCursor)
-        self.popupmenu.addAction(nocurs)
+        a = ag.addAction(nocurs)
+        self.popupmenu.addAction(a)
 
         storm_motion = QAction(self)
         storm_motion.setText("Strm Motion Cursor")
+        storm_motion.setCheckable(True)
         storm_motion.triggered.connect(self.setStormMotionCursor)
-        self.popupmenu.addAction(storm_motion)
+        a = ag.addAction(storm_motion)
+        self.popupmenu.addAction(a)
 
         bnd = QAction(self)
         bnd.setText("Bndy Cursor")
+        bnd.setCheckable(True)
         bnd.triggered.connect(self.setBndyCursor)
-        self.popupmenu.addAction(bnd)
+        a = ag.addAction(bnd)
+        self.popupmenu.addAction(a)
 
         self.popupmenu.addSeparator()
+        ag2 = QtGui.QActionGroup(self, exclusive=True)
 
         norm = QAction(self)
         norm.setText("Normal")
-        norm.triggered.connect(self.setNormalCenter)        
-        self.popupmenu.addAction(norm)
+        norm.setCheckable(True)
+        norm.setChecked(True)
+        norm.triggered.connect(self.setNormalCenter)
+        a = ag2.addAction(norm)        
+        self.popupmenu.addAction(a)
 
         sr = QAction(self)
         sr.setText("Storm Relative")
+        sr.setCheckable(True)
         sr.triggered.connect(self.setSRCenter)       
-        self.popupmenu.addAction(sr)
+        a = ag2.addAction(sr)
+        self.popupmenu.addAction(a)
 
         mw = QAction(self)
         mw.setText("Mean Wind")
+        mw.setCheckable(True)
         mw.triggered.connect(self.setMWCenter)
-        self.popupmenu.addAction(mw)
+        a = ag2.addAction(mw)
+        self.popupmenu.addAction(a)
 
     def setBndyCursor(self):
         self.setMouseTracking(True)
         self.bndy = True
-        self.plotBndy()
+        self.plotBndy(self.bndy_dir)
         self.wndReadout.hide()
         self.srh1kmReadout.hide()
         self.srh3kmReadout.show()
@@ -447,16 +462,10 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        if self.bndy == False:
-            super(plotHodo, self).wheelEvent(e)
-            self.clearData()
-            self.plotData()
-        else:
-            if e.delta() < 0:
-                self.bndy_ori -= 5
-            else:
-                self.bndy_ori += 5
-            self.plotBndy()
+        super(plotHodo, self).wheelEvent(e)
+        self.clearData()
+        self.plotData()
+
 
     def mousePressEvent(self, e):
         '''
@@ -478,10 +487,10 @@ class plotHodo(backgroundHodo):
                 qp = QtGui.QPainter()
                 self.bndy_u, self.bndy_v = self.pix_to_uv(e.x(), e.y())
                 self.bndy_dir, self.bndy_spd = tab.utils.comp2vec(self.bndy_u, self.bndy_v)
-                y1 = 400*np.sin(np.radians(self.bndy_ori)) + e.y()
-                x1 = 400*np.cos(np.radians(self.bndy_ori)) + e.x()
-                y2 = e.y() - 400*np.sin(np.radians(self.bndy_ori))
-                x2 = e.x() - 400*np.cos(np.radians(self.bndy_ori))
+                y1 = 400*np.sin(np.radians(self.bndy_dir)) + e.y()
+                x1 = 400*np.cos(np.radians(self.bndy_dir)) + e.x()
+                y2 = e.y() - 400*np.sin(np.radians(self.bndy_dir))
+                x2 = e.x() - 400*np.cos(np.radians(self.bndy_dir))
                 penwidth = 2
                 width = 300
                 hght = 14
@@ -535,7 +544,7 @@ class plotHodo(backgroundHodo):
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
                 norm_Shear, mode_Shear, norm_Wind, norm_Mode = self.calculateStormMode()
  
-                if tab.utils.QC(norm_Wind):
+                if tab.utils.QC(norm_Wind) and self.prof.mupcl.bplus != 0:
                     width = 80
                     qp = self.setBlackPen(qp)
                     rect = QtCore.QRectF(3, self.bry-80, width, hght)
@@ -574,6 +583,7 @@ class plotHodo(backgroundHodo):
                 self.update()
                 self.setMouseTracking(False)
             else:
+                self.plotBndy(self.bndy_dir)
                 self.clearData()
                 self.plotData()
                 self.update()               
@@ -593,19 +603,19 @@ class plotHodo(backgroundHodo):
             Logic based off of some of the key findings in Dial et al. (2010)
         """
         dir_06shear, mag_06shear = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
-        norm_shear = mag_06shear * np.sin( np.radians( dir_06shear - (self.bndy_ori + 90)) )
+        norm_shear = mag_06shear * np.sin( np.radians( dir_06shear - (self.bndy_dir + 90)) )
         norm_shear = np.abs(tab.utils.KTS2MS(norm_shear))
         if norm_shear < 15: # M/S
             shear_mode = "Linear/Mixed"
         else:
             shear_mode = "Discrete"
 
-        if not tab.utils.QC(self.mean_lcl_el[0]) or (self.mean_lcl_el[0] == 1 and self.mean_lcl_el[1] == 1):
+        if not tab.utils.QC(self.mean_lcl_el[0]) or (self.mean_lcl_el[0] == 0 and self.mean_lcl_el[1] == 0):
             wind_mode = np.ma.masked
             wind_diff = np.ma.masked
         else:
             dir_cloud, mag_cloud = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
-            norm_cloudmotion = mag_cloud * np.sin( np.radians( dir_cloud - (self.bndy_ori + 90) ) )
+            norm_cloudmotion = mag_cloud * np.sin( np.radians( dir_cloud - (self.bndy_dir + 90) ) )
             wind_diff = tab.utils.KTS2MS(np.abs(norm_cloudmotion) - self.bndy_spd)
             if wind_diff > 6: # M/S
                 wind_mode = "Discrete"
@@ -614,11 +624,10 @@ class plotHodo(backgroundHodo):
 
         return norm_shear, shear_mode, wind_diff, wind_mode
 
-    def plotBndy(self):
+    def plotBndy(self, direction):
         length = 40
-        print self.bndy_ori
-        y1 = length*np.sin(np.radians(self.bndy_ori))
-        x1 = length*np.cos(np.radians(self.bndy_ori))
+        y1 = length*np.sin(np.radians(direction))
+        x1 = length*np.cos(np.radians(direction))
         penwidth = 2
 
         top_x_pix = x1 + length/2
@@ -695,6 +704,7 @@ class plotHodo(backgroundHodo):
 
             ## get the direction and speed from u,v
             dir, spd = tab.utils.comp2vec(u,v)
+            self.plotBndy(dir)
             self.srh3kmReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
             self.srh3kmReadout.setFixedWidth(120)
             self.srh3kmReadout.move(self.brx-130, self.bry-30)
