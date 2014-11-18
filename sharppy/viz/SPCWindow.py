@@ -3,7 +3,7 @@ __author__ = 'keltonhalbert, wblumberg'
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics, plotGeneric
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
-from sharppy.viz import plotSHIP
+from sharppy.viz import plotSHIP, plotSTPEF, plotFire
 from PySide.QtCore import *
 from PySide.QtGui import *
 from sharppy.io.buf_decoder import BufkitFile
@@ -286,15 +286,18 @@ class SkewApp(QWidget):
         self.convective.deleteLater()
         self.kinematic.deleteLater()
 
+        # Swappable Insets
+        self.stp.deleteLater()
         if self.inset == "S":
             self.SARS.deleteLater()
-        self.stp.deleteLater()
         if self.inset == "W":
             self.winter.deleteLater()
         if self.inset == "F":
             self.fire.deleteLater()
         if self.inset == "H":
             self.ship.deleteLater()
+        if self.inset == "E":
+            self.stpef.deleteLater()
 
     def exitApp(self):
         self.close()
@@ -331,7 +334,9 @@ class SkewApp(QWidget):
         self.SARS = plotAnalogues(self.prof)
         self.stp = plotSTP(self.prof)
         self.winter = plotWinter(self.prof)
+        self.fire = plotFire(self.prof)
         self.ship = plotSHIP(self.prof)
+        self.stpef = plotSTPEF(self.prof)
 
     def paintEvent(self, e):
         if self.changeflag:
@@ -357,6 +362,10 @@ class SkewApp(QWidget):
                     self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
             elif self.inset == "H":
                 self.grid3.addWidget(self.ship, 0, 2)
+            elif self.inset == "F":
+                self.grid3.addWidget(self.fire, 0, 2)
+            elif self.inset == "E":
+                self.grid3.addWidget(self.stpef, 0, 2)
 
             self.grid3.addWidget(self.stp, 0, 3)
             self.grid.addWidget(self.sound, 0, 0, 3, 1)
@@ -364,6 +373,7 @@ class SkewApp(QWidget):
             self.changeflag = False
 
         if self.swap_inset and self.inset == "S":
+            # Swap to Winter inset from SARS
             self.inset = "W"
             self.SARS.deleteLater()
             self.winter = plotWinter(self.prof)
@@ -378,6 +388,7 @@ class SkewApp(QWidget):
             self.swap_inset = False
 
         elif self.swap_inset and self.inset == "W":
+            # Swap to SHIP inset from Winter
             self.inset = "H"
             self.winter.deleteLater()
             self.ship = plotSHIP(self.prof)
@@ -390,10 +401,38 @@ class SkewApp(QWidget):
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
             self.grid.addWidget(self.sound, 0, 0, 3, 1)
             self.swap_inset = False
-
         elif self.swap_inset and self.inset == "H":
-            self.inset = "S"
+            # Swap to Conditional Tor Probs inset from SHIP
+            self.inset = "E"
             self.ship.deleteLater()
+            self.stpef = plotSTPEF(self.prof)
+            self.grid3.addWidget(self.stpef, 0, 2)
+            self.sound.deleteLater()
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=False)
+            else:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)               
+            self.swap_inset = False        
+        elif self.swap_inset and self.inset == "E":
+            # Swap to Fire inset from Conditional Tor Probs inset
+            self.inset = "F"
+            self.stpef.deleteLater()
+            self.fire = plotFire(self.prof)
+            self.grid3.addWidget(self.fire, 0, 2)
+            self.sound.deleteLater()
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_index][:], dgz=False)
+            else:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+            self.grid.addWidget(self.sound, 0, 0, 3, 1)               
+            self.swap_inset = False    
+        elif self.swap_inset and self.inset == "F":
+            # Swap to SARS inset from Fire inset
+            self.inset = "S"
+            self.fire.deleteLater()
             self.SARS = plotAnalogues(self.prof)
             self.grid3.addWidget(self.SARS, 0, 2)
             self.sound.deleteLater()

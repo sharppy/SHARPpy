@@ -144,9 +144,12 @@ class plotFire(backgroundFire):
         self.pblrh = prof.pblrh
         self.meanwind01km = tab.utils.comp2vec(prof.meanwind01km[0], prof.meanwind01km[1])
         self.meanwindpbl = tab.utils.comp2vec(prof.meanwindpbl[0], prof.meanwindpbl[1])
-        self.sfc_wind = (prof.wspd[prof.get_sfc()], prof.wdir[prof.get_sfc()])
+        self.sfc_wind = (prof.wdir[prof.get_sfc()], prof.wspd[prof.get_sfc()])
         self.pwat = prof.pwat
-        self.maxwindpbl = tab.utils.comp2vec(prof.pblmaxwind[0], prof.pblmaxwind[1])
+        if not tab.utils.QC(prof.pblmaxwind[0]):
+            self.maxwindpbl = [np.ma.masked, np.ma.masked]
+        else:
+            self.maxwindpbl = tab.utils.comp2vec(prof.pblmaxwind[0], prof.pblmaxwind[1])
         self.bplus_fire = prof.bplus_fire
 
     def resizeEvent(self, e):
@@ -212,7 +215,7 @@ class plotFire(backgroundFire):
 
     def getMaxWindFormat(self):
         fontsize = 12
-        if tab.utils.QC(self.maxwindpbl[1]) or int(self.maxwindpbl[1]) <= 10:
+        if (not tab.utils.QC(self.maxwindpbl[1])) or int(self.maxwindpbl[1]) <= 10:
             color = QtGui.QColor(DBROWN)
         elif int(self.maxwindpbl[1]) <= 20:
             color = QtGui.QColor(LBROWN)
@@ -234,9 +237,9 @@ class plotFire(backgroundFire):
         qp.setFont(QtGui.QFont('Helvetica', 10))        
         
         label = ['SFC = ' + tab.utils.INT2STR(self.sfc_wind[0]) + '/' + tab.utils.INT2STR(self.sfc_wind[1]), \
-                '0-1 km mean = ' + tab.utils.INT2STR(self.meanwind01km[1]) + '/' + tab.utils.INT2STR(self.meanwind01km[0]), \
-                'BL mean = ' + tab.utils.INT2STR(self.meanwindpbl[1]) + '/' + tab.utils.INT2STR(self.meanwindpbl[0]), \
-                'BL max = ' + tab.utils.INT2STR(self.maxwindpbl[1]) + '/' + tab.utils.INT2STR(self.maxwindpbl[0])]
+                '0-1 km mean = ' + tab.utils.INT2STR(self.meanwind01km[0]) + '/' + tab.utils.INT2STR(self.meanwind01km[1]), \
+                'BL mean = ' + tab.utils.INT2STR(self.meanwindpbl[0]) + '/' + tab.utils.INT2STR(self.meanwindpbl[1]), \
+                'BL max = ' + tab.utils.INT2STR(self.maxwindpbl[0]) + '/' + tab.utils.INT2STR(self.maxwindpbl[1])]
         sep = self.moswindsep
         y1 = self.start_data_y1 + 6
         for i in xrange(len(label)):
