@@ -2,6 +2,25 @@ import numpy as np
 """
     Contains the data to generate the plots in certain insets.
 """
+
+def sherbData():
+    # FOR THE STP INSET BOX/WHISKE
+    # From Thompson et al. 2012 WAF
+    sherb_ytexts = ['2.5', '2', '1.5', '1', '0.5', '0', ' ']
+    sherb_xtexts = ['3SIG', '3SIGTOR', '3NULL', 'ESIG', 'ESIGTOR', 'ENULL']
+    sherb = [[0.25, 0.8, 1.02, 1.25, 1.95], #3SIG
+    [0.6, 1.0, 1.2, 1.4, 1.8], #3SIGTOR
+    [0.1, 0.6, 0.8, 1.05, 1.6], #3NULL
+    [0.0, 0.6, 1.0, 1.35, 2.3], #ESIG
+    [0.2, 1.0, 1.25, 1.55, 2.0], # ESIGTOR
+    [0.0, 0.4, 0.75, 1.0, 1.95]] # ENULL
+    sherb = np.array(sherb)
+    stp_inset_data = {}
+    stp_inset_data['sherb_ytexts'] = sherb_ytexts
+    stp_inset_data['sherb_xtexts'] = sherb_xtexts
+    stp_inset_data['sherb'] = sherb    
+    return stp_inset_data
+
 def shipData():
     # FOR THE SHIP INSET BOX/WHISKER
     # Developed interally by Ryan Jewell (SPC)
@@ -62,10 +81,12 @@ def vrotData():
     # Provided by Bryan Smith (SPC) and Rich Thompson (SPC)
     xtexts = ['0-9.9', '10-19.9', '20-29.9', '30-39.9', '40-49.9', '50-59.9', '60-69.9', '70-79.9', '80-89.9', '90-99.9', '100-109.9']
     ytexts = [' ', '0', '10', '20', '30', '40', '50', '60', '70'][::-1]
+    xpts = np.arange(5, 115, 10)
     ef01 = [100.0, 98.6, 95.3, 91.0, 80.2, 61.9, 42.1, 29.1, 16.3, 5.6, 0.0]
     ef23 = [0.0, 1.0, 4.7, 9.0, 19.3, 36.5, 51.1, 62.8, 65.1, 50.0, 25.0]
     ef45 = [0.0, 0.0, 0.0, 0.0, 0.5, 1.6, 6.8, 8.1, 18.6, 44.4, 75.0]
     vrot_inset_data = {}
+    vrot_inset_data['xpts'] = xpts
     vrot_inset_data['xtexts'] = xtexts
     vrot_inset_data['ytexts'] = ytexts
     vrot_inset_data['EF0-EF1'] = ef01
