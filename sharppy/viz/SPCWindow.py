@@ -148,7 +148,9 @@ class SkewApp(QWidget):
         self.grid3.setContentsMargins(0, 0, 0, 0)
         self.text.setLayout(self.grid3)
         self.setUpdatesEnabled(True)
-
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.makeInsetMenu()
         self.menuBar()
         self.initData()
 
@@ -472,3 +474,69 @@ class SkewApp(QWidget):
         if key == Qt.Key_S:
             self.swap_inset = True
             self.update()
+
+    def showCursorMenu(self, pos):
+        # popup menu
+        #print pos.x(), pos.y()
+        #print self.childAt(pos.x(), pos.y())
+        #print self.childAt(pos.x(), pos.y()) is self.stp
+        if self.childAt(pos.x(), pos.y()) is self.stp:
+            self.popupmenu.popup(self.mapToGlobal(pos))
+            self.setFocus()
+
+    def makeInsetMenu(self):
+        self.popupmenu=QMenu("Inset Menu")
+        ag = QActionGroup(self, exclusive=True)
+
+        nocurs = QAction(self)
+        nocurs.setText("SARS")
+        nocurs.setCheckable(True)
+        nocurs.setChecked(True)
+        nocurs.triggered.connect(self.dummy)
+        a = ag.addAction(nocurs)
+        self.popupmenu.addAction(a)
+
+        storm_motion = QAction(self)
+        storm_motion.setText("VROT")
+        storm_motion.setCheckable(True)
+        storm_motion.triggered.connect(self.dummy)
+        a = ag.addAction(storm_motion)
+        self.popupmenu.addAction(a)
+
+        bnd = QAction(self)
+        bnd.setText("STP Stats")
+        bnd.setCheckable(True)
+        bnd.triggered.connect(self.dummy)
+        a = ag.addAction(bnd)
+        self.popupmenu.addAction(a)
+
+        norm = QAction(self)
+        norm.setText("SHIP Stats")
+        norm.setCheckable(True)
+        norm.triggered.connect(self.dummy)
+        a = ag.addAction(norm)        
+        self.popupmenu.addAction(a)
+
+        sr = QAction(self)
+        sr.setText("Fire")
+        sr.setCheckable(True)
+        sr.triggered.connect(self.dummy)       
+        a = ag.addAction(sr)
+        self.popupmenu.addAction(a)
+
+        mw = QAction(self)
+        mw.setText("Winter")
+        mw.setCheckable(True)
+        mw.triggered.connect(self.dummy)
+        a = ag.addAction(mw)
+        self.popupmenu.addAction(a)
+
+        mw = QAction(self)
+        mw.setText("Cond STP")
+        mw.setCheckable(True)
+        mw.triggered.connect(self.dummy)
+        a = ag.addAction(mw)
+        self.popupmenu.addAction(a)
+
+    def dummy(self):
+        self.setFocus()
