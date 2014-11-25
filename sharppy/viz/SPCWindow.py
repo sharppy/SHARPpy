@@ -20,6 +20,7 @@ class Thread(QThread):
         self.model = kwargs.get("model")
         self.runtime = kwargs.get("run")
         self.loc = kwargs.get("loc")
+        self.prof_idx = kwargs.get("idx")
         self.profs = []
         self.d = None
 
@@ -55,7 +56,7 @@ class Thread(QThread):
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
                 self.profs.append(profs)
         else:
-            for i in range(len(d.wdir[0]))[:]:
+            for i in self.prof_idx[:]:
                 print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
                 self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
                     tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
@@ -74,6 +75,7 @@ class SkewApp(QWidget):
         super(SkewApp, self).__init__()
         self.model = kwargs.get("model")
         self.prof_time = kwargs.get("prof_time", None)
+        self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.link = kwargs.get("path", None)
@@ -90,7 +92,7 @@ class SkewApp(QWidget):
             self.prof, self.plot_title = self.__archiveProf()
             self.profs.append(self.prof)            
         else:
-            self.thread = Thread(model=self.model, loc=self.loc, run=self.run)
+            self.thread = Thread(model=self.model, loc=self.loc, run=self.run, idx=self.prof_idx)
             self.thread.start()
             while not self.thread.isFinished():
                 QCoreApplication.processEvents()
