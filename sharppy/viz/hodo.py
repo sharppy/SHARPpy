@@ -403,6 +403,7 @@ class plotHodo(backgroundHodo):
         self.clearData()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def setNoCursor(self):
         self.setMouseTracking(False)
@@ -417,6 +418,7 @@ class plotHodo(backgroundHodo):
         self.srh1kmReadout.hide()
         self.srh3kmReadout.hide()
         self.esrhReadout.hide()
+        self.parentWidget().setFocus()
 
     def setStormMotionCursor(self):
         self.setMouseTracking(True)
@@ -429,6 +431,7 @@ class plotHodo(backgroundHodo):
         self.clearData()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def showCursorMenu(self, pos):
         self.popupmenu.popup(self.mapToGlobal(pos))
@@ -438,13 +441,14 @@ class plotHodo(backgroundHodo):
         self.clearData()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def setMWCenter(self):
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
         self.clearData()
         self.plotData()
         self.update()
-
+        self.parentWidget().setFocus()
 
     def setSRCenter(self):
         rstu,rstv,lstu,lstv = self.srwind
@@ -452,6 +456,8 @@ class plotHodo(backgroundHodo):
         self.clearData()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
+
 
     def wheelEvent(self, e):
         '''
