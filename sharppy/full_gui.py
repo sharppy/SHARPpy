@@ -37,7 +37,7 @@ class MainWindow(QWidget):
         self.prof_time = "Latest"
         ## the index of the item in the list that corresponds
         ## to the profile selected from the list
-        self.prof_idx = [0]
+        self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
         ## the offset is time time offset between sounding availabilities for models
@@ -70,6 +70,7 @@ class MainWindow(QWidget):
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.all_profs = QPushButton("Select All")
+        self.all_profs.clicked.connect(self.select_all)
 
         self.profile_list = self.list_profiles()
         self.profile_list.clicked.connect(self.get_time)
@@ -224,6 +225,7 @@ class MainWindow(QWidget):
         """
         ## create a list widget
         list = QListWidget()
+        list.setSelectionMode(QAbstractItemView.MultiSelection)
         ## get the date nearest to 00Z or 12 Z
         time = self.__date()
 
@@ -246,6 +248,7 @@ class MainWindow(QWidget):
         :return:
         """
         self.profile_list.clear()
+        self.prof_idx = []
         timelist = []
 
         if self.model == "Observed":
@@ -378,7 +381,17 @@ class MainWindow(QWidget):
         Get the user's profile date selection
         """
         self.prof_time = self.profile_list.currentItem().text()
-        self.prof_idx = [self.profile_list.currentIndex()]
+        item = self.profile_list.currentIndex().row()
+        if item in self.prof_idx:
+            self.prof_idx.remove(item)
+        else:
+            self.prof_idx.append(item)
+        self.prof_idx.sort()
+
+    def select_all(self):
+        items = self.profile_list.count()
+        for i in range(items):
+            self.profile_list.item(i).setSelected(True)
 
     def skewApp(self):
         """
@@ -387,7 +400,7 @@ class MainWindow(QWidget):
         :return:
         """
         self.skew = SkewApp(model=self.model, location=self.loc,
-            prof_time=self.prof_time, run=self.run)
+            prof_time=self.prof_time, run=self.run, idx=self.prof_idx)
         self.skew.show()
 
 
