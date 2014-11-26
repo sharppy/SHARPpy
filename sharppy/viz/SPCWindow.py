@@ -203,9 +203,10 @@ class SkewApp(QWidget):
         self.helpmenu.addAction(about)
 
     def saveimage(self):
-        fileName = QFileDialog.getSaveFileName(self, "Save Image", '/home')
-        pixmap = QPixmap.grabWidget(self)
-        pixmap.save(fileName[0], 'PNG', 100)
+        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
+        if result:
+            pixmap = QPixmap.grabWidget(self)
+            pixmap.save(fileName, 'PNG', 100)
 
     def aboutbox(self):
 
@@ -451,6 +452,7 @@ class SkewApp(QWidget):
             self.clearWidgets()
             self.initData()
             self.update()
+            return
 
         if key == Qt.Key_Left:
             if self.current_index != 0:
@@ -461,6 +463,12 @@ class SkewApp(QWidget):
             self.clearWidgets()
             self.initData()
             self.update()
+            return
+
+        if e.matches(QKeySequence.Save):
+            # Save an image
+            self.saveimage()
+            return
 
         if key == Qt.Key_S:
             temp = self.right_inset
@@ -470,6 +478,8 @@ class SkewApp(QWidget):
             self.left_inset_ob = self.right_inset_ob
             self.right_inset_ob = obj
             self.update()
+            return
+
 
     def showCursorMenu(self, pos):
         # popup menu
