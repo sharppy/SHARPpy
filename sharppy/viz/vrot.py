@@ -237,7 +237,7 @@ class plotVROT(backgroundVROT):
     '''
     def __init__(self, prof):
         super(plotVROT, self).__init__()
-        self.vrot = 100
+        self.vrot = 0
 
 
     def resizeEvent(self, e):
@@ -268,6 +268,22 @@ class plotVROT(backgroundVROT):
         self.probef01 = self.vrot_inset_data['EF0-EF1'][np.argmin(np.abs(self.vrot - self.vrot_inset_data['xpts']))]
         self.probef23 = self.vrot_inset_data['EF2-EF3'][np.argmin(np.abs(self.vrot - self.vrot_inset_data['xpts']))]
         self.probef45 = self.vrot_inset_data['EF4-EF5'][np.argmin(np.abs(self.vrot - self.vrot_inset_data['xpts']))]
+
+    def mouseDoubleClickEvent(self, e):
+        super(plotVROT, self).resizeEvent(e)
+        self.openInputDialog()
+        self.interp_vrot()
+        self.plotData()
+        self.update()
+
+    def openInputDialog(self):
+        """
+        Opens the text version of the input dialog
+        """
+        text, result = QtGui.QInputDialog.getText(self, "VROT Input",
+                                            "Enter the VROT:")
+        if result:
+            self.vrot = int(text)
 
     def draw_vrot(self, qp):
         qp.begin(self.plotBitMap)

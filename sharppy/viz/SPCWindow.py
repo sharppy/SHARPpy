@@ -3,7 +3,7 @@ __author__ = 'keltonhalbert, wblumberg'
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics, plotGeneric
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
-from sharppy.viz import plotSHIP, plotSTPEF, plotFire
+from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *
 from PySide.QtGui import *
 from sharppy.io.buf_decoder import BufkitFile
@@ -83,7 +83,11 @@ class SkewApp(QWidget):
         self.swap_inset = False
         self.d = None
         self.current_index = 0
-        self.inset = "S"
+        self.left_inset = "SARS"
+        self.right_inset = "STP STATS"
+        self.left_inset_ob = None
+        self.right_inset_ob = None
+        self.avaliable_insets = ['COND STP', 'WINTER', 'FIRE', 'SHIP STATS', 'VROT']
         self.profs = []
         if self.model == "Observed":
             self.prof, self.plot_title = self.__observedProf()
@@ -291,17 +295,32 @@ class SkewApp(QWidget):
         self.kinematic.deleteLater()
 
         # Swappable Insets
-        self.stp.deleteLater()
-        if self.inset == "S":
+        #self.stp.deleteLater()
+        if self.left_inset == "SARS":
             self.SARS.deleteLater()
-        if self.inset == "W":
+        if self.left_inset == "STP STATS":
+            self.stp.deleteLater()
+        if self.left_inset == "WINTER":
             self.winter.deleteLater()
-        if self.inset == "F":
+        if self.left_inset == "FIRE":
             self.fire.deleteLater()
-        if self.inset == "H":
+        if self.left_inset == "SHIP STATS":
             self.ship.deleteLater()
-        if self.inset == "E":
+        if self.left_inset == "COND STP":
             self.stpef.deleteLater()
+
+        if self.right_inset == "SARS":
+            self.SARS.deleteLater()
+        if self.right_inset == "STP STATS":
+            self.stp.deleteLater()
+        if self.right_inset == "WINTER":
+            self.winter.deleteLater()
+        if self.right_inset == "FIRE":
+            self.fire.deleteLater()
+        if self.right_inset == "SHIP STATS":
+            self.ship.deleteLater()
+        if self.right_inset == "COND STP":
+            self.stpef.deleteLater()        
 
     def exitApp(self):
         self.close()
@@ -335,48 +354,93 @@ class SkewApp(QWidget):
 
         self.convective = plotText(self.prof)
         self.kinematic = plotKinematics(self.prof)
+        self.makeInsets()
+
+    def makeInsets(self):
         self.SARS = plotAnalogues(self.prof)
         self.stp = plotSTP(self.prof)
         self.winter = plotWinter(self.prof)
         self.fire = plotFire(self.prof)
         self.ship = plotSHIP(self.prof)
         self.stpef = plotSTPEF(self.prof)
+        self.vrot = plotVROT(self.prof)        
 
     def paintEvent(self, e):
-        if self.changeflag:
-            self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
-            self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
-            self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
-            self.grid2.addWidget(self.storm_slinky, 8, 5, 3, 6)
-            self.grid2.addWidget(self.thetae_vs_pressure, 8, 11, 3, 6)
-            self.grid2.addWidget(self.srwinds_vs_height, 8, 17, 3, 6)
-            self.grid2.addWidget(self.watch_type, 8, 23, 3, 6)
+        #if self.changeflag:
+        self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
+        self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
+        self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
+        self.grid2.addWidget(self.storm_slinky, 8, 5, 3, 6)
+        self.grid2.addWidget(self.thetae_vs_pressure, 8, 11, 3, 6)
+        self.grid2.addWidget(self.srwinds_vs_height, 8, 17, 3, 6)
+        self.grid2.addWidget(self.watch_type, 8, 23, 3, 6)
 
+        # Draw the kinematic and convective insets
+        self.grid3.addWidget(self.convective, 0, 0)
+        self.grid3.addWidget(self.kinematic, 0, 1)
 
-            self.grid3.addWidget(self.convective, 0, 0)
-            self.grid3.addWidget(self.kinematic, 0, 1)
-            if self.inset == "S":
-                self.grid3.addWidget(self.SARS, 0, 2)
-            elif self.inset == "W":
-                self.grid3.addWidget(self.winter, 0, 2)
-                if self.model == "SREF":
-                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_index][:], dgz=True)
-                else:
-                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
-            elif self.inset == "H":
-                self.grid3.addWidget(self.ship, 0, 2)
-            elif self.inset == "F":
-                self.grid3.addWidget(self.fire, 0, 2)
-            elif self.inset == "E":
-                self.grid3.addWidget(self.stpef, 0, 2)
+        # Set Left Inset
+        if self.left_inset == "SARS":
+            self.grid3.addWidget(self.SARS, 0, 2)
+            self.left_inset_ob = self.SARS
+        elif self.left_inset == "STP STATS":
+            self.grid3.addWidget(self.stp, 0, 2)
+            self.left_inset_ob = self.stp
+        elif self.left_inset == "FIRE":
+            self.grid3.addWidget(self.fire, 0, 2)
+            self.left_inset_ob = self.fire
+        elif self.left_inset == "COND STP":
+            self.grid3.addWidget(self.stpef, 0, 2)
+            self.left_inset_ob = self.stpef
+        elif self.left_inset == "SHIP STATS":
+            self.grid3.addWidget(self.ship, 0, 2)
+            self.left_inset_ob = self.ship
+        elif self.left_inset == "VROT":
+            self.grid3.addWidget(self.vrot, 0, 2)
+            self.left_inset_ob = self.vrot        
+        elif self.left_inset == "WINTER":
+            self.grid3.addWidget(self.winter, 0, 2)
+            self.left_inset_ob = self.winter
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                           proflist=self.profs[self.current_index][:], dgz=True)          
+            if self.changeflag == True:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
 
+        # Set Right Inset
+        if self.right_inset == "SARS":
+            self.grid3.addWidget(self.SARS, 0, 3)
+            self.right_inset_ob = self.SARS
+        elif self.right_inset == "STP STATS":
             self.grid3.addWidget(self.stp, 0, 3)
-            self.grid.addWidget(self.sound, 0, 0, 3, 1)
-            self.grid.addWidget(self.text, 3, 0, 1, 2)
-            self.changeflag = False
+            self.right_inset_ob = self.stp
+        elif self.right_inset == "FIRE":
+            self.grid3.addWidget(self.fire, 0, 3)
+            self.right_inset_ob = self.fire
+        elif self.right_inset == "COND STP":
+            self.grid3.addWidget(self.stpef, 0, 3)
+            self.right_inset_ob = self.stpef
+        elif self.right_inset == "SHIP STATS":
+            self.grid3.addWidget(self.ship, 0, 3)
+            self.right_inset_ob = self.ship
+        elif self.right_inset == "VROT":
+            self.grid3.addWidget(self.vrot, 0, 2)
+            self.right_inset_ob = self.vrot 
+        elif self.right_inset == "WINTER":
+            self.grid3.addWidget(self.winter, 0, 3)
+            self.right_inset_ob = self.winter
+            if self.model == "SREF":
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                           proflist=self.profs[self.current_index][:], dgz=True)
+            if self.changeflag == True:
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
 
-        if self.swap_inset and self.inset == "S":
+        self.grid.addWidget(self.sound, 0, 0, 3, 1)
+        self.grid.addWidget(self.text, 3, 0, 1, 2)
+        self.changeflag = False
+        """
+        if self.swap_inset:
+
             # Swap to Winter inset from SARS
             self.inset = "W"
             self.SARS.deleteLater()
@@ -447,6 +511,7 @@ class SkewApp(QWidget):
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
             self.grid.addWidget(self.sound, 0, 0, 3, 1)               
             self.swap_inset = False        
+        """
 
     def keyPressEvent(self, e):
         key = e.key()
@@ -472,7 +537,12 @@ class SkewApp(QWidget):
             self.update()
 
         if key == Qt.Key_S:
-            self.swap_inset = True
+            temp = self.right_inset
+            self.right_inset = self.left_inset
+            self.left_inset = temp
+            obj = self.left_inset_ob
+            self.left_inset_ob = self.right_inset_ob
+            self.right_inset_ob = obj
             self.update()
 
     def showCursorMenu(self, pos):
@@ -480,63 +550,66 @@ class SkewApp(QWidget):
         #print pos.x(), pos.y()
         #print self.childAt(pos.x(), pos.y())
         #print self.childAt(pos.x(), pos.y()) is self.stp
-        if self.childAt(pos.x(), pos.y()) is self.stp:
+        if self.childAt(pos.x(), pos.y()) is self.right_inset_ob:
+            self.inset_to_swap = "RIGHT"
             self.popupmenu.popup(self.mapToGlobal(pos))
             self.setFocus()
+        elif self.childAt(pos.x(), pos.y()) is self.left_inset_ob:
+            self.inset_to_swap = "LEFT"
+            self.popupmenu.popup(self.mapToGlobal(pos))
+            self.setFocus()            
 
     def makeInsetMenu(self):
+        # This will make the menu of the available insets.
         self.popupmenu=QMenu("Inset Menu")
-        ag = QActionGroup(self, exclusive=True)
+        self.menu_ag = QActionGroup(self, exclusive=True)
+        self.actions = []
+        for i in xrange(len(np.asarray(self.avaliable_insets))):
+            inset_action = QAction(self)
+            self.actions.append(inset_action)
+            inset_action.setText(np.asarray(self.avaliable_insets)[i])
+            inset_action.setCheckable(True)
+            #nocurs.setChecked(True)
+            inset_action.triggered.connect(self.swapInset)
+            a = self.menu_ag.addAction(inset_action)
+            self.popupmenu.addAction(a)
 
-        nocurs = QAction(self)
-        nocurs.setText("SARS")
-        nocurs.setCheckable(True)
-        nocurs.setChecked(True)
-        nocurs.triggered.connect(self.dummy)
-        a = ag.addAction(nocurs)
-        self.popupmenu.addAction(a)
+    def swapInset(self):
+        # This will swap either the left or right inset depending on whether or not the 
+        # self.inset_to_swap value is LEFT or RIGHT.
+        a = self.menu_ag.checkedAction()
+        print "SWAPPING THE", self.inset_to_swap, "INSET TO:", a.text()
+        if self.inset_to_swap == "LEFT":
+            if a.text() == "WINTER" :
+                # If we're switching to the winter inset or if we're removing
+                # the winter inset, delete the current sounding
+                self.sound.deleteLater()
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+            elif self.left_inset == "WINTER":
+                self.sound.deleteLater()
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+            self.avaliable_insets.remove(a.text())
+            self.avaliable_insets.append(self.left_inset)
+            self.left_inset = a.text()
+            self.left_inset_ob.deleteLater()
+        elif self.inset_to_swap == "RIGHT":
+            if a.text() == "WINTER" :
+                # If we're switching to the winter inset delete the current sounding
+                # paintEvent will create the new one with the DGZ
+                self.sound.deleteLater()
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=True)
+            elif self.right_inset == "WINTER":
+                # If we're switching out of the WINTER inset,
+                # delete it and make a new one without the DGZ
+                self.sound.deleteLater()
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
 
-        storm_motion = QAction(self)
-        storm_motion.setText("VROT")
-        storm_motion.setCheckable(True)
-        storm_motion.triggered.connect(self.dummy)
-        a = ag.addAction(storm_motion)
-        self.popupmenu.addAction(a)
-
-        bnd = QAction(self)
-        bnd.setText("STP Stats")
-        bnd.setCheckable(True)
-        bnd.triggered.connect(self.dummy)
-        a = ag.addAction(bnd)
-        self.popupmenu.addAction(a)
-
-        norm = QAction(self)
-        norm.setText("SHIP Stats")
-        norm.setCheckable(True)
-        norm.triggered.connect(self.dummy)
-        a = ag.addAction(norm)        
-        self.popupmenu.addAction(a)
-
-        sr = QAction(self)
-        sr.setText("Fire")
-        sr.setCheckable(True)
-        sr.triggered.connect(self.dummy)       
-        a = ag.addAction(sr)
-        self.popupmenu.addAction(a)
-
-        mw = QAction(self)
-        mw.setText("Winter")
-        mw.setCheckable(True)
-        mw.triggered.connect(self.dummy)
-        a = ag.addAction(mw)
-        self.popupmenu.addAction(a)
-
-        mw = QAction(self)
-        mw.setText("Cond STP")
-        mw.setCheckable(True)
-        mw.triggered.connect(self.dummy)
-        a = ag.addAction(mw)
-        self.popupmenu.addAction(a)
-
-    def dummy(self):
+            self.avaliable_insets.remove(a.text())
+            self.avaliable_insets.append(self.right_inset)
+            self.right_inset = a.text()
+            self.right_inset_ob.deleteLater()
+                
+        self.makeInsets()
+        self.makeInsetMenu()
         self.setFocus()
+        self.update()
