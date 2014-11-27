@@ -18,4 +18,5 @@ from fire import *
 from ship import *
 from stpef import *
 from SPCWindow import *
+from vrot import *
 __all__ = []
