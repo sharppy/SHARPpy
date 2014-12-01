@@ -5,7 +5,7 @@ import os
 
 ## written by Greg Blumberg - CIMMS
 ## and
-## Kelton Halbert - University of Oklaho,a
+## Kelton Halbert - University of Oklahoma
 ## wblumberg@ou.edu
 ## keltonhalbert@ou.edu
 
@@ -116,7 +116,7 @@ def pwv_climo(prof, station, month=None):
     station_id_3 is the station ID (lower case)
     prof is the profile object
 
-    This function uses the PWV climatology databases provided by Matt Bunker (NWS/UNR)
+    This function uses the PWV climatology databases provided by Matt Bunkers (NWS/UNR)
     and accepts a SHARPPY profile object, the station name, and the month
     and returns to the user a number indicating where in the distribution the profile's PWV
     value lies.  This function is used in SHARPPY to help provide the user climatological
@@ -144,8 +144,8 @@ def pwv_climo(prof, station, month=None):
     if pwv_means is np.ma.masked:
         return 0
     
-    month_mean = float(pwv_means[month])
-    month_std = float(pwv_stds[month])
+    month_mean = float(pwv_means[month-1])
+    month_std = float(pwv_stds[month-1])
 
     sigma_1 = (month_mean - month_std, month_mean + month_std)
     sigma_2 = (month_mean - (2.*month_std), month_mean + (2.*month_std))
