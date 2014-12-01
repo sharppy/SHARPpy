@@ -41,7 +41,7 @@ class backgroundText(QtGui.QFrame):
         ## do a DPI check to make sure
         ## the text is sized properly!
         if self.physicalDpiX() > 75:
-            fsize = np.floor(.05 * self.hgt)
+            fsize = np.floor(.04 * self.hgt)
         else:
             fsize = np.floor(.06 * self.hgt)
         ## set the font, get the metrics and height of the font
