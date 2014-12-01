@@ -31,14 +31,15 @@ class backgroundText(QtGui.QFrame):
             "  border-style: solid;"
             "  border-color: #3399CC;}")
         ## set the frame padding
+        ## set the height/width variables
         self.lpad = 0; self.rpad = 0
         self.tpad = 5; self.bpad = 0
-        ## do a DPI check to make sure
-        ## the text is sized properly!
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
+        self.wid = self.size().width()
+        self.hgt = self.size().height()
+        self.tlx = self.rpad; self.tly = self.tpad
+        self.brx = self.wid; self.bry = self.hgt
+
+        fsize = np.floor(.06 * self.hgt)
         ## set the font, get the metrics and height of the font
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
@@ -46,11 +47,6 @@ class backgroundText(QtGui.QFrame):
         ## the self.ylast variable is used as a running sum for
         ## text placement.
         self.ylast = self.label_height
-        ## set the height/width variables
-        self.wid = self.size().width()
-        self.hgt = self.size().height()
-        self.tlx = self.rpad; self.tly = self.tpad
-        self.brx = self.wid; self.bry = self.hgt
         ## initialize the QPixmap that will be drawn on.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
