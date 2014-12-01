@@ -45,7 +45,9 @@ class backgroundText(QtGui.QFrame):
         else:
             fsize = np.floor(.06 * self.hgt)
         ## set the font, get the metrics and height of the font
-        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.label_font = QtGui.QFont('Helvetica')
+        print fsize
+        self.label_font.setPixelSize(fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.label_height = self.label_metrics.xHeight() + self.tpad
         ## the self.ylast variable is used as a running sum for
