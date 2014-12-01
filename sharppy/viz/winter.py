@@ -214,7 +214,7 @@ class plotWinter(backgroundWinter):
         qp.end()
     
     def drawOPRH(self, qp):
-        if self.oprh < -.1:
+        if self.oprh < -.1 and tab.utils.QC(self.oprh):
             pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
         else:
             pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
@@ -224,7 +224,7 @@ class plotWinter(backgroundWinter):
         if self.dgz_meanomeg == self.prof.missing:
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): N/A')
         else:    
-            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + str(round(self.oprh,2)))
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + tab.utils.FLOAT2STR(self.oprh,2))
 
     def drawPrecipType(self, qp):
         big = QtGui.QFont('Helvetica', 15, bold=True)
@@ -278,10 +278,10 @@ class plotWinter(backgroundWinter):
         qp.setFont(self.label_font)
         sep = 5
         y1 = self.layers_y1
-        label = ['Layer Depth: ' + str(int(self.dgz_depth)) + " ft (" + str(int(self.dgz_zbot)) + '-' +\
-                 str(int(self.dgz_ztop)) + ' ft msl)',\
-                 'Mean Layer RH: ' + str(round(self.dgz_meanrh,0)) + '%',\
-                 'Mean Layer PW: ' + str(round(self.dgz_pw,0)) + 'in']
+        label = ['Layer Depth: ' + tab.utils.INT2STR(self.dgz_depth) + " ft (" + tab.utils.INT2STR(self.dgz_zbot) + '-' +\
+                 tab.utils.INT2STR(self.dgz_ztop) + ' ft msl)',\
+                 'Mean Layer RH: ' + tab.utils.FLOAT2STR(self.dgz_meanrh,0) + ' %',\
+                 'Mean Layer PW: ' + tab.utils.FLOAT2STR(self.dgz_pw,1) + ' in']
         for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
@@ -291,8 +291,8 @@ class plotWinter(backgroundWinter):
         if self.dgz_meanomeg == 10*self.prof.missing:
             omeg = 'N/A'
         else:
-            omeg = str(round(self.dgz_meanomeg,0)) + ' ub/s'
-        label = ['Mean Layer MixRat: ' + str(round(self.dgz_meanq,1)) + 'g/kg', \
+            omeg = tab.utils.FLOAT2STR(self.dgz_meanomeg,1) + ' ub/s'
+        label = ['Mean Layer MixRat: ' + tab.utils.FLOAT2STR(self.dgz_meanq,1) + ' g/kg', \
                  'Mean Layer Omega: ' + omeg]
         for i in label: 
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
@@ -312,7 +312,7 @@ class plotWinter(backgroundWinter):
         rect1 = QtCore.QRect(self.lpad, self.init_phase_y1,  self.wid/10, self.label_height)
         if self.plevel > 100: 
             hght = tab.utils.M2FT(tab.interp.hght(self.prof, self.plevel))
-            string = "Inital Phase: " + self.init_st + ' from: ' + str(int(self.plevel)) + ' mb (' + str(int(hght)) + ' ft msl; ' + str(round(self.init_tmp,1)) + ' C)'
+            string = "Inital Phase: " + self.init_st + ' from: ' + tab.utils.INT2STR(self.plevel) + ' mb (' + tab.utils.INT2STR(hght) + ' ft msl; ' + tab.utils.FLOAT2STR(self.init_tmp,1) + ' C)'
         else:
             string = "Initial Phase:  No Precipitation layers found."
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, string)

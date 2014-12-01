@@ -310,6 +310,8 @@ class plotSkewT(backgroundSkewT):
         self.logp = np.log10(prof.pres)
         self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
+        self.plotdgz = kwargs.get('dgz', False)
+        self.interpWinds = kwargs.get('interpWinds', True)
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
@@ -428,10 +430,20 @@ class plotSkewT(backgroundSkewT):
             for profile in self.proflist:
                 self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres, width=1)
                 self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres, width=1)
-                self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
+                #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
+
+        if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
+            idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
+            pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
+            tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
+            self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
+
         self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
+
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
         if self.pcl is not None:
@@ -443,26 +455,38 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
-        self.draw_effective_layer(qp)
+        if self.plotdgz is False:
+            self.draw_effective_layer(qp)
+        if self.prof.omeg.count() != 0:
+            self.draw_omega_profile(qp)
         qp.end()
 
     def drawBarbs(self, qp):
-        i = 0
-        mask1 = self.u.mask
-        mask2 = self.pres.mask
-        mask = np.maximum(mask1, mask2)
-        pres = self.pres[~mask]
-        u = self.u[~mask]
-        v = self.v[~mask]
-        yvals = self.pres_to_pix(pres)
-        for y in yvals:
-            if y >= self.tly:
-                uu = u[i]
-                vv = v[i]
+        if self.interpWinds is False:
+            i = 0
+            mask1 = self.u.mask
+            mask2 = self.pres.mask
+            mask = np.maximum(mask1, mask2)
+            pres = self.pres[~mask]
+            u = self.u[~mask]
+            v = self.v[~mask]
+            yvals = self.pres_to_pix(pres)
+            for y in yvals:
+                if y >= self.tly:
+                    uu = u[i]
+                    vv = v[i]
+                    drawBarb( qp, self.barbx, y, uu, vv )
+                    i += 1
+                else:
+                    break
+        else:
+            for p in np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40):
+                uu, vv = tab.interp.components(self.prof, p)
+                if not tab.utils.QC(uu) or np.isnan(uu) or p < self.pmin:
+                    continue
+                y = self.pres_to_pix(p)
                 drawBarb( qp, self.barbx, y, uu, vv )
-                i += 1
-            else:
-                break
+
 
     def drawTitle(self, qp):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
@@ -487,6 +511,21 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(h/1000)+' km')
+
+    def draw_sig_levels(self, qp, plevel=1000, color="#FFFFFF"):
+        if not tab.utils.QC(plevel):
+            return
+        xbounds = [37,45]
+        z = tab.utils.M2FT(tab.interp.hght(self.prof, plevel))
+
+        x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+        y = self.pres_to_pix(plevel)
+        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(x[0], y, x[1], y)
+        rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
+        
 
     def draw_parcel_levels(self, qp):
         if self.pcl is None:
@@ -520,7 +559,59 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x[0], y, x[1], y)
             rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
-                   
+
+    def omeg_to_pix(self, omeg):
+        plus10_bound = -49
+        minus10_bound = -41
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        x1_0 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        if omeg > 0:
+            return ((x1_0 - x1_10)/(0.-10.)) * omeg + x1_0    
+        elif omeg < 0:
+            return ((x1_0 - x1_m10)/(0.+10.)) * omeg + x1_0 
+        else:
+            return x1_0
+
+    def draw_omega_profile(self, qp):
+        plus10_bound = -49
+        minus10_bound = -41
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        y1_m10 = self.pres_to_pix(1000)
+        y2_m10 = self.pres_to_pix(111)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
+        qp.setPen(pen)
+        qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        y1_10 = self.pres_to_pix(1000)
+        y2_10 = self.pres_to_pix(111)
+        qp.drawLine(x1_10, y1_10, x1_10, y2_10)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        y1 = self.pres_to_pix(1000)
+        y2 = self.pres_to_pix(111)
+        qp.drawLine(x1, y1, x1, y2)
+        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
+        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
+        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+        for i in range(len(self.prof.omeg)):
+            pres_y = self.pres_to_pix(self.prof.pres[i])
+            if self.prof.omeg[i] == np.ma.masked or self.prof.pres[i] < 111:
+                continue
+            if self.prof.omeg[i] > 0:
+                pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)
+            elif self.prof.omeg[i] < 0:
+                pen = QtGui.QPen(QtGui.QColor("#FF6666"), 1.5, QtCore.Qt.SolidLine)
+            else:
+                pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)                
+            x2 = self.omeg_to_pix(self.prof.omeg[i]*10.)
+            qp.drawLine(x1, pres_y, x2, pres_y)
+
 
     def draw_effective_layer(self, qp):
         '''
@@ -588,7 +679,7 @@ class plotSkewT(backgroundSkewT):
                 path.lineTo(x, y)
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None):
+    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None, label=True):
         '''
         Draw an environmental trace.
 
@@ -623,17 +714,18 @@ class plotSkewT(backgroundSkewT):
                     self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
                 qp.restore()
         qp.drawPath(path)
-        label = (1.8 * data[0]) + 32.
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        qp.setPen(pen)
-        qp.setBrush(brush)
-        rect = QtCore.QRectF(x[0]-8, y[0]+4, 16, 12)
-        qp.drawRect(rect)
-        pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        qp.setFont(self.environment_trace_font)
-        qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
+        if label is True:
+            label = (1.8 * data[0]) + 32.
+            pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
+            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+            qp.setPen(pen)
+            qp.setBrush(brush)
+            rect = QtCore.QRectF(x[0]-8, y[0]+4, 16, 12)
+            qp.drawRect(rect)
+            pen = QtGui.QPen(QtGui.QColor(color), 3, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.setFont(self.environment_trace_font)
+            qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
 
     def drawSTDEV(self, pres, data, stdev, color, qp, width=1):
         '''

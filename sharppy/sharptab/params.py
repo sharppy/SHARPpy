@@ -213,13 +213,13 @@ class Parcel(object):
         self.lfchght = ma.masked # Parcel LFC height (m AGL)
         self.elpres = ma.masked # Parcel EL pressure (mb)
         self.elhght = ma.masked # Parcel EL height (m AGL)
-        self.mplpres = ma.masked
+        self.mplpres = ma.masked # Maximum Parcel Level
         self.mplhght = ma.masked
         self.bplus = ma.masked # Parcel CAPE (J/kg)
         self.bminus = ma.masked # Parcel CIN (J/kg)
         self.bfzl = ma.masked # Parcel CAPE up to freezing level (J/kg)
-        self.b3km = ma.masked
-        self.b6km = ma.masked
+        self.b3km = ma.masked # Parcel CAPE up to 3 km
+        self.b6km = ma.masked # Parcel CAPE up to 6 km
         self.p0c = ma.masked
         self.pm10c = ma.masked
         self.pm20c = ma.masked
@@ -248,7 +248,8 @@ def dgz(prof):
         Dendritic Growth Zone Levels
     
         This function finds the pressure levels for the dendritic 
-        growth zone (from -12 C to -17 C).
+        growth zone (from -12 C to -17 C).  If either temperature cannot be found,
+        it is set to be the surface pressure.
 
         Parameters
         ----------
@@ -265,6 +266,11 @@ def dgz(prof):
 
     pbot = temp_lvl(prof, -12)
     ptop = temp_lvl(prof, -17)
+
+    if not utils.QC(pbot):
+        pbot = prof.pres[prof.sfc]
+    if not utils.QC(ptop):
+        ptop = prof.pres[prof.sfc]
 
     return pbot, ptop
 
@@ -1068,7 +1074,8 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
 def parcelTraj(prof, parcel, smu=None, smv=None):
     '''
         Parcel Trajectory Routine (Storm Slinky)
-        
+        Coded by Greg Blumberg
+
         This routine is a simple 3D thermodynamic parcel trajectory model that
         takes a thermodynamic profile and a parcel trace and computes the
         trajectory of a parcel that is lifted to its LFC, then given a 5 m/s
@@ -1503,6 +1510,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         pe2 = prof.pres[i]
         h2 = prof.hght[i]
         te2 = prof.vtmp[i]
+        #te2 = thermo.virtemp(prof.pres[i], prof.tmpc[i], prof.dwpc[i])
         tp2 = thermo.wetlift(pe1, tp1, pe2)
         tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
         tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
@@ -1512,7 +1520,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
 
-        
         # Add layer energy to total positive if lyre > 0
         if lyre > 0: totp += lyre
         # Add layer energy to total negative if lyre < 0, only up to EL
@@ -2537,6 +2544,7 @@ def pbl_top(prof):
     level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
 
     return prof.pres[level]
+
 
 
 

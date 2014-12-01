@@ -14,7 +14,9 @@ from advection import *
 from stp import *
 from barbs import *
 from winter import *
-from SPCWindow import *
 from fire import *
 from ship import *
+from stpef import *
+from vrot import *
+from SPCWindow import *
 __all__ = []
