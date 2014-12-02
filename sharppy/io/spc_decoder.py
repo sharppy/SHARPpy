@@ -2,6 +2,8 @@ import urllib2
 import sys
 import numpy as np
 from datetime import datetime
+from StringIO import StringIO
+
 
 '''
     SPC/SND Decoders
@@ -45,10 +47,10 @@ class SNDFile(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urllib2.urlopen(self.filename)
+            file_data = urllib2.urlopen(self.filename)
         except:
             try:
-                f = open(self.filename, 'r')
+                file_data = open(self.filename, 'r')
             except:
                 print self.filename + " unable to be opened."
                 sys.exit()
