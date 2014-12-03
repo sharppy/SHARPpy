@@ -40,13 +40,11 @@ class backgroundText(QtGui.QFrame):
         self.brx = self.wid; self.bry = self.hgt
         ## do a DPI check to make sure
         ## the text is sized properly!
-        if self.physicalDpiX() > 75:
-            fsize = np.floor(.06 * self.hgt)
-        else:
-            fsize = np.floor(.06 * self.hgt)
+        fsize = np.floor(.06 * self.hgt)
+        fsize = np.floor(.06 * self.hgt)
+        self.tpad = np.floor(.03 * self.hgt)
         ## set the font, get the metrics and height of the font
         self.label_font = QtGui.QFont('Helvetica')
-        print fsize
         self.label_font.setPixelSize(fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.label_height = self.label_metrics.xHeight() + self.tpad
