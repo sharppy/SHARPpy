@@ -25,21 +25,24 @@ class backgroundKinematics(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
+
         self.lpad = 5; self.rpad = 5
         self.tpad = 5; self.bpad = 5
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
-        self.label_font = QtGui.QFont('Helvetica', fsize)
-        self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.label_height = self.label_metrics.xHeight() + self.tpad
-        self.ylast = self.label_height
-        self.barby = 0
+
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+
+        fsize = np.floor(.06 * self.hgt)
+        self.tpad = np.floor(.03 * self.hgt)
+
+        self.label_font = QtGui.QFont('Helvetica')
+        self.label_font.setPixelSize(fsize)
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.label_height = self.label_metrics.xHeight() + self.tpad
+        self.ylast = self.label_height
+        self.barby = 0
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()

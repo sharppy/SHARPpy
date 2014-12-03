@@ -29,16 +29,7 @@ class backgroundSTP(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-        if self.physicalDpiX() > 75:
-            fsize = 7
-        else:
-            fsize = 8
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
-        self.box_font = QtGui.QFont('Helvetica', fsize)
-        self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
-        self.box_metrics = QtGui.QFontMetrics(self.box_font)
-        self.plot_height = self.plot_metrics.xHeight() + 5
-        self.box_height = self.box_metrics.xHeight() + 5
+
         self.lpad = 0.; self.rpad = 0.
         self.tpad = 15.; self.bpad = 15.
         self.wid = self.size().width() - self.rpad
@@ -46,6 +37,17 @@ class backgroundSTP(QtGui.QFrame):
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
         self.stpmax = 11.; self.stpmin = 0.
+
+        fsize = np.floor(.06 * self.hgt)
+        self.textpad = np.floor(.03 * self.hgt)
+
+        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
+        self.box_font = QtGui.QFont('Helvetica', fsize)
+        self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+        self.box_metrics = QtGui.QFontMetrics(self.box_font)
+        self.plot_height = self.plot_metrics.xHeight() + self.textpad
+        self.box_height = self.box_metrics.xHeight() + self.textpad
+
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()

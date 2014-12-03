@@ -38,11 +38,16 @@ class backgroundAnalogues(QtGui.QFrame):
         ## Set the padding constants
         self.lpad = 5; self.rpad = 5
         self.tpad = 5; self.bpad = 5
-        ## take care of dynamically sizing the text based on DPI
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
+
+        ## set the window metrics (height, width)
+        self.wid = self.size().width()
+        self.hgt = self.size().height()
+        self.tlx = self.rpad; self.tly = self.tpad
+        self.brx = self.wid; self.bry = self.hgt
+
+        fsize = np.floor(.06 * self.hgt)
+        self.tpad = np.floor(.03 * self.hgt)
+
         ## set various fonts
         self.title_font = QtGui.QFont('Helvetica', fsize + 4)
         self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
@@ -60,11 +65,7 @@ class backgroundAnalogues(QtGui.QFrame):
         ## where in pixel space the last line of text ends
         self.ylast = self.tpad
         self.text_start = 0
-        ## set the window metrics (height, width)
-        self.wid = self.size().width()
-        self.hgt = self.size().height()
-        self.tlx = self.rpad; self.tly = self.tpad
-        self.brx = self.wid; self.bry = self.hgt
+
         ## The widget will be drawn on a QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
