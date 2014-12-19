@@ -321,6 +321,26 @@ class SkewApp(QWidget):
         self.insets["COND STP"] = stpef
         self.insets["VROT"] = vrot
 
+    def clearWidgets(self):
+        """
+        Clear the entire frame.
+        :return:
+        """
+
+        for inset in self.insets.keys():
+            self.insets[inset].deleteLater()
+
+        self.sound.deleteLater()
+        self.hodo.deleteLater()
+        self.speed_vs_height.deleteLater()
+        self.inferred_temp_advection.deleteLater()
+        self.storm_slinky.deleteLater()
+        self.thetae_vs_pressure.deleteLater()
+        self.srwinds_vs_height.deleteLater()
+        self.watch_type.deleteLater()
+        self.convective.deleteLater()
+        self.kinematic.deleteLater()
+
     def paintEvent(self, e):
         """
         The paint event will handle the placing of widgets in their
@@ -369,10 +389,10 @@ class SkewApp(QWidget):
         key = e.key()
         length = len(self.profs)
         if key == Qt.Key_Right:
-            if self.current_index != length - 1:
-                self.current_index += 1
+            if self.current_idx != length - 1:
+                self.current_idx += 1
             else:
-                self.current_index = 0
+                self.current_idx = 0
             self.changeflag = True
             self.clearWidgets()
             self.initData()
@@ -380,10 +400,10 @@ class SkewApp(QWidget):
             return
 
         if key == Qt.Key_Left:
-            if self.current_index != 0:
-                self.current_index -= 1
-            elif self.current_index == 0:
-                self.current_index = length -1
+            if self.current_idx != 0:
+                self.current_idx -= 1
+            elif self.current_idx == 0:
+                self.current_idx = length -1
             self.changeflag = True
             self.clearWidgets()
             self.initData()
