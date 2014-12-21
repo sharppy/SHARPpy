@@ -157,6 +157,7 @@ class SkewApp(QWidget):
                          "  border-style: solid;"
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
+
         self.brand = QLabel('SHARPpy Beta')
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
@@ -164,6 +165,7 @@ class SkewApp(QWidget):
                              "  text-align: right;"
                              "  font-size: 11px;"
                              "  color: #FFFFFF;}")
+
         ## this layout manager will handle the upper right portion of the window
         self.grid2 = QGridLayout()
         self.grid2.setHorizontalSpacing(0)
@@ -261,6 +263,12 @@ class SkewApp(QWidget):
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
 
+    def saveimage(self):
+        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
+        if result:
+            pixmap = QPixmap.grabWidget(self)
+            pixmap.save(fileName, 'PNG', 100)
+
     def initData(self):
         """
         Initializes all the widgets for the window.
@@ -298,7 +306,6 @@ class SkewApp(QWidget):
         self.kinematic = plotKinematics(self.prof)
 
         self.makeInsets()
-        #self.makeInsetMenu()
 
     def makeInsets(self):
         """
@@ -441,14 +448,15 @@ class SkewApp(QWidget):
             self.setFocus()
 
     def swapInset(self):
-        # This will swap either the left or right inset depending on whether or not the
-        # self.inset_to_swap value is LEFT or RIGHT.
+        ## This will swap either the left or right inset depending on whether or not the
+        ## self.inset_to_swap value is LEFT or RIGHT.
         a = self.menu_ag.checkedAction()
 
         if self.inset_to_swap == "LEFT":
             if self.left_inset == "WINTER":
                 self.sound.deleteLater()
-                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
+                    title=self.plot_title, brand=self.brand, dgz=False)
 
             self.avaliable_insets.remove(a.text())
             self.avaliable_insets.append(self.left_inset)
@@ -459,7 +467,8 @@ class SkewApp(QWidget):
         elif self.inset_to_swap == "RIGHT":
             if self.right_inset == "WINTER":
                 self.sound.deleteLater()
-                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=False)
+                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
+                    title=self.plot_title, brand=self.brand, dgz=False)
 
             self.avaliable_insets.remove(a.text())
             self.avaliable_insets.append(self.right_inset)
