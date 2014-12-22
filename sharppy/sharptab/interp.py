@@ -96,6 +96,28 @@ def temp(prof, p):
     # this requirement.
     return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.tmpc[::-1])
 
+def thetae(prof, p):
+    '''
+        Interpolates the given data to calculate a temperature at a given pressure
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        p : number, numpy array
+        Pressure (hPa) of the level for which temperature is desired
+        
+        Returns
+        -------
+        Temperature (C) at the given pressure
+        
+        '''
+    # Note: numpy's interpoloation routine expects the interpoloation
+    # routine to be in ascending order. Because pressure decreases in the
+    # vertical, we must reverse the order of the two arrays to satisfy
+    # this requirement.
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.thetae[::-1])
+
 
 def dwpt(prof, p):
     '''

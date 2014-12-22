@@ -932,8 +932,9 @@ def mean_thetae(prof, pbot=None, ptop=None, dp=-1, exact=False):
         temp = interp.temp(prof, p)
         dwpt = interp.dwpt(prof, p)
         thetae = np.empty(p.shape)
-        for i in np.arange(0, len(thetae), 1):
-            thetae[i] = thermo.thetae(p[i], temp[i], dwpt[i])
+        #for i in np.arange(0, len(thetae), 1):
+        #   thetae[i] = thermo.thetae(p[i], temp[i], dwpt[i])
+        thtae = interp.thetae(prof, p)
         thtae = ma.average(thetae, weights=p)
     return thtae
 
@@ -1274,8 +1275,10 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tv_env = thermo.virtemp(pp, tmp_env_theta, tmp_env_dwpt)
     tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
     tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
-    
-    lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
+
+    tidx1 = np.arange(0, len(tdef)-1, 1)
+    tidx2 = np.arange(1, len(tdef), 1)
+    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx1]-hh[tidx2])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
     
@@ -1458,8 +1461,11 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tv_env = thermo.virtemp(pp, tmp_env_theta, tmp_env_dwpt)
     tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
     tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
-    
-    lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
+
+
+    tidx1 = np.arange(0, len(tdef)-1, 1)
+    tidx2 = np.arange(1, len(tdef), 1)
+    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx1]-hh[tidx2])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
     
@@ -2024,7 +2030,6 @@ def convective_temp(prof, **kwargs):
     # up more than 25C, don't compute.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
     if pcl.bplus == 0. or pcl.bminus < mincinh: return ma.masked
-    
     excess = dwpc - tmpc
     if excess > 0: tmpc = tmpc + excess + 4.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
@@ -2243,8 +2248,8 @@ def mmp(prof, **kwargs):
     for b in xrange(len(pbots)):
         for t in xrange(len(ptops)):
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
-            possible_shears[b,t] = utils.comp2vec(u_shear, v_shear)[1]
-    max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.flatten()))
+            possible_shears[b,t] = utils.mag(u_shear, v_shear)
+    max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.ravel()))
     lr38 = lapse_rate(prof, 3000., 8000., pres=False)
     plower = interp.pres(prof, interp.to_msl(prof, 3000.))
     pupper = interp.pres(prof, interp.to_msl(prof, 12000.))
@@ -2389,36 +2394,6 @@ def dcape(prof):
     hght = prof.hght[~mask]
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
-    """
-    i = len(prof.tmpc) - 1
-    while(prof.pres[i] < prof.pres[prof.sfc] - 400 ):
-        i = i-1
-    p5 = i
-    if prof.pres[i] == prof.pres[prof.sfc] - 400:
-        p5 = p5-1
-
-    # Find the minimum average theta-e in a 100 mb layer
-    mine = 1000.0
-    minp = -999.0
-    for i in xrange(0, p5+1, 1):
-        if utils.QC(prof.dwpc[i]) and utils.QC(interp.temp(prof, prof.pres[i]+100)):
-            thta_e_mean = mean_thetae(prof, pbot=pres[i], ptop=pres[i]-100.)
-            if utils.QC(thta_e_mean) and (thta_e_mean < mine):
-                mine = thta_e_mean
-                minp = prof.pres[i] - 50.0
-    if minp < 0:
-        return prof.missing, [-9999], [-9999]
-
-    upper = minp
-    i = len(prof.tmpc) - 1
-    while(prof.pres[i] < upper):
-        i = i - 1
-    uptr = i 
-    if prof.pres[i] == upper:
-        uptr = uptr - 1
-    print "REAL CODE:", uptr
-    print "REAL CODE UPPER: ", upper
-    """
     idx = np.where(prof.pres >= sfc_pres - 400.)[0]
 
     # Find the minimum average theta-e in a 100 mb layer
