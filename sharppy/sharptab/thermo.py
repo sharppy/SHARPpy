@@ -105,7 +105,7 @@ def theta(p, t, p2=1000.):
     Potential temperature (C)
 
     '''
-        return ((t + ZEROCNK) * np.power((p2 / p),ROCP)) - ZEROCNK
+    return ((t + ZEROCNK) * np.power((p2 / p),ROCP)) - ZEROCNK
 
 
 def thetaw(p, t, td):
