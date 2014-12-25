@@ -14,6 +14,7 @@ import urllib
 import numpy as np
 
 class Thread(QThread):
+    progress = Signal()
     def __init__(self, **kwargs):
         super(Thread, self).__init__()
         self.model = kwargs.get("model")
@@ -50,15 +51,19 @@ class Thread(QThread):
                     if j == 0:
                         profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+                        self.progress.emit()
+                        print "emit, ", i
                     else:
                         profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
                 self.profs.append(profs)
+
         else:
             for i in self.prof_idx[:]:
                 print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
                 self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
                     tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+                self.progress.emit()
 
 
     def run(self):
@@ -72,6 +77,7 @@ class SkewApp(QWidget):
     """
 
     def __init__(self, **kwargs):
+
         super(SkewApp, self).__init__()
         """
         """
@@ -83,6 +89,8 @@ class SkewApp(QWidget):
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.link = kwargs.get("path", None)
+
+        self.progressDialog = QProgressDialog()
 
         ## these are the boolean flags used throughout the program
         self.changeflag = True
@@ -121,8 +129,14 @@ class SkewApp(QWidget):
         ## if the profile is a model profile, load it from the model
         ## download thread
         else:
+            self.progressDialog.setMinimum(0)
+            self.progressDialog.setMaximum(len(self.prof_idx))
+            self.progressDialog.setValue(0)
+            self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
             self.thread = Thread(model=self.model, loc=self.loc, run=self.run, idx=self.prof_idx)
+            self.thread.progress.connect(self.progress_bar)
             self.thread.start()
+            self.progressDialog.open()
             while not self.thread.isFinished():
                 QCoreApplication.processEvents()
             ## return the data from the thread
@@ -262,6 +276,12 @@ class SkewApp(QWidget):
         prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
                                 wdir=wdir, wspd=wspd, location=self.loc)
         return prof, plot_title
+
+    @Slot()
+    def progress_bar(self):
+        value = self.progressDialog.value()
+        self.progressDialog.setValue(value + 1)
+        self.progressDialog.setLabelText("Profile " + str(value + 1) + "/" + str(self.progressDialog.maximum()))
 
     def saveimage(self):
         fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
