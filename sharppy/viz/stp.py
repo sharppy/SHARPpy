@@ -38,11 +38,12 @@ class backgroundSTP(QtGui.QFrame):
         self.brx = self.wid; self.bry = self.hgt
         self.stpmax = 11.; self.stpmin = 0.
 
-        fsize = np.floor(.06 * self.hgt)
+        fsize1 = np.floor(.08 * self.hgt)
+        fsize2 = np.floor(.05 * self.hgt)
         self.textpad = np.floor(.03 * self.hgt)
 
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
-        self.box_font = QtGui.QFont('Helvetica', fsize)
+        self.plot_font = QtGui.QFont('Helvetica', fsize1 )
+        self.box_font = QtGui.QFont('Helvetica', fsize2)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
         self.plot_height = self.plot_metrics.xHeight() + self.textpad
