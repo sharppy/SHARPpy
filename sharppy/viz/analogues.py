@@ -45,13 +45,16 @@ class backgroundAnalogues(QtGui.QFrame):
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
 
-        fsize = np.floor(.06 * self.hgt)
+        fsize1 = np.floor(.09 * self.hgt)
+        fsize2 = np.floor(.07 * self.hgt)
+        fsize3 = np.floor(.06 * self.hgt)
+
         self.tpad = np.floor(.03 * self.hgt)
 
         ## set various fonts
-        self.title_font = QtGui.QFont('Helvetica', fsize + 4)
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 2)
-        self.match_font = QtGui.QFont('Helvetica', fsize)
+        self.title_font = QtGui.QFont('Helvetica', fsize1)
+        self.plot_font = QtGui.QFont('Helvetica', fsize2)
+        self.match_font = QtGui.QFont('Helvetica', fsize3)
         ## get the metrics on the fonts. This is used to get their size.
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
