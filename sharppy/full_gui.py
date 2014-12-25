@@ -69,11 +69,11 @@ class MainWindow(QWidget):
         self.view = self.create_map_view()
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
+        self.select_flag = False
         self.all_profs = QPushButton("Select All")
         self.all_profs.clicked.connect(self.select_all)
 
         self.profile_list = self.list_profiles()
-        self.profile_list.clicked.connect(self.get_time)
 
         ## create subwidgets that will hold the individual GUI items
         self.left_data_frame = QWidget()
@@ -311,7 +311,8 @@ class MainWindow(QWidget):
             self.offset = 4
             self.available = 6
         elif self.model == "SREF":
-            self.duration = 30
+            self.delta = 1
+            self.duration = 84
             self.offset = 4
             self.available = 3
 
@@ -334,8 +335,6 @@ class MainWindow(QWidget):
 
         self.run_dropdown.update()
 
-
-
     def map_link(self, url):
         """
         Change the text of the button based on the user click.
@@ -351,6 +350,16 @@ class MainWindow(QWidget):
         if self.loc is None:
             return
         else:
+            self.prof_idx = []
+            selected = self.profile_list.selectedItems()
+            for item in xrange(len(selected)):
+                #text = item.text()
+                if item in self.prof_idx:
+                    continue
+                else:
+                    self.prof_idx.append(item)
+            self.prof_time = selected[0].text()
+            self.prof_idx.sort()
             self.skewApp()
 
 
@@ -380,6 +389,7 @@ class MainWindow(QWidget):
         """
         Get the user's profile date selection
         """
+
         self.prof_time = self.profile_list.currentItem().text()
         item = self.profile_list.currentIndex().row()
         if item in self.prof_idx:
@@ -390,8 +400,20 @@ class MainWindow(QWidget):
 
     def select_all(self):
         items = self.profile_list.count()
-        for i in range(items):
-            self.profile_list.item(i).setSelected(True)
+        if not self.select_flag:
+            for i in range(items):
+                if self.profile_list.item(i).text() in self.prof_idx:
+                    continue
+                else:
+                    self.profile_list.item(i).setSelected(True)
+            self.all_profs.setText("Deselect All")
+            self.select_flag = True
+        else:
+            for i in range(items):
+                self.profile_list.item(i).setSelected(False)
+            self.all_profs.setText("Select All")
+            self.select_flag = False
+
 
     def skewApp(self):
         """
