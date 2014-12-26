@@ -1,7 +1,4 @@
 from distutils.core import setup
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
-import numpy
 import os, sys
 
 pkgname = "SHARPpy"
@@ -28,7 +25,4 @@ setup(
     include_package_data=True,
     long_description="",
     classifiers=["Development Status :: 2 - Pre-Alpha"],
-      
-    cmdclass = {'build_ext': build_ext},
-    ext_modules = [Extension("cthermo", ["sharppy/sharptab/cthermo.pyx"], include_dirs=[numpy.get_include()])]
 )
