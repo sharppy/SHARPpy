@@ -44,7 +44,7 @@ class Thread(QThread):
         self.d = d
 
         if self.model == "SREF":
-            for i in range(len(d.wdir[0]))[:]:
+            for i in self.prof_idx:
                 profs = []
                 for j in range(len(d.wdir)):
                     print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
@@ -52,14 +52,13 @@ class Thread(QThread):
                         profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
                         self.progress.emit()
-                        print "emit, ", i
                     else:
                         profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
                 self.profs.append(profs)
 
         else:
-            for i in self.prof_idx[:]:
+            for i in self.prof_idx:
                 print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
                 self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
                     tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
