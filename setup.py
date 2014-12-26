@@ -13,8 +13,8 @@ sys.path.pop()
 setup(
     name = pkgname,
     version = ver,
-    author = "Patrick Marsh & John Hart",
-    author_email = "patrick.marsh@noaa.gov & john.hart@noaa.gov",
+    author = "Patrick Marsh, John Hart, Kelton Halbert, and Greg Blumberg",
+    author_email = "patrick.marsh@noaa.gov, john.hart@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu",
     description = ("Sounding/Hodograph Analysis and Research Program " \
         "for Python"),
     license = "BSD",
