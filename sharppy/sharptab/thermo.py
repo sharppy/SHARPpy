@@ -4,7 +4,6 @@ import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab.utils import *
 from sharppy.sharptab.constants import *
-import cthermo
 
 __all__ = ['drylift', 'thalvl', 'lcltemp', 'theta', 'wobf']
 __all__ += ['satlift', 'wetlift', 'lifted', 'vappres', 'mixratio']

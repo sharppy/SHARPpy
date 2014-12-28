@@ -85,7 +85,7 @@ class DefineParcel(object):
             self.presval = kwargs.get('pres', 100)
             self.__effective(prof, **kwargs)
         else:
-            print 'Defaulting to Surface Parcel'
+            #print 'Defaulting to Surface Parcel'
             self.presval = kwargs.get('pres', prof.gSndg[prof.sfc])
             self.__sfc(prof)
     

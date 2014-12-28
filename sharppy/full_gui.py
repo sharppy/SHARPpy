@@ -160,7 +160,6 @@ class MainWindow(QWidget):
 
     def openFile(self):
         fname, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-        print fname
         self.model = "Archive"
         self.location = None
         self.prof_time = None

@@ -391,7 +391,7 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
 
     # Case: non-snow init...always too cold - Initphase & sleet
     elif init_phase == 1 and tpos <= 0 and prof.tmpc[prof.get_sfc()] <= 0:
-        print interp.to_agl(prof, interp.hght(prof, init_lvl))
+        #print interp.to_agl(prof, interp.hght(prof, init_lvl))
         if interp.to_agl(prof, interp.hght(prof, init_lvl)) >= 3000:
             if init_temp <= -4:
                 precip_type = "Sleet and Snow."

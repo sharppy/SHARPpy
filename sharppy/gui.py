@@ -26,7 +26,7 @@ centralWidget.setLayout(grid)
 
 # Handle the Upper Left
 ## plot the main sounding
-#print prof.right_scp, prof.left_scp
+##print prof.right_scp, prof.left_scp
 brand = 'Oklahoma Weather Lab'
 sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
