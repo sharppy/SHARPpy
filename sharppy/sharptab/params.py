@@ -1795,7 +1795,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     bulk_rich(prof, pcl)
     
     # Save params
-    if pcl.bplus == 0: pcl.bminus = 0.
+    if np.floor(pcl.bplus) == 0: pcl.bminus = 0.
     pcl.ptrace = ma.concatenate((ptrace, ptraces))
     pcl.ttrace = ma.concatenate((ttrace, ttraces))
     return pcl
