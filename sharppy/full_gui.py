@@ -1,17 +1,9 @@
-from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
-from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
-from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.viz import SkewApp
 from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
 import sys
-from subprocess import call
-from StringIO import StringIO
-import sharppy.sharptab.profile as profile
-import urllib
-import numpy as np
 
 
 # Create an application
