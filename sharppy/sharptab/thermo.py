@@ -217,22 +217,18 @@ def wobf(t):
     '''
     t = t - 20
     if type(t) == type(np.array([t])):
-        npol = 1 + t * (-8.841660499999999e-3 + t * ( 1.4714143e-4 + t * (-9.671989000000001e-7 + t * (-3.2607217e-8 + t * (-3.8598073e-10)))))
+        npol = 1. + t * (-8.841660499999999e-3 + t * ( 1.4714143e-4 + t * (-9.671989000000001e-7 + t * (-3.2607217e-8 + t * (-3.8598073e-10)))))
         npol = 15.13 / (np.power(npol,4))
         ppol = t * (4.9618922e-07 + t * (-6.1059365e-09 + t * (3.9401551e-11 + t * (-1.2588129e-13 + t * (1.6688280e-16)))))
         ppol = 1 + t * (3.6182989e-03 + t * (-1.3603273e-05 + ppol))
         ppol = (29.93 / np.power(ppol,4)) + (0.96 * t) - 14.8
-        
         correction = np.zeros(t.shape, dtype=np.float64)
         correction[t <= 0] = npol[t <= 0]
         correction[t > 0] = ppol[t > 0]
         return correction
-    
     else:
         if t is np.ma.masked:
             return t
-        #t = t + 20.
-        #return cthermo.wobf(t)
         if t <= 0:
             npol = 1. + t * (-8.841660499999999e-3 + t * ( 1.4714143e-4 + t * (-9.671989000000001e-7 + t * (-3.2607217e-8 + t * (-3.8598073e-10)))))
             npol = 15.13 / (np.power(npol,4))
@@ -263,8 +259,6 @@ def satlift(p, thetam):
 
     '''
     #if type(p) == type(np.array([p])) or type(thetam) == type(np.array([thetam])):
-    if p is np.ma.masked or thetam is np.ma.masked:
-        return np.ma.masked
     if np.fabs(p - 1000.) - 0.001 <= 0: return thetam
     eor = 999
     while np.fabs(eor) - 0.1 > 0:
@@ -305,9 +299,7 @@ def wetlift(p, t, p2):
     thta = theta(p, t, 1000.)
     if thta is np.ma.masked or p2 is np.ma.masked:
         return np.ma.masked
-    c1 = wobf(thta)
-    c2 = wobf(t)
-    thetam = thta - c1 + c2
+    thetam = thta - wobf(thta) + wobf(t)
     return satlift(p2, thetam)
 
 
