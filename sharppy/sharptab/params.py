@@ -327,7 +327,7 @@ def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
         except:
             sfc = prof.pres[prof.sfc]
             p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
-            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p8km) 
+            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p6km)
     
     sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
@@ -820,6 +820,7 @@ def mean_omega(prof, pbot=None, ptop=None, dp=-1, exact=False):
     if not utils.QC(interp.omeg(prof, ptop)): return ma.masked
     if exact:
         # This condition of the if statement is not tested
+        omeg = prof.omeg
         ind1 = np.where(pbot > prof.pres)[0].min()
         ind2 = np.where(ptop < prof.pres)[0].max()
         omeg1 = interp.omeg(prof, pbot)
@@ -2352,7 +2353,7 @@ def sig_severe(prof, **kwargs):
         except:
             sfc = prof.pres[prof.sfc]
             p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
-            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p8km) 
+            sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p6km)
 
     sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
