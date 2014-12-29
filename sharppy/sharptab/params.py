@@ -1278,7 +1278,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
 
     tidx1 = np.arange(0, len(tdef)-1, 1)
     tidx2 = np.arange(1, len(tdef), 1)
-    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx1]-hh[tidx2])
+    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx2]-hh[tidx1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
     
@@ -1465,7 +1465,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
 
     tidx1 = np.arange(0, len(tdef)-1, 1)
     tidx2 = np.arange(1, len(tdef), 1)
-    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx1]-hh[tidx2])
+    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx2]-hh[tidx1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
     
