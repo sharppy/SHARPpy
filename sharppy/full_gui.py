@@ -243,6 +243,7 @@ class MainWindow(QWidget):
         timelist = []
 
         if self.model == "Observed":
+            self.set_model_dt()
             time = self.__date()
             timelist = ['Latest', time.strftime('%Y:%m:%d %HZ')]
             delta = date.timedelta(hours=self.delta)
@@ -288,17 +289,22 @@ class MainWindow(QWidget):
             self.available = 12
         elif self.model == "RAP" or self.model == "HRRR":
             self.delta = 1
-            self.duration = 17
+            self.duration = 15
             self.offset = 1
             self.available = 1
-        elif self.model.startswith("NAM"):
+        elif self.model == "NAM":
             self.delta = 1
             self.duration = 83
             self.offset = 3
             self.available = 6
+        elif self.model == "NAM4KM":
+            self.delta = 1
+            self.duration = 60
+            self.offset = 3
+            self.available = 6
         elif self.model.startswith("GFS"):
             self.delta = 3
-            self.duration = 119
+            self.duration = 60
             self.offset = 4
             self.available = 6
         elif self.model == "SREF":
