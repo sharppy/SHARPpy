@@ -3,6 +3,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
+import numpy as np
 import sys
 
 
@@ -369,12 +370,13 @@ class MainWindow(QWidget):
         else:
             self.prof_idx = []
             selected = self.profile_list.selectedItems()
-            for item in xrange(len(selected)):
-                #text = item.text()
-                if item in self.prof_idx:
+            for item in selected:
+                idx = self.profile_list.indexFromItem(item).row()
+                if idx in self.prof_idx:
                     continue
                 else:
-                    self.prof_idx.append(item)
+                    self.prof_idx.append(idx)
+
             self.prof_time = selected[0].text()
             self.prof_idx.sort()
             self.skewApp()

@@ -300,7 +300,7 @@ class SkewApp(QWidget):
 
         ## set the plot title that will be displayed in the Skew frame.
         if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.current_idx], "%Y%m%d/%H%M") \
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
                 + "  (" + self.run + "  " + self.model + ")"
 
         if self.model == "SREF":
