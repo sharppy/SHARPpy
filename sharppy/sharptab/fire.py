@@ -7,7 +7,7 @@ import numpy as np
 def fosberg(prof):
     '''
         The Fosberg Fire Weather Index
-        Adapted from code by Rich Thompson - NOAA Storm Prediction Center
+        Adapted from code donated by Rich Thompson - NOAA Storm Prediction Center
 
         Description:
         The FWI (Fire Weather Index) is defined by a quantitative model that provides
@@ -24,7 +24,9 @@ def fosberg(prof):
         The SPC fire weather verification scheme uses the Fosberg Index, but with a check for
         both temperature (60F) and adjective fire danger rating (3-High, 4-Very High, 5-Extreme).
 
-        Source - http://www.spc.noaa.gov/exper/firecomp/INFO/fosbinfo.html
+        Description Source - http://www.spc.noaa.gov/exper/firecomp/INFO/fosbinfo.html
+
+        WARNING: This function has not been fully tested.
 
         Parameters
         ----------
