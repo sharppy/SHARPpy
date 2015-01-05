@@ -204,43 +204,43 @@ class Parcel(object):
         self.dwpc = ma.masked # Parcel beginning dewpoint (C)
         self.ptrace = ma.masked # Parcel trace pressure (mb)
         self.ttrace = ma.masked # Parcel trace temperature (C)
-        self.blayer = ma.masked 
-        self.tlayer = ma.masked
-        self.entrain = 0.
-        self.lclpres = ma.masked # Parcel LCL pressure (mb)
+        self.blayer = ma.masked # Pressure of the bottom of the layer the parcel is lifted (mb)
+        self.tlayer = ma.masked # Pressure of the top of the layer the parcel is lifted (mb)
+        self.entrain = 0. # A parcel entrainment setting (not yet implemented)
+        self.lclpres = ma.masked # Parcel LCL (lifted condensation level) pressure (mb)
         self.lclhght = ma.masked # Parcel LCL height (m AGL)
-        self.lfcpres = ma.masked # Parcel LFC pressure (mb)
+        self.lfcpres = ma.masked # Parcel LFC (level of free convection) pressure (mb)
         self.lfchght = ma.masked # Parcel LFC height (m AGL)
-        self.elpres = ma.masked # Parcel EL pressure (mb)
+        self.elpres = ma.masked # Parcel EL (equilibrium level) pressure (mb)
         self.elhght = ma.masked # Parcel EL height (m AGL)
-        self.mplpres = ma.masked # Maximum Parcel Level
-        self.mplhght = ma.masked
+        self.mplpres = ma.masked # Maximum Parcel Level (mb)
+        self.mplhght = ma.masked # Maximum Parcel Level (m AGL)
         self.bplus = ma.masked # Parcel CAPE (J/kg)
         self.bminus = ma.masked # Parcel CIN (J/kg)
         self.bfzl = ma.masked # Parcel CAPE up to freezing level (J/kg)
-        self.b3km = ma.masked # Parcel CAPE up to 3 km
-        self.b6km = ma.masked # Parcel CAPE up to 6 km
-        self.p0c = ma.masked
-        self.pm10c = ma.masked
-        self.pm20c = ma.masked
-        self.pm30c = ma.masked
-        self.hght0c = ma.masked
-        self.hghtm10c = ma.masked
-        self.hghtm20c = ma.masked
-        self.hghtm30c = ma.masked
-        self.wm10c = ma.masked
-        self.wm20c = ma.masked
-        self.wm30c = ma.masked
-        self.li5 = ma.masked
-        self.li3 = ma.masked
-        self.brnshear = ma.masked
-        self.brnu = ma.masked
-        self.brnv = ma.masked
-        self.brn = ma.masked
-        self.limax = ma.masked
-        self.limaxpres = ma.masked
-        self.cap = ma.masked
-        self.cappres = ma.masked
+        self.b3km = ma.masked # Parcel CAPE up to 3 km (J/kg)
+        self.b6km = ma.masked # Parcel CAPE up to 6 km (J/kg)
+        self.p0c = ma.masked # Pressure value at 0 C  (mb)
+        self.pm10c = ma.masked # Pressure value at -10 C (mb)
+        self.pm20c = ma.masked # Pressure value at -20 C (mb)
+        self.pm30c = ma.masked # Pressure value at -30 C (mb)
+        self.hght0c = ma.masked # Height value at 0 C (m AGL)
+        self.hghtm10c = ma.masked # Height value at -10 C (m AGL)
+        self.hghtm20c = ma.masked # Height value at -20 C (m AGL)
+        self.hghtm30c = ma.masked # Height value at -30 C (m AGL)
+        self.wm10c = ma.masked # w velocity at -10 C ?
+        self.wm20c = ma.masked # w velocity at -20 C ?
+        self.wm30c = ma.masked # Wet bulb at -30 C ? 
+        self.li5 = ma.masked # Lifted Index at 500 mb (C)
+        self.li3 = ma.masked # Lifted Index at 300 mb (C)
+        self.brnshear = ma.masked # Bulk Richardson Number Shear
+        self.brnu = ma.masked # Bulk Richardson Number U (kts)
+        self.brnv = ma.masked # Bulk Richardson Number V (kts)
+        self.brn = ma.masked # Bulk Richardson Number (unitless)
+        self.limax = ma.masked # Maximum Lifted Index (C)
+        self.limaxpres = ma.masked # Pressure at Maximum Lifted Index (mb)
+        self.cap = ma.masked # Cap Strength (C)
+        self.cappres = ma.masked # Cap strength pressure (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
 def dgz(prof):
@@ -456,7 +456,7 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
 
 
 
-def scp(mucape, srh, ebwd):
+def scp(prof, mucape=None, srh=None, ebwd=None):
     
     '''
     Calculates the Supercell Composite Parameter
@@ -465,8 +465,9 @@ def scp(mucape, srh, ebwd):
     
     Parameters
     ----------
-    mucape : Most Unstable CAPE from the parcel class (J/kg)
-    srh : the effective SRH from the winds.helicity function (m2/s2)
+    prof : Profile object
+    mucape : Most Unstable CAPE from the parcel class (J/kg) (optional)
+    srh : the effective SRH from the winds.helicity function (m2/s2) 
     ebwd : effective bulk wind difference (m/s)
     
     Returns
@@ -474,6 +475,28 @@ def scp(mucape, srh, ebwd):
     scp : supercell composite parameter
     
     '''
+    if mucape is None:
+    	try:
+    		mupcl = prof.mupcl
+    		mucape = mupcl.bplus
+    	else:
+    		mupcl = parcelx(prof, flag=4)
+			mucape = mupcl.bplus
+
+	if srh is None or ebwd is None:
+		ebottom, etop = params.effective_inflow_layer( prof, mupcl=mupcl )
+        ## if there was no effective inflow layer, set the values to masked
+        if etop is ma.masked or ebottom is ma.masked:
+            ebotm = ma.masked; etopm = ma.masked
+
+        ## otherwise, interpolate the heights given to above ground level
+        else:
+            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
+            etopm = interp.to_agl(prof, interp.hght(prof, etop))
+        depth = ( mupcl.elhght - ebotm ) / 2
+        elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
+		ebwd = winds.wind_shear(prof, pbot=prof.ebottom, ptop=elh)
+        ebwd = utils.mag( ebwd[0], ebwd[1] )
 
     if ebwd > 20:
         ebwd = 20.
@@ -607,30 +630,37 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
     return (((w[:-1]+w[1:])/2 * (p[:-1]-p[1:])) * 0.00040173).sum()
 
 
-def inferred_temp_adv(prof, lat=None):
-    # Calculates the inferred temperature advection from the surface pressure and up every 100 mb.
-    # The units returned are in C/hr, however this function doesn't compare well to SPC in terms of
-    # magnitude of the results.  The direction and relative magnitude I think I've got right.
-    # My calculations seem to be consistently less than those seen on the SPC website.
-    #
-    # Need to get actual code from John Hart...however SPC values seem a little high for typical synoptic
-    # scale geostrophic temperature advection (10 Kelvin/day is typical?)
-    #
-    # I'm pretty sure my units are correct...
+def inferred_temp_adv(prof, lat=35):
+	'''
+		Inferred Temperature Advection
+		SHARP code deduced by Greg Blumberg.  Not based on actual SPC code.
+
+    	Calculates the inferred temperature advection from the surface pressure 
+    	and up every 100 mb assuming all winds are geostrophic.  The units returned are
+    	in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
+
+    	This function doesn't compare well to SPC in terms of magnitude of the results.  The direction 
+    	and relative magnitude I think I've got right. My calculations seem to be consistently less 
+    	than those seen on the SPC website.  Although, this function may be right as the SPC values seem 
+    	a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
+
+    	This code uses Equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
+
+    	Parameters
+    	----------
+    	prof : Profile object
+    	lat : latitude in decimal degrees (optional)
     
-    #
-    # I'm using equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
-    #
-    
-    if lat != None:
-        omega = (2. * np.pi) / (86164.)
-        f = 2. * omega * np.sin(np.radians(lat)) # Units: (s**-1)
-        multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
-    else:
-        # If you can't pass the latitude of the profile point, use this calculation (approximate)
-        omega = (2. * np.pi) / (86164.)
-        f = 2. * omega * np.sin(np.radians(35.))
-        multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees))
+    	Returns
+    	-------
+    	temp_adv : an array of temperature advection values in C/hr
+    	pressure_bounds: a 2D array indicating the top and bottom bounds of the temperature advection layers.
+    '''   
+
+    omega = (2. * np.pi) / (86164.)
+    f = 2. * omega * np.sin(np.radians(lat)) # Units: (s**-1)
+    multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
+
     dp = -100
     pres_idx = np.where(prof.pres >= 100.)[0]
     pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp, dtype=type(prof.pres[prof.get_sfc()])) # Units: mb
@@ -1069,7 +1099,7 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
         t = interp.temp(prof, p)
         d = interp.dwpt(prof, p)
     p2, t2 = thermo.drylift(p, t, d)
-    mt = thermo.wetlift(p2, t2, 1000.)
+    mt = thermo.wetlift(p2, t2, 1000.) # Essentially this is making the Theta-E profile, which we are already doing in the Profile object!
     ind = np.where(np.fabs(mt - np.nanmax(mt)) < TOL)[0]
     return p[ind[0]]
 
@@ -1081,7 +1111,8 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         This routine is a simple 3D thermodynamic parcel trajectory model that
         takes a thermodynamic profile and a parcel trace and computes the
         trajectory of a parcel that is lifted to its LFC, then given a 5 m/s
-        nudge upwards, and then left to accelerate up to the EL.
+        nudge upwards, and then left to accelerate up to the EL.  (Based on a description
+        in the AWIPS 2 Online Training.)
         
         This parcel is assumed to be moving horizontally via the storm motion vector, which
         if not supplied is taken to be the Bunkers Right Mover storm motion vector.
@@ -1126,8 +1157,11 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     if smu==None or smv==None:
         smu = prof.srwind[0] # Expected to be in knots
         smv = prof.srwind[1] # Is expected to be in knots
+
     if z_0 > elhght:
+    	# The parcel doesn't have any positively buoyant areas.
         return
+
     while z_0 < elhght:
         t_1 = delta_t + t_0 # the time step increment
         
@@ -1170,13 +1204,17 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
 def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     '''        
         Lifts the specified parcel, calculates various levels and parameters from
-        the profile object. B+/B- are calculated based on the specified layer. 
+        the profile object. Only B+/B- are calculated based on the specified layer. 
         
         This is a convenience function for effective_inflow_layer and convective_temp, 
         as well as any function that needs to lift a parcel in an iterative process.
         This function is a stripped back version of the parcelx function, that only
         handles bplus and bminus. The intention is to reduce the computation time in
         the iterative functions by reducing the calculations needed.
+
+        This method of creating a stripped down parcelx function for CAPE/CIN calculations
+        was developed by Greg Blumberg and Kelton Halbert and later implemented in
+        SPC's version of SHARP to speed up their program.
         
         For full parcel objects, use the parcelx function.
         
@@ -1904,34 +1942,37 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     
     # Scenario where shallow buoyancy present for a parcel with
     # lesser theta near the ground
-    mu2lplvals = DefineParcel(prof, 3, pres=300)
-    mu2pcl = cape(prof, lplvals=mu2lplvals)
-    if mu2pcl.bplus > mucape:
+    """ WHY DOES THIS NEED TO BE HERE?  IT'S THE SAME CALL AS ABOVE! """
+    mu2lplvals = DefineParcel(prof, 3, pres=300) # This makes a call to the Most_Unstable_level Function
+    mu2pcl = cape(prof, lplvals=mu2lplvals) # Then it's a Most-unstable CAPE/CIN calculation.
+    if mu2pcl.bplus > mucape: # THIS WILL ALWAYS BE FALSE, THEN WHY ARE WE CALLING THIS FUNCTION?
         mucape = mu2pcl.bplus
         mucinh = mu2pcl.bminus
     
     pbot = ma.masked
     ptop = ma.masked
-    if mucape >= ecape and mucinh > ecinh:
-        # Begin at surface and search upward for effective surface
-        for i in xrange(prof.sfc, prof.top):
-            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-            if pcl.bplus >= ecape and pcl.bminus > ecinh:
-                pbot = prof.pres[i]
-                break
-        if not utils.QC(pbot): return ma.masked, ma.masked
-        bptr = i
-        # Keep searching upward for the effective top
-        for i in xrange(bptr+1, prof.top):
-            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-            if pcl.bplus < ecape or pcl.bminus <= ecinh:
-                j = 1
-                while not utils.QC(prof.dwpc[i-j]) and \
-                    not utils.QC(prof.tmpc[i-j]): j += 1
-                ptop = prof.pres[i-j]
-                if ptop > pbot: ptop = pbot
-                break
-    return pbot, ptop
+    if mucape != 0:
+	    if mucape >= ecape and mucinh > ecinh:
+	        # Begin at surface and search upward for effective surface
+	        for i in xrange(prof.sfc, prof.top):
+	            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
+	            if pcl.bplus >= ecape and pcl.bminus > ecinh:
+	                pbot = prof.pres[i]
+	                break
+	        if not utils.QC(pbot): return ma.masked, ma.masked
+	        bptr = i
+	        # Keep searching upward for the effective top
+	        for i in xrange(bptr+1, prof.top):
+	            pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
+	            if pcl.bplus < ecape or pcl.bminus <= ecinh:
+	                j = 1
+	                while not utils.QC(prof.dwpc[i-j]) and \
+	                    not utils.QC(prof.tmpc[i-j]): j += 1
+	                ptop = prof.pres[i-j]
+	                if ptop > pbot: ptop = pbot
+	                break
+
+	return pbot, ptop
 
 
 def bunkers_storm_motion(prof, **kwargs):
@@ -2049,13 +2090,11 @@ def tei(prof):
         in the lowest 400 mb AGL
        
         Note: This is the definition of TEI on the SPC help page,
-        but these calculations do not match up with the TEI values online.
+        but these calculations do not match up with the TEI values on the SPC Online Soundings.
         The TEI values online are more consistent with the max Theta-E
         minus the minimum Theta-E found in the lowest 400 mb AGL.
 
         This is what our TEI calculation shall be for the time being.
-
-        REQUIRES: Nothing
 
         Parameters
         ----------
@@ -2091,7 +2130,7 @@ def esp(prof, **kwargs):
         Parameters
         ----------
         prof : Profile object
-        mlpcl : Mixed-Layer Parcel
+        mlpcl : Mixed-Layer Parcel object (optional)
 
         Returns
         -------
@@ -2131,11 +2170,12 @@ def sherb(prof, **kwargs):
         Parameters
         ----------
         prof : Profile object
-        effective : (optional) True or False...use the effective layer computation or not
+        effective : True or False...use the effective layer computation or not
                     the effective bulk wind difference (prof.ebwd) must exist first
-        ebottom : (optional) bottom of the effective inflow layer (mb)
-        etop : (optional) top of the effective inflow layer (mb)
-        mupcl : (optional) Most-Unstable Parcel
+                    if not specified it will default to False (optional)
+        ebottom : bottom of the effective inflow layer (mb) (optional) 
+        etop :top of the effective inflow layer (mb) (optional) 
+        mupcl : Most-Unstable Parcel (optional)
 
         Returns
         -------
@@ -2216,6 +2256,7 @@ def mmp(prof, **kwargs):
         Parameters
         ----------
         prof : Profile object
+        mupcl : Most-Unstable Parcel object (optional)
         
         Returns
         -------
@@ -2273,6 +2314,7 @@ def mmp(prof, **kwargs):
 def wndg(prof, **kwargs):
     '''
         Wind Damage Parameter (WNDG)
+
         A non-dimensional composite parameter that identifies areas
         where large CAPE, steep low-level lapse rates,
         enhanced flow in the low-mid levels, and minimal convective
@@ -2287,7 +2329,7 @@ def wndg(prof, **kwargs):
         Parameters
         ----------
         prof : Profile object
-        mlpcl : (optional) mixed-layer parcel
+        mlpcl : Mixed-Layer Parcel object (optional) 
 
         Returns
         -------
@@ -2330,7 +2372,7 @@ def sig_severe(prof, **kwargs):
         Parameters
         ----------
         prof : Profile object
-        mlpcl : (optional) Mixed-Layer Parcel
+        mlpcl : Mixed-Layer Parcel object (optional) 
 
         Returns
         -------
@@ -2365,7 +2407,7 @@ def dcape(prof):
     '''
         Downdraft CAPE (DCAPE)
         
-        Adapted from John Hart's (SPC) DCAPE code in NSHARP
+        Adapted from John Hart's (SPC) DCAPE code in NSHARP donated by Rich Thompson (SPC)
 
         Calculates the downdraft CAPE value using the downdraft parcel source found in the lowest
         400 mb of the sounding.  This downdraft parcel is found by identifying the minimum 100 mb layer 
@@ -2373,6 +2415,8 @@ def dcape(prof):
 
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
         correction) and the energy accumulated is called the DCAPE.
+
+		Future adaptations of this function may utilize the Parcel/DefineParcel object.
 
         Parameters
         ----------
@@ -2383,7 +2427,6 @@ def dcape(prof):
         dcape : downdraft CAPE (J/kg)
         ttrace : downdraft parcel trace temperature (C)
         ptrace : downdraft parcel trace pressure (mb)
-        dtemp : downrush temperature (C)
         '''
     
     sfc_pres = prof.pres[prof.sfc]
@@ -2500,7 +2543,7 @@ def precip_eff(prof, **kwargs):
 def pbl_top(prof):
     '''
         Planetary Boundary Layer Depth
-        Adapted from NSHARP
+        Adapted from NSHARP code donated by Rich Thompson (SPC)
 
         Calculates the planetary boundary layer depth by calculating the 
         virtual potential temperature of the surface parcel + .5 K, and then searching

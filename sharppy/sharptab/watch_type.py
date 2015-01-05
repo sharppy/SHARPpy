@@ -33,6 +33,7 @@ def wind_chill(prof):
 def init_phase(prof):
     '''
         Inital Precipitation Phase
+        Adapted from SHARP code donated by Rich Thompson (SPC)
 
         This function determines the initial phase of any precipitation source in the profile.
         It does this either by finding a source of precipitation by searching for the highest 50 mb 
@@ -123,6 +124,7 @@ def init_phase(prof):
 def posneg_temperature(prof, start=-1):
     '''
         Positive/Negative Temperature profile
+        Adapted from SHARP code donated by Rich Thompson (SPC)
 
         Description:
         This routine calculates the positive (above 0 C) and negative (below 0 C)
@@ -233,6 +235,7 @@ def posneg_temperature(prof, start=-1):
 def posneg_wetbulb(prof, start=-1):
     '''
         Positive/Negative Wetbulb profile
+        Adapted from SHARP code donated by Rich Thompson (SPC)
 
         Description:
         This routine calculates the positive (above 0 C) and negative (below 0 C)
@@ -342,6 +345,7 @@ def posneg_wetbulb(prof, start=-1):
 def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
     '''
         Best Guess Precipitation type
+        Adapted from SHARP code donated by Rich Thompson (SPC)
 
         Description:
         This algorithm utilizes the output from the init_phase() and posneg_temperature()
@@ -467,13 +471,14 @@ def possible_watch(prof):
 
         These possible weather types are computed via fuzzy logic through set thresholds that
         have been found through a.) analyzing ingredients within the profile and b.) combining those ingredients
-        with forecasting experience to produce a suggestion of what hazards may exist.
+        with forecasting experience to produce a suggestion of what hazards may exist.  Some of the logic is 
+        based on experience, some of it is based on actual National Weather Service criteria.
 
         This function has not been formally verified and is not meant to be comprehensive nor
         a source of strict guidance for weather forecasters.  As always, the raw data is to be 
         consulted.
 
-        This code base is continually under development.
+        This code base is currently under development.
 
         Wx Categories (ranked in terms of severity):
         - PDS TOR
@@ -489,7 +494,7 @@ def possible_watch(prof):
         - EXCESSIVE HEAT
         - FREEZE
     
-        Suggestions for thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
+        Suggestions for severe/tornado thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
 
         Parameters
         ----------
@@ -504,7 +509,6 @@ def possible_watch(prof):
     watch_types = []
     colors = []
     
-    """BEGIN RICH'S DECISION TREE CODE"""
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
     stp_eff = prof.stp_cin
     stp_fixed = prof.stp_fixed
@@ -549,7 +553,6 @@ def possible_watch(prof):
     elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or prof.right_scp >= 0.5):
         colors.append("#0099CC")
         watch_types.append("MRGL SVR")
-    """END RICH'S CODE"""
     
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
     # This is trying to capture the ingredients of moisture and advection speed, but cannot
@@ -564,30 +567,30 @@ def possible_watch(prof):
     #    watch_types.append("FLASH FLOOD")
     #    colors.append("#5FFB17")
     
-    # Blizzard Watch if sfc winds > 35 mph and precip type detects snow
+    # Blizzard if sfc winds > 35 mph and precip type detects snow 
+    # Still needs to be tied into the 
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
     if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0:
         watch_types.append("BLIZZARD")
         colors.append("#3366FF")
-
-    # Winter Storm Watch if precip type is snow, ice, or sleet - needs to be implemented
     
-    # Wind Chill Watch (if wind chill gets below -20 F)
+    # Wind Chill (if wind chill gets below -20 F)
     if wind_chill(prof) < -20.:
         watch_types.append("WIND CHILL")
         colors.append("#3366FF")
     
-    # Fire WX Watch (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
+    # Fire WX (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
     if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
         watch_types.append("FIRE WEATHER")
         colors.append("#FF9900")
     
-    # Excessive Heat Watch (if Max_temp > 105 F and sfc dewpoint > 75 F)
+    # Excessive Heat (if Max_temp > 105 F and sfc dewpoint > 75 F)
     if thermo.ctof(prof.dwpc[prof.get_sfc()]) > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
     
-    # Freeze Watch (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
+    # Freeze (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
+    # Still in testing.
     if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
         watch_types.append("FREEZE")
         colors.append("#3366FF")
