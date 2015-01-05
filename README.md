@@ -29,15 +29,25 @@ After all profiles have been generated, a window should show up with your desire
 1. Advance through the profiles (if more than one is selected) using the left and right arrow keys.
 2. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
 3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
+4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 
-Insets available:
-1. SARS - Sounding Analog Retrieval System
+Insets available for use:
+
+1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
 2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
 3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
 4. STP COND - Conditional probablities for different tornado strengths based on STPC.
 5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
 6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
 7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity.
+
+This program uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 5, very low values):
+
+1. MAGENTA
+2. RED
+3. WHITE
+4. LIGHT BROWN
+5. DARK BROWN
 
 =======================================================================
 
