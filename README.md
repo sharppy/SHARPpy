@@ -41,13 +41,14 @@ Insets available for use:
 6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
 7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity.
 
-This program uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 5, very low values):
+This program uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
 
 1. MAGENTA
 2. RED
-3. WHITE
-4. LIGHT BROWN
-5. DARK BROWN
+3. YELLOW
+4. WHITE
+5. LIGHT BROWN
+6. DARK BROWN
 
 =======================================================================
 
