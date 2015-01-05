@@ -1,17 +1,19 @@
 import sys
+import numpy as np
 from PySide import QtGui, QtCore
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
-from sharppy.viz import plotWinter, plotFire
+from sharppy.viz import plotGeneric
+from sharppy.sharptab.constants import *
 from sharppy.sounding import prof, plot_title
-
 
 
 # Setup Application
 app = QtGui.QApplication(sys.argv)
 mainWindow = QtGui.QMainWindow()
-mainWindow.setGeometry(0, 0, 1180, 800)
+x = 1180; y = 800
+mainWindow.setGeometry(0, 0, x, y)
 title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
 title += 'in Python'
 mainWindow.setWindowTitle(title)
@@ -26,8 +28,8 @@ centralWidget.setLayout(grid)
 
 # Handle the Upper Left
 ## plot the main sounding
-##print prof.right_scp, prof.left_scp
-brand = 'Oklahoma Weather Lab'
+#print prof.right_scp, prof.left_scp
+brand = 'SHARPpy Beta'
 sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
 grid.addWidget(sound, 0, 0, 3, 1)
@@ -44,7 +46,7 @@ ur.setStyleSheet("QFrame {"
                  "  border-style: solid;"
                  "  border-color: rgb(255, 255, 255);"
                  "  margin: 0px;}")
-brand = QtGui.QLabel('HOOT - Oklahoma Weather Lab')
+brand = QtGui.QLabel('SHARPpy Beta')
 brand.setAlignment(QtCore.Qt.AlignRight)
 brand.setStyleSheet("QFrame {"
                     "  background-color: rgb(0, 0, 0);"
@@ -62,8 +64,11 @@ speed_vs_height.setObjectName("svh")
 inferred_temp_advection = plotAdvection(prof)
 hodo = plotHodo(prof.hght, prof.u, prof.v, prof=prof, centered=prof.mean_lcl_el)
 storm_slinky = plotSlinky(prof)
-thetae_vs_pressure = plotThetae(prof)
+#thetae_vs_pressure = plotThetae(prof)
+thetae_vs_pressure = plotGeneric(prof.thetae[prof.pres > 500.], prof.pres[prof.pres > 500.],
+                                 xticks=np.arange(320,360,10), yticks=np.arange(500, 1000, 100) )
 srwinds_vs_height = plotWinds(prof)
+#srwinds_vs_height = plotGeneric(prof.srwind, prof.hght)
 watch_type = plotWatch(prof)
 
 grid2.addWidget(speed_vs_height, 0, 0, 11, 3)
@@ -89,13 +94,14 @@ grid3.setHorizontalSpacing(0)
 grid3.setContentsMargins(0, 0, 0, 0)
 text.setLayout(grid3)
 convective = plotText(prof)
+#convective = QtGui.QFrame()
+#kinematic = QtGui.QFrame()
 kinematic = plotKinematics(prof)
 SARS = plotAnalogues(prof)
 stp = plotSTP(prof)
-winter = plotFire(prof)
 grid3.addWidget(convective, 0, 0)
 grid3.addWidget(kinematic, 0, 1)
-grid3.addWidget(winter, 0, 2)
+grid3.addWidget(SARS, 0, 2)
 grid3.addWidget(stp, 0, 3)
 grid.addWidget(text, 3, 0, 1, 2)
 pixmap = QtGui.QPixmap.grabWidget(mainWindow)
