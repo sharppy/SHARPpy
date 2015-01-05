@@ -47,7 +47,7 @@ class Thread(QThread):
             for i in self.prof_idx:
                 profs = []
                 for j in range(len(d.wdir)):
-                    print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                    ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
                     if j == 0:
                         profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
                         tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
@@ -59,7 +59,7 @@ class Thread(QThread):
 
         else:
             for i in self.prof_idx:
-                print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
                 self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
                     tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
                 self.progress.emit()
@@ -219,6 +219,9 @@ class SkewApp(QWidget):
 
         ## read in the file
         data = np.array(arch_file.read().split('\n'))
+        ## take care of possible whitespace issues
+        for i in range(len(data)):
+            data[i] = data[i].strip()
         arch_file.close()
 
         ## necessary index points
