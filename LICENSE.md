@@ -1,10 +1,10 @@
 Copyright (c) 2011, Patrick T. Marsh & John Hart.
-All rights reserved
+All rights reserved.
 
 Copyright (c) 2012, MetPy Developers.
 All rights reserved.
 
-Copyright (c) 2014, Kelton Halbert & Greg Blumberg
+Copyright (c) 2014, Kelton Halbert & Greg Blumberg. ALl rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
