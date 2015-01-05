@@ -2228,7 +2228,7 @@ def sherb(prof, **kwargs):
 
 def mmp(prof, **kwargs):
 
-    '''
+    """
         MCS Maintenance Probability (MMP)
         The probability that a mature MCS will maintain peak intensity
         for the next hour.
@@ -2253,7 +2253,7 @@ def mmp(prof, **kwargs):
         computing the shear vector between all the wind vectors
         in the lowest 1 km and all the wind vectors in the 6-10 km layer.
         The maximum speed shear from this is the max_bulk_shear value (m/s).
-        '''
+        """
     
     mupcl = kwargs.get('mupcl', None)
     if not mupcl:
