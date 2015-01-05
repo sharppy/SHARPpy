@@ -3,8 +3,9 @@ SHARPpy
 Sounding/Hodograph Analysis and Research Program in Python
 
 This is primarily tested and used with the Anaconda Python Distribution
-from Continuum Analytics. Anaconda can be downloaded here:
-https://store.continuum.io/cshop/anaconda/
+from Continuum Analytics, running Python 2.7. Python 3+ is currently
+not supported, but we are working towards it.Anaconda can be downloaded
+here: https://store.continuum.io/cshop/anaconda/
 
 To install the SHARPpy package into your Python path, type:
 
