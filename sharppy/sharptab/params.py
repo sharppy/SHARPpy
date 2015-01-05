@@ -456,7 +456,7 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
 
 
 
-def scp(prof, mucape=None, srh=None, ebwd=None):
+def scp(mucape, srh, ebwd):
     '''
     Calculates the Supercell Composite Parameter
     
@@ -474,28 +474,6 @@ def scp(prof, mucape=None, srh=None, ebwd=None):
     scp : supercell composite parameter
     
     '''
-    if mucape is None:
-        try:
-            mupcl = prof.mupcl
-            mucape = mupcl.bplus
-        except:
-            mupcl = parcelx(prof, flag=4)
-            mucape = mupcl.bplus
-
-    if srh is None or ebwd is None:
-        ebottom, etop = effective_inflow_layer( prof, mupcl=mupcl )
-        ## if there was no effective inflow layer, set the values to masked
-        if etop is ma.masked or ebottom is ma.masked:
-            ebotm = ma.masked; etopm = ma.masked
-
-        ## otherwise, interpolate the heights given to above ground level
-        else:
-            ebotm = interp.to_agl(prof, interp.hght(prof, ebottom))
-            etopm = interp.to_agl(prof, interp.hght(prof, etop))
-        depth = ( mupcl.elhght - ebotm ) / 2
-        elh = interp.pres(prof, interp.to_msl(prof, ebotm + depth))
-        ebwd = winds.wind_shear(prof, pbot=prof.ebottom, ptop=elh)
-        ebwd = utils.mag( ebwd[0], ebwd[1] )
 
     if ebwd > 20:
         ebwd = 20.
