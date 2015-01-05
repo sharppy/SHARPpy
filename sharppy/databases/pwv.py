@@ -43,7 +43,7 @@ def get_mean_pwv(station):
     elif len(station) == 5:
         id_index = 1
     else:
-        print "Invalid station ID"
+        #print "Invalid station ID"
         return
     ## open the file, release the kraken!
     ## get the arrays of station IDs
@@ -94,7 +94,7 @@ def get_stdev_pwv(station):
     elif len(station) == 5:
         id_index = 1
     else:
-        print "Invalid station ID"
+        #print "Invalid station ID"
         return
     ## open the file, release the kraken!
     ## get the arrays of station IDs
