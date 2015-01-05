@@ -1663,8 +1663,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 if lyrf > 0: pcl.wm30c += lyrf
         
         # Is this the 3km level
-        if pcl.lclhght < 3000.:
-            h = interp.to_agl(prof, interp.hght(prof, pe2))
+        if pcl.lclhght < 3000. and interp.to_agl(prof, h1) <=3000.:
+            h = interp.to_agl(prof, h2)
             if h >= 3000. and not utils.QC(pcl.b3km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
@@ -1687,8 +1687,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         else: pcl.b3km = 0.
         
         # Is this the 6km level
-        if pcl.lclhght < 6000.:
-            h = interp.to_agl(prof, interp.hght(prof, pe2))
+        if pcl.lclhght < 6000. and interp.to_agl(prof, h1) <=6000.:
+            h = interp.to_agl(prof, h2)
             if h >= 6000. and not utils.QC(pcl.b6km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
@@ -1713,7 +1713,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         # LFC Possibility
         if lyre >= 0. and lyrlast <= 0.:
             tp3 = tp1
-            te3 = te1
+            #te3 = te1
             pe2 = pe1
             pe3 = pelast
             if interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
@@ -1739,7 +1739,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         # EL Possibility
         if lyre <= 0. and lyrlast >= 0.:
             tp3 = tp1
-            te3 = te1
+            #te3 = te1
             pe2 = pe1
             pe3 = pelast
             while interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
@@ -1904,11 +1904,11 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     
     # Scenario where shallow buoyancy present for a parcel with
     # lesser theta near the ground
-    mu2lplvals = DefineParcel(prof, 3, pres=300)
-    mu2pcl = cape(prof, lplvals=mu2lplvals)
-    if mu2pcl.bplus > mucape:
-        mucape = mu2pcl.bplus
-        mucinh = mu2pcl.bminus
+    #mu2lplvals = DefineParcel(prof, 3, pres=300)
+    #mu2pcl = cape(prof, lplvals=mu2lplvals)
+    #if mu2pcl.bplus > mucape:
+    #    mucape = mu2pcl.bplus
+    #    mucinh = mu2pcl.bminus
     
     pbot = ma.masked
     ptop = ma.masked
