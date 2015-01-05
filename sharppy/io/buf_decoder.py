@@ -91,7 +91,7 @@ class BufkitFile(object):
                 data_idxs.append((begin_idx, i))
             elif new_record == True:
                 continue
-                    #print data[i]
+                    ##print data[i]
         
         data_idxs = data_idxs[1:]
         # Make arrays to store the data
@@ -135,7 +135,7 @@ class BufkitFile(object):
             try:
                 f = open(self.filename, 'r')
             except:
-                print self.filename + " unable to be opened."
+                #print self.filename + " unable to be opened."
                 sys.exit()
         file_data = f.read()
         string = '\r\n\r\n\r\n'

@@ -12,14 +12,14 @@ def raiseError(string, errorType):
 
         Parameters
         ----------
-        string: the string to be printed out to the user.
+        string: the string to be #printed out to the user.
         errorType: the type of exception.
 
         Returns
         -------
         None
     '''
-    raise errorType, string
+    raise Exception(errorType, string)
 
 def numMasked(arr):
     '''

@@ -52,7 +52,7 @@ class SNDFile(object):
             try:
                 file_data = open(self.filename, 'r')
             except:
-                print self.filename + " unable to be opened."
+                #print self.filename + " unable to be opened."
                 sys.exit()
         ## read in the file
         data = np.array(file_data.read().split('\n'))
