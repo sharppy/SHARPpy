@@ -449,9 +449,9 @@ class SkewApp(QWidget):
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
 
-        for i in xrange(len(np.asarray(self.avaliable_insets))):
+        for i in xrange(len(self.avaliable_insets)):
             inset_action = QAction(self)
-            inset_action.setText(np.asarray(self.avaliable_insets)[i])
+            inset_action.setText(self.avaliable_insets[i])
             inset_action.setCheckable(True)
             inset_action.triggered.connect(self.swapInset)
             a = self.menu_ag.addAction(inset_action)
@@ -480,8 +480,6 @@ class SkewApp(QWidget):
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
                     title=self.plot_title, brand=self.brand, dgz=False)
 
-            self.avaliable_insets.remove(a.text())
-            self.avaliable_insets.append(self.left_inset)
             self.left_inset = a.text()
             self.left_inset_ob.deleteLater()
 
@@ -492,8 +490,6 @@ class SkewApp(QWidget):
                 self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
                     title=self.plot_title, brand=self.brand, dgz=False)
 
-            self.avaliable_insets.remove(a.text())
-            self.avaliable_insets.append(self.right_inset)
             self.right_inset = a.text()
             self.right_inset_ob.deleteLater()
 
