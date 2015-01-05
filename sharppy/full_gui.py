@@ -159,6 +159,26 @@ class MainWindow(QWidget):
         self.skew = SkewApp(model=self.model, location=self.loc,
             prof_time=self.prof_time, run=self.run, path=fname)
         self.skew.show()
+        ## this is the time step between available profiles
+        self.delta = 12
+        ## default the sounding location to OUN because obviously I'm biased
+        self.loc = "OUN"
+        ## set the default profile to display
+        self.prof_time = "Latest"
+        ## the index of the item in the list that corresponds
+        ## to the profile selected from the list
+        self.prof_idx = []
+        ## set the default profile type to Observed
+        self.model = "Observed"
+        ## the offset is time time offset between sounding availabilities for models
+        self.offset = 1
+        ## this is the duration of the period the available profiles have
+        self.duration = 17
+        ## this is the default model initialization time.
+        self.run = "00Z"
+        ## this is the default map to display
+        self.map = None
+        self.set_model_dt()
 
     def aboutbox(self):
 
