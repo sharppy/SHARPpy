@@ -16,7 +16,6 @@ to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
 python full_gui.py
-
 =======================================================================
 
 ### Using the GUI
@@ -48,7 +47,6 @@ This program uses color to highlight the features a forecaster ought to look at.
 3. WHITE
 4. LIGHT BROWN
 5. DARK BROWN
-
 =======================================================================
 
 ### Known Issues
