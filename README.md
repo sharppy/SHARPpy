@@ -3,9 +3,8 @@ SHARPpy
 Sounding/Hodograph Analysis and Research Program in Python
 
 This is primarily tested and used with the Anaconda Python Distribution
-from Continuum Analytics, running Python 2.7. Python 3+ is currently
-not supported, but we are working towards it. Anaconda can be downloaded
-here: https://store.continuum.io/cshop/anaconda/
+from Continuum Analytics. Anaconda can be downloaded here:
+https://store.continuum.io/cshop/anaconda/
 
 To install the SHARPpy package into your Python path, type:
 
@@ -17,3 +16,13 @@ to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
 python full_gui.py
+
+Known Windows Issues:
+- Inset text is not properly sized or placed in their windows.
+- When incrementing/decrementing profiles, the entire screen goes blank and redraws
+- The program’s menu bar does not display
+- The sounding window may not properly size at first. A fix is to manually resize it and manipulate it.
+
+Other Issues:
+- Multi-select does not work for Observed soundings
+- Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash.
