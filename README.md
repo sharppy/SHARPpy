@@ -39,7 +39,7 @@ Insets available for use:
 4. STP COND - Conditional probablities for different tornado strengths based on STPC.
 5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
 6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity.
+7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value.)
 
 The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
 
