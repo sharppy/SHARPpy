@@ -2,9 +2,9 @@ SHARPpy
 =======
 Sounding/Hodograph Analysis and Research Program in Python
 
-REQUIRED PACKAGES:
-======
+Required Packages:
 NumPy
+
 PySide
 
 This is primarily tested and used with the Anaconda Python Distribution
