@@ -2,9 +2,18 @@ SHARPpy
 =======
 Sounding/Hodograph Analysis and Research Program in Python
 
+REQUIRED PACKAGES:
+======
+NumPy
+PySide
+
 This is primarily tested and used with the Anaconda Python Distribution
 from Continuum Analytics. Anaconda can be downloaded here:
 https://store.continuum.io/cshop/anaconda/
+
+You will then need to install the PySide package through the anaconda package manager:
+
+conda install PySide
 
 To install the SHARPpy package into your Python path, type:
 
