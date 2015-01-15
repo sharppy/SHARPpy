@@ -241,6 +241,8 @@ class Parcel(object):
         self.limaxpres = ma.masked # Pressure at Maximum Lifted Index (mb)
         self.cap = ma.masked # Cap Strength (C)
         self.cappres = ma.masked # Cap strength pressure (mb)
+        self.bmin = ma.masked # Buoyancy minimum in profile (C)
+        self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
 def dgz(prof):
@@ -1802,7 +1804,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             pcl.li3 = a - thermo.virtemp(300, b, b)
     
 #    pcl.bminus = cinh_old
-    
+
     if not utils.QC(pcl.bplus): pcl.bplus = totp
     
     # Calculate BRN if available
@@ -1812,6 +1814,14 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     if np.floor(pcl.bplus) == 0: pcl.bminus = 0.
     pcl.ptrace = ma.concatenate((ptrace, ptraces))
     pcl.ttrace = ma.concatenate((ttrace, ttraces))
+
+    # Find minimum buoyancy from Trier et al. 2014, Part 1
+    idx = np.ma.where(pcl.ptrace >= 500.)[0]
+    b = pcl.ttrace[idx] - interp.vtmp(prof, pcl.ptrace[idx])
+    idx2 = np.ma.argmin(b)
+    pcl.bmin = b[idx2]
+    pcl.bminpres = pcl.ptrace[idx][idx2]
+
     return pcl
 
 
