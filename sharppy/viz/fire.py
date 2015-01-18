@@ -198,7 +198,7 @@ class plotFire(backgroundFire):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fosberg FWI = ' + tab.utils.INT2STR(self.fosberg))
 
     def getFosbergFormat(self):
-        if tab.utils.QC(self.fosberg) or self.fosberg < 30:
+        if (not tab.utils.QC(self.fosberg)) or self.fosberg < 30:
             color = QtGui.QColor(DBROWN)
         elif self.fosberg < 40:
             color = QtGui.QColor(LBROWN)
