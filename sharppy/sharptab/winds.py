@@ -343,6 +343,8 @@ def max_wind(prof, lower, upper, all=False):
         Bottom level of layer (m, AGL)
     upper : number
         Top level of layer (m, AGL)
+    all : Boolean
+        Switch to change the output to sorted wind levels or maximum level.
 
     Returns
     -------
@@ -364,11 +366,10 @@ def max_wind(prof, lower, upper, all=False):
         maxu, maxv =  utils.vec2comp([prof.wdir[ind1]], [prof.wspd[ind1]])
         return maxu, maxv, prof.pres[ind1]
 
-    inds = np.where((np.fabs(prof.wspd[ind1:ind2+1] -
-                    np.nanmax(prof.wspd[ind1:ind2+1]))) < TOL)[0]
-    inds += ind1
-    inds.sort()
-    maxu, maxv =  utils.vec2comp(prof.wdir[inds], prof.wspd[inds])
+    arr = prof.wspd[ind1:ind2+1]
+    inds = np.ma.argsort(arr)
+    inds = inds[~arr[inds].mask][::-1]
+    maxu, maxv =  utils.vec2comp(prof.wdir[ind1:ind2+1][inds], prof.wspd[ind1:ind2+1][inds])
     if all:
         return maxu, maxv, prof.pres[inds]
     else:
