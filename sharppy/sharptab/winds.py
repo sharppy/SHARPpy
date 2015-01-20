@@ -360,9 +360,11 @@ def max_wind(prof, lower, upper, all=False):
     upper = interp.to_msl(prof, upper)
     plower = interp.pres(prof, lower)
     pupper = interp.pres(prof, upper)
-    ind1 = np.where(plower > prof.pres)[0].min()
-    ind2 = np.where(pupper < prof.pres)[0].max()
-    if len(prof.wspd[ind1:ind2+1]) == 0:
+
+    ind1 = np.where((plower > prof.pres) | (np.isclose(plower, prof.pres)))[0][0]
+    ind2 = np.where((pupper < prof.pres) | (np.isclose(pupper, prof.pres)))[0][-1]
+
+    if len(prof.wspd[ind1:ind2+1]) == 0 or ind1 == ind2:
         maxu, maxv =  utils.vec2comp([prof.wdir[ind1]], [prof.wspd[ind1]])
         return maxu, maxv, prof.pres[ind1]
 
