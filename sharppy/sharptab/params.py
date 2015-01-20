@@ -1817,10 +1817,11 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
 
     # Find minimum buoyancy from Trier et al. 2014, Part 1
     idx = np.ma.where(pcl.ptrace >= 500.)[0]
-    b = pcl.ttrace[idx] - interp.vtmp(prof, pcl.ptrace[idx])
-    idx2 = np.ma.argmin(b)
-    pcl.bmin = b[idx2]
-    pcl.bminpres = pcl.ptrace[idx][idx2]
+    if len(idx) != 0:
+        b = pcl.ttrace[idx] - interp.vtmp(prof, pcl.ptrace[idx])
+        idx2 = np.ma.argmin(b)
+        pcl.bmin = b[idx2]
+        pcl.bminpres = pcl.ptrace[idx][idx2]
 
     return pcl
 
