@@ -177,6 +177,47 @@ class plotWinter(backgroundWinter):
         # PRECIP TYPE
         self.precip_type = prof.precip_type
 
+    def setProf(self, prof):
+        self.prof = prof;
+
+        # DGZ data
+        self.dgz_pbot = prof.dgz_pbot
+        self.dgz_ptop = prof.dgz_ptop
+        self.dgz_zbot = tab.utils.M2FT(tab.interp.hght(prof, self.dgz_pbot))
+        self.dgz_ztop = tab.utils.M2FT(tab.interp.hght(prof, self.dgz_ptop))
+        self.dgz_depth = self.dgz_ztop - self.dgz_zbot
+        self.oprh = prof.oprh
+        self.dgz_meanrh = prof.dgz_meanrh
+        self.dgz_pw = prof.dgz_pw
+        self.dgz_meanq = prof.dgz_meanq
+        self.dgz_meanomeg = prof.dgz_meanomeg
+
+        # Inital Phase Types
+        self.plevel = prof.plevel
+        self.init_phase = prof.phase
+        self.init_tmp = prof.tmp
+        self.init_st = prof.st
+
+        # TEMP Energy
+        self.tpos = prof.tpos
+        self.tneg = prof.tneg
+        self.ttop = prof.ttop
+        self.tbot = prof.tbot
+
+        # WETBULB Energy
+        self.wpos = prof.wpos
+        self.wneg = prof.wneg
+        self.wtop = prof.wtop
+        self.wbot = prof.wbot
+
+        # PRECIP TYPE
+        self.precip_type = prof.precip_type
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -190,6 +231,14 @@ class plotWinter(backgroundWinter):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
         '''

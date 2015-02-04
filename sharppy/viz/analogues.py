@@ -166,6 +166,17 @@ class plotAnalogues(backgroundAnalogues):
         self.sup_matches = prof.supercell_matches
         super(plotAnalogues, self).__init__()
 
+    def setProf(self, prof):
+        self.prof = prof
+        self.hail_matches = prof.matches
+        self.sup_matches = prof.supercell_matches
+
+        self.ylast = self.tpad
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -195,6 +206,14 @@ class plotAnalogues(backgroundAnalogues):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
         '''

@@ -165,6 +165,27 @@ class plotSTP(backgroundSTP):
         self.ebwd_p, self.ebwd_c = self.ebwd_prob(self.ebwd)
         self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
         self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
+    def setProf(self, prof):
+        self.mlcape = prof.mlpcl.bplus
+        self.mllcl = prof.mlpcl.lclhght
+        self.esrh = prof.right_esrh[0]
+        self.ebwd = prof.ebwspd
+        self.stpc = prof.stp_cin
+        self.stpf = prof.stp_fixed
+        ## get the probabilities
+        self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
+        self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
+        self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
+        self.ebwd_p, self.ebwd_c = self.ebwd_prob(self.ebwd)
+        self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
+        self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
+        #self.ylast = self.tpad
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
     
     def cape_prob(self, cape):
         if cape == 0.:
@@ -378,6 +399,14 @@ class plotSTP(backgroundSTP):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''

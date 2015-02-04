@@ -152,6 +152,29 @@ class plotFire(backgroundFire):
             self.maxwindpbl = tab.utils.comp2vec(prof.pblmaxwind[0], prof.pblmaxwind[1])
         self.bplus_fire = prof.bplus_fire
 
+    def setProf(self, prof):
+        self.prof = prof;
+
+        # Fire indices
+        self.fosberg = prof.fosberg
+        self.sfc_rh = prof.sfc_rh
+        self.rh01km = prof.rh01km
+        self.pblrh = prof.pblrh
+        self.meanwind01km = tab.utils.comp2vec(prof.meanwind01km[0], prof.meanwind01km[1])
+        self.meanwindpbl = tab.utils.comp2vec(prof.meanwindpbl[0], prof.meanwindpbl[1])
+        self.sfc_wind = (prof.wdir[prof.get_sfc()], prof.wspd[prof.get_sfc()])
+        self.pwat = prof.pwat
+        if not tab.utils.QC(prof.pblmaxwind[0]):
+            self.maxwindpbl = [np.ma.masked, np.ma.masked]
+        else:
+            self.maxwindpbl = tab.utils.comp2vec(prof.pblmaxwind[0], prof.pblmaxwind[1])
+        self.bplus_fire = prof.bplus_fire
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -165,6 +188,14 @@ class plotFire(backgroundFire):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
         '''

@@ -213,6 +213,23 @@ class plotWinds(backgroundWinds):
         self.sru = self.u - self.srwind[0]
         self.srv = self.v - self.srwind[1]
 
+    def setProf(self, prof):
+        self.prof = prof
+        self.srw_0_2km = tab.utils.comp2vec(self.prof.srw_0_2km[0], self.prof.srw_0_2km[1])[1]
+        self.srw_4_6km = tab.utils.comp2vec(self.prof.srw_4_6km[0], self.prof.srw_4_6km[1])[1]
+        self.srw_9_11km = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])[1]
+        self.u = prof.u; self.v = prof.v
+        ## calculate the storm relative wind from the bunkers motion function
+        self.srwind = prof.srwind
+        ## get only the right mover u and v components
+        self.sru = self.u - self.srwind[0]
+        self.srv = self.v - self.srwind[1]
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -240,6 +257,14 @@ class plotWinds(backgroundWinds):
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''

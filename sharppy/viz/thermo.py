@@ -164,6 +164,55 @@ class plotText(backgroundText):
         
         super(plotText, self).__init__()
 
+    def setProf(self, prof):
+        self.ylast = self.label_height
+
+        self.sfcparcel = prof.sfcpcl
+        self.mlparcel = prof.mlpcl
+        self.fcstpcl = prof.fcstpcl
+        self.muparcel = prof.mupcl
+        self.prof = prof;
+
+
+        ## either get or calculate the indices, round to the nearest int, and
+        ## convert them to strings.
+        ## K Index
+        self.k_idx = tab.utils.INT2STR( prof.k_idx )
+        ## precipitable water
+        self.pwat = tab.utils.FLOAT2STR( prof.pwat, 2 )
+        ## 0-3km agl lapse rate
+        self.lapserate_3km = tab.utils.FLOAT2STR( prof.lapserate_3km, 1 )
+        ## 3-6km agl lapse rate
+        self.lapserate_3_6km = tab.utils.FLOAT2STR( prof.lapserate_3_6km, 1 )
+        ## 850-500mb lapse rate
+        self.lapserate_850_500 = tab.utils.FLOAT2STR( prof.lapserate_850_500, 1 )
+        ## 700-500mb lapse rate
+        self.lapserate_700_500 = tab.utils.FLOAT2STR( prof.lapserate_700_500, 1 )
+        ## convective temperature
+        self.convT = tab.utils.INT2STR( prof.convT )
+        ## sounding forecast surface temperature
+        self.maxT = tab.utils.INT2STR( prof.maxT )
+        #fzl = str(int(self.sfcparcel.hght0c))
+        ## 100mb mean mixing ratio
+        self.mean_mixr = tab.utils.FLOAT2STR( prof.mean_mixr, 1 )
+        ## 150mb mean rh
+        self.low_rh = tab.utils.INT2STR( prof.low_rh )
+        self.mid_rh = tab.utils.INT2STR( prof.mid_rh )
+        ## calculate the totals totals index
+        self.totals_totals = tab.utils.INT2STR( prof.totals_totals )
+        self.dcape = tab.utils.INT2STR( prof.dcape )
+        self.drush = tab.utils.INT2STR( prof.drush )
+        self.sigsevere = tab.utils.INT2STR( prof.sig_severe )
+        self.mmp = tab.utils.FLOAT2STR( prof.mmp, 2 )
+        self.esp = tab.utils.FLOAT2STR( prof.esp, 1 )
+        self.wndg = tab.utils.FLOAT2STR( prof.wndg, 1 )
+        self.tei = tab.utils.INT2STR( prof.tei )
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -206,6 +255,14 @@ class plotText(backgroundText):
         self.drawIndices(qp)
         self.drawSevere(qp)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def drawSevere(self, qp):
         '''

@@ -88,6 +88,7 @@ class SkewApp(QWidget):
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.link = kwargs.get("path", None)
+        self.dgz = False
 
         self.progressDialog = QProgressDialog()
 
@@ -306,10 +307,11 @@ class SkewApp(QWidget):
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:])
+                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
             self.prof = self.profs[self.current_idx]
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand)
+            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                                   dgz=self.dgz)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
@@ -350,25 +352,35 @@ class SkewApp(QWidget):
         self.insets["COND STP"] = stpef
         self.insets["VROT"] = vrot
 
-    def clearWidgets(self):
-        """
-        Clear the entire frame.
-        :return:
-        """
+    def updateProfs(self):
+        #self.sound.setProf(self.profs[self.current_idx])
+        if self.model != "Observed" and self.model != "Archive":
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
+                + "  (" + self.run + "  " + self.model + ")"
+
+        if self.model == "SREF":
+            self.prof = self.profs[self.current_idx][0]
+            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_idx][:], dgz=self.gdz)
+        else:
+            self.prof = self.profs[self.current_idx]
+            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+
+        self.storm_slinky.setProf(self.prof)
+        self.inferred_temp_advection.setProf(self.prof)
+        self.speed_vs_height.setProf(self.prof)
+        self.srwinds_vs_height.setProf(self.prof)
+        self.thetae_vs_pressure.setProf(self.prof.thetae[self.prof.pres > 500.],
+                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
+                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
+        self.watch_type.setProf(self.prof)
+        self.convective.setProf(self.prof)
+        self.kinematic.setProf(self.prof)
+        self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
 
         for inset in self.insets.keys():
-            self.insets[inset].deleteLater()
+            self.insets[inset].setProf(self.prof)
 
-        self.sound.deleteLater()
-        self.hodo.deleteLater()
-        self.speed_vs_height.deleteLater()
-        self.inferred_temp_advection.deleteLater()
-        self.storm_slinky.deleteLater()
-        self.thetae_vs_pressure.deleteLater()
-        self.srwinds_vs_height.deleteLater()
-        self.watch_type.deleteLater()
-        self.convective.deleteLater()
-        self.kinematic.deleteLater()
 
     def paintEvent(self, e):
         """
@@ -401,13 +413,7 @@ class SkewApp(QWidget):
 
             ## do a check for setting the dendretic growth zone
             if self.left_inset == "WINTER" or self.right_inset == "WINTER":
-                if self.model == "SREF":
-                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title,
-                                    brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=True)
-
-                else:
-                    self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title,
-                                    brand=self.brand, dgz=True)
+                self.dgz = True
 
 
             self.grid.addWidget(self.sound, 0, 0, 3, 1)
@@ -423,9 +429,7 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.changeflag = True
-            self.clearWidgets()
-            self.initData()
-            self.update()
+            self.updateProfs()
             return
 
         if key == Qt.Key_Left:
@@ -434,9 +438,7 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.changeflag = True
-            self.clearWidgets()
-            self.initData()
-            self.update()
+            self.updateProfs()
             return
 
         if e.matches(QKeySequence.Save):
@@ -475,20 +477,18 @@ class SkewApp(QWidget):
         a = self.menu_ag.checkedAction()
 
         if self.inset_to_swap == "LEFT":
-            if self.left_inset == "WINTER":
-                self.sound.deleteLater()
-                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
-                    title=self.plot_title, brand=self.brand, dgz=False)
+            if self.left_inset == "WINTER" and self.dgz:
+                self.sound.setDGZ(False)
+                self.dgz = False
 
             self.left_inset = a.text()
             self.left_inset_ob.deleteLater()
 
 
         elif self.inset_to_swap == "RIGHT":
-            if self.right_inset == "WINTER":
-                self.sound.deleteLater()
-                self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl,
-                    title=self.plot_title, brand=self.brand, dgz=False)
+            if self.right_inset == "WINTER" and self.dgz:
+                self.sound.setDGZ(False)
+                self.dgz = False
 
             self.right_inset = a.text()
             self.right_inset_ob.deleteLater()

@@ -153,6 +153,18 @@ class plotSlinky(backgroundSlinky):
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
 
+    def setProf(self, prof):
+        self.prof = prof
+        self.slinky_traj = self.prof.slinky_traj
+        self.updraft_tilt = self.prof.updraft_tilt
+        self.smu = self.prof.srwind[0]
+        self.smv = self.prof.srwind[1]
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -194,6 +206,14 @@ class plotSlinky(backgroundSlinky):
         self.plotSMV(qp)
         self.plotTilt(qp)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
    
     def plotSMV(self, qp):
         '''

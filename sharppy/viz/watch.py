@@ -93,6 +93,16 @@ class plotWatch(backgroundWatch):
         self.watch_type = self.prof.watch_type
         self.watch_type_color = self.prof.watch_type_color
 
+    def setProf(self, prof):
+        self.prof = prof
+        self.watch_type = self.prof.watch_type
+        self.watch_type_color = self.prof.watch_type_color
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized
@@ -112,6 +122,14 @@ class plotWatch(backgroundWatch):
         ## end the painter
         qp.drawPixmap(0,0,self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
         qp = QtGui.QPainter()

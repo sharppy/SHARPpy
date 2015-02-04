@@ -254,7 +254,10 @@ class plotVROT(backgroundVROT):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
-    
+
+    def setProf(self, prof):
+        return
+
     def plotData(self):
         '''
         Handles painting on the frame

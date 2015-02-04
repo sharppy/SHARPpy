@@ -190,6 +190,73 @@ class plotKinematics(backgroundKinematics):
         self.upshear = tab.utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
 
+    def setProf(self, prof):
+        self.ylast = self.label_height
+
+        self.prof = prof;
+        self.srh1km = prof.srh1km
+        self.srh3km = prof.srh3km
+        self.esrh = prof.right_esrh
+
+        mean_1km = prof.mean_1km
+        mean_3km = prof.mean_3km
+        mean_6km = prof.mean_6km
+        mean_8km = prof.mean_8km
+        mean_lcl_el = prof.mean_lcl_el
+        mean_eff = prof.mean_eff
+        mean_ebw = prof.mean_ebw
+        self.mean_1km = tab.utils.comp2vec(mean_1km[0], mean_1km[1])
+        self.mean_3km = tab.utils.comp2vec(mean_3km[0], mean_3km[1])
+        self.mean_6km = tab.utils.comp2vec(mean_6km[0], mean_6km[1])
+        self.mean_8km = tab.utils.comp2vec(mean_8km[0], mean_8km[1])
+        self.mean_lcl_el = tab.utils.comp2vec(mean_lcl_el[0], mean_lcl_el[1])
+
+        srw_1km = prof.srw_1km
+        srw_3km = prof.srw_3km
+        srw_6km = prof.srw_6km
+        srw_8km = prof.srw_8km
+        srw_lcl_el = prof.srw_lcl_el
+        srw_4_5km = prof.srw_4_5km
+        srw_eff = prof.srw_eff
+        srw_ebw = prof.srw_ebw
+        self.srw_1km = tab.utils.comp2vec(srw_1km[0], srw_1km[1])
+        self.srw_3km = tab.utils.comp2vec(srw_3km[0], srw_3km[1])
+        self.srw_6km = tab.utils.comp2vec(srw_6km[0], srw_6km[1])
+        self.srw_8km = tab.utils.comp2vec(srw_8km[0], srw_8km[1])
+        self.srw_lcl_el = tab.utils.comp2vec(srw_lcl_el[0], mean_lcl_el[1])
+        self.srw_4_5km = tab.utils.comp2vec(srw_4_5km[0], srw_4_5km[1])
+
+
+        self.sfc_1km_shear = prof.sfc_1km_shear
+        self.sfc_3km_shear = prof.sfc_3km_shear
+        self.sfc_6km_shear = prof.sfc_6km_shear
+        self.sfc_8km_shear = prof.sfc_8km_shear
+        self.lcl_el_shear = prof.lcl_el_shear
+        self.eff_shear = prof.eff_shear
+        self.ebwd = prof.ebwd
+
+        if prof.etop is np.ma.masked or prof.ebottom is np.ma.masked:
+            self.mean_eff = [np.ma.masked, np.ma.masked]
+            self.mean_ebw = [np.ma.masked, np.ma.masked]
+            self.srw_eff = [np.ma.masked, np.ma.masked]
+            self.srw_ebw = [np.ma.masked, np.ma.masked]
+        else:
+            self.mean_eff = tab.utils.comp2vec(mean_eff[0], mean_eff[1])
+            self.mean_ebw = tab.utils.comp2vec(mean_ebw[0], mean_ebw[1])
+            self.srw_eff = tab.utils.comp2vec(srw_eff[0], srw_eff[1])
+            self.srw_ebw = tab.utils.comp2vec(srw_ebw[0], srw_ebw[1])
+
+        self.brn_shear = prof.mupcl.brnshear
+        self.bunkers_right_vec = tab.utils.comp2vec(prof.srwind[0], prof.srwind[1])
+        self.bunkers_left_vec = tab.utils.comp2vec(prof.srwind[2], prof.srwind[3])
+        self.upshear = tab.utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
+        self.downshear = tab.utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -203,6 +270,14 @@ class plotKinematics(backgroundKinematics):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
         '''

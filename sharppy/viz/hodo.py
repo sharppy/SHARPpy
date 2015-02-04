@@ -20,6 +20,7 @@ class backgroundHodo(QtGui.QFrame):
     '''
     def __init__(self):
         super(backgroundHodo, self).__init__()
+        self.first = True
         self.initUI()
 
     def initUI(self):
@@ -53,8 +54,11 @@ class backgroundHodo(QtGui.QFrame):
         self.critical_metrics = QtGui.QFontMetrics( self.critical_font )
         self.label_height = self.label_metrics.xHeight() + 5
         self.critical_height = self.critical_metrics.xHeight() + 5
+
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+        self.backgroundBitMap = self.plotBitMap.copy()
 
     def center_hodo(self, point):
         '''
@@ -79,7 +83,10 @@ class backgroundHodo(QtGui.QFrame):
             self.point = point
             diffx = centerx - point[0]; diffy = centery - point[1]
             self.centerx += diffx; self.centery += diffy
-    
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+        self.backgroundBitMap = self.plotBitMap.copy()
+
     def wheelEvent(self, e):
         '''
         Handeles the zooming of the hodograph window.
@@ -105,6 +112,7 @@ class backgroundHodo(QtGui.QFrame):
                            self.ring_increment)
         ## reassign the new scale
         self.scale = (self.brx - self.tlx) / self.hodomag
+
         ## update
         self.update()
 
@@ -391,6 +399,31 @@ class plotHodo(backgroundHodo):
         mw.triggered.connect(self.setMWCenter)
         a = ag2.addAction(mw)
         self.popupmenu.addAction(a)
+
+    def setProf(self, hght, u, v, **kwargs):
+        self.hght = hght
+        self.u = u; self.v = v
+        ## if you want the storm motion vector, you need to
+        ## provide the profile.
+        self.prof = kwargs.get('prof', None)
+        self.centered = kwargs.get('centered', (0,0))
+        self.srwind = self.prof.srwind
+        self.ptop = self.prof.etop
+        self.pbottom = self.prof.ebottom
+        self.mean_lcl_el = self.prof.mean_lcl_el
+        self.corfidi_up_u = self.prof.upshear_downshear[0]
+        self.corfidi_up_v = self.prof.upshear_downshear[1]
+        self.corfidi_dn_u = self.prof.upshear_downshear[2]
+        self.corfidi_dn_v = self.prof.upshear_downshear[3]
+        self.bunkers_right_vec = tab.utils.comp2vec(self.prof.srwind[0], self.prof.srwind[1])
+        self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
+        self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
+        self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
+        self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+
+        self.clearData()
+        self.plotData()
+        self.update()
 
     def setBndyCursor(self):
         self.setMouseTracking(True)
@@ -747,8 +780,7 @@ class plotHodo(backgroundHodo):
         '''
         Clears/resets the base QPixmap.
         '''
-        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap = self.backgroundBitMap.copy()
     
     def plotData(self):
         '''
@@ -756,8 +788,6 @@ class plotHodo(backgroundHodo):
         '''
         ## center the hodograph on the mean wind vector
         self.center_hodo(self.centered)
-        ## draw the background
-        self.plotBackground()
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)

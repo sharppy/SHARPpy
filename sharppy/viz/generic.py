@@ -256,6 +256,22 @@ class plotGeneric(backgroundGeneric):
         self.set_ylim( self.yaxislimit[0], self.yaxislimit[1])
         ## reset the x and y limits based on the data given
 
+    def setProf(self, x, y, **kwargs):
+        self.x = x; self.y = y
+        self.color = kwargs.get('color', RED)
+        self.width = kwargs.get('width', 2)
+        self.xaxislimit = kwargs.get('xlim', (self.x.min()-10, self.x.max()+10))
+        self.yaxislimit = kwargs.get('ylim', (self.y.min(), self.y.max()))
+        ## update the min and max bounds based on the data
+        self.set_xlim( self.xaxislimit[0], self.xaxislimit[1])
+        self.set_ylim( self.yaxislimit[0], self.yaxislimit[1])
+        ## reset the x and y limits based on the data given
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         """
         Handles the resizing of the frame
@@ -296,6 +312,14 @@ class plotGeneric(backgroundGeneric):
         self.draw_lines(qp)
         ## end the painter
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.size().width(), self.size().height())
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def draw_lines(self, qp):
         """

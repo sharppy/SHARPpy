@@ -117,6 +117,16 @@ class plotSpeed(backgroundSpeed):
         self.u = prof.u; self.v = prof.v
         self.hght = prof.hght; self.pres = prof.pres
 
+    def setProf(self, prof):
+        self.prof = prof
+        self.u = prof.u; self.v = prof.v
+        self.hght = prof.hght; self.pres = prof.pres
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -130,6 +140,14 @@ class plotSpeed(backgroundSpeed):
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''
