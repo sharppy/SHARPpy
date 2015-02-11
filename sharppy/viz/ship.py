@@ -155,6 +155,14 @@ class plotSHIP(backgroundSHIP):
         super(plotSHIP, self).__init__()
         self.ship = prof.ship
 
+    def setProf(self, prof):
+        self.ship = prof.ship
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
 
     def resizeEvent(self, e):
         '''
@@ -169,6 +177,14 @@ class plotSHIP(backgroundSHIP):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''

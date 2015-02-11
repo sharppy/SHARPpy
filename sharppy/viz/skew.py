@@ -357,6 +357,35 @@ class plotSkewT(backgroundSkewT):
             "  font-size: 11px;"
             "  color: #00FF00;}")
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
+
+    def setProf(self, prof, **kwargs):
+        self.prof = prof
+        self.pres = prof.pres; self.hght = prof.hght
+        self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
+        self.dew_stdev = prof.dew_stdev
+        self.tmp_stdev = prof.tmp_stdev
+        self.u = prof.u; self.v = prof.v
+        self.wetbulb = prof.wetbulb
+        self.logp = np.log10(prof.pres)
+        self.pcl = kwargs.get('pcl', None)
+        self.proflist = kwargs.get('proflist', None)
+        self.plotdgz = kwargs.get('dgz', False)
+        self.interpWinds = kwargs.get('interpWinds', True)
+        self.title = kwargs.get('title', '')
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
+    def setDGZ(self, flag):
+        self.plotdgz = flag
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+        return
     
     def mousePressEvent(self, e):
         if self.hasMouseTracking():

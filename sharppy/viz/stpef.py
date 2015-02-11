@@ -242,6 +242,14 @@ class plotSTPEF(backgroundSTPEF):
         super(plotSTPEF, self).__init__()
         self.stpc = prof.stp_cin
 
+    def setProf(self, prof):
+        self.stpc = prof.stp_cin
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
 
     def resizeEvent(self, e):
         '''
@@ -256,6 +264,14 @@ class plotSTPEF(backgroundSTPEF):
         qp.begin(self)
         qp.drawPixmap(1, 1, self.plotBitMap)
         qp.end()
+
+    def clearData(self):
+        '''
+        Handles the clearing of the pixmap
+        in the frame.
+        '''
+        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.plotBitMap.fill(QtCore.Qt.black)
     
     def plotData(self):
         '''
