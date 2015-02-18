@@ -66,7 +66,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 
 Known Windows Issues:
 - Inset text is not properly sized or placed in their windows.
-- When incrementing/decrementing profiles, the entire screen goes blank and redraws
+- When incrementing/decrementing profiles, the entire screen goes blank and redraws (FIXED AS OF 2/11/2015)
 - The program’s menu bar does not display
 - The sounding window may not properly size at first. A fix is to manually resize it and manipulate it.
 
