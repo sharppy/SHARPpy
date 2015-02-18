@@ -1,3 +1,8 @@
+import sys, os
+
+if len(sys.argv) > 1 and sys.argv[1] == '--debug':
+    sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
+
 from sharppy.viz import SkewApp
 from PySide.QtCore import *
 from PySide.QtGui import *
