@@ -293,10 +293,13 @@ class plotHodo(backgroundHodo):
         self.u = u; self.v = v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
+        self.cursor_type = 'none'
         self.bndy = kwargs.get('bndy', False) # sets whether or not the cursor acts as the boundary
         self.bndy_spd = kwargs.get('bndy_spd', 0)
         self.bndy_dir = kwargs.get('bndy_dir', 0)
         self.bndy_u, self.bndy_v = tab.utils.vec2comp(self.bndy_dir, self.bndy_spd)
+        self.track_cursor = False
+        self.was_right_click = False
         self.prof = kwargs.get('prof', None)
         self.centered = kwargs.get('centered', (0,0))
         self.srwind = self.prof.srwind
@@ -426,8 +429,9 @@ class plotHodo(backgroundHodo):
         self.update()
 
     def setBndyCursor(self):
-        self.setMouseTracking(True)
         self.bndy = True
+        self.track_cursor = True
+        self.cursor_type = 'boundary'
         self.plotBndy(self.bndy_dir)
         self.wndReadout.hide()
         self.srh1kmReadout.hide()
@@ -439,8 +443,9 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setNoCursor(self):
-        self.setMouseTracking(False)
-        self.bndy = False          
+        self.bndy = False
+        self.track_cursor = False 
+        self.cursor_type = 'none'
         self.unsetCursor()
         self.hband.hide()
         self.vband.hide()
@@ -454,8 +459,9 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setStormMotionCursor(self):
-        self.setMouseTracking(True)
         self.unsetCursor()
+        self.track_cursor = True
+        self.cursor_type = 'stormmotion'
         self.bndy = False  
         self.wndReadout.show()
         self.srh1kmReadout.show()
@@ -516,13 +522,13 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        if self.bndy == False:
-            if self.hasMouseTracking():
-                self.setMouseTracking(False)
-            else:
-                self.setMouseTracking(True)
-        else:
-            if self.hasMouseTracking():
+        self.was_right_click = e.button() & QtCore.Qt.RightButton
+
+    def mouseReleaseEvent(self, e):
+        if self.cursor_type == 'stormmotion' and not self.was_right_click:
+            self.track_cursor = not self.track_cursor
+        elif self.cursor_type == 'boundary' and not self.was_right_click:
+            if self.track_cursor:
                 qp = QtGui.QPainter()
                 self.bndy_u, self.bndy_v = self.pix_to_uv(e.x(), e.y())
                 self.bndy_dir, self.bndy_spd = tab.utils.comp2vec(self.bndy_u, self.bndy_v)
@@ -620,13 +626,13 @@ class plotHodo(backgroundHodo):
                 qp.end()
 
                 self.update()
-                self.setMouseTracking(False)
+                self.track_cursor = False
             else:
                 self.plotBndy(self.bndy_dir)
                 self.clearData()
                 self.plotData()
                 self.update()               
-                self.setMouseTracking(True)
+                self.track_cursor = True
 
     def setBlackPen(self, qp):
         color = QtGui.QColor('#000000')
@@ -698,7 +704,7 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        if self.bndy == False:
+        if self.cursor_type == 'stormmotion' and self.track_cursor:
             ## convert the location of the mouse to u,v space
             u, v = self.pix_to_uv(e.x(), e.y())
             ## get the direction and speed from u,v
@@ -736,7 +742,7 @@ class plotHodo(backgroundHodo):
             ## show the crosshair
             self.hband.show()
             self.vband.show()
-        else:
+        elif self.cursor_type == 'boundary':
             self.hband.hide()
             self.vband.hide()
             u, v = self.pix_to_uv(e.x(), e.y())
