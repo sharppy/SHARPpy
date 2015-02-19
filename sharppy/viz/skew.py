@@ -1,12 +1,14 @@
 import numpy as np
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+from sharppy.sharptab.profile import Profile, create_profile
 from sharppy.viz.barbs import drawBarb
 from PySide import QtGui, QtCore
 from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtOpenGL import *
 
+import copy
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
@@ -51,6 +53,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.esrh_metrics = QtGui.QFontMetrics( self.esrh_font )
         self.esrh_height = self.esrh_metrics.xHeight() + 9
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.saveBitMap = None
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
     
@@ -274,6 +277,14 @@ class backgroundSkewT(QtGui.QWidget):
                               (self.bry - self.tpad)) * self.yrange)
         return self.brx - (((scl1 - t) / self.xrange) * (self.brx - self.lpad))
 
+    def pix_to_tmpc(self, x, y):
+        '''
+        Function to convert an (x, y) pixel into a temperature
+        '''
+        scl1 = self.brtmpc - (((self.bry - y) /
+                              float(self.bry - self.tpad)) * self.yrange)
+        return scl1 - (((self.brx - x) / float(self.brx - self.lpad)) * self.xrange)
+
     def pres_to_pix(self, p):
         '''
         Function to convert a pressure value (level) to a Y pixel.
@@ -297,6 +308,8 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
+    updated = Signal(Profile)
+
     def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__()
         ## get the profile data
@@ -319,6 +332,13 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.setMouseTracking(True)
+        self.tracking = False
+        self.initdrag = False
+        self.dragging = False
+        self.drag_idx = None
+        self.drag_prof = None
+        self.drag_buffer = 5
+        self.clickradius = 6
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
         self.hghtReadout = QLabel(parent=self)
@@ -387,13 +407,85 @@ class plotSkewT(backgroundSkewT):
         self.update()
         return
     
+    def mouseReleaseEvent(self, e):
+        if not self.dragging:
+            self.tracking = not self.tracking
+
+        if self.dragging:
+            tmpc = self.pix_to_tmpc(e.x(), e.y())
+            prof_name, prof = self.drag_prof
+
+            if prof_name == 'tmpc':
+                tmpc = max(tmpc, self.dwpc[self.drag_idx])
+            elif prof_name == 'dwpc':
+                tmpc = min(tmpc, self.tmpc[self.drag_idx])
+
+            prof[self.drag_idx] = tmpc       
+            therm = {'tmpc':self.tmpc, 'dwpc':self.dwpc}
+            therm.update(prof_name=prof)
+
+            new_prof = create_profile(pres=self.pres, hght=self.hght, u=self.u, v=self.v, omeg=self.prof.omeg, 
+                profile=self.prof.profile_type, location=self.prof.location, **therm)
+
+            self.drag_idx = None
+            self.dragging = False
+            self.saveBitMap = None
+
+            self.updated.emit(new_prof)
+        elif self.initdrag:
+            self.initdrag = False
+
+        self.drag_prof = None
+
     def mousePressEvent(self, e):
-        if self.hasMouseTracking():
-            self.setMouseTracking(False)
+        prof_ys = self.pres_to_pix(self.pres)
+        tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
+        dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
+
+        dist_tmpc = np.min(np.hypot(tmpc_xs - e.x(), prof_ys - e.y()))
+        dist_dwpc = np.min(np.hypot(dwpc_xs - e.x(), prof_ys - e.y()))
+
+        self.initdrag = True
+        if dist_tmpc <= self.clickradius and dist_dwpc > self.clickradius:
+            # Temperature was in the click radius and dewpoint wasn't; take the temperature
+            prof_name = 'tmpc'
+        elif dist_dwpc <= self.clickradius and dist_tmpc > self.clickradius:
+            # Dewpoint was within the click radius and temperature wasn't; take the dewpoint
+            prof_name = 'dwpc'
+        elif dist_tmpc <= self.clickradius and dist_dwpc <= self.clickradius:
+            # Both profiles have points within the click radius
+            if dist_tmpc < dist_dwpc:
+                # The temperature point is closer than the dewpoint point, so take the temperature
+                prof_name = 'tmpc'
+            elif dist_dwpc < dist_tmpc:
+                # The dewpoint point is closer than the temperature point, so take the dewpoint
+                prof_name = 'dwpc'
+            else:
+                # They were both the same distance away (probably a saturated profile).  If the click
+                #   was to the left, take the dewpoint, if it was to the right, take the temperature.
+                idx = np.argmin(np.abs(prof_ys - e.y()))
+                prof_x = self.tmpc_to_pix(self.tmpc[idx], self.pres[idx])
+                if e.x() < prof_x:
+                    prof_name = 'dwpc'
+                else:
+                    prof_name = 'tmpc'
         else:
-            self.setMouseTracking(True)
+            # Click wasn't within range of any points.  Move along, folks, nothing to see here.
+            self.initdrag = False
+
+        if self.initdrag:
+            self.drag_prof = (prof_name, self.__dict__[prof_name])
 
     def mouseMoveEvent(self, e):
+        if self.tracking:
+            self.updateReadout(e)
+
+        if self.initdrag or self.dragging:
+            self.dragging = True
+            self.initdrag = False
+            self.dragLine(e)
+
+    def updateReadout(self, e):
         pres = self.pix_to_pres(e.y())
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, pres) )
         tmp = tab.interp.temp(self.prof, pres)
@@ -415,7 +507,74 @@ class plotSkewT(backgroundSkewT):
         self.centerp = self.pix_to_pres(e.y())
         self.centert = tmp
         self.rubberBand.show()
-    
+
+    def dragLine(self, e):
+        tmpc = self.pix_to_tmpc(e.x(), e.y())
+
+        if self.drag_idx is None:
+            pres = self.pix_to_pres(e.y())
+            idx = np.argmin(np.abs(pres - self.pres))
+            while self.tmpc.mask[idx] or self.dwpc.mask[idx]:
+                idx += 1
+            self.drag_idx = idx
+        else:
+            idx = self.drag_idx
+ 
+        prof_name, drag_prof = self.drag_prof
+
+        if prof_name == 'tmpc':
+            tmpc = max(tmpc, self.dwpc[idx])
+        elif prof_name == 'dwpc':
+            tmpc = min(tmpc, self.tmpc[idx])
+
+        # Figure out the bounds of the box we need to update
+        if idx == 0 or self.pres.mask[idx - 1] or self.tmpc.mask[idx - 1] or self.dwpc.mask[idx - 1]:
+            lb_p, ub_p = self.pres[idx], self.pres[idx + 1]
+            t_points = [ (tmpc, self.pres[idx]), (drag_prof[idx + 1], self.pres[idx + 1]) ]
+        elif idx == self.pres.shape[0] - 1:
+            lb_p, ub_p = self.pres[idx - 1], self.pres[idx]
+            t_points = [ (drag_prof[idx - 1], self.pres[idx - 1]), (tmpc, self.pres[idx]) ]
+        else:
+            lb_p, ub_p = self.pres[idx - 1], self.pres[idx + 1]
+            t_points = [ (drag_prof[idx - 1], self.pres[idx - 1]), (tmpc, self.pres[idx]), (drag_prof[idx + 1], self.pres[idx + 1]) ]
+
+        x_points = [ self.tmpc_to_pix(*pt) for pt in t_points ]
+        lb_x, ub_x = min(x_points), max(x_points)
+        lb_y, ub_y = self.pres_to_pix(ub_p), self.pres_to_pix(lb_p)
+
+        qp = QtGui.QPainter()
+        qp.begin(self.plotBitMap)
+
+        # If we have something saved, restore it
+        if self.saveBitMap is not None:
+            origin, size, bmap = self.saveBitMap
+            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
+
+        # Capture the new portion of the image to save
+        origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
+        size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
+        bmap = self.plotBitMap.copy(QRect(origin, size))
+        self.saveBitMap = (origin, size, bmap)
+
+        # Draw lines
+        if prof_name == 'dwpc':
+            color = QtGui.QColor("#019B06")
+        else:
+            color = QtGui.QColor("#9F0101")
+        pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        if idx != 0 and not self.pres.mask[idx - 1] and not self.tmpc.mask[idx - 1] and not self.dwpc.mask[idx - 1]:
+            x1, x2 = self.tmpc_to_pix(drag_prof[idx - 1], self.pres[idx - 1]), self.tmpc_to_pix(tmpc, self.pres[idx])
+            y1, y2 = self.pres_to_pix(self.pres[idx - 1]), self.pres_to_pix(self.pres[idx])
+            qp.drawLine(x1, y1, x2, y2)
+        if idx != self.pres.shape[0] - 1:
+            x1, x2 = self.tmpc_to_pix(tmpc, self.pres[idx]), self.tmpc_to_pix(drag_prof[idx + 1], self.pres[idx + 1])
+            y1, y2 = self.pres_to_pix(self.pres[idx]), self.pres_to_pix(self.pres[idx + 1])
+            qp.drawLine(x1, y1, x2, y2)
+
+        qp.end()
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
