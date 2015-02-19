@@ -2538,7 +2538,11 @@ def pbl_top(prof):
     '''
 
     thetav = thermo.theta(prof.pres, thermo.virtemp(prof.pres, prof.tmpc, prof.dwpc))
-    level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
+    try:
+        level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
+    except IndexError:
+        print "Warning: PBL top could not be found."
+        level = thetav.shape[0] - 1
 
     return prof.pres[level]
 

@@ -312,11 +312,13 @@ class SkewApp(QWidget):
             self.prof = self.profs[self.current_idx]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz)
+            self.sound.updated.connect(self.updateProfs)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
         self.inferred_temp_advection = plotAdvection(self.prof)
         self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+#       self.hodo.updated.connect(self.updateProfs)
 
         self.storm_slinky = plotSlinky(self.prof)
         self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
@@ -352,17 +354,20 @@ class SkewApp(QWidget):
         self.insets["COND STP"] = stpef
         self.insets["VROT"] = vrot
 
-    def updateProfs(self):
+    @Slot(profile.Profile)
+    def updateProfs(self, prof):
         #self.sound.setProf(self.profs[self.current_idx])
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
                 + "  (" + self.run + "  " + self.model + ")"
 
         if self.model == "SREF":
+            self.profs[self.current_idx][0] = prof
             self.prof = self.profs[self.current_idx][0]
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
+            self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
 
@@ -429,7 +434,7 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.changeflag = True
-            self.updateProfs()
+            self.updateProfs(self.profs[self.current_idx])
             return
 
         if key == Qt.Key_Left:
@@ -438,7 +443,7 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.changeflag = True
-            self.updateProfs()
+            self.updateProfs(self.profs[self.current_idx])
             return
 
         if e.matches(QKeySequence.Save):

@@ -376,7 +376,7 @@ class plotText(backgroundText):
             color = QtGui.QColor('#66CD00')
         else:
             color = QtGui.QColor('#00FF00')
-        
+
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
