@@ -660,7 +660,7 @@ class plotHodo(backgroundHodo):
                 self.plotData()
                 self.update()               
                 self.track_cursor = True
-        elif self.cursor_type == 'none' and self.dragging:
+        elif self.cursor_type == 'none' and (self.dragging or self.initdrag):
             u, v = self.pix_to_uv(e.x(), e.y())
 
             self.u[self.drag_idx] = u
@@ -673,6 +673,7 @@ class plotHodo(backgroundHodo):
             self.saveBitMap = None
 
             self.updated.emit(new_prof)
+        self.initdrag = False
 
     def setBlackPen(self, qp):
         color = QtGui.QColor('#000000')
