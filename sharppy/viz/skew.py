@@ -87,74 +87,50 @@ class backgroundSkewT(QtGui.QWidget):
         self.initUI()
     
     def wheelEvent(self, e):
-        cursor_y = e.y()
-        cursor_p = self.centerp
-        cursor_t = self.centert
-        ## set the upper and lower zoom rate based
-        ## on the distance from the ma value displayed
-        rate_upperp = np.log10(self.pmax - cursor_p)
-        rate_lowerp = np.log10(cursor_p - self.pmin)
-        rate_uppert = rate_upperp * 8
-        rate_lowert = rate_lowerp * 5
-        ## use the rate to give a delta
-        deltap_upper = e.delta() / rate_upperp
-        deltap_lower = e.delta() / rate_lowerp
-        deltat_upper = e.delta() / rate_uppert
-        deltat_lower = e.delta() / rate_lowert
-        ## change the vertical bounds
-        new_pmin = self.pmin - deltap_lower
-        new_pmax = self.pmax + deltap_upper
-        ## change the horizontal bounds
-        new_tmin = self.bltmpc - deltat_lower
-        new_tmax = self.brtmpc + deltat_upper
-        ## make sure that the vertical zooming
-        ## doesn't go out of bounds
-        if new_pmin <= self.centerp - 100. and new_pmin >= 100.:
-            self.pmin = new_pmin
-        else:
-            self.pmin = np.floor(self.pmin)
-        if new_pmax >= self.centerp + 100. and new_pmax <= 1050.:
-            self.pmax = new_pmax
-        else:
-            self.pmax = int(self.pmax)
-        ## make sure that the horizontal zooming
-        ## doesn't go out of bounds
-        if new_tmin <= cursor_t - 20. and new_tmin > -50:
-            self.bltmpc = new_tmin
-        else:
-            self.bltmpc = np.floor(self.bltmpc)
-        if new_tmax >= cursor_t + 20. and new_tmax < 50:
-            self.brtmpc = new_tmax
-        else:
-            self.brtmpc = int(self.brtmpc)
+        rate_multiplier = 0.5 * e.delta()
+
+        focus_x, focus_y = (self.brx - self.lpad) / 2, self.bry #e.x(), e.y()
+
+        left_rate = (focus_x - self.lpad) / float(self.brx - self.lpad)
+        right_rate = 1 - left_rate
+        top_rate = (focus_y - self.tly) / float(self.bry - self.tly)
+        bottom_rate = 1 - top_rate
+
+#       print left_rate, right_rate, focus_x
+#       print top_rate, bottom_rate, focus_y
+
+#       qp.drawLine(self.lpad, self.tly, self.brx, self.tly)
+#       qp.drawLine(self.brx, self.tly, self.brx, self.bry)
+#       qp.drawLine(self.brx, self.bry, self.lpad, self.bry)
+#       qp.drawLine(self.lpad, self.bry, self.lpad, self.tly)
+
+        new_left = self.lpad - rate_multiplier * left_rate
+        new_right = self.brx + rate_multiplier * right_rate
+        new_top = self.tly - rate_multiplier * top_rate
+        new_bottom = self.bry + rate_multiplier * bottom_rate
+
+#       print new_left - self.lpad, self.brx - new_right
+
+        new_tmin = self.pix_to_tmpc(new_left, self.bry)
+        new_tmax = self.pix_to_tmpc(new_right, self.bry)
+        new_pmin = self.pix_to_pres(new_top)
+        new_pmax = self.pix_to_pres(new_bottom)
+
+#       print new_tmin, new_tmax
+
+        if new_pmax - new_pmin > 100:
+            self.pmin = max(100., new_pmin)
+            self.pmax = min(1050., new_pmax)
+        if new_tmax - new_tmin > 20:
+            self.bltmpc = max(-50., new_tmin)
+            self.brtmpc = min(50., new_tmax)
+
         self.log_pmin = np.log(self.pmin)
         self.log_pmax = np.log(self.pmax)
         self.xrange = int(self.brtmpc) - int(self.bltmpc)
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
         self.update()
-
-    def draw_dry_adiabat(self, theta, qp):
-        '''
-        Draw the given moist adiabat.
-
-        '''
-        pen = QtGui.QPen(QtGui.QColor("#333333"), 1)
-        pen.setStyle(QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        dp = -10
-        presvals = np.arange(int(self.pmax), int(self.pmin)+dp, dp)
-        thetas = ((theta + ZEROCNK) / (np.power((1000. / presvals),ROCP))) - ZEROCNK
-        xvals = self.tmpc_to_pix(thetas, presvals)
-        yvals = self.pres_to_pix(presvals)
-        path = QPainterPath()
-        path.moveTo(xvals[0], yvals[0])
-        for i in xrange(1, len(presvals) ):
-            p = presvals[i]
-            x = xvals[i]
-            y = yvals[i]
-            path.lineTo(x, y)
-        qp.drawPath(path)
-
+ 
     def draw_moist_adiabat(self, tw, qp):
         '''
         Draw the given moist adiabat.
