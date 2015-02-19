@@ -283,7 +283,7 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         scl1 = self.brtmpc - (((self.bry - y) /
                               float(self.bry - self.tpad)) * self.yrange)
-        return scl1 - (((self.brx - x) / float(self.brx - self.lpad)) * self.xrange)
+        return int(scl1 - (((self.brx - x) / float(self.brx - self.lpad)) * self.xrange))
 
     def pres_to_pix(self, p):
         '''
