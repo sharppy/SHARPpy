@@ -1,6 +1,7 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+from sharppy.sharptab.profile import Profile, create_profile
 from sharppy.sharptab.constants import *
 from PySide.QtGui import *
 from PySide.QtCore import *
@@ -56,6 +57,7 @@ class backgroundHodo(QtGui.QFrame):
         self.critical_height = self.critical_metrics.xHeight() + 5
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.saveBitMap = None
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
         self.backgroundBitMap = self.plotBitMap.copy()
@@ -283,6 +285,9 @@ class plotHodo(backgroundHodo):
     Plots the data on the hodograph. Inherits from the backgroundHodo
     class that plots the background frame onto a QPixmap.
     '''
+
+    updated = Signal(Profile)
+
     def __init__(self, hght, u, v, **kwargs):
         '''
         Initialize the data used in the class.
@@ -293,15 +298,20 @@ class plotHodo(backgroundHodo):
         self.u = u; self.v = v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
-        self.cursor_type = 'none'
-        self.bndy = kwargs.get('bndy', False) # sets whether or not the cursor acts as the boundary
+        self.cursor_type = kwargs.get('cursor', 'none')
         self.bndy_spd = kwargs.get('bndy_spd', 0)
         self.bndy_dir = kwargs.get('bndy_dir', 0)
         self.bndy_u, self.bndy_v = tab.utils.vec2comp(self.bndy_dir, self.bndy_spd)
         self.track_cursor = False
         self.was_right_click = False
+        self.initdrag = False
+        self.dragging = False
+        self.drag_idx = None
+        self.drag_buffer = 5
+        self.clickradius = 6
         self.prof = kwargs.get('prof', None)
         self.centered = kwargs.get('centered', (0,0))
+        self.center_loc = 'centered'
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -409,7 +419,7 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
-        self.centered = kwargs.get('centered', (0,0))
+#       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -424,12 +434,18 @@ class plotHodo(backgroundHodo):
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
 
+        if self.center_loc == 'centered':
+            self.setNormalCenter()
+        elif self.center_loc == 'meanwind':
+            self.setMWCenter()
+        elif self.center_loc == 'stormrelative':
+            self.setSRCenter()
+
         self.clearData()
         self.plotData()
         self.update()
 
     def setBndyCursor(self):
-        self.bndy = True
         self.track_cursor = True
         self.cursor_type = 'boundary'
         self.plotBndy(self.bndy_dir)
@@ -443,7 +459,6 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setNoCursor(self):
-        self.bndy = False
         self.track_cursor = False 
         self.cursor_type = 'none'
         self.unsetCursor()
@@ -462,7 +477,6 @@ class plotHodo(backgroundHodo):
         self.unsetCursor()
         self.track_cursor = True
         self.cursor_type = 'stormmotion'
-        self.bndy = False  
         self.wndReadout.show()
         self.srh1kmReadout.show()
         self.srh3kmReadout.show()
@@ -477,6 +491,7 @@ class plotHodo(backgroundHodo):
 
     def setNormalCenter(self):
         self.centered = (0, 0)
+        self.center_loc = 'centered'
         self.clearData()
         self.plotData()
         self.update()
@@ -484,6 +499,7 @@ class plotHodo(backgroundHodo):
 
     def setMWCenter(self):
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
+        self.center_loc = 'meanwind'
         self.clearData()
         self.plotData()
         self.update()
@@ -492,6 +508,7 @@ class plotHodo(backgroundHodo):
     def setSRCenter(self):
         rstu,rstv,lstu,lstv = self.srwind
         self.centered = (rstu, rstv)
+        self.center_loc = 'stormrelative'
         self.clearData()
         self.plotData()
         self.update()
@@ -523,6 +540,16 @@ class plotHodo(backgroundHodo):
         
         '''
         self.was_right_click = e.button() & QtCore.Qt.RightButton
+
+        if self.cursor_type == 'none' and not self.was_right_click:
+            visible = np.where(self.hght <= 12000)
+            
+            xs, ys = self.uv_to_pix(self.u[visible], self.v[visible])
+            dists = np.hypot(xs - e.x(), ys - e.y())
+
+            if dists.min() < self.clickradius:
+                self.initdrag = True
+                self.drag_idx = np.argmin(dists)
 
     def mouseReleaseEvent(self, e):
         if self.cursor_type == 'stormmotion' and not self.was_right_click:
@@ -633,6 +660,19 @@ class plotHodo(backgroundHodo):
                 self.plotData()
                 self.update()               
                 self.track_cursor = True
+        elif self.cursor_type == 'none' and self.dragging:
+            u, v = self.pix_to_uv(e.x(), e.y())
+
+            self.u[self.drag_idx] = u
+            self.v[self.drag_idx] = v
+            new_prof = create_profile(pres=self.prof.pres, hght=self.hght, tmpc=self.prof.tmpc, dwpc=self.prof.dwpc, 
+                u=self.u, v=self.v, omeg=self.prof.omeg,profile=self.prof.profile_type, location=self.prof.location)
+
+            self.drag_idx = None
+            self.dragging = False
+            self.saveBitMap = None
+
+            self.updated.emit(new_prof)
 
     def setBlackPen(self, qp):
         color = QtGui.QColor('#000000')
@@ -753,7 +793,63 @@ class plotHodo(backgroundHodo):
             self.srh3kmReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
             self.srh3kmReadout.setFixedWidth(120)
             self.srh3kmReadout.move(self.brx-130, self.bry-30)
+        elif self.cursor_type == 'none' and (self.initdrag or self.dragging):
+            self.initdrag = False
+            self.dragging = True
+            self.dragHodo(e)
 
+    def dragHodo(self, e):
+        idx = self.drag_idx
+        u, v = self.pix_to_uv(e.x(), e.y())
+
+        u_pts = [ u ]
+        v_pts = [ v ]
+
+        lb_idx, ub_idx = max(idx - 1, 0), min(idx + 1, self.u.shape[0] - 1)
+
+        while lb_idx >= 0 and (self.u.mask[lb_idx] or self.v.mask[lb_idx]):
+            lb_idx -= 1
+
+        while ub_idx < self.u.shape[0] and (self.u.mask[ub_idx] or self.v.mask[ub_idx]):
+            ub_idx += 1
+
+        if lb_idx != -1:
+            u_pts.append(self.u[lb_idx])
+            v_pts.append(self.v[lb_idx])
+        if ub_idx != self.u.shape[0]:
+            u_pts.append(self.u[ub_idx])
+            v_pts.append(self.v[ub_idx])
+
+        lb_u, ub_u = min(u_pts), max(u_pts)
+        lb_v, ub_v = min(v_pts), max(v_pts)
+
+        lb_x, lb_y = self.uv_to_pix(lb_u, ub_v)
+        ub_x, ub_y = self.uv_to_pix(ub_u, lb_v)
+
+        qp = QtGui.QPainter()
+        qp.begin(self.plotBitMap)
+
+        if self.saveBitMap is not None:
+            (origin, size, bmap) = self.saveBitMap
+            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
+
+        # Capture the new portion of the image to save
+        origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
+        size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
+        bmap = self.plotBitMap.copy(QRect(origin, size))
+        self.saveBitMap = (origin, size, bmap)
+
+        pen = QtGui.QPen(QtGui.QColor('#FFFFFF'), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        if lb_idx != -1:
+            prof_x, prof_y = self.uv_to_pix(self.u[lb_idx], self.v[lb_idx])
+            qp.drawLine(prof_x, prof_y, e.x(), e.y())
+        if ub_idx != self.u.shape[0]:
+            prof_x, prof_y = self.uv_to_pix(self.u[ub_idx], self.v[ub_idx])
+            qp.drawLine(e.x(), e.y(), prof_x, prof_y)
+
+        qp.end()
+        self.update()
 
     def resizeEvent(self, e):
         '''
@@ -805,7 +901,7 @@ class plotHodo(backgroundHodo):
         self.drawSMV(qp)
         self.drawCorfidi(qp)
         self.drawLCLtoEL_MW(qp)
-        if self.bndy is False:
+        if self.cursor_type in [ 'none', 'stormmotion' ]:
             self.drawCriticalAngle(qp)
         qp.end()
     
