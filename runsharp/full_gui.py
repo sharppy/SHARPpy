@@ -9,13 +9,13 @@ from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
 import numpy as np
-import sys
-
 
 # Create an application
 app = QApplication([])
 
 class MainWindow(QWidget):
+    date_format = "%Y-%m-%d %HZ"
+
     def __init__(self, **kwargs):
         """
         Construct the main window and handle all of the
@@ -23,6 +23,7 @@ class MainWindow(QWidget):
         sounding picker - a means for interactively selecting
         which sounding profile(s) to view.
         """
+
         super(MainWindow, self).__init__(**kwargs)
 
         ## All of these variables get set/reset by the various menus in the GUI
@@ -38,8 +39,10 @@ class MainWindow(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## the offset is time time offset between sounding availabilities for models
-        self.offset = 1
+        ## the delay is time time delay between sounding availabilities for models
+        self.delay = 1
+        ## Offset in time from the synoptic hours
+        self.offset = 0
         ## this is the duration of the period the available profiles have
         self.duration = 17
         ## this is the default model initialization time.
@@ -116,7 +119,7 @@ class MainWindow(QWidget):
         ## add the left and right sides to the main window
         self.layout.addWidget(self.left_data_frame, 0, 0, 1, 1)
         self.layout.addWidget(self.right_map_frame, 0, 1, 1, 1)
-        self.left_data_frame.setMaximumWidth(200)
+        self.left_data_frame.setMaximumWidth(280)
 
         self.menuBar()
 
@@ -139,18 +142,23 @@ class MainWindow(QWidget):
 
         self.bar = QMenuBar()
         self.filemenu = self.bar.addMenu("File")
+
         opendata = QAction("Open", self, shortcut=QKeySequence("Ctrl+O"))
-        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
-        pref = QAction("Preferences", self)
-        self.filemenu.addAction(opendata)
         opendata.triggered.connect(self.openFile)
-        self.filemenu.addAction(exit)
+        self.filemenu.addAction(opendata)
+
+        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
         exit.triggered.connect(self.exitApp)        
-        self.filemenu.addAction(pref)
         self.filemenu.addAction(exit)
+
+        pref = QAction("Preferences", self)
+        self.filemenu.addAction(pref)
+
         self.helpmenu = self.bar.addMenu("Help")
+
         about = QAction("About", self)
         about.triggered.connect(self.aboutbox)
+
         self.helpmenu.addAction(about)
 
     def exitApp(self):
@@ -176,8 +184,10 @@ class MainWindow(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## the offset is time time offset between sounding availabilities for models
-        self.offset = 1
+        ## the delay is time time delay between sounding availabilities for models
+        self.delay = 1
+        ## Offset time from the synoptic hour
+        self.offset = 0
         ## this is the duration of the period the available profiles have
         self.duration = 17
         ## this is the default model initialization time.
@@ -188,9 +198,10 @@ class MainWindow(QWidget):
 
     def aboutbox(self):
 
+        cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
         msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
-                       "Python\n\n(C) 2014 by Kelton Halbert and Greg Blumberg")
+                       "Python\n\n(C) 2014-%d by Kelton Halbert and Greg Blumberg" % cur_year)
         msgBox.exec_()
 
     def create_map_view(self):
@@ -246,12 +257,12 @@ class MainWindow(QWidget):
         ## get the date nearest to 00Z or 12 Z
         time = self.__date()
 
-        timelist = ['Latest', time.strftime('%Y:%m:%d %HZ')]
+        timelist = ['Latest', time.strftime(MainWindow.date_format)]
         delta = date.timedelta(hours=self.delta)
         i = 0
         while i < 17:
             time = time - delta
-            timelist.append(time.strftime('%Y:%m:%d %HZ'))
+            timelist.append(time.strftime(MainWindow.date_format))
             i += 1
         for item in timelist:
             list.addItem(item)
@@ -269,31 +280,26 @@ class MainWindow(QWidget):
         timelist = []
 
         if self.model == "Observed":
-            self.set_model_dt()
             time = self.__date()
-            timelist = ['Latest', time.strftime('%Y:%m:%d %HZ')]
+            timelist = ['Latest', time.strftime(MainWindow.date_format)]
             delta = date.timedelta(hours=self.delta)
             i = 0
             while i < 17:
                 time = time - delta
-                timelist.append(time.strftime('%Y:%m:%d %HZ'))
+                timelist.append(time.strftime(MainWindow.date_format))
                 i += 1
 
         else:
-            current_time = date.datetime.utcnow()
-            hour = current_time.hour
-            self.set_model_dt()
             delta = date.timedelta(hours=self.delta)
-            if hour < int(self.run[:-1]) - self.offset:
-                current_time = current_time - date.timedelta(days=1)
+            latest = self.latestAvailable()
+            run_idx = [ "%02dZ" % run.hour for run in latest ].index(self.run)
+            time = latest[run_idx]
 
-            time = date.datetime.strptime( str(current_time.year) + str(current_time.month).zfill(2) +
-                                str(current_time.day).zfill(2) + self.run[:-1], "%Y%m%d%H")
-            timelist.append(time.strftime('%Y:%m:%d %HZ'))
+            timelist.append(time.strftime(MainWindow.date_format) + "   (F000)")
             i = 0
             while i < self.duration:
                 time = time + delta
-                timelist.append(time.strftime('%Y:%m:%d %HZ'))
+                timelist.append(time.strftime(MainWindow.date_format) + "   (F%03d)" % ((i + 1) * (delta.seconds / 3600)))
                 i += 1
 
         for item in timelist:
@@ -311,33 +317,39 @@ class MainWindow(QWidget):
         if self.model == "Observed":
             self.delta = 12
             self.duration = 17
-            self.offset = 1
+            self.delay = 1
+            self.offset = 0
             self.available = 12
         elif self.model == "RAP" or self.model == "HRRR":
             self.delta = 1
             self.duration = 15
-            self.offset = 1
+            self.delay = 1
+            self.offset = 0
             self.available = 1
         elif self.model == "NAM":
             self.delta = 1
             self.duration = 83
-            self.offset = 3
+            self.delay = 3
+            self.offset = 0
             self.available = 6
         elif self.model == "NAM4KM":
             self.delta = 1
             self.duration = 60
-            self.offset = 3
+            self.delay = 3
+            self.offset = 0
             self.available = 6
         elif self.model.startswith("GFS"):
             self.delta = 3
             self.duration = 60
-            self.offset = 4
+            self.delay = 4
+            self.offset = 0
             self.available = 6
         elif self.model == "SREF":
             self.delta = 1
             self.duration = 84
-            self.offset = 4
-            self.available = 3
+            self.delay = 4
+            self.offset = 3
+            self.available = 6
 
     def update_run_dropdown(self):
         """
@@ -346,17 +358,22 @@ class MainWindow(QWidget):
         :return:
         """
         self.run_dropdown.clear()
+        run_idx = 0
         if self.model == "Observed":
             self.run_dropdown.addItem("None")
 
         else:
-            runs = []
-            for i in range(0, 24, self.available):
-                runs.append(str(i).zfill(2) + "Z")
+
+            latest = self.latestAvailable()
+            runs = sorted([ "%02dZ" % run.hour for run in latest ])
+            run_idx = runs.index("%02dZ" % latest[-1].hour)
+            self.run = runs[run_idx]
+
             for run in runs:
                 self.run_dropdown.addItem(run)
 
         self.run_dropdown.update()
+        self.run_dropdown.setCurrentIndex(run_idx)
 
     def map_link(self, url):
         """
@@ -393,8 +410,9 @@ class MainWindow(QWidget):
         """
         self.model = self.model_dropdown.currentText()
         self.view.setUrl(self.model.lower() + '.html')
-        self.update_list()
+        self.set_model_dt()
         self.update_run_dropdown()
+        self.update_list()
 
     def get_run(self):
         """
@@ -438,6 +456,17 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
+    def latestAvailable(self):
+        """
+        Return a list containing the datetimes of the most recent runs, ordered by actual time (yesterday's runs are first in the list).
+        """
+        now = date.datetime.utcnow()
+        runs = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + date.timedelta(hours=(self.offset + self.delay)) for hr in xrange(0, 24, self.available) ]
+        if all( now < run for run in runs ):
+            runs = [ run - date.timedelta(days=1) for run in runs ]
+        run_offsets = [ date.timedelta(days=0) if now >= run else date.timedelta(days=-1) for run in runs ]
+        runs = [ r + o - date.timedelta(hours=self.delay) for r, o, in zip(runs, run_offsets) ]
+        return sorted(runs)
 
     def skewApp(self):
         """

@@ -358,7 +358,7 @@ class SkewApp(QWidget):
         self.insets["COND STP"] = stpef
         self.insets["VROT"] = vrot
 
-    @Slot(profile.Profile, bool)
+    @Slot(profile.Profile)
     def updateProfs(self, prof):
         #self.sound.setProf(self.profs[self.current_idx])
         if self.model != "Observed" and self.model != "Archive":
