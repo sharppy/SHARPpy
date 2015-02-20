@@ -309,6 +309,7 @@ class backgroundSkewT(QtGui.QWidget):
 
 class plotSkewT(backgroundSkewT):
     updated = Signal(Profile)
+    reset = Signal()
 
     def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__()
@@ -378,6 +379,15 @@ class plotSkewT(backgroundSkewT):
             "  color: #00FF00;}")
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.popupmenu=QMenu("Cursor Type:")
+
+        reset = QAction(self)
+        reset.setText("Reset Skew-T")
+        reset.triggered.connect(lambda: self.reset.emit())
+        self.popupmenu.addAction(reset)
+
     def setProf(self, prof, **kwargs):
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
@@ -420,12 +430,13 @@ class plotSkewT(backgroundSkewT):
             elif prof_name == 'dwpc':
                 tmpc = min(tmpc, self.tmpc[self.drag_idx])
 
-            prof[self.drag_idx] = tmpc       
+            new_prof = prof.copy()
+            new_prof[self.drag_idx] = tmpc
             therm = {'tmpc':self.tmpc, 'dwpc':self.dwpc}
-            therm.update(prof_name=prof)
+            therm.update(**{prof_name:new_prof})
 
             new_prof = create_profile(pres=self.pres, hght=self.hght, u=self.u, v=self.v, omeg=self.prof.omeg, 
-                profile=self.prof.profile_type, location=self.prof.location, **therm)
+                profile=self.prof.profile, location=self.prof.location, **therm)
 
             self.drag_idx = None
             self.dragging = False
@@ -582,7 +593,10 @@ class plotSkewT(backgroundSkewT):
         '''
         super(plotSkewT, self).resizeEvent(e)
         self.plotData()
-    
+ 
+    def showCursorMenu(self, pos):
+        self.popupmenu.popup(self.mapToGlobal(pos))
+   
     def wheelEvent(self, e):
         super(plotSkewT, self).wheelEvent(e)
         self.clearData()
@@ -723,6 +737,7 @@ class plotSkewT(backgroundSkewT):
         lclp = self.pcl.lclpres
         lfcp = self.pcl.lfcpres
         elp = self.pcl.elpres
+
         # Plot LCL
         if lclp is not np.ma.masked:
             y = self.pres_to_pix(lclp)
