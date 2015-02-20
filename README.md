@@ -40,7 +40,7 @@ After all profiles have been generated, a window should show up with your desire
 2. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
 3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
-5. Graphically modify the Skew-T and hodograph.  Recalculations of all indices will take places when this is done.  (Added 2/19/2015 by Tim Supinie.)
+5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
 
 Insets available for use:
 
