@@ -147,7 +147,7 @@ class Profile(object):
         '''
         ## set the missing variable
         self.missing = kwargs.get('missing', MISSING)
-        self.profile_type = kwargs.get('profile')
+        self.profile = kwargs.get('profile')
 
         assert len(kwargs.get('pres')) == len(kwargs.get('hght')) == len(kwargs.get('tmpc')) == len(kwargs.get('dwpc')),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
