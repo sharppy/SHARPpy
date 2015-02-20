@@ -130,7 +130,6 @@ def pwv_climo(prof, station, month=None):
     Written by Greg Blumberg
     and Kelton Halbert.
     '''
-    
     if not month:
         month = datetime.now().month
 
