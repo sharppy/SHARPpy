@@ -34,7 +34,11 @@ If SHARPpy is used to develop a weather product or contributes to research that 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
 
-Halbert, K. T., W. G. Blumberg, and P. T. Marsh, 2015: "SHARPpy: Fueling the Python Cult". Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
+
+    Halbert, K. T., W. G. Blumberg, and P. T. Marsh, 2015: "SHARPpy: Fueling the Python Cult". 
+    Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
+
+
 
 http://sharppy.github.io/SHARPpy/index.html
 
