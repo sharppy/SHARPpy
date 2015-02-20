@@ -318,7 +318,7 @@ class SkewApp(QWidget):
         self.speed_vs_height = plotSpeed( self.prof )
         self.inferred_temp_advection = plotAdvection(self.prof)
         self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
-#       self.hodo.updated.connect(self.updateProfs)
+        self.hodo.updated.connect(self.updateProfs)
 
         self.storm_slinky = plotSlinky(self.prof)
         self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
