@@ -29,7 +29,7 @@ python full_gui.py
 
 =======================================================================
 
-Many contributors have put an immeasurable amount of time into developing this software package. 
+Many people have put an immeasurable amount of time into developing this software package. 
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
@@ -41,7 +41,9 @@ http://sharppy.github.io/SHARPpy/index.html
 https://github.com/sharppy/SHARPpy
 
 Also, please send an email letting us know where SHARPpy is being used or 
-has helped your work at this address: sharppy.project@gmail.com.
+has helped your work at this address so we may track the success of the project:
+
+sharppy.project@gmail.com.
 
 =======================================================================
 
