@@ -41,9 +41,7 @@ http://sharppy.github.io/SHARPpy/index.html
 https://github.com/sharppy/SHARPpy
 
 Also, please send an email letting us know where SHARPpy is being used or 
-has helped your work at this address so we may track the success of the project:
-
-sharppy.project@gmail.com.
+has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
 
 =======================================================================
 
