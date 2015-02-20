@@ -37,6 +37,7 @@ this ready-made citation entry or provide a link back to this website:
 Halbert, K. T., W. G. Blumberg, and P. T. Marsh, 2015: "SHARPpy: Fueling the Python Cult". Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
 
 http://sharppy.github.io/SHARPpy/index.html
+
 https://github.com/sharppy/SHARPpy
 
 Also, please send an email letting us know where SHARPpy is being used or 
