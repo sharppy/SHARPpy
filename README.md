@@ -28,6 +28,19 @@ folder in your terminal and run the following command:
 python full_gui.py
 
 =======================================================================
+Many contributors have put an immeasurable amount of time into developing this software package. 
+If SHARPpy is used to develop a weather product or contributes to research that leads to a 
+scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
+this ready-made citation entry or provide a link back to this website:
+
+Halbert, K. T., W. G. Blumberg, and P. T. Marsh, 2015: "SHARPpy: Fueling the Python Cult". Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
+
+http://sharppy.github.io/SHARPpy/index.html
+https://github.com/sharppy/SHARPpy
+
+Also, please send an email letting us know where SHARPpy is being used or 
+has helped your work at this address: sharppy.project@gmail.com.
+=======================================================================
 
 ### Using the GUI
 
