@@ -362,7 +362,7 @@ class SkewApp(QWidget):
                 + "  (" + self.run + "  " + self.model + ")"
 
         if self.model == "SREF":
-            self.profs[self.current_idx][0] = prof
+            self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
