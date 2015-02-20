@@ -55,7 +55,7 @@ def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
             ## use this as a linear offset from the previous barb,
             ## starting at the end
             if num_flag_barbs > 0:
-                offset = 4. * num_flag_barbs * (i+2)
+                offset = 4. * num_flag_barbs + 4 * i + 2
             else:
                 offset = 4. * i
             ## calculate the u nd v offset
