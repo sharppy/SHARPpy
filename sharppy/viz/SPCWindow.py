@@ -69,7 +69,6 @@ class Thread(QThread):
     def run(self):
         self.__modelProf()
 
-
 class SkewApp(QWidget):
     """
     This will create the full SPC window, handle the organization
@@ -89,6 +88,7 @@ class SkewApp(QWidget):
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.link = kwargs.get("path", None)
+        self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
 
         self.progressDialog = QProgressDialog()
@@ -304,7 +304,7 @@ class SkewApp(QWidget):
         ## set the plot title that will be displayed in the Skew frame.
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + ")"
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -363,7 +363,7 @@ class SkewApp(QWidget):
         #self.sound.setProf(self.profs[self.current_idx])
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + ")"
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]

@@ -171,7 +171,7 @@ class MainWindow(QWidget):
         self.prof_time = None
         self.run = None
         self.skew = SkewApp(model=self.model, location=self.loc,
-            prof_time=self.prof_time, run=self.run, path=fname)
+            prof_time=self.prof_time, run=self.run, path=fname, fhour=[ None ])
         self.skew.show()
         ## this is the time step between available profiles
         self.delta = 12
@@ -257,8 +257,10 @@ class MainWindow(QWidget):
         ## get the date nearest to 00Z or 12 Z
         time = self.__date()
 
-        timelist = ['Latest', time.strftime(MainWindow.date_format)]
         delta = date.timedelta(hours=self.delta)
+        if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
+            time -= delta
+        timelist = ['Latest', time.strftime(MainWindow.date_format)]
         i = 0
         while i < 17:
             time = time - delta
@@ -281,8 +283,11 @@ class MainWindow(QWidget):
 
         if self.model == "Observed":
             time = self.__date()
-            timelist = ['Latest', time.strftime(MainWindow.date_format)]
             delta = date.timedelta(hours=self.delta)
+            if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
+                time -= delta
+
+            timelist = ['Latest', time.strftime(MainWindow.date_format)]
             i = 0
             while i < 17:
                 time = time - delta
@@ -400,6 +405,8 @@ class MainWindow(QWidget):
                     self.prof_idx.append(idx)
 
             self.prof_time = selected[0].text()
+            if '   ' in self.prof_time:
+                self.prof_time = self.prof_time.split("   ")[0]
             self.prof_idx.sort()
             self.skewApp()
 
@@ -433,6 +440,9 @@ class MainWindow(QWidget):
         """
 
         self.prof_time = self.profile_list.currentItem().text()
+        if '   ' in self.prof_time:
+            self.prof_time = self.prof_time.split("   ")[0]
+
         item = self.profile_list.currentIndex().row()
         if item in self.prof_idx:
             self.prof_idx.remove(item)
@@ -456,12 +466,12 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def latestAvailable(self):
+    def latestAvailable(self, hours=24):
         """
         Return a list containing the datetimes of the most recent runs, ordered by actual time (yesterday's runs are first in the list).
         """
         now = date.datetime.utcnow()
-        runs = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + date.timedelta(hours=(self.offset + self.delay)) for hr in xrange(0, 24, self.available) ]
+        runs = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + date.timedelta(hours=(self.offset + self.delay)) for hr in xrange(0, hours, self.available) ]
         if all( now < run for run in runs ):
             runs = [ run - date.timedelta(days=1) for run in runs ]
         run_offsets = [ date.timedelta(days=0) if now >= run else date.timedelta(days=-1) for run in runs ]
@@ -474,8 +484,11 @@ class MainWindow(QWidget):
         and magical funtimes.
         :return:
         """
+        items = [ item.text() for item in self.profile_list.selectedItems() ]
+        fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
+
         self.skew = SkewApp(model=self.model, location=self.loc,
-            prof_time=self.prof_time, run=self.run, idx=self.prof_idx)
+            prof_time=self.prof_time, run=self.run, idx=self.prof_idx, fhour=fhours)
         self.skew.show()
 
 
