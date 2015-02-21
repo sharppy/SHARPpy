@@ -6,6 +6,7 @@ from sharppy.sharptab.constants import *
 from PySide.QtGui import *
 from PySide.QtCore import *
 
+import copy
 
 __all__ = ['backgroundHodo', 'plotHodo']
 
@@ -287,6 +288,7 @@ class plotHodo(backgroundHodo):
     '''
 
     updated = Signal(Profile)
+    reset = Signal()
 
     def __init__(self, hght, u, v, **kwargs):
         '''
@@ -302,6 +304,7 @@ class plotHodo(backgroundHodo):
         self.bndy_spd = kwargs.get('bndy_spd', 0)
         self.bndy_dir = kwargs.get('bndy_dir', 0)
         self.bndy_u, self.bndy_v = tab.utils.vec2comp(self.bndy_dir, self.bndy_spd)
+
         self.track_cursor = False
         self.was_right_click = False
         self.initdrag = False
@@ -309,7 +312,10 @@ class plotHodo(backgroundHodo):
         self.drag_idx = None
         self.drag_buffer = 5
         self.clickradius = 6
+
         self.prof = kwargs.get('prof', None)
+        self.original_prof = self.prof
+
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
         self.srwind = self.prof.srwind
@@ -413,12 +419,21 @@ class plotHodo(backgroundHodo):
         a = ag2.addAction(mw)
         self.popupmenu.addAction(a)
 
+        self.popupmenu.addSeparator()
+        
+        reset = QAction(self)
+        reset.setText("Reset Hodograph")
+        reset.triggered.connect(lambda: self.reset.emit())
+        self.popupmenu.addAction(reset)
+
     def setProf(self, hght, u, v, **kwargs):
         self.hght = hght
         self.u = u; self.v = v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
+        if kwargs.get('update_orig', False):
+            self.original_prof = self.prof
 #       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
@@ -663,10 +678,12 @@ class plotHodo(backgroundHodo):
         elif self.cursor_type == 'none' and (self.dragging or self.initdrag):
             u, v = self.pix_to_uv(e.x(), e.y())
 
-            self.u[self.drag_idx] = u
-            self.v[self.drag_idx] = v
+            new_u = self.u.copy()
+            new_v = self.v.copy()
+            new_u[self.drag_idx] = u
+            new_v[self.drag_idx] = v
             new_prof = create_profile(pres=self.prof.pres, hght=self.hght, tmpc=self.prof.tmpc, dwpc=self.prof.dwpc, 
-                u=self.u, v=self.v, omeg=self.prof.omeg,profile=self.prof.profile_type, location=self.prof.location)
+                u=new_u, v=new_v, omeg=self.prof.omeg,profile=self.prof.profile, location=self.prof.location)
 
             self.drag_idx = None
             self.dragging = False

@@ -11,6 +11,7 @@ import sharppy.sharptab.profile as profile
 from StringIO import StringIO
 from datetime import datetime
 import urllib
+import copy
 import numpy as np
 
 class Thread(QThread):
@@ -68,7 +69,6 @@ class Thread(QThread):
     def run(self):
         self.__modelProf()
 
-
 class SkewApp(QWidget):
     """
     This will create the full SPC window, handle the organization
@@ -88,6 +88,7 @@ class SkewApp(QWidget):
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.link = kwargs.get("path", None)
+        self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
 
         self.progressDialog = QProgressDialog()
@@ -142,6 +143,7 @@ class SkewApp(QWidget):
             ## return the data from the thread
             self.profs, self.d = self.thread.returnData()
 
+        self.original_profs = self.profs[:]
 
         ## initialize the rest of the window attributes, layout managers, etc
 
@@ -302,7 +304,7 @@ class SkewApp(QWidget):
         ## set the plot title that will be displayed in the Skew frame.
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + ")"
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -313,12 +315,14 @@ class SkewApp(QWidget):
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz)
             self.sound.updated.connect(self.updateProfs)
+            self.sound.reset.connect(self.resetProf)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
         self.inferred_temp_advection = plotAdvection(self.prof)
         self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
         self.hodo.updated.connect(self.updateProfs)
+        self.hodo.reset.connect(self.resetProf)
 
         self.storm_slinky = plotSlinky(self.prof)
         self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
@@ -359,7 +363,7 @@ class SkewApp(QWidget):
         #self.sound.setProf(self.profs[self.current_idx])
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + ")"
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
@@ -386,6 +390,10 @@ class SkewApp(QWidget):
         for inset in self.insets.keys():
             self.insets[inset].setProf(self.prof)
 
+    @Slot()
+    def resetProf(self):
+        self.profs[self.current_idx] = self.original_profs[self.current_idx]
+        self.updateProfs(self.profs[self.current_idx])
 
     def paintEvent(self, e):
         """
