@@ -13,6 +13,7 @@ from datetime import datetime
 import urllib
 import copy
 import numpy as np
+import ConfigParser
 
 class Thread(QThread):
     progress = Signal()
@@ -85,6 +86,8 @@ class SkewApp(QWidget):
         'VROT':plotVROT,
     }
 
+    cfg_file_name = 'sharppy.ini'
+
     def __init__(self, **kwargs):
 
         super(SkewApp, self).__init__()
@@ -101,6 +104,13 @@ class SkewApp(QWidget):
         self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
 
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read(SkewApp.cfg_file_name)
+        if not self.config.has_section('insets'):
+            self.config.add_section('insets')
+            self.config.set('insets', 'right_inset', 'STP STATS')
+            self.config.set('insets', 'left_inset', 'SARS')
+
         self.progressDialog = QProgressDialog()
 
         ## these are the boolean flags used throughout the program
@@ -113,11 +123,10 @@ class SkewApp(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        self.available_insets = sorted(SkewApp.inset_generators.keys()) #["SARS", "STP STATS", 'COND STP', 'WINTER', 'FIRE', 'SHIP', 'VROT']
-        self.left_inset = "SARS"
-        self.right_inset = "STP STATS"
+        self.available_insets = sorted(SkewApp.inset_generators.keys())
+        self.left_inset = self.config.get('insets', 'left_inset')
+        self.right_inset = self.config.get('insets', 'right_inset')
         self.insets = {}
-#       self.makeInsetMenu()
 
         ## these are used to display profiles
         self.current_idx = 0
@@ -417,6 +426,7 @@ class SkewApp(QWidget):
 
         ## do a check for setting the dendretic growth zone
         if self.left_inset == "WINTER" or self.right_inset == "WINTER":
+            self.sound.setDGZ(True)
             self.dgz = True
 
         self.grid.addWidget(self.sound, 0, 0, 3, 1)
@@ -445,6 +455,9 @@ class SkewApp(QWidget):
             # Save an image
             self.saveimage()
             return
+
+    def closeEvent(self, e):
+        self.config.write(open(SkewApp.cfg_file_name, 'w'))
 
     def makeInsetMenu(self, *exclude):
 
@@ -492,6 +505,7 @@ class SkewApp(QWidget):
             self.left_inset = a.text()
             self.left_inset_ob = self.insets[self.left_inset]
             self.grid3.addWidget(self.left_inset_ob, 0, 2)
+            self.config.set('insets', 'left_inset', self.left_inset)
 
         elif self.inset_to_swap == "RIGHT":
             if self.right_inset == "WINTER" and self.dgz:
@@ -506,11 +520,11 @@ class SkewApp(QWidget):
             self.right_inset = a.text()
             self.right_inset_ob = self.insets[self.right_inset]
             self.grid3.addWidget(self.right_inset_ob, 0, 3)
+            self.config.set('insets', 'right_inset', self.right_inset)
 
         if a.text() == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
 
-#       self.makeInsets()
         self.setFocus()
         self.update()
