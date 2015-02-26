@@ -75,6 +75,16 @@ class SkewApp(QWidget):
     of the insets, and handle all click/key events and features.
     """
 
+    inset_generators = {
+        'SARS':plotAnalogues,
+        'STP STATS':plotSTP,
+        'COND STP':plotSTPEF,
+        'WINTER':plotWinter,
+        'FIRE':plotFire,
+        'SHIP':plotSHIP,
+        'VROT':plotVROT,
+    }
+
     def __init__(self, **kwargs):
 
         super(SkewApp, self).__init__()
@@ -94,7 +104,6 @@ class SkewApp(QWidget):
         self.progressDialog = QProgressDialog()
 
         ## these are the boolean flags used throughout the program
-        self.changeflag = True
         self.swap_inset = False
 
         ## initialize empty variables to hold objects that will be
@@ -104,11 +113,11 @@ class SkewApp(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        self.avaliable_insets = ["SARS", "STP STATS", 'COND STP', 'WINTER', 'FIRE', 'SHIP', 'VROT']
+        self.available_insets = sorted(SkewApp.inset_generators.keys()) #["SARS", "STP STATS", 'COND STP', 'WINTER', 'FIRE', 'SHIP', 'VROT']
         self.left_inset = "SARS"
         self.right_inset = "STP STATS"
         self.insets = {}
-        self.makeInsetMenu()
+#       self.makeInsetMenu()
 
         ## these are used to display profiles
         self.current_idx = 0
@@ -212,6 +221,7 @@ class SkewApp(QWidget):
 
         ## initialize the data frames
         self.initData()
+        self.loadWidgets()
 
     def __archiveProf(self):
         """
@@ -336,27 +346,17 @@ class SkewApp(QWidget):
         self.kinematic = plotKinematics(self.prof)
 
         self.makeInsets()
+        self.right_inset_ob = self.insets[self.right_inset]
+        self.left_inset_ob = self.insets[self.left_inset]
 
     def makeInsets(self):
         """
         Create the swappable insets
         :return:
         """
-        SARS = plotAnalogues(self.prof)
-        stp = plotSTP(self.prof)
-        winter = plotWinter(self.prof)
-        fire = plotFire(self.prof)
-        ship = plotSHIP(self.prof)
-        stpef = plotSTPEF(self.prof)
-        vrot = plotVROT(self.prof)
 
-        self.insets["SARS"] = SARS
-        self.insets["STP STATS"] = stp
-        self.insets["WINTER"] = winter
-        self.insets["FIRE"] = fire
-        self.insets["SHIP"] = ship
-        self.insets["COND STP"] = stpef
-        self.insets["VROT"] = vrot
+        for inset, inset_gen in SkewApp.inset_generators.iteritems():
+            self.insets[inset] = inset_gen(self.prof)
 
     @Slot(profile.Profile)
     def updateProfs(self, prof):
@@ -395,43 +395,32 @@ class SkewApp(QWidget):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
         self.updateProfs(self.profs[self.current_idx])
 
-    def paintEvent(self, e):
-        """
-        The paint event will handle the placing of widgets in their
-        appropriate layout managers and places.
-        :param e:
-        :return:
-        """
-        if self.changeflag:
-            ## add the upper-right window insets
-            self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
-            self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
-            self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
-            self.grid2.addWidget(self.storm_slinky, 8, 5, 3, 6)
-            self.grid2.addWidget(self.thetae_vs_pressure, 8, 11, 3, 6)
-            self.grid2.addWidget(self.srwinds_vs_height, 8, 17, 3, 6)
-            self.grid2.addWidget(self.watch_type, 8, 23, 3, 6)
+    def loadWidgets(self):
+        ## add the upper-right window insets
+        self.grid2.addWidget(self.speed_vs_height, 0, 0, 11, 3)
+        self.grid2.addWidget(self.inferred_temp_advection, 0, 3, 11, 2)
+        self.grid2.addWidget(self.hodo, 0, 5, 8, 24)
+        self.grid2.addWidget(self.storm_slinky, 8, 5, 3, 6)
+        self.grid2.addWidget(self.thetae_vs_pressure, 8, 11, 3, 6)
+        self.grid2.addWidget(self.srwinds_vs_height, 8, 17, 3, 6)
+        self.grid2.addWidget(self.watch_type, 8, 23, 3, 6)
 
-            # Draw the kinematic and convective insets
-            self.grid3.addWidget(self.convective, 0, 0)
-            self.grid3.addWidget(self.kinematic, 0, 1)
+        # Draw the kinematic and convective insets
+        self.grid3.addWidget(self.convective, 0, 0)
+        self.grid3.addWidget(self.kinematic, 0, 1)
 
-            # Set Left Inset
-            self.grid3.addWidget(self.insets[self.left_inset], 0, 2)
-            self.left_inset_ob = self.insets[self.left_inset]
+        # Set Left Inset
+        self.grid3.addWidget(self.left_inset_ob, 0, 2)
 
-            # Set Right Inset
-            self.grid3.addWidget(self.insets[self.right_inset], 0, 3)
-            self.right_inset_ob = self.insets[self.right_inset]
+        # Set Right Inset
+        self.grid3.addWidget(self.right_inset_ob, 0, 3)
 
-            ## do a check for setting the dendretic growth zone
-            if self.left_inset == "WINTER" or self.right_inset == "WINTER":
-                self.dgz = True
+        ## do a check for setting the dendretic growth zone
+        if self.left_inset == "WINTER" or self.right_inset == "WINTER":
+            self.dgz = True
 
-
-            self.grid.addWidget(self.sound, 0, 0, 3, 1)
-            self.grid.addWidget(self.text, 3, 0, 1, 2)
-            self.changeflag = False
+        self.grid.addWidget(self.sound, 0, 0, 3, 1)
+        self.grid.addWidget(self.text, 3, 0, 1, 2)
 
     def keyPressEvent(self, e):
         key = e.key()
@@ -441,7 +430,6 @@ class SkewApp(QWidget):
                 self.current_idx += 1
             else:
                 self.current_idx = 0
-            self.changeflag = True
             self.updateProfs(self.profs[self.current_idx])
             return
 
@@ -450,7 +438,6 @@ class SkewApp(QWidget):
                 self.current_idx -= 1
             elif self.current_idx == 0:
                 self.current_idx = length -1
-            self.changeflag = True
             self.updateProfs(self.profs[self.current_idx])
             return
 
@@ -459,21 +446,24 @@ class SkewApp(QWidget):
             self.saveimage()
             return
 
-    def makeInsetMenu(self):
+    def makeInsetMenu(self, *exclude):
+
         # This will make the menu of the available insets.
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
 
-        for i in xrange(len(self.avaliable_insets)):
-            inset_action = QAction(self)
-            inset_action.setText(self.avaliable_insets[i])
-            inset_action.setCheckable(True)
-            inset_action.triggered.connect(self.swapInset)
-            a = self.menu_ag.addAction(inset_action)
-            self.popupmenu.addAction(a)
+        for i in xrange(len(self.available_insets)):
+            if self.available_insets[i] not in exclude:
+                inset_action = QAction(self)
+                inset_action.setText(self.available_insets[i])
+                inset_action.setCheckable(True)
+                inset_action.triggered.connect(self.swapInset)
+                a = self.menu_ag.addAction(inset_action)
+                self.popupmenu.addAction(a)
 
     def showCursorMenu(self, pos):
 
+        self.makeInsetMenu(self.left_inset, self.right_inset)
         if self.childAt(pos.x(), pos.y()) is self.right_inset_ob:
             self.inset_to_swap = "RIGHT"
             self.popupmenu.popup(self.mapToGlobal(pos))
@@ -494,19 +484,33 @@ class SkewApp(QWidget):
                 self.sound.setDGZ(False)
                 self.dgz = False
 
-            self.left_inset = a.text()
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+            #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()
+            self.insets[self.left_inset] = SkewApp.inset_generators[self.left_inset](self.prof)
 
+            self.left_inset = a.text()
+            self.left_inset_ob = self.insets[self.left_inset]
+            self.grid3.addWidget(self.left_inset_ob, 0, 2)
 
         elif self.inset_to_swap == "RIGHT":
             if self.right_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
                 self.dgz = False
 
-            self.right_inset = a.text()
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+            #   delete something you want to remove from the layout.
             self.right_inset_ob.deleteLater()
+            self.insets[self.right_inset] = SkewApp.inset_generators[self.right_inset](self.prof)
 
-        self.makeInsets()
+            self.right_inset = a.text()
+            self.right_inset_ob = self.insets[self.right_inset]
+            self.grid3.addWidget(self.right_inset_ob, 0, 3)
+
+        if a.text() == "WINTER":
+            self.sound.setDGZ(True)
+            self.dgz = True
+
+#       self.makeInsets()
         self.setFocus()
-        self.changeflag=True
         self.update()
