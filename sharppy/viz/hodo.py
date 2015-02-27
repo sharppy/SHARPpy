@@ -287,7 +287,7 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile)
+    updated = Signal(Profile, bool)
     reset = Signal()
 
     def __init__(self, hght, u, v, **kwargs):
@@ -689,7 +689,7 @@ class plotHodo(backgroundHodo):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof)
+            self.updated.emit(new_prof, True)
         self.initdrag = False
 
     def setBlackPen(self, qp):

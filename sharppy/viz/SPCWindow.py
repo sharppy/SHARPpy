@@ -14,6 +14,7 @@ import urllib
 import copy
 import numpy as np
 import ConfigParser
+from time import sleep
 
 class Thread(QThread):
     progress = Signal()
@@ -86,6 +87,16 @@ class SkewApp(QWidget):
         'VROT':plotVROT,
     }
 
+    inset_names = {
+        'SARS':'Sounding Analogues',
+        'STP STATS':'Sig-Tor Stats',
+        'COND STP':'EF-Scale Probs (Sig-Tor)',
+        'WINTER':'Winter Weather',
+        'FIRE':'Fire Weather',
+        'SHIP':'Sig-Hail Stats',
+        'VROT':'EF-Scale Probs (V-Rot)',
+    }
+
     cfg_file_name = 'sharppy.ini'
 
     def __init__(self, **kwargs):
@@ -123,7 +134,9 @@ class SkewApp(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        self.available_insets = sorted(SkewApp.inset_generators.keys())
+        insets = sorted(SkewApp.inset_names.items(), key=lambda i: i[1])
+        inset_ids, inset_names = zip(*insets)
+        self.available_insets = inset_ids
         self.left_inset = self.config.get('insets', 'left_inset')
         self.right_inset = self.config.get('insets', 'right_inset')
         self.insets = {}
@@ -162,6 +175,7 @@ class SkewApp(QWidget):
             self.profs, self.d = self.thread.returnData()
 
         self.original_profs = self.profs[:]
+        self.modified = [ False for p in self.original_profs ]
 
         ## initialize the rest of the window attributes, layout managers, etc
 
@@ -367,12 +381,20 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile)
-    def updateProfs(self, prof):
+    @Slot(profile.Profile, bool)
+    def updateProfs(self, prof, modified):
+        self.modified[self.current_idx] = modified
         #self.sound.setProf(self.profs[self.current_idx])
+        modified_str = "; Modified" if self.modified[self.current_idx] else ""
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        elif self.model == "Observed":
+            date_str = self.plot_title.split(' (')[0]
+            self.plot_title = date_str + " (Observed" + modified_str + ")"
+        elif self.model == "Archive":
+            date_str = self.plot_title.split(' (')[0]
+            self.plot_title = date_str + " (User Selected" + modified_str + ")"
 
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
@@ -402,7 +424,7 @@ class SkewApp(QWidget):
     @Slot()
     def resetProf(self):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx])
+        self.updateProfs(self.profs[self.current_idx], modified=False)
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -440,7 +462,7 @@ class SkewApp(QWidget):
                 self.current_idx += 1
             else:
                 self.current_idx = 0
-            self.updateProfs(self.profs[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
             return
 
         if key == Qt.Key_Left:
@@ -448,7 +470,7 @@ class SkewApp(QWidget):
                 self.current_idx -= 1
             elif self.current_idx == 0:
                 self.current_idx = length -1
-            self.updateProfs(self.profs[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
             return
 
         if e.matches(QKeySequence.Save):
@@ -465,10 +487,11 @@ class SkewApp(QWidget):
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
 
-        for i in xrange(len(self.available_insets)):
-            if self.available_insets[i] not in exclude:
+        for inset in self.available_insets:
+            if inset not in exclude:
                 inset_action = QAction(self)
-                inset_action.setText(self.available_insets[i])
+                inset_action.setText(SkewApp.inset_names[inset])
+                inset_action.setData(inset)
                 inset_action.setCheckable(True)
                 inset_action.triggered.connect(self.swapInset)
                 a = self.menu_ag.addAction(inset_action)
@@ -502,7 +525,7 @@ class SkewApp(QWidget):
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SkewApp.inset_generators[self.left_inset](self.prof)
 
-            self.left_inset = a.text()
+            self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
             self.grid3.addWidget(self.left_inset_ob, 0, 2)
             self.config.set('insets', 'left_inset', self.left_inset)
@@ -517,12 +540,12 @@ class SkewApp(QWidget):
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SkewApp.inset_generators[self.right_inset](self.prof)
 
-            self.right_inset = a.text()
+            self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
             self.grid3.addWidget(self.right_inset_ob, 0, 3)
             self.config.set('insets', 'right_inset', self.right_inset)
 
-        if a.text() == "WINTER":
+        if a.data() == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
 

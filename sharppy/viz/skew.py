@@ -308,7 +308,7 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile)
+    updated = Signal(Profile, bool)
     reset = Signal()
 
     def __init__(self, prof, **kwargs):
@@ -333,7 +333,9 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.setMouseTracking(True)
-        self.tracking = False
+        self.was_right_click = False
+        self.track_cursor = False
+        self.readout = False
         self.initdrag = False
         self.dragging = False
         self.drag_idx = None
@@ -382,6 +384,24 @@ class plotSkewT(backgroundSkewT):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
         self.popupmenu=QMenu("Cursor Type:")
+        ag = QtGui.QActionGroup(self, exclusive=True)
+
+        nocurs = QAction(self)
+        nocurs.setText("No Cursor")
+        nocurs.setCheckable(True)
+        nocurs.setChecked(True)
+        nocurs.triggered.connect(self.setNoCursor)
+        a = ag.addAction(nocurs)
+        self.popupmenu.addAction(a)
+
+        storm_motion = QAction(self)
+        storm_motion.setText("Readout Cursor")
+        storm_motion.setCheckable(True)
+        storm_motion.triggered.connect(self.setReadoutCursor)
+        a = ag.addAction(storm_motion)
+        self.popupmenu.addAction(a)
+
+        self.popupmenu.addSeparator()
 
         reset = QAction(self)
         reset.setText("Reset Skew-T")
@@ -418,8 +438,8 @@ class plotSkewT(backgroundSkewT):
         return
     
     def mouseReleaseEvent(self, e):
-        if not self.dragging:
-            self.tracking = not self.tracking
+        if not self.was_right_click and self.readout:
+            self.track_cursor = not self.track_cursor
 
         if self.dragging:
             tmpc = self.pix_to_tmpc(e.x(), e.y())
@@ -442,13 +462,20 @@ class plotSkewT(backgroundSkewT):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof)
+            self.updated.emit(new_prof, True)
         elif self.initdrag:
             self.initdrag = False
 
+        self.was_right_click = False
         self.drag_prof = None
 
     def mousePressEvent(self, e):
+        self.was_right_click = e.button() & QtCore.Qt.RightButton
+
+        if not self.was_right_click and not self.readout:
+            self.initDrag(e)
+
+    def initDrag(self, e):
         prof_ys = self.pres_to_pix(self.pres)
         tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
         dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
@@ -488,10 +515,10 @@ class plotSkewT(backgroundSkewT):
             self.drag_prof = (prof_name, self.__dict__[prof_name])
 
     def mouseMoveEvent(self, e):
-        if self.tracking:
+        if self.track_cursor:
             self.updateReadout(e)
 
-        if self.initdrag or self.dragging:
+        elif self.initdrag or self.dragging:
             self.dragging = True
             self.initdrag = False
             self.dragLine(e)
@@ -585,6 +612,34 @@ class plotSkewT(backgroundSkewT):
 
         qp.end()
         self.update()
+
+    def setReadoutCursor(self):
+        self.readout = True
+        self.track_cursor = True
+        self.presReadout.show()
+        self.hghtReadout.show()
+        self.tmpcReadout.show()
+        self.dwpcReadout.show()
+        self.rubberBand.show()
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
+
+    def setNoCursor(self):
+        self.readout = False
+        self.track_cursor = False
+        self.presReadout.hide()
+        self.hghtReadout.hide()
+        self.tmpcReadout.hide()
+        self.dwpcReadout.hide()      
+        self.rubberBand.hide()
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
 
     def resizeEvent(self, e):
         '''
