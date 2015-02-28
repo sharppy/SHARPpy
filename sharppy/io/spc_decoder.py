@@ -4,7 +4,6 @@ import numpy as np
 from datetime import datetime
 from StringIO import StringIO
 
-
 '''
     SPC/SND Decoders
     Written by Greg Blumberg (OU/CIMMS) and Kelton Halbert (OU)
@@ -91,4 +90,3 @@ class SNDFile(object):
 
     def getTime(self):
         return self.time
-

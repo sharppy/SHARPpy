@@ -263,14 +263,14 @@ class plotWinter(backgroundWinter):
         qp.end()
     
     def drawOPRH(self, qp):
-        if self.oprh < -.1 and tab.utils.QC(self.oprh):
+        if self.oprh < -.1 and tab.utils.QC(self.oprh) and self.dgz_meanomeg != -99990.0:
             pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
         else:
             pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(0, self.oprh_y1, self.wid, self.label_height)
-        if self.dgz_meanomeg == self.prof.missing:
+        if self.dgz_meanomeg == -99990.0:
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): N/A')
         else:    
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + tab.utils.FLOAT2STR(self.oprh,2))
