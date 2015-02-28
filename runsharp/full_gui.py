@@ -4,11 +4,76 @@ if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
 
 from sharppy.viz import SkewApp
+import sharppy.sharptab.profile as profile
+from sharppy.io.buf_decoder import BufkitFile
 from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
 import numpy as np
+from StringIO import StringIO
+import urllib
+
+class DataThread(QThread):
+    progress = Signal()
+    def __init__(self, parent, **kwargs):
+        super(DataThread, self).__init__(parent)
+        self.model = kwargs.get("model")
+        self.runtime = kwargs.get("run")
+        self.loc = kwargs.get("loc")
+        self.prof_idx = kwargs.get("idx")
+        self.profs = []
+        self.d = None
+        self.exc = ""
+
+    def returnData(self):
+        if self.exc == "":
+            return self.profs, self.d
+        else:
+            return self.exc
+
+    def make_profile(self, i):
+        d = self.d
+        prof = profile.create_profile(profile='convective', hght = d.hght[0][i],
+                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i],
+                wspd=d.wspd[0][i], wdir=d.wdir[0][i])
+        return prof
+
+    def __modelProf(self):
+        if self.model == "GFS":
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
+        else:
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+                + self.model.lower() + '_' + self.loc.lower() + '.buf')
+        self.d = d
+
+        if self.model == "SREF":
+            for i in self.prof_idx:
+                profs = []
+                for j in range(len(d.wdir)):
+                    ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                    if j == 0:
+                        profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
+                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+                        self.progress.emit()
+                    else:
+                        profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
+                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+                self.profs.append(profs)
+
+        else:
+            for i in self.prof_idx:
+                ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+                self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
+                    tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+                self.progress.emit()
+
+    def run(self):
+        try:
+            self.__modelProf()
+        except Exception as e:
+            self.exc = str(e)
 
 # Create an application
 app = QApplication([])
@@ -25,6 +90,7 @@ class MainWindow(QWidget):
         """
 
         super(MainWindow, self).__init__(**kwargs)
+        self.progressDialog = QProgressDialog()
 
         ## All of these variables get set/reset by the various menus in the GUI
 
@@ -165,14 +231,14 @@ class MainWindow(QWidget):
         self.close()
 
     def openFile(self):
-        fname, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
+        self.link, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
         self.model = "Archive"
         self.location = None
         self.prof_time = None
         self.run = None
-        self.skew = SkewApp(model=self.model, location=self.loc,
-            prof_time=self.prof_time, run=self.run, path=fname, fhour=[ None ])
-        self.skew.show()
+
+        self.skewApp()
+
         ## this is the time step between available profiles
         self.delta = 12
         ## default the sounding location to OUN because obviously I'm biased
@@ -333,7 +399,7 @@ class MainWindow(QWidget):
             self.available = 1
         elif self.model == "NAM":
             self.delta = 1
-            self.duration = 83
+            self.duration = 84
             self.delay = 3
             self.offset = 0
             self.available = 6
@@ -478,19 +544,152 @@ class MainWindow(QWidget):
         runs = [ r + o - date.timedelta(hours=self.delay) for r, o, in zip(runs, run_offsets) ]
         return sorted(runs)
 
+    @Slot()
+    def progress_bar(self):
+        value = self.progressDialog.value()
+        self.progressDialog.setValue(value + 1)
+        self.progressDialog.setLabelText("Profile " + str(value + 1) + "/" + str(self.progressDialog.maximum()))
+
     def skewApp(self):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
         :return:
         """
+
         items = [ item.text() for item in self.profile_list.selectedItems() ]
         fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
-        self.skew = SkewApp(model=self.model, location=self.loc,
-            prof_time=self.prof_time, run=self.run, idx=self.prof_idx, fhour=fhours)
-        self.skew.show()
+        profs = []
+        failure = False
 
+        exc = ""
+
+        ## determine what type of data is to be loaded
+        ## if the profile is an observed sounding, load
+        ## from the SPC website
+        if self.model == "Observed":
+            try:
+                prof, plot_title = self.loadObserved()
+                profs.append(prof)
+                d = None
+            except Exception as e:
+                exc = str(e)
+                failure = True
+
+        ## if the profile is an archived file, load the file from
+        ## the hard disk
+        elif self.model == "Archive":
+            try:
+                prof, plot_title = self.loadArchive()
+                profs.append(prof)
+                d = None
+            except Exception as e:
+                exc = str(e)
+                failure = True
+
+        ## if the profile is a model profile, load it from the model
+        ## download thread
+        else:
+            self.progressDialog.setMinimum(0)
+            self.progressDialog.setMaximum(len(self.prof_idx))
+            self.progressDialog.setValue(0)
+            self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
+            self.thread = DataThread(self, model=self.model, loc=self.loc, run=self.run, idx=self.prof_idx)
+            self.thread.progress.connect(self.progress_bar)
+            self.thread.start()
+            self.progressDialog.open()
+            while not self.thread.isFinished():
+                QCoreApplication.processEvents()
+            ## return the data from the thread
+            plot_title = ""
+            try:
+                profs, d = self.thread.returnData()
+            except ValueError:
+                exc = self.thread.returnData()
+                self.progressDialog.close()
+                failure = True
+
+        if failure:
+            msgbox = QMessageBox()
+            msgbox.setText("An error has occurred while retrieving the data.")
+            msgbox.setInformativeText("This probably means the data are missing for some reason. Try another site or model or try again later.")
+            msgbox.setDetailedText(exc)
+            msgbox.setIcon(QMessageBox.Critical)
+            msgbox.exec_()
+        else:
+            self.skew = SkewApp(profs, d, plot_title, model=self.model, location=self.loc,
+                prof_time=self.prof_time, run=self.run, idx=self.prof_idx, fhour=fhours)
+            self.skew.show()
+
+    def loadObserved(self):
+        """
+        Get the observed sounding based on the user's selections
+        """
+        ## if the profile is the latest, pull the latest profile
+        if self.prof_time == "Latest":
+            timestr = self.prof_time.upper()
+        ## otherwise, convert the menu string to the URL format
+        else:
+            timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
+            timestr += "_OBS"
+        ## construct the URL
+        url = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc.upper() + '.txt')
+        ## read in the file
+        data = np.array(url.read().split('\n'))
+        ## necessary index points
+        title_idx = np.where( data == '%TITLE%')[0][0]
+        start_idx = np.where( data == '%RAW%' )[0] + 1
+        finish_idx = np.where( data == '%END%')[0]
+
+        ## create the plot title
+        plot_title = data[title_idx + 1] + ' (Observed)'
+
+        ## put it all together for StringIO
+        full_data = '\n'.join(data[start_idx : finish_idx][:])
+        sound_data = StringIO( full_data )
+
+        ## read the data into arrays
+        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+
+        ## construct the Profile object
+        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
+                                wdir=wdir, wspd=wspd, location=self.loc)
+        return prof, plot_title
+
+    def loadArchive(self):
+        """
+        Get the archive sounding based on the user's selections.
+        """
+        ## construct the URL
+        arch_file = open(self.link, 'r')
+
+        ## read in the file
+        data = np.array(arch_file.read().split('\n'))
+        ## take care of possible whitespace issues
+        for i in range(len(data)):
+            data[i] = data[i].strip()
+        arch_file.close()
+
+        ## necessary index points
+        title_idx = np.where( data == '%TITLE%')[0][0]
+        start_idx = np.where( data == '%RAW%' )[0] + 1
+        finish_idx = np.where( data == '%END%')[0]
+
+        ## create the plot title
+        plot_title = data[title_idx + 1].upper() + ' (User Selected)'
+
+        ## put it all together for StringIO
+        full_data = '\n'.join(data[start_idx : finish_idx][:])
+        sound_data = StringIO( full_data )
+
+        ## read the data into arrays
+        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+
+        ## construct the Profile object
+        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
+                                wdir=wdir, wspd=wspd, location=self.loc)
+        return prof, plot_title
 
 if __name__ == '__main__':
     win = MainWindow()
