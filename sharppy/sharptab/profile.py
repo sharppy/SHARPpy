@@ -147,7 +147,7 @@ class Profile(object):
         '''
         ## set the missing variable
         self.missing = kwargs.get('missing', MISSING)
-        self.profile_type = kwargs.get('profile')
+        self.profile = kwargs.get('profile')
 
         assert len(kwargs.get('pres')) == len(kwargs.get('hght')) == len(kwargs.get('tmpc')) == len(kwargs.get('dwpc')),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
@@ -566,8 +566,8 @@ class ConvectiveProfile(Profile):
         heights = np.array([1000., 3000., 4000., 5000., 6000., 8000., 9000.])
         p1km, p3km, p4km, p5km, p6km, p8km, p9km = interp.pres(self, interp.to_msl(self, heights))
         ## 1km and 6km winds
-        self.wind1km = interp.components(self, p1km)
-        self.wind6km = interp.components(self, p6km)
+        self.wind1km = interp.vec(self, p1km)
+        self.wind6km = interp.vec(self, p6km)
         ## calcluate wind shear
         self.sfc_1km_shear = winds.wind_shear(self, pbot=sfc, ptop=p1km)
         self.sfc_3km_shear = winds.wind_shear(self, pbot=sfc, ptop=p3km)
@@ -576,11 +576,11 @@ class ConvectiveProfile(Profile):
         self.sfc_9km_shear = winds.wind_shear(self, pbot=sfc, ptop=p9km)
         self.lcl_el_shear = winds.wind_shear(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres)
         ## calculate mean wind
-        self.mean_1km = winds.mean_wind(self, pbot=sfc, ptop=p1km)
-        self.mean_3km = winds.mean_wind(self, pbot=sfc, ptop=p3km)
-        self.mean_6km = winds.mean_wind(self, pbot=sfc, ptop=p6km)
-        self.mean_8km = winds.mean_wind(self, pbot=sfc, ptop=p8km)
-        self.mean_lcl_el = winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres)
+        self.mean_1km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p1km))
+        self.mean_3km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p3km))
+        self.mean_6km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km))
+        self.mean_8km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p8km))
+        self.mean_lcl_el = utils.comp2vec(*winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres))
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
             self.etopm = ma.masked; self.ebotm = ma.masked
@@ -613,12 +613,12 @@ class ConvectiveProfile(Profile):
             self.left_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[2], stv=self.srwind[3])
             self.critical_angle = winds.critical_angle(self, stu=self.srwind[0], stv=self.srwind[1])
         ## calculate mean srw
-        self.srw_1km = winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] )
-        self.srw_3km = winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] )
-        self.srw_6km = winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] )
-        self.srw_8km = winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] )
-        self.srw_4_5km = winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] )
-        self.srw_lcl_el = winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] )
+        self.srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] ))
         # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
         self.srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
         self.srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])

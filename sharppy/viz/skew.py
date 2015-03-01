@@ -8,13 +8,14 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtOpenGL import *
 
-import copy
+from datetime import datetime, timedelta
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
 class backgroundSkewT(QtGui.QWidget):
-    def __init__(self):
+    def __init__(self, plot_omega=False):
         super(backgroundSkewT, self).__init__()
+        self.plot_omega = plot_omega
         self.initUI()
 
     def initUI(self):
@@ -57,8 +58,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
     
-    
-    def plotBackground(self):
+    def plotBackground(self, plot_omega=False):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
@@ -75,10 +75,36 @@ class backgroundSkewT(QtGui.QWidget):
             self.draw_isotherm_labels(t, qp)
         for p in xrange(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
+
+        if self.plot_omega:
+            plus10_bound = -49
+            minus10_bound = -41
+            x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+            y1_m10 = self.pres_to_pix(1000)
+            y2_m10 = self.pres_to_pix(111)
+            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
+            qp.setPen(pen)
+            qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
+            x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+            y1_10 = self.pres_to_pix(1000)
+            y2_10 = self.pres_to_pix(111)
+            qp.drawLine(x1_10, y1_10, x1_10, y2_10)
+            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+            y1 = self.pres_to_pix(1000)
+            y2 = self.pres_to_pix(111)
+            qp.drawLine(x1, y1, x1, y2)
+            rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
+            rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
+            rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+
         qp.end()
+        self.backgroundBitMap = self.plotBitMap.copy(0, 0, self.width(), self.height())
 
-
-    
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
@@ -259,7 +285,7 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         scl1 = self.brtmpc - (((self.bry - y) /
                               float(self.bry - self.tpad)) * self.yrange)
-        return int(scl1 - (((self.brx - x) / float(self.brx - self.lpad)) * self.xrange))
+        return scl1 - (((self.brx - x) / float(self.brx - self.lpad)) * self.xrange)
 
     def pres_to_pix(self, p):
         '''
@@ -284,10 +310,11 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile)
+    updated = Signal(Profile, bool)
+    reset = Signal()
 
     def __init__(self, prof, **kwargs):
-        super(plotSkewT, self).__init__()
+        super(plotSkewT, self).__init__(plot_omega=(prof.omeg.count() != 0))
         ## get the profile data
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
@@ -308,7 +335,9 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.setMouseTracking(True)
-        self.tracking = False
+        self.was_right_click = False
+        self.track_cursor = False
+        self.readout = False
         self.initdrag = False
         self.dragging = False
         self.drag_idx = None
@@ -354,6 +383,33 @@ class plotSkewT(backgroundSkewT):
             "  color: #00FF00;}")
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.popupmenu=QMenu("Cursor Type:")
+        ag = QtGui.QActionGroup(self, exclusive=True)
+
+        nocurs = QAction(self)
+        nocurs.setText("No Cursor")
+        nocurs.setCheckable(True)
+        nocurs.setChecked(True)
+        nocurs.triggered.connect(self.setNoCursor)
+        a = ag.addAction(nocurs)
+        self.popupmenu.addAction(a)
+
+        storm_motion = QAction(self)
+        storm_motion.setText("Readout Cursor")
+        storm_motion.setCheckable(True)
+        storm_motion.triggered.connect(self.setReadoutCursor)
+        a = ag.addAction(storm_motion)
+        self.popupmenu.addAction(a)
+
+        self.popupmenu.addSeparator()
+
+        reset = QAction(self)
+        reset.setText("Reset Skew-T")
+        reset.triggered.connect(lambda: self.reset.emit())
+        self.popupmenu.addAction(reset)
+
     def setProf(self, prof, **kwargs):
         self.prof = prof
         self.pres = prof.pres; self.hght = prof.hght
@@ -370,7 +426,6 @@ class plotSkewT(backgroundSkewT):
         self.title = kwargs.get('title', '')
 
         self.clearData()
-        self.plotBackground()
         self.plotData()
         self.update()
 
@@ -378,14 +433,13 @@ class plotSkewT(backgroundSkewT):
         self.plotdgz = flag
 
         self.clearData()
-        self.plotBackground()
         self.plotData()
         self.update()
         return
     
     def mouseReleaseEvent(self, e):
-        if not self.dragging:
-            self.tracking = not self.tracking
+        if not self.was_right_click and self.readout:
+            self.track_cursor = not self.track_cursor
 
         if self.dragging:
             tmpc = self.pix_to_tmpc(e.x(), e.y())
@@ -396,24 +450,32 @@ class plotSkewT(backgroundSkewT):
             elif prof_name == 'dwpc':
                 tmpc = min(tmpc, self.tmpc[self.drag_idx])
 
-            prof[self.drag_idx] = tmpc       
+            new_prof = prof.copy()
+            new_prof[self.drag_idx] = tmpc
             therm = {'tmpc':self.tmpc, 'dwpc':self.dwpc}
-            therm.update(prof_name=prof)
+            therm.update(**{prof_name:new_prof})
 
             new_prof = create_profile(pres=self.pres, hght=self.hght, u=self.u, v=self.v, omeg=self.prof.omeg, 
-                profile=self.prof.profile_type, location=self.prof.location, **therm)
+                profile=self.prof.profile, location=self.prof.location, **therm)
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof)
+            self.updated.emit(new_prof, True)
         elif self.initdrag:
             self.initdrag = False
 
+        self.was_right_click = False
         self.drag_prof = None
 
     def mousePressEvent(self, e):
+        self.was_right_click = e.button() & QtCore.Qt.RightButton
+
+        if not self.was_right_click and not self.readout:
+            self.initDrag(e)
+
+    def initDrag(self, e):
         prof_ys = self.pres_to_pix(self.pres)
         tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
         dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
@@ -453,10 +515,10 @@ class plotSkewT(backgroundSkewT):
             self.drag_prof = (prof_name, self.__dict__[prof_name])
 
     def mouseMoveEvent(self, e):
-        if self.tracking:
+        if self.track_cursor:
             self.updateReadout(e)
 
-        if self.initdrag or self.dragging:
+        elif self.initdrag or self.dragging:
             self.dragging = True
             self.initdrag = False
             self.dragLine(e)
@@ -551,6 +613,32 @@ class plotSkewT(backgroundSkewT):
         qp.end()
         self.update()
 
+    def setReadoutCursor(self):
+        self.readout = True
+        self.track_cursor = True
+        self.presReadout.show()
+        self.hghtReadout.show()
+        self.tmpcReadout.show()
+        self.dwpcReadout.show()
+        self.rubberBand.show()
+        self.clearData()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
+
+    def setNoCursor(self):
+        self.readout = False
+        self.track_cursor = False
+        self.presReadout.hide()
+        self.hghtReadout.hide()
+        self.tmpcReadout.hide()
+        self.dwpcReadout.hide()      
+        self.rubberBand.hide()
+        self.clearData()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
+
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
@@ -558,10 +646,16 @@ class plotSkewT(backgroundSkewT):
         '''
         super(plotSkewT, self).resizeEvent(e)
         self.plotData()
-    
+
+    def closeEvent(self, e):
+        pass
+
+    def showCursorMenu(self, pos):
+        self.popupmenu.popup(self.mapToGlobal(pos))
+   
     def wheelEvent(self, e):
         super(plotSkewT, self).wheelEvent(e)
-        self.clearData()
+        self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
         self.plotData()
 
@@ -577,14 +671,13 @@ class plotSkewT(backgroundSkewT):
         Handles the clearing of the pixmap
         in the frame.
         '''
-        self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap = self.backgroundBitMap.copy(0, 0, self.width(), self.height())
     
     def plotData(self):
         '''
         Plot the data used in a Skew-T.
 
-       '''
+        '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
@@ -599,9 +692,12 @@ class plotSkewT(backgroundSkewT):
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
         if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
-            idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
+#           idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
+#           idx_pbot, idx_ptop = np.searchsorted(np.array([self.prof.dgz_pbot, self.prof.dgz_ptop]), self.prof.pres)
+
             pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
+
             self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
@@ -621,7 +717,7 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing)
         if self.plotdgz is False:
             self.draw_effective_layer(qp)
-        if self.prof.omeg.count() != 0:
+        if self.plot_omega:
             self.draw_omega_profile(qp)
         qp.end()
 
@@ -634,22 +730,24 @@ class plotSkewT(backgroundSkewT):
             pres = self.pres[~mask]
             u = self.u[~mask]
             v = self.v[~mask]
+            wdir, wspd = tab.utils.comp2vec(u, v)
             yvals = self.pres_to_pix(pres)
             for y in yvals:
                 if y >= self.tly:
-                    uu = u[i]
-                    vv = v[i]
-                    drawBarb( qp, self.barbx, y, uu, vv )
+                    dd = wdir[i]
+                    ss = wspd[i]
+                    drawBarb( qp, self.barbx, y, dd, vv )
                     i += 1
                 else:
                     break
         else:
-            for p in np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40):
-                uu, vv = tab.interp.components(self.prof, p)
-                if not tab.utils.QC(uu) or np.isnan(uu) or p < self.pmin:
+            pres = np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40)
+            wdir, wspd = tab.interp.vec(self.prof, pres)
+            for p, dd, ss in zip(pres, wdir, wspd):
+                if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
                 y = self.pres_to_pix(p)
-                drawBarb( qp, self.barbx, y, uu, vv )
+                drawBarb( qp, self.barbx, y, dd, ss )
 
 
     def drawTitle(self, qp):
@@ -699,6 +797,7 @@ class plotSkewT(backgroundSkewT):
         lclp = self.pcl.lclpres
         lfcp = self.pcl.lfcpres
         elp = self.pcl.elpres
+
         # Plot LCL
         if lclp is not np.ma.masked:
             y = self.pres_to_pix(lclp)
@@ -740,28 +839,8 @@ class plotSkewT(backgroundSkewT):
     def draw_omega_profile(self, qp):
         plus10_bound = -49
         minus10_bound = -41
-        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
-        y1_m10 = self.pres_to_pix(1000)
-        y2_m10 = self.pres_to_pix(111)
-        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
-        qp.setPen(pen)
-        qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
-        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
-        y1_10 = self.pres_to_pix(1000)
-        y2_10 = self.pres_to_pix(111)
-        qp.drawLine(x1_10, y1_10, x1_10, y2_10)
-        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
         x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
-        y1 = self.pres_to_pix(1000)
-        y2 = self.pres_to_pix(111)
-        qp.drawLine(x1, y1, x1, y2)
-        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
-        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
-        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+
         for i in range(len(self.prof.omeg)):
             pres_y = self.pres_to_pix(self.prof.pres[i])
             if self.prof.omeg[i] == np.ma.masked or self.prof.pres[i] < 111:
@@ -852,6 +931,7 @@ class plotSkewT(backgroundSkewT):
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
+
         mask1 = data.mask
         if p is not None:
             mask2 = p.mask
@@ -864,6 +944,7 @@ class plotSkewT(backgroundSkewT):
         pres = pres[~mask]
         if stdev is not None:
             stdev = stdev[~mask]
+
         path = QPainterPath()
         x = self.tmpc_to_pix(data, pres)
         y = self.pres_to_pix(pres)
@@ -871,13 +952,13 @@ class plotSkewT(backgroundSkewT):
         for i in xrange(1, x.shape[0]):
             if y[i] < self.tpad:
                 break
-            else:
-                qp.save()
-                path.lineTo(x[i], y[i])
-                if stdev is not None:
-                    self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
-                qp.restore()
+
+            path.lineTo(x[i], y[i])
+            if stdev is not None:
+                self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
+
         qp.drawPath(path)
+
         if label is True:
             label = (1.8 * data[0]) + 32.
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)

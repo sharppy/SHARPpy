@@ -29,6 +29,26 @@ python full_gui.py
 
 =======================================================================
 
+Many people have put an immeasurable amount of time into developing this software package. 
+If SHARPpy is used to develop a weather product or contributes to research that leads to a 
+scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
+this ready-made citation entry or provide a link back to this website:
+
+
+    Halbert, K. T., W. G. Blumberg, and P. T. Marsh, 2015: "SHARPpy: Fueling the Python Cult". 
+    Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
+
+
+
+http://sharppy.github.io/SHARPpy/index.html
+
+https://github.com/sharppy/SHARPpy
+
+Also, please send an email letting us know where SHARPpy is being used or 
+has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
+
+=======================================================================
+
 ### Using the GUI
 
 To open a sounding, select a sounding type, a model run time (if the type is an NWP model), and then select a time(s).
@@ -40,6 +60,7 @@ After all profiles have been generated, a window should show up with your desire
 2. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
 3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
+5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
 
 Insets available for use:
 
@@ -66,10 +87,12 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 
 Known Windows Issues:
 - Inset text is not properly sized or placed in their windows.
-- When incrementing/decrementing profiles, the entire screen goes blank and redraws
+- When incrementing/decrementing profiles, the entire screen goes blank and redraws (FIXED AS OF 2/11/2015)
 - The program’s menu bar does not display
 - The sounding window may not properly size at first. A fix is to manually resize it and manipulate it.
 
 Other Issues:
 - Multi-select does not work for Observed soundings
 - Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash.
+- Wind barbs for very fast winds sometimes have barbs misplaced with respect to the stick of the wind diagram.  (FIXED AS OF 2/20/2015)
+- "Select Model Run" list of availiable model runs for SREF has invalid SREF run times (FIXED AS OF 2/20/2015)
