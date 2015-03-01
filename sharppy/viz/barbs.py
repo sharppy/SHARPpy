@@ -10,7 +10,7 @@ def drawFlag(path):
     pos = path.currentPosition()
     path.lineTo(pos.x(), pos.y() + 10)
     path.lineTo(pos.x() - 4, pos.y())
-    path.moveTo(pos.x() - 8, pos.y())
+    path.moveTo(pos.x() - 6, pos.y())
 
 def drawFullBarb(path):
     pos = path.currentPosition()
@@ -27,10 +27,12 @@ def drawBarb(qp, origin_x, origin_y, wdir, wspd, color='#FFFFFF'):
     pen.setWidthF(1.)
     qp.setPen(pen)
 
-    qp.translate(origin_x, origin_y)
+    try:
+        wspd = int(round(wspd / 5.) * 5) # Round to the nearest 5
+    except ValueError:
+        return
 
-#   wdir, wspd = tab.utils.comp2vec(u, v)
-    wspd = int(round(wspd / 5.) * 5) # Round to the nearest 5
+    qp.translate(origin_x, origin_y)
 
     if wspd > 0:
         qp.rotate(wdir - 90)
