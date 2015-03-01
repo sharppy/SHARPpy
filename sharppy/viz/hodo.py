@@ -287,7 +287,7 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile)
+    updated = Signal(Profile, bool)
     reset = Signal()
 
     def __init__(self, hght, u, v, **kwargs):
@@ -432,8 +432,6 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
-        if kwargs.get('update_orig', False):
-            self.original_prof = self.prof
 #       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
@@ -449,12 +447,12 @@ class plotHodo(backgroundHodo):
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
 
-        if self.center_loc == 'centered':
-            self.setNormalCenter()
-        elif self.center_loc == 'meanwind':
-            self.setMWCenter()
-        elif self.center_loc == 'stormrelative':
-            self.setSRCenter()
+#       if self.center_loc == 'centered':
+#           self.setNormalCenter()
+#       elif self.center_loc == 'meanwind':
+#           self.setMWCenter()
+#       elif self.center_loc == 'stormrelative':
+#           self.setSRCenter()
 
         self.clearData()
         self.plotData()
@@ -507,6 +505,7 @@ class plotHodo(backgroundHodo):
     def setNormalCenter(self):
         self.centered = (0, 0)
         self.center_loc = 'centered'
+        self.center_hodo(self.centered)
         self.clearData()
         self.plotData()
         self.update()
@@ -515,6 +514,7 @@ class plotHodo(backgroundHodo):
     def setMWCenter(self):
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
         self.center_loc = 'meanwind'
+        self.center_hodo(self.centered)
         self.clearData()
         self.plotData()
         self.update()
@@ -524,6 +524,7 @@ class plotHodo(backgroundHodo):
         rstu,rstv,lstu,lstv = self.srwind
         self.centered = (rstu, rstv)
         self.center_loc = 'stormrelative'
+        self.center_hodo(self.centered)
         self.clearData()
         self.plotData()
         self.update()
@@ -689,7 +690,7 @@ class plotHodo(backgroundHodo):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof)
+            self.updated.emit(new_prof, True)
         self.initdrag = False
 
     def setBlackPen(self, qp):
@@ -906,8 +907,6 @@ class plotHodo(backgroundHodo):
         '''
         Handles the plotting of the data in the QPixmap.
         '''
-        ## center the hodograph on the mean wind vector
-        self.center_hodo(self.centered)
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
@@ -1118,8 +1117,6 @@ class plotHodo(backgroundHodo):
             qp.setFont(self.critical_font)
             offset = 10
             qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
-    
-
 
     def draw_hodo(self, qp):
         '''
@@ -1144,74 +1141,29 @@ class plotHodo(backgroundHodo):
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
-        low_level_color = QtGui.QColor("#FF0000")
-        mid_level_color = QtGui.QColor("#00FF00")
-        upper_level_color = QtGui.QColor("#FFFF00")
-        trop_level_color = QtGui.QColor("#00FFFF")
-        ## define a pen to draw with
+        colors = [ 
+            QtGui.QColor("#FF0000"), 
+            QtGui.QColor("#00FF00"), 
+            QtGui.QColor("#FFFF00"), 
+            QtGui.QColor("#00FFFF") 
+        ]
+
         penwidth = 2
-        pen = QtGui.QPen(low_level_color, penwidth)
-        pen.setStyle(QtCore.Qt.SolidLine)
-        ## loop through the profile. Loop through shape - 1 since
-        ## i + 1 is indexed
-        for i in xrange(xx.shape[0]-1):
-            ## draw the hodograph in the lowest 3km
-            if z[i] < 3000:
-                if z[i+1] < 3000:
-                    pen = QtGui.QPen(low_level_color, penwidth)
-                else:
-                    pen = QtGui.QPen(low_level_color, penwidth)
-                    ## get the interpolated wind at 3km
-                    tmp_u = tab.interp.generic_interp_hght(3000, z, u)
-                    tmp_v = tab.interp.generic_interp_hght(3000, z, v)
-                    ## get the pixel value
-                    tmp_x, tmp_y = self.uv_to_pix(tmp_u, tmp_v)
-                    ## draw the hodograph
-                    qp.drawLine(xx[i], yy[i], tmp_x, tmp_y)
-                    pen = QtGui.QPen(mid_level_color, penwidth)
-                    qp.setPen(pen)
-                    qp.drawLine(tmp_x, tmp_y, xx[i+1], yy[i+1])
-                    continue
-            ## draw the hodograph in the 3-6km range
-            elif z[i] < 6000:
-                if z[i+1] < 6000:
-                    pen = QtGui.QPen(mid_level_color, penwidth)
-                else:
-                    pen = QtGui.QPen(mid_level_color, penwidth)
-                    tmp_u = tab.interp.generic_interp_hght(6000, z, u)
-                    tmp_v = tab.interp.generic_interp_hght(6000, z, v)
-                    tmp_x, tmp_y = self.uv_to_pix(tmp_u, tmp_v)
-                    qp.drawLine(xx[i], yy[i], tmp_x, tmp_y)
-                    pen = QtGui.QPen(upper_level_color, penwidth)
-                    qp.setPen(pen)
-                    qp.drawLine(tmp_x, tmp_y, xx[i+1], yy[i+1])
-                    continue
-            ## draw the hodograph in the 6-9km layer
-            elif z[i] < 9000:
-                if z[i+1] < 9000:
-                    pen = QtGui.QPen(upper_level_color, penwidth)
-                else:
-                    pen = QtGui.QPen(upper_level_color, penwidth)
-                    tmp_u = tab.interp.generic_interp_hght(9000, z, u)
-                    tmp_v = tab.interp.generic_interp_hght(9000, z, v)
-                    tmp_x, tmp_y = self.uv_to_pix(tmp_u, tmp_v)
-                    qp.drawLine(xx[i], yy[i], tmp_x, tmp_y)
-                    pen = QtGui.QPen(trop_level_color, penwidth)
-                    qp.setPen(pen)
-                    qp.drawLine(tmp_x, tmp_y, xx[i+1], yy[i+1])
-                    continue
-            ## draw the hodograph in the 9-12km layer
-            elif z[i] < 12000:
-                if z[i+1] < 12000:
-                    pen = QtGui.QPen(trop_level_color, penwidth)
-                else:
-                    pen = QtGui.QPen(low_level_color, penwidth)
-                    tmp_u = tab.interp.generic_interp_hght(12000, z, u)
-                    tmp_v = tab.interp.generic_interp_hght(12000, z, v)
-                    tmp_x, tmp_y = self.uv_to_pix(tmp_u, tmp_v)
-                    qp.drawLine(xx[i], yy[i], tmp_x, tmp_y)
-                    break
-            else:
-                break
+        seg_bnds = [0., 3000., 6000., 9000., 12000.]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+
+        seg_idxs = np.searchsorted(z, seg_bnds)
+        for idx in xrange(len(seg_bnds) - 1):
+            ## define a pen to draw with
+            pen = QtGui.QPen(colors[idx], penwidth)
+            pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            qp.drawLine(xx[i], yy[i], xx[i+1], yy[i+1])
+
+            path = QPainterPath()
+            path.moveTo(seg_x[idx], seg_y[idx])
+            for z_idx in xrange(seg_idxs[idx] + 1, seg_idxs[idx + 1]):
+                path.lineTo(xx[z_idx], yy[z_idx])
+            path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
+
+            qp.drawPath(path)

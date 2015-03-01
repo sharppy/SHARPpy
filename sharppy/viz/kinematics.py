@@ -136,34 +136,22 @@ class plotKinematics(backgroundKinematics):
         self.srh3km = prof.srh3km
         self.esrh = prof.right_esrh
         
-        mean_1km = prof.mean_1km
-        mean_3km = prof.mean_3km
-        mean_6km = prof.mean_6km
-        mean_8km = prof.mean_8km
-        mean_lcl_el = prof.mean_lcl_el
+        self.mean_1km = prof.mean_1km
+        self.mean_3km = prof.mean_3km
+        self.mean_6km = prof.mean_6km
+        self.mean_8km = prof.mean_8km
+        self.mean_lcl_el = prof.mean_lcl_el
         mean_eff = prof.mean_eff
         mean_ebw = prof.mean_ebw
-        self.mean_1km = tab.utils.comp2vec(mean_1km[0], mean_1km[1])
-        self.mean_3km = tab.utils.comp2vec(mean_3km[0], mean_3km[1])
-        self.mean_6km = tab.utils.comp2vec(mean_6km[0], mean_6km[1])
-        self.mean_8km = tab.utils.comp2vec(mean_8km[0], mean_8km[1])
-        self.mean_lcl_el = tab.utils.comp2vec(mean_lcl_el[0], mean_lcl_el[1])
         
-        srw_1km = prof.srw_1km
-        srw_3km = prof.srw_3km
-        srw_6km = prof.srw_6km
-        srw_8km = prof.srw_8km
-        srw_lcl_el = prof.srw_lcl_el
-        srw_4_5km = prof.srw_4_5km
+        self.srw_1km = prof.srw_1km
+        self.srw_3km = prof.srw_3km
+        self.srw_6km = prof.srw_6km
+        self.srw_8km = prof.srw_8km
+        self.srw_lcl_el = prof.srw_lcl_el
+        self.srw_4_5km = prof.srw_4_5km
         srw_eff = prof.srw_eff
         srw_ebw = prof.srw_ebw
-        self.srw_1km = tab.utils.comp2vec(srw_1km[0], srw_1km[1])
-        self.srw_3km = tab.utils.comp2vec(srw_3km[0], srw_3km[1])
-        self.srw_6km = tab.utils.comp2vec(srw_6km[0], srw_6km[1])
-        self.srw_8km = tab.utils.comp2vec(srw_8km[0], srw_8km[1])
-        self.srw_lcl_el = tab.utils.comp2vec(srw_lcl_el[0], mean_lcl_el[1])
-        self.srw_4_5km = tab.utils.comp2vec(srw_4_5km[0], srw_4_5km[1])
-
         
         self.sfc_1km_shear = prof.sfc_1km_shear
         self.sfc_3km_shear = prof.sfc_3km_shear
@@ -198,34 +186,22 @@ class plotKinematics(backgroundKinematics):
         self.srh3km = prof.srh3km
         self.esrh = prof.right_esrh
 
-        mean_1km = prof.mean_1km
-        mean_3km = prof.mean_3km
-        mean_6km = prof.mean_6km
-        mean_8km = prof.mean_8km
-        mean_lcl_el = prof.mean_lcl_el
+        self.mean_1km = prof.mean_1km
+        self.mean_3km = prof.mean_3km
+        self.mean_6km = prof.mean_6km
+        self.mean_8km = prof.mean_8km
+        self.mean_lcl_el = prof.mean_lcl_el
         mean_eff = prof.mean_eff
         mean_ebw = prof.mean_ebw
-        self.mean_1km = tab.utils.comp2vec(mean_1km[0], mean_1km[1])
-        self.mean_3km = tab.utils.comp2vec(mean_3km[0], mean_3km[1])
-        self.mean_6km = tab.utils.comp2vec(mean_6km[0], mean_6km[1])
-        self.mean_8km = tab.utils.comp2vec(mean_8km[0], mean_8km[1])
-        self.mean_lcl_el = tab.utils.comp2vec(mean_lcl_el[0], mean_lcl_el[1])
 
-        srw_1km = prof.srw_1km
-        srw_3km = prof.srw_3km
-        srw_6km = prof.srw_6km
-        srw_8km = prof.srw_8km
-        srw_lcl_el = prof.srw_lcl_el
-        srw_4_5km = prof.srw_4_5km
+        self.srw_1km = prof.srw_1km
+        self.srw_3km = prof.srw_3km
+        self.srw_6km = prof.srw_6km
+        self.srw_8km = prof.srw_8km
+        self.srw_lcl_el = prof.srw_lcl_el
+        self.srw_4_5km = prof.srw_4_5km
         srw_eff = prof.srw_eff
         srw_ebw = prof.srw_ebw
-        self.srw_1km = tab.utils.comp2vec(srw_1km[0], srw_1km[1])
-        self.srw_3km = tab.utils.comp2vec(srw_3km[0], srw_3km[1])
-        self.srw_6km = tab.utils.comp2vec(srw_6km[0], srw_6km[1])
-        self.srw_8km = tab.utils.comp2vec(srw_8km[0], srw_8km[1])
-        self.srw_lcl_el = tab.utils.comp2vec(srw_lcl_el[0], mean_lcl_el[1])
-        self.srw_4_5km = tab.utils.comp2vec(srw_4_5km[0], srw_4_5km[1])
-
 
         self.sfc_1km_shear = prof.sfc_1km_shear
         self.sfc_3km_shear = prof.sfc_3km_shear

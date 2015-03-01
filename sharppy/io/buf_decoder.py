@@ -135,8 +135,8 @@ class BufkitFile(object):
             try:
                 f = open(self.filename, 'r')
             except:
+                raise IOError("File '%s' cannot be found" % self.filename)
                 #print self.filename + " unable to be opened."
-                sys.exit()
         file_data = f.read()
         string = '\r\n\r\n\r\n'
         members = np.array(file_data.split(string))
