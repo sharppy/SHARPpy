@@ -36,8 +36,11 @@ class backgroundSkewT(QtGui.QWidget):
         self.xskew = 100 / 3.
         self.xrange = self.brtmpc - self.bltmpc
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
-        self.centert = (self.brtmpc - self.bltmpc) / 2.
-        self.centerp = self.pix_to_pres(self.hgt/2.)
+#       self.centert = (self.brtmpc - self.bltmpc) / 2.
+#       self.centerp = self.pix_to_pres(self.hgt/2.)
+        self.centerx = self.size().width() / 2
+        self.centery = self.size().height() / 2
+        self.scale = 1.
         if self.physicalDpiX() > 75:
             fsize = 6
             fsizet = 10
@@ -61,6 +64,7 @@ class backgroundSkewT(QtGui.QWidget):
     def plotBackground(self, plot_omega=False):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.scale(1 / self.scale, 1 / self.scale)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         for t in np.arange(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
@@ -102,6 +106,7 @@ class backgroundSkewT(QtGui.QWidget):
             rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
 
+        qp.scale(self.scale, self.scale)
         qp.end()
         self.backgroundBitMap = self.plotBitMap.copy(0, 0, self.width(), self.height())
 
@@ -113,50 +118,77 @@ class backgroundSkewT(QtGui.QWidget):
         self.initUI()
     
     def wheelEvent(self, e):
-        rate_multiplier = 0.5 * e.delta()
+#       rate_multiplier = 0.5 * e.delta()
 
-        focus_x, focus_y = (self.brx - self.lpad) / 2, self.bry #e.x(), e.y()
+#       focus_x, focus_y = (self.brx - self.lpad) / 2, self.bry #e.x(), e.y()
 
-        left_rate = (focus_x - self.lpad) / float(self.brx - self.lpad)
-        right_rate = 1 - left_rate
-        top_rate = (focus_y - self.tly) / float(self.bry - self.tly)
-        bottom_rate = 1 - top_rate
+#       left_rate = (focus_x - self.lpad) / float(self.brx - self.lpad)
+#       right_rate = 1 - left_rate
+#       top_rate = (focus_y - self.tly) / float(self.bry - self.tly)
+#       bottom_rate = 1 - top_rate
 
-#       print left_rate, right_rate, focus_x
-#       print top_rate, bottom_rate, focus_y
+##       print left_rate, right_rate, focus_x
+##       print top_rate, bottom_rate, focus_y
 
-#       qp.drawLine(self.lpad, self.tly, self.brx, self.tly)
-#       qp.drawLine(self.brx, self.tly, self.brx, self.bry)
-#       qp.drawLine(self.brx, self.bry, self.lpad, self.bry)
-#       qp.drawLine(self.lpad, self.bry, self.lpad, self.tly)
+##       qp.drawLine(self.lpad, self.tly, self.brx, self.tly)
+##       qp.drawLine(self.brx, self.tly, self.brx, self.bry)
+##       qp.drawLine(self.brx, self.bry, self.lpad, self.bry)
+##       qp.drawLine(self.lpad, self.bry, self.lpad, self.tly)
 
-        new_left = self.lpad - rate_multiplier * left_rate
-        new_right = self.brx + rate_multiplier * right_rate
-        new_top = self.tly - rate_multiplier * top_rate
-        new_bottom = self.bry + rate_multiplier * bottom_rate
+#       new_left = self.lpad - rate_multiplier * left_rate
+#       new_right = self.brx + rate_multiplier * right_rate
+#       new_top = self.tly - rate_multiplier * top_rate
+#       new_bottom = self.bry + rate_multiplier * bottom_rate
 
-#       print new_left - self.lpad, self.brx - new_right
+##       print new_left - self.lpad, self.brx - new_right
 
-        new_tmin = self.pix_to_tmpc(new_left, self.bry)
-        new_tmax = self.pix_to_tmpc(new_right, self.bry)
-        new_pmin = self.pix_to_pres(new_top)
-        new_pmax = self.pix_to_pres(new_bottom)
+#       new_tmin = self.pix_to_tmpc(new_left, self.bry)
+#       new_tmax = self.pix_to_tmpc(new_right, self.bry)
+#       new_pmin = self.pix_to_pres(new_top)
+#       new_pmax = self.pix_to_pres(new_bottom)
 
 #       print new_tmin, new_tmax
 
-        if new_pmax - new_pmin > 100:
-            self.pmin = max(100., new_pmin)
-            self.pmax = min(1050., new_pmax)
-        if new_tmax - new_tmin > 20:
-            self.bltmpc = max(-50., new_tmin)
-            self.brtmpc = min(50., new_tmax)
+#       if new_pmax - new_pmin > 100:
+#           self.pmin = max(100., new_pmin)
+#           self.pmax = min(1050., new_pmax)
+#       if new_tmax - new_tmin > 20:
+#           self.bltmpc = max(-50., new_tmin)
+#           self.brtmpc = min(50., new_tmax)
 
-        self.log_pmin = np.log(self.pmin)
-        self.log_pmax = np.log(self.pmax)
-        self.xrange = int(self.brtmpc) - int(self.bltmpc)
-        self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
+#       self.log_pmin = np.log(self.pmin)
+#       self.log_pmax = np.log(self.pmax)
+#       self.xrange = int(self.brtmpc) - int(self.bltmpc)
+#       self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
+#       self.update()
+
+        self.centerx, self.centery = e.x(), e.y()
+        delta = min(10, max(-10, e.delta()))
+        self.scale *= (10 ** (delta / 50.))
+        self.scale = min(self.scale, 1)
         self.update()
- 
+
+    def draw_dry_adiabat(self, theta, qp):
+        '''
+        Draw the given moist adiabat.
+        '''
+        pen = QtGui.QPen(QtGui.QColor("#333333"), 1)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        dp = -10
+        presvals = np.arange(int(self.pmax), int(self.pmin)+dp, dp)
+        thetas = ((theta + ZEROCNK) / (np.power((1000. / presvals),ROCP))) - ZEROCNK
+        xvals = self.tmpc_to_pix(thetas, presvals)
+        yvals = self.pres_to_pix(presvals)
+        path = QPainterPath()
+        path.moveTo(xvals[0], yvals[0])
+        for i in xrange(1, len(presvals) ):
+            p = presvals[i]
+            x = xvals[i]
+            y = yvals[i]
+            path.lineTo(x, y)
+        qp.drawPath(path)
+
     def draw_moist_adiabat(self, tw, qp):
         '''
         Draw the given moist adiabat.
@@ -542,8 +574,8 @@ class plotSkewT(backgroundSkewT):
         self.hghtReadout.move(self.lpad, e.y() - 15)
         self.tmpcReadout.move(self.brx-self.rpad, e.y())
         self.dwpcReadout.move(self.brx-self.rpad, e.y() - 15)
-        self.centerp = self.pix_to_pres(e.y())
-        self.centert = tmp
+#       self.centerp = self.pix_to_pres(e.y())
+#       self.centert = tmp
         self.rubberBand.show()
 
     def dragLine(self, e):
@@ -582,6 +614,7 @@ class plotSkewT(backgroundSkewT):
 
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.scale(1. / self.scale, 1. / self.scale)
 
         # If we have something saved, restore it
         if self.saveBitMap is not None:
@@ -610,6 +643,7 @@ class plotSkewT(backgroundSkewT):
             y1, y2 = self.pres_to_pix(self.pres[idx]), self.pres_to_pix(self.pres[idx + 1])
             qp.drawLine(x1, y1, x2, y2)
 
+        qp.scale(self.scale, self.scale)
         qp.end()
         self.update()
 
@@ -680,6 +714,8 @@ class plotSkewT(backgroundSkewT):
         '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.scale(1 / self.scale, 1 / self.scale)
+
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         self.drawTitle(qp)
@@ -719,6 +755,8 @@ class plotSkewT(backgroundSkewT):
             self.draw_effective_layer(qp)
         if self.plot_omega:
             self.draw_omega_profile(qp)
+
+        qp.scale(self.scale, self.scale)
         qp.end()
 
     def drawBarbs(self, qp):
