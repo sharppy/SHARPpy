@@ -270,6 +270,7 @@ class SkewApp(QWidget):
     def resetProf(self):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
         self.updateProfs(self.profs[self.current_idx], modified=False)
+        self.setFocus()
 
     def loadWidgets(self):
         ## add the upper-right window insets
