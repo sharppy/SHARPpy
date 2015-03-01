@@ -116,6 +116,11 @@ class backgroundHodo(QtGui.QFrame):
         ## reassign the new scale
         self.scale = (self.brx - self.tlx) / self.hodomag
 
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+        self.plotData()
+        self.backgroundBitMap = self.plotBitMap.copy()
+
         ## update
         self.update()
 
@@ -321,7 +326,7 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = self.prof.mean_lcl_el
+        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -330,7 +335,7 @@ class plotHodo(backgroundHodo):
         self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
-        self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+        self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
         ## the following is used for the dynamic readout
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
@@ -436,7 +441,7 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = self.prof.mean_lcl_el
+        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -445,7 +450,7 @@ class plotHodo(backgroundHodo):
         self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
-        self.mean_lcl_el_vec = tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+        self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
 
 #       if self.center_loc == 'centered':
 #           self.setNormalCenter()
