@@ -1,7 +1,10 @@
 import sys, os
+import numpy as np
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
+else:
+    np.seterr(all='ignore')
 
 from sharppy.viz import SkewApp
 import sharppy.sharptab.profile as profile
@@ -10,7 +13,6 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
 import datetime as date
-import numpy as np
 from StringIO import StringIO
 import urllib
 
