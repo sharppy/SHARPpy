@@ -7,7 +7,7 @@ from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
-from datetime import datetime
+from datetime import datetime, timedelta
 import copy
 import numpy as np
 import ConfigParser
@@ -188,8 +188,11 @@ class SkewApp(QWidget):
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
+
         self.inferred_temp_advection = plotAdvection(self.prof)
+
         self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+
         self.hodo.updated.connect(self.updateProfs)
         self.hodo.reset.connect(self.resetProf)
 
@@ -200,7 +203,6 @@ class SkewApp(QWidget):
 
         self.srwinds_vs_height = plotWinds(self.prof)
         self.watch_type = plotWatch(self.prof)
-
         self.convective = plotText(self.prof)
         self.kinematic = plotKinematics(self.prof)
 
@@ -243,15 +245,22 @@ class SkewApp(QWidget):
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
 
         self.storm_slinky.setProf(self.prof)
+
         self.inferred_temp_advection.setProf(self.prof)
+
         self.speed_vs_height.setProf(self.prof)
+
         self.srwinds_vs_height.setProf(self.prof)
+
         self.thetae_vs_pressure.setProf(self.prof.thetae[self.prof.pres > 500.],
                                 self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
                                  yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
+
         self.watch_type.setProf(self.prof)
+
         self.convective.setProf(self.prof)
         self.kinematic.setProf(self.prof)
+
         self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
 
         for inset in self.insets.keys():
@@ -316,6 +325,7 @@ class SkewApp(QWidget):
 
     def closeEvent(self, e):
         self.config.write(open(SkewApp.cfg_file_name, 'w'))
+        self.sound.closeEvent(e)
 
     def makeInsetMenu(self, *exclude):
 

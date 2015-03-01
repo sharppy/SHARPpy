@@ -6,8 +6,58 @@ from sharppy.sharptab.constants import *
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
 
+def drawFlag(path):
+    pos = path.currentPosition()
+    path.lineTo(pos.x(), pos.y() + 10)
+    path.lineTo(pos.x() - 4, pos.y())
+    path.moveTo(pos.x() - 8, pos.y())
 
-def drawBarb( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
+def drawFullBarb(path):
+    pos = path.currentPosition()
+    path.lineTo(pos.x(), pos.y() + 10)
+    path.moveTo(pos.x() - 4, pos.y())
+
+def drawHalfBarb(path):
+    pos = path.currentPosition()
+    path.lineTo(pos.x(), pos.y() + 5)
+    path.moveTo(pos.x() - 4, pos.y())
+
+def drawBarb(qp, origin_x, origin_y, wdir, wspd, color='#FFFFFF'):
+    pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+    pen.setWidthF(1.)
+    qp.setPen(pen)
+
+    qp.translate(origin_x, origin_y)
+
+#   wdir, wspd = tab.utils.comp2vec(u, v)
+    wspd = int(round(wspd / 5.) * 5) # Round to the nearest 5
+
+    if wspd > 0:
+        qp.rotate(wdir - 90)
+
+        path = QtGui.QPainterPath()
+        path.moveTo(0, 0)
+        path.lineTo(25, 0)
+
+        while wspd >= 50:
+            drawFlag(path)
+            wspd -= 50
+
+        while wspd >= 10:
+            drawFullBarb(path)
+            wspd -= 10
+
+        while wspd >= 5:
+            drawHalfBarb(path)
+            wspd -= 5
+
+        qp.drawPath(path)
+        qp.rotate(90 - wdir)
+    else:
+        qp.drawEllipse(QtCore.QPoint(0, 0), 3, 3)
+    qp.translate(-origin_x, -origin_y)
+
+def drawBarb_old( qp, origin_x, origin_y, u, v, color='#FFFFFF' ):
     pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
     pen.setWidthF(1.)
     qp.setPen(pen)
