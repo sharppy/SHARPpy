@@ -41,7 +41,7 @@ class SkewApp(QWidget):
 
     cfg_file_name = 'sharppy.ini'
 
-    def __init__(self, profs, d, plot_title, **kwargs):
+    def __init__(self, profs, dates, model, **kwargs):
 
         super(SkewApp, self).__init__()
         """
@@ -49,15 +49,16 @@ class SkewApp(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.profs = profs
-        self.d = d
-        self.plot_title = plot_title
-        self.model = kwargs.get("model")
+        self.dates = dates
+        self.model = model
         self.prof_time = kwargs.get("prof_time", None)
         self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
+
+        self.plot_title = ""
 
         ## these are used to display profiles
         self.current_idx = 0
@@ -171,9 +172,13 @@ class SkewApp(QWidget):
         """
 
         ## set the plot title that will be displayed in the Skew frame.
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
+        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            self.plot_title += "  (User Selected)"
+        elif self.model == "Observed":
+            self.plot_title += "  (Observed)"
+        else:
+            self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -222,17 +227,16 @@ class SkewApp(QWidget):
     @Slot(profile.Profile, bool)
     def updateProfs(self, prof, modified):
         self.modified[self.current_idx] = modified
-        #self.sound.setProf(self.profs[self.current_idx])
+
         modified_str = "; Modified" if self.modified[self.current_idx] else ""
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+
+        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            self.plot_title += "  (User Selected" + modified_str + ")"
         elif self.model == "Observed":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (Observed" + modified_str + ")"
-        elif self.model == "Archive":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (User Selected" + modified_str + ")"
+            self.plot_title += "  (Observed" + modified_str + ")"
+        else:
+             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
 
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
