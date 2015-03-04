@@ -93,6 +93,6 @@ Known Windows Issues:
 
 Other Issues:
 - Multi-select does not work for Observed soundings
-- Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash.
+- Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash. (FIXED AS OF 2/28/2015 - program no longer crashes.)
 - Wind barbs for very fast winds sometimes have barbs misplaced with respect to the stick of the wind diagram.  (FIXED AS OF 2/20/2015)
 - "Select Model Run" list of availiable model runs for SREF has invalid SREF run times (FIXED AS OF 2/20/2015)
