@@ -47,11 +47,12 @@ class SNDFile(object):
         # gets opened.
         try:
             file_data = urllib2.urlopen(self.filename)
-        except IOError:
+        except (IOError, ValueError):
             try:
                 file_data = open(self.filename, 'r')
             except IOError:
                 raise IOError("File name '%s' could not be found." % self.filename)
+            
         ## read in the file
         data = np.array(file_data.read().split('\n'))
         ## necessary index points

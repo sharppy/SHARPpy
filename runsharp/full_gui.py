@@ -646,53 +646,20 @@ class MainWindow(QWidget):
         Get the archive sounding based on the user's selections.
         """
 
-#       vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
-#       if self.link.endswith('.txt'):
-#           snd_file = SNDfile(self.link)
-#           station = snd_file.location
-#           time = snd_file.time
+        vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
+        snd_file = SNDFile(self.link)
+        station = snd_file.location
+        time = snd_file.time
 
-#           kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
-#           plot_title = snd_file.location + '   ' + snd_file.time + ' (User Selected)'
+        kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
 
-#       elif self.link.endswith('.buf'):
-#           snd_file = BufkitFile(self.link)
-#           station = snd_file.station
-#           
-#           vars.append('omeg')
+#       ## construct the Profile object
+        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
 
-         # construct the URL
-        arch_file = open(self.link, 'r')
- 
-        ## read in the file
-        data = np.array(arch_file.read().split('\n'))
-        ## take care of possible whitespace issues
-        for i in range(len(data)):
-            data[i] = data[i].strip()
-        arch_file.close()
-
-        ## necessary index points
-        title_idx = np.where( data == '%TITLE%')[0][0]
-        start_idx = np.where( data == '%RAW%' )[0] + 1
-        finish_idx = np.where( data == '%END%')[0]
-
-        ## create the plot title
-        plot_title = data[title_idx + 1].upper() + ' (User Selected)'
-
-        ## put it all together for StringIO
-        full_data = '\n'.join(data[start_idx : finish_idx][:])
-        sound_data = StringIO( full_data )
-
-        ## read the data into arrays
-        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-
-        ## construct the Profile object
-        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
-                                wdir=wdir, wspd=wspd, location=self.loc)
-
-        return prof, date.datetime.strptime(data[title_idx + 1].split()[1], "%y%m%d/%H%M")
+        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
 if __name__ == '__main__':
     win = MainWindow()
     win.show()
+    win.setFocus()
     sys.exit(app.exec_())
