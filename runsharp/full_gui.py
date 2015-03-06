@@ -648,7 +648,7 @@ class MainWindow(QWidget):
 
         vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
         snd_file = SNDFile(self.link)
-        station = snd_file.location
+        self.loc = snd_file.location
         time = snd_file.time
 
         kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
