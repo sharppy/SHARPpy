@@ -1,28 +1,47 @@
-from distutils.core import setup
 import os, sys
+from setuptools import setup, find_packages
+
 
 pkgname = "SHARPpy"
+
+
+### GET VERSION INFORMATION ###
 setup_path = os.path.split(os.path.abspath(__file__))[0]
 sys.path.append(os.path.join(setup_path, pkgname.lower()))
 import version
 version.write_git_version()
-ver = version.get_version()
+ver = version.get_version().split("+")[0]
 sys.path.pop()
 
 
+### ACTUAL SETUP VALUES ###
+name = pkgname
+version = ver
+author = "Patrick Marsh, Kelton Halbert, and Greg Blumberg"
+author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu"
+description = "Sounding/Hodograph Analysis and Research Program for Python"
+long_description = ""
+license = "BSD"
+keywords = "meteorology soundings analysis"
+url = "https://github.com/sharppy/SHARPpy"
+packages = find_packages()
+package_data = {"": ["*.md", "*.txt", "*.png"],}
+include_package_data = True
+classifiers = ["Development Status :: 2 - Pre-Alpha"]
+
+
 setup(
-    name = pkgname,
-    version = ver,
-    author = "Patrick Marsh, John Hart, Kelton Halbert, and Greg Blumberg",
-    author_email = "patrick.marsh@noaa.gov, john.hart@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu",
-    description = ("Sounding/Hodograph Analysis and Research Program " \
-        "for Python"),
-    license = "BSD",
-    keywords = "meteorology soundings analysis",
-    url = "",
-    packages=['sharppy', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'sharppy.databases'],
-    package_data={'': ['*.md', '*.txt', '*.png']},
-    include_package_data=True,
-    long_description="",
-    classifiers=["Development Status :: 2 - Pre-Alpha"],
+    name = name,
+    version = version,
+    author = author,
+    author_email = author_email,
+    description = description,
+    long_description = long_description,
+    license = license,
+    keywords = keywords,
+    url = url,
+    packages = packages,
+    package_data = package_data,
+    include_package_data = include_package_data,
+    classifiers = classifiers
 )
