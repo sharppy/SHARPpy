@@ -27,7 +27,7 @@ url = "https://github.com/sharppy/SHARPpy"
 packages = find_packages()
 package_data = {"": ["*.md", "*.txt", "*.png"],}
 include_package_data = True
-classifiers = ["Development Status :: 2 - Pre-Alpha"]
+classifiers = ["Development Status :: 4 - Beta"]
 
 
 setup(
