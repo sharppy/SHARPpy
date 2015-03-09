@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 import os.path
 import subprocess
 release = False
-__version__ = '0.1'
+__version__ = '0.1.0'
 
 
 _repository_path = os.path.split(__file__)[0]
@@ -19,8 +20,22 @@ def _minimal_ext_cmd(cmd):
     env['LANGUAGE'] = 'C'
     env['LANG'] = 'C'
     env['LC_ALL'] = 'C'
-    out = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env).communicate()[0]
+    out = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                           env=env).communicate()[0]
     return out
+
+def get_git_branch():
+    '''
+    Gets the current Git branch.
+
+    '''
+    try:
+        out = _minimal_ext_cmd(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        branch = out.strip().decode('ascii')
+    except:
+        branch = ''
+    return branch
+
 
 def get_git_hash():
     '''
@@ -29,28 +44,38 @@ def get_git_hash():
 
     '''
     try:
-        out = _minimal_ext_cmd(['git', 'rev-parse', 'HEAD'])
-        GIT_REVISION = out.strip().decode('ascii')
+        out = _minimal_ext_cmd(['git', 'rev-parse', '--short', 'HEAD'])
+        revision = out.strip().decode('ascii')
     except:
-        GIT_REVISION = None
+        revision = ''
+    return revision
 
-    return GIT_REVISION
+
+def get_git_date(git_hash):
+    '''
+    Gets the date of the last commit.
+
+    '''
+    try:
+        out = _minimal_ext_cmd(['git', 'show', git_hash, '--date=short',
+                                '--format="%ad"'])
+        date = out.strip().decode('ascii').split('"')[1]
+    except:
+        date = ''
+    return date
+
 
 def get_git_revision():
-    hash = get_git_hash()
-    if hash :
-        rev = '.dev.' + hash[:7]
-        try:
-            cmd = ['git', 'show', '%s' % (hash), '--date=short',
-                   '--format="(%ad)"']
-            date = _minimal_ext_cmd(cmd).split('"')[1]
-            rev += date
-        except:
-            pass
-    else:
-        rev = ".dev.Unknown"
+    git_branch = get_git_branch()
+    git_hash = get_git_hash()
+    git_date = get_git_date(git_hash)
 
+    if git_branch:
+        rev = '.dev0+%s-%s(%s)' % (git_branch, git_hash, git_date)
+    else:
+        rev = ''
     return rev
+
 
 def write_git_version():
     '''
@@ -58,7 +83,7 @@ def write_git_version():
 
     '''
     rev = get_git_revision()
-    if rev == ".dev.Unknown":
+    if rev == "":
         if os.path.isfile(_git_file_path):
             return
     gitfile = open(_git_file_path, 'w')
@@ -79,5 +104,11 @@ def get_version():
             version += __git_version__.rev
         except ImportError:
             version += get_git_revision()
-
     return version
+
+
+
+
+
+if __name__ == "__main__":
+    write_git_version()
