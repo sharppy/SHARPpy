@@ -22,9 +22,7 @@ python setup.py install
 
 =======================================================================
 
-To run the SHARPpy GUI, you will need both Numpy and PySide installed
-with your Python distribution.  To run the gui, copy the runsharp folder
-to the location at which you wish to run the program. Navigate to that
+To run the gui, copy the runsharp folder to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
 python full_gui.py
