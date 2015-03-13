@@ -14,18 +14,18 @@ https://store.continuum.io/cshop/anaconda/
 
 You will then need to install the PySide package through the anaconda package manager:
 
-conda install PySide
+    conda install PySide
 
 To install the SHARPpy package into your Python path, type:
 
-python setup.py install
+    python setup.py install
 
 =======================================================================
 
 To run the SHARPpy GUI and interact with real-time observed and forecast soundings, copy the runsharp folder to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
-python full_gui.py
+    python full_gui.py
 
 =======================================================================
 
