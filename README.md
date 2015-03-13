@@ -20,12 +20,21 @@ To install the SHARPpy package into your Python path, type:
 
 python setup.py install
 
+=======================================================================
+
 To run the SHARPpy GUI, you will need both Numpy and PySide installed
 with your Python distribution.  To run the gui, copy the runsharp folder
 to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
 python full_gui.py
+
+=======================================================================
+
+To learn more about interacting with the SHARPpy libraries using the Python
+programming language, see the tutorial listed in tutorials/ and check out the link:
+
+http://nbviewer.ipython.org/github/wblumberg/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
 
 =======================================================================
 
