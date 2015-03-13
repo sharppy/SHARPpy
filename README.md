@@ -9,7 +9,7 @@ NumPy
 PySide
 
 This is primarily tested and used with the Anaconda Python Distribution
-from Continuum Analytics. Anaconda can be downloaded here:
+from Continuum Analytics. We recommend you use Python 2.7 instead of Python 3 as SHARPpy has not converted to be Python 3 compatable yet.  Anaconda can be downloaded here:
 https://store.continuum.io/cshop/anaconda/
 
 You will then need to install the PySide package through the anaconda package manager:
