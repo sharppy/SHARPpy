@@ -368,6 +368,7 @@ class plotSkewT(backgroundSkewT):
         self.drag_prof = None
         self.drag_buffer = 5
         self.clickradius = 6
+        self.cursor_loc = None
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
         self.hghtReadout = QLabel(parent=self)
@@ -409,6 +410,29 @@ class plotSkewT(backgroundSkewT):
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.parcelmenu = QMenu("Lift Parcel")
+
+        # List of parcels that can be lifted
+        pcl1 = QAction(self)
+        pcl1.setText("This Parcel")
+        pcl1.triggered.connect(lambda: self.liftparcellevel(0))
+        self.parcelmenu.addAction(pcl1)
+
+        pcl2 = QAction(self)
+        pcl2.setText("50 mb Layer Parcel")
+        pcl2.triggered.connect(lambda: self.liftparcellevel(50))
+        self.parcelmenu.addAction(pcl2)
+
+        pcl3 = QAction(self)
+        pcl3.setText("100 mb Layer Parcel")
+        pcl3.triggered.connect(lambda: self.liftparcellevel(100))
+        self.parcelmenu.addAction(pcl3)
+
+        pcl4 = QAction(self)
+        pcl4.setText("Custom Parcel")
+        pcl4.triggered.connect(lambda: self.liftparcellevel(-9999))
+        self.parcelmenu.addAction(pcl4)
+
         self.popupmenu=QMenu("Cursor Type:")
         ag = QtGui.QActionGroup(self, exclusive=True)
 
@@ -428,11 +452,40 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addAction(a)
 
         self.popupmenu.addSeparator()
+        self.popupmenu.addMenu(self.parcelmenu)
+        #lift = QAction(self)
+        #lift.setText("Lift Parcel")
+        #lift.triggered.connect(self.liftparcellevel)
+        #self.popupmenu.addAction(lift)
 
+        self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
         reset.triggered.connect(lambda: self.reset.emit())
         self.popupmenu.addAction(reset)
+
+    def liftparcellevel(self, i):
+        pres = self.pix_to_pres( self.cursor_loc.y())
+        tmp = tab.interp.temp(self.prof, pres)
+        dwp = tab.interp.dwpt(self.prof, pres)
+        print i
+        if i == 0:
+
+            user_pcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
+        else:
+            if i == -9999:
+                depth, result = QInputDialog.getText(None, "Parcel Depth (" + str(int(pres)) + "to __)",\
+                                            "Mean Layer Depth (mb):")
+                try:
+                    i = int(depth)
+                except:
+                    return
+            user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
+            user_pcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
+                                          dwpc=user_initpcl.dwpc)
+
+        print user_pcl.pres, user_pcl.tmpc, user_pcl.dwpc, user_pcl.lclhght, tmp, dwp
+
 
     def setProf(self, prof, **kwargs):
         self.prof = prof
@@ -464,7 +517,7 @@ class plotSkewT(backgroundSkewT):
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
             self.track_cursor = not self.track_cursor
-
+            self.cursor_loc = e.pos()
         if self.dragging:
             tmpc = self.pix_to_tmpc(e.x(), e.y())
             prof_name, prof = self.drag_prof
@@ -675,8 +728,10 @@ class plotSkewT(backgroundSkewT):
         pass
 
     def showCursorMenu(self, pos):
+        if self.cursor_loc is None or self.track_cursor:
+            self.cursor_loc = pos
         self.popupmenu.popup(self.mapToGlobal(pos))
-   
+
     def wheelEvent(self, e):
         super(plotSkewT, self).wheelEvent(e)
         self.plotBitMap.fill(QtCore.Qt.black)

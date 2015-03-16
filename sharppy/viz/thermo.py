@@ -284,7 +284,8 @@ class plotText(backgroundText):
         stp_fixed = tab.utils.FLOAT2STR( self.prof.stp_fixed, 1 )
         stp_cin = tab.utils.FLOAT2STR( self.prof.stp_cin, 1 )
         right_scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
-        
+
+        # Coloring provided by Rich Thompson (SPC)
         labels = ['Supercell = ', 'STP (cin) = ', 'STP (fix) = ', 'SHIP = ']
         indices = [right_scp, stp_cin, stp_fixed, ship]
         for label, index in zip(labels,indices):
