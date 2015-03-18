@@ -110,7 +110,7 @@ class plotText(backgroundText):
     gets done on this QPixmap, and then the QPixmap
     gets rendered by the paintEvent function.
     '''
-    def __init__(self, prof, pcl_types=["SFC", "ML", "EFF", "MU"]):
+    def __init__(self, prof, pcl_types):
         '''
         Initialize the data from a Profile object passed to 
         this class. It then takes the data it needs from the
@@ -179,7 +179,7 @@ class plotText(backgroundText):
         self.parcels["USER"] = prof.usrpcl
 
 
-    def setProf(self, prof, pcl_types=["SFC", "ML", "EFF", "MU"]):
+    def setProf(self, prof, pcl_types):
         self.pcl_types = pcl_types
         self.ylast = self.label_height
         self.setParcels(prof)
