@@ -310,7 +310,7 @@ class SkewApp(QWidget):
 
         self.watch_type.setProf(self.prof)
 
-        self.convective.setProf(self.prof, self.parcel_types)
+        self.convective.setProf(self.prof, self.convective.pcl_types)
         self.kinematic.setProf(self.prof)
 
         self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
