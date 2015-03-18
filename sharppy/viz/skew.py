@@ -992,7 +992,7 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setBrush(brush)
         path = QPainterPath()
-        if ptrace == np.ma.masked:
+        if not tab.utils.QC(ptrace):
             return
         yvals = self.pres_to_pix(ptrace)
         xvals = self.tmpc_to_pix(ttrace, ptrace)

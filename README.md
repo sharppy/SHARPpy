@@ -88,6 +88,24 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 5. LIGHT BROWN
 6. DARK BROWN
 
+## Lifting Parcels
+
+Soundings opened up in the GUI by default show 4 lifted parcels in the lower left inset window:
+
+1.) Surface-based Parcel
+2.) 100 mb Mixed-layer Parcel
+3.) Forecasted Surface Parcel
+4.) Most-Unstable Parcel
+
+Double clicking on this inset will allow you to swap out these parcels for two others:
+
+1.) Effective Inflow Layer Mean Parcel
+2.) User Defined Parcel
+
+The user defined parcel can be set by right clicking on the Skew-T and selecting a custom
+parcel to lift.  The location of the cursor (or readout cursor) selects the level (or bottom of the layer)
+you are lifting.  
+
 =======================================================================
 
 ### Known Issues

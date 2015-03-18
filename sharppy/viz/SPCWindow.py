@@ -343,6 +343,11 @@ class SkewApp(QWidget):
 
         self.storm_slinky.setProf(self.prof, pcl=pcl)
 
+        self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
+        self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
+        self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
+        self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
+
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -397,10 +402,6 @@ class SkewApp(QWidget):
             return
 
     def closeEvent(self, e):
-        self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
-        self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
-        self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
-        self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
         self.config.write(open(SkewApp.cfg_file_name, 'w'))
         self.sound.closeEvent(e)
 
