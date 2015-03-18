@@ -182,7 +182,6 @@ class Picker(QtGui.QWidget):
 
         self.initMap()
         self.initUI()
-        self.show()
         self.initializing = False
 
     def initUI(self):
@@ -372,11 +371,3 @@ class Picker(QtGui.QWidget):
                 names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
                 names[-1] = names[-1].replace('Afb', 'AFB')
         return np.array(lats), np.array(lons), stns, names
-
-def main():
-    app = QtGui.QApplication(sys.argv)
-    picker = Picker()
-    sys.exit(app.exec_())
-
-if __name__ == "__main__":
-    main()
