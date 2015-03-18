@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 import copy
 import numpy as np
 import ConfigParser
+import platform
 from time import sleep
 
 class SkewApp(QWidget):
@@ -103,7 +104,10 @@ class SkewApp(QWidget):
         ## initialize the rest of the window attributes, layout managers, etc
 
         ## handle the attribute of the main window
-        self.setGeometry(0, 0, 1180, 800)
+        if platform.system() == 'Windows':
+            self.setGeometry(0,10,1180,800)
+        else:
+            self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
         self.setWindowTitle(title)
