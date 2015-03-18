@@ -523,14 +523,29 @@ class plotText(backgroundText):
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
+
         ## LCL
         y1 = self.ylast + self.tpad
-        for text in lcls:
+        for i, text in enumerate(lcls):
+            try:
+                if int(text) < 1000 and pcl_index == i and texts[i] == "ML":
+                    color = QtCore.Qt.green
+                elif int(text) < 1500 and pcl_index == i and texts[i] == "ML":
+                    color=QtGui.QColor('#996600')
+                elif int(text) < 2000 and pcl_index == i and texts[i] == "ML":
+                    color=QtGui.QColor('#993333')
+                else:
+                    color=QtCore.Qt.white
+            except:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+
+        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         ## LI
         y1 = self.ylast + self.tpad
         for text in lis:
