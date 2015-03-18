@@ -90,7 +90,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 
 #### Lifting Parcels
 
-Soundings opened up in the GUI by default show 4 lifted parcels in the lower left inset window:
+By default, soundings opened up in the GUI show 4 parcels in the lower left inset window:
 
 1.) Surface-based Parcel
 
