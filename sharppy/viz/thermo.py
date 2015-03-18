@@ -128,7 +128,7 @@ class plotText(backgroundText):
         self.setParcels(prof)
         self.prof = prof;
         self.bounds = np.empty((4,2))
-        self.skewt_pcl = 2
+        self.setDefaultParcel()
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -166,6 +166,13 @@ class plotText(backgroundText):
         
         super(plotText, self).__init__()
         self.w = SelectParcels(self.pcl_types, self)
+
+    def setDefaultParcel(self):
+        idx = np.where(np.asarray(self.pcl_types) == "MU")[0]
+        if len(idx) == 0:
+            self.skewt_pcl = 0
+        else:
+            self.skewt_pcl = idx
 
     def mouseDoubleClickEvent(self, e):
         self.w.show()
