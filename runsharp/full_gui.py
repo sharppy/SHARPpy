@@ -6,7 +6,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '--debug':
 else:
     np.seterr(all='ignore')
 
-from sharppy.viz import SkewApp
+from sharppy.viz import SkewApp, Picker
 import sharppy.sharptab.profile as profile
 from sharppy.io.buf_decoder import BufkitFile
 from PySide.QtCore import *
@@ -282,10 +282,8 @@ class MainWindow(QWidget):
         view : QWebView object
         """
         # Create and fill a QWebView
-        view = QWebView()
-        view.setUrl(QUrl(self.model.lower() + '.html'))
-        view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        view.linkClicked.connect(self.map_link)
+        view = Picker(width=800, height=500)
+        #view.linkClicked.connect(self.map_link)
 
         return view
 
