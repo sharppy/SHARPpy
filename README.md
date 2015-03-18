@@ -69,7 +69,7 @@ After all profiles have been generated, a window should show up with your desire
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
 
-## Available Insets
+#### Available Insets
 
 1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
 2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
@@ -88,18 +88,22 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 5. LIGHT BROWN
 6. DARK BROWN
 
-## Lifting Parcels
+#### Lifting Parcels
 
 Soundings opened up in the GUI by default show 4 lifted parcels in the lower left inset window:
 
 1.) Surface-based Parcel
+
 2.) 100 mb Mixed-layer Parcel
+
 3.) Forecasted Surface Parcel
+
 4.) Most-Unstable Parcel
 
 Double clicking on this inset will allow you to swap out these parcels for two others:
 
 1.) Effective Inflow Layer Mean Parcel
+
 2.) User Defined Parcel
 
 The user defined parcel can be set by right clicking on the Skew-T and selecting a custom
