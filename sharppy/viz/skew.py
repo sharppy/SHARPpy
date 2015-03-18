@@ -473,7 +473,6 @@ class plotSkewT(backgroundSkewT):
         pres = self.pix_to_pres( self.cursor_loc.y())
         tmp = tab.interp.temp(self.prof, pres)
         dwp = tab.interp.dwpt(self.prof, pres)
-        print i
         if i == 0:
 
             self.prof.usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)

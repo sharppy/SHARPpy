@@ -165,58 +165,11 @@ class plotText(backgroundText):
         self.tei = tab.utils.INT2STR( prof.tei )
         
         super(plotText, self).__init__()
-        """
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.showCursorMenu)
-        self.popupmenu=QtGui.QMenu("Parcel Types")
-        ag = QtGui.QActionGroup(self, exclusive=False)
+        self.w = SelectParcels(self.pcl_types, self)
 
-        sfcact = QtGui.QAction(self)
-        sfcact.setText("Surface-Based Parcel")
-        sfcact.setCheckable(True)
-        sfcact.setChecked(True)
-        sfcact.triggered.connect(lambda: self.swapParcel("SB"))
-        a = ag.addAction(sfcact)
-        self.popupmenu.addAction(a)
+    def mouseDoubleClickEvent(self, e):
+        self.w.show()
 
-        mlact = QtGui.QAction(self)
-        mlact.setText("100 mb Mixed-Layer Parcel")
-        mlact.setCheckable(True)
-        mlact.triggered.connect(lambda: self.swapParcel("ML"))
-        a = ag.addAction(mlact)
-        self.popupmenu.addAction(a)
-
-        muact = QtGui.QAction(self)
-        muact.setText("Most Unstable Parcel")
-        muact.setCheckable(True)
-        muact.triggered.connect(lambda: self.swapParcel("MU"))
-        a = ag.addAction(mlact)
-        self.popupmenu.addAction(a)
-
-        fcstact = QtGui.QAction(self)
-        fcstact.setText("Forecast Parcel")
-        fcstact.setCheckable(True)
-        fcstact.triggered.connect(lambda: self.swapParcel("FCST"))
-        a = ag.addAction(fcstact)
-        self.popupmenu.addAction(a)
-
-        effact= QtGui.QAction(self)
-        effact.setText("Effective Inflow Parcel")
-        effact.setCheckable(True)
-        effact.triggered.connect(lambda: self.swapParcel("EFF"))
-        a = ag.addAction(effact)
-        self.popupmenu.addAction(a)
-
-        usract = QtGui.QAction(self)
-        usract.setText("User-Defined Parcel")
-        usract.setCheckable(True)
-        usract.triggered.connect(lambda: self.swapParcel("USER"))
-        a = ag.addAction(usract)
-        self.popupmenu.addAction(a)
-
-    def showCursorMenu(self, pos):
-        self.popupmenu.popup(self.mapToGlobal(pos))
-"""
     def setParcels(self, prof):
         self.parcels["SFC"] = prof.sfcpcl # Set the surface parcel
         self.parcels["ML"] = prof.mlpcl
@@ -225,14 +178,9 @@ class plotText(backgroundText):
         self.parcels["EFF"] = prof.effpcl
         self.parcels["USER"] = prof.usrpcl
 
-    """
-    def swapParcel(self, pcl_name):
-        self.pcl_types.pop()
-        self.pcl_types.append(pcl_name)
-        self.updated.emit(self.prof, False)
-    """
 
-    def setProf(self, prof):
+    def setProf(self, prof, pcl_types=["SFC", "ML", "EFF", "MU"]):
+        self.pcl_types = pcl_types
         self.ylast = self.label_height
         self.setParcels(prof)
         self.prof = prof;
@@ -540,13 +488,16 @@ class plotText(backgroundText):
         ## CAPE
         y1 = self.ylast + self.tpad
         for i, text in enumerate(capes):
-            if pcl_index == i and int(text) >= 4000:
-                color = QtCore.Qt.magenta
-            elif pcl_index == i and int(text) >= 3000:
-                color=QtCore.Qt.red
-            elif pcl_index == i and int(text) >= 2000:
-                color=QtCore.Qt.yellow
-            else:
+            try:
+                if pcl_index == i and int(text) >= 4000:
+                    color = QtCore.Qt.magenta
+                elif pcl_index == i and int(text) >= 3000:
+                    color=QtCore.Qt.red
+                elif pcl_index == i and int(text) >= 2000:
+                    color=QtCore.Qt.yellow
+                else:
+                    color=QtCore.Qt.white
+            except:
                 color=QtCore.Qt.white
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -556,13 +507,16 @@ class plotText(backgroundText):
         ## CINH
         y1 = self.ylast + self.tpad
         for i, text in enumerate(cins):
-            if int(capes[i]) > 0 and pcl_index == i and int(text) >= -50:
-                color = QtCore.Qt.green
-            elif int(capes[i]) > 0 and pcl_index == i and int(text) >= -100:
-                color=QtGui.QColor('#996600')
-            elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
-                color=QtGui.QColor('#993333')
-            else:
+            try:
+                if int(capes[i]) > 0 and pcl_index == i and int(text) >= -50:
+                    color = QtCore.Qt.green
+                elif int(capes[i]) > 0 and pcl_index == i and int(text) >= -100:
+                    color=QtGui.QColor('#996600')
+                elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
+                    color=QtGui.QColor('#993333')
+                else:
+                    color=QtCore.Qt.white
+            except:
                 color=QtCore.Qt.white
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -618,4 +572,110 @@ class plotText(backgroundText):
                 self.plotBackground()
                 self.plotData()
                 self.update()
+                self.parentWidget().setFocus()
                 break
+
+class SelectParcels(QWidget):
+    def __init__(self, parcel_types, parent):
+        QWidget.__init__(self)
+        self.thermo = parent
+        self.parcel_types = parcel_types
+        self.max_pcls = 4
+        self.pcl_count = 0
+        self.initUI()
+
+    def initUI(self):
+
+        self.sb = QtGui.QCheckBox('Surface-Based Parcel', self)
+        self.sb.move(20, 20)
+        if "SFC" in self.parcel_types:
+            self.sb.toggle()
+            self.pcl_count += 1
+        self.sb.stateChanged.connect(self.changeParcel)
+
+        self.ml = QtGui.QCheckBox('100 mb Mixed Layer Parcel', self)
+        self.ml.move(20, 40)
+        if "ML" in self.parcel_types:
+            self.ml.toggle()
+            self.pcl_count += 1
+        self.ml.stateChanged.connect(self.changeParcel)
+
+        self.fcst = QtGui.QCheckBox('Forecast Surface Parcel', self)
+        self.fcst.move(20, 60)
+        if "FCST" in self.parcel_types:
+            self.fcst.toggle()
+            self.pcl_count += 1
+        self.fcst.stateChanged.connect(self.changeParcel)
+
+        self.mu = QtGui.QCheckBox('Most Unstable Parcel', self)
+        self.mu.move(20, 80)
+        if "MU" in self.parcel_types:
+            self.mu.toggle()
+            self.pcl_count += 1
+        self.mu.stateChanged.connect(self.changeParcel)
+
+        self.eff = QtGui.QCheckBox('Effective Inflow Layer Parcel', self)
+        self.eff.move(20, 100)
+        if "EFF" in self.parcel_types:
+            self.eff.toggle()
+            self.pcl_count += 1
+        self.eff.stateChanged.connect(self.changeParcel)
+
+        self.usr = QtGui.QCheckBox('User Defined Parcel', self)
+        self.usr.move(20, 120)
+        if "USER" in self.parcel_types:
+            self.usr.toggle()
+            self.pcl_count += 1
+        self.usr.stateChanged.connect(self.changeParcel)
+
+
+        self.setGeometry(300, 300, 250, 180)
+        self.setWindowTitle('Show Parcels')
+        self.ok = QtGui.QPushButton('Ok', self)
+        self.ok.move(20,150)
+        self.ok.clicked.connect(self.okPushed)
+
+        #cb.stateChanged.connect(self.changeTitle)
+    #cb.stateChanged.connect(
+
+    def changeParcel(self, state):
+        if state == QtCore.Qt.Checked:
+            self.pcl_count += 1
+        else:
+            self.pcl_count -= 1
+
+    def okPushed(self):
+        if self.pcl_count > self.max_pcls:
+            msgBox = QMessageBox()
+            msgBox.setText("You can only show 4 parcels at a time.\nUnselect some parcels.")
+            msgBox.exec_()
+        elif self.pcl_count != self.max_pcls:
+            msgBox = QMessageBox()
+            msgBox.setText("You need to select 4 parcels to show.  Select some more.")
+            msgBox.exec_()
+        else:
+            self.parcel_types = []
+            if self.sb.isChecked() is True:
+                self.parcel_types.append('SFC')
+            if self.ml.isChecked() is True:
+                self.parcel_types.append('ML')
+            if self.fcst.isChecked() is True:
+                self.parcel_types.append('FCST')
+            if self.mu.isChecked() is True:
+                self.parcel_types.append('MU')
+            if self.eff.isChecked() is True:
+                self.parcel_types.append('EFF')
+            if self.usr.isChecked() is True:
+                self.parcel_types.append('USER')
+
+            self.thermo.pcl_types = self.parcel_types
+            self.thermo.skewt_pcl = 0
+            self.thermo.ylast = self.thermo.label_height
+            pcl_to_pass = self.thermo.parcels[self.thermo.pcl_types[self.thermo.skewt_pcl]]
+            self.thermo.updatepcl.emit(pcl_to_pass)
+            self.thermo.clearData()
+            self.thermo.plotBackground()
+            self.thermo.plotData()
+            self.thermo.update()
+            self.thermo.parentWidget().setFocus()
+            self.hide()

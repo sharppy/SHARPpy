@@ -65,6 +65,7 @@ class SkewApp(QWidget):
         self.prof = profs[self.current_idx]
         self.original_profs = self.profs[:]
         self.modified = [ False for p in self.original_profs ]
+        self.parcel_type = "MU"
 
         self.config = ConfigParser.RawConfigParser()
         self.config.read(SkewApp.cfg_file_name)
@@ -72,6 +73,13 @@ class SkewApp(QWidget):
             self.config.add_section('insets')
             self.config.set('insets', 'right_inset', 'STP STATS')
             self.config.set('insets', 'left_inset', 'SARS')
+        if not self.config.has_section('parcel_types'):
+            self.config.add_section('parcel_types')
+            self.config.set('parcel_types', 'pcl1', 'SFC')
+            self.config.set('parcel_types', 'pcl2', 'ML')
+            self.config.set('parcel_types', 'pcl3', 'FCST')
+            self.config.set('parcel_types', 'pcl4', 'MU')
+
 
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
@@ -88,6 +96,9 @@ class SkewApp(QWidget):
         self.left_inset = self.config.get('insets', 'left_inset')
         self.right_inset = self.config.get('insets', 'right_inset')
         self.insets = {}
+
+        self.parcel_types = [self.config.get('parcel_types', 'pcl1'), self.config.get('parcel_types', 'pcl2'), \
+                             self.config.get('parcel_types', 'pcl3'),self.config.get('parcel_types', 'pcl4')]
 
         ## initialize the rest of the window attributes, layout managers, etc
 
@@ -159,6 +170,34 @@ class SkewApp(QWidget):
         self.loadWidgets()
 
 
+    def getParcelObj(self, prof, name):
+        if name == "SFC":
+            return prof.sfcpcl
+        elif name == "ML":
+            return prof.mlpcl
+        elif name == "FCST":
+            return prof.fcstpcl
+        elif name == "MU":
+            return prof.mupcl
+        elif name == 'EFF':
+            return prof.effpcl
+        elif name == "USER":
+            return prof.usrpcl
+
+    def getParcelName(self, prof, pcl):
+        if pcl == prof.sfcpcl:
+            return "SFC"
+        elif pcl == prof.mlpcl:
+            return "ML"
+        elif pcl == prof.fcstpcl:
+            return "FCST"
+        elif pcl == prof.mupcl:
+            return "MU"
+        elif pcl == prof.effpcl:
+            return "EFF"
+        elif pcl == prof.usrpcl:
+            return "USER"
+
     def saveimage(self):
         fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
         if result:
@@ -205,7 +244,7 @@ class SkewApp(QWidget):
 
         self.srwinds_vs_height = plotWinds(self.prof)
         self.watch_type = plotWatch(self.prof)
-        self.convective = plotText(self.prof)
+        self.convective = plotText(self.prof, self.parcel_types)
         self.kinematic = plotKinematics(self.prof)
 
         self.convective.updatepcl.connect(self.updateParcel)
@@ -223,10 +262,9 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool, tab.params.Parcel) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, modified, pcl):
-        if pcl is None:
-            pcl = prof.mupcl
+    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
+    def updateProfs(self, prof, modified):
+
         self.modified[self.current_idx] = modified
         #self.sound.setProf(self.profs[self.current_idx])
         if modified is True:
@@ -247,14 +285,14 @@ class SkewApp(QWidget):
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
-            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
             self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand, dgz=self.dgz)
 
-        self.storm_slinky.setProf(self.prof)
+        self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
 
         self.inferred_temp_advection.setProf(self.prof)
 
@@ -279,13 +317,13 @@ class SkewApp(QWidget):
     @Slot()
     def resetProf(self):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False, pcl=self.profs[self.current_idx].mupcl)
+        self.updateProfs(self.profs[self.current_idx], modified=False, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
         self.setFocus()
 
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
-        #self.sound.setProf(self.profs[self.current_idx])
         modified_str = ""
+        self.parcel_type = self.getParcelName(self.prof, pcl)
 
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
@@ -302,6 +340,8 @@ class SkewApp(QWidget):
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
             self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+
+        self.storm_slinky.setProf(self.prof, pcl=pcl)
 
 
     def loadWidgets(self):
@@ -357,6 +397,10 @@ class SkewApp(QWidget):
             return
 
     def closeEvent(self, e):
+        self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
+        self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
+        self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
+        self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
         self.config.write(open(SkewApp.cfg_file_name, 'w'))
         self.sound.closeEvent(e)
 
