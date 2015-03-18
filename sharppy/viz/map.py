@@ -152,8 +152,9 @@ class Mapper(object):
         return bndy
 
 class Picker(QtGui.QWidget):
-    def __init__(self):
-        super(Picker, self).__init__()
+    def __init__(self, **kwargs):
+        super(Picker, self).__init__(**kwargs)
+        #self.setMinimumSize(self.min_width, self.min_height)
         self.initializing = True
         self.scale = 0.5
         self.trans_x, self.trans_y = 0., 0.
@@ -172,12 +173,11 @@ class Picker(QtGui.QWidget):
         self.stn_readout.setText("")
         self.stn_readout.show()
 
-        self.default_width, self.default_height = 800, 800
+        self.default_width, self.default_height = kwargs.get('width', 800), kwargs.get('height', 800)
 
         self.setGeometry(300, 300, self.default_width, self.default_height)
-        self.setWindowTitle('SHARPpy')
+        self.setMinimumSize(self.default_width, self.default_height)
         self.stn_readout.setFixedWidth(self.width() - 20)
-
         self.map_center_x, self.map_center_y = self.width() / 2, -4 * self.height() / 10
 
         self.initMap()
