@@ -1,6 +1,7 @@
 import numpy as np
 from PySide import QtGui, QtCore
 from PySide.QtCore import *
+from PySide.QtGui import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import datetime
@@ -100,6 +101,7 @@ class backgroundText(QtGui.QFrame):
 
 
 class plotText(backgroundText):
+    updatepcl = Signal(tab.params.Parcel)
 
     '''
     Handles plotting the indices in the frame.
@@ -108,7 +110,7 @@ class plotText(backgroundText):
     gets done on this QPixmap, and then the QPixmap
     gets rendered by the paintEvent function.
     '''
-    def __init__(self, prof, pcl_types=["SFC", "ML", "EFF", "USER"]):
+    def __init__(self, prof, pcl_types=["SFC", "ML", "EFF", "MU"]):
         '''
         Initialize the data from a Profile object passed to 
         this class. It then takes the data it needs from the
@@ -125,6 +127,8 @@ class plotText(backgroundText):
         self.parcels = {}
         self.setParcels(prof)
         self.prof = prof;
+        self.bounds = np.empty((4,2))
+        self.skewt_pcl = 2
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -509,35 +513,64 @@ class plotText(backgroundText):
         texts = self.pcl_types
         for i, key in enumerate(texts):
             parcel = self.parcels[key]
-            print parcel
-            print key, parcel.bplus, parcel.bminus, parcel.lclhght, parcel.li5, parcel.lfchght, parcel.elhght
             capes[i] = tab.utils.INT2STR(parcel.bplus) # Append the CAPE value
             cins[i] = tab.utils.INT2STR(parcel.bminus)
             lcls[i] = tab.utils.INT2STR(parcel.lclhght)
             lis[i] = tab.utils.INT2STR(parcel.li5)
             lfcs[i] = tab.utils.INT2STR(parcel.lfchght)
             els[i] = tab.utils.INT2STR(parcel.elhght)
-
         ## Now that we have all the data, time to plot the text in their
         ## respective columns.
         
         ## PCL type
-        for text in texts:
+        pcl_index = 0
+        for i, text in enumerate(texts):
+            self.bounds[i,0] = y1
+            if text == self.pcl_types[self.skewt_pcl]:
+                pen = QtGui.QPen(QtCore.Qt.cyan, 1, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                pcl_index = i
+            else:
+                pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+            self.bounds[i,1] = y1
         ## CAPE
         y1 = self.ylast + self.tpad
-        for text in capes:
+        for i, text in enumerate(capes):
+            if pcl_index == i and int(text) >= 4000:
+                color = QtCore.Qt.magenta
+            elif pcl_index == i and int(text) >= 3000:
+                color=QtCore.Qt.red
+            elif pcl_index == i and int(text) >= 2000:
+                color=QtCore.Qt.yellow
+            else:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## CINH
         y1 = self.ylast + self.tpad
-        for text in cins:
+        for i, text in enumerate(cins):
+            if int(capes[i]) > 0 and pcl_index == i and int(text) >= -50:
+                color = QtCore.Qt.green
+            elif int(capes[i]) > 0 and pcl_index == i and int(text) >= -100:
+                color=QtGui.QColor('#996600')
+            elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
+                color=QtGui.QColor('#993333')
+            else:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         ## LCL
         y1 = self.ylast + self.tpad
         for text in lcls:
@@ -564,6 +597,25 @@ class plotText(backgroundText):
             y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
+        color=QtGui.QColor('#996633')
+        pen = QtGui.QPen(color, .5, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(2, self.bounds[self.skewt_pcl,0]-1, x1*6 + x1*2 - 1, self.bounds[self.skewt_pcl,0]-1)
+        qp.drawLine(2, self.bounds[self.skewt_pcl,0]-1, 2, self.bounds[self.skewt_pcl,1])
+        qp.drawLine(2, self.bounds[self.skewt_pcl,1], x1*6 + x1*2 - 1, self.bounds[self.skewt_pcl,1])
+        qp.drawLine(x1*6 + x1*2 -1 , self.bounds[self.skewt_pcl,0]-1, x1*6 + x1*2 -1, self.bounds[self.skewt_pcl,1])
 
 
-
+    def mousePressEvent(self, e):
+        pos = e.pos()
+        for i, bound in enumerate(self.bounds):
+            if bound[0] < pos.y() and bound[1] > pos.y():
+                self.skewt_pcl = i
+                self.ylast = self.label_height
+                pcl_to_pass = self.parcels[self.pcl_types[self.skewt_pcl]]
+                self.updatepcl.emit(pcl_to_pass)
+                self.clearData()
+                self.plotBackground()
+                self.plotData()
+                self.update()
+                break

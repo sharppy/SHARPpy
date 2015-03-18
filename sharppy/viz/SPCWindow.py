@@ -7,6 +7,7 @@ from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
+import sharppy.sharptab as tab
 from datetime import datetime, timedelta
 import copy
 import numpy as np
@@ -157,6 +158,7 @@ class SkewApp(QWidget):
         self.initData()
         self.loadWidgets()
 
+
     def saveimage(self):
         fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
         if result:
@@ -206,6 +208,8 @@ class SkewApp(QWidget):
         self.convective = plotText(self.prof)
         self.kinematic = plotKinematics(self.prof)
 
+        self.convective.updatepcl.connect(self.updateParcel)
+
         self.makeInsets()
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
@@ -219,11 +223,17 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, modified):
+    @Slot(profile.Profile, bool, tab.params.Parcel) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
+    def updateProfs(self, prof, modified, pcl):
+        if pcl is None:
+            pcl = prof.mupcl
         self.modified[self.current_idx] = modified
         #self.sound.setProf(self.profs[self.current_idx])
-        modified_str = "; Modified" if self.modified[self.current_idx] else ""
+        if modified is True:
+            modified_str = "; Modified" if self.modified[self.current_idx] else ""
+        else:
+            modified_str = ""
+
         if self.model != "Observed" and self.model != "Archive":
             self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
                 + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
@@ -242,7 +252,7 @@ class SkewApp(QWidget):
         else:
             self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
 
         self.storm_slinky.setProf(self.prof)
 
@@ -269,8 +279,30 @@ class SkewApp(QWidget):
     @Slot()
     def resetProf(self):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False)
+        self.updateProfs(self.profs[self.current_idx], modified=False, pcl=self.profs[self.current_idx].mupcl)
         self.setFocus()
+
+    @Slot(tab.params.Parcel)
+    def updateParcel(self, pcl):
+        #self.sound.setProf(self.profs[self.current_idx])
+        modified_str = ""
+
+        if self.model != "Observed" and self.model != "Archive":
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
+                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        elif self.model == "Observed":
+            date_str = self.plot_title.split(' (')[0]
+            self.plot_title = date_str + " (Observed" + modified_str + ")"
+        elif self.model == "Archive":
+            date_str = self.plot_title.split(' (')[0]
+            self.plot_title = date_str + " (User Selected" + modified_str + ")"
+
+        if self.model == "SREF":
+            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+        else:
+            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+
 
     def loadWidgets(self):
         ## add the upper-right window insets

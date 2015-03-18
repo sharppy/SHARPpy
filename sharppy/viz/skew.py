@@ -334,7 +334,7 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile, bool)
+    updated = Signal(Profile, bool, tab.params.Parcel)
     reset = Signal()
 
     def __init__(self, prof, **kwargs):
@@ -411,26 +411,31 @@ class plotSkewT(backgroundSkewT):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
         self.parcelmenu = QMenu("Lift Parcel")
+        #ag = QtGui.QActionGroup(self, exclusive=True)
 
         # List of parcels that can be lifted
         pcl1 = QAction(self)
         pcl1.setText("This Parcel")
         pcl1.triggered.connect(lambda: self.liftparcellevel(0))
+        #ag.addAction(pcl1)
         self.parcelmenu.addAction(pcl1)
 
         pcl2 = QAction(self)
         pcl2.setText("50 mb Layer Parcel")
         pcl2.triggered.connect(lambda: self.liftparcellevel(50))
+        #ag.addAction(pcl2)
         self.parcelmenu.addAction(pcl2)
 
         pcl3 = QAction(self)
         pcl3.setText("100 mb Layer Parcel")
         pcl3.triggered.connect(lambda: self.liftparcellevel(100))
+        #ag.addAction(pcl3)
         self.parcelmenu.addAction(pcl3)
 
         pcl4 = QAction(self)
         pcl4.setText("Custom Parcel")
         pcl4.triggered.connect(lambda: self.liftparcellevel(-9999))
+        #ag.addAction(pcl4)
         self.parcelmenu.addAction(pcl4)
 
         self.popupmenu=QMenu("Cursor Type:")
@@ -483,7 +488,7 @@ class plotSkewT(backgroundSkewT):
             user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
             self.prof.usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
                                           dwpc=user_initpcl.dwpc)
-        self.updated.emit(self.prof, True) # Emit a signal that a new profile has been created
+        self.updated.emit(self.prof, False, self.prof.usrpcl) # Emit a signal that a new profile has been created
 
     def setProf(self, prof, **kwargs):
         self.prof = prof
@@ -537,7 +542,7 @@ class plotSkewT(backgroundSkewT):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, True)
+            self.updated.emit(new_prof, True, self.pcl)
         elif self.initdrag:
             self.initdrag = False
 
@@ -988,6 +993,8 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setBrush(brush)
         path = QPainterPath()
+        if ptrace == np.ma.masked:
+            return
         yvals = self.pres_to_pix(ptrace)
         xvals = self.tmpc_to_pix(ttrace, ptrace)
         path.moveTo(xvals[0], yvals[0])
