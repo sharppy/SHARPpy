@@ -1,5 +1,6 @@
 import numpy as np
 from PySide import QtGui, QtCore
+from PySide.QtCore import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import datetime
@@ -99,6 +100,7 @@ class backgroundText(QtGui.QFrame):
 
 
 class plotText(backgroundText):
+
     '''
     Handles plotting the indices in the frame.
     Inherits a backgroundText Object that contains
@@ -106,7 +108,7 @@ class plotText(backgroundText):
     gets done on this QPixmap, and then the QPixmap
     gets rendered by the paintEvent function.
     '''
-    def __init__(self, prof):
+    def __init__(self, prof, pcl_types=["SFC", "ML", "EFF", "USER"]):
         '''
         Initialize the data from a Profile object passed to 
         this class. It then takes the data it needs from the
@@ -118,16 +120,12 @@ class plotText(backgroundText):
         prof: a Profile Object
         
         '''
-        ## get the surfce based, most unstable, and mixed layer
-        ## parcels to use for indices, as well as the sounding
-        ## profile itself.
-        self.sfcparcel = prof.sfcpcl
-        self.mlparcel = prof.mlpcl
-        self.fcstpcl = prof.fcstpcl
-        self.muparcel = prof.mupcl
+        ## get the parcels to be displayed in the GUI
+        self.pcl_types = pcl_types
+        self.parcels = {}
+        self.setParcels(prof)
         self.prof = prof;
-        
-        
+
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
         ## K Index
@@ -163,16 +161,77 @@ class plotText(backgroundText):
         self.tei = tab.utils.INT2STR( prof.tei )
         
         super(plotText, self).__init__()
+        """
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showCursorMenu)
+        self.popupmenu=QtGui.QMenu("Parcel Types")
+        ag = QtGui.QActionGroup(self, exclusive=False)
+
+        sfcact = QtGui.QAction(self)
+        sfcact.setText("Surface-Based Parcel")
+        sfcact.setCheckable(True)
+        sfcact.setChecked(True)
+        sfcact.triggered.connect(lambda: self.swapParcel("SB"))
+        a = ag.addAction(sfcact)
+        self.popupmenu.addAction(a)
+
+        mlact = QtGui.QAction(self)
+        mlact.setText("100 mb Mixed-Layer Parcel")
+        mlact.setCheckable(True)
+        mlact.triggered.connect(lambda: self.swapParcel("ML"))
+        a = ag.addAction(mlact)
+        self.popupmenu.addAction(a)
+
+        muact = QtGui.QAction(self)
+        muact.setText("Most Unstable Parcel")
+        muact.setCheckable(True)
+        muact.triggered.connect(lambda: self.swapParcel("MU"))
+        a = ag.addAction(mlact)
+        self.popupmenu.addAction(a)
+
+        fcstact = QtGui.QAction(self)
+        fcstact.setText("Forecast Parcel")
+        fcstact.setCheckable(True)
+        fcstact.triggered.connect(lambda: self.swapParcel("FCST"))
+        a = ag.addAction(fcstact)
+        self.popupmenu.addAction(a)
+
+        effact= QtGui.QAction(self)
+        effact.setText("Effective Inflow Parcel")
+        effact.setCheckable(True)
+        effact.triggered.connect(lambda: self.swapParcel("EFF"))
+        a = ag.addAction(effact)
+        self.popupmenu.addAction(a)
+
+        usract = QtGui.QAction(self)
+        usract.setText("User-Defined Parcel")
+        usract.setCheckable(True)
+        usract.triggered.connect(lambda: self.swapParcel("USER"))
+        a = ag.addAction(usract)
+        self.popupmenu.addAction(a)
+
+    def showCursorMenu(self, pos):
+        self.popupmenu.popup(self.mapToGlobal(pos))
+"""
+    def setParcels(self, prof):
+        self.parcels["SFC"] = prof.sfcpcl # Set the surface parcel
+        self.parcels["ML"] = prof.mlpcl
+        self.parcels["FCST"] = prof.fcstpcl
+        self.parcels["MU"] = prof.mupcl
+        self.parcels["EFF"] = prof.effpcl
+        self.parcels["USER"] = prof.usrpcl
+
+    """
+    def swapParcel(self, pcl_name):
+        self.pcl_types.pop()
+        self.pcl_types.append(pcl_name)
+        self.updated.emit(self.prof, False)
+    """
 
     def setProf(self, prof):
         self.ylast = self.label_height
-
-        self.sfcparcel = prof.sfcpcl
-        self.mlparcel = prof.mlpcl
-        self.fcstpcl = prof.fcstpcl
-        self.muparcel = prof.mupcl
+        self.setParcels(prof)
         self.prof = prof;
-
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -441,84 +500,65 @@ class plotText(backgroundText):
         y1 = self.ylast + self.tpad
         ## get the indices rounded to the nearest int, conver to strings
         ## Start with the surface based parcel.
-        sfc_bplus = tab.utils.INT2STR( self.sfcparcel.bplus )
-        sfc_bminus = tab.utils.INT2STR( self.sfcparcel.bminus )
-        sfc_lclhght = tab.utils.INT2STR( self.sfcparcel.lclhght )
-        sfc_limax = tab.utils.INT2STR( self.sfcparcel.li5 )
-        sfc_lfchght = tab.utils.INT2STR( self.sfcparcel.lfchght )
-        sfc_elhght = tab.utils.INT2STR( self.sfcparcel.elhght )
-        ## get the forecast surface parvel
-        fcst_bplus = tab.utils.INT2STR( self.fcstpcl.bplus )
-        fcst_bminus = tab.utils.INT2STR( self.fcstpcl.bminus )
-        fcst_lclhght = tab.utils.INT2STR( self.fcstpcl.lclhght )
-        fcst_limax = tab.utils.INT2STR( self.fcstpcl.li5 )
-        fcst_lfchght = tab.utils.INT2STR( self.fcstpcl.lfchght )
-        fcst_elhght = tab.utils.INT2STR( self.fcstpcl.elhght )
-        ## Now get the mixed layer parcel indices
-        ml_bplus = tab.utils.INT2STR( self.mlparcel.bplus )
-        ml_bminus = tab.utils.INT2STR( self.mlparcel.bminus )
-        ml_lclhght = tab.utils.INT2STR( self.mlparcel.lclhght )
-        ml_limax = tab.utils.INT2STR( self.mlparcel.li5 )
-        ## check and see if the lfc is there
-        ml_lfchght = tab.utils.INT2STR( self.mlparcel.lfchght )
-        ml_elhght = tab.utils.INT2STR( self.mlparcel.elhght )
-        ## get the most unstable parcel indices
-        mu_bplus = tab.utils.INT2STR( self.muparcel.bplus )
-        mu_bminus = tab.utils.INT2STR( self.muparcel.bminus )
-        mu_lclhght = tab.utils.INT2STR( self.muparcel.lclhght )
-        mu_limax = tab.utils.INT2STR( self.muparcel.li5 )
-        ## make sure the lfc is there
-        mu_lfchght = tab.utils.INT2STR( self.muparcel.lfchght )
-        mu_elhght = tab.utils.INT2STR( self.muparcel.elhght )
+        capes = np.empty(4, dtype="S10") # Only allow 4 parcels to be displayed
+        cins = np.empty(4, dtype="S10")
+        lcls = np.empty(4, dtype="S10")
+        lis = np.empty(4, dtype="S10")
+        lfcs = np.empty(4, dtype="S10")
+        els = np.empty(4, dtype="S10")
+        texts = self.pcl_types
+        for i, key in enumerate(texts):
+            parcel = self.parcels[key]
+            print parcel
+            print key, parcel.bplus, parcel.bminus, parcel.lclhght, parcel.li5, parcel.lfchght, parcel.elhght
+            capes[i] = tab.utils.INT2STR(parcel.bplus) # Append the CAPE value
+            cins[i] = tab.utils.INT2STR(parcel.bminus)
+            lcls[i] = tab.utils.INT2STR(parcel.lclhght)
+            lis[i] = tab.utils.INT2STR(parcel.li5)
+            lfcs[i] = tab.utils.INT2STR(parcel.lfchght)
+            els[i] = tab.utils.INT2STR(parcel.elhght)
 
         ## Now that we have all the data, time to plot the text in their
         ## respective columns.
         
         ## PCL type
-        texts = ['SFC', 'FCST', 'ML', 'MU']
         for text in texts:
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## CAPE
         y1 = self.ylast + self.tpad
-        texts = [sfc_bplus, fcst_bplus, ml_bplus, mu_bplus]
-        for text in texts:
+        for text in capes:
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## CINH
         y1 = self.ylast + self.tpad
-        texts = [sfc_bminus, fcst_bminus, ml_bminus, mu_bminus]
-        for text in texts:
+        for text in cins:
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## LCL
         y1 = self.ylast + self.tpad
-        texts = [sfc_lclhght, fcst_lclhght, ml_lclhght, mu_lclhght]
-        for text in texts:
+        for text in lcls:
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## LI
         y1 = self.ylast + self.tpad
-        texts = [sfc_limax, fcst_limax, ml_limax, mu_limax]
-        for text in texts:
+        for text in lis:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## LFC
         y1 = self.ylast + self.tpad
-        texts = [sfc_lfchght, fcst_lfchght, ml_lfchght, mu_lfchght]
-        for text in texts:
+        for text in lfcs:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## EL
         y1 = self.ylast + self.tpad
-        texts = [sfc_elhght, fcst_elhght, ml_elhght, mu_elhght]
-        for text in texts:
+        for text in els:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)

@@ -471,7 +471,7 @@ class plotSkewT(backgroundSkewT):
         print i
         if i == 0:
 
-            user_pcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
+            self.prof.usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
         else:
             if i == -9999:
                 depth, result = QInputDialog.getText(None, "Parcel Depth (" + str(int(pres)) + "to __)",\
@@ -481,11 +481,9 @@ class plotSkewT(backgroundSkewT):
                 except:
                     return
             user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
-            user_pcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
+            self.prof.usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
                                           dwpc=user_initpcl.dwpc)
-
-        print user_pcl.pres, user_pcl.tmpc, user_pcl.dwpc, user_pcl.lclhght, tmp, dwp
-
+        self.updated.emit(self.prof, True) # Emit a signal that a new profile has been created
 
     def setProf(self, prof, **kwargs):
         self.prof = prof

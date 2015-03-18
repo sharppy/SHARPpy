@@ -219,7 +219,7 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool)
+    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
     def updateProfs(self, prof, modified):
         self.modified[self.current_idx] = modified
         #self.sound.setProf(self.profs[self.current_idx])
