@@ -69,7 +69,7 @@ After all profiles have been generated, a window should show up with your desire
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
 
-Insets available for use:
+## Available Insets
 
 1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
 2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
@@ -104,7 +104,7 @@ Double clicking on this inset will allow you to swap out these parcels for two o
 
 The user defined parcel can be set by right clicking on the Skew-T and selecting a custom
 parcel to lift.  The location of the cursor (or readout cursor) selects the level (or bottom of the layer)
-you are lifting.  
+you are lifting.
 
 =======================================================================
 
