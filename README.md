@@ -90,7 +90,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 
 #### Lifting Parcels
 
-By default, soundings opened up in the GUI show 4 parcels in the lower left inset window:
+By default, soundings opened up in the GUI show these 4 parcels in the lower left inset window:
 
 1.) Surface-based Parcel
 
@@ -109,6 +109,8 @@ Double clicking on this inset will allow you to swap out these parcels for two o
 The user defined parcel can be set by right clicking on the Skew-T and selecting a custom
 parcel to lift.  The location of the cursor (or readout cursor) selects the level (or bottom of the layer)
 you are lifting.
+
+Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)
 
 =======================================================================
 
