@@ -286,6 +286,7 @@ class MainWindow(QWidget):
         """
         # Create and fill a QWebView
         view = Picker(width=800, height=500)
+        view.set_stations("RaobSites.csv")
         #view.linkClicked.connect(self.map_link)
 
         return view
