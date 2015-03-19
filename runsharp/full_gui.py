@@ -45,6 +45,9 @@ class DataThread(QThread):
         if self.model == "GFS":
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
                 + self.model.lower() + '3_' + self.loc.lower() + '.buf')
+        elif self.model.startswith("NAM") and (self.runtime.startswith("06") or self.runtime.startswith("18")):
+            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+                + self.model.lower() + 'm_' + self.loc.lower() + '.buf')
         else:
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
                 + self.model.lower() + '_' + self.loc.lower() + '.buf')

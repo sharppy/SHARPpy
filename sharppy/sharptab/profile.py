@@ -533,6 +533,7 @@ class ConvectiveProfile(Profile):
             self.sfcpcl = params.parcelx( self, flag=1 )
         self.fcstpcl = params.parcelx( self, flag=2 )
         self.mlpcl = params.parcelx( self, flag=4 )
+        self.usrpcl = params.Parcel()
 
         ## get the effective inflow layer data
         self.ebottom, self.etop = params.effective_inflow_layer( self, mupcl=self.mupcl )
@@ -540,11 +541,21 @@ class ConvectiveProfile(Profile):
         ## if there was no effective inflow layer, set the values to masked
         if self.etop is ma.masked or self.ebottom is ma.masked:
             self.ebotm = ma.masked; self.etopm = ma.masked
+            self.effpcl = self.sfcpcl # Default to surface parcel, as in params.DefineProfile().
 
         ## otherwise, interpolate the heights given to above ground level
         else:
             self.ebotm = interp.to_agl(self, interp.hght(self, self.ebottom))
             self.etopm = interp.to_agl(self, interp.hght(self, self.etop))
+            # The below code was adapted from params.DefineProfile()
+            # Lifting one additional parcel probably won't slow the program too much.
+            # It's just one more lift compared to all the lifts in the params.effective_inflow_layer() call.
+            mtha = params.mean_theta(self, self.ebottom, self.etop)
+            mmr = params.mean_mixratio(self, self.ebottom, self.etop)
+            effpres = (self.ebottom+self.etop)/2.
+            efftmpc = thermo.theta(1000., mtha, effpres)
+            effdwpc = thermo.temp_at_mixrat(mmr, effpres)
+            self.effpcl = params.parcelx(self, flag=5, pres=effpres, tmpc=efftmpc, dwpc=effdwpc) #This is the effective parcel.
 
     def get_kinematics(self):
         '''
