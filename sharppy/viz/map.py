@@ -369,3 +369,31 @@ class Picker(QtGui.QWidget):
                 names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
                 names[-1] = names[-1].replace('Afb', 'AFB')
         return np.array(lats), np.array(lons), stns, names
+
+    def set_stations(self, csv_file):
+        """
+        Given the path to a CSV file of stations,
+        read them in, set the class attributes related
+        to station lat, lon, name, etc, and then call
+        update in order to repaint the map with the new
+        stations
+        :param csv_file:
+        :return:
+        """
+        lats, lons, stns, names = [], [], [], []
+        file = open(csv_file)
+        for line in file:
+            data = line.split(",")
+            stns.append(data[2])
+            lats.append(float(data[3]))
+            lons.append(float(data[4]))
+            names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
+            names[-1] = names[-1].replace('Afb', 'AFB')
+        file.close()
+
+        self.stn_lats = np.array(lats)
+        self.stn_lons = np.array(lons)
+        self.stn_ids = stns
+        self.stn_names = names
+        ## redraw the map
+        self.update()
