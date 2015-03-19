@@ -32,7 +32,7 @@ folder in your terminal and run the following command:
 To learn more about interacting with the SHARPpy libraries using the Python
 programming language, see the tutorial listed in tutorials/ and check out the link:
 
-http://nbviewer.ipython.org/github/wblumberg/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
+http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
 
 =======================================================================
 
