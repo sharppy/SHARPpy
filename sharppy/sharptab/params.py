@@ -131,10 +131,12 @@ class DefineParcel(object):
         '''
             Create a mixed-layer parcel with mixing within the lowest XXX hPa,
             where XXX is supplied. Default is 100 hPa.
+
+            If
             
             '''
         self.desc = '%.2f hPa Mixed Layer Parcel' % self.presval
-        pbot = prof.pres[prof.sfc]
+        pbot = kwargs.get('pbot', prof.pres[prof.sfc])
         ptop = pbot - self.presval
         self.pres = pbot
         mtheta = mean_theta(prof, pbot, ptop, exact=True)

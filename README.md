@@ -14,18 +14,25 @@ https://store.continuum.io/cshop/anaconda/
 
 You will then need to install the PySide package through the anaconda package manager:
 
-conda install PySide
+    conda install PySide
 
 To install the SHARPpy package into your Python path, type:
 
-python setup.py install
+    python setup.py install
 
-To run the SHARPpy GUI, you will need both Numpy and PySide installed
-with your Python distribution.  To run the gui, copy the runsharp folder
-to the location at which you wish to run the program. Navigate to that
+=======================================================================
+
+To run the SHARPpy GUI and interact with real-time observed and forecast soundings, copy the runsharp folder to the location at which you wish to run the program. Navigate to that
 folder in your terminal and run the following command:
 
-python full_gui.py
+    python full_gui.py
+
+=======================================================================
+
+To learn more about interacting with the SHARPpy libraries using the Python
+programming language, see the tutorial listed in tutorials/ and check out the link:
+
+http://nbviewer.ipython.org/github/wblumberg/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
 
 =======================================================================
 
@@ -62,7 +69,7 @@ After all profiles have been generated, a window should show up with your desire
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
 
-Insets available for use:
+#### Available Insets
 
 1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
 2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
@@ -80,6 +87,28 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 4. WHITE
 5. LIGHT BROWN
 6. DARK BROWN
+
+#### Lifting Parcels
+
+By default, soundings opened up in the GUI show 4 parcels in the lower left inset window:
+
+1.) Surface-based Parcel
+
+2.) 100 mb Mixed-layer Parcel
+
+3.) Forecasted Surface Parcel
+
+4.) Most-Unstable Parcel
+
+Double clicking on this inset will allow you to swap out these parcels for two others:
+
+1.) Effective Inflow Layer Mean Parcel
+
+2.) User Defined Parcel
+
+The user defined parcel can be set by right clicking on the Skew-T and selecting a custom
+parcel to lift.  The location of the cursor (or readout cursor) selects the level (or bottom of the layer)
+you are lifting.
 
 =======================================================================
 

@@ -1,5 +1,7 @@
 import numpy as np
 from PySide import QtGui, QtCore
+from PySide.QtCore import *
+from PySide.QtGui import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import datetime
@@ -99,6 +101,8 @@ class backgroundText(QtGui.QFrame):
 
 
 class plotText(backgroundText):
+    updatepcl = Signal(tab.params.Parcel)
+
     '''
     Handles plotting the indices in the frame.
     Inherits a backgroundText Object that contains
@@ -106,7 +110,7 @@ class plotText(backgroundText):
     gets done on this QPixmap, and then the QPixmap
     gets rendered by the paintEvent function.
     '''
-    def __init__(self, prof):
+    def __init__(self, prof, pcl_types):
         '''
         Initialize the data from a Profile object passed to 
         this class. It then takes the data it needs from the
@@ -118,16 +122,14 @@ class plotText(backgroundText):
         prof: a Profile Object
         
         '''
-        ## get the surfce based, most unstable, and mixed layer
-        ## parcels to use for indices, as well as the sounding
-        ## profile itself.
-        self.sfcparcel = prof.sfcpcl
-        self.mlparcel = prof.mlpcl
-        self.fcstpcl = prof.fcstpcl
-        self.muparcel = prof.mupcl
+        ## get the parcels to be displayed in the GUI
+        self.pcl_types = pcl_types
+        self.parcels = {}
+        self.setParcels(prof)
         self.prof = prof;
-        
-        
+        self.bounds = np.empty((4,2))
+        self.setDefaultParcel()
+
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
         ## K Index
@@ -163,16 +165,32 @@ class plotText(backgroundText):
         self.tei = tab.utils.INT2STR( prof.tei )
         
         super(plotText, self).__init__()
+        self.w = SelectParcels(self.pcl_types, self)
 
-    def setProf(self, prof):
+    def setDefaultParcel(self):
+        idx = np.where(np.asarray(self.pcl_types) == "MU")[0]
+        if len(idx) == 0:
+            self.skewt_pcl = 0
+        else:
+            self.skewt_pcl = idx
+
+    def mouseDoubleClickEvent(self, e):
+        self.w.show()
+
+    def setParcels(self, prof):
+        self.parcels["SFC"] = prof.sfcpcl # Set the surface parcel
+        self.parcels["ML"] = prof.mlpcl
+        self.parcels["FCST"] = prof.fcstpcl
+        self.parcels["MU"] = prof.mupcl
+        self.parcels["EFF"] = prof.effpcl
+        self.parcels["USER"] = prof.usrpcl
+
+
+    def setProf(self, prof, pcl_types):
+        self.pcl_types = pcl_types
         self.ylast = self.label_height
-
-        self.sfcparcel = prof.sfcpcl
-        self.mlparcel = prof.mlpcl
-        self.fcstpcl = prof.fcstpcl
-        self.muparcel = prof.mupcl
+        self.setParcels(prof)
         self.prof = prof;
-
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -284,7 +302,8 @@ class plotText(backgroundText):
         stp_fixed = tab.utils.FLOAT2STR( self.prof.stp_fixed, 1 )
         stp_cin = tab.utils.FLOAT2STR( self.prof.stp_cin, 1 )
         right_scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
-        
+
+        # Coloring provided by Rich Thompson (SPC)
         labels = ['Supercell = ', 'STP (cin) = ', 'STP (fix) = ', 'SHIP = ']
         indices = [right_scp, stp_cin, stp_fixed, ship]
         for label, index in zip(labels,indices):
@@ -440,89 +459,245 @@ class plotText(backgroundText):
         y1 = self.ylast + self.tpad
         ## get the indices rounded to the nearest int, conver to strings
         ## Start with the surface based parcel.
-        sfc_bplus = tab.utils.INT2STR( self.sfcparcel.bplus )
-        sfc_bminus = tab.utils.INT2STR( self.sfcparcel.bminus )
-        sfc_lclhght = tab.utils.INT2STR( self.sfcparcel.lclhght )
-        sfc_limax = tab.utils.INT2STR( self.sfcparcel.li5 )
-        sfc_lfchght = tab.utils.INT2STR( self.sfcparcel.lfchght )
-        sfc_elhght = tab.utils.INT2STR( self.sfcparcel.elhght )
-        ## get the forecast surface parvel
-        fcst_bplus = tab.utils.INT2STR( self.fcstpcl.bplus )
-        fcst_bminus = tab.utils.INT2STR( self.fcstpcl.bminus )
-        fcst_lclhght = tab.utils.INT2STR( self.fcstpcl.lclhght )
-        fcst_limax = tab.utils.INT2STR( self.fcstpcl.li5 )
-        fcst_lfchght = tab.utils.INT2STR( self.fcstpcl.lfchght )
-        fcst_elhght = tab.utils.INT2STR( self.fcstpcl.elhght )
-        ## Now get the mixed layer parcel indices
-        ml_bplus = tab.utils.INT2STR( self.mlparcel.bplus )
-        ml_bminus = tab.utils.INT2STR( self.mlparcel.bminus )
-        ml_lclhght = tab.utils.INT2STR( self.mlparcel.lclhght )
-        ml_limax = tab.utils.INT2STR( self.mlparcel.li5 )
-        ## check and see if the lfc is there
-        ml_lfchght = tab.utils.INT2STR( self.mlparcel.lfchght )
-        ml_elhght = tab.utils.INT2STR( self.mlparcel.elhght )
-        ## get the most unstable parcel indices
-        mu_bplus = tab.utils.INT2STR( self.muparcel.bplus )
-        mu_bminus = tab.utils.INT2STR( self.muparcel.bminus )
-        mu_lclhght = tab.utils.INT2STR( self.muparcel.lclhght )
-        mu_limax = tab.utils.INT2STR( self.muparcel.li5 )
-        ## make sure the lfc is there
-        mu_lfchght = tab.utils.INT2STR( self.muparcel.lfchght )
-        mu_elhght = tab.utils.INT2STR( self.muparcel.elhght )
-
+        capes = np.empty(4, dtype="S10") # Only allow 4 parcels to be displayed
+        cins = np.empty(4, dtype="S10")
+        lcls = np.empty(4, dtype="S10")
+        lis = np.empty(4, dtype="S10")
+        lfcs = np.empty(4, dtype="S10")
+        els = np.empty(4, dtype="S10")
+        texts = self.pcl_types
+        for i, key in enumerate(texts):
+            parcel = self.parcels[key]
+            capes[i] = tab.utils.INT2STR(parcel.bplus) # Append the CAPE value
+            cins[i] = tab.utils.INT2STR(parcel.bminus)
+            lcls[i] = tab.utils.INT2STR(parcel.lclhght)
+            lis[i] = tab.utils.INT2STR(parcel.li5)
+            lfcs[i] = tab.utils.INT2STR(parcel.lfchght)
+            els[i] = tab.utils.INT2STR(parcel.elhght)
         ## Now that we have all the data, time to plot the text in their
         ## respective columns.
         
         ## PCL type
-        texts = ['SFC', 'FCST', 'ML', 'MU']
-        for text in texts:
+        pcl_index = 0
+        for i, text in enumerate(texts):
+            self.bounds[i,0] = y1
+            if text == self.pcl_types[self.skewt_pcl]:
+                pen = QtGui.QPen(QtCore.Qt.cyan, 1, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                pcl_index = i
+            else:
+                pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+            self.bounds[i,1] = y1
         ## CAPE
         y1 = self.ylast + self.tpad
-        texts = [sfc_bplus, fcst_bplus, ml_bplus, mu_bplus]
-        for text in texts:
+        for i, text in enumerate(capes):
+            try:
+                if pcl_index == i and int(text) >= 4000:
+                    color = QtCore.Qt.magenta
+                elif pcl_index == i and int(text) >= 3000:
+                    color=QtCore.Qt.red
+                elif pcl_index == i and int(text) >= 2000:
+                    color=QtCore.Qt.yellow
+                else:
+                    color=QtCore.Qt.white
+            except:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## CINH
         y1 = self.ylast + self.tpad
-        texts = [sfc_bminus, fcst_bminus, ml_bminus, mu_bminus]
-        for text in texts:
+        for i, text in enumerate(cins):
+            try:
+                if int(capes[i]) > 0 and pcl_index == i and int(text) >= -50:
+                    color = QtCore.Qt.green
+                elif int(capes[i]) > 0 and pcl_index == i and int(text) >= -100:
+                    color=QtGui.QColor('#996600')
+                elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
+                    color=QtGui.QColor('#993333')
+                else:
+                    color=QtCore.Qt.white
+            except:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+
         ## LCL
         y1 = self.ylast + self.tpad
-        texts = [sfc_lclhght, fcst_lclhght, ml_lclhght, mu_lclhght]
-        for text in texts:
+        for i, text in enumerate(lcls):
+            try:
+                if int(text) < 1000 and pcl_index == i and texts[i] == "ML":
+                    color = QtCore.Qt.green
+                elif int(text) < 1500 and pcl_index == i and texts[i] == "ML":
+                    color=QtGui.QColor('#996600')
+                elif int(text) < 2000 and pcl_index == i and texts[i] == "ML":
+                    color=QtGui.QColor('#993333')
+                else:
+                    color=QtCore.Qt.white
+            except:
+                color=QtCore.Qt.white
+            pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
+
+        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
         ## LI
         y1 = self.ylast + self.tpad
-        texts = [sfc_limax, fcst_limax, ml_limax, mu_limax]
-        for text in texts:
+        for text in lis:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## LFC
         y1 = self.ylast + self.tpad
-        texts = [sfc_lfchght, fcst_lfchght, ml_lfchght, mu_lfchght]
-        for text in texts:
+        for text in lfcs:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
         ## EL
         y1 = self.ylast + self.tpad
-        texts = [sfc_elhght, fcst_elhght, ml_elhght, mu_elhght]
-        for text in texts:
+        for text in els:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
             y1 += (self.label_height)
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
+        color=QtGui.QColor('#996633')
+        pen = QtGui.QPen(color, .5, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(2, self.bounds[self.skewt_pcl,0]-1, x1*6 + x1*2 - 1, self.bounds[self.skewt_pcl,0]-1)
+        qp.drawLine(2, self.bounds[self.skewt_pcl,0]-1, 2, self.bounds[self.skewt_pcl,1])
+        qp.drawLine(2, self.bounds[self.skewt_pcl,1], x1*6 + x1*2 - 1, self.bounds[self.skewt_pcl,1])
+        qp.drawLine(x1*6 + x1*2 -1 , self.bounds[self.skewt_pcl,0]-1, x1*6 + x1*2 -1, self.bounds[self.skewt_pcl,1])
 
 
+    def mousePressEvent(self, e):
+        pos = e.pos()
+        for i, bound in enumerate(self.bounds):
+            if bound[0] < pos.y() and bound[1] > pos.y():
+                self.skewt_pcl = i
+                self.ylast = self.label_height
+                pcl_to_pass = self.parcels[self.pcl_types[self.skewt_pcl]]
+                self.updatepcl.emit(pcl_to_pass)
+                self.clearData()
+                self.plotBackground()
+                self.plotData()
+                self.update()
+                self.parentWidget().setFocus()
+                break
 
+class SelectParcels(QWidget):
+    def __init__(self, parcel_types, parent):
+        QWidget.__init__(self)
+        self.thermo = parent
+        self.parcel_types = parcel_types
+        self.max_pcls = 4
+        self.pcl_count = 0
+        self.initUI()
+
+    def initUI(self):
+
+        self.sb = QtGui.QCheckBox('Surface-Based Parcel', self)
+        self.sb.move(20, 20)
+        if "SFC" in self.parcel_types:
+            self.sb.toggle()
+            self.pcl_count += 1
+        self.sb.stateChanged.connect(self.changeParcel)
+
+        self.ml = QtGui.QCheckBox('100 mb Mixed Layer Parcel', self)
+        self.ml.move(20, 40)
+        if "ML" in self.parcel_types:
+            self.ml.toggle()
+            self.pcl_count += 1
+        self.ml.stateChanged.connect(self.changeParcel)
+
+        self.fcst = QtGui.QCheckBox('Forecast Surface Parcel', self)
+        self.fcst.move(20, 60)
+        if "FCST" in self.parcel_types:
+            self.fcst.toggle()
+            self.pcl_count += 1
+        self.fcst.stateChanged.connect(self.changeParcel)
+
+        self.mu = QtGui.QCheckBox('Most Unstable Parcel', self)
+        self.mu.move(20, 80)
+        if "MU" in self.parcel_types:
+            self.mu.toggle()
+            self.pcl_count += 1
+        self.mu.stateChanged.connect(self.changeParcel)
+
+        self.eff = QtGui.QCheckBox('Effective Inflow Layer Parcel', self)
+        self.eff.move(20, 100)
+        if "EFF" in self.parcel_types:
+            self.eff.toggle()
+            self.pcl_count += 1
+        self.eff.stateChanged.connect(self.changeParcel)
+
+        self.usr = QtGui.QCheckBox('User Defined Parcel', self)
+        self.usr.move(20, 120)
+        if "USER" in self.parcel_types:
+            self.usr.toggle()
+            self.pcl_count += 1
+        self.usr.stateChanged.connect(self.changeParcel)
+
+
+        self.setGeometry(300, 300, 250, 180)
+        self.setWindowTitle('Show Parcels')
+        self.ok = QtGui.QPushButton('Ok', self)
+        self.ok.move(20,150)
+        self.ok.clicked.connect(self.okPushed)
+
+        #cb.stateChanged.connect(self.changeTitle)
+    #cb.stateChanged.connect(
+
+    def changeParcel(self, state):
+        if state == QtCore.Qt.Checked:
+            self.pcl_count += 1
+        else:
+            self.pcl_count -= 1
+
+    def okPushed(self):
+        if self.pcl_count > self.max_pcls:
+            msgBox = QMessageBox()
+            msgBox.setText("You can only show 4 parcels at a time.\nUnselect some parcels.")
+            msgBox.exec_()
+        elif self.pcl_count != self.max_pcls:
+            msgBox = QMessageBox()
+            msgBox.setText("You need to select 4 parcels to show.  Select some more.")
+            msgBox.exec_()
+        else:
+            self.parcel_types = []
+            if self.sb.isChecked() is True:
+                self.parcel_types.append('SFC')
+            if self.ml.isChecked() is True:
+                self.parcel_types.append('ML')
+            if self.fcst.isChecked() is True:
+                self.parcel_types.append('FCST')
+            if self.mu.isChecked() is True:
+                self.parcel_types.append('MU')
+            if self.eff.isChecked() is True:
+                self.parcel_types.append('EFF')
+            if self.usr.isChecked() is True:
+                self.parcel_types.append('USER')
+
+            self.thermo.pcl_types = self.parcel_types
+            self.thermo.skewt_pcl = 0
+            self.thermo.ylast = self.thermo.label_height
+            pcl_to_pass = self.thermo.parcels[self.thermo.pcl_types[self.thermo.skewt_pcl]]
+            self.thermo.updatepcl.emit(pcl_to_pass)
+            self.thermo.clearData()
+            self.thermo.plotBackground()
+            self.thermo.plotData()
+            self.thermo.update()
+            self.thermo.parentWidget().setFocus()
+            self.hide()
