@@ -1,16 +1,14 @@
 import numpy as np
 
 from PySide import QtGui, QtCore
-
-from mpl_toolkits.basemap import Basemap
+import sharppy
 from mpl_toolkits.basemap.shapefile import Reader
-import mpl_toolkits.basemap as basemap
 import sys, os
 import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join(os.path.dirname(basemap.__file__), "data/")
+    data_dir = os.path.join(os.path.dirname(sharppy.__file__), "databases/shapefiles/")
 
     def __init__(self, lambda_0, phi_0):
         self.lambda_0 = lambda_0
