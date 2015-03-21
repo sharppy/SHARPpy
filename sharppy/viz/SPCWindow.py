@@ -330,7 +330,7 @@ class SkewApp(QWidget):
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
         if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
                 + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
         elif self.model == "Observed":
             date_str = self.plot_title.split(' (')[0]
