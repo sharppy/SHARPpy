@@ -796,8 +796,8 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(qp)
         qp.setRenderHint(qp.Antialiasing)
-        if self.plotdgz is False:
-            self.draw_effective_layer(qp)
+
+        self.draw_effective_layer(qp)
         if self.plot_omega:
             self.draw_omega_profile(qp)
         qp.end()
