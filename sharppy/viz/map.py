@@ -1,16 +1,23 @@
+
 import numpy as np
 
 from PySide import QtGui, QtCore
-import sharppy
+
+from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap.shapefile import Reader
+
 import sys, os
 import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join(os.path.dirname(sharppy.__file__), "databases/shapefiles/")
+    data_dir = "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/mpl_toolkits/basemap/data/"
 
-    def __init__(self, lambda_0, phi_0):
+    min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
+    max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
+
+    def __init__(self, lambda_0, phi_0, proj='npstere'):
+        self.proj = proj
         self.lambda_0 = lambda_0
         self.phi_0 = phi_0
         self.m = 6.6667e-7
@@ -20,6 +27,9 @@ class Mapper(object):
 
     def getPhi0(self):
         return self.phi_0
+
+    def getLatBounds(self):
+        return Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
 
     def __call__(self, lats, lons):
         return self._lltoxy_npstere(lats, lons, self.lambda_0, self.phi_0, self.m)
@@ -111,7 +121,8 @@ class Mapper(object):
                 b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
                 b.shape = (npts, 2)
 
-                idxs = np.where(b[:, 1] >= 0)[0]
+                lb, ub = self.getLatBounds()
+                idxs = np.where((b[:, 1] >= lb) & (b[:, 1] <= ub))[0]
                 if len(idxs) < 2:
                     continue
 
@@ -121,7 +132,7 @@ class Mapper(object):
                 except IndexError:
                     breaks = []
                 breaks = [ 0 ] + list(breaks) + [ -1 ]
-
+ 
                 for idx in xrange(len(breaks) - 1):
                     if breaks[idx + 1] == -1:
                         seg_idxs = idxs[breaks[idx]:]
@@ -149,12 +160,11 @@ class Mapper(object):
             bndy = self._loadDat(name, res)
         return bndy
 
-class Picker(QtGui.QWidget):
-    def __init__(self, **kwargs):
-        super(Picker, self).__init__(**kwargs)
-        #self.setMinimumSize(self.min_width, self.min_height)
+class MapWidget(QtGui.QWidget):
+    def __init__(self, data_sources, init_source, **kwargs):
+        super(MapWidget, self).__init__(**kwargs)
         self.initializing = True
-        self.scale = 0.5
+        self.scale = 0.60
         self.trans_x, self.trans_y = 0., 0.
         self.center_x, self.center_y = 0., 0.
         self.map_center_x, self.map_center_x = 0., 0.
@@ -164,22 +174,48 @@ class Picker(QtGui.QWidget):
 
         self.mapper = Mapper(-97.5, 60.)
 
-        self.stn_lats, self.stn_lons, self.stn_ids, self.stn_names = self._available_spc()
+        self.data_sources = data_sources
+        self.cur_source = init_source
+        stn_lats, stn_lons, stn_ids, stn_names, stn_states, stn_countries = zip(*data_sources[init_source].getPoints())
+        self.stn_lats = np.array(stn_lats)
+        self.stn_lons = np.array(stn_lons)
+        self.stn_ids = stn_ids
+        self.stn_names = []
+        for nm, st, id, ct in zip(stn_names, stn_states, stn_ids, stn_countries):
+            if id != "":
+                id_str = " (%s)" % id
+            else:
+                id_str = ""
+            if st != "":
+                pol_str = ", %s" % st
+            elif ct != "":
+                pol_str = ", %s" % ct
+            else:
+                pol_str = ""
+
+            if id_str == "" and pol_str == "":
+                nm = nm.upper()
+            name = "%s%s%s" % (nm, pol_str, id_str)
+            self.stn_names.append(name)
+        
         self.clicked_stn = None
         self.stn_readout = QtGui.QLabel(parent=self)
-        self.stn_readout.setStyleSheet("QLabel { border-width: 0px; font-size: 18px; color: #FFFFFF; }")
+        self.stn_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 16px; color: #FFFFFF; }")
         self.stn_readout.setText("")
         self.stn_readout.show()
 
-        self.default_width, self.default_height = kwargs.get('width', 800), kwargs.get('height', 800)
+        self.default_width, self.default_height = 800, 800
+        self.setMinimumSize(self.width(), self.height())
 
-        self.setGeometry(300, 300, self.default_width, self.default_height)
-        self.setMinimumSize(self.default_width, self.default_height)
+#       self.setGeometry(300, 300, self.default_width, self.default_height)
+        self.setWindowTitle('SHARPpy')
         self.stn_readout.setFixedWidth(self.width() - 20)
-        self.map_center_x, self.map_center_y = self.width() / 2, -4 * self.height() / 10
+
+        self.map_center_x, self.map_center_y = self.width() / 2, -8 * self.height() / 10
 
         self.initMap()
         self.initUI()
+        self.show()
         self.initializing = False
 
     def initUI(self):
@@ -189,7 +225,6 @@ class Picker(QtGui.QWidget):
         self.drawMap()
 
     def initMap(self):
-
         self._coast_path = self.mapper.loadBoundary('coastlines')
         self._country_path = self.mapper.loadBoundary('countries')
         self._state_path = self.mapper.loadBoundary('states')
@@ -259,20 +294,23 @@ class Picker(QtGui.QWidget):
 
     def drawStations(self, qp):
         stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        lb_lat, ub_lat = self.mapper.getLatBounds()
         size = 3 * self.scale
 
         unselected_color = QtCore.Qt.red
         selected_color = QtCore.Qt.green
 
-        for stn_x, stn_y, stn_id in zip(stn_xs, stn_ys, self.stn_ids):
+        window_rect = QtCore.QRect(0, 0, self.width(), self.height())
+        for stn_x, stn_y, stn_lat, stn_id in zip(stn_xs, stn_ys, self.stn_lats, self.stn_ids):
             if self.clicked_stn == stn_id:
                 color = selected_color
             else:
                 color = unselected_color
 
-            qp.setPen(QtGui.QPen(color))
-            qp.setBrush(QtGui.QBrush(color))
-            qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
+            if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
+                qp.setPen(QtGui.QPen(color))
+                qp.setBrush(QtGui.QBrush(color))
+                qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
@@ -300,18 +338,7 @@ class Picker(QtGui.QWidget):
             self.trans_y = e.y() - self.init_drag_y
             self.drawMap()
             self.update()
-
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
-        stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ])
-        stn_xs = np.array(stn_xs)
-        stn_ys = np.array(stn_ys)
-        dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
-        stn_idx = np.argmin(dists)
-        if dists[stn_idx] <= 5:
-            self.stn_readout.setText(self.stn_names[stn_idx])
-            self.stn_readout.move(10, self.height() - 25)
-        else:
-            self.stn_readout.setText("")
+        self._checkStations(e)
 
     def mouseReleaseEvent(self, e):
         self.init_drag_x, self.init_drag_y = None, None
@@ -337,13 +364,61 @@ class Picker(QtGui.QWidget):
         max_speed = 75
         delta = max(min(-e.delta(), max_speed), -max_speed)
         scale_fac = 10 ** (delta / 1000.)
-        self.scale *= scale_fac
 
+        scaled_size = float(min(self.default_width, self.default_height)) / min(self.width(), self.height())
+        if self.scale * scale_fac > 2.5 * scaled_size:
+            scale_fac = 2.5 * scaled_size / self.scale
+
+        self.scale *= scale_fac
         self.map_center_x = self.center_x - (self.center_x - self.map_center_x) / scale_fac
         self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / scale_fac
 
         self.drawMap()
+        self._checkStations(e)
         self.update()
+
+    def _checkStations(self, e):
+        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ])
+        stn_xs = np.array(stn_xs)
+        stn_ys = np.array(stn_ys)
+        dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
+        stn_idx = np.argmin(dists)
+        if dists[stn_idx] <= 5:
+            stn_x, stn_y = stn_xs[stn_idx], stn_ys[stn_idx]
+            fm = QtGui.QFontMetrics(QtGui.QFont(self.font().rawName(), 16))
+
+            label_offset = 5
+            align = 0
+            if stn_x > self.width() / 2:
+                sgn_x = -1
+                label_x = stn_x - fm.width(self.stn_names[stn_idx])
+                align |= QtCore.Qt.AlignRight
+            else:
+                sgn_x = 1
+                label_x = stn_x
+                align |= QtCore.Qt.AlignLeft
+
+            if stn_y > self.height() / 2:
+                sgn_y = -1
+                label_y = stn_y - fm.height()
+                align |= QtCore.Qt.AlignBottom
+            else:
+                sgn_y = 1
+                label_y = stn_y
+                align |= QtCore.Qt.AlignTop
+
+            self.stn_readout.setText(self.stn_names[stn_idx])
+            self.stn_readout.move(label_x + sgn_x * label_offset, label_y + sgn_y * label_offset)
+            self.stn_readout.setFixedWidth(fm.width(self.stn_names[stn_idx]))
+            self.stn_readout.setAlignment(align)
+            self.setCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self.stn_readout.setText("")
+            self.stn_readout.setFixedWidth(0)
+            self.stn_readout.move(self.width(), self.height())
+            self.stn_readout.setAlignment(QtCore.Qt.AlignLeft)
+            self.unsetCursor()
 
     def _available_spc(self):
         available_url = "http://www.spc.noaa.gov/exper/soundings/"
@@ -359,9 +434,9 @@ class Picker(QtGui.QWidget):
         for line in open("ua_stations.csv"):
             data = line.split(",")
             if data[2][1:] in matches or data[2] in matches:
-                if data[2][1:] in matches:
+                if data[2][1:] in matches: 
                     stns.append(data[2][1:])
-                else:
+                else:   
                     stns.append(data[2])
 
                 lats.append(float(data[3]))
@@ -369,31 +444,3 @@ class Picker(QtGui.QWidget):
                 names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
                 names[-1] = names[-1].replace('Afb', 'AFB')
         return np.array(lats), np.array(lons), stns, names
-
-    def set_stations(self, csv_file):
-        """
-        Given the path to a CSV file of stations,
-        read them in, set the class attributes related
-        to station lat, lon, name, etc, and then call
-        update in order to repaint the map with the new
-        stations
-        :param csv_file:
-        :return:
-        """
-        lats, lons, stns, names = [], [], [], []
-        file = open(csv_file)
-        for line in file:
-            data = line.split(",")
-            stns.append(data[2])
-            lats.append(float(data[3]))
-            lons.append(float(data[4]))
-            names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
-            names[-1] = names[-1].replace('Afb', 'AFB')
-        file.close()
-
-        self.stn_lats = np.array(lats)
-        self.stn_lons = np.array(lons)
-        self.stn_ids = stns
-        self.stn_names = names
-        ## redraw the map
-        self.update()

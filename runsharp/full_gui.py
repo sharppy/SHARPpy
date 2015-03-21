@@ -6,9 +6,11 @@ if len(sys.argv) > 1 and sys.argv[1] == '--debug':
 else:
     np.seterr(all='ignore')
 
-from sharppy.viz import SkewApp, Picker
+from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.buf_decoder import BufkitFile
+from datasources import data_source
+
 from PySide.QtCore import *
 from PySide.QtGui import *
 from PySide.QtWebKit import *
@@ -96,6 +98,7 @@ class MainWindow(QWidget):
 
         super(MainWindow, self).__init__(**kwargs)
         self.progressDialog = QProgressDialog()
+        self.data_sources = data_source.loadDataSources()
 
         ## All of these variables get set/reset by the various menus in the GUI
 
@@ -285,8 +288,8 @@ class MainWindow(QWidget):
         view : QWebView object
         """
         # Create and fill a QWebView
-        view = Picker(width=800, height=500)
-        view.set_stations("RaobSites.csv")
+        view = MapWidget(self.data_sources, 'GFS', width=800, height=500)
+#       view.set_stations("RaobSites.csv")
         #view.linkClicked.connect(self.map_link)
 
         return view
