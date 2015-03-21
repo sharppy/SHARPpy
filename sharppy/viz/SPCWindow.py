@@ -321,7 +321,7 @@ class SkewApp(QWidget):
     @Slot()
     def resetProf(self):
         self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
+        self.updateProfs(self.profs[self.current_idx], modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
         self.setFocus()
 
     @Slot(tab.params.Parcel)
