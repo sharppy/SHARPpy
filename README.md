@@ -1,48 +1,8 @@
-SHARPpy
-=======
-Sounding/Hodograph Analysis and Research Program in Python
+#SHARPpy
 
-Required Packages:
+######Sounding/Hodograph Analysis and Research Program in Python
 
-NumPy
-
-PySide
-
-This is primarily tested and used with the Anaconda Python Distribution
-from Continuum Analytics. We recommend you use Python 2.7 instead of Python 3 as SHARPpy is not Python 3 compatable yet.  Anaconda can be downloaded here:
-https://store.continuum.io/cshop/anaconda/
-
-You will then need to install the PySide package through the anaconda package manager:
-
-    conda install PySide
-
-To install the SHARPpy package into your Python path, you can download SHARPpy as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing:
-
-    git clone https://github.com/sharppy/SHARPpy.git
-    
-If you follow the route of cloning SHARPpy, you can update to the recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
-
-    git pull origin master
-    
-Within the main SHARPpy directory, type this command in to install the SHARPpy package:
-
-    python setup.py install
-
-=======================================================================
-
-To run the SHARPpy GUI and interact with real-time observed and forecast soundings, copy the runsharp folder to the location at which you wish to run the program. Navigate to that
-folder in your terminal and run the following command:
-
-    python full_gui.py
-
-=======================================================================
-
-To learn more about interacting with the SHARPpy libraries using the Python
-programming language, see the tutorial listed in tutorials/ and check out the link:
-
-http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
-
-=======================================================================
+SHARPPy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPPy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
 Many people have put an immeasurable amount of time into developing this software package. 
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
@@ -54,13 +14,58 @@ this ready-made citation entry or provide a link back to this website:
     Preprints, 5th Symposium on Advances in Modeling and Analysis Using Python, Phoenix AZ.
 
 
-
 http://sharppy.github.io/SHARPpy/index.html
 
 https://github.com/sharppy/SHARPpy
 
 Also, please send an email letting us know where SHARPpy is being used or 
 has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
+
+=======================================================================
+### Installing SHARPpy
+
+Required Packages:
+
+- NumPy
+
+- PySide
+
+SHARPpy is primarily tested and used with the Anaconda Python Distribution
+from Continuum Analytics. We recommend you use Python 2.7 instead of Python 3 as SHARPpy is not Python 3 compatable yet.  Anaconda can be downloaded here: https://store.continuum.io/cshop/anaconda/
+
+Since SHARPpy requires the PySide package, you will need to install it.  If you choose to use the Anaconda distribution, PySide can be installed through the Anaconda package manager by typing:
+
+    conda install PySide
+
+After installing all the required Python packages for SHARPpy, you now install the SHARPpy package to your computer.  You'll need to download it to your computer first.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
+
+    git clone https://github.com/sharppy/SHARPpy.git
+    
+If you follow the route of cloning SHARPpy, you can update to the recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
+
+    git pull origin master
+    
+Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory and type this command in to install SHARPpy:
+
+    python setup.py install
+
+After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
+
+=======================================================================
+### Running the SHARPpy GUI
+
+To run the SHARPpy GUI and interact with real-time observed and forecast soundings, copy the runsharp folder to the location at which you wish to run the program. Navigate to that
+folder in your terminal and run the following command:
+
+    python full_gui.py
+
+=======================================================================
+### Scripting with SHARPpy
+
+To learn more about interacting with the SHARPpy libraries using the Python
+programming language, see the tutorial listed in tutorials/ and check out the link:
+
+http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
 
 =======================================================================
 
@@ -122,7 +127,7 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 
 =======================================================================
 
-### Known Issues
+### Known GUI Issues
 
 Known Windows Issues:
 - Inset text is not properly sized or placed in their windows.
