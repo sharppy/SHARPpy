@@ -37,7 +37,7 @@ Since SHARPpy requires the PySide package, you will need to install it.  If you 
 
     conda install PySide
 
-After installing all the required Python packages for SHARPpy, you now install the SHARPpy package to your computer.  You'll need to download it to your computer first.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
+After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 
     git clone https://github.com/sharppy/SHARPpy.git
     
