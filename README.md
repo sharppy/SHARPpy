@@ -41,7 +41,7 @@ After installing all the required Python packages for SHARPpy, you now install t
 
     git clone https://github.com/sharppy/SHARPpy.git
     
-If you follow the route of cloning SHARPpy, you can update to the recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
+If you follow the route of cloning SHARPpy, you can update to the most recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
 
     git pull origin master
     
