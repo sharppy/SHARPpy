@@ -3,6 +3,8 @@ import xml.etree.ElementTree as ET
 import glob
 from datetime import datetime, timedelta
 
+import available
+
 def loadDataSources(ds_dir='../datasources'):
     files = glob.glob(ds_dir + '/*.xml')
     ds = {}
@@ -48,6 +50,12 @@ class Outlet(object):
 
     def getDelay(self):
         return int(self._time.get('delay'))
+
+    def getAvailableAtTime(self, dt):
+        return
+
+    def getAvailableTimes(self):
+        return 
 
     def getArchiveLen(self):
         return int(self._time.get('archive'))

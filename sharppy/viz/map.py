@@ -419,28 +419,3 @@ class MapWidget(QtGui.QWidget):
             self.stn_readout.move(self.width(), self.height())
             self.stn_readout.setAlignment(QtCore.Qt.AlignLeft)
             self.unsetCursor()
-
-    def _available_spc(self):
-        available_url = "http://www.spc.noaa.gov/exper/soundings/"
-        text = urllib2.urlopen(available_url).read()
-        matches = sorted(list(set(re.findall("[\d]{8}_OBS", text))))
-        recent_synop = [ m for m in matches if m[6:8] in ["00", "12"] ][-1]
-
-        recent_url = "%s%s/" % (available_url, recent_synop)
-        text = urllib2.urlopen(recent_url).read()
-        matches = re.findall("alt=\"([\w]{3}|[\d]{5})\"", text)
-
-        lats, lons, stns, names = [], [], [], []
-        for line in open("ua_stations.csv"):
-            data = line.split(",")
-            if data[2][1:] in matches or data[2] in matches:
-                if data[2][1:] in matches: 
-                    stns.append(data[2][1:])
-                else:   
-                    stns.append(data[2])
-
-                lats.append(float(data[3]))
-                lons.append(float(data[4]))
-                names.append(data[1].title() + ', ' + data[0].upper() + ' (' + data[2] + ')')
-                names[-1] = names[-1].replace('Afb', 'AFB')
-        return np.array(lats), np.array(lons), stns, names
