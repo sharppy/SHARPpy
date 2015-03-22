@@ -16,7 +16,15 @@ You will then need to install the PySide package through the anaconda package ma
 
     conda install PySide
 
-To install the SHARPpy package into your Python path, type:
+To install the SHARPpy package into your Python path, you can download SHARPpy as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing:
+
+    git clone https://github.com/sharppy/SHARPpy.git
+    
+If you follow the route of cloning SHARPpy, you can update to the recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
+
+    git pull origin master
+    
+Within the main SHARPpy directory, type this command in to install the SHARPpy package:
 
     python setup.py install
 
