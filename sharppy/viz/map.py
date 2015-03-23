@@ -229,7 +229,7 @@ class MapWidget(QtGui.QWidget):
 
     def setDataSource(self, data_source, data_time, init=False):
         self.cur_source = data_source
-        self.setCurrentTime(data_time, init=True)
+        self.setCurrentTime(data_time, init=init)
 
     def setCurrentTime(self, data_time, init=False):
         self.current_time = data_time
