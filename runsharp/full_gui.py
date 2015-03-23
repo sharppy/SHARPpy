@@ -97,8 +97,6 @@ class MainWindow(QWidget):
 
         ## All of these variables get set/reset by the various menus in the GUI
 
-        ## this is the time step between available profiles
-        self.delta = 12
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = "OUN"
         ## set the default profile to display
@@ -108,16 +106,8 @@ class MainWindow(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## the delay is time time delay between sounding availabilities for models
-        self.delay = 1
-        ## Offset in time from the synoptic hours
-        self.offset = 0
-        ## this is the duration of the period the available profiles have
-        self.duration = 17
         ## this is the default model initialization time.
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
-        ## this is the default map to display
-        self.map = None
         ## initialize the UI
         self.__initUI()
 
@@ -200,21 +190,6 @@ class MainWindow(QWidget):
 
         self.menuBar()
 
-    def __date(self):
-        """
-        This function does some date magic to get the current date nearest to 00Z or 12Z
-        """
-        current_time = date.datetime.utcnow()
-        delta = date.timedelta(hours=12)
-        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month).zfill(2) +
-                                            str(current_time.day).zfill(2) + "00", "%Y%m%d%H")
-        if current_time.hour >= 12:
-            time = today_00Z + delta
-        else:
-            time = today_00Z
-
-        return time
-
     def menuBar(self):
 
         self.bar = QMenuBar()
@@ -250,8 +225,6 @@ class MainWindow(QWidget):
 
         self.skewApp()
 
-        ## this is the time step between available profiles
-        self.delta = 12
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = "OUN"
         ## set the default profile to display
@@ -261,23 +234,15 @@ class MainWindow(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## the delay is time time delay between sounding availabilities for models
-        self.delay = 1
-        ## Offset time from the synoptic hour
-        self.offset = 0
-        ## this is the duration of the period the available profiles have
-        self.duration = 17
         ## this is the default model initialization time.
         self.run = "00Z"
-        ## this is the default map to display
-        self.map = None
 
     def aboutbox(self):
 
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
         msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
-                       "Python\n\n(C) 2014-%d by Kelton Halbert and Greg Blumberg" % cur_year)
+                       "Python\n\n(C) 2014-%d by Kelton Halbert, Greg Blumberg, and Tim Supinie" % cur_year)
         msgBox.exec_()
 
     def create_map_view(self):
@@ -289,9 +254,8 @@ class MainWindow(QWidget):
         -------
         view : QWebView object
         """
-        # Create and fill a QWebView
+
         view = MapWidget(self.data_sources[self.model], self.run, width=800, height=500)
-#       view.set_stations("RaobSites.csv")
         view.clicked.connect(self.map_link)
 
         return view
@@ -444,7 +408,7 @@ class MainWindow(QWidget):
         """
         Get the user's map selection
         """
-        self.map = self.map_dropdown.currentText()
+        pass
 
     def select_all(self):
         items = self.profile_list.count()
