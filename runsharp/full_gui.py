@@ -149,7 +149,7 @@ class MainWindow(QWidget):
 
         ## create dropdown menus
         models = sorted(self.data_sources.keys())
-        self.model_dropdown = self.dropdown_menu(models) #['Observed', 'GFS', 'NAM', 'NAM4KM', 'RAP', 'HRRR', 'SREF'])
+        self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
         self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
         times = self.data_sources[self.model].getAvailableTimes()
