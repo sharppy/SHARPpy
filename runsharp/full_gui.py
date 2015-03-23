@@ -87,6 +87,7 @@ app = QApplication([])
 
 class MainWindow(QWidget):
     date_format = "%Y-%m-%d %HZ"
+    run_format = "%d %B %Y / %H%M UTC"
 
     def __init__(self, **kwargs):
         """
@@ -120,7 +121,7 @@ class MainWindow(QWidget):
         ## this is the duration of the period the available profiles have
         self.duration = 17
         ## this is the default model initialization time.
-        self.run = "00Z"
+        self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
         ## this is the default map to display
         self.map = None
         ## initialize the UI
@@ -147,8 +148,11 @@ class MainWindow(QWidget):
         self.select_flag = False
         self.all_profs = QPushButton("Select All")
         self.all_profs.clicked.connect(self.select_all)
+        self.all_profs.setDisabled(True)
 
-        self.profile_list = self.list_profiles()
+        self.profile_list = QListWidget()
+        self.profile_list.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.profile_list.setDisabled(True)
 
         ## create subwidgets that will hold the individual GUI items
         self.left_data_frame = QWidget()
@@ -160,9 +164,13 @@ class MainWindow(QWidget):
         self.right_map_frame.setLayout(self.right_layout)
 
         ## create dropdown menus
-        self.model_dropdown = self.dropdown_menu(['Observed', 'GFS', 'NAM', 'NAM4KM', 'RAP', 'HRRR', 'SREF'])
+        models = sorted(self.data_sources.keys())
+        self.model_dropdown = self.dropdown_menu(models) #['Observed', 'GFS', 'NAM', 'NAM4KM', 'RAP', 'HRRR', 'SREF'])
+        self.model_dropdown.setCurrentIndex(models.index(self.model))
         self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
-        self.run_dropdown = self.dropdown_menu(["None"])
+        times = self.data_sources[self.model].getAvailableTimes()
+        self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
+        self.run_dropdown.setCurrentIndex(times.index(self.run))
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -170,10 +178,11 @@ class MainWindow(QWidget):
         self.run_dropdown.activated.connect(self.get_run)
 
         ## Create text labels to describe the various menus
-        self.type_label = QLabel("Select Sounding Type")
-        self.date_label = QLabel("Select Sounding Date")
+        self.type_label = QLabel("Select Sounding Source")
+        self.date_label = QLabel("Select Forecast Time")
         self.map_label = QLabel("Select Map Area")
-        self.run_label = QLabel("Select Model Run")
+        self.run_label = QLabel("Select Cycle")
+        self.date_label.setDisabled(True)
 
         ## add the elements to the left side of the GUI
         self.left_layout.addWidget(self.type_label)
@@ -268,7 +277,6 @@ class MainWindow(QWidget):
         self.run = "00Z"
         ## this is the default map to display
         self.map = None
-        self.set_model_dt()
 
     def aboutbox(self):
 
@@ -288,9 +296,9 @@ class MainWindow(QWidget):
         view : QWebView object
         """
         # Create and fill a QWebView
-        view = MapWidget(self.data_sources, 'GFS', width=800, height=500)
+        view = MapWidget(self.data_sources[self.model], self.run, width=800, height=500)
 #       view.set_stations("RaobSites.csv")
-        #view.linkClicked.connect(self.map_link)
+        view.clicked.connect(self.map_link)
 
         return view
 
@@ -319,30 +327,6 @@ class MainWindow(QWidget):
 
         return dropdown
 
-
-    def list_profiles(self):
-        """
-        Add profile times to the list of profiles.
-        """
-        ## create a list widget
-        list = QListWidget()
-        list.setSelectionMode(QAbstractItemView.MultiSelection)
-        ## get the date nearest to 00Z or 12 Z
-        time = self.__date()
-
-        delta = date.timedelta(hours=self.delta)
-        if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
-            time -= delta
-        timelist = ['Latest', time.strftime(MainWindow.date_format)]
-        i = 0
-        while i < 17:
-            time = time - delta
-            timelist.append(time.strftime(MainWindow.date_format))
-            i += 1
-        for item in timelist:
-            list.addItem(item)
-        return list
-
     def update_list(self):
         """
         Update the list with new dates.
@@ -350,84 +334,30 @@ class MainWindow(QWidget):
         :param list:
         :return:
         """
+
+        if self.select_flag:
+            self.select_all()
         self.profile_list.clear()
         self.prof_idx = []
         timelist = []
 
-        if self.model == "Observed":
-            time = self.__date()
-            delta = date.timedelta(hours=self.delta)
-            if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
-                time -= delta
-
-            timelist = ['Latest', time.strftime(MainWindow.date_format)]
-            i = 0
-            while i < 17:
-                time = time - delta
-                timelist.append(time.strftime(MainWindow.date_format))
-                i += 1
-
+        fcst_hours = self.data_sources[self.model].getForecastHours()
+        if fcst_hours != [ 0 ]:
+            self.profile_list.setEnabled(True)
+            self.all_profs.setEnabled(True)
+            self.date_label.setEnabled(True)
+            for fh in fcst_hours:
+                fcst_str = (self.run + date.timedelta(hours=fh)).strftime(MainWindow.date_format) + "   (F%03d)" % fh
+                timelist.append(fcst_str)
         else:
-            delta = date.timedelta(hours=self.delta)
-            latest = self.latestAvailable()
-            run_idx = [ "%02dZ" % run.hour for run in latest ].index(self.run)
-            time = latest[run_idx]
-
-            timelist.append(time.strftime(MainWindow.date_format) + "   (F000)")
-            i = 0
-            while i < self.duration:
-                time = time + delta
-                timelist.append(time.strftime(MainWindow.date_format) + "   (F%03d)" % ((i + 1) * (delta.seconds / 3600)))
-                i += 1
+            self.profile_list.setDisabled(True)
+            self.all_profs.setDisabled(True)
+            self.date_label.setDisabled(True)
 
         for item in timelist:
             self.profile_list.addItem(item)
-
+ 
         self.profile_list.update()
-
-
-    def set_model_dt(self):
-        """
-        Set the model dt (model time step) based on the user's selection, in addition
-        to the duration of the forecast and the time offset in hours that determines
-        when new model data is available.
-        """
-        if self.model == "Observed":
-            self.delta = 12
-            self.duration = 17
-            self.delay = 1
-            self.offset = 0
-            self.available = 12
-        elif self.model == "RAP" or self.model == "HRRR":
-            self.delta = 1
-            self.duration = 15
-            self.delay = 1
-            self.offset = 0
-            self.available = 1
-        elif self.model == "NAM":
-            self.delta = 1
-            self.duration = 84
-            self.delay = 3
-            self.offset = 0
-            self.available = 6
-        elif self.model == "NAM4KM":
-            self.delta = 1
-            self.duration = 60
-            self.delay = 3
-            self.offset = 0
-            self.available = 6
-        elif self.model.startswith("GFS"):
-            self.delta = 3
-            self.duration = 60
-            self.delay = 4
-            self.offset = 0
-            self.available = 6
-        elif self.model == "SREF":
-            self.delta = 1
-            self.duration = 84
-            self.delay = 4
-            self.offset = 3
-            self.available = 6
 
     def update_run_dropdown(self):
         """
@@ -435,31 +365,39 @@ class MainWindow(QWidget):
         information.
         :return:
         """
+
         self.run_dropdown.clear()
-        run_idx = 0
+
+        times = self.data_sources[self.model].getAvailableTimes()
         if self.model == "Observed":
-            self.run_dropdown.addItem("None")
-
+            self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
         else:
+            self.run = times[-1]
 
-            latest = self.latestAvailable()
-            runs = sorted([ "%02dZ" % run.hour for run in latest ])
-            run_idx = runs.index("%02dZ" % latest[-1].hour)
-            self.run = runs[run_idx]
-
-            for run in runs:
-                self.run_dropdown.addItem(run)
+        for data_time in times:
+            self.run_dropdown.addItem(data_time.strftime(MainWindow.run_format))
 
         self.run_dropdown.update()
-        self.run_dropdown.setCurrentIndex(run_idx)
+        self.run_dropdown.setCurrentIndex(len(times) - 1)
 
-    def map_link(self, url):
+    def map_link(self, point):
         """
         Change the text of the button based on the user click.
         """
-        self.loc = url.toString().split('/')[-1]
-        self.button.setText(self.loc + ' | Generate Profiles')
+        if point is None:
+            self.loc = None
+            self.disp_name = None
+            self.button.setText('Generate Profiles')
+        else:
+            self.loc = point['srcid'] #url.toString().split('/')[-1]
+            if point['icao'] != "":
+                self.disp_name = point['icao']
+            elif point['iata'] != "":
+                self.disp_name = point['iata']
+            else:
+                self.disp_name = point['srcid'].upper()
 
+            self.button.setText(self.disp_name + ' | Generate Profiles')
 
     def complete_name(self):
         """
@@ -477,9 +415,13 @@ class MainWindow(QWidget):
                 else:
                     self.prof_idx.append(idx)
 
-            self.prof_time = selected[0].text()
-            if '   ' in self.prof_time:
-                self.prof_time = self.prof_time.split("   ")[0]
+            if len(self.prof_idx) > 0:
+                self.prof_time = selected[0].text()
+                if '   ' in self.prof_time:
+                    self.prof_time = self.prof_time.split("   ")[0]
+            else:
+                self.prof_time = self.run.strftime(MainWindow.date_format)
+
             self.prof_idx.sort()
             self.skewApp()
 
@@ -489,16 +431,17 @@ class MainWindow(QWidget):
         Get the user's model selection
         """
         self.model = self.model_dropdown.currentText()
-        self.view.setUrl(self.model.lower() + '.html')
-        self.set_model_dt()
+
         self.update_run_dropdown()
         self.update_list()
+        self.view.setDataSource(self.data_sources[self.model], self.run)
 
     def get_run(self):
         """
         Get the user's run hour selection for the model
         """
-        self.run = self.run_dropdown.currentText()
+        self.run = date.datetime.strptime(self.run_dropdown.currentText(), MainWindow.run_format)
+        self.view.setCurrentTime(self.run)
         self.update_list()
 
     def get_map(self):
@@ -506,22 +449,6 @@ class MainWindow(QWidget):
         Get the user's map selection
         """
         self.map = self.map_dropdown.currentText()
-
-    def get_time(self):
-        """
-        Get the user's profile date selection
-        """
-
-        self.prof_time = self.profile_list.currentItem().text()
-        if '   ' in self.prof_time:
-            self.prof_time = self.prof_time.split("   ")[0]
-
-        item = self.profile_list.currentIndex().row()
-        if item in self.prof_idx:
-            self.prof_idx.remove(item)
-        else:
-            self.prof_idx.append(item)
-        self.prof_idx.sort()
 
     def select_all(self):
         items = self.profile_list.count()
@@ -538,18 +465,6 @@ class MainWindow(QWidget):
                 self.profile_list.item(i).setSelected(False)
             self.all_profs.setText("Select All")
             self.select_flag = False
-
-    def latestAvailable(self, hours=24):
-        """
-        Return a list containing the datetimes of the most recent runs, ordered by actual time (yesterday's runs are first in the list).
-        """
-        now = date.datetime.utcnow()
-        runs = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + date.timedelta(hours=(self.offset + self.delay)) for hr in xrange(0, hours, self.available) ]
-        if all( now < run for run in runs ):
-            runs = [ run - date.timedelta(days=1) for run in runs ]
-        run_offsets = [ date.timedelta(days=0) if now >= run else date.timedelta(days=-1) for run in runs ]
-        runs = [ r + o - date.timedelta(hours=self.delay) for r, o, in zip(runs, run_offsets) ]
-        return sorted(runs)
 
     @Slot()
     def progress_bar(self):
@@ -602,7 +517,7 @@ class MainWindow(QWidget):
             self.progressDialog.setMaximum(len(self.prof_idx))
             self.progressDialog.setValue(0)
             self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
-            self.thread = DataThread(self, model=self.model, loc=self.loc, run=self.run, idx=self.prof_idx)
+            self.thread = DataThread(self, model=self.model, loc=self.loc, run="%02dZ" % self.run.hour, idx=self.prof_idx)
             self.thread.progress.connect(self.progress_bar)
             self.thread.start()
             self.progressDialog.open()
@@ -625,8 +540,8 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, d, plot_title, model=self.model, location=self.loc,
-                prof_time=self.prof_time, run=self.run, idx=self.prof_idx, fhour=fhours)
+            self.skew = SkewApp(profs, d, plot_title, model=self.model, location=self.disp_name,
+                prof_time=self.prof_time, run="%02dZ" % self.run.hour, idx=self.prof_idx, fhour=fhours)
             self.skew.show()
 
     def loadObserved(self):

@@ -16,7 +16,8 @@ def loadDataSources(ds_dir='../datasources'):
     return ds
 
 class Outlet(object):
-    def __init__(self, config):
+    def __init__(self, ds_name, config):
+        self._ds_name = ds_name
         self._name = config.get('name')
         self._url = config.get('url')
         self._format = config.get('format')
@@ -51,11 +52,77 @@ class Outlet(object):
     def getDelay(self):
         return int(self._time.get('delay'))
 
-    def getAvailableAtTime(self, dt):
-        return
+    def getMostRecentCycle(self):
+        if self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]:
+            times = available.available[self._name.lower()][self._ds_name.lower()]()
+            recent = max(times)
+        else:
+            now = datetime.utcnow()
+            cycles = self.getCycles()
+            delay = self.getDelay()
+            avail = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + timedelta(hours=delay) for hr in cycles ]
+            avail = [ run - timedelta(days=1) if run > now else run for run in avail ]
+            recent = max(avail) - timedelta(hours=delay)
+        return recent
 
-    def getAvailableTimes(self):
-        return 
+    def getArchivedCycles(self, **kwargs):
+        max_cycles = kwargs.get('max_cycles', 100)
+
+        start = kwargs.get('start', None)
+        if start is None:
+            start = self.getMostRecentCycle()
+
+        daily_cycles = self.getCycles()
+        time_counter = daily_cycles.index(start.hour)
+        archive_len = self.getArchiveLen() 
+
+        cycles = []
+        cur_time = start
+        while cur_time > start - timedelta(hours=archive_len):
+            cycles.append(cur_time)
+
+            if len(cycles) >= max_cycles:
+                break
+
+            time_counter = (time_counter - 1) % len(daily_cycles)
+            cycle = daily_cycles[time_counter]
+            cur_time = cur_time.replace(hour=cycle)
+            if cycle == daily_cycles[-1]:
+                cur_time -= timedelta(days=1)
+
+        return cycles
+
+    def getAvailableAtTime(self, **kwargs):
+        dt = kwargs.get('dt', None)
+        if dt is None:
+            dt = self.getMostRecentCycle()
+
+        if self._name.lower() in available.availableat and self._ds_name.lower() in available.availableat[self._name.lower()]:
+            avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)
+
+            stns_avail = []
+            points = self.getPoints()
+            srcids = [ p['srcid'] for p in points ]
+
+            for stn in avail:
+                try:
+                    idx = srcids.index(stn)
+                    stns_avail.append(points[idx])
+                except ValueError:
+                    pass
+        else:
+            stns_avail = self.getPoints()
+
+        return stns_avail
+
+    def getAvailableTimes(self, max_cycles=100):
+        if self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]:
+            times = available.available[self._name.lower()][self._ds_name.lower()]()
+            if len(times) == 1:
+                times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
+        else:
+            times = self.getArchivedCycles(max_cycles=max_cycles)
+        return times[-max_cycles:]
 
     def getArchiveLen(self):
         return int(self._time.get('archive'))
@@ -67,15 +134,19 @@ class Outlet(object):
         return
 
     def getPoints(self):
-        return [ ( p['lat'], p['lon'], p['icao'], p['name'], p['state'], p['country'] ) for p in self._points ]
+        points = self._points
+        return points
+
+    def getFields(self):
+        return self._csv_fields
 
     def _loadCSV(self, csv_file_name):
         csv = []
         csv_file = open(csv_file_name, 'r')
-        fields = [ f.lower() for f in csv_file.readline().strip().split(',') ]
+        self._csv_fields = [ f.lower() for f in csv_file.readline().strip().split(',') ]
 
         for line in csv_file:
-            line_dict = dict( (f, v) for f, v in zip(fields, line.split(',')))
+            line_dict = dict( (f, v) for f, v in zip(self._csv_fields, line.strip().split(',')))
             csv.append(line_dict)
 
         csv_file.close()
@@ -85,15 +156,15 @@ class DataSource(object):
     def __init__(self, config):
         self._name = config.get('name')
         self._ensemble = config.get('ensemble')
-        self._outlets = dict( (c.get('name'), Outlet(c)) for c in config )
+        self._outlets = dict( (c.get('name'), Outlet(self._name, c)) for c in config )
 
-    def _get(self, name, outlet, flatten=True):
+    def _get(self, name, outlet, flatten=True, **kwargs):
         prop = None
         if outlet is None:
             prop = []
             for o in self._outlets.itervalues():
                 func = getattr(o, name)
-                prop.append(func())
+                prop.append(func(**kwargs))
 
             if flatten:
                 prop = [ p for plist in prop for p in plist ]
@@ -121,46 +192,34 @@ class DataSource(object):
         return lens
 
     def getMostRecentCycle(self, outlet=None):
-        daily = self.getDailyCycles(outlet=outlet, flatten=False)
-        delay = self.getDelays(outlet=outlet)
-        now = datetime.utcnow()
-        cycles = []
-        for out_cyc, out_delay in zip(daily, delay):
-            avail = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + timedelta(hours=out_delay) for hr in out_cyc ]
-            avail = [ run - timedelta(days=1) if run > now else run for run in avail ]
-            cycles.append(max(avail) - timedelta(hours=out_delay))
+        cycles = self._get('getMostRecentCycle', outlet, flatten=False)
         return max(cycles)
 
-    def getArchivedCycles(self, outlet=None, max_cycles=100):
-        start = self.getMostRecentCycle(outlet=outlet)
-        daily_cycles = self.getDailyCycles(outlet=outlet)
-        time_counter = daily_cycles.index(start.hour)
-        archive_len = max(self.getArchiveLens(outlet=outlet))
+    def getAvailableTimes(self, outlet=None, max_cycles=100):
+        cycles = self._get('getAvailableTimes', outlet, max_cycles=max_cycles)
+        return cycles[-max_cycles:]
 
-        cycles = []
-        cur_time = start
-        while cur_time >= start - timedelta(hours=archive_len):
-            cycles.append(cur_time)
+    def getAvailableAtTime(self, dt, outlet=None):
+        points = self._get('getAvailableAtTime', outlet, flatten=False, dt=dt)
 
-            if len(cycles) >= max_cycles:
-                break
-
-            time_counter = (time_counter - 1) % len(daily_cycles)
-            cycle = daily_cycles[time_counter]
-            cur_time.replace(hour=cycle)
-            if cycle == daily_cycles[-1]:
-                cur_time -= timedelta(days=1)
-        return cycles
+        flatten_pts = []
+        flatten_coords = []
+        for pt_list in points:
+            for pt in pt_list:
+                if (pt['lat'], pt['lon']) not in flatten_coords:
+                    flatten_coords.append((pt['lat'], pt['lon']))
+                    flatten_pts.append(pt)
+        return flatten_pts
 
     def getURL(self, outlet=None):
         return
 
-    def getPoints(self, outlet=None):
-        points = self._get('getPoints', outlet, flatten=True)
-        return points
-
 if __name__ == "__main__":
     ds = loadDataSources()
+    ds = dict( (n, ds[n]) for n in ['Observed', 'GFS'] )
 
     for n, d in ds.iteritems():
-        print n, d.getArchivedCycles()
+#       print n, d.getMostRecentCycle()
+        times = d.getAvailableTimes()
+        for t in times:
+            print n, t, [ s['srcid'] for s in d.getAvailableAtTime(t) ]

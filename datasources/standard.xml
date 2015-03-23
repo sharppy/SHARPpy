@@ -7,11 +7,11 @@
         </outlet>
     </datasource>
     <datasource name="NAM" ensemble="false">
-        <outlet name="PSU (On-Hour)" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/nam_%{icao}.buf" format="bufkit" >
+        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/nam_%{icao}.buf" format="bufkit" >
             <time range="84" delta="1" offset="0" delay="3" cycle="12" archive="24"/>
             <points csv="namm.csv" />
         </outlet>
-        <outlet name="PSU (Off-Hour)" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/namm_%{icao}.buf" format="bufkit" >
+        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/namm_%{icao}.buf" format="bufkit" >
             <time range="84" delta="1" offset="6" delay="3" cycle="12" archive="24"/>
             <points csv="namm.csv" />
         </outlet>
@@ -43,7 +43,7 @@
     <datasource name="Observed" ensemble="false">
         <outlet name="SPC" url="http://www.spc.noaa.gov/exper/soundings/%{date}%{cycle}_OBS/%{iata}.txt" format="spc" >
             <time range="0" delta="0" offset="0" delay="1" cycle="12" archive="168"/>
-            <points csv="ua_stations.csv" />
+            <points csv="spc_ua.csv" />
         </outlet>
     </datasource>
 </sourcelist>

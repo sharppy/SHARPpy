@@ -161,7 +161,9 @@ class Mapper(object):
         return bndy
 
 class MapWidget(QtGui.QWidget):
-    def __init__(self, data_sources, init_source, **kwargs):
+    clicked = QtCore.Signal(dict)
+
+    def __init__(self, data_source, init_time, **kwargs):
         super(MapWidget, self).__init__(**kwargs)
         self.initializing = True
         self.scale = 0.60
@@ -174,30 +176,8 @@ class MapWidget(QtGui.QWidget):
 
         self.mapper = Mapper(-97.5, 60.)
 
-        self.data_sources = data_sources
-        self.cur_source = init_source
-        stn_lats, stn_lons, stn_ids, stn_names, stn_states, stn_countries = zip(*data_sources[init_source].getPoints())
-        self.stn_lats = np.array(stn_lats)
-        self.stn_lons = np.array(stn_lons)
-        self.stn_ids = stn_ids
-        self.stn_names = []
-        for nm, st, id, ct in zip(stn_names, stn_states, stn_ids, stn_countries):
-            if id != "":
-                id_str = " (%s)" % id
-            else:
-                id_str = ""
-            if st != "":
-                pol_str = ", %s" % st
-            elif ct != "":
-                pol_str = ", %s" % ct
-            else:
-                pol_str = ""
+        self.setDataSource(data_source, init_time, init=True)
 
-            if id_str == "" and pol_str == "":
-                nm = nm.upper()
-            name = "%s%s%s" % (nm, pol_str, id_str)
-            self.stn_names.append(name)
-        
         self.clicked_stn = None
         self.stn_readout = QtGui.QLabel(parent=self)
         self.stn_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 16px; color: #FFFFFF; }")
@@ -246,6 +226,42 @@ class MapWidget(QtGui.QWidget):
             y_min, y_max = ry.min(), ry.max()
             path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
         self._grid_path = path
+
+    def setDataSource(self, data_source, data_time, init=False):
+        self.cur_source = data_source
+        self.setCurrentTime(data_time, init=True)
+
+    def setCurrentTime(self, data_time, init=False):
+        self.current_time = data_time
+        self.clicked_stn = None
+        self.clicked.emit(None)
+
+        self.points = self.cur_source.getAvailableAtTime(self.current_time)
+        self.stn_lats = np.array([ p['lat'] for p in self.points ])
+        self.stn_lons = np.array([ p['lon'] for p in self.points ])
+        self.stn_ids = [ p['srcid'] for p in self.points ]
+        self.stn_names = []
+        for p in self.points:
+            if p['icao'] != "":
+                id_str = " (%s)" % p['icao']
+            else:
+                id_str = ""
+            if p['state'] != "":
+                pol_str = ", %s" % p['state']
+            elif p['country'] != "":
+                pol_str = ", %s" % p['country']
+            else:
+                pol_str = ""
+
+            nm = p['name']
+            if id_str == "" and pol_str == "":
+                nm = nm.upper()
+            name = "%s%s%s" % (nm, pol_str, id_str)
+            self.stn_names.append(name)
+
+        if not init:
+            self.drawMap()
+            self.update()
 
     def drawMap(self):
         qp = QtGui.QPainter()
@@ -355,9 +371,11 @@ class MapWidget(QtGui.QWidget):
             stn_idx = np.argmin(dists)
             if dists[stn_idx] <= 5:
                 self.clicked_stn = self.stn_ids[stn_idx]
+                self.clicked.emit(self.points[stn_idx])
 
-            self.drawMap()
-            self.update()
+                self.drawMap()
+                self.update()
+
         self.dragging = False
 
     def wheelEvent(self, e):
