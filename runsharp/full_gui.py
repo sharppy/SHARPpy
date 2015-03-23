@@ -9,6 +9,7 @@ else:
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.buf_decoder import BufkitFile
+from sharppy.io.spc_decoder import SNDFile
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -27,21 +28,14 @@ class DataThread(QThread):
         self.loc = kwargs.get("loc")
         self.prof_idx = kwargs.get("idx")
         self.profs = []
-        self.d = None
+        self.dates = None
         self.exc = ""
 
     def returnData(self):
         if self.exc == "":
-            return self.profs, self.d
+            return self.profs, self.dates
         else:
             return self.exc
-
-    def make_profile(self, i):
-        d = self.d
-        prof = profile.create_profile(profile='convective', hght = d.hght[0][i],
-                tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i],
-                wspd=d.wspd[0][i], wdir=d.wdir[0][i])
-        return prof
 
     def __modelProf(self):
         if self.model == "GFS":
@@ -53,7 +47,7 @@ class DataThread(QThread):
         else:
             d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
                 + self.model.lower() + '_' + self.loc.lower() + '.buf')
-        self.d = d
+        self.dates = d.dates
 
         if self.model == "SREF":
             for i in self.prof_idx:
@@ -358,6 +352,8 @@ class MainWindow(QWidget):
             self.profile_list.addItem(item)
  
         self.profile_list.update()
+        self.all_profs.setText("Select All")
+        self.select_flag = False
 
     def update_run_dropdown(self):
         """
@@ -483,6 +479,7 @@ class MainWindow(QWidget):
         fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
         profs = []
+        dates = []
         failure = False
 
         exc = ""
@@ -492,9 +489,10 @@ class MainWindow(QWidget):
         ## from the SPC website
         if self.model == "Observed":
             try:
-                prof, plot_title = self.loadObserved()
+                prof, date = self.loadObserved()
                 profs.append(prof)
-                d = None
+                dates.append(date)
+                self.prof_idx = [ 0 ]
             except Exception as e:
                 exc = str(e)
                 failure = True
@@ -503,9 +501,10 @@ class MainWindow(QWidget):
         ## the hard disk
         elif self.model == "Archive":
             try:
-                prof, plot_title = self.loadArchive()
+                prof, date = self.loadArchive()
                 profs.append(prof)
-                d = None
+                dates.append(date)
+                self.prof_idx = [ 0 ]
             except Exception as e:
                 exc = str(e)
                 failure = True
@@ -524,9 +523,8 @@ class MainWindow(QWidget):
             while not self.thread.isFinished():
                 QCoreApplication.processEvents()
             ## return the data from the thread
-            plot_title = ""
             try:
-                profs, d = self.thread.returnData()
+                profs, dates = self.thread.returnData()
             except ValueError:
                 exc = self.thread.returnData()
                 self.progressDialog.close()
@@ -540,7 +538,7 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, d, plot_title, model=self.model, location=self.disp_name,
+            self.skew = SkewApp(profs, dates, self.model, location=self.disp_name,
                 prof_time=self.prof_time, run="%02dZ" % self.run.hour, idx=self.prof_idx, fhour=fhours)
             self.skew.show()
 
@@ -556,64 +554,34 @@ class MainWindow(QWidget):
             timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
             timestr += "_OBS"
         ## construct the URL
-        url = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc.upper() + '.txt')
-        ## read in the file
-        data = np.array(url.read().split('\n'))
-        ## necessary index points
-        title_idx = np.where( data == '%TITLE%')[0][0]
-        start_idx = np.where( data == '%RAW%' )[0] + 1
-        finish_idx = np.where( data == '%END%')[0]
+        url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc.upper() + '.txt'
+        snd_file = SNDFile(url)
 
-        ## create the plot title
-        plot_title = data[title_idx + 1] + ' (Observed)'
-
-        ## put it all together for StringIO
-        full_data = '\n'.join(data[start_idx : finish_idx][:])
-        sound_data = StringIO( full_data )
-
-        ## read the data into arrays
-        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+        kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
 
         ## construct the Profile object
-        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
-                                wdir=wdir, wspd=wspd, location=self.loc)
-        return prof, plot_title
+        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
+        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
     def loadArchive(self):
         """
         Get the archive sounding based on the user's selections.
         """
-        ## construct the URL
-        arch_file = open(self.link, 'r')
 
-        ## read in the file
-        data = np.array(arch_file.read().split('\n'))
-        ## take care of possible whitespace issues
-        for i in range(len(data)):
-            data[i] = data[i].strip()
-        arch_file.close()
+        vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
+        snd_file = SNDFile(self.link)
+        self.loc = snd_file.location
+        time = snd_file.time
 
-        ## necessary index points
-        title_idx = np.where( data == '%TITLE%')[0][0]
-        start_idx = np.where( data == '%RAW%' )[0] + 1
-        finish_idx = np.where( data == '%END%')[0]
+        kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
 
-        ## create the plot title
-        plot_title = data[title_idx + 1].upper() + ' (User Selected)'
+#       ## construct the Profile object
+        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
 
-        ## put it all together for StringIO
-        full_data = '\n'.join(data[start_idx : finish_idx][:])
-        sound_data = StringIO( full_data )
-
-        ## read the data into arrays
-        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-
-        ## construct the Profile object
-        prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
-                                wdir=wdir, wspd=wspd, location=self.loc)
-        return prof, plot_title
+        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
 if __name__ == '__main__':
     win = MainWindow()
     win.show()
+    win.setFocus()
     sys.exit(app.exec_())

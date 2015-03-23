@@ -7,3 +7,6 @@ To make sure you have IPython installed, open up a Python terminal and type in
 To open up these tutorials, navigate to this directory and type in:
 "ipython notebook" in your command line.
 
+Click on the link below to see the notebook's contents:
+
+http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
