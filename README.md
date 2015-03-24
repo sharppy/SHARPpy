@@ -4,7 +4,10 @@
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
-Many people have put an immeasurable amount of time into developing this software package. 
+=======================================================================
+#####Developer Requests:
+
+1.) Many people have put an immeasurable amount of time into developing this software package. 
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
@@ -18,8 +21,12 @@ http://sharppy.github.io/SHARPpy/index.html
 
 https://github.com/sharppy/SHARPpy
 
-Also, please send an email letting us know where SHARPpy is being used or 
+2.) Also, please send an email letting us know where SHARPpy is being used or 
 has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
+
+3.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
+
+https://github.com/sharppy/SHARPpy/issues
 
 =======================================================================
 ### Installing SHARPpy
