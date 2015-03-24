@@ -9,11 +9,11 @@
     <datasource name="NAM" ensemble="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/nam_%{icao}.buf" format="bufkit" >
             <time range="84" delta="1" offset="0" delay="3" cycle="12" archive="24"/>
-            <points csv="namm.csv" />
+            <points csv="nam.csv" />
         </outlet>
-        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/namm_%{icao}.buf" format="bufkit" >
+        <outlet name="PSU_OFF" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/%{cycle}/namm_%{icao}.buf" format="bufkit" >
             <time range="84" delta="1" offset="6" delay="3" cycle="12" archive="24"/>
-            <points csv="namm.csv" />
+            <points csv="nam.csv" />
         </outlet>
     </datasource>
     <datasource name="RAP" ensemble="false">
@@ -31,7 +31,7 @@
     <datasource name="4km NAM" ensemble="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM4km/%{cycle}/nam4km_%{icao}.buf" format="bufkit" >
             <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
-            <points csv="namm.csv" />
+            <points csv="nam4km.csv" />
         </outlet>
     </datasource>
     <datasource name="SREF" ensemble="true">
