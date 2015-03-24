@@ -165,7 +165,6 @@ class MapWidget(QtGui.QWidget):
 
     def __init__(self, data_source, init_time, **kwargs):
         super(MapWidget, self).__init__(**kwargs)
-        self.initializing = True
         self.scale = 0.60
         self.trans_x, self.trans_y = 0., 0.
         self.center_x, self.center_y = 0., 0.
@@ -195,8 +194,6 @@ class MapWidget(QtGui.QWidget):
 
         self.initMap()
         self.initUI()
-        self.show()
-        self.initializing = False
 
     def initUI(self):
         self.center_x, self.center_y = self.width() / 2, self.height() / 2
@@ -335,14 +332,16 @@ class MapWidget(QtGui.QWidget):
         qp.end()
 
     def resizeEvent(self, e):
-        if not self.initializing:
-            old_size = e.oldSize()
-            new_size = e.size()
+        old_size = e.oldSize()
+        new_size = e.size()
 
-            self.map_center_x += (new_size.width() - old_size.width()) / 2.
-            self.map_center_y += (new_size.height() - old_size.height()) / 2.
+        if old_size.width() == -1 and old_size.height() == -1:
+            old_size = self.size()
 
-            self.initUI()
+        self.map_center_x += (new_size.width() - old_size.width()) / 2.
+        self.map_center_y += (new_size.height() - old_size.height()) / 2.
+
+        self.initUI()
 
     def mousePressEvent(self, e):
         self.init_drag_x, self.init_drag_y = e.x(), e.y()

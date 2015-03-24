@@ -238,6 +238,9 @@ class DataSource(object):
         url = url_base.format(**fmt)
         return url
 
+    def getName(self):
+        return self._name
+
     def isEnsemble(self):
         return self._ensemble
 
