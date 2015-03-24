@@ -2,6 +2,7 @@
 import xml.etree.ElementTree as ET
 import glob
 from datetime import datetime, timedelta
+import urllib
 
 import available
 
@@ -130,8 +131,14 @@ class Outlet(object):
     def getURL(self):
         return self._url
 
-    def hasCycle(self, point, cycle):
-        return
+    def hasProfile(self, point, cycle):
+        times = self.getAvailableTimes()
+        has_prof = cycle in times 
+
+        if has_prof:
+            stns = self.getAvailableAtTime(dt=cycle)
+            has_prof = point in stns
+        return has_prof
 
     def getPoints(self):
         points = self._points
@@ -155,7 +162,7 @@ class Outlet(object):
 class DataSource(object):
     def __init__(self, config):
         self._name = config.get('name')
-        self._ensemble = config.get('ensemble')
+        self._ensemble = config.get('ensemble').lower() == "true"
         self._outlets = dict( (c.get('name'), Outlet(self._name, c)) for c in config )
 
     def _get(self, name, outlet, flatten=True, **kwargs):
@@ -211,8 +218,28 @@ class DataSource(object):
                     flatten_pts.append(pt)
         return flatten_pts
 
-    def getURL(self, outlet=None):
-        return
+    def getURL(self, stn, cycle_dt, outlet=None):
+        if outlet is None:
+            use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
+            try:
+                outlet = use_outlets[0]
+            except IndexError:
+                print "Uh-oh. Tim's screwed something up."
+                return ""
+
+        url_base = self._outlets[outlet].getURL()
+
+        fmt = { 
+            'srcid':urllib.quote(stn['srcid']),
+            'cycle':"%02d" % cycle_dt.hour,
+            'date':cycle_dt.strftime("%y%m%d")
+        }
+
+        url = url_base.format(**fmt)
+        return url
+
+    def isEnsemble(self):
+        return self._ensemble
 
 if __name__ == "__main__":
     ds = loadDataSources()

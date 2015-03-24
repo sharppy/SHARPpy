@@ -23,7 +23,8 @@ class DataThread(QThread):
     progress = Signal()
     def __init__(self, parent, **kwargs):
         super(DataThread, self).__init__(parent)
-        self.model = kwargs.get("model")
+#       self.model = kwargs.get("model")
+        self.data_source = kwargs.get("source")
         self.runtime = kwargs.get("run")
         self.loc = kwargs.get("loc")
         self.prof_idx = kwargs.get("idx")
@@ -38,18 +39,20 @@ class DataThread(QThread):
             return self.exc
 
     def __modelProf(self):
-        if self.model == "GFS":
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
-        elif self.model.startswith("NAM") and (self.runtime.startswith("06") or self.runtime.startswith("18")):
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + 'm_' + self.loc.lower() + '.buf')
-        else:
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + '_' + self.loc.lower() + '.buf')
+        url = self.data_source.getURL(self.loc, self.runtime)
+        d = BufkitFile(url)
+#       if self.model == "GFS":
+#           d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+#               + self.model.lower() + '3_' + self.loc.lower() + '.buf')
+#       elif self.model.startswith("NAM") and (self.runtime.startswith("06") or self.runtime.startswith("18")):
+#           d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+#               + self.model.lower() + 'm_' + self.loc.lower() + '.buf')
+#       else:
+#           d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
+#               + self.model.lower() + '_' + self.loc.lower() + '.buf')
         self.dates = d.dates
 
-        if self.model == "SREF":
+        if self.data_source.isEnsemble():
             for i in self.prof_idx:
                 profs = []
                 for j in range(len(d.wdir)):
@@ -98,7 +101,7 @@ class MainWindow(QWidget):
         ## All of these variables get set/reset by the various menus in the GUI
 
         ## default the sounding location to OUN because obviously I'm biased
-        self.loc = "OUN"
+        self.loc = None
         ## set the default profile to display
         self.prof_time = "Latest"
         ## the index of the item in the list that corresponds
@@ -226,7 +229,7 @@ class MainWindow(QWidget):
         self.skewApp()
 
         ## default the sounding location to OUN because obviously I'm biased
-        self.loc = "OUN"
+        self.loc = None
         ## set the default profile to display
         self.prof_time = "Latest"
         ## the index of the item in the list that corresponds
@@ -349,7 +352,7 @@ class MainWindow(QWidget):
             self.disp_name = None
             self.button.setText('Generate Profiles')
         else:
-            self.loc = point['srcid'] #url.toString().split('/')[-1]
+            self.loc = point #url.toString().split('/')[-1]
             if point['icao'] != "":
                 self.disp_name = point['icao']
             elif point['iata'] != "":
@@ -448,22 +451,9 @@ class MainWindow(QWidget):
 
         exc = ""
 
-        ## determine what type of data is to be loaded
-        ## if the profile is an observed sounding, load
-        ## from the SPC website
-        if self.model == "Observed":
-            try:
-                prof, date = self.loadObserved()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
-            except Exception as e:
-                exc = str(e)
-                failure = True
-
         ## if the profile is an archived file, load the file from
         ## the hard disk
-        elif self.model == "Archive":
+        if self.model == "Archive":
             try:
                 prof, date = self.loadArchive()
                 profs.append(prof)
@@ -473,26 +463,40 @@ class MainWindow(QWidget):
                 exc = str(e)
                 failure = True
 
-        ## if the profile is a model profile, load it from the model
-        ## download thread
         else:
-            self.progressDialog.setMinimum(0)
-            self.progressDialog.setMaximum(len(self.prof_idx))
-            self.progressDialog.setValue(0)
-            self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
-            self.thread = DataThread(self, model=self.model, loc=self.loc, run="%02dZ" % self.run.hour, idx=self.prof_idx)
-            self.thread.progress.connect(self.progress_bar)
-            self.thread.start()
-            self.progressDialog.open()
-            while not self.thread.isFinished():
-                QCoreApplication.processEvents()
-            ## return the data from the thread
-            try:
-                profs, dates = self.thread.returnData()
-            except ValueError:
-                exc = self.thread.returnData()
-                self.progressDialog.close()
-                failure = True
+            ## determine what type of data is to be loaded
+            ## if the profile is an observed sounding, load
+            ## from the SPC website
+            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
+                try:
+                    prof, date = self.loadObserved()
+                    profs.append(prof)
+                    dates.append(date)
+                    self.prof_idx = [ 0 ]
+                except Exception as e:
+                    exc = str(e)
+                    failure = True
+
+            ## if the profile is a model profile, load it from the model
+            ## download thread
+            else:
+                self.progressDialog.setMinimum(0)
+                self.progressDialog.setMaximum(len(self.prof_idx))
+                self.progressDialog.setValue(0)
+                self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
+                self.thread = DataThread(self, source=self.data_sources[self.model], loc=self.loc, run=self.run, idx=self.prof_idx)
+                self.thread.progress.connect(self.progress_bar)
+                self.thread.start()
+                self.progressDialog.open()
+                while not self.thread.isFinished():
+                    QCoreApplication.processEvents()
+                ## return the data from the thread
+                try:
+                    profs, dates = self.thread.returnData()
+                except ValueError:
+                    exc = self.thread.returnData()
+                    self.progressDialog.close()
+                    failure = True
 
         if failure:
             msgbox = QMessageBox()
@@ -518,13 +522,15 @@ class MainWindow(QWidget):
             timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
             timestr += "_OBS"
         ## construct the URL
-        url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc.upper() + '.txt'
+
+#       url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc['srcid'].upper() + '.txt'
+        url = self.data_sources[self.model].getURL(self.loc, self.run)
         snd_file = SNDFile(url)
 
         kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
 
         ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
+        prof = profile.create_profile( profile='convective', location=self.disp_name, **kwargs)
         return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
     def loadArchive(self):
@@ -534,13 +540,13 @@ class MainWindow(QWidget):
 
         vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
         snd_file = SNDFile(self.link)
-        self.loc = snd_file.location
+        loc = snd_file.location
         time = snd_file.time
 
         kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
 
 #       ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
+        prof = profile.create_profile( profile='convective', location=loc, **kwargs)
 
         return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
