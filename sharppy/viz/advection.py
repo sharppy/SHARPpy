@@ -161,7 +161,7 @@ class plotAdvection(backgroundAdvection):
             label_width = 5
             box_height = 8
             if tab.utils.QC(self.inf_temp_adv[i]) and not np.isnan(self.inf_temp_adv[i]):
-                if self.inf_temp_adv[i] >= 0:
+                if self.inf_temp_adv[i] > 0:
                     pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(8) - label_width
@@ -170,6 +170,11 @@ class plotAdvection(backgroundAdvection):
                     pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(-8)
+                else:
+                    color = QtGui.QColor('#FFFFFF')
+                    qp.setPen(pen)
+                    label_loc = self.adv_to_pix(8) - label_width
+
                 rect = QtCore.QRect(label_loc, (pix_ptop + pix_pbot)/2, label_width, box_height)
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, str(round(inf_temp_adv,1)))
                 qp.drawLine(pix_adv, pix_ptop, self.adv_to_pix(inf_temp_adv), pix_pbot)
