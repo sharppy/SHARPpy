@@ -584,14 +584,14 @@ class MainWindow(QWidget):
         ## if the profile is an archived file, load the file from
         ## the hard disk
         elif self.model == "Archive":
-            try:
-                prof, date = self.loadArchive()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
-            except Exception as e:
-                exc = str(e)
-                failure = True
+#           try:
+            prof, date = self.loadArchive()
+            profs.append(prof)
+            dates.append(date)
+            self.prof_idx = [ 0 ]
+#           except Exception as e:
+#               exc = str(e)
+#               failure = True
 
         ## if the profile is a model profile, load it from the model
         ## download thread
