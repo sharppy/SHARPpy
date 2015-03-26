@@ -171,10 +171,10 @@ class plotAdvection(backgroundAdvection):
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(-8)
                 else:
-                    color = QtGui.QColor('#FFFFFF')
+                    color = QtGui.QColor("#FFFFFF")
+                    pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(8) - label_width
-
                 rect = QtCore.QRect(label_loc, (pix_ptop + pix_pbot)/2, label_width, box_height)
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, str(round(inf_temp_adv,1)))
                 qp.drawLine(pix_adv, pix_ptop, self.adv_to_pix(inf_temp_adv), pix_pbot)
