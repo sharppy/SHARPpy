@@ -40,17 +40,19 @@ def _availableat_psu(model, dt):
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
     return stns
 
-def _available_psu(model, off=False):
+def _available_psu(model, nam=False, off=False):
     psu_text = _download_psu()
     latest = re.search("%s\.([\d]{12})\.done" % model, psu_text).groups(0)[0]
     dt = datetime.strptime(latest, "%Y%m%d%H%M")
-    if off and dt.hour in [ 0, 12 ]:
+    if nam and off and dt.hour in [ 0, 12 ]:
+        dt -= timedelta(hours=6)
+    if nam and not off and dt.hour in [ 6, 18 ]:
         dt -= timedelta(hours=6)
     return [ dt ]
 
 available = {
     'psu':{}, 
-    'psu_off':{'nam':lambda: _available_psu('nam', off=True)},
+    'psu_off':{'nam':lambda: _available_psu('nam', nam=True, off=True)},
     'spc':{'observed':_available_spc},
 }
 
@@ -61,7 +63,7 @@ availableat = {
 }
 
 for model in [ 'gfs', 'nam', 'rap', 'hrrr', 'nam4km', 'sref' ]:
-    available['psu'][model] = (lambda m: lambda: _available_psu(m, off=False))(model)
+    available['psu'][model] = (lambda m: lambda: _available_psu(m, nam=(model == 'nam'), off=False))(model)
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from PySide.QtWebKit import *
 import datetime as date
 from StringIO import StringIO
 import urllib
+import traceback
 
 class DataThread(QThread):
     progress = Signal()
@@ -68,6 +69,7 @@ class DataThread(QThread):
         try:
             self.__modelProf()
         except Exception as e:
+            print traceback.format_exc()
             self.exc = str(e)
 
 # Create an application
@@ -433,7 +435,7 @@ class MainWindow(QWidget):
         :return:
         """
 
-        items = [ item.text() for item in self.profile_list.selectedItems() ]
+        items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
         fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
         profs = []
