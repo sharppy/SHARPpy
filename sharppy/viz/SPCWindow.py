@@ -277,7 +277,7 @@ class SkewApp(QWidget):
 
         if panel == 'skew':
             self.modified_skew[self.current_idx] = modified
-        if panel == 'hodo':
+        elif panel == 'hodo':
             self.modified_hodo[self.current_idx] = modified
 
         modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
@@ -403,7 +403,7 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', False)
             return
 
         if key == Qt.Key_Left:
@@ -412,7 +412,7 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', False)
             return
 
         if e.matches(QKeySequence.Save):
