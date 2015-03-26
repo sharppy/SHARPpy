@@ -131,10 +131,10 @@ class BufkitFile(object):
         # gets opened.
         try:
             f = urllib2.urlopen(self.filename)
-        except:
+        except IOError:
             try:
                 f = open(self.filename, 'r')
-            except:
+            except IOError:
                 raise IOError("File '%s' cannot be found" % self.filename)
                 #print self.filename + " unable to be opened."
         file_data = f.read()

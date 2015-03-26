@@ -43,7 +43,7 @@ class SkewApp(QWidget):
 
     cfg_file_name = 'sharppy.ini'
 
-    def __init__(self, profs, d, plot_title, **kwargs):
+    def __init__(self, profs, dates, model, **kwargs):
 
         super(SkewApp, self).__init__()
         """
@@ -51,9 +51,8 @@ class SkewApp(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.profs = profs
-        self.d = d
-        self.plot_title = plot_title
-        self.model = kwargs.get("model")
+        self.dates = dates
+        self.model = model
         self.prof_time = kwargs.get("prof_time", None)
         self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
@@ -61,11 +60,14 @@ class SkewApp(QWidget):
         self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
 
+        self.plot_title = ""
+
         ## these are used to display profiles
         self.current_idx = 0
         self.prof = profs[self.current_idx]
         self.original_profs = self.profs[:]
-        self.modified = [ False for p in self.original_profs ]
+        self.modified_skew = [ False for p in self.original_profs ]
+        self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
         self.config = ConfigParser.RawConfigParser()
@@ -216,9 +218,13 @@ class SkewApp(QWidget):
         """
 
         ## set the plot title that will be displayed in the Skew frame.
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
+        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            self.plot_title += "  (User Selected)"
+        elif self.model == "Observed":
+            self.plot_title += "  (Observed)"
+        else:
+            self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -266,25 +272,24 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, modified):
+    @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
+    def updateProfs(self, prof, panel, modified):
 
-        self.modified[self.current_idx] = modified
-        #self.sound.setProf(self.profs[self.current_idx])
-        if modified is True:
-            modified_str = "; Modified" if self.modified[self.current_idx] else ""
-        else:
-            modified_str = ""
+        if panel == 'skew':
+            self.modified_skew[self.current_idx] = modified
+        if panel == 'hodo':
+            self.modified_hodo[self.current_idx] = modified
 
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
+        modified_str = "; Modified" if modified else ""
+
+        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            self.plot_title += "  (User Selected" + modified_str + ")"
         elif self.model == "Observed":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (Observed" + modified_str + ")"
-        elif self.model == "Archive":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (User Selected" + modified_str + ")"
+            self.plot_title += "  (Observed" + modified_str + ")"
+        else:
+             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
 
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
@@ -318,10 +323,18 @@ class SkewApp(QWidget):
         for inset in self.insets.keys():
             self.insets[inset].setProf(self.prof)
 
-    @Slot()
-    def resetProf(self):
-        self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
+    @Slot(str)
+    def resetProf(self, panel):
+        kwargs = dict( (k, getattr(self.profs[self.current_idx], k)) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'u', 'v', 'omeg', 'profile', 'location' ] )
+
+        if panel == 'hodo':
+            kwargs.update({'u':self.original_profs[self.current_idx].u, 'v':self.original_profs[self.current_idx].v})
+        elif panel == 'skew':
+            kwargs.update({'tmpc':self.original_profs[self.current_idx].tmpc, 'dwpc':self.original_profs[self.current_idx].dwpc})
+
+        self.profs[self.current_idx] = profile.create_profile(**kwargs)
+
+        self.updateProfs(self.profs[self.current_idx], panel, modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
         self.setFocus()
 
     @Slot(tab.params.Parcel)
@@ -330,7 +343,7 @@ class SkewApp(QWidget):
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
         if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.d.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
+            self.plot_title = self.loc + ' ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
                 + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
         elif self.model == "Observed":
             date_str = self.plot_title.split(' (')[0]
@@ -390,7 +403,7 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
             return
 
         if key == Qt.Key_Left:
@@ -399,7 +412,7 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
             return
 
         if e.matches(QKeySequence.Save):

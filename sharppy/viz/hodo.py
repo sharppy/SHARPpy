@@ -118,8 +118,8 @@ class backgroundHodo(QtGui.QFrame):
 
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
-        self.plotData()
         self.backgroundBitMap = self.plotBitMap.copy()
+        self.plotData()
 
         ## update
         self.update()
@@ -292,8 +292,8 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile, bool, tab.params.Parcel)
-    reset = Signal()
+    updated = Signal(Profile, str, bool, tab.params.Parcel)
+    reset = Signal(str)
 
     def __init__(self, hght, u, v, **kwargs):
         '''
@@ -428,7 +428,7 @@ class plotHodo(backgroundHodo):
         
         reset = QAction(self)
         reset.setText("Reset Hodograph")
-        reset.triggered.connect(lambda: self.reset.emit())
+        reset.triggered.connect(lambda: self.reset.emit('hodo'))
         self.popupmenu.addAction(reset)
 
     def setProf(self, hght, u, v, **kwargs):
@@ -510,8 +510,8 @@ class plotHodo(backgroundHodo):
     def setNormalCenter(self):
         self.centered = (0, 0)
         self.center_loc = 'centered'
-        self.center_hodo(self.centered)
         self.clearData()
+        self.center_hodo(self.centered)
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -519,8 +519,8 @@ class plotHodo(backgroundHodo):
     def setMWCenter(self):
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
         self.center_loc = 'meanwind'
-        self.center_hodo(self.centered)
         self.clearData()
+        self.center_hodo(self.centered)
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -529,8 +529,8 @@ class plotHodo(backgroundHodo):
         rstu,rstv,lstu,lstv = self.srwind
         self.centered = (rstu, rstv)
         self.center_loc = 'stormrelative'
-        self.center_hodo(self.centered)
         self.clearData()
+        self.center_hodo(self.centered)
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -546,8 +546,8 @@ class plotHodo(backgroundHodo):
         
         '''
         super(plotHodo, self).wheelEvent(e)
-        self.clearData()
-        self.plotData()
+#       self.clearData()
+#       self.plotData()
 
 
     def mousePressEvent(self, e):
@@ -695,7 +695,7 @@ class plotHodo(backgroundHodo):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, True, None)
+            self.updated.emit(new_prof, 'hodo', True, None)
         self.initdrag = False
 
     def setBlackPen(self, qp):
