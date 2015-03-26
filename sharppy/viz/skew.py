@@ -334,8 +334,8 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile, bool, tab.params.Parcel)
-    reset = Signal()
+    updated = Signal(Profile, str, bool, tab.params.Parcel)
+    reset = Signal(str)
 
     def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__(plot_omega=(prof.omeg.count() != 0))
@@ -466,7 +466,7 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
-        reset.triggered.connect(lambda: self.reset.emit())
+        reset.triggered.connect(lambda: self.reset.emit('skew'))
         self.popupmenu.addAction(reset)
 
     def liftparcellevel(self, i):
@@ -487,7 +487,7 @@ class plotSkewT(backgroundSkewT):
             user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
             self.prof.usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
                                           dwpc=user_initpcl.dwpc)
-        self.updated.emit(self.prof, False, self.prof.usrpcl) # Emit a signal that a new profile has been created
+        self.updated.emit(self.prof, 'none', False, self.prof.usrpcl) # Emit a signal that a new profile has been created
 
     def setProf(self, prof, **kwargs):
         self.prof = prof
@@ -541,7 +541,7 @@ class plotSkewT(backgroundSkewT):
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, True, self.pcl)
+            self.updated.emit(new_prof, 'skew', True, self.pcl)
         elif self.initdrag:
             self.initdrag = False
 

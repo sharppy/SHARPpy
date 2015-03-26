@@ -66,7 +66,8 @@ class SkewApp(QWidget):
         self.current_idx = 0
         self.prof = profs[self.current_idx]
         self.original_profs = self.profs[:]
-        self.modified = [ False for p in self.original_profs ]
+        self.modified_skew = [ False for p in self.original_profs ]
+        self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
         self.config = ConfigParser.RawConfigParser()
@@ -271,12 +272,16 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, modified):
+    @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
+    def updateProfs(self, prof, panel, modified):
 
-        self.modified[self.current_idx] = modified
+        if panel == 'skew':
+            self.modified_skew[self.current_idx] = modified
+        if panel == 'hodo':
+            self.modified_hodo[self.current_idx] = modified
 
-        modified_str = "; Modified" if self.modified[self.current_idx] else ""
+        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
+        modified_str = "; Modified" if modified else ""
 
         self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
         if self.model == "Archive":
@@ -318,10 +323,18 @@ class SkewApp(QWidget):
         for inset in self.insets.keys():
             self.insets[inset].setProf(self.prof)
 
-    @Slot()
-    def resetProf(self):
-        self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
+    @Slot(str)
+    def resetProf(self, panel):
+        kwargs = dict( (k, getattr(self.profs[self.current_idx], k)) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'u', 'v', 'omeg', 'profile', 'location' ] )
+
+        if panel == 'hodo':
+            kwargs.update({'u':self.original_profs[self.current_idx].u, 'v':self.original_profs[self.current_idx].v})
+        elif panel == 'skew':
+            kwargs.update({'tmpc':self.original_profs[self.current_idx].tmpc, 'dwpc':self.original_profs[self.current_idx].dwpc})
+
+        self.profs[self.current_idx] = profile.create_profile(**kwargs)
+
+        self.updateProfs(self.profs[self.current_idx], panel, modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
         self.setFocus()
 
     @Slot(tab.params.Parcel)
@@ -390,7 +403,7 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
             return
 
         if key == Qt.Key_Left:
@@ -399,7 +412,7 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', self.modified[self.current_idx])
             return
 
         if e.matches(QKeySequence.Save):
