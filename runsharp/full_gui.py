@@ -41,7 +41,7 @@ class DataThread(QThread):
 
     def __modelProf(self):
         url = self.data_source.getURL(self.loc, self.runtime)
-        d = BufkitFile(url)
+        d = BufkitFile(urllib.quote(url, safe="/%:=&?~"))
         self.dates = d.dates
 
         if self.data_source.isEnsemble():
