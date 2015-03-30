@@ -2,8 +2,10 @@ import sys, os
 import numpy as np
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
+    debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
 else:
+    debug = False
     np.seterr(all='ignore')
 
 from sharppy.viz import SkewApp, MapWidget 
@@ -69,7 +71,8 @@ class DataThread(QThread):
         try:
             self.__modelProf()
         except Exception as e:
-            print traceback.format_exc()
+            if debug:
+                print traceback.format_exc()
             self.exc = str(e)
 
 # Create an application
