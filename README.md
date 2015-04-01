@@ -58,6 +58,8 @@ Once the package has been downloaded to your computer, use your command line to 
 
 After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 
+A video tutorial for Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
+
 =======================================================================
 ### Running the SHARPpy GUI
 
