@@ -688,8 +688,8 @@ class plotHodo(backgroundHodo):
             new_v = self.v.copy()
             new_u[self.drag_idx] = u
             new_v[self.drag_idx] = v
-            new_prof = create_profile(pres=self.prof.pres, hght=self.hght, tmpc=self.prof.tmpc, dwpc=self.prof.dwpc, 
-                u=new_u, v=new_v, omeg=self.prof.omeg,profile=self.prof.profile, location=self.prof.location)
+
+            new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
 
             self.drag_idx = None
             self.dragging = False

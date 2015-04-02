@@ -10,8 +10,7 @@ else:
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.buf_decoder import BufkitFile
-from sharppy.io.spc_decoder import SNDFile
+from sharppy.io.decoder import SPCDecoder, BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -21,59 +20,136 @@ import datetime as date
 from StringIO import StringIO
 import urllib
 import traceback
+from functools import wraps, partial
+import hashlib
 
-class DataThread(QThread):
-    progress = Signal()
-    def __init__(self, parent, **kwargs):
-        super(DataThread, self).__init__(parent)
-#       self.model = kwargs.get("model")
-        self.data_source = kwargs.get("source")
-        self.runtime = kwargs.get("run")
-        self.loc = kwargs.get("loc")
-        self.prof_idx = kwargs.get("idx")
-        self.profs = []
-        self.dates = None
-        self.exc = ""
+class AsyncThreads(QObject):
+    def __init__(self):
+        super(AsyncThreads, self).__init__()
+        self.threads = {}
+        self.callbacks = {}
+        return
 
-    def returnData(self):
-        if self.exc == "":
-            return self.profs, self.dates
+    def post(self, func, callback, *args, **kwargs):
+        thd_id = self._genThreadId()
+
+        thd = self._threadFactory(func, thd_id, *args, **kwargs)
+        thd.finished.connect(self.finish)
+        thd.start()
+
+        self.threads[thd_id] = thd
+        if callback is None:
+            callback = lambda x: x
+        self.callbacks[thd_id] = callback
+        return thd_id
+
+    def isFinished(self, thread_id):
+        return not (thread_id in self.threads)
+
+    def join(self, thread_id):
+        while not self.isFinished(thread_id):
+            QCoreApplication.processEvents()
+
+    @Slot(str, tuple)
+    def finish(self, thread_id, ret_val):
+        thd = self.threads[thread_id]
+        callback = self.callbacks[thread_id]
+
+        callback(ret_val)
+
+        del self.threads[thread_id]
+        del self.callbacks[thread_id]
+
+    def _genThreadId(self):
+        time_stamp = date.datetime.utcnow().isoformat()
+        return hashlib.md5(time_stamp).hexdigest()
+
+    def _threadFactory(self, func, thread_id, *args, **kwargs):
+
+        class AsyncThread(QThread):
+            finished = Signal(str, tuple)
+
+            def __init__(self):
+                super(AsyncThread, self).__init__()
+            
+            def run(self):
+                try:
+                    ret_val = func(*args, **kwargs)
+                except Exception as e:
+                    if debug:
+                        print traceback.format_exc()
+                    ret_val = e
+                if type(ret_val) != tuple:
+                    ret_val = (ret_val, )
+
+                self.finished.emit(thread_id, ret_val)
+
+        return AsyncThread()
+
+class progress(QThread):
+    _progress = Signal(int, int)
+    _text = Signal(str)
+
+    def __init__(self, *args, **kwargs):
+        super(progress, self).__init__()
+        self._func = None
+        self._async = args[0]
+        self._ret_val = None
+
+    def __get__(self, obj, cls):
+        return partial(self.__call__, obj)
+
+    def __call__(self, *args, **kwargs):
+        if len(args) > 0 and hasattr(args[0], '__call__'):
+            self._func = args[0]
+            ret = self.doasync
         else:
-            return self.exc
+            ret = self.doasync(*args, **kwargs)
+        return ret
 
-    def __modelProf(self):
-        url = self.data_source.getURL(self.loc, self.runtime)
-        d = BufkitFile(urllib.quote(url, safe="/%:=&?~"))
-        self.dates = d.dates
+    def doasync(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
 
-        if self.data_source.isEnsemble():
-            for i in self.prof_idx:
-                profs = []
-                for j in range(len(d.wdir)):
-                    ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                    if j == 0:
-                        profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                        self.progress.emit()
-                    else:
-                        profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                self.profs.append(profs)
+        self._kwargs['__prog__'] = self._progress
+        self._kwargs['__text__'] = self._text
 
-        else:
-            for i in self.prof_idx:
-                ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
-                    tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-                self.progress.emit()
+        self._progress_dialog = QProgressDialog()
+        self._progress.connect(self.updateProgress)
+        self._text.connect(self.updateText)
+        self._progress_dialog.setMinimum(0)
+        self._progress_dialog.setValue(0)
 
-    def run(self):
-        try:
-            self.__modelProf()
-        except Exception as e:
-            if debug:
-                print traceback.format_exc()
-            self.exc = str(e)
+        self._progress_dialog.open()
+        self._isfinished = False
+
+        def finish(ret_val):
+            self._isfinished = True
+            self._progress_dialog.close()
+            self._ret_val = ret_val
+
+        self._async.post(self._func, finish, *self._args, **self._kwargs)
+
+        while not self._isfinished:
+            QCoreApplication.processEvents()
+
+        return self._ret_val
+
+    @Slot(int, int)
+    def updateProgress(self, value, maximum):
+        text = self._prog_text
+
+        self._progress_dialog.setMaximum(maximum)
+        self._progress_dialog.setValue(value)
+
+        if maximum > 0:
+            text += " (%d / %d)" % (value, maximum)
+        self._progress_dialog.setLabelText(text)
+
+    @Slot(str)
+    def updateText(self, text):
+        self._prog_text = text
+        self._progress_dialog.setLabelText(text)
 
 # Create an application
 app = QApplication([])
@@ -81,6 +157,8 @@ app = QApplication([])
 class MainWindow(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
+
+    async = AsyncThreads()
 
     def __init__(self, **kwargs):
         """
@@ -91,7 +169,6 @@ class MainWindow(QWidget):
         """
 
         super(MainWindow, self).__init__(**kwargs)
-        self.progressDialog = QProgressDialog()
         self.data_sources = data_source.loadDataSources()
 
         ## All of these variables get set/reset by the various menus in the GUI
@@ -254,7 +331,7 @@ class MainWindow(QWidget):
         view : QWebView object
         """
 
-        view = MapWidget(self.data_sources[self.model], self.run, width=800, height=500)
+        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500)
         view.clicked.connect(self.map_link)
 
         return view
@@ -325,19 +402,24 @@ class MainWindow(QWidget):
         :return:
         """
 
-        self.run_dropdown.clear()
+        getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
+        
+        def update(times):
+            times = times[0]
+            self.run_dropdown.clear()
 
-        times = self.data_sources[self.model].getAvailableTimes()
-        if self.model == "Observed":
-            self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
-        else:
-            self.run = times[-1]
+            if self.model == "Observed":
+                self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
+            else:
+                self.run = times[-1]
 
-        for data_time in times:
-            self.run_dropdown.addItem(data_time.strftime(MainWindow.run_format))
+            for data_time in times:
+                self.run_dropdown.addItem(data_time.strftime(MainWindow.run_format))
 
-        self.run_dropdown.update()
-        self.run_dropdown.setCurrentIndex(len(times) - 1)
+            self.run_dropdown.update()
+            self.run_dropdown.setCurrentIndex(times.index(self.run))
+
+        self.async_id = self.async.post(getTimes, update)
 
     def map_link(self, point):
         """
@@ -374,28 +456,33 @@ class MainWindow(QWidget):
                 else:
                     self.prof_idx.append(idx)
 
-            if len(self.prof_idx) > 0:
-                self.prof_time = selected[0].text()
-                if '   ' in self.prof_time:
-                    self.prof_time = self.prof_time.split("   ")[0]
-            else:
-                self.prof_time = self.run.strftime(MainWindow.date_format)
+            fcst_hours = self.data_sources[self.model].getForecastHours()
 
-            self.prof_idx.sort()
-            self.skewApp()
+            if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
 
+                if fcst_hours != [ 0 ]:
+                    self.prof_time = selected[0].text()
+                    if '   ' in self.prof_time:
+                        self.prof_time = self.prof_time.split("   ")[0]
+                else:
+                    self.prof_time = self.run.strftime(MainWindow.date_format)
 
-    def get_model(self):
+                self.prof_idx.sort()
+                self.skewApp()
+
+    def get_model(self, index):
         """
         Get the user's model selection
         """
         self.model = self.model_dropdown.currentText()
 
         self.update_run_dropdown()
+        self.async.join(self.async_id)
+
         self.update_list()
         self.view.setDataSource(self.data_sources[self.model], self.run)
 
-    def get_run(self):
+    def get_run(self, index):
         """
         Get the user's run hour selection for the model
         """
@@ -425,12 +512,6 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    @Slot()
-    def progress_bar(self):
-        value = self.progressDialog.value()
-        self.progressDialog.setValue(value + 1)
-        self.progressDialog.setLabelText("Profile " + str(value + 1) + "/" + str(self.progressDialog.maximum()))
-
     def skewApp(self):
         """
         Create the SPC style SkewT window, complete with insets
@@ -451,48 +532,31 @@ class MainWindow(QWidget):
         ## the hard disk
         if self.model == "Archive":
             try:
-                prof, date = self.loadArchive()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
+                profs, dates, stn_id = self.loadArchive()
+                self.disp_name = stn_id
+                self.prof_idx = range(len(dates))
             except Exception as e:
                 exc = str(e)
+                if debug:
+                    print traceback.format_exc()
                 failure = True
 
-        else:
-            ## determine what type of data is to be loaded
-            ## if the profile is an observed sounding, load
-            ## from the SPC website
-            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
-                try:
-                    prof, date = self.loadObserved()
-                    profs.append(prof)
-                    dates.append(date)
-                    self.prof_idx = [ 0 ]
-                except Exception as e:
-                    exc = str(e)
-                    failure = True
+            run = None
 
-            ## if the profile is a model profile, load it from the model
-            ## download thread
+        else:
+        ## otherwise, download with the data thread
+            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
+                self.prof_idx = [ 0 ]
+
+            ret = loadData(self.data_sources[self.model], self.loc, self.run, self.prof_idx)
+
+            if isinstance(ret[0], Exception):
+                exc = str(ret[0])
+                failure = True
             else:
-                self.progressDialog.setMinimum(0)
-                self.progressDialog.setMaximum(len(self.prof_idx))
-                self.progressDialog.setValue(0)
-                self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
-                self.thread = DataThread(self, source=self.data_sources[self.model], loc=self.loc, run=self.run, idx=self.prof_idx)
-                self.thread.progress.connect(self.progress_bar)
-                self.thread.start()
-                self.progressDialog.open()
-                while not self.thread.isFinished():
-                    QCoreApplication.processEvents()
-                ## return the data from the thread
-                try:
-                    profs, dates = self.thread.returnData()
-                except ValueError:
-                    exc = self.thread.returnData()
-                    self.progressDialog.close()
-                    failure = True
+                profs, dates = ret
+
+            run = "%02dZ" % self.run.hour
 
         if failure:
             msgbox = QMessageBox()
@@ -503,48 +567,44 @@ class MainWindow(QWidget):
             msgbox.exec_()
         else:
             self.skew = SkewApp(profs, dates, self.model, location=self.disp_name,
-                prof_time=self.prof_time, run="%02dZ" % self.run.hour, idx=self.prof_idx, fhour=fhours)
+                prof_time=self.prof_time, run=run, idx=self.prof_idx, fhour=fhours)
             self.skew.show()
-
-    def loadObserved(self):
-        """
-        Get the observed sounding based on the user's selections
-        """
-        ## if the profile is the latest, pull the latest profile
-        if self.prof_time == "Latest":
-            timestr = self.prof_time.upper()
-        ## otherwise, convert the menu string to the URL format
-        else:
-            timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
-            timestr += "_OBS"
-        ## construct the URL
-
-#       url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc['srcid'].upper() + '.txt'
-        url = self.data_sources[self.model].getURL(self.loc, self.run)
-        snd_file = SNDFile(url)
-
-        kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
-
-        ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.disp_name, **kwargs)
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
     def loadArchive(self):
         """
         Get the archive sounding based on the user's selections.
         """
 
-        vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
-        snd_file = SNDFile(self.link)
-        loc = snd_file.location
-        time = snd_file.time
+        try:
+            dec = SPCDecoder(self.link)
+        except:
+            try:
+                dec = BufDecoder(self.link)
+            except:
+                raise IOError("Could not figure out the format of '%s'!" % self.link)
 
-        kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
+        prof = dec.getProfiles()
+        dates = dec.getProfileTimes()
+        stn_id = dec.getStnId()
 
-#       ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=loc, **kwargs)
+        return prof, dates, stn_id
 
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
+@progress(MainWindow.async)
+def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+    if __text__ is not None:
+        __text__.emit("Decoding File")
+
+    url = data_source.getURL(loc, run)
+    decoder = data_source.getDecoder(loc, run)
+    dec = decoder(url)
+
+    if __text__ is not None:
+        __text__.emit("Creating Profiles")
+
+    dates = dec.getProfileTimes(indexes)
+    profs = dec.getProfiles(indexes, __prog__)
+
+    return profs, dates
 
 if __name__ == '__main__':
     win = MainWindow()

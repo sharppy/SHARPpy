@@ -162,7 +162,7 @@ class Mapper(object):
 class MapWidget(QtGui.QWidget):
     clicked = QtCore.Signal(dict)
 
-    def __init__(self, data_source, init_time, **kwargs):
+    def __init__(self, data_source, init_time, async, **kwargs):
         super(MapWidget, self).__init__(**kwargs)
         self.scale = 0.60
         self.trans_x, self.trans_y = 0., 0.
@@ -174,20 +174,33 @@ class MapWidget(QtGui.QWidget):
 
         self.mapper = Mapper(-97.5, 60.)
 
-        self.setDataSource(data_source, init_time, init=True)
+        self.stn_lats = np.array([])
+        self.stn_lons = np.array([])
+        self.stn_ids = []
+        self.stn_names = []
+
+        self.default_width, self.default_height = 800, 800
+        self.setMinimumSize(self.width(), self.height())
 
         self.clicked_stn = None
         self.stn_readout = QtGui.QLabel(parent=self)
         self.stn_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 16px; color: #FFFFFF; }")
         self.stn_readout.setText("")
         self.stn_readout.show()
+        self.stn_readout.move(self.width(), self.height())
 
-        self.default_width, self.default_height = 800, 800
-        self.setMinimumSize(self.width(), self.height())
+        self.load_readout = QtGui.QLabel(parent=self)
+        self.load_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
+        self.load_readout.setText("Loading ...")
+        self.load_readout.setFixedWidth(100)
+        self.load_readout.show()
+        self.load_readout.move(self.width(), self.height())
+
+        self.async = async
+        self.setDataSource(data_source, init_time, init=True)
 
 #       self.setGeometry(300, 300, self.default_width, self.default_height)
         self.setWindowTitle('SHARPpy')
-        self.stn_readout.setFixedWidth(self.width() - 20)
 
         self.map_center_x, self.map_center_y = self.width() / 2, -8 * self.height() / 10
 
@@ -232,32 +245,46 @@ class MapWidget(QtGui.QWidget):
         self.clicked_stn = None
         self.clicked.emit(None)
 
-        self.points = self.cur_source.getAvailableAtTime(self.current_time)
-        self.stn_lats = np.array([ p['lat'] for p in self.points ])
-        self.stn_lons = np.array([ p['lon'] for p in self.points ])
-        self.stn_ids = [ p['srcid'] for p in self.points ]
-        self.stn_names = []
-        for p in self.points:
-            if p['icao'] != "":
-                id_str = " (%s)" % p['icao']
-            else:
-                id_str = ""
-            if p['state'] != "":
-                pol_str = ", %s" % p['state']
-            elif p['country'] != "":
-                pol_str = ", %s" % p['country']
-            else:
-                pol_str = ""
+        self.load_readout.move(10, self.height() - 25)
 
-            nm = p['name']
-            if id_str == "" and pol_str == "":
-                nm = nm.upper()
-            name = "%s%s%s" % (nm, pol_str, id_str)
-            self.stn_names.append(name)
+        getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
 
-        if not init:
-            self.drawMap()
-            self.update()
+        def update(points):
+            self.points = points[0]
+
+            self.stn_lats = np.array([ p['lat'] for p in self.points ])
+            self.stn_lons = np.array([ p['lon'] for p in self.points ])
+            self.stn_ids = [ p['srcid'] for p in self.points ]
+            self.stn_names = []
+            for p in self.points:
+                if p['icao'] != "":
+                    id_str = " (%s)" % p['icao']
+                else:
+                    id_str = ""
+                if p['state'] != "":
+                    pol_str = ", %s" % p['state']
+                elif p['country'] != "":
+                    pol_str = ", %s" % p['country']
+                else:
+                    pol_str = ""
+
+                nm = p['name']
+                if id_str == "" and pol_str == "":
+                    nm = nm.upper()
+                name = "%s%s%s" % (nm, pol_str, id_str)
+                self.stn_names.append(name)
+
+            self.load_readout.move(self.width(), self.height())
+
+            if not init:
+                self.drawMap()
+                self.update()
+
+        if init:
+            points = getPoints()
+            update([ points ])
+        else:
+            self.async.post(getPoints, update)
 
     def drawMap(self):
         qp = QtGui.QPainter()
@@ -395,6 +422,9 @@ class MapWidget(QtGui.QWidget):
 
     def _checkStations(self, e):
         stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        if len(stn_xs) == 0 or len(stn_ys) == 0:
+            return
+
         stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ])
         stn_xs = np.array(stn_xs)
         stn_ys = np.array(stn_ys)

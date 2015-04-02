@@ -5,6 +5,13 @@ from datetime import datetime, timedelta
 import urllib
 
 import available
+from sharppy.io.decoder import BufDecoder, SPCDecoder
+from sharppy.io.spc_decoder import SNDFile
+
+_decoder = {
+    'spc':SPCDecoder,
+    'bufkit':BufDecoder,
+}
 
 def loadDataSources(ds_dir='../datasources'):
     files = glob.glob(ds_dir + '/*.xml')
@@ -131,6 +138,9 @@ class Outlet(object):
     def getURL(self):
         return self._url
 
+    def getDecoder(self):
+        return _decoder[self._format]
+
     def hasProfile(self, point, cycle):
         times = self.getAvailableTimes()
         has_prof = cycle in times 
@@ -182,6 +192,16 @@ class DataSource(object):
             prop = func()
         return prop
 
+    def _getOutletWithProfile(self, stn, cycle_dt, outlet):
+        if outlet is None:
+            use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
+            try:
+                outlet = use_outlets[0]
+            except IndexError:
+                print "Uh-oh. Tim's screwed something up."
+                return ""
+        return outlet
+
     def getForecastHours(self, outlet=None, flatten=True):
         times = self._get('getForecastHours', outlet, flatten=flatten)
         return times
@@ -218,15 +238,13 @@ class DataSource(object):
                     flatten_pts.append(pt)
         return flatten_pts
 
-    def getURL(self, stn, cycle_dt, outlet=None):
-        if outlet is None:
-            use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
-            try:
-                outlet = use_outlets[0]
-            except IndexError:
-                print "Uh-oh. Tim's screwed something up."
-                return ""
+    def getDecoder(self, stn, cycle_dt, outlet=None):
+        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet)
+        decoder = self._outlets[outlet].getDecoder()
+        return decoder
 
+    def getURL(self, stn, cycle_dt, outlet=None):
+        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet)
         url_base = self._outlets[outlet].getURL()
 
         fmt = { 
