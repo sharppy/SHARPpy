@@ -12,6 +12,7 @@ from sharppy.viz import SkewApp, MapWidget
 import sharppy.sharptab.profile as profile
 from sharppy.io.buf_decoder import BufkitFile
 from sharppy.io.spc_decoder import SNDFile
+from sharppy.io.decoder import BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -43,29 +44,32 @@ class DataThread(QThread):
 
     def __modelProf(self):
         url = self.data_source.getURL(self.loc, self.runtime)
-        d = BufkitFile(url)
-        self.dates = d.dates
+        dec = BufDecoder(url)
+        self.dates = dec.getProfileTimes(self.prof_idx)
+        self.profs = dec.getProfiles(self.prof_idx, self.progress)
 
-        if self.data_source.isEnsemble():
-            for i in self.prof_idx:
-                profs = []
-                for j in range(len(d.wdir)):
-                    ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                    if j == 0:
-                        profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                        self.progress.emit()
-                    else:
-                        profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                self.profs.append(profs)
-
-        else:
-            for i in self.prof_idx:
-                ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
-                    tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-                self.progress.emit()
+#       self.dates = d.dates
+#
+#       if self.data_source.isEnsemble():
+#           for i in self.prof_idx:
+#               profs = []
+#               for j in range(len(d.wdir)):
+#                   ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+#                   if j == 0:
+#                       profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
+#                       tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+#                       self.progress.emit()
+#                   else:
+#                       profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
+#                       tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
+#               self.profs.append(profs)
+#
+#       else:
+#           for i in self.prof_idx:
+#               ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
+#               self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
+#                   tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
+#               self.progress.emit()
 
     def run(self):
         try:
