@@ -477,9 +477,9 @@ class MainWindow(QWidget):
         self.model = self.model_dropdown.currentText()
 
         self.update_run_dropdown()
-        self.update_list()
-
         self.async.join(self.async_id)
+
+        self.update_list()
         self.view.setDataSource(self.data_sources[self.model], self.run)
 
     def get_run(self, index):
