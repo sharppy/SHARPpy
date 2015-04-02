@@ -1,10 +1,12 @@
 import sys, os
 import numpy as np
+import warnings
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
 else:
     np.seterr(all='ignore')
+    warnings.simplefilter('ignore')
 
 from sharppy.viz import SkewApp
 import sharppy.sharptab.profile as profile
