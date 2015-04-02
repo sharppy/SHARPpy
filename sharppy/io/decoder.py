@@ -29,11 +29,13 @@ class Decoder(object):
             if 'mean' in mem_name.lower() or len(self._profiles) == 1:
                 mean_idx = idx
                 profs = []
-                for idx, prof in enumerate(mem_profs):
-                    if prof_idxs is None or idx in prof_idxs:
-                        profs.append(ConvectiveProfile.copy(prof))
+                nprofs = len(mem_profs) if prof_idxs is None else len(prof_idxs)
+
+                for prof_idx, prof in enumerate(mem_profs):
+                    if prof_idxs is None or prof_idx in prof_idxs:
                         if prog is not None:
-                            prog.emit()
+                            prog.emit(prof_idx, nprofs)
+                        profs.append(ConvectiveProfile.copy(prof))
             else:
                 if prof_idxs is not None:
                     profs = [ mem_profs[i] for i in prof_idxs ]
@@ -176,7 +178,7 @@ class SPCDecoder(Decoder):
             try:
                 file_data = open(file_name, 'r')
             except IOError:
-                raise IOError("File name '%s' could not be found." % self.file_name)
+                raise IOError("File name '%s' could not be found." % file_name)
             
         ## read in the file
         data = np.array(file_data.read().split('\n'))
