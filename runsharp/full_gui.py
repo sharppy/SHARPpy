@@ -10,9 +10,7 @@ else:
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.buf_decoder import BufkitFile
 from sharppy.io.spc_decoder import SNDFile
-from sharppy.io.decoder import BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -27,7 +25,6 @@ class DataThread(QThread):
     progress = Signal()
     def __init__(self, parent, **kwargs):
         super(DataThread, self).__init__(parent)
-#       self.model = kwargs.get("model")
         self.data_source = kwargs.get("source")
         self.runtime = kwargs.get("run")
         self.loc = kwargs.get("loc")
@@ -44,32 +41,11 @@ class DataThread(QThread):
 
     def __modelProf(self):
         url = self.data_source.getURL(self.loc, self.runtime)
-        dec = BufDecoder(url)
+        decoder = self.data_source.getDecoder(self.loc, self.runtime)
+        dec = decoder(url)
+
         self.dates = dec.getProfileTimes(self.prof_idx)
         self.profs = dec.getProfiles(self.prof_idx, self.progress)
-
-#       self.dates = d.dates
-#
-#       if self.data_source.isEnsemble():
-#           for i in self.prof_idx:
-#               profs = []
-#               for j in range(len(d.wdir)):
-#                   ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-#                   if j == 0:
-#                       profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
-#                       tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-#                       self.progress.emit()
-#                   else:
-#                       profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
-#                       tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-#               self.profs.append(profs)
-#
-#       else:
-#           for i in self.prof_idx:
-#               ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-#               self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
-#                   tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-#               self.progress.emit()
 
     def run(self):
         try:
@@ -514,18 +490,10 @@ class MainWindow(QWidget):
         """
         Get the observed sounding based on the user's selections
         """
-        ## if the profile is the latest, pull the latest profile
-        if self.prof_time == "Latest":
-            timestr = self.prof_time.upper()
-        ## otherwise, convert the menu string to the URL format
-        else:
-            timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
-            timestr += "_OBS"
-        ## construct the URL
 
-#       url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc['srcid'].upper() + '.txt'
         url = self.data_sources[self.model].getURL(self.loc, self.run)
-        snd_file = SNDFile(url)
+        decoder = self.data_sources[self.model].getDecoder(self.loc, self.run)
+        snd_file = decoder(url)
 
         kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
 
