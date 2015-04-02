@@ -5,6 +5,7 @@ from sharppy.sharptab.profile import create_profile, ConvectiveProfile
 
 import urllib2
 from datetime import datetime
+from StringIO import StringIO
 
 class abstract(object):
     def __init__(self, func):
@@ -21,7 +22,7 @@ class Decoder(object):
     def _parse(self):
         pass
 
-    def getProfiles(self, prof_idxs, prog):
+    def getProfiles(self, prof_idxs=None, prog=None):
         profiles = []
         mean_idx = None
         for idx, (mem_name, mem_profs) in enumerate(self._profiles.iteritems()):
@@ -29,11 +30,15 @@ class Decoder(object):
                 mean_idx = idx
                 profs = []
                 for idx, prof in enumerate(mem_profs):
-                    if idx in prof_idxs:
+                    if prof_idxs is None or idx in prof_idxs:
                         profs.append(ConvectiveProfile.copy(prof))
-                        prog.emit()
+                        if prog is not None:
+                            prog.emit()
             else:
-                profs = [ mem_profs[i] for i in prof_idxs ]
+                if prof_idxs is not None:
+                    profs = [ mem_profs[i] for i in prof_idxs ]
+                else:
+                    profs = mem_profs
 
             profiles.append(profs)
 
@@ -47,8 +52,12 @@ class Decoder(object):
 
         return profiles
 
-    def getProfileTimes(self, prof_idxs):
-        return [ self._dates[i] for i in prof_idxs ]
+    def getProfileTimes(self, prof_idxs=None):
+        if prof_idxs is None:
+            dates = self._dates
+        else:
+            dates = [ self._dates[i] for i in prof_idxs ]
+        return dates
 
     def getStnId(self):
         return self._profiles.values()[0][0].location
@@ -151,6 +160,54 @@ class BufDecoder(Decoder):
             profiles.append(prof)
 
         return member_name, profiles, dates
+
+class SPCDecoder(Decoder):
+    def __init__(self, file_name):
+        super(SPCDecoder, self).__init__(file_name)
+
+    def _parse(self, file_name):
+        # Try to open the file.  This is a dirty hack right now until
+        # I can figure out a cleaner way to make sure the file (either local or URL)
+        # gets opened.
+        try:
+            file_data = urllib2.urlopen(file_name)
+        except (IOError, ValueError):
+            try:
+                file_data = open(file_name, 'r')
+            except IOError:
+                raise IOError("File name '%s' could not be found." % self.file_name)
+            
+        ## read in the file
+        data = np.array(file_data.read().split('\n'))
+        ## necessary index points
+        title_idx = np.where( data == '%TITLE%')[0][0]
+        start_idx = np.where( data == '%RAW%' )[0] + 1
+        finish_idx = np.where( data == '%END%')[0]
+
+        ## create the plot title
+        data_header = data[title_idx + 1].split()
+        location = data_header[0]
+        time = data_header[1]
+
+        ## put it all together for StringIO
+        full_data = '\n'.join(data[start_idx : finish_idx][:])
+        sound_data = StringIO( full_data )
+
+        ## read the data into arrays
+        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+        idx = np.argsort(p)[::-1] # sort by pressure in case the pressure array is off.
+
+        pres = p[idx]
+        hght = h[idx]
+        tmpc = T[idx]
+        dwpc = Td[idx]
+        wspd = wspd[idx]
+        wdir = wdir[idx]
+
+        prof = create_profile(profile='default', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
+            wdir=wdir, wspd=wspd, location=location)
+
+        return {'':[ prof ]}, [ datetime.strptime(time, '%y%m%d/%H%M') ]
 
 if __name__ == "__main__":
     print "Creating bufkit decoder ..."

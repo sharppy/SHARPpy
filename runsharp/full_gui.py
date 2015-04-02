@@ -440,39 +440,42 @@ class MainWindow(QWidget):
                 failure = True
 
         else:
-            ## determine what type of data is to be loaded
-            ## if the profile is an observed sounding, load
-            ## from the SPC website
+#           ## determine what type of data is to be loaded
+#           ## if the profile is an observed sounding, load
+#           ## from the SPC website
+#           if self.data_sources[self.model].getForecastHours() == [ 0 ]:
+#               try:
+#                   prof, date = self.loadObserved()
+#                   profs.append(prof)
+#                   dates.append(date)
+#                   self.prof_idx = [ 0 ]
+#               except Exception as e:
+#                   exc = str(e)
+#                   failure = True
+#
+#           ## if the profile is a model profile, load it from the model
+#           ## download thread
+#           else:
             if self.data_sources[self.model].getForecastHours() == [ 0 ]:
-                try:
-                    prof, date = self.loadObserved()
-                    profs.append(prof)
-                    dates.append(date)
-                    self.prof_idx = [ 0 ]
-                except Exception as e:
-                    exc = str(e)
-                    failure = True
+                self.prof_idx = [ 0 ]
 
-            ## if the profile is a model profile, load it from the model
-            ## download thread
-            else:
-                self.progressDialog.setMinimum(0)
-                self.progressDialog.setMaximum(len(self.prof_idx))
-                self.progressDialog.setValue(0)
-                self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
-                self.thread = DataThread(self, source=self.data_sources[self.model], loc=self.loc, run=self.run, idx=self.prof_idx)
-                self.thread.progress.connect(self.progress_bar)
-                self.thread.start()
-                self.progressDialog.open()
-                while not self.thread.isFinished():
-                    QCoreApplication.processEvents()
-                ## return the data from the thread
-                try:
-                    profs, dates = self.thread.returnData()
-                except ValueError:
-                    exc = self.thread.returnData()
-                    self.progressDialog.close()
-                    failure = True
+            self.progressDialog.setMinimum(0)
+            self.progressDialog.setMaximum(len(self.prof_idx))
+            self.progressDialog.setValue(0)
+            self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
+            self.thread = DataThread(self, source=self.data_sources[self.model], loc=self.loc, run=self.run, idx=self.prof_idx)
+            self.thread.progress.connect(self.progress_bar)
+            self.thread.start()
+            self.progressDialog.open()
+            while not self.thread.isFinished():
+                QCoreApplication.processEvents()
+            ## return the data from the thread
+            try:
+                profs, dates = self.thread.returnData()
+            except ValueError:
+                exc = self.thread.returnData()
+                self.progressDialog.close()
+                failure = True
 
         if failure:
             msgbox = QMessageBox()
@@ -493,13 +496,11 @@ class MainWindow(QWidget):
 
         url = self.data_sources[self.model].getURL(self.loc, self.run)
         decoder = self.data_sources[self.model].getDecoder(self.loc, self.run)
-        snd_file = decoder(url)
+        dec = decoder(url)
+        dates = dec.getProfileTimes()
+        prof = dec.getProfiles()
 
-        kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
-
-        ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.disp_name, **kwargs)
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
+        return prof, dates
 
     def loadArchive(self):
         """

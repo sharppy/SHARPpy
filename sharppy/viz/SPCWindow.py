@@ -342,15 +342,13 @@ class SkewApp(QWidget):
         modified_str = ""
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            self.plot_title += "  (User Selected" + modified_str + ")"
         elif self.model == "Observed":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (Observed" + modified_str + ")"
-        elif self.model == "Archive":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (User Selected" + modified_str + ")"
+            self.plot_title += "  (Observed" + modified_str + ")"
+        else:
+             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
 
         if self.model == "SREF":
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
