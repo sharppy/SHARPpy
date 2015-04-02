@@ -456,15 +456,19 @@ class MainWindow(QWidget):
                 else:
                     self.prof_idx.append(idx)
 
-            if len(self.prof_idx) > 0:
-                self.prof_time = selected[0].text()
-                if '   ' in self.prof_time:
-                    self.prof_time = self.prof_time.split("   ")[0]
-            else:
-                self.prof_time = self.run.strftime(MainWindow.date_format)
+            fcst_hours = self.data_sources[self.model].getForecastHours()
 
-            self.prof_idx.sort()
-            self.skewApp()
+            if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
+
+                if fcst_hours != [ 0 ]:
+                    self.prof_time = selected[0].text()
+                    if '   ' in self.prof_time:
+                        self.prof_time = self.prof_time.split("   ")[0]
+                else:
+                    self.prof_time = self.run.strftime(MainWindow.date_format)
+
+                self.prof_idx.sort()
+                self.skewApp()
 
     def get_model(self, index):
         """
