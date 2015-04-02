@@ -531,11 +531,7 @@ class plotSkewT(backgroundSkewT):
 
             new_prof = prof.copy()
             new_prof[self.drag_idx] = tmpc
-            therm = {'tmpc':self.tmpc, 'dwpc':self.dwpc}
-            therm.update(**{prof_name:new_prof})
-
-            new_prof = create_profile(pres=self.pres, hght=self.hght, u=self.u, v=self.v, omeg=self.prof.omeg, 
-                profile=self.prof.profile, location=self.prof.location, **therm)
+            new_prof = type(self.prof).copy(self.prof, **{prof_name:new_prof})
 
             self.drag_idx = None
             self.dragging = False
