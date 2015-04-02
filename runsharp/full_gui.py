@@ -10,7 +10,7 @@ else:
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.spc_decoder import SNDFile
+from sharppy.io.decoder import SPCDecoder, BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -431,31 +431,18 @@ class MainWindow(QWidget):
         ## the hard disk
         if self.model == "Archive":
             try:
-                prof, date = self.loadArchive()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
+                profs, dates, stn_id = self.loadArchive()
+                self.disp_name = stn_id
+                self.prof_idx = range(len(dates))
             except Exception as e:
                 exc = str(e)
+                if debug:
+                    print traceback.format_exc()
                 failure = True
 
+            run = None
+
         else:
-#           ## determine what type of data is to be loaded
-#           ## if the profile is an observed sounding, load
-#           ## from the SPC website
-#           if self.data_sources[self.model].getForecastHours() == [ 0 ]:
-#               try:
-#                   prof, date = self.loadObserved()
-#                   profs.append(prof)
-#                   dates.append(date)
-#                   self.prof_idx = [ 0 ]
-#               except Exception as e:
-#                   exc = str(e)
-#                   failure = True
-#
-#           ## if the profile is a model profile, load it from the model
-#           ## download thread
-#           else:
             if self.data_sources[self.model].getForecastHours() == [ 0 ]:
                 self.prof_idx = [ 0 ]
 
@@ -477,6 +464,8 @@ class MainWindow(QWidget):
                 self.progressDialog.close()
                 failure = True
 
+            run = "%02dZ" % self.run.hour
+
         if failure:
             msgbox = QMessageBox()
             msgbox.setText("An error has occurred while retrieving the data.")
@@ -486,38 +475,37 @@ class MainWindow(QWidget):
             msgbox.exec_()
         else:
             self.skew = SkewApp(profs, dates, self.model, location=self.disp_name,
-                prof_time=self.prof_time, run="%02dZ" % self.run.hour, idx=self.prof_idx, fhour=fhours)
+                prof_time=self.prof_time, run=run, idx=self.prof_idx, fhour=fhours)
             self.skew.show()
-
-    def loadObserved(self):
-        """
-        Get the observed sounding based on the user's selections
-        """
-
-        url = self.data_sources[self.model].getURL(self.loc, self.run)
-        decoder = self.data_sources[self.model].getDecoder(self.loc, self.run)
-        dec = decoder(url)
-        dates = dec.getProfileTimes()
-        prof = dec.getProfiles()
-
-        return prof, dates
 
     def loadArchive(self):
         """
         Get the archive sounding based on the user's selections.
         """
 
-        vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
-        snd_file = SNDFile(self.link)
-        loc = snd_file.location
-        time = snd_file.time
-
-        kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
+#       vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
+#       snd_file = SNDFile(self.link)
+#       loc = snd_file.location
+#       time = snd_file.time
+#
+#       kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
 
 #       ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=loc, **kwargs)
+#       prof = profile.create_profile( profile='convective', location=loc, **kwargs)
 
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
+        try:
+            dec = SPCDecoder(self.link)
+        except:
+            try:
+                dec = BufDecoder(self.link)
+            except:
+                raise IOError("Could not figure out the format of '%s'!" % self.link)
+
+        prof = dec.getProfiles()
+        dates = dec.getProfileTimes()
+        stn_id = dec.getStnId()
+
+        return prof, dates, stn_id
 
 if __name__ == '__main__':
     win = MainWindow()

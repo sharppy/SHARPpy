@@ -24,7 +24,7 @@ class Decoder(object):
 
     def getProfiles(self, prof_idxs=None, prog=None):
         profiles = []
-        mean_idx = None
+        mean_idx = 0
         for idx, (mem_name, mem_profs) in enumerate(self._profiles.iteritems()):
             if 'mean' in mem_name.lower() or len(self._profiles) == 1:
                 mean_idx = idx
@@ -69,7 +69,7 @@ class BufDecoder(Decoder):
     def _parse(self, file_name):
         try:
             f = urllib2.urlopen(file_name)
-        except IOError:
+        except (ValueError, IOError):
             try:
                 f = open(file_name, 'r')
             except IOError:
@@ -88,6 +88,7 @@ class BufDecoder(Decoder):
             profiles[mem_name] = mem_profs
             dates = mem_dates
         #f.close()
+
         return profiles, dates
 
     def _parseMember(self, text):
