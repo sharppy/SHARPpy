@@ -44,7 +44,8 @@ def get_mean_pwv(station):
         id_index = 1
     else:
         #print "Invalid station ID"
-        return
+        return np.ma.masked
+
     ## open the file, release the kraken!
     ## get the arrays of station IDs
     pwv_means = np.loadtxt(os.path.dirname( __file__) + '/PW-mean-inches.txt', skiprows=0, dtype=str, delimiter=',')
