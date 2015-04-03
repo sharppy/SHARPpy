@@ -208,7 +208,7 @@ class SkewApp(QWidget):
         modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
         modified_str = "; Modified" if modified else ""
 
-        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.current_idx], "%Y%m%d/%H%M")
         if self.model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
         elif self.fhour == [ 0 ]:

@@ -31,11 +31,10 @@ class Decoder(object):
                 profs = []
                 nprofs = len(mem_profs) if prof_idxs is None else len(prof_idxs)
 
-                for prof_idx, prof in enumerate(mem_profs):
-                    if prof_idxs is None or prof_idx in prof_idxs:
-                        if prog is not None:
-                            prog.emit(prof_idx, nprofs)
-                        profs.append(ConvectiveProfile.copy(prof))
+                for idx, prof_idx in enumerate(prof_idxs):
+                    if prog is not None:
+                        prog.emit(idx, nprofs)
+                    profs.append(ConvectiveProfile.copy(mem_profs[prof_idx]))
             else:
                 if prof_idxs is not None:
                     profs = [ mem_profs[i] for i in prof_idxs ]
