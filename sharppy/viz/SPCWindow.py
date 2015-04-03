@@ -204,6 +204,19 @@ class SkewApp(QWidget):
         elif pcl == prof.usrpcl:
             return "USER"
 
+    def getPlotTitle(self):
+        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
+        modified_str = "; Modified" if modified else ""
+
+        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            plot_title += "  (User Selected" + modified_str + ")"
+        elif self.fhour == [ 0 ]:
+            plot_title += "  (Observed" + modified_str + ")"
+        else:
+             plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        return plot_title
+
     def saveimage(self):
         fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
         if result:
@@ -218,13 +231,7 @@ class SkewApp(QWidget):
         """
 
         ## set the plot title that will be displayed in the Skew frame.
-        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            self.plot_title += "  (User Selected)"
-        elif self.model == "Observed":
-            self.plot_title += "  (Observed)"
-        else:
-            self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
+        self.plot_title = self.getPlotTitle()
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -279,17 +286,7 @@ class SkewApp(QWidget):
         elif panel == 'hodo':
             self.modified_hodo[self.current_idx] = modified
 
-        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
-        modified_str = "; Modified" if modified else ""
-
-        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            self.plot_title += "  (User Selected" + modified_str + ")"
-        elif self.model == "Observed":
-            self.plot_title += "  (Observed" + modified_str + ")"
-        else:
-             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
-
+        self.plot_title = self.getPlotTitle()
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
@@ -342,14 +339,7 @@ class SkewApp(QWidget):
         modified_str = ""
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
-        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            self.plot_title += "  (User Selected" + modified_str + ")"
-        elif self.model == "Observed":
-            self.plot_title += "  (Observed" + modified_str + ")"
-        else:
-             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
-
+        self.plot_title = self.getPlotTitle()
         if self.model == "SREF":
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)

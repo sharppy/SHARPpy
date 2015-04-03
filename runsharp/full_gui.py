@@ -519,12 +519,12 @@ class MainWindow(QWidget):
         :return:
         """
 
-        items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
-        fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
-
         profs = []
         dates = []
         failure = False
+
+#       items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
+#       fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
         exc = ""
 
@@ -542,6 +542,7 @@ class MainWindow(QWidget):
                 failure = True
 
             run = None
+            fhours = None
 
         else:
         ## otherwise, download with the data thread
@@ -557,6 +558,7 @@ class MainWindow(QWidget):
                 profs, dates = ret
 
             run = "%02dZ" % self.run.hour
+            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in self.prof_idx ]
 
         if failure:
             msgbox = QMessageBox()
