@@ -228,7 +228,7 @@ class MainWindow(QWidget):
         models = sorted(self.data_sources.keys())
         self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
-        self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
+        self.map_dropdown = self.dropdown_menu(['Northern Hemisphere', 'Tropics (Coming Soon!)', 'Southern Hemisphere (Coming Soon!)'])
         times = self.data_sources[self.model].getAvailableTimes()
         self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
         self.run_dropdown.setCurrentIndex(times.index(self.run))
