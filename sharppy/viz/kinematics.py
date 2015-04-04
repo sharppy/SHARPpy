@@ -3,6 +3,7 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.viz import drawBarb
 from sharppy.sharptab.constants import *
+import platform
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -73,7 +74,10 @@ class backgroundKinematics(QtGui.QFrame):
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            y1 += self.label_height
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         self.ylast = y1
         ## second block
         texts = ['SFC-6km', 'SFC-8km','LCL-EL (Cloud Layer)', 'Eff Shear (EBWD)']
@@ -81,7 +85,10 @@ class backgroundKinematics(QtGui.QFrame):
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            y1 += self.label_height
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         self.ylast = y1
         ## third block
         texts = ['BRN Shear = ', '4-6km SR Wind = ']
@@ -89,7 +96,10 @@ class backgroundKinematics(QtGui.QFrame):
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            y1 += self.label_height
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         self.ylast = y1
         ## fourth block
         texts = ['...Storm Motion Vectors...', 'Bunkers Right = ', 'Bunkers Left = ', 'Corfidi Downshear = ', 'Corfidi Upshear = ']
@@ -98,8 +108,11 @@ class backgroundKinematics(QtGui.QFrame):
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            y1 += self.label_height
-        self.ylast = self.label_height
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
+        self.ylast = vspace
 
         ## draw lines seperating the indices
         qp.drawLine( 0, self.ylast+3, self.brx, self.ylast+3 )
@@ -343,7 +356,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += self.label_height
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## sfc-3km
         texts = [srh3km, sfc3km, mean_3km, srw_3km]
@@ -352,7 +368,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += self.label_height
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## Effective Inflow Layer
         texts = [esrh, eff_lr, mean_eff, srw_eff]
@@ -361,7 +380,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += (self.label_height + self.tpad)
+        vspace = self.label_height + self.tpad
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## sfc-6km
         texts = [sfc6km, mean_6km, srw_6km]
@@ -370,7 +392,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += self.label_height
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## sfc-8km
         texts = [sfc8km, mean_8km, srw_8km]
@@ -379,7 +404,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += self.label_height
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## LCL-EL
         texts = [lcl_el, mean_lcl_el, srw_lcl_el]
@@ -388,7 +416,10 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += self.label_height
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## Effective Shear
         texts = [efbwd, mean_ebw, srw_ebw]
@@ -397,16 +428,25 @@ class plotKinematics(backgroundKinematics):
             rect = QtCore.QRect(x1*count, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
             count += 2
-        y1 += (self.label_height + self.tpad)
+        vspace = self.label_height + self.tpad
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         self.ylast = y1
         ## BRN Shear and 4-6km SR Wind
         texts = [brn_shear, srw_4_5km]
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
-            y1 += self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
+
         self.ylast = y1
-        y1 += (self.label_height + self.tpad)
+        vspace = self.label_height + self.tpad
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        y1 += vspace
         ## bunkers motion
         texts = [bunkers_right, bunkers_left]
         colors =[QtGui.QColor('#0099CC'), QtGui.QColor('#FF6666')]
@@ -415,7 +455,10 @@ class plotKinematics(backgroundKinematics):
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
-            y1 += self.label_height
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         self.ylast = y1
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -424,5 +467,7 @@ class plotKinematics(backgroundKinematics):
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
-            y1 += self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 

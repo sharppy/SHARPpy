@@ -3,6 +3,7 @@ import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import platform
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -61,6 +62,20 @@ class backgroundAnalogues(QtGui.QFrame):
         self.match_metrics = QtGui.QFontMetrics( self.match_font )
         ## get the height of each font. This is so that we can do propper font aligning
         ## when drawing text
+
+        if platform.system() == "Windows":
+            fsize1 -= self.title_metrics.descent()
+            fsize2 -= self.plot_metrics.descent()
+            fsize3 -= self.match_metrics.descent()
+
+            self.title_font = QtGui.QFont('Helvetica', fsize1)
+            self.plot_font = QtGui.QFont('Helvetica', fsize2)
+            self.match_font = QtGui.QFont('Helvetica', fsize3)
+            ## get the metrics on the fonts. This is used to get their size.
+            self.title_metrics = QtGui.QFontMetrics( self.title_font )
+            self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+            self.match_metrics = QtGui.QFontMetrics( self.match_font )
+		
         self.title_height = self.title_metrics.xHeight() + self.tpad
         self.plot_height = self.plot_metrics.xHeight() + self.tpad
         self.match_height = self.match_metrics.xHeight() + self.tpad
@@ -85,7 +100,7 @@ class backgroundAnalogues(QtGui.QFrame):
         
         ## make the initial x value relative to the width of the frame
         x1 = self.brx / 6
-        
+
         ## use the larger title font to plot the title, and then
         ## add to self.ylast the height of the font + padding
         qp.setFont(self.title_font)
@@ -355,4 +370,7 @@ class plotAnalogues(backgroundAnalogues):
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
                     idx += 1
                     ## add to the running vertical sum
-                    self.ylast += (self.match_height)
+                    vspace = self.match_height
+                    if platform.system() == "Windows":
+                        vspace += self.match_metrics.descent()
+                    self.ylast += vspace

@@ -3,7 +3,6 @@ import numpy as np
 
 from PySide import QtGui, QtCore
 
-from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap.shapefile import Reader
 import mpl_toolkits.basemap as basemap
 import sys, os
@@ -11,7 +10,7 @@ import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join(os.path.dirname(basemap.__file__), "data/")
+    data_dir = os.path.join(os.path.dirname(basemap.__file__), "data")
     min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
     max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
 
