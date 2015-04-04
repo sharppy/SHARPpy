@@ -340,16 +340,25 @@ class MapWidget(QtGui.QWidget):
         selected_color = QtCore.Qt.green
 
         window_rect = QtCore.QRect(0, 0, self.width(), self.height())
+        clicked_x, clicked_y, clicked_lat, clicked_id = None, None, None, None
+        color = unselected_color
         for stn_x, stn_y, stn_lat, stn_id in zip(stn_xs, stn_ys, self.stn_lats, self.stn_ids):
             if self.clicked_stn == stn_id:
-                color = selected_color
+                clicked_x = stn_x
+                clicked_y = stn_y
+                clicked_lat = stn_lat
+                clicked_id = stn_id
             else:
-                color = unselected_color
-
-            if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
-                qp.setPen(QtGui.QPen(color))
-                qp.setBrush(QtGui.QBrush(color))
-                qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
+               if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
+                    qp.setPen(QtGui.QPen(color))
+                    qp.setBrush(QtGui.QBrush(color))
+                    qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
+        
+        color = selected_color
+        if lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+            qp.setPen(QtGui.QPen(color))
+            qp.setBrush(QtGui.QBrush(color))
+            qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
