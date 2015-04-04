@@ -211,7 +211,7 @@ class SkewApp(QWidget):
         plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.current_idx], "%Y%m%d/%H%M")
         if self.model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
-        elif self.fhour == [ 0 ]:
+        elif self.fhour == [ 'F000' ]:
             plot_title += "  (Observed" + modified_str + ")"
         else:
              plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"

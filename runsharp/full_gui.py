@@ -22,6 +22,7 @@ import urllib
 import traceback
 from functools import wraps, partial
 import hashlib
+import cProfile
 
 class AsyncThreads(QObject):
     def __init__(self):

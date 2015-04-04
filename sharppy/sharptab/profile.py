@@ -79,16 +79,74 @@ def create_profile(**kwargs):
     profile = kwargs.get('profile', 'default')
 
     ## if the profile is default, pass the rest of the keyword
-    ## arguments to the Profile object and return it
+    ## arguments to the BasicProfile object and return it
     if profile == 'default':
+        return BasicProfile(**kwargs)
+    ## if the profile is raw, return a base profile object
+    elif profile == 'raw':
         return Profile(**kwargs)
     ## if the profile is convective, pass the rest of the keyword
     ## arguments to the ConvectiveProfile object and return it
     elif profile == 'convective':
         return ConvectiveProfile(**kwargs)
 
-    
 class Profile(object):
+    def __init__(self, **kwargs):
+        ## set the missing variable
+        self.missing = kwargs.get('missing', MISSING)
+        self.profile = kwargs.get('profile')
+
+        ## get the data and turn them into arrays
+        self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
+        self.hght = ma.asanyarray(kwargs.get('hght'), dtype=float)
+        self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
+        self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
+ 
+        if 'wdir' in kwargs:
+            self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
+            self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
+
+            self.u = None
+            self.v = None
+
+        ## did the user provide the wind in u,v form?
+        elif 'u' in kwargs:
+            self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
+            self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
+
+            self.wdir = None
+            self.wspd = None
+
+        ## check if any standard deviation data was supplied
+        if 'tmp_stdev' in kwargs:
+            self.dew_stdev = ma.asanyarray(kwargs.get('dew_stdev'), dtype=float)
+            self.tmp_stdev = ma.asanyarray(kwargs.get('tmp_stdev'), dtype=float)
+        else:
+            self.dew_stdev = None
+            self.tmp_stdev = None
+
+        if kwargs.get('omeg', None) is not None:
+            ## get the omega data and turn into arrays
+            self.omeg = ma.asanyarray(kwargs.get('omeg'))
+        else:
+            self.omeg = None
+
+        ## optional keyword argument for location
+        self.location = kwargs.get('location', None)
+ 
+    @classmethod
+    def copy(cls, prof, **kwargs):
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location' ])
+        if 'u' in kwargs or 'v' in kwargs:
+            new_kwargs.update({'u':prof.u, 'v':prof.v})
+        else:   
+            new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+
+        new_kwargs.update(kwargs)
+        return cls(**new_kwargs)
+
+
+class BasicProfile(Profile):
     '''
     The default data class for SHARPpy. 
     All other data classes inherit from this class.
@@ -145,24 +203,14 @@ class Profile(object):
         A profile object
             
         '''
-        ## set the missing variable
-        self.missing = kwargs.get('missing', MISSING)
-        self.profile = kwargs.get('profile')
+        super(BasicProfile, self).__init__(**kwargs)
 
-        assert len(kwargs.get('pres')) == len(kwargs.get('hght')) == len(kwargs.get('tmpc')) == len(kwargs.get('dwpc')),\
+        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
 
-        ## get the data and turn them into arrays
-        self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
-        self.hght = ma.asanyarray(kwargs.get('hght'), dtype=float)
-        self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
-        self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
- 
         ## did the user provide the wind in vector form?
-        if 'wdir' in kwargs:
-            assert len(kwargs.get('wdir')) == len(kwargs.get('wspd')) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
-            self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
-            self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
+        if self.wdir is not None:
+            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             self.wdir[self.wdir == self.missing] = ma.masked
             self.wspd[self.wspd == self.missing] = ma.masked
             self.wdir[self.wspd.mask] = ma.masked
@@ -170,10 +218,8 @@ class Profile(object):
             self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
 
         ## did the user provide the wind in u,v form?
-        elif 'u' in kwargs:
-            assert len(kwargs.get('u')) == len(kwargs.get('v')) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
-            self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
-            self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
+        elif self.u is not None:
+            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
             self.u[self.u == self.missing] = ma.masked
             self.v[self.v == self.missing] = ma.masked
             self.u[self.v.mask] = ma.masked
@@ -181,41 +227,27 @@ class Profile(object):
             self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
 
         ## check if any standard deviation data was supplied
-        if 'tmp_stdev' in kwargs:
-            self.dew_stdev = ma.asanyarray(kwargs.get('dew_stdev'), dtype=float)
-            self.tmp_stdev = ma.asanyarray(kwargs.get('tmp_stdev'), dtype=float)
+        if self.tmp_stdev is not None:
             self.dew_stdev[self.dew_stdev == self.missing] = ma.masked
             self.tmp_stdev[self.tmp_stdev == self.missing] = ma.masked
             self.dew_stdev.set_fill_value(self.missing)
             self.tmp_stdev.set_fill_value(self.missing)
-        
-        elif not 'tmp_stdev' in kwargs:
-            self.dew_stdev = None
-            self.tmp_stdev = None
 
-        if kwargs.get('omeg', None) is not None:
+        if self.omeg is not None:
             ## get the omega data and turn into arrays
-            assert len(kwargs.get('omeg')) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
-            self.omeg = ma.asanyarray(kwargs.get('omeg'))
+            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
             self.omeg[self.omeg == self.missing] = ma.masked
         else:
             self.omeg = ma.masked_all(len(self.hght))
 
         # QC Checks on the arrays passed to the constructor.
         qc_tools.areProfileArrayLengthEqual(self)
-        
-        ## optional keyword argument for location
-        self.location = kwargs.get('location', None)
-        
+       
         ## mask the missing values
         self.pres[self.pres == self.missing] = ma.masked
         self.hght[self.hght == self.missing] = ma.masked
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
-        self.logp = np.log10(self.pres.copy())
-        self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
-        idx = np.ma.where(self.pres > 0)[0]
-        self.vtmp[self.dwpc.mask[idx]] = self.tmpc[self.dwpc.mask[idx]] # Masking any virtual temperature 
 
         #if not qc_tools.isPRESValid(self.pres):
         ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
@@ -230,6 +262,12 @@ class Profile(object):
         if not qc_tools.isWDIRValid(self.wdir):
             qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value >= 360 degrees.", ValueError)     
 
+
+        self.logp = np.log10(self.pres.copy())
+        self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
+        idx = np.ma.where(self.pres > 0)[0]
+        self.vtmp[self.dwpc.mask[idx]] = self.tmpc[self.dwpc.mask[idx]] # Masking any virtual temperature 
+
         ## get the index of the top and bottom of the profile
         self.sfc = self.get_sfc()
         self.top = self.get_top()
@@ -237,17 +275,6 @@ class Profile(object):
         self.wetbulb = self.get_wetbulb_profile()
         ## generate theta-e profile
         self.thetae = self.get_thetae_profile()
-
-    @classmethod
-    def copy(cls, prof, **kwargs):
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location' ])
-        if 'u' in kwargs or 'v' in kwargs:
-            new_kwargs.update({'u':prof.u, 'v':prof.v})
-        else:   
-            new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
-
-        new_kwargs.update(kwargs)
-        return cls(**new_kwargs)
 
     def get_sfc(self):
         '''
@@ -343,7 +370,7 @@ class Profile(object):
 
 
 
-class ConvectiveProfile(Profile):
+class ConvectiveProfile(BasicProfile):
     '''
     The Convective data class for SHARPPy. This is the class used
     to generate the indices that are default for the SPC NSHARP display.

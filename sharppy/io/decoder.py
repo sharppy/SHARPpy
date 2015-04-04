@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from sharppy.sharptab.profile import create_profile, ConvectiveProfile
+from sharppy.sharptab.profile import create_profile, ConvectiveProfile, BasicProfile
 
 import urllib2
 from datetime import datetime
@@ -26,20 +26,17 @@ class Decoder(object):
         profiles = []
         mean_idx = 0
         for idx, (mem_name, mem_profs) in enumerate(self._profiles.iteritems()):
-            if 'mean' in mem_name.lower() or len(self._profiles) == 1:
-                mean_idx = idx
-                profs = []
-                nprofs = len(mem_profs) if prof_idxs is None else len(prof_idxs)
+            profs = []
+            nprofs = len(mem_profs) if prof_idxs is None else len(prof_idxs)
 
-                for idx, prof_idx in enumerate(prof_idxs):
+            for pidx, prof_idx in enumerate(prof_idxs):
+                if 'mean' in mem_name.lower() or len(self._profiles) == 1:
+                    mean_idx = idx
                     if prog is not None:
-                        prog.emit(idx, nprofs)
+                        prog.emit(pidx, nprofs)
                     profs.append(ConvectiveProfile.copy(mem_profs[prof_idx]))
-            else:
-                if prof_idxs is not None:
-                    profs = [ mem_profs[i] for i in prof_idxs ]
                 else:
-                    profs = mem_profs
+                    profs.append(BasicProfile.copy(mem_profs[prof_idx]))
 
             profiles.append(profs)
 
@@ -156,7 +153,7 @@ class BufDecoder(Decoder):
                 wdir[j / 2] = float(data_stuff[j].split()[5])
                 omeg[j / 2] = float(data_stuff[j].split()[7])
 
-            prof = create_profile(profile='default', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
+            prof = create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
                 wdir=wdir, wspd=wspd, omeg=omeg, location=station)
 
             profiles.append(prof)
@@ -206,7 +203,7 @@ class SPCDecoder(Decoder):
         wspd = wspd[idx]
         wdir = wdir[idx]
 
-        prof = create_profile(profile='default', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
+        prof = create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
             wdir=wdir, wspd=wspd, location=location)
 
         return {'':[ prof ]}, [ datetime.strptime(time, '%y%m%d/%H%M') ]
