@@ -438,7 +438,7 @@ class plotKinematics(backgroundKinematics):
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
-			vspace = self.label_height + self.tpad
+            vspace = self.label_height + self.tpad
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
             y1 += vspace
