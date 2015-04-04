@@ -238,7 +238,17 @@ class Profile(object):
         ## generate theta-e profile
         self.thetae = self.get_thetae_profile()
 
-    
+    @classmethod
+    def copy(cls, prof, **kwargs):
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location' ])
+        if 'u' in kwargs or 'v' in kwargs:
+            new_kwargs.update({'u':prof.u, 'v':prof.v})
+        else:   
+            new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+
+        new_kwargs.update(kwargs)
+        return cls(**new_kwargs)
+
     def get_sfc(self):
         '''
             Convenience function to get the index of the surface. It is
