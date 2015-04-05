@@ -3,6 +3,7 @@ import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import sharppy.databases.sars as sars
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -143,6 +144,7 @@ class backgroundAnalogues(QtGui.QFrame):
 
 
 class plotAnalogues(backgroundAnalogues):
+    updatematch = QtCore.Signal(str)
     '''
     Handles the non-background plotting
     of the SARS window. This inherits a
@@ -375,6 +377,8 @@ class plotAnalogues(backgroundAnalogues):
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
                     ## is there is a selected match, draw the bounds
                     if self.selectRect is not None:
+                        pen.setColor(QtGui.QColor(LBLUE))
+                        qp.setPen(pen)
                         topLeft = self.selectRect.topLeft()
                         topRight = self.selectRect.topRight()
                         bottomLeft = self.selectRect.bottomLeft()
@@ -394,7 +398,8 @@ class plotAnalogues(backgroundAnalogues):
             ## loop over supercells
             for i, bound in enumerate(self.ybounds_sup):
                 if bound[0] < pos.y() and bound[1] > pos.y():
-                    print self.sup_matches[0][i]
+                    filematch = sars.getSounding(self.sup_matches[0][i], "supercell")
+                    self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
                     self.selectRect = QtCore.QRect(0, self.ybounds_sup[i, 0],
@@ -406,7 +411,8 @@ class plotAnalogues(backgroundAnalogues):
             ## loop over hail
             for i, bound in enumerate(self.ybounds_hail):
                 if bound[0] < pos.y() and bound[1] > pos.y():
-                    print self.hail_matches[0][i]
+                    filematch = sars.getSounding(self.hail_matches[0][i], "hail")
+                    self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
                     self.selectRect = QtCore.QRect(self.brx / 2., self.ybounds_hail[i, 0],
