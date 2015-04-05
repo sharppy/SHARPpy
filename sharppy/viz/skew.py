@@ -763,10 +763,10 @@ class plotSkewT(backgroundSkewT):
         if self.proflist is not None:
             for profile in self.proflist:
                 #purple #666699
-                self.drawTrace(profile.tmpc, QtGui.QColor("#666699"), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor("#666699"), qp, p=profile.pres)
+                self.drawTrace(profile.tmpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
                 #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
-                self.drawBarbs(profile, qp, color="#666699")
+                self.drawBarbs(profile, qp, color="#6666CC")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
