@@ -762,10 +762,11 @@ class plotSkewT(backgroundSkewT):
         self.drawTitle(qp)
         if self.proflist is not None:
             for profile in self.proflist:
-                #purple #7F00AD
-                self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
+                #purple #666699
+                self.drawTrace(profile.tmpc, QtGui.QColor("#666699"), qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, QtGui.QColor("#666699"), qp, p=profile.pres)
                 #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
+                self.drawBarbs(profile, qp, color="#666699")
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
@@ -791,7 +792,7 @@ class plotSkewT(backgroundSkewT):
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
-        self.drawBarbs(qp)
+        self.drawBarbs(self.prof, qp)
         qp.setRenderHint(qp.Antialiasing)
 
         self.draw_effective_layer(qp)
@@ -799,15 +800,15 @@ class plotSkewT(backgroundSkewT):
             self.draw_omega_profile(qp)
         qp.end()
 
-    def drawBarbs(self, qp):
+    def drawBarbs(self, prof, qp, color="#FFFFFF"):
         if self.interpWinds is False:
             i = 0
-            mask1 = self.u.mask
-            mask2 = self.pres.mask
+            mask1 = prof.u.mask
+            mask2 = prof.pres.mask
             mask = np.maximum(mask1, mask2)
-            pres = self.pres[~mask]
-            u = self.u[~mask]
-            v = self.v[~mask]
+            pres = prof.pres[~mask]
+            u = prof.u[~mask]
+            v = prof.v[~mask]
             wdir, wspd = tab.utils.comp2vec(u, v)
             yvals = self.pres_to_pix(pres)
             for y in yvals:
@@ -819,13 +820,13 @@ class plotSkewT(backgroundSkewT):
                 else:
                     break
         else:
-            pres = np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -40)
-            wdir, wspd = tab.interp.vec(self.prof, pres)
+            pres = np.arange(prof.pres[prof.sfc], prof.pres[prof.top], -40)
+            wdir, wspd = tab.interp.vec(prof, pres)
             for p, dd, ss in zip(pres, wdir, wspd):
                 if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
                 y = self.pres_to_pix(p)
-                drawBarb( qp, self.barbx, y, dd, ss )
+                drawBarb( qp, self.barbx, y, dd, ss, color=color)
 
 
     def drawTitle(self, qp):
