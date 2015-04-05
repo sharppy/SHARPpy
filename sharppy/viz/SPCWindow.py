@@ -373,7 +373,7 @@ class SkewApp(QWidget):
         matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
                                                tmpc=data.tmpc, dwpc=data.dwpc,
                                                wspd=data.wspd, wdir=data.wdir,
-                                               profile="default")
+                                               profile="convective")
         self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                            brand=self.brand, dgz=self.dgz, proflist=[matchprof])
 
