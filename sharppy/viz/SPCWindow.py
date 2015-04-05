@@ -8,6 +8,8 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
+import sharppy.io as io
+import sharppy.databases.sars as sars
 from datetime import datetime, timedelta
 import copy
 import numpy as np
@@ -260,6 +262,7 @@ class SkewApp(QWidget):
         self.convective.updatepcl.connect(self.updateParcel)
 
         self.makeInsets()
+        self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
@@ -271,6 +274,7 @@ class SkewApp(QWidget):
 
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
+
 
     @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
     def updateProfs(self, prof, panel, modified):
@@ -362,6 +366,16 @@ class SkewApp(QWidget):
         self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
         self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
         self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
+
+    @Slot(str)
+    def updateSARS(self, filematch):
+        data = io.spc_decoder.SNDFile(filematch)
+        matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
+                                               tmpc=data.tmpc, dwpc=data.dwpc,
+                                               wspd=data.wspd, wdir=data.wdir,
+                                               profile="default")
+        self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                           brand=self.brand, dgz=self.dgz, proflist=[matchprof])
 
 
     def loadWidgets(self):
