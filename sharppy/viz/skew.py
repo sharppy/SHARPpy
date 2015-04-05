@@ -762,6 +762,7 @@ class plotSkewT(backgroundSkewT):
         self.drawTitle(qp)
         if self.proflist is not None:
             for profile in self.proflist:
+                #purple #7F00AD
                 self.drawTrace(profile.tmpc, QtGui.QColor("#9F0101"), qp, p=profile.pres)
                 self.drawTrace(profile.dwpc, QtGui.QColor("#019B06"), qp, p=profile.pres)
                 #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
