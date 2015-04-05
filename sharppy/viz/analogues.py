@@ -172,10 +172,8 @@ class plotAnalogues(backgroundAnalogues):
         self.hail_matches = prof.matches
         self.sup_matches = prof.supercell_matches
         ## pixel bounds of supercell matches
-        self.xbounds_sup = np.empty((len(self.sup_matches[0]),2))
         self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
         ## pixel bounds of hail matches
-        self.xbounds_hail = np.empty((len(self.hail_matches[0]),2))
         self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
         super(plotAnalogues, self).__init__()
 
@@ -183,6 +181,8 @@ class plotAnalogues(backgroundAnalogues):
         self.prof = prof
         self.hail_matches = prof.matches
         self.sup_matches = prof.supercell_matches
+        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
 
         self.ylast = self.tpad
         self.clearData()
@@ -268,7 +268,6 @@ class plotAnalogues(backgroundAnalogues):
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
             place2 = (self.lpad, (self.brx/2.) - x1 * 3./4.)
-            self.xbounds = self.xbounds_sup
             self.ybounds = self.ybounds_sup
         else:
             self.matches = self.hail_matches
@@ -280,7 +279,6 @@ class plotAnalogues(backgroundAnalogues):
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
             place2 = (x1*3+10, x1*5.5-5)
-            self.xbounds = self.xbounds_hail
             self.ybounds = self.ybounds_hail
         ## if there are no matches, leave the function to prevent crashing
         if self.matches is np.ma.masked:
@@ -347,8 +345,6 @@ class plotAnalogues(backgroundAnalogues):
                     ## these are the rectangles that matches will plot inside of
                     rect3 = QtCore.QRect(place2[0], self.ylast, x1, self.match_height)
                     rect4 = QtCore.QRect(place2[1], self.ylast, x1, self.match_height)
-                    self.xbounds[i, 0] = place2[0]
-                    self.xbounds[i, 1] = place2[1] + x1
                     self.ybounds[i, 0] = self.ylast
                     self.ybounds[i, 1] = self.ylast + self.match_height
                     ## size or type is used for setting the color
