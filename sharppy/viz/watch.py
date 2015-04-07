@@ -1,7 +1,6 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
 ## Written by Kelton Halbert - OU School of Meteorology
