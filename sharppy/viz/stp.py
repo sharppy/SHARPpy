@@ -3,7 +3,6 @@ import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
-from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
 ## routine written by Kelton Halbert and Greg Blumberg
