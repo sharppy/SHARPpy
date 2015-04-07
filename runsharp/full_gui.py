@@ -10,7 +10,8 @@ else:
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.decoder import SPCDecoder, BufDecoder
+from sharppy.io.spc_decoder import SPCDecoder
+from sharppy.io.buf_decoder import BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -87,7 +88,7 @@ class AsyncThreads(QObject):
 
         return AsyncThread()
 
-class progress(QThread):
+class progress(QObject):
     _progress = Signal(int, int)
     _text = Signal(str)
 
@@ -594,6 +595,7 @@ class MainWindow(QWidget):
 
 @progress(MainWindow.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+
     if __text__ is not None:
         __text__.emit("Decoding File")
 

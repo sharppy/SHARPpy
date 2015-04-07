@@ -3,7 +3,7 @@ from __future__ import division
 import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import utils, winds, params, interp, thermo, watch_type, fire
-from sharppy.io import qc_tools
+import sharppy.io.qc_tools as qc_tools
 from sharppy.databases.sars import hail, supercell
 from sharppy.databases.pwv import pwv_climo
 from sharppy.sharptab.constants import MISSING

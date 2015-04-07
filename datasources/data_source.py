@@ -5,8 +5,9 @@ from datetime import datetime, timedelta
 import urllib
 
 import available
-from sharppy.io.decoder import BufDecoder, SPCDecoder
-from sharppy.io.spc_decoder import SNDFile
+from sharppy.io.buf_decoder import BufDecoder
+from sharppy.io.spc_decoder import SPCDecoder
+#from sharppy.io.spc_decoder import SNDFile
 
 _decoder = {
     'spc':SPCDecoder,
