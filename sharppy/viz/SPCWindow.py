@@ -233,19 +233,23 @@ class SkewApp(QWidget):
             self.prof = self.profs[self.current_idx][0]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                                 proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
             self.sound.reset.connect(self.resetProf)
+            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
+                                 proflist=self.proflist)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
 
         self.inferred_temp_advection = plotAdvection(self.prof)
 
-        self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+
 
         self.hodo.updated.connect(self.updateProfs)
         self.hodo.reset.connect(self.resetProf)
@@ -300,11 +304,15 @@ class SkewApp(QWidget):
             self.prof = self.profs[self.current_idx][0]
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                                brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                              proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                                brand=self.brand, dgz=self.dgz, proflist=self.proflist)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                              proflist=self.proflist, parent=self)
 
         self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
 
@@ -323,7 +331,7 @@ class SkewApp(QWidget):
         self.convective.setProf(self.prof, self.convective.pcl_types)
         self.kinematic.setProf(self.prof)
 
-        self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+
 
         for inset in self.insets.keys():
             self.insets[inset].setProf(self.prof)
@@ -383,6 +391,8 @@ class SkewApp(QWidget):
             self.proflist.append(matchprof)
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                            brand=self.brand, dgz=self.dgz, proflist=self.proflist)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
+                              proflist=self.proflist)
 
 
     def loadWidgets(self):

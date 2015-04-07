@@ -319,6 +319,7 @@ class plotHodo(backgroundHodo):
         self.clickradius = 6
 
         self.prof = kwargs.get('prof', None)
+        self.proflist = kwargs.get("proflist", [])
         self.original_prof = self.prof
 
         self.centered = kwargs.get('centered', (0,0))
@@ -437,6 +438,7 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
+        self.proflist = kwargs.get("proflist", [])
 #       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
@@ -917,6 +919,8 @@ class plotHodo(backgroundHodo):
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
+        for prof in self.proflist:
+            self.draw_profile(prof, qp)
         ## draw the hodograph
         self.draw_hodo(qp)
         ## draw the storm motion vector
@@ -925,6 +929,7 @@ class plotHodo(backgroundHodo):
         self.drawLCLtoEL_MW(qp)
         if self.cursor_type in [ 'none', 'stormmotion' ]:
             self.drawCriticalAngle(qp)
+
         qp.end()
     
     def drawLCLtoEL_MW(self, qp):
@@ -1164,6 +1169,50 @@ class plotHodo(backgroundHodo):
             pen = QtGui.QPen(colors[idx], penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
+
+            path = QPainterPath()
+            path.moveTo(seg_x[idx], seg_y[idx])
+            for z_idx in xrange(seg_idxs[idx] + 1, seg_idxs[idx + 1]):
+                path.lineTo(xx[z_idx], yy[z_idx])
+            path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
+
+            qp.drawPath(path)
+
+    def draw_profile(self, prof, qp, color="#6666CC"):
+        '''
+        Plot the Hodograph.
+
+        Parameters
+        ----------
+        qp: QtGui.QPainter object
+
+        '''
+        ## check for masked daata
+        try:
+            mask = np.maximum(prof.u.mask, prof.v.mask)
+            z = tab.interp.to_agl(prof.prof, prof.hght[~mask])
+            u = prof.u[~mask]
+            v = prof.v[~mask]
+        ## otherwise the data is fine
+        except:
+            z = tab.interp.to_agl(prof, prof.hght )
+            u = prof.u
+            v = prof.v
+        ## convert the u and v values to x and y pixels
+        xx, yy = self.uv_to_pix(u, v)
+
+        penwidth = 2
+        pen = QtGui.QPen(QtGui.QColor(color), penwidth)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.setBrush(Qt.NoBrush)
+
+        seg_bnds = [0., 3000., 6000., 9000., 12000.]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+
+        seg_idxs = np.searchsorted(z, seg_bnds)
+        for idx in xrange(len(seg_bnds) - 1):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
