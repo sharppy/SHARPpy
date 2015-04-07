@@ -3,14 +3,12 @@ import numpy as np
 
 from PySide import QtGui, QtCore
 
-from mpl_toolkits.basemap.shapefile import Reader
-import mpl_toolkits.basemap as basemap
 import sys, os
 import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join(os.path.dirname(basemap.__file__), "data")
+    data_dir = os.path.join('..', 'sharppy', 'databases', 'shapefiles')
     min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
     max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
 
@@ -50,52 +48,11 @@ class Mapper(object):
 
         return x, y
 
-    def _loadShapefile(self, name):
-        try:
-            shf = Reader(os.path.join(Mapper.data_dir, name))
-        except:
-            raise IOError('error reading shapefile %s.shp' % name)
-        fields = shf.fields
-        try:
-            shptype = shf.shapes()[0].shapeType
-        except IndexError:
-            return [], []
-        bbox = shf.bbox.tolist()
-        info = (shf.numRecords,shptype,bbox[0:2]+[0.,0.],bbox[2:]+[0.,0.])
-        npoly = 0
-
-        paths = []
-        for shprec in shf.shapeRecords():
-            shp = shprec.shape; rec = shprec.record
-            npoly = npoly + 1
-            if shptype != shp.shapeType:
-                raise ValueError('readshapefile can only handle a single shape type per file')
-            if shptype not in [1,3,5,8]:
-                raise ValueError('readshapefile can only handle 2D shape types')
-            verts = shp.points
-            if shptype not in [1,8]: # not a Point or MultiPoint shape.
-                parts = shp.parts.tolist()
-                ringnum = 0
-                for indx1,indx2 in zip(parts,parts[1:]+[len(verts)]):
-                    ringnum = ringnum + 1
-                    lons, lats = list(zip(*verts[indx1:indx2]))
-                    if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                        raise ValueError("shapefile must have lat/lon vertices")
-
-                    path = QtGui.QPainterPath()
-                    shp_x, shp_y = self(np.array(lats), np.array(lons))
-                    path.moveTo(shp_x[0], shp_y[0])
-                    for sx, sy in zip(shp_x, shp_y):
-                        path.lineTo(sx, sy)
-
-                    paths.append(path)
-        return paths
-
     def _loadDat(self, name, res):
-        bdatfile = open(os.path.join(Mapper.data_dir, name+'_' + res + '.dat'),'rb')
-        bdatmetafile = open(os.path.join(Mapper.data_dir, name+'meta_' + res + '.dat'),'r')
+        bdatfile = open(os.path.join(Mapper.data_dir, name + '_' + res + '.dat'), 'rb')
+        bdatmetafile = open(os.path.join(Mapper.data_dir, name + 'meta_' + res + '.dat'), 'r')
 
-        path = QtGui.QPainterPath()
+        paths = [ ] 
 
         for line in bdatmetafile:
             lats, lons = [], []
@@ -137,6 +94,8 @@ class Mapper(object):
                     else:
                         seg_idxs = idxs[breaks[idx]:breaks[idx + 1]]
 
+                    path = QtGui.QPainterPath()
+
                     poly_xs, poly_ys = self(b[seg_idxs, 1], b[seg_idxs, 0])
                     if len(poly_xs) < 2 or len(poly_ys) < 2:
                         continue
@@ -145,17 +104,23 @@ class Mapper(object):
                     for px, py in zip(poly_xs, poly_ys)[1:]:
                         path.lineTo(px, py)
 
-        return path
+                    paths.append(path)
+
+        return paths
 
 
     def loadBoundary(self, name):
         if name == 'coastlines':
             name = 'gshhs'
-        if name == 'counties':
-            bndy = self._loadShapefile('USCounties')
+
+        if name == 'states':
+            res = 'h'
+        elif name == 'uscounties':
+            res = 'f'
         else:
-            res = 'h' if name == 'states' else 'i'
-            bndy = self._loadDat(name, res)
+            res = 'i'
+
+        bndy = self._loadDat(name, res)
         return bndy
 
 class MapWidget(QtGui.QWidget):
@@ -216,7 +181,7 @@ class MapWidget(QtGui.QWidget):
         self._coast_path = self.mapper.loadBoundary('coastlines')
         self._country_path = self.mapper.loadBoundary('countries')
         self._state_path = self.mapper.loadBoundary('states')
-        self._county_path = self.mapper.loadBoundary('counties')
+        self._county_path = self.mapper.loadBoundary('uscounties')
 
         path = QtGui.QPainterPath()
         for lon in xrange(0, 360, 20):
@@ -297,6 +262,7 @@ class MapWidget(QtGui.QWidget):
         qp.translate(map_center_x, map_center_y)
         qp.scale(1. / self.scale, 1. / self.scale)
         self.transform = qp.transform()
+        window_rect = QtCore.QRect(0, 0, self.width(), self.height())
 
         qp.setPen(QtGui.QPen(QtGui.QColor('#333333'))) #, self.scale, QtCore.Qt.DashLine
         qp.drawPath(self._grid_path)
@@ -307,7 +273,6 @@ class MapWidget(QtGui.QWidget):
         scaled_area = np.sqrt(default_area / float(actual_area))
 
         if self.scale < 0.10 * scaled_area:
-            window_rect = QtCore.QRect(0, 0, self.width(), self.height())
 
             max_comp = 102
             full_scale = 0.05 * scaled_area
@@ -321,11 +286,18 @@ class MapWidget(QtGui.QWidget):
                     qp.drawPath(cp)
 
         qp.setPen(QtGui.QPen(QtGui.QColor('#999999')))
-        qp.drawPath(self._state_path)
+        for sp in self._state_path:
+            if self.transform.mapRect(sp.boundingRect()).intersects(window_rect):
+                qp.drawPath(sp)
 
         qp.setPen(QtGui.QPen(QtCore.Qt.white))
-        qp.drawPath(self._coast_path)
-        qp.drawPath(self._country_path)
+        for cp in self._coast_path:
+            if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
+                qp.drawPath(cp)
+
+        for cp in self._country_path:
+            if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
+                qp.drawPath(cp)
 
         self.drawStations(qp)
         qp.end()

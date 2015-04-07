@@ -22,7 +22,7 @@ class Decoder(object):
     def _parse(self):
         pass
 
-    def getProfiles(self, prof_idxs=None, prog=None):
+    def getProfiles(self, prof_idxs=[0], prog=None):
         profiles = []
         mean_idx = 0
         for idx, (mem_name, mem_profs) in enumerate(self._profiles.iteritems()):
