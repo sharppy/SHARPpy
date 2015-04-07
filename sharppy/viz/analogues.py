@@ -3,6 +3,7 @@ import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import sharppy.databases.sars as sars
 import platform
 
 ## routine written by Kelton Halbert
@@ -39,6 +40,8 @@ class backgroundAnalogues(QtGui.QFrame):
         ## Set the padding constants
         self.lpad = 5; self.rpad = 5
         self.tpad = 5; self.bpad = 5
+
+
 
         ## set the window metrics (height, width)
         self.wid = self.size().width()
@@ -83,6 +86,9 @@ class backgroundAnalogues(QtGui.QFrame):
         ## where in pixel space the last line of text ends
         self.ylast = self.tpad
         self.text_start = 0
+        ## placement of supercell vs hail
+        self.divide = (self.brx / 6)*3+10
+        self.selectRect = None
 
         ## The widget will be drawn on a QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
@@ -153,6 +159,7 @@ class backgroundAnalogues(QtGui.QFrame):
 
 
 class plotAnalogues(backgroundAnalogues):
+    updatematch = QtCore.Signal(str)
     '''
     Handles the non-background plotting
     of the SARS window. This inherits a
@@ -179,12 +186,18 @@ class plotAnalogues(backgroundAnalogues):
         self.prof = prof
         self.hail_matches = prof.matches
         self.sup_matches = prof.supercell_matches
+        ## pixel bounds of supercell matches
+        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
+        ## pixel bounds of hail matches
+        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
         super(plotAnalogues, self).__init__()
 
     def setProf(self, prof):
         self.prof = prof
         self.hail_matches = prof.matches
         self.sup_matches = prof.supercell_matches
+        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
 
         self.ylast = self.tpad
         self.clearData()
@@ -270,6 +283,7 @@ class plotAnalogues(backgroundAnalogues):
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
             place2 = (self.lpad, (self.brx/2.) - x1 * 3./4.)
+            self.ybounds = self.ybounds_sup
         else:
             self.matches = self.hail_matches
             sigstr = 'SIG'
@@ -280,6 +294,7 @@ class plotAnalogues(backgroundAnalogues):
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
             place2 = (x1*3+10, x1*5.5-5)
+            self.ybounds = self.ybounds_hail
         ## if there are no matches, leave the function to prevent crashing
         if self.matches is np.ma.masked:
             return
@@ -340,10 +355,13 @@ class plotAnalogues(backgroundAnalogues):
                 self.ylast = self.text_start
                 idx  = 0
                 ## loop through each of the matches
+                i = 0
                 for m in self.matches[0]:
                     ## these are the rectangles that matches will plot inside of
                     rect3 = QtCore.QRect(place2[0], self.ylast, x1, self.match_height)
                     rect4 = QtCore.QRect(place2[1], self.ylast, x1, self.match_height)
+                    self.ybounds[i, 0] = self.ylast
+                    self.ybounds[i, 1] = self.ylast + self.match_height
                     ## size or type is used for setting the color
                     size = self.matches[1][idx]
                     if type == 'TOR':
@@ -368,9 +386,55 @@ class plotAnalogues(backgroundAnalogues):
                     ## draw the text
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
+                    ## is there is a selected match, draw the bounds
+                    if self.selectRect is not None:
+                        pen.setColor(QtGui.QColor(LBLUE))
+                        qp.setPen(pen)
+                        topLeft = self.selectRect.topLeft()
+                        topRight = self.selectRect.topRight()
+                        bottomLeft = self.selectRect.bottomLeft()
+                        bottomRight = self.selectRect.bottomRight()
+                        qp.drawLine(topLeft, topRight)
+                        qp.drawLine(bottomLeft, bottomRight)
                     idx += 1
+                    i += 1
                     ## add to the running vertical sum
                     vspace = self.match_height
                     if platform.system() == "Windows":
                         vspace += self.match_metrics.descent()
                     self.ylast += vspace
+            self.ylast = self.tpad
+
+    def mousePressEvent(self, e):
+        pos = e.pos()
+        ## is this a supercell match?
+        if pos.x() < (self.brx / 2.):
+            ## loop over supercells
+            for i, bound in enumerate(self.ybounds_sup):
+                if bound[0] < pos.y() and bound[1] > pos.y():
+                    filematch = sars.getSounding(self.sup_matches[0][i], "supercell")
+                    self.updatematch.emit(filematch)
+                    ## set the rectangle used for showing
+                    ## a selected match
+                    self.selectRect = QtCore.QRect(0, self.ybounds_sup[i, 0],
+                                    self.brx / 2.,
+                                    self.ybounds_sup[i, 1] - self.ybounds_sup[i, 0])
+                    break
+        ## is this a hail match?
+        elif pos.x() > (self.brx / 2.):
+            ## loop over hail
+            for i, bound in enumerate(self.ybounds_hail):
+                if bound[0] < pos.y() and bound[1] > pos.y():
+                    filematch = sars.getSounding(self.hail_matches[0][i], "hail")
+                    self.updatematch.emit(filematch)
+                    ## set the rectangle used for showing
+                    ## a selected match
+                    self.selectRect = QtCore.QRect(self.brx / 2., self.ybounds_hail[i, 0],
+                                    self.brx / 2.,
+                                    self.ybounds_hail[i, 1] - self.ybounds_hail[i, 0])
+                    break
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()

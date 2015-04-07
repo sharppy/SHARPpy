@@ -8,6 +8,8 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
+import sharppy.io as io
+import sharppy.databases.sars as sars
 from datetime import datetime, timedelta
 import copy
 import numpy as np
@@ -51,6 +53,7 @@ class SkewApp(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.profs = profs
+        self.proflist = []
         self.dates = dates
         self.model = model
         self.prof_time = kwargs.get("prof_time", None)
@@ -240,7 +243,7 @@ class SkewApp(QWidget):
         else:
             self.prof = self.profs[self.current_idx]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                                   dgz=self.dgz)
+                                   dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
             self.sound.reset.connect(self.resetProf)
 
@@ -267,6 +270,7 @@ class SkewApp(QWidget):
         self.convective.updatepcl.connect(self.updateParcel)
 
         self.makeInsets()
+        self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
@@ -279,6 +283,7 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
+
     @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
     def updateProfs(self, prof, panel, modified):
         if panel == 'skew':
@@ -290,12 +295,13 @@ class SkewApp(QWidget):
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                               brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
             self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                               brand=self.brand, dgz=self.dgz, proflist=self.proflist)
 
         self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
 
@@ -323,6 +329,7 @@ class SkewApp(QWidget):
     def resetProf(self, panel):
         current = self.profs[self.current_idx]
         orig = self.original_profs[self.current_idx]
+        self.proflist = []
 
         if panel == 'hodo':
             kwargs = {'u':orig.u, 'v':orig.v}
@@ -344,7 +351,8 @@ class SkewApp(QWidget):
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
-            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand,
+                               dgz=self.dgz, proflist=self.proflist)
 
         self.storm_slinky.setProf(self.prof, pcl=pcl)
 
@@ -352,6 +360,19 @@ class SkewApp(QWidget):
         self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
         self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
         self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
+
+    @Slot(str)
+    def updateSARS(self, filematch):
+        if self.model != "SREF":
+            self.proflist = []
+            data = io.spc_decoder.SNDFile(filematch)
+            matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
+                                               tmpc=data.tmpc, dwpc=data.dwpc,
+                                               wspd=data.wspd, wdir=data.wdir,
+                                               profile="convective")
+            self.proflist.append(matchprof)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                           brand=self.brand, dgz=self.dgz, proflist=self.proflist)
 
 
     def loadWidgets(self):
