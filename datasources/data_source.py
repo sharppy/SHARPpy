@@ -5,13 +5,16 @@ from datetime import datetime, timedelta
 import urllib
 
 import available
-from sharppy.io.decoder import BufDecoder, SPCDecoder
-from sharppy.io.spc_decoder import SNDFile
+
+# Move this to a function in decoder.py
+from sharppy.io.buf_decoder import BufDecoder
+from sharppy.io.spc_decoder import SPCDecoder
 
 _decoder = {
     'spc':SPCDecoder,
     'bufkit':BufDecoder,
 }
+# End move
 
 def loadDataSources(ds_dir='../datasources'):
     files = glob.glob(ds_dir + '/*.xml')

@@ -207,8 +207,8 @@ def _vec2comp(wdir, wspd):
         V-component of the wind
 
     '''
-    u = wspd * ma.sin(np.radians(wdir % 360.)) * -1
-    v = wspd * ma.cos(np.radians(wdir % 360.)) * -1
+    u = wspd * ma.sin(np.radians(wdir)) * -1
+    v = wspd * ma.cos(np.radians(wdir)) * -1
     return u, v
 
 

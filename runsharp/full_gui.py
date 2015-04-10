@@ -10,7 +10,8 @@ else:
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.decoder import SPCDecoder, BufDecoder
+from sharppy.io.spc_decoder import SPCDecoder
+from sharppy.io.buf_decoder import BufDecoder
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -22,6 +23,7 @@ import urllib
 import traceback
 from functools import wraps, partial
 import hashlib
+import cProfile
 
 class AsyncThreads(QObject):
     def __init__(self):
@@ -86,7 +88,7 @@ class AsyncThreads(QObject):
 
         return AsyncThread()
 
-class progress(QThread):
+class progress(QObject):
     _progress = Signal(int, int)
     _text = Signal(str)
 
@@ -227,7 +229,7 @@ class MainWindow(QWidget):
         models = sorted(self.data_sources.keys())
         self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
-        self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
+        self.map_dropdown = self.dropdown_menu(['Northern Hemisphere', 'Tropics (Coming Soon!)', 'Southern Hemisphere (Coming Soon!)'])
         times = self.data_sources[self.model].getAvailableTimes()
         self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
         self.run_dropdown.setCurrentIndex(times.index(self.run))
@@ -519,12 +521,12 @@ class MainWindow(QWidget):
         :return:
         """
 
-        items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
-        fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
-
         profs = []
         dates = []
         failure = False
+
+#       items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
+#       fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
         exc = ""
 
@@ -542,6 +544,7 @@ class MainWindow(QWidget):
                 failure = True
 
             run = None
+            fhours = None
 
         else:
         ## otherwise, download with the data thread
@@ -557,6 +560,7 @@ class MainWindow(QWidget):
                 profs, dates = ret
 
             run = "%02dZ" % self.run.hour
+            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in self.prof_idx ]
 
         if failure:
             msgbox = QMessageBox()
@@ -591,6 +595,7 @@ class MainWindow(QWidget):
 
 @progress(MainWindow.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+
     if __text__ is not None:
         __text__.emit("Decoding File")
 
