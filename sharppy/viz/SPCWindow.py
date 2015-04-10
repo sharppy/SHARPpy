@@ -371,13 +371,14 @@ class SkewApp(QWidget):
 #                                              wspd=data.wspd, wdir=data.wdir,
 #                                              profile="convective")
 
-            dec = io.spc_decoder.SPCDecoder(filematch)
-            matchprof = dec.getProfiles()[0]
+            if filematch != "":
+                dec = io.spc_decoder.SPCDecoder(filematch)
+                matchprof = dec.getProfiles()[0]
 
-            self.proflist.append(matchprof)
+                self.proflist.append(matchprof)
+
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                            brand=self.brand, dgz=self.dgz, proflist=self.proflist)
-
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -417,6 +418,8 @@ class SkewApp(QWidget):
                 self.current_idx = 0
             self.parcel_types = self.convective.pcl_types
             self.updateProfs(self.profs[self.current_idx], 'none', False)
+            self.updateSARS("")
+            self.insets['SARS'].clearSelection()
             return
 
         if key == Qt.Key_Left:
@@ -426,6 +429,8 @@ class SkewApp(QWidget):
                 self.current_idx = length -1
             self.parcel_types = self.convective.pcl_types
             self.updateProfs(self.profs[self.current_idx], 'none', False)
+            self.updateSARS("")
+            self.insets['SARS'].clearSelection()
             return
 
         if e.matches(QKeySequence.Save):

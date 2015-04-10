@@ -438,3 +438,12 @@ class plotAnalogues(backgroundAnalogues):
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
+
+    def clearSelection(self):
+        self.selectRect = None
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
