@@ -23,7 +23,7 @@ class SPCDecoder(Decoder):
         ## create the plot title
         data_header = data[title_idx + 1].split()
         location = data_header[0]
-        time = data_header[1]
+        time = data_header[1][:11]
 
         ## put it all together for StringIO
         full_data = '\n'.join(data[start_idx : finish_idx][:])
@@ -44,4 +44,3 @@ class SPCDecoder(Decoder):
             wdir=wdir, wspd=wspd, location=location)
 
         return {'':[ prof ]}, [ datetime.strptime(time, '%y%m%d/%H%M') ]
-

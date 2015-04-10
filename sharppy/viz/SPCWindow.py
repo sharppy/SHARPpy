@@ -365,11 +365,15 @@ class SkewApp(QWidget):
     def updateSARS(self, filematch):
         if self.model != "SREF":
             self.proflist = []
-            data = io.spc_decoder.SNDFile(filematch)
-            matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
-                                               tmpc=data.tmpc, dwpc=data.dwpc,
-                                               wspd=data.wspd, wdir=data.wdir,
-                                               profile="convective")
+#           data = io.spc_decoder.SNDFile(filematch)
+#           matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
+#                                              tmpc=data.tmpc, dwpc=data.dwpc,
+#                                              wspd=data.wspd, wdir=data.wdir,
+#                                              profile="convective")
+
+            dec = io.spc_decoder.SPCDecoder(filematch)
+            matchprof = dec.getProfiles()[0]
+
             self.proflist.append(matchprof)
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
                            brand=self.brand, dgz=self.dgz, proflist=self.proflist)
