@@ -1,7 +1,6 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundSlinky', 'plotSlinky']
@@ -136,7 +135,7 @@ class plotSlinky(backgroundSlinky):
     backgroundSlinky class and draws on the QPixmap
     that is initialized there.
     '''
-    def __init__(self, prof):
+    def __init__(self, prof, **kwargs):
         '''
         Initializes data variables needed to draw 
         the slinky by taking in a Profile object.
@@ -147,19 +146,21 @@ class plotSlinky(backgroundSlinky):
         
         '''
         self.prof = prof
+        #self.pcl = kwargs.get('pcl', self.prof.mupcl)
         super(plotSlinky, self).__init__()
         self.slinky_traj = self.prof.slinky_traj
         self.updraft_tilt = self.prof.updraft_tilt
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
 
-    def setProf(self, prof):
+    def setProf(self, prof, pcl):
         self.prof = prof
-        self.slinky_traj = self.prof.slinky_traj
-        self.updraft_tilt = self.prof.updraft_tilt
+        self.pcl = pcl
+        #self.slinky_traj = self.prof.slinky_traj
+        #self.updraft_tilt = self.prof.updraft_tilt
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
-
+        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(prof, pcl, self.smu, self.smv)
         self.clearData()
         self.plotBackground()
         self.plotData()
