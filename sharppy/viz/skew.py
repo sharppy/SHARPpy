@@ -118,54 +118,11 @@ class backgroundSkewT(QtGui.QWidget):
         self.initUI()
     
     def wheelEvent(self, e):
-#       rate_multiplier = 0.5 * e.delta()
-
-#       focus_x, focus_y = (self.brx - self.lpad) / 2, self.bry #e.x(), e.y()
-
-#       left_rate = (focus_x - self.lpad) / float(self.brx - self.lpad)
-#       right_rate = 1 - left_rate
-#       top_rate = (focus_y - self.tly) / float(self.bry - self.tly)
-#       bottom_rate = 1 - top_rate
-
-##       print left_rate, right_rate, focus_x
-##       print top_rate, bottom_rate, focus_y
-
-##       qp.drawLine(self.lpad, self.tly, self.brx, self.tly)
-##       qp.drawLine(self.brx, self.tly, self.brx, self.bry)
-##       qp.drawLine(self.brx, self.bry, self.lpad, self.bry)
-##       qp.drawLine(self.lpad, self.bry, self.lpad, self.tly)
-
-#       new_left = self.lpad - rate_multiplier * left_rate
-#       new_right = self.brx + rate_multiplier * right_rate
-#       new_top = self.tly - rate_multiplier * top_rate
-#       new_bottom = self.bry + rate_multiplier * bottom_rate
-
-##       print new_left - self.lpad, self.brx - new_right
-
-#       new_tmin = self.pix_to_tmpc(new_left, self.bry)
-#       new_tmax = self.pix_to_tmpc(new_right, self.bry)
-#       new_pmin = self.pix_to_pres(new_top)
-#       new_pmax = self.pix_to_pres(new_bottom)
-
-#       print new_tmin, new_tmax
-
-#       if new_pmax - new_pmin > 100:
-#           self.pmin = max(100., new_pmin)
-#           self.pmax = min(1050., new_pmax)
-#       if new_tmax - new_tmin > 20:
-#           self.bltmpc = max(-50., new_tmin)
-#           self.brtmpc = min(50., new_tmax)
-
-#       self.log_pmin = np.log(self.pmin)
-#       self.log_pmax = np.log(self.pmax)
-#       self.xrange = int(self.brtmpc) - int(self.bltmpc)
-#       self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
-#       self.update()
-
         self.centerx, self.centery = e.x(), e.y()
         delta = min(10, max(-10, e.delta()))
         self.scale *= (10 ** (delta / 50.))
         self.scale = min(self.scale, 1)
+        
         self.update()
 
     def draw_dry_adiabat(self, theta, qp):
@@ -767,6 +724,7 @@ class plotSkewT(backgroundSkewT):
         '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+#       qp.translate(self.centerx, self.centery)
         qp.scale(1 / self.scale, 1 / self.scale)
 
         qp.setRenderHint(qp.Antialiasing)
