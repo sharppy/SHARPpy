@@ -133,10 +133,12 @@ class Mapper(object):
 
     def _xytoll_stere(self, xs, ys, lambda_0, phi_0, m, rad_earth):
         sign = -1 if (phi_0 < 0) else 1
-        sigma = self._get_sigma(phi_0, lats, south_hemis=(phi_0 < 0))
 
-        lon = lambda_0 + 90 - np.degrees(np.arctan2(ys, xs))
-        lat = sign * np.degrees(np.arccos(np.hypot(xs, ys) / (m * sigma * rad_earth)))
+        lon = (lambda_0 + 90 - sign * np.degrees(np.arctan2(ys, xs)))
+        lat = sign * np.degrees(2 * np.arctan(rad_earth * m * (1 + sign * np.sin(np.radians(phi_0))) / np.hypot(xs, ys)) - np.pi / 2)
+
+        if lon < -180: lon += 360
+        elif lon > 180: lon -= 360
         return lat, lon
 
     # Function to perform map transformation to and from Mercator projection
@@ -153,7 +155,7 @@ class Mapper(object):
 
     def _xytoll_merc(self, xs, ys, lambda_0, m, rad_earth):
         lon = np.degrees(np.radians(lambda_0) + xs / (m * rad_earth))
-        lat = np.degrees(2 * np.arctan(np.exp(ys / (m * rad_earth))) - np.pi / 2)
+        lat = -np.degrees(2 * np.arctan(np.exp(ys / (m * rad_earth))) - np.pi / 2)
         return lat, lon
 
     def _loadDat(self, name, res):
@@ -179,17 +181,9 @@ class Mapper(object):
                 else:
                     seg_idxs = idxs[breaks[idx]:breaks[idx + 1]]
 
-                path = QtGui.QPainterPath()
+                if len(seg_idxs) >= 2:
+                    paths.append(b[seg_idxs, ::-1])
 
-                poly_xs, poly_ys = self(b[seg_idxs, 1], b[seg_idxs, 0])
-                if len(poly_xs) < 2 or len(poly_ys) < 2:
-                    continue
-
-                path.moveTo(poly_xs[0], poly_ys[0])
-                for px, py in zip(poly_xs, poly_ys)[1:]:
-                    path.lineTo(px, py)
-
-                paths.append(path)
             return paths
 
         bdatfile = open(os.path.join(Mapper.data_dir, name + '_' + res + '.dat'), 'rb')
@@ -198,7 +192,7 @@ class Mapper(object):
         projs = ['npstere', 'merc', 'spstere']
         paths = dict( (p, []) for p in projs )
 
-        old_proj = self.proj
+#       old_proj = self.proj
         for line in bdatmetafile:
             lats, lons = [], []
             linesplit = line.split()
@@ -225,12 +219,10 @@ class Mapper(object):
                     b[:, 0] -= 360
 
                 for proj in projs:
-                    self.setProjection(proj)
-                    lb_lat, ub_lat = self.getLatBounds()
+                    lb_lat, ub_lat = Mapper.min_lat[proj], Mapper.max_lat[proj]
                     path = segmentPath(b, lb_lat, ub_lat)
                     paths[proj].extend(path)
 
-        self.setProjection(old_proj)
         return paths
 
 
@@ -247,7 +239,20 @@ class Mapper(object):
 
         if name not in self._bnds:
             self._bnds[name] = self._loadDat(name, res)
-        return self._bnds[name][self.proj]
+
+        paths = []
+        for bnd in self._bnds[name][self.proj]:
+            path = QtGui.QPainterPath()
+
+            path_lats, path_lons = zip(*bnd)
+            path_x, path_y = self(np.array(path_lats), np.array(path_lons))
+
+            path.moveTo(path_x[0], path_y[0])
+            for px, py in zip(path_x, path_y)[1:]:
+                path.lineTo(px, py)
+
+            paths.append(path)
+        return paths
 
 class MapWidget(QtGui.QWidget):
     clicked = QtCore.Signal(dict)
@@ -285,12 +290,12 @@ class MapWidget(QtGui.QWidget):
         self.load_readout.show()
         self.load_readout.move(self.width(), self.height())
 
-#       self.latlon_readout = QtGui.QLabel(parent=self)
-#       self.latlon_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
-#       self.latlon_readout.setText("")
-#       self.latlon_readout.setFixedWidth(150)
-#       self.latlon_readout.show()
-#       self.latlon_readout.move(15, 15)
+        self.latlon_readout = QtGui.QLabel(parent=self)
+        self.latlon_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
+        self.latlon_readout.setText("")
+        self.latlon_readout.setFixedWidth(150)
+        self.latlon_readout.show()
+        self.latlon_readout.move(10, 10)
 
         self.async = async
         self.setDataSource(data_source, init_time, init=True)
@@ -497,8 +502,10 @@ class MapWidget(QtGui.QWidget):
             self.update()
         self._checkStations(e)
 
-#       lat, lon = self.mapper(e.x(), e.y(), inverse=True)
-#       self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
+        trans_inv, is_invertible = self.transform.inverted()
+        mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
+        lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
 
     def mouseReleaseEvent(self, e):
         self.init_drag_x, self.init_drag_y = None, None
@@ -523,7 +530,13 @@ class MapWidget(QtGui.QWidget):
         self.dragging = False
 
     def mouseDoubleClickEvent(self, e):
-        return
+        trans_inv, is_invertible = self.transform.inverted()
+        mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
+        lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        self.mapper.setLambda0(lon)
+        self.initMap()
+        self.drawMap()
+        self.update()
 
     def wheelEvent(self, e):
         max_speed = 75
