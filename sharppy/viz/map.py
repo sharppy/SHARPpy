@@ -9,51 +9,177 @@ import urllib2
 
 class Mapper(object):
     data_dir = os.path.join('..', 'sharppy', 'databases', 'shapefiles')
-    min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
-    max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
+    min_lat = {'npstere':0., 'merc':-40., 'spstere':-90.}
+    max_lat = {'npstere':90., 'merc':40., 'spstere':0.}
 
     def __init__(self, lambda_0, phi_0, proj='npstere'):
         self.proj = proj
         self.lambda_0 = lambda_0
         self.phi_0 = phi_0
         self.m = 6.6667e-7
+        self.rad_earth = 6.371e8
+        self._bnds = {}
 
     def getLambda0(self):
         return self.lambda_0
 
+    def setLambda0(self, lambda_0):
+        self.lambda_0 = lambda_0
+
     def getPhi0(self):
         return self.phi_0
+
+    def setProjection(self, proj):
+        if proj not in ['npstere', 'spstere', 'merc']:
+            raise ValueError("Projection must be one of 'npstere', 'spstere', or 'merc'; got '%s'." % proj)
+        self.proj = proj
+
+        if proj == 'spstere':
+            self.phi_0 = -np.abs(self.phi_0)
+        elif proj == 'npstere':
+            self.phi_0 = np.abs(self.phi_0)
+
+    def getProjection(self):
+        return self.proj
+
+    def getCoordPaths(self):
+        path = QtGui.QPainterPath()
+        lb_lat, ub_lat = Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
+
+        if self.proj == 'npstere':
+            for lon in xrange(0, 360, 20):
+                lats = np.linspace(lb_lat, ub_lat, 2)
+                lx, ly = self(lats, lon)
+
+                path.moveTo(lx[0], ly[0])
+                for x, y in zip(lx, ly)[1:]:
+                    path.lineTo(x, y)
+
+            for lat in xrange(int(lb_lat), int(ub_lat), 15):
+                lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
+                rx, ry = self(lat, lons)
+                x_min, x_max = rx.min(), rx.max()
+                y_min, y_max = ry.min(), ry.max()
+                path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
+
+        elif self.proj == 'merc':
+            for lon in xrange(-180, 180 + 20, 20):
+                lats = np.linspace(lb_lat, ub_lat, 2)
+                lx, ly = self(lats, lon)
+
+                path.moveTo(lx[0], ly[0])
+                for x, y in zip(lx, ly)[1:]:
+                    path.lineTo(x, y)
+
+            for lat in xrange(int(lb_lat), int(ub_lat) + 10, 10):
+                lons = np.linspace(-180, 180, 2)
+                lx, ly = self(lat, lons)
+
+                path.moveTo(lx[0], ly[0])
+                for x, y in zip(lx, ly)[1:]:
+                    path.lineTo(x, y)
+
+        elif self.proj == 'spstere':
+            for lon in xrange(0, 360, 20):
+                lats = np.linspace(lb_lat, ub_lat, 2)
+                lx, ly = self(lats, lon)
+
+                path.moveTo(lx[0], ly[0])
+                for x, y in zip(lx, ly)[1:]:
+                    path.lineTo(x, y)
+
+            for lat in xrange(int(ub_lat), int(lb_lat), -15):
+                lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
+                rx, ry = self(lat, lons)
+                x_min, x_max = rx.min(), rx.max()
+                y_min, y_max = ry.min(), ry.max()
+                path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
+
+        return path
 
     def getLatBounds(self):
         return Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
 
     def __call__(self, lats, lons):
-        return self._lltoxy_npstere(lats, lons, self.lambda_0, self.phi_0, self.m)
+        if self.proj in ['npstere', 'spstere']:
+            return self._lltoxy_stere(lats, lons, self.lambda_0, self.phi_0, self.m, self.rad_earth)
+        elif self.proj in ['merc']:
+            return self._lltoxy_merc(lats, lons, self.lambda_0, self.m, self.rad_earth)
 
     # Functions to perform the map transformation to North Pole Stereographic
     # Equations from the SoM OBAN 2014 class
-    def _get_sigma(self, phi_0, lats):
-        sigma = (1. + np.sin(np.radians(phi_0)))/(1. + np.sin(np.radians(lats)))
+    # Functions adapted for either hemisphere by Tim Supinie, April 2015
+    def _get_sigma(self, phi_0, lats, south_hemis=False):
+        sign = -1 if south_hemis else 1
+        sigma = (1. + np.sin(np.radians(sign * phi_0))) / (1. + np.sin(np.radians(sign * lats)))
         return sigma
 
-    def _get_shifted_lon(self, lambda_0, lons):
-        return lambda_0 - lons
+    def _get_shifted_lon(self, lambda_0, lons, south_hemis=False):
+        sign = -1 if south_hemis else 1
+        return sign * (lambda_0 - lons)
 
-    def _lltoxy_npstere(self, lats, lons, lambda_0, phi_0, m):
-        rad_earth = 6.371e8
-        sigma = self._get_sigma(phi_0, lats)
-        lambdas = np.radians(self._get_shifted_lon(lambda_0 + 90, lons))
+    def _lltoxy_stere(self, lats, lons, lambda_0, phi_0, m, rad_earth):
+        sigma = self._get_sigma(phi_0, lats, south_hemis=(phi_0 < 0))
+        lambdas = np.radians(self._get_shifted_lon(lambda_0 + 90, lons, south_hemis=(phi_0 < 0)))
         x = m * sigma * rad_earth * np.cos(np.radians(lats)) * np.cos(lambdas)
         y = m * sigma * rad_earth * np.cos(np.radians(lats)) * np.sin(lambdas)
+        return x, y
 
+    # Function to perform map transformation to Mercator projection
+    def _lltoxy_merc(self, lats, lons, lambda_0, m, rad_earth):
+        x = m * rad_earth * (np.radians(lons) - np.radians(lambda_0))
+        y = -m * rad_earth * np.log(np.tan(np.pi / 4 + np.radians(lats) / 2))
+
+        if type(x) in [ np.ndarray ] or type(y) in [ np.ndarray ]:
+            if type(x) not in [ np.ndarray ]:
+                x = x * np.ones(y.shape)
+            if type(y) not in [ np.ndarray ]:
+                y = y * np.ones(x.shape)
         return x, y
 
     def _loadDat(self, name, res):
+        def segmentPath(b, lb_lat, ub_lat):
+            paths = []
+            if b[:, 1].max() <= lb_lat or b[:, 1].min() >= ub_lat:
+                return paths
+
+            idxs = np.where((b[:, 1] >= lb_lat) & (b[:, 1] <= ub_lat))[0]
+            if len(idxs) < 2:
+                return paths
+
+            segs = (np.diff(idxs) == 1)
+            try:
+                breaks = np.where(segs == 0)[0] + 1
+            except IndexError:
+                breaks = []
+            breaks = [ 0 ] + list(breaks) + [ -1 ]
+ 
+            for idx in xrange(len(breaks) - 1):
+                if breaks[idx + 1] == -1:
+                    seg_idxs = idxs[breaks[idx]:]
+                else:
+                    seg_idxs = idxs[breaks[idx]:breaks[idx + 1]]
+
+                path = QtGui.QPainterPath()
+
+                poly_xs, poly_ys = self(b[seg_idxs, 1], b[seg_idxs, 0])
+                if len(poly_xs) < 2 or len(poly_ys) < 2:
+                    continue
+
+                path.moveTo(poly_xs[0], poly_ys[0])
+                for px, py in zip(poly_xs, poly_ys)[1:]:
+                    path.lineTo(px, py)
+
+                paths.append(path)
+            return paths
+
         bdatfile = open(os.path.join(Mapper.data_dir, name + '_' + res + '.dat'), 'rb')
         bdatmetafile = open(os.path.join(Mapper.data_dir, name + 'meta_' + res + '.dat'), 'r')
 
-        paths = [ ] 
+        projs = ['npstere', 'merc', 'spstere']
+        paths = dict( (p, []) for p in projs )
 
+        old_proj = self.proj
         for line in bdatmetafile:
             lats, lons = [], []
             linesplit = line.split()
@@ -63,7 +189,7 @@ class Mapper(object):
             if area < 0:
                 area = 1e30
 
-            if north > 0 and area > 1500.:
+            if area > 1500.:
                 typ = int(linesplit[0])
                 npts = int(linesplit[2])
                 offsetbytes = int(linesplit[5])
@@ -76,40 +202,20 @@ class Mapper(object):
                 b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
                 b.shape = (npts, 2)
 
-                lb, ub = self.getLatBounds()
-                idxs = np.where((b[:, 1] >= lb) & (b[:, 1] <= ub))[0]
-                if len(idxs) < 2:
-                    continue
+                if np.any(b[:, 0] > 180):
+                    b[:, 0] -= 360
 
-                segs = (np.diff(idxs) == 1)
-                try:
-                    breaks = np.where(segs == 0)[0] + 1
-                except IndexError:
-                    breaks = []
-                breaks = [ 0 ] + list(breaks) + [ -1 ]
- 
-                for idx in xrange(len(breaks) - 1):
-                    if breaks[idx + 1] == -1:
-                        seg_idxs = idxs[breaks[idx]:]
-                    else:
-                        seg_idxs = idxs[breaks[idx]:breaks[idx + 1]]
+                for proj in projs:
+                    self.setProjection(proj)
+                    lb_lat, ub_lat = self.getLatBounds()
+                    path = segmentPath(b, lb_lat, ub_lat)
+                    paths[proj].extend(path)
 
-                    path = QtGui.QPainterPath()
-
-                    poly_xs, poly_ys = self(b[seg_idxs, 1], b[seg_idxs, 0])
-                    if len(poly_xs) < 2 or len(poly_ys) < 2:
-                        continue
-
-                    path.moveTo(poly_xs[0], poly_ys[0])
-                    for px, py in zip(poly_xs, poly_ys)[1:]:
-                        path.lineTo(px, py)
-
-                    paths.append(path)
-
+        self.setProjection(old_proj)
         return paths
 
 
-    def loadBoundary(self, name):
+    def getBoundary(self, name):
         if name == 'coastlines':
             name = 'gshhs'
 
@@ -120,15 +226,15 @@ class Mapper(object):
         else:
             res = 'i'
 
-        bndy = self._loadDat(name, res)
-        return bndy
+        if name not in self._bnds:
+            self._bnds[name] = self._loadDat(name, res)
+        return self._bnds[name][self.proj]
 
 class MapWidget(QtGui.QWidget):
     clicked = QtCore.Signal(dict)
 
     def __init__(self, data_source, init_time, async, **kwargs):
         super(MapWidget, self).__init__(**kwargs)
-        self.scale = 0.60
         self.trans_x, self.trans_y = 0., 0.
         self.center_x, self.center_y = 0., 0.
         self.map_center_x, self.map_center_x = 0., 0.
@@ -163,10 +269,9 @@ class MapWidget(QtGui.QWidget):
         self.async = async
         self.setDataSource(data_source, init_time, init=True)
 
-#       self.setGeometry(300, 300, self.default_width, self.default_height)
         self.setWindowTitle('SHARPpy')
 
-        self.map_center_x, self.map_center_y = self.width() / 2, -8 * self.height() / 10
+        self.resetViewport()
 
         self.initMap()
         self.initUI()
@@ -178,27 +283,12 @@ class MapWidget(QtGui.QWidget):
         self.drawMap()
 
     def initMap(self):
-        self._coast_path = self.mapper.loadBoundary('coastlines')
-        self._country_path = self.mapper.loadBoundary('countries')
-        self._state_path = self.mapper.loadBoundary('states')
-        self._county_path = self.mapper.loadBoundary('uscounties')
+        self._coast_path = self.mapper.getBoundary('coastlines')
+        self._country_path = self.mapper.getBoundary('countries')
+        self._state_path = self.mapper.getBoundary('states')
+        self._county_path = self.mapper.getBoundary('uscounties')
 
-        path = QtGui.QPainterPath()
-        for lon in xrange(0, 360, 20):
-            lats = np.linspace(0, 90, 2)
-            lx, ly = self.mapper(lats, lon)
-
-            path.moveTo(lx[0], ly[0])
-            for x, y in zip(lx, ly)[1:]:
-                path.lineTo(x, y)
-
-        for lat in xrange(0, 90, 15):
-            lons = np.arange(self.mapper.getLambda0(), self.mapper.getLambda0() + 360, 90)
-            rx, ry = self.mapper(lat, lons)
-            x_min, x_max = rx.min(), rx.max()
-            y_min, y_max = ry.min(), ry.max()
-            path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
-        self._grid_path = path
+        self._grid_path = self.mapper.getCoordPaths()
 
     def setDataSource(self, data_source, data_time, init=False):
         self.cur_source = data_source
@@ -249,6 +339,26 @@ class MapWidget(QtGui.QWidget):
             update([ points ])
         else:
             self.async.post(getPoints, update)
+
+    def setProjection(self, proj):
+        self.mapper.setProjection(proj)
+        self.resetViewport()
+
+        self.initMap()
+        self.drawMap()
+        self.update()
+
+    def resetViewport(self):
+        proj = self.mapper.getProjection()
+        self.scale = 0.60
+
+        self.map_center_x = self.width() / 2
+        if proj == 'npstere':
+            self.map_center_y = -13 * self.height() / 10 + self.height() / 2 
+        elif proj == 'merc':
+            self.map_center_y = self.height() / 2
+        elif proj == 'spstere':
+            self.map_center_y = 13 * self.height() / 10 + self.height() / 2
 
     def drawMap(self):
         qp = QtGui.QPainter()
@@ -382,6 +492,9 @@ class MapWidget(QtGui.QWidget):
                 self.update()
 
         self.dragging = False
+
+    def mouseDoubleClickEvent(self, e):
+        return
 
     def wheelEvent(self, e):
         max_speed = 75
