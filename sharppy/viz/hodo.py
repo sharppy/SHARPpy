@@ -607,12 +607,13 @@ class plotHodo(backgroundHodo):
                 width = 150
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-35, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 shear_color = QtGui.QColor("#0099CC")
                 pen = QtGui.QPen(shear_color, penwidth)
                 qp.setFont(self.critical_font)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+                to_add = self.pix_to_uv(e.x(), e.y())
+                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0] + to_add[0], self.prof.sfc_6km_shear[1]+ to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
@@ -621,11 +622,11 @@ class plotHodo(backgroundHodo):
                 width = 200
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-20, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
                 if spd >= 70:
@@ -635,7 +636,6 @@ class plotHodo(backgroundHodo):
                 else:
                     supercell_type = "HP"
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
-
                 # Removing this function until @wblumberg can finish fixing this function.
                 """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
