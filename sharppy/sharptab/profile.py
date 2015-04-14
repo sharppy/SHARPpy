@@ -205,7 +205,7 @@ class BasicProfile(Profile):
         '''
         super(BasicProfile, self).__init__(**kwargs)
 
-        strictQC = kwargs.get('strictQC', False)
+        strictQC = kwargs.get('strictQC', True)
 
         assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
