@@ -100,15 +100,21 @@ class Mapper(object):
     def getLatBounds(self):
         return Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
 
-    def __call__(self, lats, lons):
-        if self.proj in ['npstere', 'spstere']:
-            return self._lltoxy_stere(lats, lons, self.lambda_0, self.phi_0, self.m, self.rad_earth)
-        elif self.proj in ['merc']:
-            return self._lltoxy_merc(lats, lons, self.lambda_0, self.m, self.rad_earth)
+    def __call__(self, coord1, coord2, inverse=False):
+        if inverse:
+            if self.proj in ['npstere', 'spstere']:
+                return self._xytoll_stere(coord1, coord2, self.lambda_0, self.phi_0, self.m, self.rad_earth)
+            elif self.proj in ['merc']:
+                return self._xytoll_merc(coord1, coord2, self.lambda_0, self.m, self.rad_earth)
+        else:
+            if self.proj in ['npstere', 'spstere']:
+                return self._lltoxy_stere(coord1, coord2, self.lambda_0, self.phi_0, self.m, self.rad_earth)
+            elif self.proj in ['merc']:
+                return self._lltoxy_merc(coord1, coord2, self.lambda_0, self.m, self.rad_earth)
 
     # Functions to perform the map transformation to North Pole Stereographic
     # Equations from the SoM OBAN 2014 class
-    # Functions adapted for either hemisphere by Tim Supinie, April 2015
+    # Functions adapted for either hemisphere and inverse transformations added by Tim Supinie, April 2015
     def _get_sigma(self, phi_0, lats, south_hemis=False):
         sign = -1 if south_hemis else 1
         sigma = (1. + np.sin(np.radians(sign * phi_0))) / (1. + np.sin(np.radians(sign * lats)))
@@ -125,7 +131,15 @@ class Mapper(object):
         y = m * sigma * rad_earth * np.cos(np.radians(lats)) * np.sin(lambdas)
         return x, y
 
-    # Function to perform map transformation to Mercator projection
+    def _xytoll_stere(self, xs, ys, lambda_0, phi_0, m, rad_earth):
+        sign = -1 if (phi_0 < 0) else 1
+        sigma = self._get_sigma(phi_0, lats, south_hemis=(phi_0 < 0))
+
+        lon = lambda_0 + 90 - np.degrees(np.arctan2(ys, xs))
+        lat = sign * np.degrees(np.arccos(np.hypot(xs, ys) / (m * sigma * rad_earth)))
+        return lat, lon
+
+    # Function to perform map transformation to and from Mercator projection
     def _lltoxy_merc(self, lats, lons, lambda_0, m, rad_earth):
         x = m * rad_earth * (np.radians(lons) - np.radians(lambda_0))
         y = -m * rad_earth * np.log(np.tan(np.pi / 4 + np.radians(lats) / 2))
@@ -136,6 +150,11 @@ class Mapper(object):
             if type(y) not in [ np.ndarray ]:
                 y = y * np.ones(x.shape)
         return x, y
+
+    def _xytoll_merc(self, xs, ys, lambda_0, m, rad_earth):
+        lon = np.degrees(np.radians(lambda_0) + xs / (m * rad_earth))
+        lat = np.degrees(2 * np.arctan(np.exp(ys / (m * rad_earth))) - np.pi / 2)
+        return lat, lon
 
     def _loadDat(self, name, res):
         def segmentPath(b, lb_lat, ub_lat):
@@ -265,6 +284,13 @@ class MapWidget(QtGui.QWidget):
         self.load_readout.setFixedWidth(100)
         self.load_readout.show()
         self.load_readout.move(self.width(), self.height())
+
+#       self.latlon_readout = QtGui.QLabel(parent=self)
+#       self.latlon_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
+#       self.latlon_readout.setText("")
+#       self.latlon_readout.setFixedWidth(150)
+#       self.latlon_readout.show()
+#       self.latlon_readout.move(15, 15)
 
         self.async = async
         self.setDataSource(data_source, init_time, init=True)
@@ -470,6 +496,9 @@ class MapWidget(QtGui.QWidget):
             self.drawMap()
             self.update()
         self._checkStations(e)
+
+#       lat, lon = self.mapper(e.x(), e.y(), inverse=True)
+#       self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
 
     def mouseReleaseEvent(self, e):
         self.init_drag_x, self.init_drag_y = None, None
