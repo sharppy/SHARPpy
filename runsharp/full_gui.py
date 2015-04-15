@@ -16,10 +16,7 @@ from datasources import data_source
 
 from PySide.QtCore import *
 from PySide.QtGui import *
-from PySide.QtWebKit import *
 import datetime as date
-from StringIO import StringIO
-import urllib
 import traceback
 from functools import wraps, partial
 import hashlib
@@ -319,8 +316,33 @@ class MainWindow(QWidget):
 
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
-        msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
-                       "Python\n\n(C) 2014-%d by Kelton Halbert, Greg Blumberg, and Tim Supinie" % cur_year)
+        str = """
+        SHARPpy v1.2, El Reno '11
+
+        Sounding and Hodograph Analysis and Research
+        Program for Python
+
+        (C) 2014-%d by Patrick Marsh, John Hart,
+        Kelton Halbert, Greg Blumberg, and Tim Supinie.
+
+        SHARPPy is a collection of open source sounding
+        and hodograph analysis routines, a sounding
+        plotting package, and an interactive application
+        for analyzing real-time soundings all written in
+        Python. It was developed to provide the
+        atmospheric science community a free and
+        consistent source of routines for convective
+        indices. SHARPPy is constantly updated and
+        vetted by professional meteorologists and
+        climatologists within the scientific community to
+        help maintain a standard source of sounding
+        routines.
+
+        Website: http://sharppy.github.io/SHARPpy/
+        Contact: sharppy.project@gmail.com
+        Contribute: https://github.com/sharppy/SHARPpy/
+        """ % cur_year
+        msgBox.setText(str)
         msgBox.exec_()
 
     def create_map_view(self):
