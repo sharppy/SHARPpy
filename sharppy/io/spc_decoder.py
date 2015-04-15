@@ -14,7 +14,8 @@ class SPCDecoder(Decoder):
     def _parse(self, file_name):
         file_data = self._downloadFile(file_name)           
         ## read in the file
-        data = np.array(file_data.split('\n'))
+        data = np.array([l.strip() for l in file_data.split('\n')])
+
         ## necessary index points
         title_idx = np.where( data == '%TITLE%')[0][0]
         start_idx = np.where( data == '%RAW%' )[0] + 1
