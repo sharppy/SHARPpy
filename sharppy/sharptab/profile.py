@@ -205,6 +205,8 @@ class BasicProfile(Profile):
         '''
         super(BasicProfile, self).__init__(**kwargs)
 
+        strictQC = kwargs.get('strictQC', True)
+
         assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
 
@@ -251,15 +253,15 @@ class BasicProfile(Profile):
 
         #if not qc_tools.isPRESValid(self.pres):
         ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
-        if not qc_tools.isHGHTValid(self.hght):
+        if not qc_tools.isHGHTValid(self.hght) and strictQC:
             qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
         if not qc_tools.isTMPCValid(self.tmpc):
             qc_tools.raiseError("Invalid temperature array. Array contains a value < 273.15 Celsius.", ValueError)
         if not qc_tools.isDWPCValid(self.dwpc):
             qc_tools.raiseError("Invalid dewpoint array. Array contains a value < 273.15 Celsius.", ValueError)
-        if not qc_tools.isWSPDValid(self.wspd):
+        if not qc_tools.isWSPDValid(self.wspd) and strictQC:
             qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
-        if not qc_tools.isWDIRValid(self.wdir):
+        if not qc_tools.isWDIRValid(self.wdir) and strictQC:
             qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value >= 360 degrees.", ValueError)     
 
 
