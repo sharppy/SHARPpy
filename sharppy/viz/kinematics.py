@@ -444,10 +444,8 @@ class plotKinematics(backgroundKinematics):
             y1 += vspace
 
         self.ylast = y1
-        vspace = self.label_height + self.tpad
-        if platform.system() == "Windows":
-            vspace += self.label_metrics.descent()
-        y1 += vspace
+        y1 += self.label_height + self.tpad # Not entirely sure why this doesn't 
+                                            # need the extra pixels on Windows.
         ## bunkers motion
         texts = [bunkers_right, bunkers_left]
         colors =[QtGui.QColor('#0099CC'), QtGui.QColor('#FF6666')]
