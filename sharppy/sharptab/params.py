@@ -1567,14 +1567,13 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         tote += lyre
         pelast = pe1
         pe1 = pe2
-        h1 = h2
         te1 = te2
         tp1 = tp2
         
         # Is this the top of the specified layer
         if i >= uptr and not utils.QC(pcl.bplus):
             pe3 = pe1
-            h3 = h1
+            h3 = h2
             te3 = te1
             tp3 = tp1
             lyrf = lyre
@@ -1682,9 +1681,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 if lyrf > 0: pcl.wm30c += lyrf
         
         # Is this the 3km level
-        if pcl.lclhght < 3000. and interp.to_agl(prof, h1) <=3000.:
-            h = interp.to_agl(prof, h2)
-            if h >= 3000. and not utils.QC(pcl.b3km):
+        if pcl.lclhght < 3000.:
+            if interp.to_agl(prof, h1) <=3000. and interp.to_agl(prof, h2) >= 3000. and not utils.QC(pcl.b3km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
                 te3 = interp.vtmp(prof, pe3)
@@ -1692,23 +1690,22 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 lyrf = lyre
                 if lyrf > 0: pcl.b3km = totp - lyrf
                 else: pcl.b3km = totp
-                h2 = interp.to_msl(prof, 3000.)
-                pe2 = interp.pres(prof, h2)
+                h4 = interp.to_msl(prof, 3000.)
+                pe4 = interp.pres(prof, h4)
                 if utils.QC(pe2):
-                    te2 = interp.vtmp(prof, pe2)
-                    tp2 = thermo.wetlift(pe3, tp3, pe2)
+                    te2 = interp.vtmp(prof, pe4)
+                    tp2 = thermo.wetlift(pe3, tp3, pe4)
                     tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / \
                         thermo.ctok(te3)
-                    tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / \
+                    tdef2 = (thermo.virtemp(pe4, tp2, tp2) - te2) / \
                         thermo.ctok(te2)
-                    lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                    lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b3km += lyrf
         else: pcl.b3km = 0.
         
         # Is this the 6km level
-        if pcl.lclhght < 6000. and interp.to_agl(prof, h1) <=6000.:
-            h = interp.to_agl(prof, h2)
-            if h >= 6000. and not utils.QC(pcl.b6km):
+        if pcl.lclhght < 6000.:
+            if interp.to_agl(prof, h1) <=6000. and interp.to_agl(prof, h2) >= 6000. and not utils.QC(pcl.b6km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
                 te3 = interp.vtmp(prof, pe3)
@@ -1716,19 +1713,21 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 lyrf = lyre
                 if lyrf > 0: pcl.b6km = totp - lyrf
                 else: pcl.b6km = totp
-                h2 = interp.to_msl(prof, 6000.)
-                pe2 = interp.pres(prof, h2)
+                h4 = interp.to_msl(prof, 6000.)
+                pe4 = interp.pres(prof, h4)
                 if utils.QC(pe2):
-                    te2 = interp.vtmp(prof, pe2)
-                    tp2 = thermo.wetlift(pe3, tp3, pe2)
+                    te2 = interp.vtmp(prof, pe4)
+                    tp2 = thermo.wetlift(pe3, tp3, pe4)
                     tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / \
                         thermo.ctok(te3)
-                    tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / \
+                    tdef2 = (thermo.virtemp(pe4, tp2, tp2) - te2) / \
                         thermo.ctok(te2)
-                    lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                    lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b6km += lyrf
         else: pcl.b6km = 0.
         
+        h1 = h2
+
         # LFC Possibility
         if lyre >= 0. and lyrlast <= 0.:
             tp3 = tp1
