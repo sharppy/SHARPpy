@@ -435,7 +435,7 @@ class plotText(backgroundText):
         ## middle-right column
         y1 = self.ylast + self.tpad
         texts = ['WNDG = ', 'TEI = ', '3CAPE = ', '', '', 'SigSvr = ']
-        indices = [self.wndg, self.tei, self.prof.mlpcl.b3km, '', '', self.sigsevere + ' m3/s3']
+        indices = [self.wndg, self.tei, tab.utils.INT2STR(self.prof.mlpcl.b3km), '', '', self.sigsevere + ' m3/s3']
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*6, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
