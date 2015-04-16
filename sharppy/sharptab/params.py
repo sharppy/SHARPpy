@@ -13,6 +13,7 @@ __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
+__all__ += ['mburst', 'dcp', 'ehi', 'sweat']
 
 
 class DefineParcel(object):
@@ -2548,6 +2549,217 @@ def pbl_top(prof):
 
     return prof.pres[level]
 
+def dcp(prof):
+    '''
+        Derecho Composite Parameter
+
+        This parameter is based on a data set of 113 derecho events compiled by Evans and Doswell (2001).
+        The DCP was developed to identify environments considered favorable for cold pool "driven" wind
+        events through four primary mechanisms:
+
+        1) Cold pool production [DCAPE]
+        2) Ability to sustain strong storms along the leading edge of a gust front [MUCAPE]
+        3) Organization potential for any ensuing convection [0-6 km shear]
+        4) Sufficient flow within the ambient environment to favor development along downstream portion of the
+            gust front [0-6 km mean wind].
+
+        This index is fomulated as follows:
+        DCP = (DCAPE/980)*(MUCAPE/2000)*(0-6 km shear/20 kt)*(0-6 km mean wind/16 kt)
+
+        Reference:
+        Evans, J.S., and C.A. Doswell, 2001: Examination of derecho environments using proximity soundings. Wea. Forecasting, 16, 329-342.
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        dcp : number
+            Derecho Composite Parameter (unitless)
+
+    '''
+    sfc = prof.pres[prof.sfc]
+    p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
+    dcape = getattr(prof, 'dcape', dcape( prof ))
+    mupcl = getattr(prof, 'mupcl', parcelx(prof, flag=1))
+    sfc_6km_shear = getattr(prof, 'sfc_6km_shear', winds.wind_shear(self, pbot=sfc, ptop=p6km))
+    mean_6km = getattr(prof, 'mean_6km', utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km)))
+    mag_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
+    mag_mean_wind = mean_6km[1]
+
+    dcp = (dcape/980.) * (mupcl.bplus/2000.) * (mag_shear / 20. ) * (mag_mean_wind / 16.)
+
+    return dcp
 
 
+def mburst(prof):
+    '''
+        Microburst Composite
 
+        Developer unknown.
+
+        Below is taken from the SPC Mesoanalysis:
+        The Microburst Composite is a weighted sum of the following individual parameters: SBCAPE, SBLI,
+        lapse rates, vertical totals (850-500 mb temperature difference), DCAPE, and precipitable water.
+        The specific terms and weights are listed below:
+
+        SBCAPE term -> < 3100 set to 0; 3100-3999 set to 1; >= 4000 set to 2;
+        SBLI term -> > -8 set to 0; <= -8 set to 1; <= -9 set to 2; <= -10 set to 3;
+        0-3 km lapse rate term -> <= 8.4 set to 0; > 8.4 set to 1;
+        vertical totals term -> < 27 set to 0; >= 27 set to 1; >= 28 set to 2; >= 29 set to 3;
+        DCAPE term -> < 900 set to 0; >= 900 set to 1; >= 1100 set to 2; >= 1300 set to 3;
+        precipitable water term -> <= 1.5 set to -5; > 1.5 set to 0.
+
+        All six of the terms are summed to arrive at the final microburst composite value.
+        The values can be interpreted in the following manner: 3-4 infers a "slight chance" of a microburst;
+        5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
+        These values can also be viewed as conditional upon the existence of a storm.
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        mburst : number
+            Microburst Composite (unitless)
+    '''
+
+    sbpcl = getattr(prof, 'sfcpcl', parcelx(prof, flag=1))
+    lr03 = getattr(prof, 'lapserate_3km', lapse_rate( prof, 0., 3000., pres=False ))
+    tt = getattr(prof, 'totals_totals', t_totals( prof ))
+    dcape = getattr(prof, 'dcape', dcape( prof ))
+    pwat = getattr(prof, 'pwat', precip_water( prof ))
+
+    if sbpcl.bplus < 3100:
+        sbcape_term = 0
+    elif sbpcl.bplus >= 3100 and sbpcl.bplus < 3999:
+        sbcape_term = 1
+    else:
+        sbcape_term = 2
+
+    if sbpcl.li5 > -8:
+        sbli_term = 0
+    elif sbpcl.li5 <= -8 and sbpcl.li5 > -9:
+        sbli_term = 1
+    elif sbpcl.li5 <= -9 and sbpcl.li5 > -10:
+        sbli_term = 2
+    elif sbpcl.li5 <= -10:
+        sbli_term = 3
+
+    if lr03 <= 8.4:
+        lr03_term = 0
+    else:
+        lr03_term = 1
+
+    if tt < 27:
+        tt_term = 0
+    elif tt >= 27 and tt < 28:
+        tt_term = 1
+    elif tt >= 28 and tt < 29:
+        tt_term = 2
+    else:
+        tt_term = 3
+
+    if dcape < 900:
+        dcape_term = 0
+    elif dcape >= 900 and dcape < 1100:
+        dcape_term = 1
+    elif dcape >= 1100 and dcape < 1300:
+        dcape_term = 2
+    else:
+        dcape_term = 3
+
+    if pwat <= 1.5:
+        pwat_term = -5
+    else:
+        pwat_term = 0
+
+    mburst = sbcape_term + sbli_term + lr03_term + tt_term + dcape_term + pwat_term
+
+    return mburst
+
+def ehi(prof, pcl, hbot, htop, stu=0, stv=0):
+    '''
+        Energy-Helicity Index
+
+        Computes the energy helicity index (EHI) using a parcel
+        object and a profile object.
+
+        The equation is EHI = (CAPE * HELICITY) / 160000.
+
+        Parameters
+        ----------
+        prof : Profile object
+        pcl : Parcel object
+        hbot : number
+            Height of the bottom of the helicity layer [m]
+        htop : number
+            Height of the top of the helicity layer [m]
+        stu : number
+            Storm-relative wind U component [kts]
+            (optional; default=0)
+        stv : number
+            Storm-relative wind V component [kts]
+            (optional; default=0)
+
+        Returns
+        -------
+        ehi : number
+            Energy Helicity Index (unitless)
+    '''
+
+    helicity = winds.helicity(prof, hbot, htop, stu=stu, stv=stv)[0]
+    ehi = (helicity * pcl.bplus) / 160000.
+
+    return ehi
+
+def sweat(prof):
+    '''
+        SWEAT Index
+
+        Computes the SWEAT (Severe Weather Threat Index) using the following numbers:
+
+        1.) 850 Dewpoint
+        2.) Total Totals Index
+        3.) 850 mb wind speed
+        4.) 500 mb wind speed
+        5.) Direction of wind at 500
+        6.) Direction of wind at 850
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        sweat : number
+            SWEAT Index (number)
+    '''
+
+    td850 = interp.dwpt(prof, 850)
+    vec850 = interp.vec(850, prof)
+    vec500 = interp.vec(500, prof)
+    tt = getattr(prof, 'totals_totals', t_totals( prof ))
+
+    if td850 > 0:
+        term1 = 12. * td850
+    else:
+        term1 = 0
+
+    if tt < 49:
+        term2 = 0
+    else:
+        term2 = 20. * (tt - 49)
+
+    term3 = 2 * vec850[1]
+    term4 = vec500[1]
+    if vec500[0] - vec850[0] > 0:
+        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])  + 0.2)
+    else:
+        term5 = 0
+
+    sweat = term1 + term2 + term3 + term4 + term5
+
+    return sweat
