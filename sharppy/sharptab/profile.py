@@ -101,7 +101,7 @@ class Profile(object):
         self.hght = ma.asanyarray(kwargs.get('hght'), dtype=float)
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
- 
+
         if 'wdir' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
