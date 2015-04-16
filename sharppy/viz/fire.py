@@ -39,10 +39,6 @@ class backgroundFire(QtGui.QFrame):
         self.os_mod = 0
         if platform.system() == "Windows":
             self.os_mod = self.label_metrics.descent()
-			
-#           fsize -= self.os_mod
-#           self.label_font = QtGui.QFont('Helvetica', fsize)
-#           self.label_metrics = QtGui.QFontMetrics( self.label_font )
 
         self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
