@@ -49,6 +49,10 @@ class Mapper(object):
         return x, y
 
     def _loadDat(self, name, res):
+        """
+        Code shamelessly lifted from Basemap's data file parser by Jeff Whitaker.
+        http://matplotlib.org/basemap/
+        """
         bdatfile = open(os.path.join(Mapper.data_dir, name + '_' + res + '.dat'), 'rb')
         bdatmetafile = open(os.path.join(Mapper.data_dir, name + 'meta_' + res + '.dat'), 'r')
 
