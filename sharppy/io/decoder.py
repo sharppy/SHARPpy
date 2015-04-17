@@ -33,7 +33,7 @@ class Decoder(object):
             except IOError:
                 raise IOError("File '%s' cannot be found" % file_name)
         file_data = f.read()
-#       f.close()
+#       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
         return file_data
 
     def getProfiles(self, prof_idxs=[0], prog=None):

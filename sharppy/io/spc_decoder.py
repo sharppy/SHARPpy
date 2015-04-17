@@ -32,14 +32,14 @@ class SPCDecoder(Decoder):
 
         ## read the data into arrays
         p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-        idx = np.argsort(p)[::-1] # sort by pressure in case the pressure array is off.
+#       idx = np.argsort(p, kind='mergesort')[::-1] # sort by pressure in case the pressure array is off.
 
-        pres = p[idx]
-        hght = h[idx]
-        tmpc = T[idx]
-        dwpc = Td[idx]
-        wspd = wspd[idx]
-        wdir = wdir[idx]
+        pres = p #[idx]
+        hght = h #[idx]
+        tmpc = T #[idx]
+        dwpc = Td #[idx]
+        wspd = wspd #[idx]
+        wdir = wdir #[idx]
 
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
             wdir=wdir, wspd=wspd, location=location)
