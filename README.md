@@ -140,14 +140,9 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 
 ### Known GUI Issues
 
-Known Windows Issues:
-- Inset text is not properly sized or placed in their windows.
-- When incrementing/decrementing profiles, the entire screen goes blank and redraws (FIXED AS OF 2/11/2015)
-- The program’s menu bar does not display
-- The sounding window may not properly size at first. A fix is to manually resize it and manipulate it.
+Known Issues:
+- Text can sometimes overlap. (Windows)
+- The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
+- SHARPpy will not work with QT 4.8.6.0.  There is a bug in the pacakage that affects running SHARPpy on Linux.  See this issue for a fix: https://github.com/sharppy/SHARPpy/issues/51
 
-Other Issues:
-- Multi-select does not work for Observed soundings
-- Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash. (FIXED AS OF 2/28/2015 - program no longer crashes.)
-- Wind barbs for very fast winds sometimes have barbs misplaced with respect to the stick of the wind diagram.  (FIXED AS OF 2/20/2015)
-- "Select Model Run" list of availiable model runs for SREF has invalid SREF run times (FIXED AS OF 2/20/2015)
+
