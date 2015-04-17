@@ -3,7 +3,7 @@ import os.path
 import subprocess
 release = True
 __version__ = '0.1.2'
-
+__version_name__ = "El Reno"
 
 _repository_path = os.path.split(__file__)[0]
 _git_file_path = os.path.join(_repository_path, '__git_version__.py')

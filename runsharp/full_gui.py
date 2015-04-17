@@ -12,6 +12,7 @@ from sharppy.viz import SkewApp, MapWidget
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
+from sharppy.version import __version__, __version_name__
 from datasources import data_source
 
 from PySide.QtCore import *
@@ -317,7 +318,7 @@ class MainWindow(QWidget):
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
         str = """
-        SHARPpy v1.2, El Reno '11
+        SHARPpy v%s %s
 
         Sounding and Hodograph Analysis and Research
         Program for Python
@@ -341,7 +342,7 @@ class MainWindow(QWidget):
         Website: http://sharppy.github.io/SHARPpy/
         Contact: sharppy.project@gmail.com
         Contribute: https://github.com/sharppy/SHARPpy/
-        """ % cur_year
+        """ % (__version__, __version_name__, cur_year)
         msgBox.setText(str)
         msgBox.exec_()
 

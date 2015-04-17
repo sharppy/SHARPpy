@@ -16,6 +16,8 @@ import numpy as np
 import ConfigParser
 import platform
 from time import sleep
+from sharppy.version import __version__, __version_name__
+
 
 class SkewApp(QWidget):
     """
@@ -138,7 +140,7 @@ class SkewApp(QWidget):
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
 
-        self.brand = QLabel('SHARPpy Beta')
+        self.brand = QLabel('SHARPpy Beta v' + __version__ + ' ' + __version_name__)
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
