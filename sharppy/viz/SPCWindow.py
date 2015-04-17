@@ -18,7 +18,6 @@ import platform
 from time import sleep
 from sharppy.version import __version__, __version_name__
 
-
 class SkewApp(QWidget):
     """
     This will create the full SPC window, handle the organization
@@ -112,7 +111,7 @@ class SkewApp(QWidget):
 
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
-            self.setGeometry(0,10,1180,800)
+            self.setGeometry(10,30,1180,800)
         else:
             self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
@@ -140,7 +139,7 @@ class SkewApp(QWidget):
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
 
-        self.brand = QLabel('SHARPpy Beta v' + __version__ + ' ' + __version_name__)
+        self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
