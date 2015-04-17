@@ -21,7 +21,7 @@ http://sharppy.github.io/SHARPpy/index.html
 
 https://github.com/sharppy/SHARPpy
 
-Additionally, Jeff Whitaker created the Basemap package, from which we have borrowed data and code to parse that data.
+Additionally, Jeff Whitaker created the Basemap package, from which we have borrowed data and code to develop the SHARPpy data selector GUI.
 
 2.) Also, please send an email letting us know where SHARPpy is being used or 
 has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
