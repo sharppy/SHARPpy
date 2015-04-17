@@ -2,7 +2,7 @@
 import os.path
 import subprocess
 release = True
-__version__ = '0.1.2'
+__version__ = '1.2.0'
 __version_name__ = "El Reno"
 
 _repository_path = os.path.split(__file__)[0]
