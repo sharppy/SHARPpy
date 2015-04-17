@@ -4,6 +4,10 @@ This folder contains the raw sounding data used in generating the SARS function 
 
 More information about the development of these databases can be found here:
 
+http://www.spc.noaa.gov/publications/jewell/sars.pdf
+
+The reference for this paper can be found below:
+
     Jewell, R., 2010: The Sounding Analog Retrieval System (SARS). Preprints, 25th Conf. Severe Local Storms, Denver CO.
     
 For additional information regarding the construction of the SARS database, please contact Rich Thompson or Ryan Jewell:
