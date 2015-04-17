@@ -1,6 +1,6 @@
 ### Sounding Analog Retrieval System (SARS) Database
 
-This folder contains the raw sounding data used in generating the SARS function in SHARPpy.  The data within these folders are proximity soundings (both observed and NWP based) that represent the atmospheric environment nearby certain severe weather phenomena.
+This folder contains the raw sounding data used in generating the SARS function in SHARPpy.  The data within these folders are proximity soundings (both observed and NWP based) that represent the atmospheric environment nearby certain severe weather phenomena.  This data was generously donated by Rich Thompson and Ryan Jewell.
 
 More information about the development of these databases can be found here:
 
