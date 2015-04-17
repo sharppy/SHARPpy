@@ -1683,18 +1683,23 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         
         # Is this the 3km level
         if pcl.lclhght < 3000. and interp.to_agl(prof, h1) <=3000.:
+            print "Entered into the 3 km level if statement"
             h = interp.to_agl(prof, h2)
-            if h >= 3000. and not utils.QC(pcl.b3km):
+            print utils.QC(pcl.b3km), pcl.b3km, h, h2
+            if h < 3000.:# and not utils.QC(pcl.b3km):
+                print "The height was greater than 3000 km"
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
                 te3 = interp.vtmp(prof, pe3)
                 tp3 = thermo.wetlift(pe1, tp1, pe3)
                 lyrf = lyre
+                print "LYRF > 0:", lyrf > 0
                 if lyrf > 0: pcl.b3km = totp - lyrf
                 else: pcl.b3km = totp
                 h2 = interp.to_msl(prof, 3000.)
                 pe2 = interp.pres(prof, h2)
                 if utils.QC(pe2):
+                    print "PASSED QC."
                     te2 = interp.vtmp(prof, pe2)
                     tp2 = thermo.wetlift(pe3, tp3, pe2)
                     tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / \
@@ -1702,6 +1707,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / \
                         thermo.ctok(te2)
                     lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                    print lyrf
                     if lyrf > 0: pcl.b3km += lyrf
         else: pcl.b3km = 0.
         
