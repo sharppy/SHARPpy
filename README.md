@@ -145,4 +145,13 @@ Known Issues:
 - The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
 - SHARPpy will not work with QT 4.8.6.0.  There is a bug in the pacakage that affects running SHARPpy on Linux.  See this issue for a fix: https://github.com/sharppy/SHARPpy/issues/51
 
+=======================================================================
+
+SHARPpy is currently managed by the following co-developers:
+- Patrick Marsh (SPC)
+- Kelton Halbert (OU School of Meteorology)
+- Greg Blumberg (OU/CIMMS)
+- Tim Supinie (OU School of Meteorology)
+
+Questions and concerns not related to bug reports or feature requests should be directed by email to: sharppy.project@gmail.com
 
