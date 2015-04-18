@@ -60,7 +60,7 @@ Once the package has been downloaded to your computer, use your command line to 
 
 After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 
-A video tutorial for Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
+A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
 
 =======================================================================
 ### Running the SHARPpy GUI
@@ -82,7 +82,7 @@ http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy
 
 ### Using the GUI
 
-To open a sounding, select a sounding type, a model run time (if the type is an NWP model), and then select a time(s).
+To open a sounding, select a sounding type, a model run time (if the type is a NWP model), and then select a time(s).
 Afterwards, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
 After all profiles have been generated, a window should show up with your desired data.  Below are things you can do:
@@ -92,6 +92,10 @@ After all profiles have been generated, a window should show up with your desire
 3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
+6. View different parcels that can be lifted and lift custom parcels.  
+7. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
+8. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
+9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format.  See the OAX file in the tutorials folder for an example.  
 
 #### Available Insets
 
