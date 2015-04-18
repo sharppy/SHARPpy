@@ -197,10 +197,14 @@ class BasicProfile(Profile):
         The 3 character station identifier or 4 character
         WMO station ID for radiosonde locations. Used for
         the PWV database.
-            
+        
+        strictQC : boolean
+        A flag that indicates whether or not the strict quality control
+        routines should be run on the profile upon construction.
+
         Returns
         -------
-        A profile object
+        prof: Profile object
             
         '''
         super(BasicProfile, self).__init__(**kwargs)
