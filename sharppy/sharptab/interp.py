@@ -188,7 +188,7 @@ def components(prof, p):
     return U, V
 
 
-def vec(p, prof):
+def vec(prof, p):
     '''
     Interpolates the given data to calculate the wind direction and speed
     at a given pressure
