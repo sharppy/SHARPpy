@@ -307,24 +307,8 @@ class MainWindow(QWidget):
             return
         else:
             self.link = link
-        self.model = "Archive"
-        self.location = None
-        self.prof_time = None
-        self.run = None
 
         self.skewApp()
-
-        ## default the sounding location to OUN because obviously I'm biased
-        self.loc = None
-        ## set the default profile to display
-        self.prof_time = "Latest"
-        ## the index of the item in the list that corresponds
-        ## to the profile selected from the list
-        self.prof_idx = []
-        ## set the default profile type to Observed
-        self.model = "Observed"
-        ## this is the default model initialization time.
-        self.run = "00Z"
 
     def aboutbox(self):
 
@@ -571,8 +555,8 @@ class MainWindow(QWidget):
         if self.model == "Archive":
             try:
                 profs, dates, stn_id = self.loadArchive()
-                self.disp_name = stn_id
-                self.prof_idx = range(len(dates))
+                disp_name = stn_id
+                prof_idx = range(len(dates))
             except Exception as e:
                 exc = str(e)
                 if debug:
@@ -584,10 +568,14 @@ class MainWindow(QWidget):
 
         else:
         ## otherwise, download with the data thread
-            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
-                self.prof_idx = [ 0 ]
+            prof_idx = self.prof_idx
+            disp_name = self.disp_name
+			run = self.run
 
-            ret = loadData(self.data_sources[self.model], self.loc, self.run, self.prof_idx)
+            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
+                prof_idx = [ 0 ]
+
+            ret = loadData(self.data_sources[self.model], self.loc, run, prof_idx)
 
             if isinstance(ret[0], Exception):
                 exc = str(ret[0])
@@ -606,8 +594,8 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, self.model, location=self.disp_name,
-                prof_time=self.prof_time, run=run, idx=self.prof_idx, fhour=fhours)
+            self.skew = SkewApp(profs, dates, self.model, location=disp_name,
+                prof_time=self.prof_time, run=run, idx=prof_idx, fhour=fhours)
             self.skew.show()
 
     def loadArchive(self):
