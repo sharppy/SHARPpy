@@ -147,6 +147,8 @@ Known Issues:
 
 =======================================================================
 
+### SHARPpy Development Team
+
 SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
 - Kelton Halbert (OU School of Meteorology)
