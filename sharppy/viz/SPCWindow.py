@@ -16,6 +16,7 @@ import numpy as np
 import ConfigParser
 import platform
 from time import sleep
+from os.path import expanduser
 from sharppy.version import __version__, __version_name__
 
 class SkewApp(QWidget):
@@ -222,7 +223,9 @@ class SkewApp(QWidget):
         return plot_title
 
     def saveimage(self):
-        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
+        self.home_path = expanduser('~')
+        files_types = "PNG (*.png)"
+        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, files_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
             pixmap.save(fileName, 'PNG', 100)
