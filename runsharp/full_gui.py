@@ -176,8 +176,6 @@ class MainWindow(QWidget):
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
-        ## set the default profile to display
-        self.prof_time = "Latest"
         ## the index of the item in the list that corresponds
         ## to the profile selected from the list
         self.prof_idx = []
@@ -308,7 +306,7 @@ class MainWindow(QWidget):
         else:
             self.link = link
 
-        self.skewApp()
+        self.skewApp(archive=True)
 
     def aboutbox(self):
 
@@ -481,14 +479,6 @@ class MainWindow(QWidget):
             fcst_hours = self.data_sources[self.model].getForecastHours()
 
             if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
-
-                if fcst_hours != [ 0 ]:
-                    self.prof_time = selected[0].text()
-                    if '   ' in self.prof_time:
-                        self.prof_time = self.prof_time.split("   ")[0]
-                else:
-                    self.prof_time = self.run.strftime(MainWindow.date_format)
-
                 self.prof_idx.sort()
                 self.skewApp()
 
@@ -534,7 +524,7 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def skewApp(self):
+    def skewApp(self, archive=False):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -552,7 +542,8 @@ class MainWindow(QWidget):
 
         ## if the profile is an archived file, load the file from
         ## the hard disk
-        if self.model == "Archive":
+        if archive:
+            model = "Archive"
             try:
                 profs, dates, stn_id = self.loadArchive()
                 disp_name = stn_id
@@ -570,12 +561,13 @@ class MainWindow(QWidget):
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
-			run = self.run
+            run = self.run
+            model = self.model
 
-            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
+            if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
-            ret = loadData(self.data_sources[self.model], self.loc, run, prof_idx)
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
 
             if isinstance(ret[0], Exception):
                 exc = str(ret[0])
@@ -583,8 +575,8 @@ class MainWindow(QWidget):
             else:
                 profs, dates = ret
 
-            run = "%02dZ" % self.run.hour
-            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in self.prof_idx ]
+            run = "%02dZ" % run.hour
+            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
             msgbox = QMessageBox()
@@ -594,8 +586,8 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, self.model, location=disp_name,
-                prof_time=self.prof_time, run=run, idx=prof_idx, fhour=fhours)
+            self.skew = SkewApp(profs, dates, model, location=disp_name,
+                run=run, idx=prof_idx, fhour=fhours)
             self.skew.show()
 
     def loadArchive(self):

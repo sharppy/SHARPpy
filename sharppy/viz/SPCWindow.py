@@ -58,7 +58,6 @@ class SkewApp(QWidget):
         self.proflist = []
         self.dates = dates
         self.model = model
-        self.prof_time = kwargs.get("prof_time", None)
         self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
