@@ -82,8 +82,7 @@ http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy
 
 ### Using the GUI
 
-To open a sounding, select a sounding type, a model run time (if the type is a NWP model), and then select a time(s).
-Afterwards, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
+To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
 After all profiles have been generated, a window should show up with your desired data.  Below are things you can do:
 
