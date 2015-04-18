@@ -155,5 +155,5 @@ SHARPpy is currently managed by the following co-developers (in no particular or
 - Greg Blumberg (OU/CIMMS)
 - Tim Supinie (OU School of Meteorology)
 
-Questions and concerns not related to bug reports or feature requests should be directed by email to: sharppy.project@gmail.com
+Questions and concerns not related to bug reports or feature requests should be may be directed to the team through this email: sharppy.project@gmail.com
 
