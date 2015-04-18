@@ -437,7 +437,7 @@ class plotSkewT(backgroundSkewT):
         pcl4.triggered.connect(lambda: self.liftparcellevel(-9999))
         #ag.addAction(pcl4)
         self.parcelmenu.addAction(pcl4)
-
+        self.parcelmenu.setEnabled(False)
         self.popupmenu=QMenu("Cursor Type:")
         ag = QtGui.QActionGroup(self, exclusive=True)
 
@@ -458,10 +458,6 @@ class plotSkewT(backgroundSkewT):
 
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
-        #lift = QAction(self)
-        #lift.setText("Lift Parcel")
-        #lift.triggered.connect(self.liftparcellevel)
-        #self.popupmenu.addAction(lift)
 
         self.popupmenu.addSeparator()
         reset = QAction(self)
@@ -689,6 +685,7 @@ class plotSkewT(backgroundSkewT):
         self.update()
 
     def setReadoutCursor(self):
+        self.parcelmenu.setEnabled(True)
         self.readout = True
         self.track_cursor = True
         self.presReadout.show()
@@ -702,6 +699,7 @@ class plotSkewT(backgroundSkewT):
         self.parentWidget().setFocus()
 
     def setNoCursor(self):
+        self.parcelmenu.setEnabled(False)
         self.readout = False
         self.track_cursor = False
         self.presReadout.hide()
