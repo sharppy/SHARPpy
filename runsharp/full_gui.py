@@ -22,6 +22,7 @@ import traceback
 from functools import wraps, partial
 import hashlib
 import cProfile
+from os.path import expanduser
 
 class AsyncThreads(QObject):
     def __init__(self):
@@ -266,6 +267,13 @@ class MainWindow(QWidget):
 
         self.menuBar()
 
+    def keyPressEvent(self, e):
+        if e.matches(QKeySequence.Open):
+            self.openFile()
+
+        if e.matches(QKeySequence.Quit):
+            self.exitApp() 
+
     def menuBar(self):
 
         self.bar = QMenuBar()
@@ -293,7 +301,12 @@ class MainWindow(QWidget):
         self.close()
 
     def openFile(self):
-        self.link, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
+        self.home_path = expanduser('~')
+        link, _ = QFileDialog.getOpenFileName(self, 'Open file', self.home_path)
+        if link == '':
+            return
+        else:
+            self.link = link
         self.model = "Archive"
         self.location = None
         self.prof_time = None
