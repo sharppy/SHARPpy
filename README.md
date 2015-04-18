@@ -143,11 +143,11 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 Known Issues:
 - Text can sometimes overlap. (Windows)
 - The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
-- SHARPpy will not work with QT 4.8.6.0.  There is a bug in the pacakage that affects running SHARPpy on Linux.  See this issue for a fix: https://github.com/sharppy/SHARPpy/issues/51
+- SHARPpy will not work with QT 4.8.6.0 on Linux.  There is a bug in the QT package affects the ability of the GUI to render.  See this issue for a fix: https://github.com/sharppy/SHARPpy/issues/51
 
 =======================================================================
 
-SHARPpy is currently managed by the following co-developers:
+SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
 - Kelton Halbert (OU School of Meteorology)
 - Greg Blumberg (OU/CIMMS)
