@@ -2580,14 +2580,14 @@ def dcp(prof):
     '''
     sfc = prof.pres[prof.sfc]
     p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
-    dcape = getattr(prof, 'dcape', dcape( prof ))
+    dcape_val = getattr(prof, 'dcape', dcape( prof ))
     mupcl = getattr(prof, 'mupcl', parcelx(prof, flag=1))
     sfc_6km_shear = getattr(prof, 'sfc_6km_shear', winds.wind_shear(self, pbot=sfc, ptop=p6km))
     mean_6km = getattr(prof, 'mean_6km', utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km)))
     mag_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     mag_mean_wind = mean_6km[1]
 
-    dcp = (dcape/980.) * (mupcl.bplus/2000.) * (mag_shear / 20. ) * (mag_mean_wind / 16.)
+    dcp = (dcape_val/980.) * (mupcl.bplus/2000.) * (mag_shear / 20. ) * (mag_mean_wind / 16.)
 
     return dcp
 
@@ -2628,7 +2628,7 @@ def mburst(prof):
     sbpcl = getattr(prof, 'sfcpcl', parcelx(prof, flag=1))
     lr03 = getattr(prof, 'lapserate_3km', lapse_rate( prof, 0., 3000., pres=False ))
     tt = getattr(prof, 'totals_totals', t_totals( prof ))
-    dcape = getattr(prof, 'dcape', dcape( prof ))
+    dcape_val = getattr(prof, 'dcape', dcape( prof ))
     pwat = getattr(prof, 'pwat', precip_water( prof ))
 
     if sbpcl.bplus < 3100:
@@ -2661,11 +2661,11 @@ def mburst(prof):
     else:
         tt_term = 3
 
-    if dcape < 900:
+    if dcape_val < 900:
         dcape_term = 0
-    elif dcape >= 900 and dcape < 1100:
+    elif dcape_val >= 900 and dcape_val < 1100:
         dcape_term = 1
-    elif dcape >= 1100 and dcape < 1300:
+    elif dcape_val >= 1100 and dcape_val < 1300:
         dcape_term = 2
     else:
         dcape_term = 3

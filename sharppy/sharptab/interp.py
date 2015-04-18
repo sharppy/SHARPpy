@@ -204,7 +204,7 @@ def vec(p, prof):
     -------
     Wind direction and magnitude at the given pressure
     '''
-    U, V = components(p, prof)
+    U, V = components(prof, p)
     return utils.comp2vec(U, V)
 
 
