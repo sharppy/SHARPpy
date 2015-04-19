@@ -6,7 +6,7 @@ More information about the development of these databases can be found here:
 
 http://www.spc.noaa.gov/publications/jewell/sars.pdf
 
-The reference for this paper can be found below:
+Use of this dataset outside of normal program functionality requires citation. The reference for this paper can be found below:
 
     Jewell, R., 2010: The Sounding Analog Retrieval System (SARS). Preprints, 25th Conf. Severe Local Storms, Denver CO.
     
