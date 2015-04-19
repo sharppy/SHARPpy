@@ -176,8 +176,6 @@ class MainWindow(QWidget):
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
-        ## set the default profile to display
-        self.prof_time = "Latest"
         ## the index of the item in the list that corresponds
         ## to the profile selected from the list
         self.prof_idx = []
@@ -307,24 +305,8 @@ class MainWindow(QWidget):
             return
         else:
             self.link = link
-        self.model = "Archive"
-        self.location = None
-        self.prof_time = None
-        self.run = None
 
-        self.skewApp()
-
-        ## default the sounding location to OUN because obviously I'm biased
-        self.loc = None
-        ## set the default profile to display
-        self.prof_time = "Latest"
-        ## the index of the item in the list that corresponds
-        ## to the profile selected from the list
-        self.prof_idx = []
-        ## set the default profile type to Observed
-        self.model = "Observed"
-        ## this is the default model initialization time.
-        self.run = "00Z"
+        self.skewApp(archive=True)
 
     def aboutbox(self):
 
@@ -497,14 +479,6 @@ class MainWindow(QWidget):
             fcst_hours = self.data_sources[self.model].getForecastHours()
 
             if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
-
-                if fcst_hours != [ 0 ]:
-                    self.prof_time = selected[0].text()
-                    if '   ' in self.prof_time:
-                        self.prof_time = self.prof_time.split("   ")[0]
-                else:
-                    self.prof_time = self.run.strftime(MainWindow.date_format)
-
                 self.prof_idx.sort()
                 self.skewApp()
 
@@ -550,7 +524,7 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def skewApp(self):
+    def skewApp(self, archive=False):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -568,11 +542,12 @@ class MainWindow(QWidget):
 
         ## if the profile is an archived file, load the file from
         ## the hard disk
-        if self.model == "Archive":
+        if archive:
+            model = "Archive"
             try:
                 profs, dates, stn_id = self.loadArchive()
-                self.disp_name = stn_id
-                self.prof_idx = range(len(dates))
+                disp_name = stn_id
+                prof_idx = range(len(dates))
             except Exception as e:
                 exc = str(e)
                 if debug:
@@ -584,10 +559,15 @@ class MainWindow(QWidget):
 
         else:
         ## otherwise, download with the data thread
-            if self.data_sources[self.model].getForecastHours() == [ 0 ]:
-                self.prof_idx = [ 0 ]
+            prof_idx = self.prof_idx
+            disp_name = self.disp_name
+            run = self.run
+            model = self.model
 
-            ret = loadData(self.data_sources[self.model], self.loc, self.run, self.prof_idx)
+            if self.data_sources[model].getForecastHours() == [ 0 ]:
+                prof_idx = [ 0 ]
+
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
 
             if isinstance(ret[0], Exception):
                 exc = str(ret[0])
@@ -595,8 +575,8 @@ class MainWindow(QWidget):
             else:
                 profs, dates = ret
 
-            run = "%02dZ" % self.run.hour
-            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in self.prof_idx ]
+            run = "%02dZ" % run.hour
+            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
             msgbox = QMessageBox()
@@ -606,8 +586,8 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, self.model, location=self.disp_name,
-                prof_time=self.prof_time, run=run, idx=self.prof_idx, fhour=fhours)
+            self.skew = SkewApp(profs, dates, model, location=disp_name,
+                run=run, idx=prof_idx, fhour=fhours)
             self.skew.show()
 
     def loadArchive(self):
