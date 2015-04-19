@@ -3,6 +3,7 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.viz import drawBarb
 from sharppy.sharptab.constants import *
+import platform
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -33,6 +34,11 @@ class backgroundWinter(QtGui.QFrame):
             fsize = 10
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
+
+        self.os_mod = 0
+        if platform.system() == "Windows":
+            self.os_mod = self.label_metrics.descent()
+
         self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
         self.barby = 0
@@ -62,22 +68,22 @@ class backgroundWinter(QtGui.QFrame):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 5
-        y1 = 3*self.label_height+self.tpad+sep
+        y1 = 3 * self.label_height + self.tpad + sep + self.os_mod
         self.layers_y1 = y1
         
         label = ['', '', '']
         for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
-        y1 = 3*self.label_height+self.tpad+sep + self.label_height+sep
-        begin = 3*self.label_height+self.tpad+sep + self.label_height+sep
+        y1 = 3 * (self.label_height + self.os_mod) + self.tpad + sep + self.label_height + sep + self.os_mod
+        begin = y1
         label = ['', '']
         for i in label: 
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
         
         qp.drawLine( 0, y1, self.brx, y1 )
         qp.drawLine( self.brx* .48, y1, self.brx*.48, begin )
@@ -89,7 +95,7 @@ class backgroundWinter(QtGui.QFrame):
         for i in label: 
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
         qp.drawLine( 0, y1, self.brx, y1 )
         
         y1 = y1+3
@@ -98,14 +104,14 @@ class backgroundWinter(QtGui.QFrame):
         for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
         y1 = backup
         label = ['','', '', '']
         for i in label: 
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
         
         self.energy_y1 = backup
         qp.drawLine( 0, y1+6, self.brx, y1 +6)
@@ -113,7 +119,7 @@ class backgroundWinter(QtGui.QFrame):
         y1 = y1 +10
         rect1 = QtCore.QRect(0, y1, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '*** BEST GUESS PRECIP TYPE ***')
-        self.precip_type_y1 = y1 + self.label_height + 3
+        self.precip_type_y1 = y1 + self.label_height + 3 + 2 * self.os_mod
     
     def resizeEvent(self, e):
         '''
@@ -302,7 +308,7 @@ class plotWinter(backgroundWinter):
         for i in label:
             rect1 = QtCore.QRect(x, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
         # Wetbulb Profile stuff
         y1 = self.energy_y1
@@ -319,7 +325,7 @@ class plotWinter(backgroundWinter):
         for i in label:
             rect1 = QtCore.QRect(x, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
     def drawDGZLayer(self, qp):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
@@ -334,9 +340,9 @@ class plotWinter(backgroundWinter):
         for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
-        y1 = self.layers_y1 + self.label_height+sep
+        y1 = self.layers_y1 + self.label_height + sep + self.os_mod
         if self.dgz_meanomeg == 10*self.prof.missing:
             omeg = 'N/A'
         else:
@@ -346,7 +352,7 @@ class plotWinter(backgroundWinter):
         for i in label: 
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
 
     def drawInitial(self, qp):

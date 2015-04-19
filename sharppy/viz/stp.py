@@ -4,6 +4,7 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
+import platform
 
 ## routine written by Kelton Halbert and Greg Blumberg
 ## keltonhalbert@ou.edu and wblumberg@ou.edu
@@ -45,9 +46,19 @@ class backgroundSTP(QtGui.QFrame):
         self.box_font = QtGui.QFont('Helvetica', fsize2)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
+
+        if platform.system() == "Windows":
+            fsize1 -= self.plot_metrics.descent()
+            fsize2 -= self.box_metrics.descent()
+
+            self.plot_font = QtGui.QFont('Helvetica', fsize1 )
+            self.box_font = QtGui.QFont('Helvetica', fsize2)
+            self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+            self.box_metrics = QtGui.QFontMetrics(self.box_font)
+
         self.plot_height = self.plot_metrics.xHeight() + self.textpad
         self.box_height = self.box_metrics.xHeight() + self.textpad
-
+		
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
@@ -438,7 +449,10 @@ class plotSTP(backgroundSTP):
         left_x = width * 7
         right_x = self.brx - 5.
         top_y = self.stp_to_pix(11.)
-        bot_y = top_y + (self.box_height + 1)*8
+        vspace = self.box_height + 1
+        if platform.system() == "Windows":
+            vspace += self.box_metrics.descent()
+        bot_y = top_y + vspace * 8
         ## fill the box with a black background
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
         pen = QtGui.QPen(QtCore.Qt.black, 0, QtCore.Qt.SolidLine)
@@ -466,8 +480,14 @@ class plotSTP(backgroundSTP):
         for text in texts:
             rect = QtCore.QRectF(x1, y1, width, self.box_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            y1 += self.box_height + 1
-        qp.drawLine(left_x, y1-1, right_x, y1-1)
+            vspace = self.box_height + 1
+            if platform.system() == "Windows":
+                vspace += self.box_metrics.descent()
+            y1 += vspace
+        vspace = y1 - 1
+        if platform.system() == "Windows":
+            vspace += 2
+        qp.drawLine(left_x, vspace, right_x, vspace)
         ## draw the variable names
         texts = ['based on CAPE: ', 'based on LCL:', 'based on ESRH:', 'based on EBWD:',
                  'based on STPC:', 'based on STP_fixed:' ]
@@ -480,6 +500,9 @@ class plotSTP(backgroundSTP):
             rect2 = QtCore.QRectF(x2, y1, width, self.box_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.FLOAT2STR(p,2) )
-            y1 += self.box_height
+            vspace = self.box_height
+            if platform.system() == "Windows":
+                vspace += self.box_metrics.descent()
+            y1 += vspace
         qp.end()
 

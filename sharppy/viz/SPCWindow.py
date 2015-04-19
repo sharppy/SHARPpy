@@ -8,12 +8,16 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
+import sharppy.io as io
+import sharppy.databases.sars as sars
 from datetime import datetime, timedelta
 import copy
 import numpy as np
 import ConfigParser
 import platform
 from time import sleep
+from os.path import expanduser
+from sharppy.version import __version__, __version_name__
 
 class SkewApp(QWidget):
     """
@@ -51,9 +55,9 @@ class SkewApp(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.profs = profs
+        self.proflist = []
         self.dates = dates
         self.model = model
-        self.prof_time = kwargs.get("prof_time", None)
         self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
@@ -66,7 +70,8 @@ class SkewApp(QWidget):
         self.current_idx = 0
         self.prof = profs[self.current_idx]
         self.original_profs = self.profs[:]
-        self.modified = [ False for p in self.original_profs ]
+        self.modified_skew = [ False for p in self.original_profs ]
+        self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
         self.config = ConfigParser.RawConfigParser()
@@ -106,7 +111,7 @@ class SkewApp(QWidget):
 
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
-            self.setGeometry(0,10,1180,800)
+            self.setGeometry(10,30,1180,800)
         else:
             self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
@@ -134,7 +139,7 @@ class SkewApp(QWidget):
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
 
-        self.brand = QLabel('SHARPpy Beta')
+        self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
@@ -203,8 +208,23 @@ class SkewApp(QWidget):
         elif pcl == prof.usrpcl:
             return "USER"
 
+    def getPlotTitle(self):
+        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
+        modified_str = "; Modified" if modified else ""
+
+        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.current_idx], "%Y%m%d/%H%M")
+        if self.model == "Archive":
+            plot_title += "  (User Selected" + modified_str + ")"
+        elif self.fhour == [ 'F000' ]:
+            plot_title += "  (Observed" + modified_str + ")"
+        else:
+             plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+        return plot_title
+
     def saveimage(self):
-        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
+        self.home_path = expanduser('~')
+        files_types = "PNG (*.png)"
+        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, files_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
             pixmap.save(fileName, 'PNG', 100)
@@ -217,31 +237,29 @@ class SkewApp(QWidget):
         """
 
         ## set the plot title that will be displayed in the Skew frame.
-        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            self.plot_title += "  (User Selected)"
-        elif self.model == "Observed":
-            self.plot_title += "  (Observed)"
-        else:
-            self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + ")"
+        self.plot_title = self.getPlotTitle()
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                                 proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                                   dgz=self.dgz)
+                                   dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
             self.sound.reset.connect(self.resetProf)
+            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
+                                 proflist=self.proflist)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed( self.prof )
 
         self.inferred_temp_advection = plotAdvection(self.prof)
 
-        self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+
 
         self.hodo.updated.connect(self.updateProfs)
         self.hodo.reset.connect(self.resetProf)
@@ -259,6 +277,7 @@ class SkewApp(QWidget):
         self.convective.updatepcl.connect(self.updateParcel)
 
         self.makeInsets()
+        self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
@@ -271,30 +290,29 @@ class SkewApp(QWidget):
         for inset, inset_gen in SkewApp.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
-    @Slot(profile.Profile, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, modified):
 
-        self.modified[self.current_idx] = modified
+    @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
+    def updateProfs(self, prof, panel, modified):
+        if panel == 'skew':
+            self.modified_skew[self.current_idx] = modified
+        elif panel == 'hodo':
+            self.modified_hodo[self.current_idx] = modified
 
-        modified_str = "; Modified" if self.modified[self.current_idx] else ""
-
-        self.plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            self.plot_title += "  (User Selected" + modified_str + ")"
-        elif self.model == "Observed":
-            self.plot_title += "  (Observed" + modified_str + ")"
-        else:
-             self.plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
-
+        self.plot_title = self.getPlotTitle()
         if self.model == "SREF":
             self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                               brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                              proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.profs[self.current_idx] = prof
             self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                               brand=self.brand, dgz=self.dgz, proflist=self.proflist)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
+                              proflist=self.proflist, parent=self)
 
         self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
 
@@ -313,15 +331,25 @@ class SkewApp(QWidget):
         self.convective.setProf(self.prof, self.convective.pcl_types)
         self.kinematic.setProf(self.prof)
 
-        self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self)
+
 
         for inset in self.insets.keys():
             self.insets[inset].setProf(self.prof)
 
-    @Slot()
-    def resetProf(self):
-        self.profs[self.current_idx] = self.original_profs[self.current_idx]
-        self.updateProfs(self.profs[self.current_idx], modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
+    @Slot(str)
+    def resetProf(self, panel):
+        current = self.profs[self.current_idx]
+        orig = self.original_profs[self.current_idx]
+        self.proflist = []
+
+        if panel == 'hodo':
+            kwargs = {'u':orig.u, 'v':orig.v}
+        elif panel == 'skew':
+            kwargs = {'tmpc':orig.tmpc, 'dwpc':orig.dwpc}
+
+        self.profs[self.current_idx] = type(current).copy(current, **kwargs)
+
+        self.updateProfs(self.profs[self.current_idx], panel, modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
         self.setFocus()
 
     @Slot(tab.params.Parcel)
@@ -329,21 +357,13 @@ class SkewApp(QWidget):
         modified_str = ""
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
-        if self.model != "Observed" and self.model != "Archive":
-            self.plot_title = self.loc + ' ' + datetime.strftime(self.dates[self.prof_idx[self.current_idx]], "%Y%m%d/%H%M") \
-                + "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
-        elif self.model == "Observed":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (Observed" + modified_str + ")"
-        elif self.model == "Archive":
-            date_str = self.plot_title.split(' (')[0]
-            self.plot_title = date_str + " (User Selected" + modified_str + ")"
-
+        self.plot_title = self.getPlotTitle()
         if self.model == "SREF":
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
-            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand, dgz=self.dgz)
+            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand,
+                               dgz=self.dgz, proflist=self.proflist)
 
         self.storm_slinky.setProf(self.prof, pcl=pcl)
 
@@ -352,6 +372,26 @@ class SkewApp(QWidget):
         self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
         self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
 
+    @Slot(str)
+    def updateSARS(self, filematch):
+        if self.model != "SREF":
+            self.proflist = []
+#           data = io.spc_decoder.SNDFile(filematch)
+#           matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
+#                                              tmpc=data.tmpc, dwpc=data.dwpc,
+#                                              wspd=data.wspd, wdir=data.wdir,
+#                                              profile="convective")
+
+            if filematch != "":
+                dec = io.spc_decoder.SPCDecoder(filematch)
+                matchprof = dec.getProfiles()[0]
+
+                self.proflist.append(matchprof)
+
+            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
+                           brand=self.brand, dgz=self.dgz, proflist=self.proflist)
+            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
+                              proflist=self.proflist)
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -390,7 +430,9 @@ class SkewApp(QWidget):
             else:
                 self.current_idx = 0
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', False)
+            self.updateSARS("")
+            self.insets['SARS'].clearSelection()
             return
 
         if key == Qt.Key_Left:
@@ -399,7 +441,9 @@ class SkewApp(QWidget):
             elif self.current_idx == 0:
                 self.current_idx = length -1
             self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], self.modified[self.current_idx])
+            self.updateProfs(self.profs[self.current_idx], 'none', False)
+            self.updateSARS("")
+            self.insets['SARS'].clearSelection()
             return
 
         if e.matches(QKeySequence.Save):

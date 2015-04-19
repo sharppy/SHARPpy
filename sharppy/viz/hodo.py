@@ -292,8 +292,8 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile, bool, tab.params.Parcel)
-    reset = Signal()
+    updated = Signal(Profile, str, bool, tab.params.Parcel)
+    reset = Signal(str)
 
     def __init__(self, hght, u, v, **kwargs):
         '''
@@ -319,6 +319,7 @@ class plotHodo(backgroundHodo):
         self.clickradius = 6
 
         self.prof = kwargs.get('prof', None)
+        self.proflist = kwargs.get("proflist", [])
         self.original_prof = self.prof
 
         self.centered = kwargs.get('centered', (0,0))
@@ -428,7 +429,7 @@ class plotHodo(backgroundHodo):
         
         reset = QAction(self)
         reset.setText("Reset Hodograph")
-        reset.triggered.connect(lambda: self.reset.emit())
+        reset.triggered.connect(lambda: self.reset.emit('hodo'))
         self.popupmenu.addAction(reset)
 
     def setProf(self, hght, u, v, **kwargs):
@@ -437,6 +438,7 @@ class plotHodo(backgroundHodo):
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.prof = kwargs.get('prof', None)
+        self.proflist = kwargs.get("proflist", [])
 #       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
@@ -605,12 +607,13 @@ class plotHodo(backgroundHodo):
                 width = 150
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-35, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 shear_color = QtGui.QColor("#0099CC")
                 pen = QtGui.QPen(shear_color, penwidth)
                 qp.setFont(self.critical_font)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+                to_add = self.pix_to_uv(e.x(), e.y())
+                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0] + to_add[0], self.prof.sfc_6km_shear[1]+ to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
@@ -619,11 +622,11 @@ class plotHodo(backgroundHodo):
                 width = 200
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-20, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
                 if spd >= 70:
@@ -633,7 +636,8 @@ class plotHodo(backgroundHodo):
                 else:
                     supercell_type = "HP"
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
-                
+                # Removing this function until @wblumberg can finish fixing this function.
+                """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
                 norm_Shear, mode_Shear, norm_Wind, norm_Mode = self.calculateStormMode()
  
@@ -670,7 +674,7 @@ class plotHodo(backgroundHodo):
                     pen = QtGui.QPen(color, penwidth)
                     qp.setPen(pen)
                     qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "From Bndy 0-6 km Shr Diff (" + tab.utils.INT2STR(norm_Shear) + " m/s): " + mode_Shear)
-
+                """
                 qp.end()
 
                 self.update()
@@ -688,14 +692,14 @@ class plotHodo(backgroundHodo):
             new_v = self.v.copy()
             new_u[self.drag_idx] = u
             new_v[self.drag_idx] = v
-            new_prof = create_profile(pres=self.prof.pres, hght=self.hght, tmpc=self.prof.tmpc, dwpc=self.prof.dwpc, 
-                u=new_u, v=new_v, omeg=self.prof.omeg,profile=self.prof.profile, location=self.prof.location)
+
+            new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, True, None)
+            self.updated.emit(new_prof, 'hodo', True, None)
         self.initdrag = False
 
     def setBlackPen(self, qp):
@@ -917,6 +921,8 @@ class plotHodo(backgroundHodo):
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
+        for prof in self.proflist:
+            self.draw_profile(prof, qp)
         ## draw the hodograph
         self.draw_hodo(qp)
         ## draw the storm motion vector
@@ -925,6 +931,7 @@ class plotHodo(backgroundHodo):
         self.drawLCLtoEL_MW(qp)
         if self.cursor_type in [ 'none', 'stormmotion' ]:
             self.drawCriticalAngle(qp)
+
         qp.end()
     
     def drawLCLtoEL_MW(self, qp):
@@ -1164,6 +1171,50 @@ class plotHodo(backgroundHodo):
             pen = QtGui.QPen(colors[idx], penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
+
+            path = QPainterPath()
+            path.moveTo(seg_x[idx], seg_y[idx])
+            for z_idx in xrange(seg_idxs[idx] + 1, seg_idxs[idx + 1]):
+                path.lineTo(xx[z_idx], yy[z_idx])
+            path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
+
+            qp.drawPath(path)
+
+    def draw_profile(self, prof, qp, color="#6666CC"):
+        '''
+        Plot the Hodograph.
+
+        Parameters
+        ----------
+        qp: QtGui.QPainter object
+
+        '''
+        ## check for masked daata
+        try:
+            mask = np.maximum(prof.u.mask, prof.v.mask)
+            z = tab.interp.to_agl(prof.prof, prof.hght[~mask])
+            u = prof.u[~mask]
+            v = prof.v[~mask]
+        ## otherwise the data is fine
+        except:
+            z = tab.interp.to_agl(prof, prof.hght )
+            u = prof.u
+            v = prof.v
+        ## convert the u and v values to x and y pixels
+        xx, yy = self.uv_to_pix(u, v)
+
+        penwidth = 2
+        pen = QtGui.QPen(QtGui.QColor(color), penwidth)
+        pen.setStyle(QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.setBrush(Qt.NoBrush)
+
+        seg_bnds = [0., 3000., 6000., 9000., 12000.]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+
+        seg_idxs = np.searchsorted(z, seg_bnds)
+        for idx in xrange(len(seg_bnds) - 1):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])

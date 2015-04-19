@@ -4,7 +4,10 @@
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
-Many people have put an immeasurable amount of time into developing this software package. 
+=======================================================================
+#####Developer Requests:
+
+1.) Many people have put an immeasurable amount of time into developing this software package. 
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
@@ -18,8 +21,14 @@ http://sharppy.github.io/SHARPpy/index.html
 
 https://github.com/sharppy/SHARPpy
 
-Also, please send an email letting us know where SHARPpy is being used or 
+Additionally, Jeff Whitaker created the Basemap package, from which we have borrowed data and code to develop the SHARPpy data selector GUI.
+
+2.) Also, please send an email letting us know where SHARPpy is being used or 
 has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
+
+3.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
+
+https://github.com/sharppy/SHARPpy/issues
 
 =======================================================================
 ### Installing SHARPpy
@@ -51,6 +60,8 @@ Once the package has been downloaded to your computer, use your command line to 
 
 After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 
+A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
+
 =======================================================================
 ### Running the SHARPpy GUI
 
@@ -71,8 +82,7 @@ http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy
 
 ### Using the GUI
 
-To open a sounding, select a sounding type, a model run time (if the type is an NWP model), and then select a time(s).
-Afterwards, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
+To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
 After all profiles have been generated, a window should show up with your desired data.  Below are things you can do:
 
@@ -81,6 +91,10 @@ After all profiles have been generated, a window should show up with your desire
 3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
 4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
 5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
+6. View different parcels that can be lifted and lift custom parcels.  
+7. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
+8. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
+9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format.  See the OAX file in the tutorials folder for an example.  
 
 #### Available Insets
 
@@ -129,14 +143,21 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 
 ### Known GUI Issues
 
-Known Windows Issues:
-- Inset text is not properly sized or placed in their windows.
-- When incrementing/decrementing profiles, the entire screen goes blank and redraws (FIXED AS OF 2/11/2015)
-- The program’s menu bar does not display
-- The sounding window may not properly size at first. A fix is to manually resize it and manipulate it.
+Known Issues:
+- Text can sometimes overlap. (Windows)
+- The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
+- SHARPpy will not work with QT 4.8.6.0 on Linux.  There is a bug in the QT package affects the ability of the GUI to render.  See this issue for a fix: https://github.com/sharppy/SHARPpy/issues/51 (Linux)
+- Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
-Other Issues:
-- Multi-select does not work for Observed soundings
-- Some forecast sounding (HRRR, NAM, etc.) point-click locations do not exist on the data server. This will cause the program to crash. (FIXED AS OF 2/28/2015 - program no longer crashes.)
-- Wind barbs for very fast winds sometimes have barbs misplaced with respect to the stick of the wind diagram.  (FIXED AS OF 2/20/2015)
-- "Select Model Run" list of availiable model runs for SREF has invalid SREF run times (FIXED AS OF 2/20/2015)
+=======================================================================
+
+### SHARPpy Development Team
+
+SHARPpy is currently managed by the following co-developers (in no particular order):
+- Patrick Marsh (SPC)
+- Kelton Halbert (OU School of Meteorology)
+- Greg Blumberg (OU/CIMMS)
+- Tim Supinie (OU School of Meteorology)
+
+Questions and concerns not related to bug reports or feature requests should be may be directed to the team through this email: sharppy.project@gmail.com
+
