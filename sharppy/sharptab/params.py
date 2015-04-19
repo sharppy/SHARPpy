@@ -1458,7 +1458,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     blupper = pe2
     h2 = interp.hght(prof, pe2)
     te2 = interp.vtmp(prof, pe2)
-    pcl.lclpres = pe2
+    pcl.lclpres = min(pe2, prof.pres[prof.sfc]) # Make sure the LCL pressure is
+                                                # never below the surface
     pcl.lclhght = interp.to_agl(prof, h2)
     ptrace.append(pe2)
     ttrace.append(thermo.virtemp(pe2, tp2, tp2))
