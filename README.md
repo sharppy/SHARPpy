@@ -97,7 +97,7 @@ After all profiles have been generated, a window should show up with your desire
 6. View different parcels that can be lifted and lift custom parcels.  
 7. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
 8. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
-9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format.  See the OAX file in the tutorials folder for an example.  
+9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format similar to what is seen on the SPC soundings page.  See the OAX file in the tutorials folder for an example.  
 
 #### Available Insets
 
