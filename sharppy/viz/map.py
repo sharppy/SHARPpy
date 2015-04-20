@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import sharppy
 from PySide import QtGui, QtCore
 
 import sys, os
@@ -8,7 +8,7 @@ import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join('..', 'sharppy', 'databases', 'shapefiles')
+    data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
     min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
     max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
 
