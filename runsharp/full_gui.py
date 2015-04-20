@@ -3,84 +3,165 @@ import numpy as np
 import warnings
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
+    debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
 else:
+    debug = False
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
-from sharppy.viz import SkewApp
+from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.buf_decoder import BufkitFile
-from sharppy.io.spc_decoder import SNDFile
+from sharppy.io.spc_decoder import SPCDecoder
+from sharppy.io.buf_decoder import BufDecoder
+from sharppy.version import __version__, __version_name__
+from datasources import data_source
+
 from PySide.QtCore import *
 from PySide.QtGui import *
-from PySide.QtWebKit import *
 import datetime as date
-from StringIO import StringIO
-import urllib
+import traceback
+from functools import wraps, partial
+import hashlib
+import cProfile
+from os.path import expanduser
 
-class DataThread(QThread):
-    progress = Signal()
-    def __init__(self, parent, **kwargs):
-        super(DataThread, self).__init__(parent)
-        self.model = kwargs.get("model")
-        self.runtime = kwargs.get("run")
-        self.loc = kwargs.get("loc")
-        self.prof_idx = kwargs.get("idx")
-        self.profs = []
-        self.dates = None
-        self.exc = ""
+class AsyncThreads(QObject):
+    def __init__(self):
+        super(AsyncThreads, self).__init__()
+        self.threads = {}
+        self.callbacks = {}
+        return
 
-    def returnData(self):
-        if self.exc == "":
-            return self.profs, self.dates
+    def post(self, func, callback, *args, **kwargs):
+        thd_id = self._genThreadId()
+
+        thd = self._threadFactory(func, thd_id, *args, **kwargs)
+        thd.finished.connect(self.finish)
+        thd.start()
+
+        self.threads[thd_id] = thd
+        if callback is None:
+            callback = lambda x: x
+        self.callbacks[thd_id] = callback
+        return thd_id
+
+    def isFinished(self, thread_id):
+        return not (thread_id in self.threads)
+
+    def join(self, thread_id):
+        while not self.isFinished(thread_id):
+            QCoreApplication.processEvents()
+
+    @Slot(str, tuple)
+    def finish(self, thread_id, ret_val):
+        thd = self.threads[thread_id]
+        callback = self.callbacks[thread_id]
+
+        callback(ret_val)
+
+        del self.threads[thread_id]
+        del self.callbacks[thread_id]
+
+    def _genThreadId(self):
+        time_stamp = date.datetime.utcnow().isoformat()
+        return hashlib.md5(time_stamp).hexdigest()
+
+    def _threadFactory(self, func, thread_id, *args, **kwargs):
+
+        class AsyncThread(QThread):
+            finished = Signal(str, tuple)
+
+            def __init__(self):
+                super(AsyncThread, self).__init__()
+            
+            def run(self):
+                try:
+                    ret_val = func(*args, **kwargs)
+                except Exception as e:
+                    if debug:
+                        print traceback.format_exc()
+                    ret_val = e
+                if type(ret_val) != tuple:
+                    ret_val = (ret_val, )
+
+                self.finished.emit(thread_id, ret_val)
+
+        return AsyncThread()
+
+class progress(QObject):
+    _progress = Signal(int, int)
+    _text = Signal(str)
+
+    def __init__(self, *args, **kwargs):
+        super(progress, self).__init__()
+        self._func = None
+        self._async = args[0]
+        self._ret_val = None
+
+    def __get__(self, obj, cls):
+        return partial(self.__call__, obj)
+
+    def __call__(self, *args, **kwargs):
+        if len(args) > 0 and hasattr(args[0], '__call__'):
+            self._func = args[0]
+            ret = self.doasync
         else:
-            return self.exc
+            ret = self.doasync(*args, **kwargs)
+        return ret
 
-    def __modelProf(self):
-        if self.model == "GFS":
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + '3_' + self.loc.lower() + '.buf')
-        elif self.model.startswith("NAM") and (self.runtime.startswith("06") or self.runtime.startswith("18")):
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + 'm_' + self.loc.lower() + '.buf')
-        else:
-            d = BufkitFile('ftp://ftp.meteo.psu.edu/pub/bufkit/' + self.model + '/' + self.runtime[:-1] + '/'
-                + self.model.lower() + '_' + self.loc.lower() + '.buf')
-        self.dates = d.dates
+    def doasync(self, *args, **kwargs):
+        self._args = args
+        self._kwargs = kwargs
 
-        if self.model == "SREF":
-            for i in self.prof_idx:
-                profs = []
-                for j in range(len(d.wdir)):
-                    ##print "MAKING PROFILE OBJECT: " + datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                    if j == 0:
-                        profs.append(profile.create_profile(profile='convective', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                        self.progress.emit()
-                    else:
-                        profs.append(profile.create_profile(profile='default', omeg = d.omeg[j][i], hght = d.hght[j][i],
-                        tmpc = d.tmpc[j][i], dwpc = d.dwpc[j][i], pres = d.pres[j][i], wspd=d.wspd[j][i], wdir=d.wdir[j][i]))
-                self.profs.append(profs)
+        self._kwargs['__prog__'] = self._progress
+        self._kwargs['__text__'] = self._text
 
-        else:
-            for i in self.prof_idx:
-                ##print "MAKING PROFILE OBJECT: " + date.datetime.strftime(d.dates[i], '%Y%m%d/%H%M')
-                self.profs.append(profile.create_profile(profile='convective', omeg = d.omeg[0][i], hght = d.hght[0][i],
-                    tmpc = d.tmpc[0][i], dwpc = d.dwpc[0][i], pres = d.pres[0][i], wspd=d.wspd[0][i], wdir=d.wdir[0][i]))
-                self.progress.emit()
+        self._progress_dialog = QProgressDialog()
+        self._progress.connect(self.updateProgress)
+        self._text.connect(self.updateText)
+        self._progress_dialog.setMinimum(0)
+        self._progress_dialog.setValue(0)
 
-    def run(self):
-        try:
-            self.__modelProf()
-        except Exception as e:
-            self.exc = str(e)
+        self._progress_dialog.open()
+        self._isfinished = False
+
+        def finish(ret_val):
+            self._isfinished = True
+            self._progress_dialog.close()
+            self._ret_val = ret_val
+
+        self._async.post(self._func, finish, *self._args, **self._kwargs)
+
+        while not self._isfinished:
+            QCoreApplication.processEvents()
+
+        return self._ret_val
+
+    @Slot(int, int)
+    def updateProgress(self, value, maximum):
+        text = self._prog_text
+
+        self._progress_dialog.setMaximum(maximum)
+        self._progress_dialog.setValue(value)
+
+        if maximum > 0:
+            text += " (%d / %d)" % (value, maximum)
+        self._progress_dialog.setLabelText(text)
+
+    @Slot(str)
+    def updateText(self, text):
+        self._prog_text = text
+        self._progress_dialog.setLabelText(text)
 
 # Create an application
 app = QApplication([])
 
 class MainWindow(QWidget):
     date_format = "%Y-%m-%d %HZ"
+    run_format = "%d %B %Y / %H%M UTC"
+
+    async = AsyncThreads()
 
     def __init__(self, **kwargs):
         """
@@ -91,31 +172,19 @@ class MainWindow(QWidget):
         """
 
         super(MainWindow, self).__init__(**kwargs)
-        self.progressDialog = QProgressDialog()
+        self.data_sources = data_source.loadDataSources()
 
         ## All of these variables get set/reset by the various menus in the GUI
 
-        ## this is the time step between available profiles
-        self.delta = 12
         ## default the sounding location to OUN because obviously I'm biased
-        self.loc = "OUN"
-        ## set the default profile to display
-        self.prof_time = "Latest"
+        self.loc = None
         ## the index of the item in the list that corresponds
         ## to the profile selected from the list
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## the delay is time time delay between sounding availabilities for models
-        self.delay = 1
-        ## Offset in time from the synoptic hours
-        self.offset = 0
-        ## this is the duration of the period the available profiles have
-        self.duration = 17
         ## this is the default model initialization time.
-        self.run = "00Z"
-        ## this is the default map to display
-        self.map = None
+        self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
         ## initialize the UI
         self.__initUI()
 
@@ -140,8 +209,11 @@ class MainWindow(QWidget):
         self.select_flag = False
         self.all_profs = QPushButton("Select All")
         self.all_profs.clicked.connect(self.select_all)
+        self.all_profs.setDisabled(True)
 
-        self.profile_list = self.list_profiles()
+        self.profile_list = QListWidget()
+        self.profile_list.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.profile_list.setDisabled(True)
 
         ## create subwidgets that will hold the individual GUI items
         self.left_data_frame = QWidget()
@@ -153,9 +225,13 @@ class MainWindow(QWidget):
         self.right_map_frame.setLayout(self.right_layout)
 
         ## create dropdown menus
-        self.model_dropdown = self.dropdown_menu(['Observed', 'GFS', 'NAM', 'NAM4KM', 'RAP', 'HRRR', 'SREF'])
-        self.map_dropdown = self.dropdown_menu(['CONUS', 'Southeast', 'Central', 'West', 'Northeast', 'Europe', 'Asia'])
-        self.run_dropdown = self.dropdown_menu(["None"])
+        models = sorted(self.data_sources.keys())
+        self.model_dropdown = self.dropdown_menu(models)
+        self.model_dropdown.setCurrentIndex(models.index(self.model))
+        self.map_dropdown = self.dropdown_menu(['Northern Hemisphere', 'Tropics (Coming Soon!)', 'Southern Hemisphere (Coming Soon!)'])
+        times = self.data_sources[self.model].getAvailableTimes()
+        self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
+        self.run_dropdown.setCurrentIndex(times.index(self.run))
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -163,10 +239,11 @@ class MainWindow(QWidget):
         self.run_dropdown.activated.connect(self.get_run)
 
         ## Create text labels to describe the various menus
-        self.type_label = QLabel("Select Sounding Type")
-        self.date_label = QLabel("Select Sounding Date")
+        self.type_label = QLabel("Select Sounding Source")
+        self.date_label = QLabel("Select Forecast Time")
         self.map_label = QLabel("Select Map Area")
-        self.run_label = QLabel("Select Model Run")
+        self.run_label = QLabel("Select Cycle")
+        self.date_label.setDisabled(True)
 
         ## add the elements to the left side of the GUI
         self.left_layout.addWidget(self.type_label)
@@ -190,20 +267,12 @@ class MainWindow(QWidget):
 
         self.menuBar()
 
-    def __date(self):
-        """
-        This function does some date magic to get the current date nearest to 00Z or 12Z
-        """
-        current_time = date.datetime.utcnow()
-        delta = date.timedelta(hours=12)
-        today_00Z = date.datetime.strptime( str(current_time.year) + str(current_time.month).zfill(2) +
-                                            str(current_time.day).zfill(2) + "00", "%Y%m%d%H")
-        if current_time.hour >= 12:
-            time = today_00Z + delta
-        else:
-            time = today_00Z
+    def keyPressEvent(self, e):
+        if e.matches(QKeySequence.Open):
+            self.openFile()
 
-        return time
+        if e.matches(QKeySequence.Quit):
+            self.exitApp() 
 
     def menuBar(self):
 
@@ -232,43 +301,46 @@ class MainWindow(QWidget):
         self.close()
 
     def openFile(self):
-        self.link, _ = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-        self.model = "Archive"
-        self.location = None
-        self.prof_time = None
-        self.run = None
+        self.home_path = expanduser('~')
+        link, _ = QFileDialog.getOpenFileName(self, 'Open file', self.home_path)
+        if link == '':
+            return
+        else:
+            self.link = link
 
-        self.skewApp()
-
-        ## this is the time step between available profiles
-        self.delta = 12
-        ## default the sounding location to OUN because obviously I'm biased
-        self.loc = "OUN"
-        ## set the default profile to display
-        self.prof_time = "Latest"
-        ## the index of the item in the list that corresponds
-        ## to the profile selected from the list
-        self.prof_idx = []
-        ## set the default profile type to Observed
-        self.model = "Observed"
-        ## the delay is time time delay between sounding availabilities for models
-        self.delay = 1
-        ## Offset time from the synoptic hour
-        self.offset = 0
-        ## this is the duration of the period the available profiles have
-        self.duration = 17
-        ## this is the default model initialization time.
-        self.run = "00Z"
-        ## this is the default map to display
-        self.map = None
-        self.set_model_dt()
+        self.skewApp(archive=True)
 
     def aboutbox(self):
 
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
-        msgBox.setText("SHARPpy\nSounding and Hodograph Research and Analysis Program for " +
-                       "Python\n\n(C) 2014-%d by Kelton Halbert and Greg Blumberg" % cur_year)
+        str = """
+        SHARPpy v%s %s
+
+        Sounding and Hodograph Analysis and Research
+        Program for Python
+
+        (C) 2014-%d by Patrick Marsh, John Hart,
+        Kelton Halbert, Greg Blumberg, and Tim Supinie.
+
+        SHARPPy is a collection of open source sounding
+        and hodograph analysis routines, a sounding
+        plotting package, and an interactive application
+        for analyzing real-time soundings all written in
+        Python. It was developed to provide the
+        atmospheric science community a free and
+        consistent source of routines for convective
+        indices. SHARPPy is constantly updated and
+        vetted by professional meteorologists and
+        climatologists within the scientific community to
+        help maintain a standard source of sounding
+        routines.
+
+        Website: http://sharppy.github.io/SHARPpy/
+        Contact: sharppy.project@gmail.com
+        Contribute: https://github.com/sharppy/SHARPpy/
+        """ % (__version__, __version_name__, cur_year)
+        msgBox.setText(str)
         msgBox.exec_()
 
     def create_map_view(self):
@@ -280,11 +352,9 @@ class MainWindow(QWidget):
         -------
         view : QWebView object
         """
-        # Create and fill a QWebView
-        view = QWebView()
-        view.setUrl(QUrl(self.model.lower() + '.html'))
-        view.page().setLinkDelegationPolicy(QWebPage.DelegateAllLinks)
-        view.linkClicked.connect(self.map_link)
+
+        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500)
+        view.clicked.connect(self.map_link)
 
         return view
 
@@ -313,30 +383,6 @@ class MainWindow(QWidget):
 
         return dropdown
 
-
-    def list_profiles(self):
-        """
-        Add profile times to the list of profiles.
-        """
-        ## create a list widget
-        list = QListWidget()
-        list.setSelectionMode(QAbstractItemView.MultiSelection)
-        ## get the date nearest to 00Z or 12 Z
-        time = self.__date()
-
-        delta = date.timedelta(hours=self.delta)
-        if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
-            time -= delta
-        timelist = ['Latest', time.strftime(MainWindow.date_format)]
-        i = 0
-        while i < 17:
-            time = time - delta
-            timelist.append(time.strftime(MainWindow.date_format))
-            i += 1
-        for item in timelist:
-            list.addItem(item)
-        return list
-
     def update_list(self):
         """
         Update the list with new dates.
@@ -344,86 +390,32 @@ class MainWindow(QWidget):
         :param list:
         :return:
         """
+
+        if self.select_flag:
+            self.select_all()
         self.profile_list.clear()
         self.prof_idx = []
         timelist = []
 
-        if self.model == "Observed":
-            time = self.__date()
-            delta = date.timedelta(hours=self.delta)
-            if date.datetime.utcnow() < time + date.timedelta(hours=self.delay):
-                time -= delta
-
-            timelist = ['Latest', time.strftime(MainWindow.date_format)]
-            i = 0
-            while i < 17:
-                time = time - delta
-                timelist.append(time.strftime(MainWindow.date_format))
-                i += 1
-
+        fcst_hours = self.data_sources[self.model].getForecastHours()
+        if fcst_hours != [ 0 ]:
+            self.profile_list.setEnabled(True)
+            self.all_profs.setEnabled(True)
+            self.date_label.setEnabled(True)
+            for fh in fcst_hours:
+                fcst_str = (self.run + date.timedelta(hours=fh)).strftime(MainWindow.date_format) + "   (F%03d)" % fh
+                timelist.append(fcst_str)
         else:
-            delta = date.timedelta(hours=self.delta)
-            latest = self.latestAvailable()
-            run_idx = [ "%02dZ" % run.hour for run in latest ].index(self.run)
-            time = latest[run_idx]
-
-            timelist.append(time.strftime(MainWindow.date_format) + "   (F000)")
-            i = 0
-            while i < self.duration:
-                time = time + delta
-                timelist.append(time.strftime(MainWindow.date_format) + "   (F%03d)" % ((i + 1) * (delta.seconds / 3600)))
-                i += 1
+            self.profile_list.setDisabled(True)
+            self.all_profs.setDisabled(True)
+            self.date_label.setDisabled(True)
 
         for item in timelist:
             self.profile_list.addItem(item)
-
+ 
         self.profile_list.update()
         self.all_profs.setText("Select All")
         self.select_flag = False
-
-
-    def set_model_dt(self):
-        """
-        Set the model dt (model time step) based on the user's selection, in addition
-        to the duration of the forecast and the time offset in hours that determines
-        when new model data is available.
-        """
-        if self.model == "Observed":
-            self.delta = 12
-            self.duration = 17
-            self.delay = 1
-            self.offset = 0
-            self.available = 12
-        elif self.model == "RAP" or self.model == "HRRR":
-            self.delta = 1
-            self.duration = 15
-            self.delay = 1
-            self.offset = 0
-            self.available = 1
-        elif self.model == "NAM":
-            self.delta = 1
-            self.duration = 84
-            self.delay = 3
-            self.offset = 0
-            self.available = 6
-        elif self.model == "NAM4KM":
-            self.delta = 1
-            self.duration = 60
-            self.delay = 3
-            self.offset = 0
-            self.available = 6
-        elif self.model.startswith("GFS"):
-            self.delta = 3
-            self.duration = 60
-            self.delay = 4
-            self.offset = 0
-            self.available = 6
-        elif self.model == "SREF":
-            self.delta = 1
-            self.duration = 84
-            self.delay = 4
-            self.offset = 3
-            self.available = 6
 
     def update_run_dropdown(self):
         """
@@ -431,31 +423,44 @@ class MainWindow(QWidget):
         information.
         :return:
         """
-        self.run_dropdown.clear()
-        run_idx = 0
-        if self.model == "Observed":
-            self.run_dropdown.addItem("None")
 
-        else:
+        getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
+        
+        def update(times):
+            times = times[0]
+            self.run_dropdown.clear()
 
-            latest = self.latestAvailable()
-            runs = sorted([ "%02dZ" % run.hour for run in latest ])
-            run_idx = runs.index("%02dZ" % latest[-1].hour)
-            self.run = runs[run_idx]
+            if self.model == "Observed":
+                self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
+            else:
+                self.run = times[-1]
 
-            for run in runs:
-                self.run_dropdown.addItem(run)
+            for data_time in times:
+                self.run_dropdown.addItem(data_time.strftime(MainWindow.run_format))
 
-        self.run_dropdown.update()
-        self.run_dropdown.setCurrentIndex(run_idx)
+            self.run_dropdown.update()
+            self.run_dropdown.setCurrentIndex(times.index(self.run))
 
-    def map_link(self, url):
+        self.async_id = self.async.post(getTimes, update)
+
+    def map_link(self, point):
         """
         Change the text of the button based on the user click.
         """
-        self.loc = url.toString().split('/')[-1]
-        self.button.setText(self.loc + ' | Generate Profiles')
+        if point is None:
+            self.loc = None
+            self.disp_name = None
+            self.button.setText('Generate Profiles')
+        else:
+            self.loc = point #url.toString().split('/')[-1]
+            if point['icao'] != "":
+                self.disp_name = point['icao']
+            elif point['iata'] != "":
+                self.disp_name = point['iata']
+            else:
+                self.disp_name = point['srcid'].upper()
 
+            self.button.setText(self.disp_name + ' | Generate Profiles')
 
     def complete_name(self):
         """
@@ -473,52 +478,37 @@ class MainWindow(QWidget):
                 else:
                     self.prof_idx.append(idx)
 
-            self.prof_time = selected[0].text()
-            if '   ' in self.prof_time:
-                self.prof_time = self.prof_time.split("   ")[0]
-            self.prof_idx.sort()
-            self.skewApp()
+            fcst_hours = self.data_sources[self.model].getForecastHours()
 
+            if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
+                self.prof_idx.sort()
+                self.skewApp()
 
-    def get_model(self):
+    def get_model(self, index):
         """
         Get the user's model selection
         """
         self.model = self.model_dropdown.currentText()
-        self.view.setUrl(self.model.lower() + '.html')
-        self.set_model_dt()
-        self.update_run_dropdown()
-        self.update_list()
-        
 
-    def get_run(self):
+        self.update_run_dropdown()
+        self.async.join(self.async_id)
+
+        self.update_list()
+        self.view.setDataSource(self.data_sources[self.model], self.run)
+
+    def get_run(self, index):
         """
         Get the user's run hour selection for the model
         """
-        self.run = self.run_dropdown.currentText()
+        self.run = date.datetime.strptime(self.run_dropdown.currentText(), MainWindow.run_format)
+        self.view.setCurrentTime(self.run)
         self.update_list()
 
     def get_map(self):
         """
         Get the user's map selection
         """
-        self.map = self.map_dropdown.currentText()
-
-    def get_time(self):
-        """
-        Get the user's profile date selection
-        """
-
-        self.prof_time = self.profile_list.currentItem().text()
-        if '   ' in self.prof_time:
-            self.prof_time = self.prof_time.split("   ")[0]
-
-        item = self.profile_list.currentIndex().row()
-        if item in self.prof_idx:
-            self.prof_idx.remove(item)
-        else:
-            self.prof_idx.append(item)
-        self.prof_idx.sort()
+        pass
 
     def select_all(self):
         items = self.profile_list.count()
@@ -536,85 +526,59 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def latestAvailable(self, hours=24):
-        """
-        Return a list containing the datetimes of the most recent runs, ordered by actual time (yesterday's runs are first in the list).
-        """
-        now = date.datetime.utcnow()
-        runs = [ now.replace(hour=hr, minute=0, second=0, microsecond=0) + date.timedelta(hours=(self.offset + self.delay)) for hr in xrange(0, hours, self.available) ]
-        if all( now < run for run in runs ):
-            runs = [ run - date.timedelta(days=1) for run in runs ]
-        run_offsets = [ date.timedelta(days=0) if now >= run else date.timedelta(days=-1) for run in runs ]
-        runs = [ r + o - date.timedelta(hours=self.delay) for r, o, in zip(runs, run_offsets) ]
-        return sorted(runs)
-
-    @Slot()
-    def progress_bar(self):
-        value = self.progressDialog.value()
-        self.progressDialog.setValue(value + 1)
-        self.progressDialog.setLabelText("Profile " + str(value + 1) + "/" + str(self.progressDialog.maximum()))
-
-    def skewApp(self):
+    def skewApp(self, archive=False):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
         :return:
         """
 
-        items = [ item.text() for item in self.profile_list.selectedItems() ]
-        fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
-
         profs = []
         dates = []
         failure = False
 
-        exc = ""
+#       items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
+#       fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
 
-        ## determine what type of data is to be loaded
-        ## if the profile is an observed sounding, load
-        ## from the SPC website
-        if self.model == "Observed":
-            try:
-                prof, date = self.loadObserved()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
-            except Exception as e:
-                exc = str(e)
-                failure = True
+        exc = ""
 
         ## if the profile is an archived file, load the file from
         ## the hard disk
-        elif self.model == "Archive":
+        if archive:
+            model = "Archive"
             try:
-                prof, date = self.loadArchive()
-                profs.append(prof)
-                dates.append(date)
-                self.prof_idx = [ 0 ]
+                profs, dates, stn_id = self.loadArchive()
+                disp_name = stn_id
+                prof_idx = range(len(dates))
             except Exception as e:
                 exc = str(e)
+                if debug:
+                    print traceback.format_exc()
                 failure = True
 
-        ## if the profile is a model profile, load it from the model
-        ## download thread
+            run = None
+            fhours = None
+
         else:
-            self.progressDialog.setMinimum(0)
-            self.progressDialog.setMaximum(len(self.prof_idx))
-            self.progressDialog.setValue(0)
-            self.progressDialog.setLabelText("Profile 0/" + str(len(self.prof_idx)))
-            self.thread = DataThread(self, model=self.model, loc=self.loc, run=self.run, idx=self.prof_idx)
-            self.thread.progress.connect(self.progress_bar)
-            self.thread.start()
-            self.progressDialog.open()
-            while not self.thread.isFinished():
-                QCoreApplication.processEvents()
-            ## return the data from the thread
-            try:
-                profs, dates = self.thread.returnData()
-            except ValueError:
-                exc = self.thread.returnData()
-                self.progressDialog.close()
+        ## otherwise, download with the data thread
+            prof_idx = self.prof_idx
+            disp_name = self.disp_name
+            run = self.run
+            model = self.model
+
+            if self.data_sources[model].getForecastHours() == [ 0 ]:
+                prof_idx = [ 0 ]
+
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
+
+            if isinstance(ret[0], Exception):
+                exc = str(ret[0])
                 failure = True
+            else:
+                profs, dates = ret
+
+            run = "%02dZ" % run.hour
+            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
             msgbox = QMessageBox()
@@ -624,47 +588,46 @@ class MainWindow(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, self.model, location=self.loc,
-                prof_time=self.prof_time, run=self.run, idx=self.prof_idx, fhour=fhours)
+            self.skew = SkewApp(profs, dates, model, location=disp_name,
+                run=run, idx=prof_idx, fhour=fhours)
             self.skew.show()
-
-    def loadObserved(self):
-        """
-        Get the observed sounding based on the user's selections
-        """
-        ## if the profile is the latest, pull the latest profile
-        if self.prof_time == "Latest":
-            timestr = self.prof_time.upper()
-        ## otherwise, convert the menu string to the URL format
-        else:
-            timestr = self.prof_time[2:4] + self.prof_time[5:7] + self.prof_time[8:10] + self.prof_time[11:-1]
-            timestr += "_OBS"
-        ## construct the URL
-        url = 'http://www.spc.noaa.gov/exper/soundings/' + timestr + '/' + self.loc.upper() + '.txt'
-        snd_file = SNDFile(url)
-
-        kwargs = dict( (var, getattr(snd_file, var)) for var in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd'] )
-
-        ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
 
     def loadArchive(self):
         """
         Get the archive sounding based on the user's selections.
         """
 
-        vars = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
-        snd_file = SNDFile(self.link)
-        self.loc = snd_file.location
-        time = snd_file.time
+        try:
+            dec = SPCDecoder(self.link)
+        except:
+            try:
+                dec = BufDecoder(self.link)
+            except:
+                raise IOError("Could not figure out the format of '%s'!" % self.link)
 
-        kwargs = dict( (var, getattr(snd_file, var)) for var in vars )
+        prof = dec.getProfiles()
+        dates = dec.getProfileTimes()
+        stn_id = dec.getStnId()
 
-#       ## construct the Profile object
-        prof = profile.create_profile( profile='convective', location=self.loc, **kwargs)
+        return prof, dates, stn_id
 
-        return prof, date.datetime.strptime(snd_file.time, "%y%m%d/%H%M")
+@progress(MainWindow.async)
+def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+
+    if __text__ is not None:
+        __text__.emit("Decoding File")
+
+    url = data_source.getURL(loc, run)
+    decoder = data_source.getDecoder(loc, run)
+    dec = decoder(url)
+
+    if __text__ is not None:
+        __text__.emit("Creating Profiles")
+
+    dates = dec.getProfileTimes(indexes)
+    profs = dec.getProfiles(indexes, __prog__)
+
+    return profs, dates
 
 if __name__ == '__main__':
     win = MainWindow()

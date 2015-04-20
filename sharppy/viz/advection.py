@@ -1,8 +1,8 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
+import platform
 
 __all__ = ['backgroundAdvection', 'plotAdvection']
 class backgroundAdvection(QtGui.QFrame):
@@ -28,7 +28,16 @@ class backgroundAdvection(QtGui.QFrame):
         self.log_pmax = np.log(self.pmax); self.log_pmin = np.log(self.pmin)
         self.adv_max = 13.; self.adv_min = -13.
         self.adv_min = 0
-        self.label_font = QtGui.QFont('Helvetica', 8)
+
+        fsize = 8
+        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.label_metrics = QtGui.QFontMetrics(self.label_font)
+        self.os_mod = 0
+        if platform.system() == "Windows":
+            self.os_mod = self.label_metrics.descent()
+            self.label_font = QtGui.QFont('Helvetica', fsize - self.os_mod)
+            self.label_metrics = QtGui.QFontMetrics(self.label_font)
+
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
@@ -182,7 +191,3 @@ class plotAdvection(backgroundAdvection):
                 qp.drawLine(pix_adv, pix_ptop, self.adv_to_pix(0), pix_ptop)
                 qp.drawLine(self.adv_to_pix(0), pix_ptop, self.adv_to_pix(0), pix_pbot)
         return
-
-
-
-

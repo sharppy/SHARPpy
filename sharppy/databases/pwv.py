@@ -44,7 +44,8 @@ def get_mean_pwv(station):
         id_index = 1
     else:
         #print "Invalid station ID"
-        return
+        return np.ma.masked
+
     ## open the file, release the kraken!
     ## get the arrays of station IDs
     pwv_means = np.loadtxt(os.path.dirname( __file__) + '/PW-mean-inches.txt', skiprows=0, dtype=str, delimiter=',')
@@ -142,7 +143,8 @@ def pwv_climo(prof, station, month=None):
     pwv_stds = get_stdev_pwv(station)
     if pwv_means is np.ma.masked:
         return 0
-    
+    elif pwv_means is None:
+	return 0
     month_mean = float(pwv_means[month-1])
     month_std = float(pwv_stds[month-1])
 

@@ -1,8 +1,8 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from scipy.misc import bytescale
 from sharppy.sharptab.constants import *
+import platform
 
 __all__ = ['backgroundSlinky', 'plotSlinky']
 
@@ -40,6 +40,10 @@ class backgroundSlinky(QtGui.QFrame):
         self.plot_font = QtGui.QFont('Helvetica', fsize)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+        self.os_mod = 0
+        if platform.system() == "Windows":
+            self.os_mod = self.plot_metrics.descent()
+
         ## get the pixel height of the font
         self.title_height = self.title_metrics.xHeight() + self.fpad
         self.plot_height = self.plot_metrics.xHeight() + self.fpad
@@ -84,7 +88,7 @@ class backgroundSlinky(QtGui.QFrame):
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
-        yval = self.bry - self.title_height - 2
+        yval = self.bry - self.title_height - self.os_mod - 2
         rect0 = QtCore.QRect(self.lpad, yval, 20, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Storm Slinky')
     

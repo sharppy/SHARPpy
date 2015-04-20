@@ -25,7 +25,8 @@ license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
 packages = find_packages()
-package_data = {"": ["*.md", "*.txt", "*.png"],}
+package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
+                     "databases/shapefiles/*"],}
 include_package_data = True
 classifiers = ["Development Status :: 4 - Beta"]
 

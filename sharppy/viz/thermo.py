@@ -5,6 +5,7 @@ from PySide.QtGui import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import datetime
+import platform
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -79,7 +80,11 @@ class backgroundText(QtGui.QFrame):
             rect = QtCore.QRect(x1*count, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, title)
             count += 1
-        qp.drawLine(0, self.label_height, self.brx, self.label_height)
+        vspace = self.label_height
+        if platform.system() == "Windows":
+            vspace += self.label_metrics.descent()
+        qp.drawLine(0, vspace, self.brx, vspace)
+        self.ylast = vspace
     
     def resizeEvent(self, e):
         '''
@@ -360,7 +365,10 @@ class plotText(backgroundText):
                     pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label + index)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
     
     def drawIndices(self, qp):
         '''
@@ -407,7 +415,10 @@ class plotText(backgroundText):
             pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 
         ## middle-left column
         y1 = self.ylast + self.tpad
@@ -416,16 +427,22 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*3.5, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 
         ## middle-right column
         y1 = self.ylast + self.tpad
-        texts = ['WNDG = ', 'TEI = ', '', '', '', 'SigSvr = ']
-        indices = [self.wndg, self.tei, '', '', '', self.sigsevere + ' m3/s3']
+        texts = ['WNDG = ', 'TEI = ', '3CAPE = ', '', '', 'SigSvr = ']
+        indices = [self.wndg, self.tei, tab.utils.INT2STR(self.prof.mlpcl.b3km), '', '', self.sigsevere + ' m3/s3']
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*6, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
         qp.drawLine(x1*7-5, y1+2, x1*7-5, self.bry )
@@ -437,7 +454,10 @@ class plotText(backgroundText):
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(rpad, y1, x1*8, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 
 
     def drawConvectiveIndices(self, qp):
@@ -490,7 +510,10 @@ class plotText(backgroundText):
                 qp.setPen(pen)
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
             self.bounds[i,1] = y1
         ## CAPE
         y1 = self.ylast + self.tpad
@@ -510,7 +533,10 @@ class plotText(backgroundText):
             qp.setPen(pen)
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         ## CINH
         y1 = self.ylast + self.tpad
         for i, text in enumerate(cins):
@@ -529,7 +555,10 @@ class plotText(backgroundText):
             qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 
         ## LCL
         y1 = self.ylast + self.tpad
@@ -549,7 +578,10 @@ class plotText(backgroundText):
             qp.setPen(pen)
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
 
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -558,19 +590,28 @@ class plotText(backgroundText):
         for text in lis:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         ## LFC
         y1 = self.ylast + self.tpad
         for text in lfcs:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
         ## EL
         y1 = self.ylast + self.tpad
         for text in els:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
-            y1 += (self.label_height)
+            vspace = self.label_height
+            if platform.system() == "Windows":
+                vspace += self.label_metrics.descent()
+            y1 += vspace
             self.ylast = y1
         qp.drawLine(0, y1+2, self.brx, y1+2)
         color=QtGui.QColor('#996633')
