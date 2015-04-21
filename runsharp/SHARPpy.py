@@ -8,6 +8,7 @@ else:
     debug = False
     np.seterr(all='ignore')
 
+import sharppy
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
@@ -170,7 +171,8 @@ class MainWindow(QWidget):
         """
 
         super(MainWindow, self).__init__(**kwargs)
-        self.data_sources = data_source.loadDataSources()
+	
+        self.data_sources = data_source.loadDataSources(ds_dir=os.path.join(os.path.dirname(sharppy.__file__), "datasources"))
 
         ## All of these variables get set/reset by the various menus in the GUI
 

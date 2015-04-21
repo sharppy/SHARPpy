@@ -3,9 +3,9 @@ import xml.etree.ElementTree as ET
 import glob
 from datetime import datetime, timedelta
 import urllib
-
+import sharppy
 import available
-
+import os
 # Move this to a function in decoder.py
 from sharppy.io.buf_decoder import BufDecoder
 from sharppy.io.spc_decoder import SPCDecoder
@@ -15,8 +15,8 @@ _decoder = {
     'bufkit':BufDecoder,
 }
 # End move
-
-def loadDataSources(ds_dir='../datasources'):
+data_dir = os.path.join(os.path.dirname(sharppy.__file__), "datasources/") 
+def loadDataSources(ds_dir=data_dir):
     files = glob.glob(ds_dir + '/*.xml')
     ds = {}
     for ds_file in files:
@@ -34,7 +34,7 @@ class Outlet(object):
         self._format = config.get('format')
         self._time = config.find('time')
         point_csv = config.find('points')
-        self._points = self._loadCSV("../datasources/" + point_csv.get("csv"))
+        self._points = self._loadCSV(data_dir + point_csv.get("csv"))
 
         for idx in xrange(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
