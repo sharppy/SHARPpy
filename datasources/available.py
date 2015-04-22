@@ -31,7 +31,8 @@ def _download_psu():
     return psu_text 
 
 def _availableat_psu(model, dt):
-    _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4km', 'hrrr':'hrrr', 'sref':'sref'}
+    if model == '4km nam': model = 'nam4km'
+    _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4kmm?', 'hrrr':'hrrr', 'sref':'sref'}
 
     cycle = dt.hour
     url = "%s%s/%02d/" % (psu_base_url, model.upper(), cycle)
@@ -41,6 +42,8 @@ def _availableat_psu(model, dt):
     return stns
 
 def _available_psu(model, nam=False, off=False):
+    if model == '4km nam': model = 'nam4km'
+
     psu_text = _download_psu()
     latest = re.search("%s\.([\d]{12})\.done" % model, psu_text).groups(0)[0]
     dt = datetime.strptime(latest, "%Y%m%d%H%M")
@@ -55,7 +58,7 @@ available = {
     'psu':{}, 
     'psu_off':{
         'nam':lambda: _available_psu('nam', nam=True, off=True),
-        'nam4km':lambda: _available_psu('nam4km', nam=True, off=True)
+        '4km nam':lambda: _available_psu('4km nam', nam=True, off=True)
     },
     'spc':{'observed':_available_spc},
 }
@@ -64,13 +67,13 @@ availableat = {
     'psu':{},
     'psu_off':{
         'nam':lambda dt: _availableat_psu('nam', dt),
-        'nam4km':lambda dt: _availableat_psu('nam4km', dt)
+        '4km nam':lambda dt: _availableat_psu('4km nam', dt)
     },
     'spc':{'observed':_availableat_spc},
 }
 
-for model in [ 'gfs', 'nam', 'rap', 'hrrr', 'nam4km', 'sref' ]:
-    available['psu'][model] = (lambda m: lambda: _available_psu(m, nam=(m == 'nam'), off=False))(model)
+for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
+    available['psu'][model] = (lambda m: lambda: _available_psu(m, nam=(m in [ 'nam', '4km nam' ]), off=False))(model)
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 if __name__ == "__main__":
