@@ -63,7 +63,7 @@ available = {
 availableat = {
     'psu':{},
     'psu_off':{
-        'nam':lambda dt: _availableat_psu('nam', dt)
+        'nam':lambda dt: _availableat_psu('nam', dt),
         'nam4km':lambda dt: _availableat_psu('nam4km', dt)
     },
     'spc':{'observed':_availableat_spc},
