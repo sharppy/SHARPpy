@@ -4,6 +4,9 @@
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
+**REMINDER: You must re-run the "python setup.py install" script for updates to take hold***
+
+
 =======================================================================
 #####Developer Requests:
 
@@ -94,7 +97,7 @@ After all profiles have been generated, a window should show up with your desire
 6. View different parcels that can be lifted and lift custom parcels.  
 7. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
 8. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
-9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format.  See the OAX file in the tutorials folder for an example.  
+9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format similar to what is seen on the SPC soundings page.  See the OAX file in the tutorials folder for an example.  
 
 #### Available Insets
 
