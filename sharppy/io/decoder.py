@@ -13,6 +13,10 @@ class abstract(object):
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Function or method '%s' is abstract.  Override it in a subclass!" % self._func.__name__)
 
+# Comment this file
+# Move inherited decoders to ~/.sharppy/decoders
+# Write function to figure out what custom decoders we have
+
 class Decoder(object):
     def __init__(self, file_name):
         self._profiles, self._dates = self._parse(file_name)

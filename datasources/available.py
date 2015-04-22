@@ -53,13 +53,19 @@ def _available_psu(model, nam=False, off=False):
 
 available = {
     'psu':{}, 
-    'psu_off':{'nam':lambda: _available_psu('nam', nam=True, off=True)},
+    'psu_off':{
+        'nam':lambda: _available_psu('nam', nam=True, off=True),
+        'nam4km':lambda: _available_psu('nam4km', nam=True, off=True)
+    },
     'spc':{'observed':_available_spc},
 }
 
 availableat = {
     'psu':{},
-    'psu_off':{'nam':lambda dt: _availableat_psu('nam', dt)},
+    'psu_off':{
+        'nam':lambda dt: _availableat_psu('nam', dt)
+        'nam4km':lambda dt: _availableat_psu('nam4km', dt)
+    },
     'spc':{'observed':_availableat_spc},
 }
 
