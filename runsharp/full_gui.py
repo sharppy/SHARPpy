@@ -1,5 +1,6 @@
 import sys, os
 import numpy as np
+import warnings
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     debug = True
@@ -7,6 +8,7 @@ if len(sys.argv) > 1 and sys.argv[1] == '--debug':
 else:
     debug = False
     np.seterr(all='ignore')
+    warnings.simplefilter('ignore')
 
 from sharppy.viz import SkewApp, MapWidget 
 import sharppy.sharptab.profile as profile

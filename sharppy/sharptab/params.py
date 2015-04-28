@@ -13,7 +13,7 @@ __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
-__all__ += ['mburst', 'dcp', 'ehi', 'sweat']
+__all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp']
 
 
 class DefineParcel(object):
@@ -248,6 +248,38 @@ class Parcel(object):
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
+def hgz(prof):
+    '''
+        Hail Growth Zone Levels
+    
+        This function finds the pressure levels for the dendritic 
+        growth zone (from -10 C to -30 C).  If either temperature cannot be found,
+        it is set to be the surface pressure.
+
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        
+        Returns
+        -------
+        pbot : number
+        Pressure of the bottom level (mb)
+        ptop : number 
+        Pressure of the top level (mb)
+    '''
+
+    pbot = temp_lvl(prof, -10)
+    ptop = temp_lvl(prof, -30)
+
+    if not utils.QC(pbot):
+        pbot = prof.pres[prof.sfc]
+    if not utils.QC(ptop):
+        ptop = prof.pres[prof.sfc]
+
+    return pbot, ptop
+
+
 def dgz(prof):
     '''
         Dendritic Growth Zone Levels
@@ -279,27 +311,88 @@ def dgz(prof):
 
     return pbot, ptop
 
-def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
+def lhp(prof):
     '''
-    Calculate the Sig Hail Parameter (SHIP)
-    
-    Parameters
-    ----------
-    prof : Profile object
-    mupcl : (optional) Most-Unstable Parcel 
-    lr75 : 700 - 500 mb lapse rate (C/km)
-    h5_temp : 500 mb temperature (C)
-    shr06 : 0-6 km shear (m/s)
-    frz_lvl : freezing level (m)
+        Large Hail Parameter
 
-    Returns
-    -------
-    ship : significant hail parameter (unitless)
-    
-    Ryan Jewell (SPC) helped in correcting this equation as the SPC
-    sounding help page version did not have the correct information
-    of how SHIP was calculated.
+        From Johnson and Sugden (2014), EJSSM
 
+        Parameters
+        ----------
+        prof : profile object
+            ConvectiveProfile object
+
+        Returns
+        -------
+        lhp : number
+            large hail parameter (unitless)
+    '''
+
+    mag06_shr = utils.KTS2MS(utils.mag(*prof.sfc_6km_shear))
+
+    if prof.mupcl.bplus >= 400 and mag06_shr >= 14:
+        lr75 = prof.lapserate_700_500
+        zbot, ztop = interp.hght(prof, hgz(prof))
+        thk_hgz = ztop - zbot
+
+        term_a = (((prof.mupcl.bplus - 2000.)/1000.) +\
+                 ((3200 - thk_hgz)/500.) +\
+                 ((lr75 - 6.5)/2.))
+
+        if term_a < 0:
+            term_a = 0
+
+        p_1km, p_3km, p_6km = interp.pres(prof, interp.to_msl(prof, [1000, 3000, 6000]))
+        shear_el = utils.KTS2MS(utils.mag(*winds.wind_shear(prof, pbot=prof.pres[prof.sfc], ptop=prof.mupcl.elpres)))
+        grw_el_dir = interp.vec(prof, prof.mupcl.elpres)[0]
+        grw_36_dir = utils.comp2vec(*winds.mean_wind(prof, pbot=p_3km, ptop=p_6km))[0]
+        grw_alpha_el = grw_el_dir - grw_36_dir
+
+        if grw_alpha_el > 180:
+            grw_alpha_el = -10
+
+        srw_01_dir = utils.comp2vec(*winds.sr_wind(prof, pbot=prof.pres[prof.sfc], ptop=p_1km, stu=prof.srwind[0], stv=prof.srwind[1]))[0]
+        srw_36_dir = utils.comp2vec(*winds.sr_wind(prof, pbot=p_3km, ptop=p_6km, stu=prof.srwind[0], stv=prof.srwind[1]))[0]
+        srw_alpha_mid = srw_36_dir - srw_01_dir
+
+        term_b = (((shear_el - 25.)/5.) +\
+                  ((grw_alpha_el + 5.)/20.) +\
+                  ((srw_alpha_mid - 80.)/10.))
+        if term_b < 0:
+            term_b = 0
+
+        lhp = term_a * term_b + 5
+
+    else:
+        lhp = 0
+
+    return lhp
+
+
+def ship(prof, **kwargs):
+    '''
+        Calculate the Sig Hail Parameter (SHIP)
+
+        Parameters
+        ----------
+        prof : Profile object
+        mupcl : (optional) Most-Unstable Parcel
+        lr75 : (optional) 700 - 500 mb lapse rate (C/km)
+        h5_temp : (optional) 500 mb temperature (C)
+        shr06 : (optional) 0-6 km shear (m/s)
+        frz_lvl : (optional) freezing level (m)
+
+        Returns
+        -------
+        ship : number
+            significant hail parameter (unitless)
+
+        Ryan Jewell (SPC) helped in correcting this equation as the SPC
+        sounding help page version did not have the correct information
+        of how SHIP was calculated.
+
+        The significant hail parameter (SHIP; SPC 2014) is
+        an index developed in-house at the SPC. (Johnson and Sugden 2014)
     '''
       
     mupcl = kwargs.get('mupcl', None)
@@ -364,25 +457,24 @@ def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     return ship
 
 def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
-    
     '''
-        
-    Calculate the Significant Tornado Parameter (w/CIN)
+        Significant Tornado Parameter (w/CIN)
 
-    From Thompson et al. 2012 WAF, page 1139
+        From Thompson et al. 2012 WAF, page 1139
 
-    Parameters
-    ----------
-    mlcape : Mixed-layer CAPE from the parcel class (J/kg)
-    esrh : effective storm relative helicity (m2/s2)
-    ebwd : effective bulk wind difference (m/s)
-    mllcl : mixed-layer lifted condensation level (m)
-    mlcinh : mixed-layer convective inhibition (J/kg)
-   
-    Returns
-    -------
-    stp_cin : significant tornado parameter (unitless)
-    
+        Parameters
+        ----------
+        mlcape : Mixed-layer CAPE from the parcel class (J/kg)
+        esrh : effective storm relative helicity (m2/s2)
+        ebwd : effective bulk wind difference (m/s)
+        mllcl : mixed-layer lifted condensation level (m)
+        mlcinh : mixed-layer convective inhibition (J/kg)
+
+        Returns
+        -------
+        stp_cin : number
+            significant tornado parameter (unitless)
+
     '''
     cape_term = mlcape / 1500.
     eshr_term = esrh / 150.
@@ -417,23 +509,22 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 
 
 def stp_fixed(sbcape, sblcl, srh01, bwd6):
-    
     '''
-        
-    Calculate the Significant Tornado Parameter (fixed layer)
+        Significant Tornado Parameter (fixed layer)
    
-    From Thompson et al. 2003
+        From Thompson et al. 2003
 
-    Parameters
-    ----------
-    sbcape : Surface based CAPE from the parcel class (J/kg)
-    sblcl : Surface based lifted condensation level (LCL) (m)
-    srh01 : Surface to 1 km storm relative helicity (m2/s2)
-    bwd6 : Bulk wind difference between 0 to 6 km (m/s)
+        Parameters
+        ----------
+        sbcape : Surface based CAPE from the parcel class (J/kg)
+        sblcl : Surface based lifted condensation level (LCL) (m)
+        srh01 : Surface to 1 km storm relative helicity (m2/s2)
+        bwd6 : Bulk wind difference between 0 to 6 km (m/s)
 
-    Returns
-    -------
-    stp_fixed : signifcant tornado parameter (fixed-layer)
+        Returns
+        -------
+        stp_fixed : number
+            signifcant tornado parameter (fixed-layer)
     '''
     
     # Calculate SBLCL term
@@ -463,20 +554,21 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
 
 def scp(mucape, srh, ebwd):
     '''
-    Calculates the Supercell Composite Parameter
-    
-    From Thompson et al. 2004
-    
-    Parameters
-    ----------
-    prof : Profile object
-    mucape : Most Unstable CAPE from the parcel class (J/kg) (optional)
-    srh : the effective SRH from the winds.helicity function (m2/s2) 
-    ebwd : effective bulk wind difference (m/s)
-    
-    Returns
-    -------
-    scp : supercell composite parameter
+        Supercell Composite Parameter
+
+        From Thompson et al. 2004
+
+        Parameters
+        ----------
+        prof : Profile object
+        mucape : Most Unstable CAPE from the parcel class (J/kg) (optional)
+        srh : the effective SRH from the winds.helicity function (m2/s2)
+        ebwd : effective bulk wind difference (m/s)
+
+        Returns
+        -------
+        scp : number
+            supercell composite parameter
     
     '''
 
@@ -613,29 +705,30 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
 
 def inferred_temp_adv(prof, lat=35):
     '''
-    Inferred Temperature Advection
-    SHARP code deduced by Greg Blumberg.  Not based on actual SPC code.
+        Inferred Temperature Advection
 
-    Calculates the inferred temperature advection from the surface pressure
-    and up every 100 mb assuming all winds are geostrophic.  The units returned are
-    in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
+        SHARP code deduced by Greg Blumberg.  Not based on actual SPC code.
 
-    This function doesn't compare well to SPC in terms of magnitude of the results.  The direction
-    and relative magnitude I think I've got right. My calculations seem to be consistently less
-    than those seen on the SPC website.  Although, this function may be right as the SPC values seem
-    a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
+        Calculates the inferred temperature advection from the surface pressure
+        and up every 100 mb assuming all winds are geostrophic.  The units returned are
+        in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
 
-    This code uses Equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
+        This function doesn't compare well to SPC in terms of magnitude of the results.  The direction
+        and relative magnitude I think I've got right. My calculations seem to be consistently less
+        than those seen on the SPC website.  Although, this function may be right as the SPC values seem
+        a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
 
-    Parameters
-    ----------
-    prof : Profile object
-    lat : latitude in decimal degrees (optional)
-    
-    Returns
-    -------
-    temp_adv : an array of temperature advection values in C/hr
-    pressure_bounds: a 2D array indicating the top and bottom bounds of the temperature advection layers.
+        This code uses Equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
+
+        Parameters
+        ----------
+        prof : Profile object
+        lat : latitude in decimal degrees (optional)
+
+        Returns
+        -------
+        temp_adv : an array of temperature advection values in C/hr
+        pressure_bounds: a 2D array indicating the top and bottom bounds of the temperature advection layers.
     '''
 
     omega = (2. * np.pi) / (86164.)
@@ -1896,28 +1989,28 @@ def bulk_rich(prof, pcl):
 
 def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     '''
-    Calculates the top and bottom of the effective inflow layer based on
-    research by Thompson et al. (2004).
+        Calculates the top and bottom of the effective inflow layer based on
+        research by Thompson et al. (2004).
 
-    Parameters
-    ----------
-    prof : profile object
-    Profile object
-    ecape : number (optional; default=100)
-    Minimum amount of CAPE in the layer to be considered part of the
-    effective inflow layer.
-    echine : number (optional; default=250)
-    Maximum amount of CINH in the layer to be considered part of the
-    effective inflow layer
-    mupcl : parcel object
-    Most Unstable Layer parcel
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        ecape : number (optional; default=100)
+        Minimum amount of CAPE in the layer to be considered part of the
+        effective inflow layer.
+        echine : number (optional; default=250)
+        Maximum amount of CINH in the layer to be considered part of the
+        effective inflow layer
+        mupcl : parcel object
+        Most Unstable Layer parcel
 
-    Returns
-    -------
-    pbot : number
-    Pressure at the bottom of the layer (hPa)
-    ptop : number
-    Pressure at the top of the layer (hPa)
+        Returns
+        -------
+        pbot : number
+        Pressure at the bottom of the layer (hPa)
+        ptop : number
+        Pressure at the top of the layer (hPa)
 
     '''
     mupcl = kwargs.get('mupcl', None)
@@ -1955,31 +2048,31 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 
 def bunkers_storm_motion(prof, **kwargs):
     '''
-    Compute the Bunkers Storm Motion for a right moving supercell using a
-    parcel based approach. This code is consistent with the findings in
-    Bunkers et. al 2014, using the Effective Inflow Base as the base, and
-    65% of the most unstable parcel equilibrium level height using the
-    pressure weighted mean wind.
+        Compute the Bunkers Storm Motion for a right moving supercell using a
+        parcel based approach. This code is consistent with the findings in
+        Bunkers et. al 2014, using the Effective Inflow Base as the base, and
+        65% of the most unstable parcel equilibrium level height using the
+        pressure weighted mean wind.
 
-    Parameters
-    ----------
-    prof : profile object
-    Profile Object
-    pbot : float (optional)
-    Base of effective-inflow layer (hPa)
-    mupcl : parcel object (optional)
-    Most Unstable Layer parcel
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        pbot : float (optional)
+        Base of effective-inflow layer (hPa)
+        mupcl : parcel object (optional)
+        Most Unstable Layer parcel
 
-    Returns
-    -------
-    rstu : number
-    Right Storm Motion U-component
-    rstv : number
-    Right Storm Motion V-component
-    lstu : number
-    Left Storm Motion U-component
-    lstv : number
-    Left Storm Motion V-component
+        Returns
+        -------
+        rstu : number
+        Right Storm Motion U-component
+        rstv : number
+        Right Storm Motion V-component
+        lstu : number
+        Left Storm Motion U-component
+        lstv : number
+        Left Storm Motion V-component
 
     '''
     d = utils.MS2KTS(7.5)   # Deviation value emperically derived at 7.5 m/s
