@@ -30,6 +30,8 @@ package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databas
 include_package_data = True
 classifiers = ["Development Status :: 4 - Beta"]
 
+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".sharppy")):
+    os.makedirs(os.path.join(os.path.expanduser("~"), ".sharppy"))
 
 setup(
     name = name,
