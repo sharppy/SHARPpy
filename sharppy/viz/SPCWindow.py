@@ -9,14 +9,12 @@ from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
 import sharppy.io as io
-import sharppy.databases.sars as sars
 from datetime import datetime, timedelta
-import copy
 import numpy as np
 import ConfigParser
 import platform
-from time import sleep
 from os.path import expanduser
+import os
 from sharppy.version import __version__, __version_name__
 
 class SkewApp(QWidget):
@@ -44,8 +42,8 @@ class SkewApp(QWidget):
         'SHIP':'Sig-Hail Stats',
         'VROT':'EF-Scale Probs (V-Rot)',
     }
-
-    cfg_file_name = 'sharppy.ini'
+    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
     def __init__(self, profs, dates, model, **kwargs):
 
