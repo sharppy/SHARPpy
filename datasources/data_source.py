@@ -1,6 +1,6 @@
 
 import xml.etree.ElementTree as ET
-import glob
+import glob, os
 from datetime import datetime, timedelta
 import urllib
 
@@ -16,9 +16,11 @@ _decoder = {
 }
 # End move
 
+HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
+
 # TAS: Comment this file and available.py
 
-def loadDataSources(ds_dir='../datasources'):
+def loadDataSources(ds_dir=HOME_DIR):
     files = glob.glob(ds_dir + '/*.xml')
     ds = {}
     for ds_file in files:
@@ -36,7 +38,7 @@ class Outlet(object):
         self._format = config.get('format')
         self._time = config.find('time')
         point_csv = config.find('points')
-        self._points = self._loadCSV("../datasources/" + point_csv.get("csv"))
+        self._points = self._loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
 
         for idx in xrange(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
