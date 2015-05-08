@@ -75,7 +75,7 @@ To run the SHARPpy GUI and interact with real-time observed and forecast soundin
 
     python full_gui.py
 
-As of May 8th, 2015, we recommend you do not move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
+As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
 
 =======================================================================
 ### Scripting with SHARPpy
