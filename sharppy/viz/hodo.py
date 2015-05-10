@@ -327,7 +327,13 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+
+        mean_lcl_el = self.prof.mean_lcl_el
+        if not tab.utils.QC(mean_lcl_el[0]):
+            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+        else:
+            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
+
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -443,7 +449,13 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+
+        mean_lcl_el = self.prof.mean_lcl_el
+        if not tab.utils.QC(mean_lcl_el[0]):
+            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+        else:
+            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
+
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -519,6 +531,9 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setMWCenter(self):
+        if not tab.utils.QC(self.mean_lcl_el[0]):
+            return
+
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
         self.center_loc = 'meanwind'
         self.clearData()

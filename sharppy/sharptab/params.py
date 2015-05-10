@@ -1118,7 +1118,6 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     t_parcel = parcel.ttrace # temperature
     p_parcel = parcel.ptrace # mb
     elhght = parcel.elhght # meter
-    elpres = parcel.elpres # meter
     
     y_0 = 0 # meter
     x_0 = 0 # meter
@@ -1139,9 +1138,12 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         smu = prof.srwind[0] # Expected to be in knots
         smv = prof.srwind[1] # Is expected to be in knots
 
-    if z_0 > elhght:
+    if parcel.bplus < 1e-3:
         # The parcel doesn't have any positively buoyant areas.
         return
+
+    if not utils.QC(elhght):
+        elhght = prof.hght[-1]
 
     while z_0 < elhght:
         t_1 = delta_t + t_0 # the time step increment
@@ -1738,6 +1740,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             if interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                 pcl.lfcpres = pe3
                 pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
+                
             else:
                 while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                     pe3 -= 5
@@ -1745,16 +1748,20 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
                     cinh_old = totn
                     tote = 0.
-                    pcl.elpres = ma.masked
                     li_max = -9999.
                     if cap_strength < 0.: cap_strength = 0.
                     pcl.cap = cap_strength
                     pcl.cappres = cap_strengthpres
+
+            pcl.elpres = ma.masked
+            pcl.elhght = ma.masked
+            pcl.mplpres = ma.masked
+
             # Hack to force LFC to be at least at the LCL
             if pcl.lfcpres >= pcl.lclpres:
                 pcl.lfcpres = pcl.lclpres
                 pcl.lfchght = pcl.lclhght
-        
+
         # EL Possibility
         if lyre <= 0. and lyrlast >= 0.:
             tp3 = tp1

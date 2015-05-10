@@ -812,11 +812,11 @@ class ConvectiveProfile(BasicProfile):
             self.matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
                 sfc_9km_shear, sfc_3km_shear, srh3km)
         except:
-            self.matches = ma.masked
+            self.matches = ([], [], 0, 0, 0)
         try:
             self.supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), srh3km)
-        except:
-            self.supercell_matches = ma.masked
+        except Exception as e:
+            self.supercell_matches = ([], [], 0, 0, 0)
                 
     def get_watch(self):
         '''

@@ -238,6 +238,7 @@ class SkewApp(QWidget):
 
         ## set the plot title that will be displayed in the Skew frame.
         self.plot_title = self.getPlotTitle()
+        default_pcl = self.prof.mupcl
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -247,7 +248,7 @@ class SkewApp(QWidget):
                                  proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+            self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
             self.sound.reset.connect(self.resetProf)
@@ -264,7 +265,7 @@ class SkewApp(QWidget):
         self.hodo.updated.connect(self.updateProfs)
         self.hodo.reset.connect(self.resetProf)
 
-        self.storm_slinky = plotSlinky(self.prof)
+        self.storm_slinky = plotSlinky(self.prof, pcl=default_pcl)
         self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
                                 self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
                                  yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
