@@ -1140,7 +1140,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
 
     if parcel.bplus < 1e-3:
         # The parcel doesn't have any positively buoyant areas.
-        return
+        return np.ma.masked, np.nan
 
     if not utils.QC(elhght):
         elhght = prof.hght[-1]
