@@ -38,8 +38,8 @@ class backgroundSkewT(QtGui.QWidget):
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
 #       self.centert = (self.brtmpc - self.bltmpc) / 2.
 #       self.centerp = self.pix_to_pres(self.hgt/2.)
-        self.centerx = 0. # self.size().width() / 2
-        self.centery = 0. # self.size().height() / 2
+        self.originx = 0. # self.size().width() / 2
+        self.originy = 0. # self.size().height() / 2
         self.scale = 1.
         if self.physicalDpiX() > 75:
             fsize = 6
@@ -64,7 +64,7 @@ class backgroundSkewT(QtGui.QWidget):
     def plotBackground(self, plot_omega=False):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        qp.translate(self.centerx, self.centery)
+        qp.translate(self.originx, self.originy)
         qp.scale(1 / self.scale, 1 / self.scale)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
@@ -126,13 +126,26 @@ class backgroundSkewT(QtGui.QWidget):
         delta = max(min(-e.delta(), max_speed), -max_speed)
         scale_fac = 10 ** (delta / 1000.)
 
-#       scaled_size = float(min(self.default_width, self.default_height)) / min(self.width(), self.height())
         if self.scale * scale_fac > 1.0:
             scale_fac = 1. / self.scale
 
         self.scale *= scale_fac
-        self.centerx = centerx - (centerx - self.centerx) / scale_fac
-        self.centery = centery - (centery - self.centery) / scale_fac
+
+        self.originx = centerx - (centerx - self.originx) / scale_fac
+        self.originy = centery - (centery - self.originy) / scale_fac
+
+        ll_x = self.originx + self.width() / self.scale
+        ll_y = self.originy + self.height() / self.scale
+
+        if ll_x < self.width():
+            self.originx += (self.width() - ll_x)
+        elif self.originx > 0:
+            self.originx = 0
+
+        if ll_y < self.height():
+            self.originy += (self.height() - ll_y)
+        elif self.originy > 0:
+            self.originy = 0
 
         self.plotBackground()
         self.update()
@@ -644,7 +657,7 @@ class plotSkewT(backgroundSkewT):
             origin, size, bmap = self.saveBitMap
             qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
 
-        qp.translate(self.centerx, self.centery)
+        qp.translate(self.originx, self.originy)
         qp.scale(1. / self.scale, 1. / self.scale)
 
         # Capture the new portion of the image to save
@@ -744,7 +757,7 @@ class plotSkewT(backgroundSkewT):
         '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        qp.translate(self.centerx, self.centery)
+        qp.translate(self.originx, self.originy)
         qp.scale(1 / self.scale, 1 / self.scale)
 
         self.transform = qp.transform()
