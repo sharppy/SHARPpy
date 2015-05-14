@@ -96,7 +96,7 @@ class backgroundKinematics(QtGui.QFrame):
         for text in texts:
             rect = QtCore.QRect(self.lpad, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text)
-            vspace = self.label_height
+            vspace = self.label_height 
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
             y1 += vspace
@@ -438,16 +438,14 @@ class plotKinematics(backgroundKinematics):
         for text in texts:
             rect = QtCore.QRect(x1*5, y1, x1, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, text)
-            vspace = self.label_height + self.tpad
+            vspace = self.label_height 
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
             y1 += vspace
 
         self.ylast = y1
-        vspace = self.label_height + self.tpad
-        if platform.system() == "Windows":
-            vspace += self.label_metrics.descent()
-        y1 += vspace
+        y1 += self.label_height + self.tpad # Not entirely sure why this doesn't 
+                                            # need the extra pixels on Windows.
         ## bunkers motion
         texts = [bunkers_right, bunkers_left]
         colors =[QtGui.QColor('#0099CC'), QtGui.QColor('#FF6666')]

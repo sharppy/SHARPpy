@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import os.path
 import subprocess
-release = False
-__version__ = '0.1.0'
-
+release = True
+__version__ = '1.2.0'
+__version_name__ = "El Reno"
 
 _repository_path = os.path.split(__file__)[0]
 _git_file_path = os.path.join(_repository_path, '__git_version__.py')

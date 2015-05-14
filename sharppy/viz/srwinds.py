@@ -342,6 +342,7 @@ class plotWinds(backgroundWinds):
         pen = QtGui.QPen(QtGui.QColor("#9400D3"), 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
-        y1 = self.hgt_to_pix(9.0); y2 = self.hgt_to_pix(11.0)
-        qp.drawLine(x1, y1, x2, y2)
+        if tab.utils.QC(self.srw_9_11km):
+            x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
+            y1 = self.hgt_to_pix(9.0); y2 = self.hgt_to_pix(11.0)
+            qp.drawLine(x1, y1, x2, y2)

@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import sharppy
 from PySide import QtGui, QtCore
 
 import sys, os
@@ -8,9 +8,9 @@ import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join('..', 'sharppy', 'databases', 'shapefiles')
-    min_lat = {'npstere':0., 'merc':-40., 'spstere':-90.}
-    max_lat = {'npstere':90., 'merc':40., 'spstere':0.}
+    data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
+    min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
+    max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
 
     def __init__(self, lambda_0, phi_0, proj='npstere'):
         self.proj = proj
@@ -159,6 +159,10 @@ class Mapper(object):
         return lat, lon
 
     def _loadDat(self, name, res):
+        """
+        Code shamelessly lifted from Basemap's data file parser by Jeff Whitaker.
+        http://matplotlib.org/basemap/
+        """
         def segmentPath(b, lb_lat, ub_lat):
             paths = []
             if b[:, 1].max() <= lb_lat or b[:, 1].min() >= ub_lat:

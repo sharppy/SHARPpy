@@ -13,6 +13,7 @@ __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
+__all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp']
 
 
 class DefineParcel(object):
@@ -247,6 +248,38 @@ class Parcel(object):
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
+def hgz(prof):
+    '''
+        Hail Growth Zone Levels
+    
+        This function finds the pressure levels for the dendritic 
+        growth zone (from -10 C to -30 C).  If either temperature cannot be found,
+        it is set to be the surface pressure.
+
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        
+        Returns
+        -------
+        pbot : number
+        Pressure of the bottom level (mb)
+        ptop : number 
+        Pressure of the top level (mb)
+    '''
+
+    pbot = temp_lvl(prof, -10)
+    ptop = temp_lvl(prof, -30)
+
+    if not utils.QC(pbot):
+        pbot = prof.pres[prof.sfc]
+    if not utils.QC(ptop):
+        ptop = prof.pres[prof.sfc]
+
+    return pbot, ptop
+
+
 def dgz(prof):
     '''
         Dendritic Growth Zone Levels
@@ -278,27 +311,88 @@ def dgz(prof):
 
     return pbot, ptop
 
-def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
+def lhp(prof):
     '''
-    Calculate the Sig Hail Parameter (SHIP)
-    
-    Parameters
-    ----------
-    prof : Profile object
-    mupcl : (optional) Most-Unstable Parcel 
-    lr75 : 700 - 500 mb lapse rate (C/km)
-    h5_temp : 500 mb temperature (C)
-    shr06 : 0-6 km shear (m/s)
-    frz_lvl : freezing level (m)
+        Large Hail Parameter
 
-    Returns
-    -------
-    ship : significant hail parameter (unitless)
-    
-    Ryan Jewell (SPC) helped in correcting this equation as the SPC
-    sounding help page version did not have the correct information
-    of how SHIP was calculated.
+        From Johnson and Sugden (2014), EJSSM
 
+        Parameters
+        ----------
+        prof : profile object
+            ConvectiveProfile object
+
+        Returns
+        -------
+        lhp : number
+            large hail parameter (unitless)
+    '''
+
+    mag06_shr = utils.KTS2MS(utils.mag(*prof.sfc_6km_shear))
+
+    if prof.mupcl.bplus >= 400 and mag06_shr >= 14:
+        lr75 = prof.lapserate_700_500
+        zbot, ztop = interp.hght(prof, hgz(prof))
+        thk_hgz = ztop - zbot
+
+        term_a = (((prof.mupcl.bplus - 2000.)/1000.) +\
+                 ((3200 - thk_hgz)/500.) +\
+                 ((lr75 - 6.5)/2.))
+
+        if term_a < 0:
+            term_a = 0
+
+        p_1km, p_3km, p_6km = interp.pres(prof, interp.to_msl(prof, [1000, 3000, 6000]))
+        shear_el = utils.KTS2MS(utils.mag(*winds.wind_shear(prof, pbot=prof.pres[prof.sfc], ptop=prof.mupcl.elpres)))
+        grw_el_dir = interp.vec(prof, prof.mupcl.elpres)[0]
+        grw_36_dir = utils.comp2vec(*winds.mean_wind(prof, pbot=p_3km, ptop=p_6km))[0]
+        grw_alpha_el = grw_el_dir - grw_36_dir
+
+        if grw_alpha_el > 180:
+            grw_alpha_el = -10
+
+        srw_01_dir = utils.comp2vec(*winds.sr_wind(prof, pbot=prof.pres[prof.sfc], ptop=p_1km, stu=prof.srwind[0], stv=prof.srwind[1]))[0]
+        srw_36_dir = utils.comp2vec(*winds.sr_wind(prof, pbot=p_3km, ptop=p_6km, stu=prof.srwind[0], stv=prof.srwind[1]))[0]
+        srw_alpha_mid = srw_36_dir - srw_01_dir
+
+        term_b = (((shear_el - 25.)/5.) +\
+                  ((grw_alpha_el + 5.)/20.) +\
+                  ((srw_alpha_mid - 80.)/10.))
+        if term_b < 0:
+            term_b = 0
+
+        lhp = term_a * term_b + 5
+
+    else:
+        lhp = 0
+
+    return lhp
+
+
+def ship(prof, **kwargs):
+    '''
+        Calculate the Sig Hail Parameter (SHIP)
+
+        Parameters
+        ----------
+        prof : Profile object
+        mupcl : (optional) Most-Unstable Parcel
+        lr75 : (optional) 700 - 500 mb lapse rate (C/km)
+        h5_temp : (optional) 500 mb temperature (C)
+        shr06 : (optional) 0-6 km shear (m/s)
+        frz_lvl : (optional) freezing level (m)
+
+        Returns
+        -------
+        ship : number
+            significant hail parameter (unitless)
+
+        Ryan Jewell (SPC) helped in correcting this equation as the SPC
+        sounding help page version did not have the correct information
+        of how SHIP was calculated.
+
+        The significant hail parameter (SHIP; SPC 2014) is
+        an index developed in-house at the SPC. (Johnson and Sugden 2014)
     '''
       
     mupcl = kwargs.get('mupcl', None)
@@ -363,25 +457,24 @@ def ship(prof, **kwargs):#mucape, mumr, lr75, h5_temp, shr06, frz_lvl):
     return ship
 
 def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
-    
     '''
-        
-    Calculate the Significant Tornado Parameter (w/CIN)
+        Significant Tornado Parameter (w/CIN)
 
-    From Thompson et al. 2012 WAF, page 1139
+        From Thompson et al. 2012 WAF, page 1139
 
-    Parameters
-    ----------
-    mlcape : Mixed-layer CAPE from the parcel class (J/kg)
-    esrh : effective storm relative helicity (m2/s2)
-    ebwd : effective bulk wind difference (m/s)
-    mllcl : mixed-layer lifted condensation level (m)
-    mlcinh : mixed-layer convective inhibition (J/kg)
-   
-    Returns
-    -------
-    stp_cin : significant tornado parameter (unitless)
-    
+        Parameters
+        ----------
+        mlcape : Mixed-layer CAPE from the parcel class (J/kg)
+        esrh : effective storm relative helicity (m2/s2)
+        ebwd : effective bulk wind difference (m/s)
+        mllcl : mixed-layer lifted condensation level (m)
+        mlcinh : mixed-layer convective inhibition (J/kg)
+
+        Returns
+        -------
+        stp_cin : number
+            significant tornado parameter (unitless)
+
     '''
     cape_term = mlcape / 1500.
     eshr_term = esrh / 150.
@@ -416,23 +509,22 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 
 
 def stp_fixed(sbcape, sblcl, srh01, bwd6):
-    
     '''
-        
-    Calculate the Significant Tornado Parameter (fixed layer)
+        Significant Tornado Parameter (fixed layer)
    
-    From Thompson et al. 2003
+        From Thompson et al. 2003
 
-    Parameters
-    ----------
-    sbcape : Surface based CAPE from the parcel class (J/kg)
-    sblcl : Surface based lifted condensation level (LCL) (m)
-    srh01 : Surface to 1 km storm relative helicity (m2/s2)
-    bwd6 : Bulk wind difference between 0 to 6 km (m/s)
+        Parameters
+        ----------
+        sbcape : Surface based CAPE from the parcel class (J/kg)
+        sblcl : Surface based lifted condensation level (LCL) (m)
+        srh01 : Surface to 1 km storm relative helicity (m2/s2)
+        bwd6 : Bulk wind difference between 0 to 6 km (m/s)
 
-    Returns
-    -------
-    stp_fixed : signifcant tornado parameter (fixed-layer)
+        Returns
+        -------
+        stp_fixed : number
+            signifcant tornado parameter (fixed-layer)
     '''
     
     # Calculate SBLCL term
@@ -462,20 +554,21 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
 
 def scp(mucape, srh, ebwd):
     '''
-    Calculates the Supercell Composite Parameter
-    
-    From Thompson et al. 2004
-    
-    Parameters
-    ----------
-    prof : Profile object
-    mucape : Most Unstable CAPE from the parcel class (J/kg) (optional)
-    srh : the effective SRH from the winds.helicity function (m2/s2) 
-    ebwd : effective bulk wind difference (m/s)
-    
-    Returns
-    -------
-    scp : supercell composite parameter
+        Supercell Composite Parameter
+
+        From Thompson et al. 2004
+
+        Parameters
+        ----------
+        prof : Profile object
+        mucape : Most Unstable CAPE from the parcel class (J/kg) (optional)
+        srh : the effective SRH from the winds.helicity function (m2/s2)
+        ebwd : effective bulk wind difference (m/s)
+
+        Returns
+        -------
+        scp : number
+            supercell composite parameter
     
     '''
 
@@ -612,29 +705,30 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
 
 def inferred_temp_adv(prof, lat=35):
     '''
-    Inferred Temperature Advection
-    SHARP code deduced by Greg Blumberg.  Not based on actual SPC code.
+        Inferred Temperature Advection
 
-    Calculates the inferred temperature advection from the surface pressure
-    and up every 100 mb assuming all winds are geostrophic.  The units returned are
-    in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
+        SHARP code deduced by Greg Blumberg.  Not based on actual SPC code.
 
-    This function doesn't compare well to SPC in terms of magnitude of the results.  The direction
-    and relative magnitude I think I've got right. My calculations seem to be consistently less
-    than those seen on the SPC website.  Although, this function may be right as the SPC values seem
-    a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
+        Calculates the inferred temperature advection from the surface pressure
+        and up every 100 mb assuming all winds are geostrophic.  The units returned are
+        in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
 
-    This code uses Equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
+        This function doesn't compare well to SPC in terms of magnitude of the results.  The direction
+        and relative magnitude I think I've got right. My calculations seem to be consistently less
+        than those seen on the SPC website.  Although, this function may be right as the SPC values seem
+        a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
 
-    Parameters
-    ----------
-    prof : Profile object
-    lat : latitude in decimal degrees (optional)
-    
-    Returns
-    -------
-    temp_adv : an array of temperature advection values in C/hr
-    pressure_bounds: a 2D array indicating the top and bottom bounds of the temperature advection layers.
+        This code uses Equation 4.1.139 from Bluestein's "Synoptic-Dynamic Meteorology in Midlatitudes (Volume I)"
+
+        Parameters
+        ----------
+        prof : Profile object
+        lat : latitude in decimal degrees (optional)
+
+        Returns
+        -------
+        temp_adv : an array of temperature advection values in C/hr
+        pressure_bounds: a 2D array indicating the top and bottom bounds of the temperature advection layers.
     '''
 
     omega = (2. * np.pi) / (86164.)
@@ -1117,7 +1211,6 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     t_parcel = parcel.ttrace # temperature
     p_parcel = parcel.ptrace # mb
     elhght = parcel.elhght # meter
-    elpres = parcel.elpres # meter
     
     y_0 = 0 # meter
     x_0 = 0 # meter
@@ -1138,9 +1231,12 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         smu = prof.srwind[0] # Expected to be in knots
         smv = prof.srwind[1] # Is expected to be in knots
 
-    if z_0 > elhght:
+    if parcel.bplus < 1e-3:
         # The parcel doesn't have any positively buoyant areas.
-        return
+        return np.ma.masked, np.nan
+
+    if not utils.QC(elhght):
+        elhght = prof.hght[-1]
 
     while z_0 < elhght:
         t_1 = delta_t + t_0 # the time step increment
@@ -1457,7 +1553,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     blupper = pe2
     h2 = interp.hght(prof, pe2)
     te2 = interp.vtmp(prof, pe2)
-    pcl.lclpres = pe2
+    pcl.lclpres = min(pe2, prof.pres[prof.sfc]) # Make sure the LCL pressure is
+                                                # never below the surface
     pcl.lclhght = interp.to_agl(prof, h2)
     ptrace.append(pe2)
     ttrace.append(thermo.virtemp(pe2, tp2, tp2))
@@ -1566,14 +1663,13 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         tote += lyre
         pelast = pe1
         pe1 = pe2
-        h1 = h2
         te1 = te2
         tp1 = tp2
         
         # Is this the top of the specified layer
         if i >= uptr and not utils.QC(pcl.bplus):
             pe3 = pe1
-            h3 = h1
+            h3 = h2
             te3 = te1
             tp3 = tp1
             lyrf = lyre
@@ -1681,9 +1777,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 if lyrf > 0: pcl.wm30c += lyrf
         
         # Is this the 3km level
-        if pcl.lclhght < 3000. and interp.to_agl(prof, h1) <=3000.:
-            h = interp.to_agl(prof, h2)
-            if h >= 3000. and not utils.QC(pcl.b3km):
+        if pcl.lclhght < 3000.:
+            if interp.to_agl(prof, h1) <=3000. and interp.to_agl(prof, h2) >= 3000. and not utils.QC(pcl.b3km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
                 te3 = interp.vtmp(prof, pe3)
@@ -1691,23 +1786,22 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 lyrf = lyre
                 if lyrf > 0: pcl.b3km = totp - lyrf
                 else: pcl.b3km = totp
-                h2 = interp.to_msl(prof, 3000.)
-                pe2 = interp.pres(prof, h2)
+                h4 = interp.to_msl(prof, 3000.)
+                pe4 = interp.pres(prof, h4)
                 if utils.QC(pe2):
-                    te2 = interp.vtmp(prof, pe2)
-                    tp2 = thermo.wetlift(pe3, tp3, pe2)
+                    te2 = interp.vtmp(prof, pe4)
+                    tp2 = thermo.wetlift(pe3, tp3, pe4)
                     tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / \
                         thermo.ctok(te3)
-                    tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / \
+                    tdef2 = (thermo.virtemp(pe4, tp2, tp2) - te2) / \
                         thermo.ctok(te2)
-                    lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                    lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b3km += lyrf
         else: pcl.b3km = 0.
         
         # Is this the 6km level
-        if pcl.lclhght < 6000. and interp.to_agl(prof, h1) <=6000.:
-            h = interp.to_agl(prof, h2)
-            if h >= 6000. and not utils.QC(pcl.b6km):
+        if pcl.lclhght < 6000.:
+            if interp.to_agl(prof, h1) <=6000. and interp.to_agl(prof, h2) >= 6000. and not utils.QC(pcl.b6km):
                 pe3 = pelast
                 h3 = interp.hght(prof, pe3)
                 te3 = interp.vtmp(prof, pe3)
@@ -1715,19 +1809,21 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 lyrf = lyre
                 if lyrf > 0: pcl.b6km = totp - lyrf
                 else: pcl.b6km = totp
-                h2 = interp.to_msl(prof, 6000.)
-                pe2 = interp.pres(prof, h2)
+                h4 = interp.to_msl(prof, 6000.)
+                pe4 = interp.pres(prof, h4)
                 if utils.QC(pe2):
-                    te2 = interp.vtmp(prof, pe2)
-                    tp2 = thermo.wetlift(pe3, tp3, pe2)
+                    te2 = interp.vtmp(prof, pe4)
+                    tp2 = thermo.wetlift(pe3, tp3, pe4)
                     tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / \
                         thermo.ctok(te3)
-                    tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / \
+                    tdef2 = (thermo.virtemp(pe4, tp2, tp2) - te2) / \
                         thermo.ctok(te2)
-                    lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                    lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b6km += lyrf
         else: pcl.b6km = 0.
         
+        h1 = h2
+
         # LFC Possibility
         if lyre >= 0. and lyrlast <= 0.:
             tp3 = tp1
@@ -1737,6 +1833,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             if interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                 pcl.lfcpres = pe3
                 pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
+                
             else:
                 while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
                     pe3 -= 5
@@ -1744,16 +1841,20 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
                     cinh_old = totn
                     tote = 0.
-                    pcl.elpres = ma.masked
                     li_max = -9999.
                     if cap_strength < 0.: cap_strength = 0.
                     pcl.cap = cap_strength
                     pcl.cappres = cap_strengthpres
+
+            pcl.elpres = ma.masked
+            pcl.elhght = ma.masked
+            pcl.mplpres = ma.masked
+
             # Hack to force LFC to be at least at the LCL
             if pcl.lfcpres >= pcl.lclpres:
                 pcl.lfcpres = pcl.lclpres
                 pcl.lfchght = pcl.lclhght
-        
+
         # EL Possibility
         if lyre <= 0. and lyrlast >= 0.:
             tp3 = tp1
@@ -1895,28 +1996,28 @@ def bulk_rich(prof, pcl):
 
 def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     '''
-    Calculates the top and bottom of the effective inflow layer based on
-    research by Thompson et al. (2004).
+        Calculates the top and bottom of the effective inflow layer based on
+        research by Thompson et al. (2004).
 
-    Parameters
-    ----------
-    prof : profile object
-    Profile object
-    ecape : number (optional; default=100)
-    Minimum amount of CAPE in the layer to be considered part of the
-    effective inflow layer.
-    echine : number (optional; default=250)
-    Maximum amount of CINH in the layer to be considered part of the
-    effective inflow layer
-    mupcl : parcel object
-    Most Unstable Layer parcel
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        ecape : number (optional; default=100)
+        Minimum amount of CAPE in the layer to be considered part of the
+        effective inflow layer.
+        echine : number (optional; default=250)
+        Maximum amount of CINH in the layer to be considered part of the
+        effective inflow layer
+        mupcl : parcel object
+        Most Unstable Layer parcel
 
-    Returns
-    -------
-    pbot : number
-    Pressure at the bottom of the layer (hPa)
-    ptop : number
-    Pressure at the top of the layer (hPa)
+        Returns
+        -------
+        pbot : number
+        Pressure at the bottom of the layer (hPa)
+        ptop : number
+        Pressure at the top of the layer (hPa)
 
     '''
     mupcl = kwargs.get('mupcl', None)
@@ -1954,31 +2055,31 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 
 def bunkers_storm_motion(prof, **kwargs):
     '''
-    Compute the Bunkers Storm Motion for a right moving supercell using a
-    parcel based approach. This code is consistent with the findings in
-    Bunkers et. al 2014, using the Effective Inflow Base as the base, and
-    65% of the most unstable parcel equilibrium level height using the
-    pressure weighted mean wind.
+        Compute the Bunkers Storm Motion for a right moving supercell using a
+        parcel based approach. This code is consistent with the findings in
+        Bunkers et. al 2014, using the Effective Inflow Base as the base, and
+        65% of the most unstable parcel equilibrium level height using the
+        pressure weighted mean wind.
 
-    Parameters
-    ----------
-    prof : profile object
-    Profile Object
-    pbot : float (optional)
-    Base of effective-inflow layer (hPa)
-    mupcl : parcel object (optional)
-    Most Unstable Layer parcel
+        Parameters
+        ----------
+        prof : profile object
+        Profile Object
+        pbot : float (optional)
+        Base of effective-inflow layer (hPa)
+        mupcl : parcel object (optional)
+        Most Unstable Layer parcel
 
-    Returns
-    -------
-    rstu : number
-    Right Storm Motion U-component
-    rstv : number
-    Right Storm Motion V-component
-    lstu : number
-    Left Storm Motion U-component
-    lstv : number
-    Left Storm Motion V-component
+        Returns
+        -------
+        rstu : number
+        Right Storm Motion U-component
+        rstv : number
+        Right Storm Motion V-component
+        lstu : number
+        Left Storm Motion U-component
+        lstv : number
+        Left Storm Motion V-component
 
     '''
     d = utils.MS2KTS(7.5)   # Deviation value emperically derived at 7.5 m/s
@@ -2548,6 +2649,217 @@ def pbl_top(prof):
 
     return prof.pres[level]
 
+def dcp(prof):
+    '''
+        Derecho Composite Parameter
+
+        This parameter is based on a data set of 113 derecho events compiled by Evans and Doswell (2001).
+        The DCP was developed to identify environments considered favorable for cold pool "driven" wind
+        events through four primary mechanisms:
+
+        1) Cold pool production [DCAPE]
+        2) Ability to sustain strong storms along the leading edge of a gust front [MUCAPE]
+        3) Organization potential for any ensuing convection [0-6 km shear]
+        4) Sufficient flow within the ambient environment to favor development along downstream portion of the
+            gust front [0-6 km mean wind].
+
+        This index is fomulated as follows:
+        DCP = (DCAPE/980)*(MUCAPE/2000)*(0-6 km shear/20 kt)*(0-6 km mean wind/16 kt)
+
+        Reference:
+        Evans, J.S., and C.A. Doswell, 2001: Examination of derecho environments using proximity soundings. Wea. Forecasting, 16, 329-342.
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        dcp : number
+            Derecho Composite Parameter (unitless)
+
+    '''
+    sfc = prof.pres[prof.sfc]
+    p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
+    dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
+    mupcl = getattr(prof, 'mupcl', parcelx(prof, flag=1))
+    sfc_6km_shear = getattr(prof, 'sfc_6km_shear', winds.wind_shear(prof, pbot=sfc, ptop=p6km))
+    mean_6km = getattr(prof, 'mean_6km', utils.comp2vec(*winds.mean_wind(prof, pbot=sfc, ptop=p6km)))
+    mag_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
+    mag_mean_wind = mean_6km[1]
+
+    dcp = (dcape_val/980.) * (mupcl.bplus/2000.) * (mag_shear / 20. ) * (mag_mean_wind / 16.)
+
+    return dcp
 
 
+def mburst(prof):
+    '''
+        Microburst Composite
 
+        Developer unknown.
+
+        Below is taken from the SPC Mesoanalysis:
+        The Microburst Composite is a weighted sum of the following individual parameters: SBCAPE, SBLI,
+        lapse rates, vertical totals (850-500 mb temperature difference), DCAPE, and precipitable water.
+        The specific terms and weights are listed below:
+
+        SBCAPE term -> < 3100 set to 0; 3100-3999 set to 1; >= 4000 set to 2;
+        SBLI term -> > -8 set to 0; <= -8 set to 1; <= -9 set to 2; <= -10 set to 3;
+        0-3 km lapse rate term -> <= 8.4 set to 0; > 8.4 set to 1;
+        vertical totals term -> < 27 set to 0; >= 27 set to 1; >= 28 set to 2; >= 29 set to 3;
+        DCAPE term -> < 900 set to 0; >= 900 set to 1; >= 1100 set to 2; >= 1300 set to 3;
+        precipitable water term -> <= 1.5 set to -5; > 1.5 set to 0.
+
+        All six of the terms are summed to arrive at the final microburst composite value.
+        The values can be interpreted in the following manner: 3-4 infers a "slight chance" of a microburst;
+        5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
+        These values can also be viewed as conditional upon the existence of a storm.
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        mburst : number
+            Microburst Composite (unitless)
+    '''
+
+    sbpcl = getattr(prof, 'sfcpcl', parcelx(prof, flag=1))
+    lr03 = getattr(prof, 'lapserate_3km', lapse_rate( prof, 0., 3000., pres=False ))
+    tt = getattr(prof, 'totals_totals', t_totals( prof ))
+    dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
+    pwat = getattr(prof, 'pwat', precip_water( prof ))
+
+    if sbpcl.bplus < 3100:
+        sbcape_term = 0
+    elif sbpcl.bplus >= 3100 and sbpcl.bplus < 3999:
+        sbcape_term = 1
+    else:
+        sbcape_term = 2
+
+    if sbpcl.li5 > -8:
+        sbli_term = 0
+    elif sbpcl.li5 <= -8 and sbpcl.li5 > -9:
+        sbli_term = 1
+    elif sbpcl.li5 <= -9 and sbpcl.li5 > -10:
+        sbli_term = 2
+    elif sbpcl.li5 <= -10:
+        sbli_term = 3
+
+    if lr03 <= 8.4:
+        lr03_term = 0
+    else:
+        lr03_term = 1
+
+    if tt < 27:
+        tt_term = 0
+    elif tt >= 27 and tt < 28:
+        tt_term = 1
+    elif tt >= 28 and tt < 29:
+        tt_term = 2
+    else:
+        tt_term = 3
+
+    if dcape_val < 900:
+        dcape_term = 0
+    elif dcape_val >= 900 and dcape_val < 1100:
+        dcape_term = 1
+    elif dcape_val >= 1100 and dcape_val < 1300:
+        dcape_term = 2
+    else:
+        dcape_term = 3
+
+    if pwat <= 1.5:
+        pwat_term = -5
+    else:
+        pwat_term = 0
+
+    mburst = sbcape_term + sbli_term + lr03_term + tt_term + dcape_term + pwat_term
+
+    return mburst
+
+def ehi(prof, pcl, hbot, htop, stu=0, stv=0):
+    '''
+        Energy-Helicity Index
+
+        Computes the energy helicity index (EHI) using a parcel
+        object and a profile object.
+
+        The equation is EHI = (CAPE * HELICITY) / 160000.
+
+        Parameters
+        ----------
+        prof : Profile object
+        pcl : Parcel object
+        hbot : number
+            Height of the bottom of the helicity layer [m]
+        htop : number
+            Height of the top of the helicity layer [m]
+        stu : number
+            Storm-relative wind U component [kts]
+            (optional; default=0)
+        stv : number
+            Storm-relative wind V component [kts]
+            (optional; default=0)
+
+        Returns
+        -------
+        ehi : number
+            Energy Helicity Index (unitless)
+    '''
+
+    helicity = winds.helicity(prof, hbot, htop, stu=stu, stv=stv)[0]
+    ehi = (helicity * pcl.bplus) / 160000.
+
+    return ehi
+
+def sweat(prof):
+    '''
+        SWEAT Index
+
+        Computes the SWEAT (Severe Weather Threat Index) using the following numbers:
+
+        1.) 850 Dewpoint
+        2.) Total Totals Index
+        3.) 850 mb wind speed
+        4.) 500 mb wind speed
+        5.) Direction of wind at 500
+        6.) Direction of wind at 850
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        sweat : number
+            SWEAT Index (number)
+    '''
+
+    td850 = interp.dwpt(prof, 850)
+    vec850 = interp.vec(prof, 850)
+    vec500 = interp.vec(prof, 500)
+    tt = getattr(prof, 'totals_totals', t_totals( prof ))
+
+    if td850 > 0:
+        term1 = 12. * td850
+    else:
+        term1 = 0
+
+    if tt < 49:
+        term2 = 0
+    else:
+        term2 = 20. * (tt - 49)
+
+    term3 = 2 * vec850[1]
+    term4 = vec500[1]
+    if vec500[0] - vec850[0] > 0:
+        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])  + 0.2))
+    else:
+        term5 = 0
+
+    sweat = term1 + term2 + term3 + term4 + term5
+
+    return sweat

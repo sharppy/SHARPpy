@@ -14,7 +14,8 @@ class SPCDecoder(Decoder):
     def _parse(self, file_name):
         file_data = self._downloadFile(file_name)           
         ## read in the file
-        data = np.array(file_data.split('\n'))
+        data = np.array([l.strip() for l in file_data.split('\n')])
+
         ## necessary index points
         title_idx = np.where( data == '%TITLE%')[0][0]
         start_idx = np.where( data == '%RAW%' )[0] + 1
@@ -31,14 +32,14 @@ class SPCDecoder(Decoder):
 
         ## read the data into arrays
         p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
-        idx = np.argsort(p)[::-1] # sort by pressure in case the pressure array is off.
+#       idx = np.argsort(p, kind='mergesort')[::-1] # sort by pressure in case the pressure array is off.
 
-        pres = p[idx]
-        hght = h[idx]
-        tmpc = T[idx]
-        dwpc = Td[idx]
-        wspd = wspd[idx]
-        wdir = wdir[idx]
+        pres = p #[idx]
+        hght = h #[idx]
+        tmpc = T #[idx]
+        dwpc = Td #[idx]
+        wspd = wspd #[idx]
+        wdir = wdir #[idx]
 
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
             wdir=wdir, wspd=wspd, location=location)

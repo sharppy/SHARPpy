@@ -16,6 +16,8 @@ import numpy as np
 import ConfigParser
 import platform
 from time import sleep
+from os.path import expanduser
+from sharppy.version import __version__, __version_name__
 
 class SkewApp(QWidget):
     """
@@ -56,7 +58,6 @@ class SkewApp(QWidget):
         self.proflist = []
         self.dates = dates
         self.model = model
-        self.prof_time = kwargs.get("prof_time", None)
         self.prof_idx = kwargs.get("idx")
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
@@ -110,7 +111,7 @@ class SkewApp(QWidget):
 
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
-            self.setGeometry(0,10,1180,800)
+            self.setGeometry(10,30,1180,800)
         else:
             self.setGeometry(0, 0, 1180, 800)
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
@@ -138,7 +139,7 @@ class SkewApp(QWidget):
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
 
-        self.brand = QLabel('SHARPpy Beta')
+        self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
@@ -221,7 +222,9 @@ class SkewApp(QWidget):
         return plot_title
 
     def saveimage(self):
-        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", '/home')
+        self.home_path = expanduser('~')
+        files_types = "PNG (*.png)"
+        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, files_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
             pixmap.save(fileName, 'PNG', 100)
@@ -235,6 +238,7 @@ class SkewApp(QWidget):
 
         ## set the plot title that will be displayed in the Skew frame.
         self.plot_title = self.getPlotTitle()
+        default_pcl = self.prof.mupcl
 
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
@@ -244,7 +248,7 @@ class SkewApp(QWidget):
                                  proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
+            self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
             self.sound.reset.connect(self.resetProf)
@@ -261,7 +265,7 @@ class SkewApp(QWidget):
         self.hodo.updated.connect(self.updateProfs)
         self.hodo.reset.connect(self.resetProf)
 
-        self.storm_slinky = plotSlinky(self.prof)
+        self.storm_slinky = plotSlinky(self.prof, pcl=default_pcl)
         self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
                                 self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
                                  yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )

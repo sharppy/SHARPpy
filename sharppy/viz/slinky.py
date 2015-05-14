@@ -2,6 +2,7 @@ import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import platform
 
 __all__ = ['backgroundSlinky', 'plotSlinky']
 
@@ -39,6 +40,10 @@ class backgroundSlinky(QtGui.QFrame):
         self.plot_font = QtGui.QFont('Helvetica', fsize)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+        self.os_mod = 0
+        if platform.system() == "Windows":
+            self.os_mod = self.plot_metrics.descent()
+
         ## get the pixel height of the font
         self.title_height = self.title_metrics.xHeight() + self.fpad
         self.plot_height = self.plot_metrics.xHeight() + self.fpad
@@ -83,7 +88,7 @@ class backgroundSlinky(QtGui.QFrame):
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
-        yval = self.bry - self.title_height - 2
+        yval = self.bry - self.title_height - self.os_mod - 2
         rect0 = QtCore.QRect(self.lpad, yval, 20, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Storm Slinky')
     
@@ -146,7 +151,7 @@ class plotSlinky(backgroundSlinky):
         
         '''
         self.prof = prof
-        #self.pcl = kwargs.get('pcl', self.prof.mupcl)
+        self.pcl = kwargs.get('pcl', self.prof.mupcl)
         super(plotSlinky, self).__init__()
         self.slinky_traj = self.prof.slinky_traj
         self.updraft_tilt = self.prof.updraft_tilt
@@ -272,6 +277,9 @@ class plotSlinky(backgroundSlinky):
         ## if there is no storm slinky, don't plot it!
         if self.slinky_traj is np.ma.masked:
             return
+
+        has_el = self.pcl.bplus > 1e-3 and tab.utils.QC(self.pcl.elhght)
+
         ## loop through the parcel tradjectory in reverse
         for tradj in self.slinky_traj[:]:
             ## get the x, y, and z location of the updraft at each height
@@ -279,7 +287,7 @@ class plotSlinky(backgroundSlinky):
             y = tradj[1]
             z = tradj[2]
             ## set the various colors
-            if z == self.slinky_traj[-1][2]:
+            if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
             elif z < 3000:
                 pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)

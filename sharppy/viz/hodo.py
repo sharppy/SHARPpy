@@ -327,7 +327,13 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+
+        mean_lcl_el = self.prof.mean_lcl_el
+        if not tab.utils.QC(mean_lcl_el[0]):
+            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+        else:
+            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
+
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -443,7 +449,13 @@ class plotHodo(backgroundHodo):
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
-        self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+
+        mean_lcl_el = self.prof.mean_lcl_el
+        if not tab.utils.QC(mean_lcl_el[0]):
+            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
+        else:
+            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
+
         self.corfidi_up_u = self.prof.upshear_downshear[0]
         self.corfidi_up_v = self.prof.upshear_downshear[1]
         self.corfidi_dn_u = self.prof.upshear_downshear[2]
@@ -519,6 +531,9 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setMWCenter(self):
+        if not tab.utils.QC(self.mean_lcl_el[0]):
+            return
+
         self.centered = (self.mean_lcl_el[0],self.mean_lcl_el[1])
         self.center_loc = 'meanwind'
         self.clearData()
@@ -607,12 +622,13 @@ class plotHodo(backgroundHodo):
                 width = 150
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-35, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 shear_color = QtGui.QColor("#0099CC")
                 pen = QtGui.QPen(shear_color, penwidth)
                 qp.setFont(self.critical_font)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
+                to_add = self.pix_to_uv(e.x(), e.y())
+                x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0] + to_add[0], self.prof.sfc_6km_shear[1]+ to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
@@ -621,11 +637,11 @@ class plotHodo(backgroundHodo):
                 width = 200
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(3, self.bry-20, width, hght)
-                qp.drawRect(rect) 
+                qp.drawRect(rect)
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
                 if spd >= 70:
@@ -635,7 +651,8 @@ class plotHodo(backgroundHodo):
                 else:
                     supercell_type = "HP"
                 qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
-                
+                # Removing this function until @wblumberg can finish fixing this function.
+                """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
                 norm_Shear, mode_Shear, norm_Wind, norm_Mode = self.calculateStormMode()
  
@@ -672,7 +689,7 @@ class plotHodo(backgroundHodo):
                     pen = QtGui.QPen(color, penwidth)
                     qp.setPen(pen)
                     qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "From Bndy 0-6 km Shr Diff (" + tab.utils.INT2STR(norm_Shear) + " m/s): " + mode_Shear)
-
+                """
                 qp.end()
 
                 self.update()

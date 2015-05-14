@@ -2,6 +2,7 @@ import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
+import platform
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
@@ -31,7 +32,14 @@ class backgroundFire(QtGui.QFrame):
         else:
             fsize = 10
         self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.fosberg_font = QtGui.QFont('Helvetica', fsize + 2)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.fosberg_metrics = QtGui.QFontMetrics( self.fosberg_font )
+
+        self.os_mod = 0
+        if platform.system() == "Windows":
+            self.os_mod = self.label_metrics.descent()
+
         self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
         self.barby = 0
@@ -50,19 +58,20 @@ class backgroundFire(QtGui.QFrame):
         ## initialize a white pen with thickness 1 and a solid line
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        qp.setFont(QtGui.QFont('Helvetica', 12))
+        qp.setFont(self.fosberg_font)
         ## make the initial x value relative to the width of the frame
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
         ## draw the header
         rect1 = QtCore.QRect(0, self.tpad, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fire Weather Parameters')
-        self.labels = 2*self.label_height+self.tpad # Beginning of next line
+        self.labels = 2 * self.label_height + self.tpad + self.os_mod # Beginning of next line
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 2
         y1 = self.labels + 4
-       
+
+        qp.setFont(self.label_font)
         color = QtGui.QColor('#00CC33')
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -73,7 +82,7 @@ class backgroundFire(QtGui.QFrame):
         for i in label:
             rect1 = QtCore.QRect(self.brx/10, y1, self.brx/2 - self.brx/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
 
         color = QtGui.QColor('#0066CC') 
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
@@ -85,7 +94,7 @@ class backgroundFire(QtGui.QFrame):
         for i in label: 
             rect1 = QtCore.QRect(self.brx/2, y1, self.brx/2 - self.brx/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, i)
-            y1 += self.label_height+sep
+            y1 += self.label_height + sep + self.os_mod
         
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -101,7 +110,7 @@ class backgroundFire(QtGui.QFrame):
         for i in label: 
             rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, i)
-            y1 += self.label_height+self.moswindsep
+            y1 += self.label_height + self.moswindsep + self.os_mod
         qp.drawLine( 0, y1, self.brx, y1 )
         
         self.fosberg_y1 = y1+self.moswindsep
@@ -220,9 +229,9 @@ class plotFire(backgroundFire):
         color = self.getFosbergFormat()
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        qp.setFont(QtGui.QFont('Helvetica', 12))
+        qp.setFont(self.fosberg_font)
 
-        rect1 = QtCore.QRect(0, self.fosberg_y1, self.fosberg_width, self.label_height)
+        rect1 = QtCore.QRect(0, self.fosberg_y1, self.fosberg_width, self.label_height - self.os_mod)
         if self.fosberg == self.prof.missing:
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fosberg FWI = M')
         else:    
@@ -265,7 +274,7 @@ class plotFire(backgroundFire):
         color = QtGui.QColor(WHITE)
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        qp.setFont(QtGui.QFont('Helvetica', 10))        
+        qp.setFont(self.label_font)        
         
         label = ['SFC = ' + tab.utils.INT2STR(self.sfc_wind[0]) + '/' + tab.utils.INT2STR(self.sfc_wind[1]), \
                 '0-1 km mean = ' + tab.utils.INT2STR(self.meanwind01km[0]) + '/' + tab.utils.INT2STR(self.meanwind01km[1]), \
@@ -280,12 +289,12 @@ class plotFire(backgroundFire):
                 color = QtGui.QColor(WHITE)
                 fontsize = 10
 
-            qp.setFont(QtGui.QFont('Helvetica', fontsize)) 
+            qp.setFont(self.label_font) 
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect1 = QtCore.QRect(self.llw_x, y1, self.llw_width, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, label[i])
-            y1 = y1 + self.label_height + sep
+            y1 += self.label_height + sep + self.os_mod
 
         label = ['SFC RH = ' + tab.utils.INT2STR(self.sfc_rh) + '%', \
                 '0-1 km RH = ' + tab.utils.INT2STR(self.rh01km) + '%', \
@@ -302,12 +311,12 @@ class plotFire(backgroundFire):
             else:
                 color, fontsize = self.getPWColor()
 
-            qp.setFont(QtGui.QFont('Helvetica', fontsize)) 
+            qp.setFont(self.label_font) 
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect1 = QtCore.QRect(self.moist_x, y1, self.moist_width, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label[i])
-            y1 = y1 + self.label_height + sep
+            y1 += self.label_height + sep + self.os_mod
 
 
     def getPWColor(self):
