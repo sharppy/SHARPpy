@@ -36,6 +36,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.xskew = 100 / 3.
         self.xrange = self.brtmpc - self.bltmpc
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
+        self.clip = QRect(QPoint(self.lpad, self.tly), QPoint(self.brx + self.rpad, self.bry))
 #       self.centert = (self.brtmpc - self.bltmpc) / 2.
 #       self.centerp = self.pix_to_pres(self.hgt/2.)
         self.originx = 0. # self.size().width() / 2
@@ -64,8 +65,7 @@ class backgroundSkewT(QtGui.QWidget):
     def plotBackground(self):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-#       qp.translate(self.originx, self.originy)
-#       qp.scale(1 / self.scale, 1 / self.scale)
+        qp.setClipRect(self.clip)
 
         self.transform = qp.transform()
 
@@ -156,14 +156,15 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         Draw the given moist adiabat.
         '''
+        qp.setClipping(True)
         pen = QtGui.QPen(QtGui.QColor("#333333"), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         dp = -10
         presvals = np.arange(int(self.pmax), int(self.pmin)+dp, dp)
         thetas = ((theta + ZEROCNK) / (np.power((1000. / presvals),ROCP))) - ZEROCNK
-        xvals = self.tmpc_to_pix(thetas, presvals)
-        yvals = self.pres_to_pix(presvals)
+        xvals = self.originx + self.tmpc_to_pix(thetas, presvals) / self.scale
+        yvals = self.originy + self.pres_to_pix(presvals) / self.scale
         path = QPainterPath()
         path.moveTo(xvals[0], yvals[0])
         for i in xrange(1, len(presvals) ):
@@ -198,6 +199,7 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the mixing ratios.
 
         '''
+        qp.setClipping(True)
         t = tab.thermo.temp_at_mixrat(w, self.pmax)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
         y1 = self.originy + self.pres_to_pix(self.pmax) / self.scale
@@ -222,6 +224,7 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the frame around the Skew-T.
 
         '''
+        qp.setClipping(False)
         pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
         qp.setPen(pen)
@@ -246,9 +249,9 @@ class backgroundSkewT(QtGui.QWidget):
         pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
         qp.setFont(self.label_font)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
-#       x1000 = self.originx + self.tmpc_to_pix(t, 1000.) / self.scale        
 
         if x1 >= self.lpad and x1 <= self.wid:
+            qp.setClipping(False)
             qp.drawText(x1-10, self.bry+2, 20, 20,
                         QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
 
@@ -257,6 +260,8 @@ class backgroundSkewT(QtGui.QWidget):
         Draw background isotherms.
 
         '''
+
+        qp.setClipping(True)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
         x2 = self.originx + self.tmpc_to_pix(t, self.pmin) / self.scale
         y1 = self.originy + self.bry / self.scale
@@ -768,8 +773,7 @@ class plotSkewT(backgroundSkewT):
         '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-#       qp.translate(self.originx, self.originy)
-#       qp.scale(1 / self.scale, 1 / self.scale)
+        qp.setClipRect(self.clip)
 
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
@@ -816,6 +820,13 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
     def drawBarbs(self, prof, qp, color="#FFFFFF"):
+        qp.setClipping(True)
+
+        rect_size = self.clip.size()
+        rect_size.setHeight(rect_size.height() + self.bpad / 2)
+        mod_clip = QRect(self.clip.topLeft(), rect_size)
+        qp.setClipRect(mod_clip)
+
         if self.interpWinds is False:
             i = 0
             mask1 = prof.u.mask
@@ -827,25 +838,23 @@ class plotSkewT(backgroundSkewT):
             wdir, wspd = tab.utils.comp2vec(u, v)
             yvals = self.originy + self.pres_to_pix(pres) / self.scale
             for y in yvals:
-                if y >= self.tpad and y <= self.hgt:
-                    dd = wdir[i]
-                    ss = wspd[i]
-                    drawBarb( qp, self.barbx, y, dd, vv )
-                    i += 1
-                else:
-                    break
+                dd = wdir[i]
+                ss = wspd[i]
+                drawBarb( qp, self.barbx, y, dd, vv )
+                i += 1
         else:
             pres = np.arange(prof.pres[prof.sfc], prof.pres[prof.top], -40)
             wdir, wspd = tab.interp.vec(prof, pres)
             for p, dd, ss in zip(pres, wdir, wspd):
                 if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
-                y = self.originy + self.pres_to_pix(p) / self.scale
-                if y >= self.tpad and y <= self.hgt:
-                    drawBarb( qp, self.barbx, y, dd, ss, color=color)
 
+                y = self.originy + self.pres_to_pix(p) / self.scale
+                drawBarb( qp, self.barbx, y, dd, ss, color=color)
+        qp.setClipRect(self.clip)
 
     def drawTitle(self, qp):
+        qp.setClipping(False)
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
@@ -854,6 +863,7 @@ class plotSkewT(backgroundSkewT):
     
     
     def draw_height(self, h, qp):
+        qp.setClipping(True)
         self.hght_font = QtGui.QFont('Helvetica', 9)
         pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -864,13 +874,13 @@ class plotSkewT(backgroundSkewT):
         p1 = tab.interp.pres(self.prof, h+sfc)
         if np.isnan(p1) == False:
             y1 = self.originy + self.pres_to_pix(p1) / self.scale
-            if y1 >= self.tpad and y1 <= self.hgt:
-                qp.drawLine(self.lpad, y1, self.lpad+offset, y1)
-                qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
-                    QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
-                    tab.utils.INT2STR(h/1000)+' km')
+            qp.drawLine(self.lpad, y1, self.lpad+offset, y1)
+            qp.drawText(self.lpad+txt_offset, y1-20, self.lpad+txt_offset, 40,
+                QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
+                tab.utils.INT2STR(h/1000)+' km')
 
     def draw_sig_levels(self, qp, plevel=1000, color="#FFFFFF"):
+        qp.setClipping(True)
         if not tab.utils.QC(plevel):
             return
         xbounds = [37,45]
@@ -878,17 +888,17 @@ class plotSkewT(backgroundSkewT):
 
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         y = self.originy + self.pres_to_pix(plevel) / self.scale
-        if y > self.tpad and y <= self.hgt:
-            pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            qp.drawLine(x[0], y, x[1], y)
-            rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
-            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
+        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.drawLine(x[0], y, x[1], y)
+        rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
         
 
     def draw_parcel_levels(self, qp):
         if self.pcl is None:
             return
+        qp.setClipping(True)
         xbounds = [37,41]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         lclp = self.pcl.lclpres
@@ -898,30 +908,27 @@ class plotSkewT(backgroundSkewT):
         # Plot LCL
         if lclp is not np.ma.masked:
             y = self.originy + self.pres_to_pix(lclp) / self.scale
-            if y >= self.tpad and y <= self.hgt:
-                pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
-                qp.setPen(pen)
-                qp.drawLine(x[0], y, x[1], y)
-                rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
-                qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
+            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
         # Plot LFC
         if lfcp is not np.ma.masked:
             y = self.originy + self.pres_to_pix(lfcp) / self.scale
-            if y >= self.tpad and y <= self.hgt:
-                pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
-                qp.setPen(pen)
-                qp.drawLine(x[0], y, x[1], y)
-                rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
-                qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
+            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
         # Plot EL
         if elp is not np.ma.masked and elp != lclp:
             y = self.originy + self.pres_to_pix(elp) / self.scale
-            if y >= self.tpad and y <= self.hgt:
-                pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
-                qp.setPen(pen)
-                qp.drawLine(x[0], y, x[1], y)
-                rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
-                qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
+            pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49
@@ -937,6 +944,7 @@ class plotSkewT(backgroundSkewT):
             return x1_0
 
     def draw_omega_profile(self, qp):
+        qp.setClipping(True)
         plus10_bound = -49
         minus10_bound = -41
         x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
@@ -960,6 +968,7 @@ class plotSkewT(backgroundSkewT):
         '''
         Draw the bounds of the effective inflow layer.
         '''
+        qp.setClipping(True)
         ptop = self.prof.etop; pbot = self.prof.ebottom
         len = 15
         text_offset = 10
@@ -1006,6 +1015,7 @@ class plotSkewT(backgroundSkewT):
         '''
         Draw a parcel trace.
         '''
+        qp.setClipping(True)
         pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.DashLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
@@ -1015,23 +1025,21 @@ class plotSkewT(backgroundSkewT):
             return
         yvals = self.originy + self.pres_to_pix(ptrace) / self.scale
         xvals = self.originx + self.tmpc_to_pix(ttrace, ptrace) / self.scale
-        start_idx = np.where(yvals <= self.hgt)[0]
-        if len(start_idx) > 0:
-            start_idx = start_idx[0]
-            path.moveTo(xvals[start_idx], yvals[start_idx])
-            for i in xrange(start_idx + 1, len(yvals)):
-                x = xvals[i]; y = yvals[i]
-                if y < self.tpad:
-                    break
-                else:
-                    path.lineTo(x, y)
-            qp.drawPath(path)
+        path.moveTo(xvals[0], yvals[0])
+        for i in xrange(1, len(yvals)):
+            x = xvals[i]; y = yvals[i]
+#           if y < self.tpad:
+#               break
+#           else:
+            path.lineTo(x, y)
+        qp.drawPath(path)
 
     def drawTrace(self, data, color, qp, width=3, p=None, stdev=None, label=True):
         '''
         Draw an environmental trace.
 
         '''
+        qp.setClipping(True)
         pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
@@ -1054,11 +1062,10 @@ class plotSkewT(backgroundSkewT):
         x = self.originx + self.tmpc_to_pix(data, pres) / self.scale
         y = self.originy + self.pres_to_pix(pres) / self.scale
 
-        start_idx = np.where(y <= self.hgt)[0][0]
-        path.moveTo(x[start_idx], y[start_idx])
-        for i in xrange(start_idx + 1, x.shape[0]):
-            if y[i] <= self.tpad:
-                break
+        path.moveTo(x[0], y[0])
+        for i in xrange(1, x.shape[0]):
+#           if y[i] <= self.tpad:
+#               break
 
             path.lineTo(x[i], y[i])
             if stdev is not None:
@@ -1066,7 +1073,7 @@ class plotSkewT(backgroundSkewT):
 
         qp.drawPath(path)
 
-        if label is True and y[0] <= self.hgt:
+        if label is True:
             label = (1.8 * data[0]) + 32.
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
