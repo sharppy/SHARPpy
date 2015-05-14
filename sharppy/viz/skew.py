@@ -38,8 +38,8 @@ class backgroundSkewT(QtGui.QWidget):
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
 #       self.centert = (self.brtmpc - self.bltmpc) / 2.
 #       self.centerp = self.pix_to_pres(self.hgt/2.)
-        self.centerx = self.size().width() / 2
-        self.centery = self.size().height() / 2
+        self.centerx = 0. # self.size().width() / 2
+        self.centery = 0. # self.size().height() / 2
         self.scale = 1.
         if self.physicalDpiX() > 75:
             fsize = 6
@@ -64,6 +64,7 @@ class backgroundSkewT(QtGui.QWidget):
     def plotBackground(self, plot_omega=False):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.translate(self.centerx, self.centery)
         qp.scale(1 / self.scale, 1 / self.scale)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
@@ -118,11 +119,22 @@ class backgroundSkewT(QtGui.QWidget):
         self.initUI()
     
     def wheelEvent(self, e):
-        self.centerx, self.centery = e.x(), e.y()
-        delta = min(10, max(-10, e.delta()))
-        self.scale *= (10 ** (delta / 50.))
-        self.scale = min(self.scale, 1)
-        
+        centerx, centery = e.x(), e.y()
+
+        # From map
+        max_speed = 100.
+        delta = max(min(-e.delta(), max_speed), -max_speed)
+        scale_fac = 10 ** (delta / 1000.)
+
+#       scaled_size = float(min(self.default_width, self.default_height)) / min(self.width(), self.height())
+        if self.scale * scale_fac > 1.0:
+            scale_fac = 1. / self.scale
+
+        self.scale *= scale_fac
+        self.centerx = centerx - (centerx - self.centerx) / scale_fac
+        self.centery = centery - (centery - self.centery) / scale_fac
+
+        self.plotBackground()
         self.update()
 
     def draw_dry_adiabat(self, theta, qp):
@@ -482,7 +494,9 @@ class plotSkewT(backgroundSkewT):
             self.track_cursor = not self.track_cursor
             self.cursor_loc = e.pos()
         if self.dragging:
-            tmpc = self.pix_to_tmpc(e.x(), e.y())
+            trans_inv = self.transform.inverted()[0]
+            trans_x, trans_y = trans_inv.map(e.x(), e.y())
+            tmpc = self.pix_to_tmpc(trans_x, trans_y)
             prof_name, prof = self.drag_prof
 
             if prof_name == 'tmpc':
@@ -516,8 +530,11 @@ class plotSkewT(backgroundSkewT):
         tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
         dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
 
-        dist_tmpc = np.min(np.hypot(tmpc_xs - e.x(), prof_ys - e.y()))
-        dist_dwpc = np.min(np.hypot(dwpc_xs - e.x(), prof_ys - e.y()))
+        trans_inv = self.transform.inverted()[0]
+        trans_ev_x, trans_ev_y = trans_inv.map(e.x(), e.y())
+
+        dist_tmpc = np.min(np.hypot(tmpc_xs - trans_ev_x, prof_ys - trans_ev_y))
+        dist_dwpc = np.min(np.hypot(dwpc_xs - trans_ev_x, prof_ys - trans_ev_y))
 
         self.initdrag = True
         if dist_tmpc <= self.clickradius and dist_dwpc > self.clickradius:
@@ -537,9 +554,9 @@ class plotSkewT(backgroundSkewT):
             else:
                 # They were both the same distance away (probably a saturated profile).  If the click
                 #   was to the left, take the dewpoint, if it was to the right, take the temperature.
-                idx = np.argmin(np.abs(prof_ys - e.y()))
+                idx = np.argmin(np.abs(prof_ys - trans_ev_y))
                 prof_x = self.tmpc_to_pix(self.tmpc[idx], self.pres[idx])
-                if e.x() < prof_x:
+                if trans_ev_x < prof_x:
                     prof_name = 'dwpc'
                 else:
                     prof_name = 'tmpc'
@@ -583,10 +600,12 @@ class plotSkewT(backgroundSkewT):
         self.rubberBand.show()
 
     def dragLine(self, e):
-        tmpc = self.pix_to_tmpc(e.x(), e.y())
+        trans_inv = self.transform.inverted()[0]
+        trans_x, trans_y = trans_inv.map(e.x(), e.y())
+        tmpc = self.pix_to_tmpc(trans_x, trans_y)
 
         if self.drag_idx is None:
-            pres = self.pix_to_pres(e.y())
+            pres = self.pix_to_pres(trans_y)
             idx = np.argmin(np.abs(pres - self.pres))
             while self.tmpc.mask[idx] or self.dwpc.mask[idx]:
                 idx += 1
@@ -615,21 +634,25 @@ class plotSkewT(backgroundSkewT):
         x_points = [ self.tmpc_to_pix(*pt) for pt in t_points ]
         lb_x, ub_x = min(x_points), max(x_points)
         lb_y, ub_y = self.pres_to_pix(ub_p), self.pres_to_pix(lb_p)
+#       lb_x, lb_y = trans_inv.map(lb_x, lb_y)
+#       ub_x, ub_y = trans_inv.map(ub_x, ub_y)
 
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-        qp.scale(1. / self.scale, 1. / self.scale)
-
         # If we have something saved, restore it
         if self.saveBitMap is not None:
             origin, size, bmap = self.saveBitMap
             qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
 
+        qp.translate(self.centerx, self.centery)
+        qp.scale(1. / self.scale, 1. / self.scale)
+
         # Capture the new portion of the image to save
         origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
         size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
-        bmap = self.plotBitMap.copy(QRect(origin, size))
-        self.saveBitMap = (origin, size, bmap)
+        regn = self.transform.mapRect(QRect(origin, size))
+        bmap = self.plotBitMap.copy(regn)
+        self.saveBitMap = (regn.topLeft(), regn.size(), bmap)
 
         # Draw lines
         if prof_name == 'dwpc':
@@ -647,7 +670,6 @@ class plotSkewT(backgroundSkewT):
             y1, y2 = self.pres_to_pix(self.pres[idx]), self.pres_to_pix(self.pres[idx + 1])
             qp.drawLine(x1, y1, x2, y2)
 
-        qp.scale(self.scale, self.scale)
         qp.end()
         self.update()
 
@@ -722,8 +744,10 @@ class plotSkewT(backgroundSkewT):
         '''
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-#       qp.translate(self.centerx, self.centery)
+        qp.translate(self.centerx, self.centery)
         qp.scale(1 / self.scale, 1 / self.scale)
+
+        self.transform = qp.transform()
 
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
@@ -767,7 +791,6 @@ class plotSkewT(backgroundSkewT):
         if self.plot_omega:
             self.draw_omega_profile(qp)
 
-        qp.scale(self.scale, self.scale)
         qp.end()
 
     def drawBarbs(self, prof, qp, color="#FFFFFF"):
