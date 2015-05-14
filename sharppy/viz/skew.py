@@ -1064,9 +1064,6 @@ class plotSkewT(backgroundSkewT):
 
         path.moveTo(x[0], y[0])
         for i in xrange(1, x.shape[0]):
-#           if y[i] <= self.tpad:
-#               break
-
             path.lineTo(x[i], y[i])
             if stdev is not None:
                 self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)
