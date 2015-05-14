@@ -16,6 +16,8 @@ _decoder = {
 }
 # End move
 
+# TAS: Comment this file and available.py
+
 def loadDataSources(ds_dir='../datasources'):
     files = glob.glob(ds_dir + '/*.xml')
     ds = {}

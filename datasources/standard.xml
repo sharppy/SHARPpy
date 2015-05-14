@@ -33,6 +33,10 @@
             <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam4km.csv" />
         </outlet>
+        <outlet name="PSU_OFF" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM4KM/{cycle}/nam4kmm_{srcid}.buf" format="bufkit" >
+            <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
+            <points csv="nam4km.csv" />
+        </outlet>
     </datasource>
     <datasource name="SREF" ensemble="true">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/{cycle}/sref_{srcid}.buf" format="bufkit" >

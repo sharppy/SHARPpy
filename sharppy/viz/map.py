@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import sharppy
 from PySide import QtGui, QtCore
 
 import sys, os
@@ -8,7 +8,7 @@ import re
 import urllib2
 
 class Mapper(object):
-    data_dir = os.path.join('..', 'sharppy', 'databases', 'shapefiles')
+    data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
     min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
     max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
 
@@ -49,6 +49,10 @@ class Mapper(object):
         return x, y
 
     def _loadDat(self, name, res):
+        """
+        Code shamelessly lifted from Basemap's data file parser by Jeff Whitaker.
+        http://matplotlib.org/basemap/
+        """
         bdatfile = open(os.path.join(Mapper.data_dir, name + '_' + res + '.dat'), 'rb')
         bdatmetafile = open(os.path.join(Mapper.data_dir, name + 'meta_' + res + '.dat'), 'r')
 

@@ -216,7 +216,7 @@ KGVL,GVL,,Gainsvil/Gilmer,GA,US,34.26,-83.83,386,7,gvl
 PAUN,UNK,70207,Unalakleet,AK,US,63.89,-160.81,6,6,paun
 KHYR,HYR,,Hayward,WI,US,46.025,-91.444,370,6,hyr
 KSUS,SUS,,St Louis/Spirit,MO,US,38.66,-90.63,141,3,ksus
-KEMP,EMP,,Emporia,KS,US,38.34,-96.2,367,7,emp
+,,76256,Empalme,,MX,27.95,-110.766666667,12,8,emp
 ,,,col2,,,45.67,-121.57,473,7,col2
 KMHX,MHX,72305,Morehead/Newport,NC,US,34.7666666667,-76.8666666667,9,8,kmhx
 PADL,DLG,70321,Dillingham,AK,US,59.05,-158.52,26,6,padl
@@ -604,7 +604,7 @@ KELY,ELY,72486,Ely/Yelland Field,NV,US,39.29,-114.85,1906,3,kely
 MMCS,CJS,,Cuidad Juarez Intl,,MX,31.63,-106.43,1171,6,mmcs
 ,,,s#9,,,28.53,-92.32,0,7,s#9
 PAUM,UMT,70162,Umiat,AK,US,69.37,-152.13,104,7,paum
-KC04,C04,,Hart/Shelby,MI,US,41.9166666667,-85.0333333333,279,7,c04
+,,,c04,,,34.59,-94.3,380,7,c04
 MHNJ,,78701,Isla De Guanaja,,HN,16.45,-85.9,15,7,mhnj
 TJBQ,,78514,Aguadilla/Borinquen,PR,US,18.5,-67.13,72,6,tjbq
 ,,,s#1,,,50.02,-135.1,0,7,s#1
@@ -699,7 +699,7 @@ KAJO,AJO,,Corona,CA,US,33.898,-117.602,163,8,ajo
 KTXK,TXK,,Texarkana Muni,AR,US,33.46,-94.0,111,6,ktxk
 KSTJ,STJ,72449,St. Joseph Rosecrans,MO,US,39.77,-94.91,247,4,kstj
 CYQG,YQG,71538,Windsor,ON,CA,42.28,-82.97,190,6,cyqg
-KC09,C09,,Morris,IL,US,41.43,-88.42,178,7,c09
+,,,c09,,,35.96,-105.33,2522,7,c09
 ,,,b#e,,,51.93,-155.82,0,7,b#e
 KPBG,PBG,,Plattsburgh Intl Ap,NY,US,44.651,-73.468,72,8,kpbg
 KTWF,TWF,,Twin Falls,ID,US,42.48,-114.48,1266,6,ktwf
@@ -1117,7 +1117,7 @@ PAOM,OME,70200,Nome,AK,US,64.5,-165.44,11,5,paom
 KLLQ,LLQ,,Monticello Muni/Ellis Field,AR,US,33.64,-91.75,83,7,llq
 KAGR,AGR,74796,Avon Park,FL,US,27.65,-81.3333333333,20,8,agr
 KDUG,DUG,,Douglas,AZ,US,31.45,-109.6,1265,6,kdug
-KSWW,SWW,,Sweetwater/Avenger Fld,TX,US,32.47,-100.47,727,8,sww
+,,,sww,,,56.97,-126.95,1463,8,sww
 KBNA,BNA,72327,NAShville Metro,TN,US,36.12,-86.68,210,2,bna
 MSAC,,78650,Acajutla/Sonsonate,,SV,13.57,-89.83,15,7,msac
 ,,,jpb,,,44.27,-67.25,0,7,jpb

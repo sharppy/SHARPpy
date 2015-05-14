@@ -296,7 +296,7 @@ class plotAnalogues(backgroundAnalogues):
             place2 = (x1*3+10, x1*5.5-5)
             self.ybounds = self.ybounds_hail
         ## if there are no matches, leave the function to prevent crashing
-        if self.matches is np.ma.masked:
+        if self.matches[0] == []:
             return
         else:
             ## set the pen, font
