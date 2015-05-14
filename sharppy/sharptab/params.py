@@ -718,7 +718,7 @@ def inferred_temp_adv(prof, lat=35):
         than those seen on the SPC website.  Although, this function may be right as the SPC values seem
         a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
 
-        This code uses Equation 4.1.139 from Bluestein's Synoptic book (Volume 1)
+        This code uses Equation 4.1.139 from Bluestein's "Synoptic-Dynamic Meteorology in Midlatitudes (Volume I)"
 
         Parameters
         ----------
