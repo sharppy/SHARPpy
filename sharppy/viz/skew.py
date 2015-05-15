@@ -67,7 +67,13 @@ class backgroundSkewT(QtGui.QWidget):
         qp.begin(self.plotBitMap)
         qp.setClipRect(self.clip)
 
+        qp.translate(self.originx, self.originy)
+        qp.scale(1. / self.scale, 1. / self.scale)
+
         self.transform = qp.transform()
+
+        qp.scale(self.scale, self.scale)
+        qp.translate(-self.originx, -self.originy)
 
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
@@ -524,7 +530,8 @@ class plotSkewT(backgroundSkewT):
             self.cursor_loc = e.pos()
         if self.dragging:
             trans_inv = self.transform.inverted()[0]
-            trans_x, trans_y = trans_inv.map(e.x(), e.y())
+            trans_x = (e.x() - self.originx) * self.scale
+            trans_y = (e.y() - self.originy) * self.scale
             tmpc = self.pix_to_tmpc(trans_x, trans_y)
             prof_name, prof = self.drag_prof
 
@@ -559,11 +566,13 @@ class plotSkewT(backgroundSkewT):
         tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
         dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
 
-        trans_inv = self.transform.inverted()[0]
-        trans_ev_x, trans_ev_y = trans_inv.map(e.x(), e.y())
+#       trans_inv = self.transform.inverted()[0]
+#       trans_ev_x, trans_ev_y = trans_inv.map(e.x(), e.y())
+        trans_x = (e.x() - self.originx) * self.scale
+        trans_y = (e.y() - self.originy) * self.scale
 
-        dist_tmpc = np.min(np.hypot(tmpc_xs - trans_ev_x, prof_ys - trans_ev_y))
-        dist_dwpc = np.min(np.hypot(dwpc_xs - trans_ev_x, prof_ys - trans_ev_y))
+        dist_tmpc = np.min(np.hypot(tmpc_xs - trans_x, prof_ys - trans_y))
+        dist_dwpc = np.min(np.hypot(dwpc_xs - trans_x, prof_ys - trans_y))
 
         self.initdrag = True
         if dist_tmpc <= self.clickradius and dist_dwpc > self.clickradius:
@@ -629,8 +638,8 @@ class plotSkewT(backgroundSkewT):
         self.rubberBand.show()
 
     def dragLine(self, e):
-        trans_inv = self.transform.inverted()[0]
-        trans_x, trans_y = trans_inv.map(e.x(), e.y())
+        trans_x = (e.x() - self.originx) * self.scale
+        trans_y = (e.y() - self.originy) * self.scale
         tmpc = self.pix_to_tmpc(trans_x, trans_y)
 
         if self.drag_idx is None:
@@ -661,8 +670,10 @@ class plotSkewT(backgroundSkewT):
             t_points = [ (drag_prof[idx - 1], self.pres[idx - 1]), (tmpc, self.pres[idx]), (drag_prof[idx + 1], self.pres[idx + 1]) ]
 
         x_points = [ self.tmpc_to_pix(*pt) for pt in t_points ]
-        lb_x, ub_x = min(x_points), max(x_points)
-        lb_y, ub_y = self.pres_to_pix(ub_p), self.pres_to_pix(lb_p)
+        lb_x = self.originx + min(x_points) / self.scale
+        ub_x = self.originx + max(x_points) / self.scale
+        lb_y = self.originy + self.pres_to_pix(ub_p) / self.scale
+        ub_y = self.originy + self.pres_to_pix(lb_p) / self.scale
 
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
@@ -671,15 +682,11 @@ class plotSkewT(backgroundSkewT):
             origin, size, bmap = self.saveBitMap
             qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
 
-        qp.translate(self.originx, self.originy)
-        qp.scale(1. / self.scale, 1. / self.scale)
-
         # Capture the new portion of the image to save
         origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
         size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
-        regn = self.transform.mapRect(QRect(origin, size))
-        bmap = self.plotBitMap.copy(regn)
-        self.saveBitMap = (regn.topLeft(), regn.size(), bmap)
+        bmap = self.plotBitMap.copy(QRect(origin, size))
+        self.saveBitMap = (origin, size, bmap)
 
         # Draw lines
         if prof_name == 'dwpc':
@@ -689,12 +696,16 @@ class plotSkewT(backgroundSkewT):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         if idx != 0 and not self.pres.mask[idx - 1] and not self.tmpc.mask[idx - 1] and not self.dwpc.mask[idx - 1]:
-            x1, x2 = self.tmpc_to_pix(drag_prof[idx - 1], self.pres[idx - 1]), self.tmpc_to_pix(tmpc, self.pres[idx])
-            y1, y2 = self.pres_to_pix(self.pres[idx - 1]), self.pres_to_pix(self.pres[idx])
+            x1 = self.originx + self.tmpc_to_pix(drag_prof[idx - 1], self.pres[idx - 1]) / self.scale
+            x2 = self.originx + self.tmpc_to_pix(tmpc, self.pres[idx]) / self.scale
+            y1 = self.originy + self.pres_to_pix(self.pres[idx - 1]) / self.scale
+            y2 = self.originy + self.pres_to_pix(self.pres[idx]) / self.scale
             qp.drawLine(x1, y1, x2, y2)
         if idx != self.pres.shape[0] - 1:
-            x1, x2 = self.tmpc_to_pix(tmpc, self.pres[idx]), self.tmpc_to_pix(drag_prof[idx + 1], self.pres[idx + 1])
-            y1, y2 = self.pres_to_pix(self.pres[idx]), self.pres_to_pix(self.pres[idx + 1])
+            x1 = self.originx + self.tmpc_to_pix(tmpc, self.pres[idx]) / self.scale
+            x2 = self.originx + self.tmpc_to_pix(drag_prof[idx + 1], self.pres[idx + 1]) / self.scale
+            y1 = self.originy + self.pres_to_pix(self.pres[idx]) / self.scale
+            y2 = self.originy + self.pres_to_pix(self.pres[idx + 1]) / self.scale
             qp.drawLine(x1, y1, x2, y2)
 
         qp.end()
