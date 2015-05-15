@@ -732,9 +732,7 @@ def inferred_temp_adv(prof, lat=35):
     '''
 
     omega = (2. * np.pi) / (86164.)
-    f = 2. * omega * np.sin(np.radians(lat)) # Units: (s**-1)
-    multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
-
+       
     dp = -100
     pres_idx = np.where(prof.pres >= 100.)[0]
     pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp, dtype=type(prof.pres[prof.get_sfc()])) # Units: mb
@@ -743,6 +741,15 @@ def inferred_temp_adv(prof, lat=35):
     temp_adv = np.empty(len(pressures) - 1)
     dirs = interp.vec(prof, pressures)[0]
     pressure_bounds = np.empty((len(pressures) - 1, 2))
+
+    if utils.QC(lat):
+        f = 2. * omega * np.sin(np.radians(lat)) # Units: (s**-1)
+    else:
+        temp_adv[:] = np.nan
+        return temp_adv, pressure_bounds
+
+    multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
+
     for i in xrange(1, len(pressures)):
         bottom_pres = pressures[i-1]
         top_pres = pressures[i]
