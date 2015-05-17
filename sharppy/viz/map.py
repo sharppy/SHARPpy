@@ -268,6 +268,7 @@ class MapWidget(QtGui.QWidget):
         self.map_center_x, self.map_center_x = 0., 0.
         self.init_drag_x, self.init_drag_y = None, None
         self.dragging = False
+        self.map_rot = 0.0
         self.setMouseTracking(True)
 
         self.mapper = Mapper(-97.5, 60.)
@@ -398,6 +399,7 @@ class MapWidget(QtGui.QWidget):
     def drawMap(self):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
+        qp.rotate(self.map_rot)
 
         self.plotBitMap.fill(QtCore.Qt.black)
 
@@ -537,8 +539,9 @@ class MapWidget(QtGui.QWidget):
         trans_inv, is_invertible = self.transform.inverted()
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
-        self.mapper.setLambda0(lon)
-        self.initMap()
+        self.map_rot = lon - self.mapper.getLambda0()
+#       self.mapper.setLambda0(lon)
+#       self.initMap()
         self.drawMap()
         self.update()
 
