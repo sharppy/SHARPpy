@@ -9,11 +9,14 @@ import available
 # Move this to a function in decoder.py
 from sharppy.io.buf_decoder import BufDecoder
 from sharppy.io.spc_decoder import SPCDecoder
+from sharppy.io.pecan_decoder import PECANDecoder
 
 _decoder = {
     'spc':SPCDecoder,
     'bufkit':BufDecoder,
-}
+    'pecan':PECANDecoder
+    }
+
 # End move
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
