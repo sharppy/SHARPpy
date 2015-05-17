@@ -12,7 +12,10 @@ def _available_spc():
 
 def _availableat_spc(dt):
     recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H_OBS'))
-    text = urllib2.urlopen(recent_url).read()
+    try:
+        text = urllib2.urlopen(recent_url).read()
+    except urllib2.URLError:
+        text = ""
     matches = re.findall("alt=\"([\w]{3}|[\d]{5})\"", text)
     return matches
 
