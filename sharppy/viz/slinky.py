@@ -151,7 +151,7 @@ class plotSlinky(backgroundSlinky):
         
         '''
         self.prof = prof
-        #self.pcl = kwargs.get('pcl', self.prof.mupcl)
+        self.pcl = kwargs.get('pcl', self.prof.mupcl)
         super(plotSlinky, self).__init__()
         self.slinky_traj = self.prof.slinky_traj
         self.updraft_tilt = self.prof.updraft_tilt
@@ -277,6 +277,9 @@ class plotSlinky(backgroundSlinky):
         ## if there is no storm slinky, don't plot it!
         if self.slinky_traj is np.ma.masked:
             return
+
+        has_el = self.pcl.bplus > 1e-3 and tab.utils.QC(self.pcl.elhght)
+
         ## loop through the parcel tradjectory in reverse
         for tradj in self.slinky_traj[:]:
             ## get the x, y, and z location of the updraft at each height
@@ -284,7 +287,7 @@ class plotSlinky(backgroundSlinky):
             y = tradj[1]
             z = tradj[2]
             ## set the various colors
-            if z == self.slinky_traj[-1][2]:
+            if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
             elif z < 3000:
                 pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)

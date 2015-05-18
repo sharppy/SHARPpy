@@ -371,7 +371,7 @@ class MapWidget(QtGui.QWidget):
         self.map_center_y += self.trans_y
         self.trans_x, self.trans_y = 0, 0
 
-        if not self.dragging:
+        if not self.dragging and len(self.stn_lats) > 0:
             stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
             stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ])
             stn_xs = np.array(stn_xs)
