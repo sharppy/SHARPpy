@@ -236,16 +236,16 @@ class SkewApp(QWidget):
 
         ## set the plot title that will be displayed in the Skew frame.
         self.plot_title = self.getPlotTitle()
-        default_pcl = self.prof.mupcl
-
         if self.model == "SREF":
             self.prof = self.profs[self.current_idx][0]
+            default_pcl = self.prof.mupcl
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
             self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
                                  proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
+            default_pcl = self.prof.mupcl
             self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
