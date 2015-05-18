@@ -42,9 +42,11 @@ if os.path.exists(os.path.join(HOME_PATH, "datasources", "standard.xml")):
     shutil.copy(os.path.join(HOME_PATH, "datasources", "standard.xml"),
                 os.path.join(HOME_PATH, "datasources", "standard.xml.old"))
 
-    ## copy over the new file
-    shutil.copy(os.path.join(os.path.dirname(__file__), "datasources", "standard.xml"),
-                os.path.join(HOME_PATH, "datasources", "standard.xml"))
+
+    ## copy over other XML files
+    XMLs = glob.glob(os.path.join(os.path.dirname(__file__), "datasources", "*.xml"))
+    for xml in XMLs:
+        shutil.copy(xml, os.path.join(HOME_PATH, "datasources", os.path.basename(xml)))
 
     ## copy over the standard CSV files
     CSVs = glob.glob(os.path.join(os.path.dirname(__file__), "datasources", "*.csv"))
