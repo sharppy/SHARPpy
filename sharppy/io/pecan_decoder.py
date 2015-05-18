@@ -41,7 +41,7 @@ class PECANDecoder(Decoder):
         p, h, t, td, wdir, wspd, omeg = np.genfromtxt( sound_data, delimiter=',', unpack=True)
 
         prof = profile.create_profile(profile='raw', pres=p[1:], hght=h[1:], tmpc=t[1:], dwpc=td[1:], wspd=wspd[1:],\
-                                      wdir=wdir[1:], omeg=omeg[1:], location=location, missing=-999)
+                                      wdir=wdir[1:], omeg=omeg[1:], location=location, missing=-999.0)
         return prof, dt_obj, member
 
 if __name__ == '__main__':
