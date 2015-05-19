@@ -9,14 +9,12 @@ from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
 import sharppy.io as io
-import sharppy.databases.sars as sars
 from datetime import datetime, timedelta
-import copy
 import numpy as np
 import ConfigParser
 import platform
-from time import sleep
 from os.path import expanduser
+import os
 from sharppy.version import __version__, __version_name__
 
 class SkewApp(QWidget):
@@ -44,8 +42,8 @@ class SkewApp(QWidget):
         'SHIP':'Sig-Hail Stats',
         'VROT':'EF-Scale Probs (V-Rot)',
     }
-
-    cfg_file_name = 'sharppy.ini'
+    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
     def __init__(self, profs, dates, model, **kwargs):
 
@@ -63,7 +61,7 @@ class SkewApp(QWidget):
         self.loc = kwargs.get("location")
         self.fhour = kwargs.get("fhour", [ None ])
         self.dgz = False
-
+        self.isensemble = type(self.profs[0]) == list # Is this an ensemble?
         self.plot_title = ""
 
         ## these are used to display profiles
@@ -238,16 +236,17 @@ class SkewApp(QWidget):
 
         ## set the plot title that will be displayed in the Skew frame.
         self.plot_title = self.getPlotTitle()
-        default_pcl = self.prof.mupcl
 
-        if self.model == "SREF":
+        if self.isensemble:
             self.prof = self.profs[self.current_idx][0]
+            default_pcl = self.prof.mupcl
             self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
             self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
                                  proflist=self.profs[self.current_idx][:], parent=self)
         else:
             self.prof = self.profs[self.current_idx]
+            default_pcl = self.prof.mupcl
             self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
                                    dgz=self.dgz, proflist=self.proflist)
             self.sound.updated.connect(self.updateProfs)
@@ -300,7 +299,7 @@ class SkewApp(QWidget):
             self.modified_hodo[self.current_idx] = modified
 
         self.plot_title = self.getPlotTitle()
-        if self.model == "SREF":
+        if self.isensemble:
             self.profs[self.current_idx][0] = prof[0]
             self.prof = self.profs[self.current_idx][0]
             self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
@@ -359,7 +358,7 @@ class SkewApp(QWidget):
         self.parcel_type = self.getParcelName(self.prof, pcl)
 
         self.plot_title = self.getPlotTitle()
-        if self.model == "SREF":
+        if self.isensemble:
             self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
                                proflist=self.profs[self.current_idx][:], dgz=self.dgz)
         else:
@@ -375,7 +374,7 @@ class SkewApp(QWidget):
 
     @Slot(str)
     def updateSARS(self, filematch):
-        if self.model != "SREF":
+        if not self.isensemble:
             self.proflist = []
 #           data = io.spc_decoder.SNDFile(filematch)
 #           matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
