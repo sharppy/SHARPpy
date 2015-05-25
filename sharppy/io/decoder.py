@@ -40,7 +40,20 @@ class Decoder(object):
 #       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
         return file_data
 
-    def getProfiles(self, prof_idxs=[0], prog=None):
+    def getProfiles(self, prof_idxs=[0], prog=None, prof_type='default'):
+        '''
+            Returns a list of profile objects generated from the
+            file that was read in.
+
+            Parameters
+            ----------
+            prof_idxs : list (optional)
+                A list of indices corresponding to the profiles to be returned.
+                Default is [0]
+            prog : flag
+                A flag that indicates whether or not the data source is prognostic
+
+        '''
         profiles = []
         mean_idx = 0
         for idx, (mem_name, mem_profs) in enumerate(self._profiles.iteritems()):
@@ -48,17 +61,24 @@ class Decoder(object):
             nprofs = len(mem_profs) if prof_idxs is None else len(prof_idxs)
 
             for pidx, prof_idx in enumerate(prof_idxs):
-                if 'mean' in mem_name.lower() or len(self._profiles) == 1:
+                # If the member name is the mean profile, or there
+                # is only one profile recorded in the file, then get the index.
+                if 'mean' in mem_name.lower() or len(self._profiles) == 1 and mem_name != "VAD":
                     mean_idx = idx
                     if prog is not None:
                         prog.emit(pidx, nprofs)
                     profs.append(profile.ConvectiveProfile.copy(mem_profs[prof_idx]))
                 else:
-                    profs.append(profile.BasicProfile.copy(mem_profs[prof_idx]))
+                    if prof_type == 'default':
+                        profs.append(profile.BasicProfile.copy(mem_profs[prof_idx]))
+                    elif prof_type == 'vad':
+                        profs.append(mem_profs[prof_idx])
 
             profiles.append(profs)
 
         mean = profiles[mean_idx]
+
+        # Rearrange list of profiless so the mean is the first element.
         profiles = [ mean ] + profiles[:mean_idx] + profiles[(mean_idx + 1):]
 
         if len(profiles) > 1:
