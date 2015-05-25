@@ -93,7 +93,7 @@ class BufDecoder(Decoder):
                 omeg[j / 2] = float(data_stuff[j].split()[7])
 
             prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
-                wdir=wdir, wspd=wspd, omeg=omeg, location=station)
+                wdir=wdir, wspd=wspd, omeg=omeg, location=station, latitude=slat)
 
             profiles.append(prof)
 

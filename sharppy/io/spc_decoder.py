@@ -41,7 +41,8 @@ class SPCDecoder(Decoder):
         wspd = wspd #[idx]
         wdir = wdir #[idx]
 
+        # Force latitude to be 35 N. Figure out a way to fix this later.
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
-            wdir=wdir, wspd=wspd, location=location)
+            wdir=wdir, wspd=wspd, location=location, latitude=35.)
 
         return {'':[ prof ]}, [ datetime.strptime(time, '%y%m%d/%H%M') ]

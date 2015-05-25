@@ -95,6 +95,7 @@ class Profile(object):
         ## set the missing variable
         self.missing = kwargs.get('missing', MISSING)
         self.profile = kwargs.get('profile')
+        self.latitude = kwargs.get('latitude', ma.masked)
 
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
@@ -136,7 +137,7 @@ class Profile(object):
  
     @classmethod
     def copy(cls, prof, **kwargs):
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location' ])
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'latitude' ])
         if 'u' in kwargs or 'v' in kwargs:
             new_kwargs.update({'u':prof.u, 'v':prof.v})
         else:   
@@ -739,7 +740,7 @@ class ConvectiveProfile(BasicProfile):
         ## calculate the totals totals index
         self.totals_totals = params.t_totals( self )
         ## calculate the inferred temperature advection
-        self.inf_temp_adv = params.inferred_temp_adv(self)
+        self.inf_temp_adv = params.inferred_temp_adv(self, lat=self.latitude)
 
     def get_severe(self):
         '''
