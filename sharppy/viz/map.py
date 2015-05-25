@@ -382,18 +382,23 @@ class MapWidget(QtGui.QWidget):
     def setProjection(self, proj):
         self.mapper.setProjection(proj)
         self.resetViewport()
+        self._showLoading()
 
-        self.initMap()
-        self.drawMap()
-        self.update()
+        def update(args):
+            self.resetViewport()
+            self.drawMap()
+            self._hideLoading()
+            self.update()
+            return
+
+        self.async.post(self.initMap, update)
 
     def resetViewport(self, ctr_lat=None, ctr_lon=None):
         self.map_center_x = self.width() / 2
         if ctr_lat is not None and ctr_lon is not None:
             center_x, center_y = self.mapper(ctr_lat, ctr_lon)
-            print self.map_center_y, center_y
-#           self.map_center_x = center_x
-            self.map_center_y += (-center_y - self.map_center_y) / self.scale
+            self.map_center_y = -center_y + self.height() / 2
+            self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / self.scale
         else:
             self.scale = self.init_scale
             proj = self.mapper.getProjection()
