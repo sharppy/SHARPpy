@@ -27,6 +27,7 @@ from functools import wraps, partial
 import hashlib
 import cProfile
 from os.path import expanduser
+import ConfigParser
 
 class AsyncThreads(QObject):
     def __init__(self):
@@ -165,6 +166,9 @@ class MainWindow(QWidget):
 
     async = AsyncThreads()
 
+    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
+
     def __init__(self, **kwargs):
         """
         Construct the main window and handle all of the
@@ -177,6 +181,8 @@ class MainWindow(QWidget):
         self.data_sources = data_source.loadDataSources()
 
         ## All of these variables get set/reset by the various menus in the GUI
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read(MainWindow.cfg_file_name)
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
@@ -592,7 +598,7 @@ class MainWindow(QWidget):
             msgbox.exec_()
         else:
             self.skew = SkewApp(profs, dates, model, location=disp_name,
-                run=run, idx=prof_idx, fhour=fhours)
+                run=run, idx=prof_idx, fhour=fhours, cfg=self.config)
             self.skew.show()
 
     def loadArchive(self):
@@ -613,6 +619,9 @@ class MainWindow(QWidget):
         stn_id = dec.getStnId()
 
         return prof, dates, stn_id
+
+    def closeEvent(self, e):
+        self.config.write(open(MainWindow.cfg_file_name, 'w'))
 
 @progress(MainWindow.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):

@@ -11,7 +11,6 @@ import sharppy.sharptab as tab
 import sharppy.io as io
 from datetime import datetime, timedelta
 import numpy as np
-import ConfigParser
 import platform
 from os.path import expanduser
 import os
@@ -42,8 +41,6 @@ class SkewApp(QWidget):
         'SHIP':'Sig-Hail Stats',
         'VROT':'EF-Scale Probs (V-Rot)',
     }
-    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
-    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
     def __init__(self, profs, dates, model, **kwargs):
 
@@ -60,6 +57,7 @@ class SkewApp(QWidget):
         self.run = kwargs.get("run")
         self.loc = kwargs.get("location")
         self.fhour = kwargs.get("fhour", [ None ])
+        self.config = kwargs.get("cfg")
         self.dgz = False
         self.isensemble = type(self.profs[0]) == list # Is this an ensemble?
         self.plot_title = ""
@@ -72,8 +70,6 @@ class SkewApp(QWidget):
         self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
-        self.config = ConfigParser.RawConfigParser()
-        self.config.read(SkewApp.cfg_file_name)
         if not self.config.has_section('insets'):
             self.config.add_section('insets')
             self.config.set('insets', 'right_inset', 'STP STATS')
@@ -452,7 +448,6 @@ class SkewApp(QWidget):
             return
 
     def closeEvent(self, e):
-        self.config.write(open(SkewApp.cfg_file_name, 'w'))
         self.sound.closeEvent(e)
 
     def makeInsetMenu(self, *exclude):
