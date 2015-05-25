@@ -1,4 +1,4 @@
-import os, sys, shutil, glob
+import os, sys, shutil, glob, getpass, platform
 from setuptools import setup, find_packages
 
 
@@ -31,17 +31,34 @@ include_package_data = True
 classifiers = ["Development Status :: 4 - Beta"]
 
 HOME_PATH = os.path.join(os.path.expanduser("~"), ".sharppy")
+chown = platform.system() in [ 'Darwin', 'Linux' ] and getpass.getuser() == 'root'
+if chown:
+    uid = int(os.environ['SUDO_UID'])
+    gid = int(os.environ['SUDO_GID'])
 
 ## if the settings directory does not exist, create it and copy the necessary resources
 if not os.path.exists(HOME_PATH):
     os.makedirs(HOME_PATH)
     shutil.copytree(os.path.join(os.path.dirname(__file__), "datasources"), os.path.join(HOME_PATH, "datasources"))
 
+    if chown:
+        # If we're running with sudo, chown the directories and files to the user actually running the process.
+        os.chown(HOME_PATH, uid, gid)
+
+        for root, dirs, files in os.walk(HOME_PATH):
+            for dirname in dirs:
+                os.chown(os.path.join(root, dirname), uid, gid)
+
+            for filename in files:
+                os.chown(os.path.join(root, filename), uid, gid)
+
 ## if a datasource XML file exits, we don't want to overwrite it, so copy it to a different file first
 if os.path.exists(os.path.join(HOME_PATH, "datasources", "standard.xml")):
     shutil.copy(os.path.join(HOME_PATH, "datasources", "standard.xml"),
                 os.path.join(HOME_PATH, "datasources", "standard.xml.old"))
 
+    if chown:
+        os.chown(os.path.join(HOME_PATH, "datasources", "standard.xml.old"), uid, gid)
 
     ## copy over other XML files
     XMLs = glob.glob(os.path.join(os.path.dirname(__file__), "datasources", "*.xml"))
