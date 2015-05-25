@@ -310,7 +310,7 @@ class MapWidget(QtGui.QWidget):
 
         self.setWindowTitle('SHARPpy')
 
-        self.resetViewport() #ctr_lat=ctr_lat, ctr_lon=ctr_lon
+        self.resetViewport()
 
         self.initMap()
         self.initUI()
