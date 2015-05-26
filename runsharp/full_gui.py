@@ -210,7 +210,6 @@ class MainWindow(QWidget):
         ## set the window title
         self.setWindowTitle('SHARPpy Sounding Picker')
 
-        # Create and fill a QWebView
         self.view = self.create_map_view()
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
@@ -218,6 +217,9 @@ class MainWindow(QWidget):
         self.all_profs = QPushButton("Select All")
         self.all_profs.clicked.connect(self.select_all)
         self.all_profs.setDisabled(True)
+
+        self.save_view_button = QPushButton('Save View as Default')
+        self.save_view_button.clicked.connect(self.save_view)
 
         self.profile_list = QListWidget()
         self.profile_list.setSelectionMode(QAbstractItemView.MultiSelection)
@@ -228,16 +230,26 @@ class MainWindow(QWidget):
         self.right_map_frame = QWidget()
         ## set the layouts for these widgets
         self.left_layout = QVBoxLayout()
-        self.right_layout = QVBoxLayout()
+        self.right_layout = QGridLayout() #QVBoxLayout()
         self.left_data_frame.setLayout(self.left_layout)
         self.right_map_frame.setLayout(self.right_layout)
+
+        times = self.data_sources[self.model].getAvailableTimes()
 
         ## create dropdown menus
         models = sorted(self.data_sources.keys())
         self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
-        self.map_dropdown = self.dropdown_menu(['Northern Hemisphere', 'Tropics', 'Southern Hemisphere'])
-        times = self.data_sources[self.model].getAvailableTimes()
+
+        projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
+        if self.config.has_section('map'):
+            proj = self.config.get('map', 'proj')
+            proj_idx = zip(*projs)[0].index(proj)
+        else:
+            proj_idx = 0
+        self.map_dropdown = self.dropdown_menu(zip(*projs)[1])
+        self.map_dropdown.setCurrentIndex(proj_idx)
+
         self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
         self.run_dropdown.setCurrentIndex(times.index(self.run))
 
@@ -264,9 +276,11 @@ class MainWindow(QWidget):
         self.left_layout.addWidget(self.button)
 
         ## add the elements to the right side of the GUI
-        self.right_layout.addWidget(self.map_label)
-        self.right_layout.addWidget(self.map_dropdown)
-        self.right_layout.addWidget(self.view)
+        self.right_layout.setColumnMinimumWidth(0, 500)
+        self.right_layout.addWidget(self.map_label, 0, 0, 1, 1)
+        self.right_layout.addWidget(self.save_view_button, 0, 1, 1, 1)
+        self.right_layout.addWidget(self.map_dropdown, 1, 0, 1, 2)
+        self.right_layout.addWidget(self.view, 2, 0, 1, 2)
 
         ## add the left and right sides to the main window
         self.layout.addWidget(self.left_data_frame, 0, 0, 1, 1)
@@ -361,7 +375,7 @@ class MainWindow(QWidget):
         view : QWebView object
         """
 
-        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500)
+        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500, cfg=self.config)
         view.clicked.connect(self.map_link)
 
         return view
@@ -518,6 +532,12 @@ class MainWindow(QWidget):
         """
         proj = {'Northern Hemisphere':'npstere', 'Tropics':'merc', 'Southern Hemisphere':'spstere'}[self.map_dropdown.currentText()]
         self.view.setProjection(proj)
+
+    def save_view(self):
+        """
+        Save the map projection to the config file
+        """
+        self.view.saveProjection(self.config)
 
     def select_all(self):
         items = self.profile_list.count()

@@ -16,6 +16,9 @@ class Mapper(object):
         self.proj = proj
         self.lambda_0 = lambda_0
         self.phi_0 = phi_0
+        if proj == 'spstere':
+            self.phi_0 = -np.abs(self.phi_0)
+
         self.m = 6.6667e-7
         self.rad_earth = 6.371e8
         self._bnds = {}
@@ -262,26 +265,41 @@ class MapWidget(QtGui.QWidget):
     clicked = QtCore.Signal(dict)
 
     def __init__(self, data_source, init_time, async, **kwargs):
+        config = kwargs.get('cfg', None)
+        del kwargs['cfg']
+
         super(MapWidget, self).__init__(**kwargs)
+
         self.trans_x, self.trans_y = 0., 0.
         self.center_x, self.center_y = 0., 0.
-        self.map_center_x, self.map_center_x = 0., 0.
         self.init_drag_x, self.init_drag_y = None, None
-        self.init_scale = 0.60
-        self.scale = self.init_scale
         self.dragging = False
         self.map_rot = 0.0
         self.setMouseTracking(True)
 
-        ctr_lat, ctr_lon = 38.5, -97.5
-        self.mapper = Mapper(ctr_lon, 60.)
+        self.init_scale = 0.6
+        if config is None or not config.has_section('map'):
+            self.scale = self.init_scale
+            self.map_center_x, self.map_center_y = 0., 0.
+            std_lon = -97.5
+            proj = 'npstere'
+            init_from_config = False
+        else:
+            proj = config.get('map', 'proj')
+            std_lon = float(config.get('map', 'std_lon'))
+            self.scale = float(config.get('map', 'scale'))
+            self.map_center_x = float(config.get('map', 'center_x'))
+            self.map_center_y = float(config.get('map', 'center_y'))
+            init_from_config = True
+
+        self.mapper = Mapper(std_lon, 60., proj=proj)
 
         self.stn_lats = np.array([])
         self.stn_lons = np.array([])
         self.stn_ids = []
         self.stn_names = []
 
-        self.default_width, self.default_height = 800, 800
+        self.default_width, self.default_height = self.width(), self.height()
         self.setMinimumSize(self.width(), self.height())
 
         self.clicked_stn = None
@@ -310,7 +328,9 @@ class MapWidget(QtGui.QWidget):
 
         self.setWindowTitle('SHARPpy')
 
-        self.resetViewport()
+        if not init_from_config:
+            self.resetViewport()
+            self.saveProjection(config)
 
         self.initMap()
         self.initUI()
@@ -432,11 +452,11 @@ class MapWidget(QtGui.QWidget):
         actual_area = self.width() * self.height()
         scaled_area = np.sqrt(default_area / float(actual_area))
 
-        if self.scale < 0.10 * scaled_area:
+        if self.scale < 0.15 * scaled_area:
 
             max_comp = 102
-            full_scale = 0.05 * scaled_area
-            zero_scale = 0.10 * scaled_area
+            full_scale = 0.10 * scaled_area
+            zero_scale = 0.15 * scaled_area
             comp = max_comp * min(max((zero_scale - self.scale) / (zero_scale - full_scale), 0), 1)
             color = '#' + ("{0:02x}".format(int(round(comp)))) * 3
 
@@ -506,6 +526,7 @@ class MapWidget(QtGui.QWidget):
 
         self.map_center_x += (new_size.width() - old_size.width()) / 2.
         self.map_center_y += (new_size.height() - old_size.height()) / 2.
+        self._hideLoading()
 
         self.initUI()
 
@@ -580,6 +601,18 @@ class MapWidget(QtGui.QWidget):
         self.drawMap()
         self._checkStations(e)
         self.update()
+
+    def saveProjection(self, config):
+        map_center_x = self.map_center_x + (self.default_width  - self.width() ) / 2.
+        map_center_y = self.map_center_y + (self.default_height - self.height()) / 2.
+
+        if not config.has_section('map'):
+            config.add_section('map')
+        config.set('map', 'proj', self.mapper.getProjection())
+        config.set('map', 'std_lon', self.mapper.getLambda0())
+        config.set('map', 'scale', self.scale)
+        config.set('map', 'center_x', map_center_x)
+        config.set('map', 'center_y', map_center_y)
 
     def _showLoading(self):
         self.load_readout.move(10, self.height() - 25)
