@@ -323,12 +323,21 @@ class MainWindow(QWidget):
         self.close()
 
     def openFile(self):
-        self.home_path = expanduser('~')
-        link, _ = QFileDialog.getOpenFileName(self, 'Open file', self.home_path)
+        if self.config.has_section('archive'):
+            path = self.config.get('archive', 'path')
+        else:
+            path = expanduser('~')
+
+        link, _ = QFileDialog.getOpenFileName(self, 'Open file', path)
         if link == '':
             return
         else:
             self.link = link
+
+        path, _ = os.path.split(link)
+        if not self.config.has_section('archive'):
+            self.config.add_section('archive')
+        self.config.set('archive', 'path', path)
 
         self.skewApp(archive=True)
 
