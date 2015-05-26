@@ -566,8 +566,6 @@ class plotSkewT(backgroundSkewT):
         tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
         dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
 
-#       trans_inv = self.transform.inverted()[0]
-#       trans_ev_x, trans_ev_y = trans_inv.map(e.x(), e.y())
         trans_x = (e.x() - self.originx) * self.scale
         trans_y = (e.y() - self.originy) * self.scale
 
@@ -592,9 +590,9 @@ class plotSkewT(backgroundSkewT):
             else:
                 # They were both the same distance away (probably a saturated profile).  If the click
                 #   was to the left, take the dewpoint, if it was to the right, take the temperature.
-                idx = np.argmin(np.abs(prof_ys - trans_ev_y))
+                idx = np.argmin(np.abs(prof_ys - trans_y))
                 prof_x = self.tmpc_to_pix(self.tmpc[idx], self.pres[idx])
-                if trans_ev_x < prof_x:
+                if trans_x < prof_x:
                     prof_name = 'dwpc'
                 else:
                     prof_name = 'tmpc'
