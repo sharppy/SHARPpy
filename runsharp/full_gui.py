@@ -198,9 +198,6 @@ class Picker(QWidget):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
 
-        ## set the window title
-        self.setWindowTitle('SHARPpy Sounding Picker')
-
         self.view = self.create_map_view()
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
@@ -584,7 +581,10 @@ class Main(QMainWindow):
         self.picker = Picker(self.config)
         self.setCentralWidget(self.picker)
         self.createMenuBar()
-
+        
+        ## set the window title
+        self.setWindowTitle('SHARPpy Sounding Picker')
+        
         self.show()
         self.raise_()
 
