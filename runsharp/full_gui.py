@@ -160,16 +160,13 @@ class progress(QObject):
 # Create an application
 app = QApplication([])
 
-class MainWindow(QWidget):
+class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
 
     async = AsyncThreads()
 
-    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
-    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
-
-    def __init__(self, **kwargs):
+    def __init__(self, config, **kwargs):
         """
         Construct the main window and handle all of the
         necessary events. This window serves as the SHARPpy
@@ -177,12 +174,9 @@ class MainWindow(QWidget):
         which sounding profile(s) to view.
         """
 
-        super(MainWindow, self).__init__(**kwargs)
+        super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
-
-        ## All of these variables get set/reset by the various menus in the GUI
-        self.config = ConfigParser.RawConfigParser()
-        self.config.read(MainWindow.cfg_file_name)
+        self.config = config
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
@@ -250,7 +244,7 @@ class MainWindow(QWidget):
         self.map_dropdown = self.dropdown_menu(zip(*projs)[1])
         self.map_dropdown.setCurrentIndex(proj_idx)
 
-        self.run_dropdown = self.dropdown_menu([ t.strftime(MainWindow.run_format) for t in times ])
+        self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
         self.run_dropdown.setCurrentIndex(times.index(self.run))
 
         ## connect the click actions to functions that do stuff
@@ -286,93 +280,6 @@ class MainWindow(QWidget):
         self.layout.addWidget(self.left_data_frame, 0, 0, 1, 1)
         self.layout.addWidget(self.right_map_frame, 0, 1, 1, 1)
         self.left_data_frame.setMaximumWidth(280)
-
-        self.menuBar()
-
-    def keyPressEvent(self, e):
-        if e.matches(QKeySequence.Open):
-            self.openFile()
-
-        if e.matches(QKeySequence.Quit):
-            self.exitApp() 
-
-    def menuBar(self):
-
-        self.bar = QMenuBar()
-        self.filemenu = self.bar.addMenu("File")
-
-        opendata = QAction("Open", self, shortcut=QKeySequence("Ctrl+O"))
-        opendata.triggered.connect(self.openFile)
-        self.filemenu.addAction(opendata)
-
-        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
-        exit.triggered.connect(self.exitApp)        
-        self.filemenu.addAction(exit)
-
-        pref = QAction("Preferences", self)
-        self.filemenu.addAction(pref)
-
-        self.helpmenu = self.bar.addMenu("Help")
-
-        about = QAction("About", self)
-        about.triggered.connect(self.aboutbox)
-
-        self.helpmenu.addAction(about)
-
-    def exitApp(self):
-        self.close()
-
-    def openFile(self):
-        if self.config.has_section('archive'):
-            path = self.config.get('archive', 'path')
-        else:
-            path = expanduser('~')
-
-        link, _ = QFileDialog.getOpenFileName(self, 'Open file', path)
-        if link == '':
-            return
-        else:
-            self.link = link
-
-        path, _ = os.path.split(link)
-        if not self.config.has_section('archive'):
-            self.config.add_section('archive')
-        self.config.set('archive', 'path', path)
-
-        self.skewApp(archive=True)
-
-    def aboutbox(self):
-
-        cur_year = date.datetime.utcnow().year
-        msgBox = QMessageBox()
-        str = """
-        SHARPpy v%s %s
-
-        Sounding and Hodograph Analysis and Research
-        Program for Python
-
-        (C) 2014-%d by Patrick Marsh, John Hart,
-        Kelton Halbert, Greg Blumberg, and Tim Supinie.
-
-        SHARPPy is a collection of open source sounding
-        and hodograph analysis routines, a sounding
-        plotting package, and an interactive application
-        for analyzing real-time soundings all written in
-        Python. It was developed to provide the
-        atmospheric science community a free and
-        consistent source of routines for convective
-        indices. SHARPPy is constantly updated and
-        vetted by professional meteorologists and
-        climatologists within the scientific community to
-        help maintain a standard source of sounding
-        routines.
-
-        Website: http://sharppy.github.io/SHARPpy/
-        Contact: sharppy.project@gmail.com
-        Contribute: https://github.com/sharppy/SHARPpy/
-        """ % (__version__, __version_name__, cur_year)
-        msgBox.setText(str)
-        msgBox.exec_()
 
     def create_map_view(self):
         """
@@ -434,7 +341,7 @@ class MainWindow(QWidget):
             self.all_profs.setEnabled(True)
             self.date_label.setEnabled(True)
             for fh in fcst_hours:
-                fcst_str = (self.run + date.timedelta(hours=fh)).strftime(MainWindow.date_format) + "   (F%03d)" % fh
+                fcst_str = (self.run + date.timedelta(hours=fh)).strftime(Picker.date_format) + "   (F%03d)" % fh
                 timelist.append(fcst_str)
         else:
             self.profile_list.setDisabled(True)
@@ -467,7 +374,7 @@ class MainWindow(QWidget):
                 self.run = times[-1]
 
             for data_time in times:
-                self.run_dropdown.addItem(data_time.strftime(MainWindow.run_format))
+                self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
 
             self.run_dropdown.update()
             self.run_dropdown.setCurrentIndex(times.index(self.run))
@@ -531,7 +438,7 @@ class MainWindow(QWidget):
         """
         Get the user's run hour selection for the model
         """
-        self.run = date.datetime.strptime(self.run_dropdown.currentText(), MainWindow.run_format)
+        self.run = date.datetime.strptime(self.run_dropdown.currentText(), Picker.run_format)
         self.view.setCurrentTime(self.run)
         self.update_list()
 
@@ -564,7 +471,7 @@ class MainWindow(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def skewApp(self, archive=False):
+    def skewApp(self, filename=None):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -575,17 +482,14 @@ class MainWindow(QWidget):
         dates = []
         failure = False
 
-#       items = [ self.profile_list.item(idx).text() for idx in self.prof_idx ]
-#       fhours = [ item.split("   ")[1].strip("()") if "   " in item else None for item in items ]
-
         exc = ""
 
         ## if the profile is an archived file, load the file from
         ## the hard disk
-        if archive:
+        if filename is not None:
             model = "Archive"
             try:
-                profs, dates, stn_id = self.loadArchive()
+                profs, dates, stn_id = self.loadArchive(filename)
                 disp_name = stn_id
                 prof_idx = range(len(dates))
             except Exception as e:
@@ -596,7 +500,6 @@ class MainWindow(QWidget):
 
             run = None
             fhours = None
-
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
@@ -630,18 +533,18 @@ class MainWindow(QWidget):
                 run=run, idx=prof_idx, fhour=fhours, cfg=self.config)
             self.skew.show()
 
-    def loadArchive(self):
+    def loadArchive(self, filename):
         """
         Get the archive sounding based on the user's selections.
         """
 
         try:
-            dec = SPCDecoder(self.link)
+            dec = SPCDecoder(filename)
         except:
             try:
-                dec = BufDecoder(self.link)
+                dec = BufDecoder(filename)
             except:
-                raise IOError("Could not figure out the format of '%s'!" % self.link)
+                raise IOError("Could not figure out the format of '%s'!" % filename)
 
         prof = dec.getProfiles()
         dates = dec.getProfileTimes()
@@ -649,10 +552,7 @@ class MainWindow(QWidget):
 
         return prof, dates, stn_id
 
-    def closeEvent(self, e):
-        self.config.write(open(MainWindow.cfg_file_name, 'w'))
-
-@progress(MainWindow.async)
+@progress(Picker.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
 
     if __text__ is not None:
@@ -670,8 +570,112 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
 
     return profs, dates
 
+class Main(QMainWindow):
+    HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
+
+    def __init__(self):
+        super(Main, self).__init__()
+
+        ## All of these variables get set/reset by the various menus in the GUI
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read(Main.cfg_file_name)
+
+        self.__initUI()
+
+    def __initUI(self):
+        self.picker = Picker(self.config)
+        self.setCentralWidget(self.picker)
+        self.createMenuBar()
+
+        self.show()
+        self.raise_()
+
+    def createMenuBar(self):
+        bar = self.menuBar()
+        filemenu = bar.addMenu("File")
+
+        opendata = QAction("Open", self, shortcut=QKeySequence("Ctrl+O"))
+        opendata.triggered.connect(self.openFile)
+        filemenu.addAction(opendata)
+
+        exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
+        exit.triggered.connect(self.exitApp)        
+        filemenu.addAction(exit)
+
+        pref = QAction("Preferences", self)
+        filemenu.addAction(pref)
+
+        helpmenu = bar.addMenu("Help")
+
+        about = QAction("About", self)
+        about.triggered.connect(self.aboutbox)
+
+        helpmenu.addAction(about)
+
+    def exitApp(self):
+        self.close()
+
+    def openFile(self):
+        if self.config.has_section('archive'):
+            path = self.config.get('archive', 'path')
+        else:
+            path = expanduser('~')
+
+        link, _ = QFileDialog.getOpenFileName(self, 'Open file', path)
+
+        if link == '':
+            return
+
+        path, _ = os.path.split(link)
+        if not self.config.has_section('archive'):
+            self.config.add_section('archive')
+        self.config.set('archive', 'path', path)
+
+        self.picker.skewApp(filename=link)
+
+    def aboutbox(self):
+        cur_year = date.datetime.utcnow().year
+        msgBox = QMessageBox()
+        str = """
+        SHARPpy v%s %s
+
+        Sounding and Hodograph Analysis and Research
+        Program for Python
+
+        (C) 2014-%d by Patrick Marsh, John Hart,
+        Kelton Halbert, Greg Blumberg, and Tim Supinie.
+
+        SHARPPy is a collection of open source sounding
+        and hodograph analysis routines, a sounding
+        plotting package, and an interactive application
+        for analyzing real-time soundings all written in
+        Python. It was developed to provide the
+        atmospheric science community a free and
+        consistent source of routines for convective
+        indices. SHARPPy is constantly updated and
+        vetted by professional meteorologists and
+        climatologists within the scientific community to
+        help maintain a standard source of sounding
+        routines.
+
+        Website: http://sharppy.github.io/SHARPpy/
+        Contact: sharppy.project@gmail.com
+        Contribute: https://github.com/sharppy/SHARPpy/
+        """ % (__version__, __version_name__, cur_year)
+        msgBox.setText(str)
+        msgBox.exec_()
+
+    def keyPressEvent(self, e):
+        if e.matches(QKeySequence.Open):
+            self.openFile()
+
+        if e.matches(QKeySequence.Quit):
+            self.exitApp()
+
+    def closeEvent(self, e):
+        self.config.write(open(Main.cfg_file_name, 'w'))
+
 if __name__ == '__main__':
-    win = MainWindow()
-    win.show()
-    win.setFocus()
+    win = Main()
     sys.exit(app.exec_())
