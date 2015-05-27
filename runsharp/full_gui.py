@@ -157,9 +157,6 @@ class progress(QObject):
         self._prog_text = text
         self._progress_dialog.setLabelText(text)
 
-# Create an application
-app = QApplication([])
-
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
@@ -677,5 +674,7 @@ class Main(QMainWindow):
         self.config.write(open(Main.cfg_file_name, 'w'))
 
 if __name__ == '__main__':
+    # Create an application
+    app = QApplication([])
     win = Main()
     sys.exit(app.exec_())
