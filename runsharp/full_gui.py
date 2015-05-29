@@ -12,7 +12,7 @@ else:
 
 sys.path.insert(0, os.path.normpath(os.path.join(os.path.expanduser("~"), ".sharppy")))
 
-from sharppy.viz import SkewApp, MapWidget 
+from sharppy.viz import SPCWindow, MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
@@ -523,7 +523,7 @@ class Picker(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, model, location=disp_name,
+            self.skew = SPCWindow(profs, dates, model, location=disp_name,
                 run=run, idx=prof_idx, fhour=fhours, cfg=self.config)
             self.skew.show()
 

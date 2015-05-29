@@ -16,7 +16,7 @@ from os.path import expanduser
 import os
 from sharppy.version import __version__, __version_name__
 
-class SkewApp(QWidget):
+class SPCWidget(QWidget):
     """
     This will create the full SPC window, handle the organization
     of the insets, and handle all click/key events and features.
@@ -44,7 +44,7 @@ class SkewApp(QWidget):
 
     def __init__(self, profs, dates, model, **kwargs):
 
-        super(SkewApp, self).__init__()
+        super(SPCWidget, self).__init__()
         """
         """
         ## these are the keyword arguments used to define what
@@ -91,7 +91,7 @@ class SkewApp(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        insets = sorted(SkewApp.inset_names.items(), key=lambda i: i[1])
+        insets = sorted(SPCWidget.inset_names.items(), key=lambda i: i[1])
         inset_ids, inset_names = zip(*insets)
         self.available_insets = inset_ids
         self.left_inset = self.config.get('insets', 'left_inset')
@@ -103,14 +103,6 @@ class SkewApp(QWidget):
 
         ## initialize the rest of the window attributes, layout managers, etc
 
-        ## handle the attribute of the main window
-        if platform.system() == 'Windows':
-            self.setGeometry(10,30,1180,800)
-        else:
-            self.setGeometry(0, 0, 1180, 800)
-        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
-        title += 'in Python'
-        self.setWindowTitle(title)
         self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
         ## set the the whole window's layout manager
         self.grid = QGridLayout()
@@ -283,7 +275,7 @@ class SkewApp(QWidget):
         :return:
         """
 
-        for inset, inset_gen in SkewApp.inset_generators.iteritems():
+        for inset, inset_gen in SPCWidget.inset_generators.iteritems():
             self.insets[inset] = inset_gen(self.prof)
 
 
@@ -417,35 +409,20 @@ class SkewApp(QWidget):
         self.grid.addWidget(self.sound, 0, 0, 3, 1)
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
-    def keyPressEvent(self, e):
-        key = e.key()
+    def advanceTime(self, direction):
         length = len(self.profs)
-        if key == Qt.Key_Right:
-            if self.current_idx != length - 1:
-                self.current_idx += 1
-            else:
-                self.current_idx = 0
-            self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', False)
-            self.updateSARS("")
-            self.insets['SARS'].clearSelection()
-            return
 
-        if key == Qt.Key_Left:
-            if self.current_idx != 0:
-                self.current_idx -= 1
-            elif self.current_idx == 0:
-                self.current_idx = length -1
-            self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', False)
-            self.updateSARS("")
-            self.insets['SARS'].clearSelection()
-            return
+        if direction > 0 and self.current_idx == length - 1:
+            self.current_idx = 0
+        elif direction < 0 and self.current_idx == 0:
+            self.current_idx = length - 1
+        else:
+            self.current_idx += direction
 
-        if e.matches(QKeySequence.Save):
-            # Save an image
-            self.saveimage()
-            return
+        self.parcel_types = self.convective.pcl_types
+        self.updateProfs(self.profs[self.current_idx], 'none', False)
+        self.updateSARS("")
+        self.insets['SARS'].clearSelection()
 
     def closeEvent(self, e):
         self.sound.closeEvent(e)
@@ -459,7 +436,7 @@ class SkewApp(QWidget):
         for inset in self.available_insets:
             if inset not in exclude:
                 inset_action = QAction(self)
-                inset_action.setText(SkewApp.inset_names[inset])
+                inset_action.setText(SPCWidget.inset_names[inset])
                 inset_action.setData(inset)
                 inset_action.setCheckable(True)
                 inset_action.triggered.connect(self.swapInset)
@@ -467,7 +444,6 @@ class SkewApp(QWidget):
                 self.popupmenu.addAction(a)
 
     def showCursorMenu(self, pos):
-
         self.makeInsetMenu(self.left_inset, self.right_inset)
         if self.childAt(pos.x(), pos.y()) is self.right_inset_ob:
             self.inset_to_swap = "RIGHT"
@@ -492,7 +468,7 @@ class SkewApp(QWidget):
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()
-            self.insets[self.left_inset] = SkewApp.inset_generators[self.left_inset](self.prof)
+            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset](self.prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -507,7 +483,7 @@ class SkewApp(QWidget):
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
             self.right_inset_ob.deleteLater()
-            self.insets[self.right_inset] = SkewApp.inset_generators[self.right_inset](self.prof)
+            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset](self.prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
@@ -520,3 +496,53 @@ class SkewApp(QWidget):
 
         self.setFocus()
         self.update()
+
+class SPCWindow(QMainWindow):
+    def __init__(self, profs, dates, model, **kwargs):
+        super(SPCWindow, self).__init__()
+
+        self.__initUI(profs, dates, model, **kwargs)
+
+    def __initUI(self, profs, dates, model, **kwargs):
+        self.spc_widget = SPCWidget(profs, dates, model, **kwargs)
+        self.setCentralWidget(self.spc_widget)
+
+        self.createMenuBar()
+
+        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
+        title += 'in Python'
+        self.setWindowTitle(title)
+
+        ## handle the attribute of the main window
+        if platform.system() == 'Windows':
+            self.setGeometry(10,30,1180,800)
+        else:
+            self.setGeometry(0, 0, 1180, 800)
+
+        self.show()
+        self.raise_()
+
+    def createMenuBar(self):
+        bar = self.menuBar()
+        filemenu = bar.addMenu("File")
+
+        saveimage = QAction("Save Image", self, shortcut=QKeySequence("Ctrl+S"))
+        saveimage.triggered.connect(self.spc_widget.saveimage)
+        filemenu.addAction(saveimage)
+
+        savetext = QAction("Save Text", self)
+        filemenu.addAction(savetext)
+
+    def keyPressEvent(self, e):
+
+        if e.key() == Qt.Key_Left:
+            self.spc_widget.advanceTime(-1)
+        elif e.key() == Qt.Key_Right:
+            self.spc_widget.advanceTime(1)
+        elif e.matches(QKeySequence.Save):
+            # Save an image
+            self.spc_widget.saveimage()
+            return
+
+    def closeEvent(self, e):
+        self.spc_widget.closeEvent(e)
