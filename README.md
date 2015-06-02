@@ -9,15 +9,15 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 **Table of Contents**
 
 - [Developer Requests](#developer-requests)
-- Installing SHARPpy
-- Running the SHARPpy GUI
-- Using the GUI
-    - Available Insets
-    - Lifting Parcels
-- Known GUI Issues
-- Adding Custom Data Sources
-- Scripting with SHARPpy
-- SHARPpy Development Team
+- [Installing SHARPpy](#installing-sharppy)
+- [Running the SHARPpy GUI](#running-the-sharppy-gui)
+- [Using the GUI](#using-the-gui)
+    - [Available Insets](#available-insets)
+    - [Lifting Parcels](#lifting-parcels)
+- [Known GUI Issues](#known-gui-issues)
+- [Adding Custom Data Sources](#adding-custom-data-sources)
+- [Scripting with SHARPpy](#scripting-with-sharppy)
+- [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
 #####Developer Requests:
