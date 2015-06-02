@@ -78,14 +78,6 @@ To run the SHARPpy GUI and interact with real-time observed and forecast soundin
 As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
 
 =======================================================================
-### Scripting with SHARPpy
-
-To learn more about interacting with the SHARPpy libraries using the Python
-programming language, see the tutorial listed in tutorials/ and check out the link:
-
-http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
-
-=======================================================================
 
 ### Using the GUI
 
@@ -155,6 +147,64 @@ Known Issues:
 - The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
 - SHARPpy will not work with QT 4.8.6.0 on Linux.  There is a bug in the QT package affects the ability of the GUI to render.  UPDATE: This bug has been fixed by a new release from QT (Noted 4/24/2015).
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
+
+=======================================================================
+### Adding Custom Data Sources
+
+To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
+
+##### 1. Make a new XML file.
+The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<sourcelist>
+    <datasource name="My Data Source" ensemble="false">
+        <outlet name="My Server" url="http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf" format="bufkit" >
+            <time range="24" delta="1" cycle="6" offset="0" delay="2" archive="24"/>
+            <points csv="mydatasource.csv" />
+        </outlet>
+    </datasource>
+</sourcelist>
+```
+
+For the `outlet` tag:
+* `name`: A name for the data source outlet
+* `url`: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:
+  * `date`: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).
+  * `cycle`: The current cycle hour in HHZ format (e.g. 00Z).
+  * `srcid`: The source's profile ID (will be filled in with the same column from the CSV file; see below).
+* `format`: The format of the data source.  Currently, the only supported formats are `bufkit` for model profiles and `spc` for observed profiles. Others will be available in the future.
+
+For the `time` tag:
+* `range`: The forecast range in hours for the data source. Observed data sources should set this to 0.
+* `delta`: The time step in hours between profiles. Observed data sources should set this to 0.
+* `cycle`: The amount of time in hours between cycles for the data source.
+* `offset`: The time offset in hours of the cycles from 00 UTC.
+* `delay`: The time delay in hours between the cycle and the data becoming available.
+* `archive`: The length of time in hours that data are kept on the server.
+These should all be integer numbers of hours; support for sub-hourly data is forthcoming.
+
+##### 2. Make a new CSV file.
+The CSV file contains information about where your profiles are located. It should look like the following:
+```
+icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
+KTOP,TOP,72456,Topeka/Billard Muni,KS,US,39.08,-95.62,268,3,ktop
+KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
+...
+```
+The only columns that are strictly required are the `lat`, `lon`, and `srcid` columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.
+
+##### 3. Run setup.py
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Datasources" drop-down menu.
+
+=======================================================================
+### Scripting with SHARPpy
+
+To learn more about interacting with the SHARPpy libraries using the Python
+programming language, see the tutorial listed in tutorials/ and check out the link:
+
+http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
 
 =======================================================================
 
