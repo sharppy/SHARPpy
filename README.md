@@ -153,7 +153,7 @@ Known Issues:
 
 To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
 
-##### 1. Make a new XML file.
+##### 1. Make a new XML file
 The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
 
 ```xml
@@ -183,10 +183,11 @@ For the `time` tag:
 * `offset`: The time offset in hours of the cycles from 00 UTC.
 * `delay`: The time delay in hours between the cycle and the data becoming available.
 * `archive`: The length of time in hours that data are kept on the server.
+
 These should all be integer numbers of hours; support for sub-hourly data is forthcoming.
 
-##### 2. Make a new CSV file.
-The CSV file contains information about where your profiles are located. It should look like the following:
+##### 2. Make a new CSV file
+The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:
 ```
 icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
 KTOP,TOP,72456,Topeka/Billard Muni,KS,US,39.08,-95.62,268,3,ktop
