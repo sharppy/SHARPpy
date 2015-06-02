@@ -168,7 +168,8 @@ Known Issues:
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
 =======================================================================
-### Adding Custom Data Sources <sup>[[Return to Top]](#sharppy)</sup>
+### Adding Custom Data Sources
+<sup>[[Return to Top]](#sharppy)</sup>
 
 To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
 
