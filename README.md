@@ -196,8 +196,8 @@ KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
 ```
 The only columns that are strictly required are the `lat`, `lon`, and `srcid` columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.
 
-##### 3. Run setup.py
-This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Datasources" drop-down menu.
+##### 3. Run `python setup.py install`
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.
 
 =======================================================================
 ### Scripting with SHARPpy
