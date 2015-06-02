@@ -46,7 +46,7 @@ has helped your work at this address so we may track the success of the project:
 https://github.com/sharppy/SHARPpy/issues
 
 =======================================================================
-### Installing SHARPpy
+### Installing SHARPpy <sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running SHARPpy requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
 
@@ -81,7 +81,7 @@ After installing the package, you can run the SHARPpy GUI and interact with the 
 A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
 
 =======================================================================
-### Running the SHARPpy GUI
+### Running the SHARPpy GUI <sup>[[Return to Top]](#sharppy)</sup>
 
 To run the SHARPpy GUI and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
@@ -91,7 +91,7 @@ As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or 
 
 =======================================================================
 
-### Using the GUI
+### Using the GUI <sup>[[Return to Top]](#sharppy)</sup>
 
 To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
@@ -152,7 +152,7 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 
 =======================================================================
 
-### Known GUI Issues
+### Known GUI Issues <sup>[[Return to Top]](#sharppy)</sup>
 
 Known Issues:
 - Text can sometimes overlap. (Windows)
@@ -161,7 +161,7 @@ Known Issues:
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
 =======================================================================
-### Adding Custom Data Sources
+### Adding Custom Data Sources <sup>[[Return to Top]](#sharppy)</sup>
 
 To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
 
@@ -212,7 +212,7 @@ The only columns that are strictly required are the `lat`, `lon`, and `srcid` co
 This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.
 
 =======================================================================
-### Scripting with SHARPpy
+### Scripting with SHARPpy <sup>[[Return to Top]](#sharppy)</sup>
 
 To learn more about interacting with the SHARPpy libraries using the Python
 programming language, see the tutorial listed in tutorials/ and check out the link:
@@ -221,7 +221,7 @@ http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy
 
 =======================================================================
 
-### SHARPpy Development Team
+### SHARPpy Development Team <sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
