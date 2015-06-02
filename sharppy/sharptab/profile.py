@@ -900,3 +900,4 @@ class ConvectiveProfile(BasicProfile):
         self.sig_severe = params.sig_severe(self)
         self.dcape, self.dpcl_ttrace, self.dpcl_ptrace = params.dcape(self)
         self.drush = thermo.ctof(self.dpcl_ttrace[-1])
+        self.mburst = params.mburst(self)

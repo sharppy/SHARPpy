@@ -459,7 +459,21 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
 
+        #odify_sfc = QAction(self)
+        #modify_sfc.setText("Modify Surface")
+        #modify_sfc.setCheckable(True)
+        #modify_sfc.setEnabled(False)
+        #modify_sfc.triggered.connect(self.setReadoutCursor)
+        #self.popupmenu.addAction(modify_sfc)
+
+        #self.interp_prof = QAction(self)
+        #self.interp_prof.setText("Interpolate Profile")
+        #self.interp_prof.setCheckable(True)
+        #self.interp_prof.triggered.connect(self.interpProfile)
+        #self.popupmenu.addAction(self.interp_prof)
+
         self.popupmenu.addSeparator()
+
         reset = QAction(self)
         reset.setText("Reset Skew-T")
         reset.triggered.connect(lambda: self.reset.emit('skew'))
@@ -511,7 +525,20 @@ class plotSkewT(backgroundSkewT):
         self.plotData()
         self.update()
         return
-    
+
+    def interpProfile(self):
+        # Step 1, interpolate the profile to 25 mb pressure levels
+        new_pres = np.arange(self.prof.pres[self.prof.sfc], self.prof.pres[self.prof.top], -25)
+        new_dwp = tab.interp.dwpt(self.prof, new_pres)
+        new_tmp = tab.interp.temp(self.prof, new_pres)
+        new_hght = tab.interp.hght(self.prof, new_pres)
+        new_wdir, new_wspd = tab.interp.vec(self.prof, new_pres)
+        new_prof = tab.profile.create_profile(pres=new_pres, hght=new_hght, tmpc=new_tmp, dwpc=new_dwp, wspd=new_wspd, wdir=new_wdir, profile='convective', missing=self.prof.missing)
+        self.interp_prof.setEnabled(False)
+
+        # Step 2, emit the signal that a new profile has been created
+        self.updated.emit(new_prof, 'skew', True, self.pcl)
+
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
             self.track_cursor = not self.track_cursor
