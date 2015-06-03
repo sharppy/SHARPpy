@@ -4,13 +4,14 @@ import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import interp, utils
 from sharppy.sharptab.constants import *
-
+import warnings
 
 __all__ = ['mean_wind', 'mean_wind_npw', 'mean_wind_old', 'mean_wind_npw_old']
 __all__ += ['sr_wind', 'sr_wind_npw', 'wind_shear', 'helicity', 'max_wind']
 __all__ += ['non_parcel_bunkers_motion', 'corfidi_mcs_motion', 'mbe_vectors']
 __all__ += ['non_parcel_bunkers_motion_experimental', 'critical_angle']
 
+warnings.warn("Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)")
 
 def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
     '''

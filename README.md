@@ -6,9 +6,22 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 **REMINDER: You must re-run the "python setup.py install" script for updates to take hold***
 
+**Table of Contents**
+
+- [Developer Requests](#developer-requests)
+- [Installing SHARPpy](#installing-sharppy)
+- [Running the SHARPpy GUI](#running-the-sharppy-gui)
+- [Using the GUI](#using-the-gui)
+    - [Available Insets](#available-insets)
+    - [Lifting Parcels](#lifting-parcels)
+- [Known GUI Issues](#known-gui-issues)
+- [Adding Custom Data Sources](#adding-custom-data-sources)
+- [Scripting with SHARPpy](#scripting-with-sharppy)
+- [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
 #####Developer Requests:
+<sup>[[Return to Top]](#sharppy)</sup>
 
 1.) Many people have put an immeasurable amount of time into developing this software package. 
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
@@ -35,6 +48,7 @@ https://github.com/sharppy/SHARPpy/issues
 
 =======================================================================
 ### Installing SHARPpy
+<sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running SHARPpy requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
 
@@ -70,6 +84,7 @@ A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/
 
 =======================================================================
 ### Running the SHARPpy GUI
+<sup>[[Return to Top]](#sharppy)</sup>
 
 To run the SHARPpy GUI and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
@@ -78,16 +93,9 @@ To run the SHARPpy GUI and interact with real-time observed and forecast soundin
 As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
 
 =======================================================================
-### Scripting with SHARPpy
-
-To learn more about interacting with the SHARPpy libraries using the Python
-programming language, see the tutorial listed in tutorials/ and check out the link:
-
-http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
-
-=======================================================================
 
 ### Using the GUI
+<sup>[[Return to Top]](#sharppy)</sup>
 
 To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
@@ -104,6 +112,7 @@ After all profiles have been generated, a window should show up with your desire
 9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format similar to what is seen on the SPC soundings page.  See the OAX file in the tutorials folder for an example.  
 
 #### Available Insets
+<sup>[[Return to Top]](#sharppy)</sup>
 
 1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
 2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
@@ -123,6 +132,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 6. DARK BROWN
 
 #### Lifting Parcels
+<sup>[[Return to Top]](#sharppy)</sup>
 
 By default, soundings opened up in the GUI show these 4 parcels in the lower left inset window:
 
@@ -149,6 +159,7 @@ Clicking on any of the 4 parcels in the inset will change the a) the parcel trac
 =======================================================================
 
 ### Known GUI Issues
+<sup>[[Return to Top]](#sharppy)</sup>
 
 Known Issues:
 - Text can sometimes overlap. (Windows)
@@ -157,8 +168,70 @@ Known Issues:
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
 =======================================================================
+### Adding Custom Data Sources
+<sup>[[Return to Top]](#sharppy)</sup>
+
+To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
+
+##### 1. Make a new XML file
+The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<sourcelist>
+    <datasource name="My Data Source" ensemble="false">
+        <outlet name="My Server" url="http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf" format="bufkit" >
+            <time range="24" delta="1" cycle="6" offset="0" delay="2" archive="24"/>
+            <points csv="mydatasource.csv" />
+        </outlet>
+    </datasource>
+</sourcelist>
+```
+
+For the `outlet` tag:
+* `name`: A name for the data source outlet
+* `url`: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:
+  * `date`: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).
+  * `cycle`: The current cycle hour in HHZ format (e.g. 00Z).
+  * `srcid`: The source's profile ID (will be filled in with the same column from the CSV file; see below).
+* `format`: The format of the data source.  Currently, the only supported formats are `bufkit` for model profiles and `spc` for observed profiles. Others will be available in the future.
+
+For the `time` tag:
+* `range`: The forecast range in hours for the data source. Observed data sources should set this to 0.
+* `delta`: The time step in hours between profiles. Observed data sources should set this to 0.
+* `cycle`: The amount of time in hours between cycles for the data source.
+* `offset`: The time offset in hours of the cycles from 00 UTC.
+* `delay`: The time delay in hours between the cycle and the data becoming available.
+* `archive`: The length of time in hours that data are kept on the server.
+
+These should all be integer numbers of hours; support for sub-hourly data is forthcoming.
+
+##### 2. Make a new CSV file
+The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:
+```
+icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
+KTOP,TOP,72456,Topeka/Billard Muni,KS,US,39.08,-95.62,268,3,ktop
+KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
+...
+```
+The only columns that are strictly required are the `lat`, `lon`, and `srcid` columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.
+
+##### 3. Run `python setup.py install`
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.
+
+=======================================================================
+### Scripting with SHARPpy
+<sup>[[Return to Top]](#sharppy)</sup>
+
+To learn more about interacting with the SHARPpy libraries using the Python
+programming language, see the tutorial listed in tutorials/ and check out the link:
+
+http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
+
+=======================================================================
 
 ### SHARPpy Development Team
+<sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
