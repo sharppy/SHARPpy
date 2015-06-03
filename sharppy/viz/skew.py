@@ -343,8 +343,9 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile, str, bool, tab.params.Parcel)
-    reset = Signal(str)
+    modified = Signal(int, dict)
+    parcel = Signal(tab.params.Parcel)
+    reset = Signal(list)
 
     def __init__(self, prof, **kwargs):
         super(plotSkewT, self).__init__(plot_omega=(prof.omeg.count() != 0))
@@ -472,7 +473,7 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
-        reset.triggered.connect(lambda: self.reset.emit('skew'))
+        reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
         self.popupmenu.addAction(reset)
 
     def liftparcellevel(self, i):
@@ -481,7 +482,7 @@ class plotSkewT(backgroundSkewT):
         dwp = tab.interp.dwpt(self.prof, pres)
         if i == 0:
 
-            self.prof.usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
+            usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
         else:
             if i == -9999:
                 depth, result = QInputDialog.getText(None, "Parcel Depth (" + str(int(pres)) + "to __)",\
@@ -491,9 +492,9 @@ class plotSkewT(backgroundSkewT):
                 except:
                     return
             user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
-            self.prof.usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
+            usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
                                           dwpc=user_initpcl.dwpc)
-        self.updated.emit(self.prof, 'none', False, self.prof.usrpcl) # Emit a signal that a new profile has been created
+        self.parcel.emit(usrpcl) # Emit a signal that a new profile has been created
 
     def setProf(self, prof, **kwargs):
         self.prof = prof
@@ -515,6 +516,9 @@ class plotSkewT(backgroundSkewT):
         if self.readout:
             self.updateReadout()
         self.update()
+
+    def setParcel(self, parcel):
+        pass
 
     def setDGZ(self, flag):
         self.plotdgz = flag
@@ -540,15 +544,12 @@ class plotSkewT(backgroundSkewT):
             elif prof_name == 'dwpc':
                 tmpc = min(tmpc, self.tmpc[self.drag_idx])
 
-            new_prof = prof.copy()
-            new_prof[self.drag_idx] = tmpc
-            new_prof = type(self.prof).copy(self.prof, **{prof_name:new_prof})
+            self.modified.emit(self.drag_idx, {prof_name:tmpc})
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, 'skew', True, self.pcl)
         elif self.initdrag:
             self.initdrag = False
 

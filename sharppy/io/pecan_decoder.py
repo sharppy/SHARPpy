@@ -1,5 +1,6 @@
 import numpy as np
 import sharppy.sharptab.profile as profile
+import sharppy.sharptab.prof_collection as prof_collection
 from datetime import datetime
 from sharppy.io.decoder import Decoder
 from StringIO import StringIO
@@ -28,8 +29,8 @@ class PECANDecoder(Decoder):
                 profiles[member] = [prof]
             dates.append(dt_obj)
 
-        dates = np.unique(np.asarray(dates))
-        return profiles, dates
+        prof_coll = prof_collection.ProfCollection(profiles, dates)
+        return prof_coll
 
     def _parseSection(self, section):
         parts = section.split('\n')

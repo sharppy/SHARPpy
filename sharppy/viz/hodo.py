@@ -292,8 +292,8 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile, str, bool, tab.params.Parcel)
-    reset = Signal(str)
+    modified = Signal(int, dict)
+    reset = Signal(list)
 
     def __init__(self, hght, u, v, **kwargs):
         '''
@@ -435,7 +435,7 @@ class plotHodo(backgroundHodo):
         
         reset = QAction(self)
         reset.setText("Reset Hodograph")
-        reset.triggered.connect(lambda: self.reset.emit('hodo'))
+        reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
     def setProf(self, hght, u, v, **kwargs):
@@ -703,18 +703,19 @@ class plotHodo(backgroundHodo):
         elif self.cursor_type == 'none' and (self.dragging or self.initdrag):
             u, v = self.pix_to_uv(e.x(), e.y())
 
-            new_u = self.u.copy()
-            new_v = self.v.copy()
-            new_u[self.drag_idx] = u
-            new_v[self.drag_idx] = v
+#           new_u = self.u.copy()
+#           new_v = self.v.copy()
+#           new_u[self.drag_idx] = u
+#           new_v[self.drag_idx] = v
 
-            new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
+#           new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
+
+            self.modified.emit(self.drag_idx, {'u':u, 'v':v})
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, 'hodo', True, None)
         self.initdrag = False
 
     def setBlackPen(self, qp):

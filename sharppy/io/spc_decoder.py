@@ -2,6 +2,7 @@
 import numpy as np
 
 import sharppy.sharptab.profile as profile
+import sharppy.sharptab.prof_collection as prof_collection
 from decoder import Decoder
 
 from StringIO import StringIO
@@ -45,4 +46,8 @@ class SPCDecoder(Decoder):
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
             wdir=wdir, wspd=wspd, location=location, latitude=35.)
 
-        return {'':[ prof ]}, [ datetime.strptime(time, '%y%m%d/%H%M') ]
+        prof_coll = prof_collection.ProfCollection(
+            {'':[ prof ]}, 
+            [ datetime.strptime(time, '%y%m%d/%H%M') ],
+        )
+        return prof_coll

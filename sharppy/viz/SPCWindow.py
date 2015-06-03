@@ -42,32 +42,32 @@ class SPCWidget(QWidget):
         'VROT':'EF-Scale Probs (V-Rot)',
     }
 
-    def __init__(self, profs, dates, model, **kwargs):
+    def __init__(self, prof_col, **kwargs):
 
         super(SPCWidget, self).__init__()
         """
         """
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
-        self.profs = profs
-        self.proflist = []
-        self.dates = dates
-        self.model = model
-        self.prof_idx = kwargs.get("idx")
-        self.run = kwargs.get("run")
-        self.loc = kwargs.get("location")
-        self.fhour = kwargs.get("fhour", [ None ])
+        self.prof_collections = [ prof_col ]
+#       self.profs = profs
+#       self.proflist = []
+#       self.dates = dates
+        self.model = prof_col.getMeta('model')
+        self.run = prof_col.getMeta('run')
+        self.loc = prof_col.getMeta('loc')
+        self.fhour = prof_col.getMeta('fhour') 
         self.config = kwargs.get("cfg")
         self.dgz = False
-        self.isensemble = type(self.profs[0]) == list # Is this an ensemble?
+        self.isensemble = self.prof_collections[0].isEnsemble()
         self.plot_title = ""
 
         ## these are used to display profiles
-        self.current_idx = 0
-        self.prof = profs[self.current_idx]
-        self.original_profs = self.profs[:]
-        self.modified_skew = [ False for p in self.original_profs ]
-        self.modified_hodo = [ False for p in self.original_profs ]
+#       self.current_idx = 0
+#       self.prof = profs[self.current_idx]
+#       self.original_profs = self.profs[:]
+#       self.modified_skew = [ False for p in self.original_profs ]
+#       self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
         if not self.config.has_section('insets'):
@@ -195,16 +195,19 @@ class SPCWidget(QWidget):
             return "USER"
 
     def getPlotTitle(self):
-        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
+        modified = self.prof_collections[0].isModified()
         modified_str = "; Modified" if modified else ""
 
-        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.current_idx], "%Y%m%d/%H%M")
+        date = self.prof_collections[0].getCurrentDate()
+        fhour = self.prof_collections[0].getMeta('fhour', index=True)
+
+        plot_title = self.loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if self.model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
         elif self.fhour == [ 'F000' ]:
             plot_title += "  (Observed" + modified_str + ")"
         else:
-             plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
+             plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
         return plot_title
 
     def saveimage(self):
@@ -225,42 +228,39 @@ class SPCWidget(QWidget):
         ## set the plot title that will be displayed in the Skew frame.
         self.plot_title = self.getPlotTitle()
 
-        if self.isensemble:
-            self.prof = self.profs[self.current_idx][0]
-            default_pcl = self.prof.mupcl
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
-            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                                 proflist=self.profs[self.current_idx][:], parent=self)
-        else:
-            self.prof = self.profs[self.current_idx]
-            default_pcl = self.prof.mupcl
-            self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
-                                   dgz=self.dgz, proflist=self.proflist)
-            self.sound.updated.connect(self.updateProfs)
+        profs = self.prof_collections[0].getCurrentProfs().values()
+        default_prof = self.prof_collections[0].getHighlightedProf()
+        default_pcl = default_prof.mupcl
+
+        member_profs = profs if self.isensemble else []
+
+        self.sound = plotSkewT(default_prof, pcl=default_pcl, title=self.plot_title,
+                           proflist=member_profs, dgz=self.dgz)
+        self.hodo = plotHodo(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof,
+                             proflist=member_profs, parent=self)
+
+        self.sound.parcel.connect(self.defineUserParcel)
+        if not self.isensemble:
+            self.sound.modified.connect(self.modifyProf)
             self.sound.reset.connect(self.resetProf)
-            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
-                                 proflist=self.proflist)
+
+            self.hodo.modified.connect(self.modifyProf)
+            self.hodo.reset.connect(self.resetProf)
 
         ## initialize the non-swappable insets
-        self.speed_vs_height = plotSpeed( self.prof )
+        self.speed_vs_height = plotSpeed( default_prof )
 
-        self.inferred_temp_advection = plotAdvection(self.prof)
+        self.inferred_temp_advection = plotAdvection(default_prof)
 
-
-
-        self.hodo.updated.connect(self.updateProfs)
-        self.hodo.reset.connect(self.resetProf)
-
-        self.storm_slinky = plotSlinky(self.prof, pcl=default_pcl)
-        self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
-                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
+        self.storm_slinky = plotSlinky(default_prof, pcl=default_pcl)
+        self.thetae_vs_pressure = plotGeneric(default_prof.thetae[default_prof.pres > 500.],
+                                default_prof.pres[default_prof.pres > 500.], xticks=np.arange(220,360,10),
                                  yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
 
-        self.srwinds_vs_height = plotWinds(self.prof)
-        self.watch_type = plotWatch(self.prof)
-        self.convective = plotText(self.prof, self.parcel_types)
-        self.kinematic = plotKinematics(self.prof)
+        self.srwinds_vs_height = plotWinds(default_prof)
+        self.watch_type = plotWatch(default_prof)
+        self.convective = plotText(default_prof, self.parcel_types)
+        self.kinematic = plotKinematics(default_prof)
 
         self.convective.updatepcl.connect(self.updateParcel)
 
@@ -275,85 +275,64 @@ class SPCWidget(QWidget):
         :return:
         """
 
+        profs = self.prof_collections[0].getCurrentProfs().values()
+        default_prof = self.prof_collections[0].getHighlightedProf()
+
         for inset, inset_gen in SPCWidget.inset_generators.iteritems():
-            self.insets[inset] = inset_gen(self.prof)
+            self.insets[inset] = inset_gen(default_prof)
 
 
-    @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, panel, modified):
-        if panel == 'skew':
-            self.modified_skew[self.current_idx] = modified
-        elif panel == 'hodo':
-            self.modified_hodo[self.current_idx] = modified
+    @Slot()
+    def updateProfs(self):
+ 
+        profs = self.prof_collections[0].getCurrentProfs().values()
+        default_prof = self.prof_collections[0].getHighlightedProf()
 
         self.plot_title = self.getPlotTitle()
-        if self.isensemble:
-            self.profs[self.current_idx][0] = prof[0]
-            self.prof = self.profs[self.current_idx][0]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                               brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=self.dgz)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                              proflist=self.profs[self.current_idx][:], parent=self)
-        else:
-            self.profs[self.current_idx] = prof
-            self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                               brand=self.brand, dgz=self.dgz, proflist=self.proflist)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                              proflist=self.proflist, parent=self)
 
-        self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
+        self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
+                            proflist=profs, dgz=self.dgz)
+        self.hodo.setProf(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof,
+                          proflist=profs, parent=self)
 
-        self.inferred_temp_advection.setProf(self.prof)
+        self.storm_slinky.setProf(default_prof, self.getParcelObj(default_prof, self.parcel_type))
 
-        self.speed_vs_height.setProf(self.prof)
+        self.inferred_temp_advection.setProf(default_prof)
 
-        self.srwinds_vs_height.setProf(self.prof)
+        self.speed_vs_height.setProf(default_prof)
 
-        self.thetae_vs_pressure.setProf(self.prof.thetae[self.prof.pres > 500.],
-                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
+        self.srwinds_vs_height.setProf(default_prof)
+
+        self.thetae_vs_pressure.setProf(default_prof.thetae[default_prof.pres > 500.],
+                                default_prof.pres[default_prof.pres > 500.], xticks=np.arange(220,360,10),
                                  yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
 
-        self.watch_type.setProf(self.prof)
+        self.watch_type.setProf(default_prof)
 
-        self.convective.setProf(self.prof, self.convective.pcl_types)
-        self.kinematic.setProf(self.prof)
-
-
+        self.convective.setProf(default_prof, self.convective.pcl_types)
+        self.kinematic.setProf(default_prof)
 
         for inset in self.insets.keys():
-            self.insets[inset].setProf(self.prof)
-
-    @Slot(str)
-    def resetProf(self, panel):
-        current = self.profs[self.current_idx]
-        orig = self.original_profs[self.current_idx]
-        self.proflist = []
-
-        if panel == 'hodo':
-            kwargs = {'u':orig.u, 'v':orig.v}
-        elif panel == 'skew':
-            kwargs = {'tmpc':orig.tmpc, 'dwpc':orig.dwpc}
-
-        self.profs[self.current_idx] = type(current).copy(current, **kwargs)
-
-        self.updateProfs(self.profs[self.current_idx], panel, modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
-        self.setFocus()
+            self.insets[inset].setProf(default_prof)
 
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
+
+        profs = self.prof_collections[0].getCurrentProfs().values()
+        default_prof = self.prof_collections[0].getHighlightedProf()
+
         modified_str = ""
-        self.parcel_type = self.getParcelName(self.prof, pcl)
+        self.parcel_type = self.getParcelName(default_prof, pcl)
 
         self.plot_title = self.getPlotTitle()
         if self.isensemble:
-            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
+            self.sound.setProf(default_prof, pcl=default_prof.mupcl, title=self.plot_title,
+                               proflist=profs, dgz=self.dgz)
         else:
-            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand,
-                               dgz=self.dgz, proflist=self.proflist)
+            self.sound.setProf(default_prof, pcl=pcl, title=self.plot_title,
+                               dgz=self.dgz, proflist=profs)
 
-        self.storm_slinky.setProf(self.prof, pcl=pcl)
+        self.storm_slinky.setProf(default_prof, pcl=pcl)
 
         self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
         self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
@@ -363,23 +342,40 @@ class SPCWidget(QWidget):
     @Slot(str)
     def updateSARS(self, filematch):
         if not self.isensemble:
-            self.proflist = []
-#           data = io.spc_decoder.SNDFile(filematch)
-#           matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
-#                                              tmpc=data.tmpc, dwpc=data.dwpc,
-#                                              wspd=data.wspd, wdir=data.wdir,
-#                                              profile="convective")
+
+            profs = self.prof_collections[0].getCurrentProfs().values()
+            default_prof = self.prof_collections[0].getHighlightedProf()
 
             if filematch != "":
                 dec = io.spc_decoder.SPCDecoder(filematch)
                 matchprof = dec.getProfiles()[0]
 
-                self.proflist.append(matchprof)
+                profs.append(matchprof)
 
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                           brand=self.brand, dgz=self.dgz, proflist=self.proflist)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
-                              proflist=self.proflist)
+            self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
+                           dgz=self.dgz, proflist=profs)
+            self.hodo.setProf(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof, parent=self,
+                              proflist=profs)
+
+    @Slot(tab.params.Parcel)
+    def defineUserParcel(self, parcel):
+        self.prof_collections[0].defineUserParcel(parcel)
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot(int, dict)
+    def modifyProf(self, idx, kwargs):
+        self.prof_collections[0].modify(idx, **kwargs)
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot(list)
+    def resetProf(self, args):
+        self.prof_collections[0].reset(*args)
+
+        self.updateProfs()
+        self.setFocus()
+
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -410,17 +406,10 @@ class SPCWidget(QWidget):
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
     def advanceTime(self, direction):
-        length = len(self.profs)
-
-        if direction > 0 and self.current_idx == length - 1:
-            self.current_idx = 0
-        elif direction < 0 and self.current_idx == 0:
-            self.current_idx = length - 1
-        else:
-            self.current_idx += direction
+        self.prof_collections[0].advanceTime(direction)
 
         self.parcel_types = self.convective.pcl_types
-        self.updateProfs(self.profs[self.current_idx], 'none', False)
+        self.updateProfs()
         self.updateSARS("")
         self.insets['SARS'].clearSelection()
 
@@ -498,13 +487,13 @@ class SPCWidget(QWidget):
         self.update()
 
 class SPCWindow(QMainWindow):
-    def __init__(self, profs, dates, model, **kwargs):
+    def __init__(self, prof_col, **kwargs):
         super(SPCWindow, self).__init__()
 
-        self.__initUI(profs, dates, model, **kwargs)
+        self.__initUI(prof_col, **kwargs)
 
-    def __initUI(self, profs, dates, model, **kwargs):
-        self.spc_widget = SPCWidget(profs, dates, model, **kwargs)
+    def __initUI(self, prof_col, **kwargs):
+        self.spc_widget = SPCWidget(prof_col, **kwargs)
         self.setCentralWidget(self.spc_widget)
 
         self.createMenuBar()

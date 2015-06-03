@@ -483,7 +483,7 @@ class Picker(QWidget):
         if filename is not None:
             model = "Archive"
             try:
-                profs, dates, stn_id = self.loadArchive(filename)
+                prof_collection, stn_id = self.loadArchive(filename)
                 disp_name = stn_id
                 prof_idx = range(len(dates))
             except Exception as e:
@@ -510,7 +510,7 @@ class Picker(QWidget):
                 exc = str(ret[0])
                 failure = True
             else:
-                profs, dates = ret
+                prof_collection = ret[0]
 
             run = "%02dZ" % run.hour
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
@@ -523,8 +523,11 @@ class Picker(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SPCWindow(profs, dates, model, location=disp_name,
-                run=run, idx=prof_idx, fhour=fhours, cfg=self.config)
+            prof_collection.setMeta('model', model)
+            prof_collection.setMeta('run', run)
+            prof_collection.setMeta('loc', disp_name)
+            prof_collection.setMeta('fhour', fhours)
+            self.skew = SPCWindow(prof_collection, cfg=self.config)
             self.skew.show()
 
     def loadArchive(self, filename):
@@ -540,11 +543,10 @@ class Picker(QWidget):
             except:
                 raise IOError("Could not figure out the format of '%s'!" % filename)
 
-        prof = dec.getProfiles()
-        dates = dec.getProfileTimes()
+        profs = dec.getProfiles()
         stn_id = dec.getStnId()
 
-        return prof, dates, stn_id
+        return profs, stn_id
 
 @progress(Picker.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
@@ -559,10 +561,8 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     if __text__ is not None:
         __text__.emit("Creating Profiles")
 
-    dates = dec.getProfileTimes(indexes)
-    profs = dec.getProfiles(indexes, __prog__)
-
-    return profs, dates
+    profs = dec.getProfiles(indexes=indexes)
+    return profs
 
 class Main(QMainWindow):
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
