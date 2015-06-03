@@ -456,8 +456,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
+            default_prof = self.prof_collections[0].getHighlightedProf()
             self.left_inset_ob.deleteLater()
-            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset](self.prof)
+            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset](default_prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -471,8 +472,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
+            default_prof = self.prof_collections[0].getHighlightedProf()
             self.right_inset_ob.deleteLater()
-            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset](self.prof)
+            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset](default_prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
