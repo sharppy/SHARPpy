@@ -51,5 +51,5 @@ class SPCDecoder(Decoder):
             [ datetime.strptime(time, '%y%m%d/%H%M') ],
         )
 
-        prof_coll.setMeta(loc=location)
+        prof_coll.setMeta('loc', location)
         return prof_coll

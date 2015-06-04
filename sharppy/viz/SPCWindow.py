@@ -199,12 +199,15 @@ class SPCWidget(QWidget):
         modified_str = "; Modified" if modified else ""
 
         date = self.prof_collections[0].getCurrentDate()
-        fhour = self.prof_collections[0].getMeta('fhour', index=True)
+        try:
+            fhour = self.prof_collections[0].getMeta('fhour', index=True)
+        except:
+            fhour = self.prof_collections[0].getMeta('fhour')
 
         plot_title = self.loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if self.model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
-        elif self.fhour == [ 'F000' ]:
+        elif fhour == [ 'F000' ]:
             plot_title += "  (Observed" + modified_str + ")"
         else:
              plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
