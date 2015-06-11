@@ -494,12 +494,14 @@ class Picker(QWidget):
 
             run = None
             fhours = None
+            observed = True
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -527,7 +529,7 @@ class Picker(QWidget):
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
             prof_collection.setMeta('fhour', fhours)
-            self.skew = SPCWindow(prof_collection, cfg=self.config)
+            self.skew = SPCWindow(prof_collection, cfg=self.config, observed=observed)
             self.skew.show()
 
     def loadArchive(self, filename):

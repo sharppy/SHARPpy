@@ -56,7 +56,8 @@ class SPCWidget(QWidget):
         self.model = prof_col.getMeta('model')
         self.run = prof_col.getMeta('run')
         self.loc = prof_col.getMeta('loc')
-        self.fhour = prof_col.getMeta('fhour') 
+        self.fhour = prof_col.getMeta('fhour')
+        self.isobserved = kwargs.get("observed")
         self.config = kwargs.get("cfg")
         self.dgz = False
         self.isensemble = self.prof_collections[0].isEnsemble()
@@ -207,7 +208,7 @@ class SPCWidget(QWidget):
         plot_title = self.loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if self.model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
-        elif fhour == [ 'F000' ]:
+        elif self.isobserved:
             plot_title += "  (Observed" + modified_str + ")"
         else:
              plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
