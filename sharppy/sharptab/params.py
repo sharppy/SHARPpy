@@ -2695,23 +2695,18 @@ def dcp(prof):
 
 def mburst(prof):
     '''
-        Microburst Composite
+        Microburst Composite Index
 
-        Developer unknown.
+        Formulated by Chad Entremont NWS JAN 12/7/2014
+        Code donated by Rich Thompson (SPC)
 
         Below is taken from the SPC Mesoanalysis:
         The Microburst Composite is a weighted sum of the following individual parameters: SBCAPE, SBLI,
         lapse rates, vertical totals (850-500 mb temperature difference), DCAPE, and precipitable water.
         The specific terms and weights are listed below:
 
-        SBCAPE term -> < 3100 set to 0; 3100-3999 set to 1; >= 4000 set to 2;
-        SBLI term -> > -8 set to 0; <= -8 set to 1; <= -9 set to 2; <= -10 set to 3;
-        0-3 km lapse rate term -> <= 8.4 set to 0; > 8.4 set to 1;
-        vertical totals term -> < 27 set to 0; >= 27 set to 1; >= 28 set to 2; >= 29 set to 3;
-        DCAPE term -> < 900 set to 0; >= 900 set to 1; >= 1100 set to 2; >= 1300 set to 3;
-        precipitable water term -> <= 1.5 set to -5; > 1.5 set to 0.
 
-        All six of the terms are summed to arrive at the final microburst composite value.
+        All of the terms are summed to arrive at the final microburst composite value.
         The values can be interpreted in the following manner: 3-4 infers a "slight chance" of a microburst;
         5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
         These values can also be viewed as conditional upon the existence of a storm.
@@ -2731,28 +2726,60 @@ def mburst(prof):
     tt = getattr(prof, 'totals_totals', t_totals( prof ))
     dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
     pwat = getattr(prof, 'pwat', precip_water( prof ))
+    tei_val = getattr(prof, 'tei', tei(prof))
 
-    if sbpcl.bplus < 3100:
-        sbcape_term = 0
-    elif sbpcl.bplus >= 3100 and sbpcl.bplus < 3999:
-        sbcape_term = 1
+    sfc_thetae = thermo.thetae(sbpcl.lplvals.pres, sbpcl.lplvals.tmpc, sbpcl.lplvals.dwpc)
+
+    # SFC Theta-E term
+    if thermo.ctok(sfc_thetae) >= 355:
+        te = 1
     else:
-        sbcape_term = 2
+        te = 0
 
-    if sbpcl.li5 > -8:
+    # Surface-based CAPE Term
+    if sbpcl.bplus < 2000:
+        sbcape_term = -5
+    if sbpcl.bplus >= 2000:
+        sbcape_term = 0
+    if sbpcl.bplus >= 3300:
+        sbcape_term = 1
+    if sbpcl.bplus >= 3700:
+        sbcape_term = 2
+    if sbpcl.bplus >= 4300:
+        sbcape_term = 4
+
+    # Surface based LI term
+    if sbpcl.li5 > -7.5:
         sbli_term = 0
-    elif sbpcl.li5 <= -8 and sbpcl.li5 > -9:
+    if sbpcl.li5 <= -7.5:
         sbli_term = 1
-    elif sbpcl.li5 <= -9 and sbpcl.li5 > -10:
+    if sbpcl.li5 <= -9.0:
         sbli_term = 2
-    elif sbpcl.li5 <= -10:
+    if sbli_term <= -10.0:
         sbli_term = 3
 
+    # PWAT Term
+    if pwat < 1.5:
+        pwat_term = -3
+    else:
+        pwat_term = 0
+
+    # DCAPE Term
+    if pwat > 1.70:
+        if dcape_val > 900:
+            dcape_term = 1
+        else:
+            dcape_term = 0
+    else:
+        dcape_term = 0
+
+    # Lapse Rate Term
     if lr03 <= 8.4:
         lr03_term = 0
     else:
         lr03_term = 1
 
+    # Vertical Total Totals term
     if tt < 27:
         tt_term = 0
     elif tt >= 27 and tt < 28:
@@ -2762,21 +2789,16 @@ def mburst(prof):
     else:
         tt_term = 3
 
-    if dcape_val < 900:
-        dcape_term = 0
-    elif dcape_val >= 900 and dcape_val < 1100:
-        dcape_term = 1
-    elif dcape_val >= 1100 and dcape_val < 1300:
-        dcape_term = 2
+    # TEI term?
+    if tei_val >= 35:
+        ted = 1
     else:
-        dcape_term = 3
+        ted = 0
 
-    if pwat <= 1.5:
-        pwat_term = -5
-    else:
-        pwat_term = 0
+    mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + tt_term + ted
 
-    mburst = sbcape_term + sbli_term + lr03_term + tt_term + dcape_term + pwat_term
+    if mburst < 0:
+        mburst = 0
 
     return mburst
 
