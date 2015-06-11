@@ -519,9 +519,9 @@ class plotSkewT(backgroundSkewT):
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
         self.logp = np.log10(prof.pres)
-        self.pcl = kwargs.get('pcl', None)
+#       self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
-        self.plotdgz = kwargs.get('dgz', False)
+#       self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
         self.title = kwargs.get('title', '')
 
@@ -532,7 +532,11 @@ class plotSkewT(backgroundSkewT):
         self.update()
 
     def setParcel(self, parcel):
-        pass
+        self.pcl = parcel
+
+        self.clearData()
+        self.plotData()
+        self.update()
 
     def setDGZ(self, flag):
         self.plotdgz = flag

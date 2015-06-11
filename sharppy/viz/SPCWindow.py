@@ -287,12 +287,11 @@ class SPCWidget(QWidget):
 
         self.plot_title = self.getPlotTitle()
 
-        self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
-                            proflist=profs, dgz=self.dgz)
+        # update the profiles
+        self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
         self.hodo.setProf(default_prof, proflist=profs)
 
-        self.storm_slinky.setProf(default_prof, self.getParcelObj(default_prof, self.parcel_type))
-
+        self.storm_slinky.setProf(default_prof)
         self.inferred_temp_advection.setProf(default_prof)
         self.speed_vs_height.setProf(default_prof)
         self.srwinds_vs_height.setProf(default_prof)
@@ -304,6 +303,11 @@ class SPCWidget(QWidget):
         for inset in self.insets.keys():
             self.insets[inset].setProf(default_prof)
 
+        # Update the parcels to match the new profiles
+        parcel = self.getParcelObj(default_prof, self.parcel_type)
+        self.sound.setParcel(parcel)
+        self.storm_slinky.setParcel(parcel)
+
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
@@ -313,15 +317,8 @@ class SPCWidget(QWidget):
         modified_str = ""
         self.parcel_type = self.getParcelName(default_prof, pcl)
 
-        self.plot_title = self.getPlotTitle()
-        if self.isensemble:
-            self.sound.setProf(default_prof, pcl=default_prof.mupcl, title=self.plot_title,
-                               proflist=profs, dgz=self.dgz)
-        else:
-            self.sound.setProf(default_prof, pcl=pcl, title=self.plot_title,
-                               dgz=self.dgz, proflist=profs)
-
-        self.storm_slinky.setProf(default_prof, pcl=pcl)
+        self.sound.setParcel(pcl)
+        self.storm_slinky.setParcel(pcl)
 
         self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
         self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
@@ -341,8 +338,7 @@ class SPCWidget(QWidget):
 
                 profs.append(matchprof)
 
-            self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
-                           dgz=self.dgz, proflist=profs)
+            self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
             self.hodo.setProf(default_prof, proflist=profs)
 
     @Slot(tab.params.Parcel)

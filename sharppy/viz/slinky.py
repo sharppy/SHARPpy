@@ -158,14 +158,23 @@ class plotSlinky(backgroundSlinky):
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
 
-    def setProf(self, prof, pcl):
+    def setProf(self, prof):
         self.prof = prof
-        self.pcl = pcl
-        #self.slinky_traj = self.prof.slinky_traj
-        #self.updraft_tilt = self.prof.updraft_tilt
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
-        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(prof, pcl, self.smu, self.smv)
+
+        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(prof, self.pcl, self.smu, self.smv)
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
+    def setParcel(self, pcl):
+        self.pcl = pcl
+
+        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, pcl, self.smu, self.smv)
+
         self.clearData()
         self.plotBackground()
         self.plotData()
