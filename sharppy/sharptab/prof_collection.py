@@ -2,11 +2,11 @@
 import sharppy.sharptab.profile as profile
 
 class ProfCollection(object):
-    def __init__(self, profiles, dates, highlight='', **kwargs):
+    def __init__(self, profiles, dates, **kwargs):
         self._profs = profiles
         self._dates = dates
         self._meta = kwargs
-        self._highlight = highlight
+        self._highlight = profiles.keys()[0]
         self._prof_idx = 0
 
         self._mod_therm = [ False for d in self._dates ]
@@ -90,7 +90,7 @@ class ProfCollection(object):
         if self.isEnsemble():
             raise ValueError("Can't modify ensemble profiles")
 
-        prof = self._profs[''][self._prof_idx]
+        prof = self._profs[self._highlight][self._prof_idx]
 
         # Save original, if one hasn't already been saved
         if self._prof_idx not in self._orig_profs:
@@ -105,7 +105,8 @@ class ProfCollection(object):
             prof_vars[var][idx] = val
 
         # Make a copy of the profile object with the newly modified variables inserted.
-        self._profs[''][self._prof_idx] = cls.copy(prof, **prof_vars)
+        
+        self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
 
         # Update bookkeeping
         if 'tmpc' in kwargs or 'dwpc' in kwargs:
