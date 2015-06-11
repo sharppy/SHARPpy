@@ -48,7 +48,7 @@ class backgroundThetae(QtGui.QFrame):
         self.label_font = QtGui.QFont('Helvetica', fsize)
         ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.clear()
         ## and draw the background
         self.plotBackground()
 
@@ -80,6 +80,12 @@ class backgroundThetae(QtGui.QFrame):
         for t in np.arange( 200, 400, 10):
             self.draw_thetae(t, qp)
         qp.end()
+
+    def clear(self):
+        '''
+        Clear the widget
+        '''
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def draw_frame(self, qp):
         '''
@@ -200,6 +206,16 @@ class plotThetae(backgroundThetae):
         self.prof = prof
         self.thetae = prof.thetae
         self.pres = prof.pres
+
+    def setProf(self, prof):
+        self.prof = prof
+        self.thetae = prof.thetae
+        self.pres = prof.pres
+
+        self.clear()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

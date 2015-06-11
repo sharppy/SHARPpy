@@ -253,10 +253,7 @@ class SPCWidget(QWidget):
         self.inferred_temp_advection = plotAdvection(default_prof)
 
         self.storm_slinky = plotSlinky(default_prof, pcl=default_pcl)
-        self.thetae_vs_pressure = plotGeneric(default_prof.thetae[default_prof.pres > 500.],
-                                default_prof.pres[default_prof.pres > 500.], xticks=np.arange(220,360,10),
-                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
-
+        self.thetae_vs_pressure = plotThetae(default_prof)
         self.srwinds_vs_height = plotWinds(default_prof)
         self.watch_type = plotWatch(default_prof)
         self.convective = plotText(default_prof, self.parcel_types)
@@ -297,17 +294,10 @@ class SPCWidget(QWidget):
         self.storm_slinky.setProf(default_prof, self.getParcelObj(default_prof, self.parcel_type))
 
         self.inferred_temp_advection.setProf(default_prof)
-
         self.speed_vs_height.setProf(default_prof)
-
         self.srwinds_vs_height.setProf(default_prof)
-
-        self.thetae_vs_pressure.setProf(default_prof.thetae[default_prof.pres > 500.],
-                                default_prof.pres[default_prof.pres > 500.], xticks=np.arange(220,360,10),
-                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
-
+        self.thetae_vs_pressure.setProf(default_prof)
         self.watch_type.setProf(default_prof)
-
         self.convective.setProf(default_prof, self.convective.pcl_types)
         self.kinematic.setProf(default_prof)
 
