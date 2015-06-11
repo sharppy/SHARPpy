@@ -295,14 +295,15 @@ class plotHodo(backgroundHodo):
     modified = Signal(int, dict)
     reset = Signal(list)
 
-    def __init__(self, hght, u, v, **kwargs):
+    def __init__(self, prof, **kwargs):
         '''
         Initialize the data used in the class.
         '''
         super(plotHodo, self).__init__()
+        self.prof = prof
         ## initialize the variables needed to plot the hodo.
-        self.hght = hght
-        self.u = u; self.v = v
+        self.hght = prof.hght
+        self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.cursor_type = kwargs.get('cursor', 'none')
@@ -318,9 +319,7 @@ class plotHodo(backgroundHodo):
         self.drag_buffer = 5
         self.clickradius = 6
 
-        self.prof = kwargs.get('prof', None)
         self.proflist = kwargs.get("proflist", [])
-        self.original_prof = self.prof
 
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
@@ -438,14 +437,13 @@ class plotHodo(backgroundHodo):
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
-    def setProf(self, hght, u, v, **kwargs):
-        self.hght = hght
-        self.u = u; self.v = v
+    def setProf(self, prof, **kwargs):
+        self.prof = prof
+        self.hght = prof.hght
+        self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
-        self.prof = kwargs.get('prof', None)
         self.proflist = kwargs.get("proflist", [])
-#       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -465,13 +463,6 @@ class plotHodo(backgroundHodo):
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
-
-#       if self.center_loc == 'centered':
-#           self.setNormalCenter()
-#       elif self.center_loc == 'meanwind':
-#           self.setMWCenter()
-#       elif self.center_loc == 'stormrelative':
-#           self.setSRCenter()
 
         self.clearData()
         self.plotData()

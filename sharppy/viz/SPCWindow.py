@@ -200,10 +200,6 @@ class SPCWidget(QWidget):
         modified_str = "; Modified" if modified else ""
 
         date = self.prof_collections[0].getCurrentDate()
-        try:
-            fhour = self.prof_collections[0].getMeta('fhour', index=True)
-        except:
-            fhour = self.prof_collections[0].getMeta('fhour')
 
         plot_title = self.loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if self.model == "Archive":
@@ -211,7 +207,8 @@ class SPCWidget(QWidget):
         elif self.isobserved:
             plot_title += "  (Observed" + modified_str + ")"
         else:
-             plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
+            fhour = self.prof_collections[0].getMeta('fhour', index=True)
+            plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
         return plot_title
 
     def saveimage(self):
@@ -240,8 +237,7 @@ class SPCWidget(QWidget):
 
         self.sound = plotSkewT(default_prof, pcl=default_pcl, title=self.plot_title,
                            proflist=member_profs, dgz=self.dgz)
-        self.hodo = plotHodo(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof,
-                             proflist=member_profs, parent=self)
+        self.hodo = plotHodo(default_prof, proflist=member_profs)
 
         self.sound.parcel.connect(self.defineUserParcel)
         if not self.isensemble:
@@ -296,8 +292,7 @@ class SPCWidget(QWidget):
 
         self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
                             proflist=profs, dgz=self.dgz)
-        self.hodo.setProf(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof,
-                          proflist=profs, parent=self)
+        self.hodo.setProf(default_prof, proflist=profs)
 
         self.storm_slinky.setProf(default_prof, self.getParcelObj(default_prof, self.parcel_type))
 
@@ -358,8 +353,7 @@ class SPCWidget(QWidget):
 
             self.sound.setProf(default_prof, pcl=self.getParcelObj(default_prof, self.parcel_type), title=self.plot_title,
                            dgz=self.dgz, proflist=profs)
-            self.hodo.setProf(default_prof.hght, default_prof.u, default_prof.v, prof=default_prof, parent=self,
-                              proflist=profs)
+            self.hodo.setProf(default_prof, proflist=profs)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
