@@ -237,18 +237,18 @@ class plotSTPEF(backgroundSTPEF):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotSTPEF, self).__init__()
-        self.stpc = prof.stp_cin
+        self.prof = None
 
     def setProf(self, prof):
+        self.prof = prof
         self.stpc = prof.stp_cin
 
         self.clearData()
         self.plotBackground()
         self.plotData()
         self.update()
-
 
     def resizeEvent(self, e):
         '''
@@ -276,6 +276,9 @@ class plotSTPEF(backgroundSTPEF):
         '''
         Handles painting on the frame
         '''
+        if self.prof is None:
+            return
+
         ## this function handles painting the plot
         ## create a new painter obkect
         qp = QtGui.QPainter()

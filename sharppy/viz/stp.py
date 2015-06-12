@@ -160,23 +160,12 @@ class plotSTP(backgroundSTP):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotSTP, self).__init__()
-        self.mlcape = prof.mlpcl.bplus
-        self.mllcl = prof.mlpcl.lclhght
-        self.esrh = prof.right_esrh[0]
-        self.ebwd = prof.ebwspd
-        self.stpc = prof.stp_cin
-        self.stpf = prof.stp_fixed
-        ## get the probabilities
-        self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
-        self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
-        self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
-        self.ebwd_p, self.ebwd_c = self.ebwd_prob(self.ebwd)
-        self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
-        self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+        self.prof = None
 
     def setProf(self, prof):
+        self.prof = prof
         self.mlcape = prof.mlpcl.bplus
         self.mllcl = prof.mlpcl.lclhght
         self.esrh = prof.right_esrh[0]
@@ -422,6 +411,9 @@ class plotSTP(backgroundSTP):
         '''
         Handles painting on the frame
         '''
+        if self.prof is None:
+            return
+
         ## this function handles painting the plot
         ## create a new painter obkect
         qp = QtGui.QPainter()

@@ -139,57 +139,12 @@ class plotKinematics(backgroundKinematics):
     '''
     Handles plotting the indices in the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
         super(plotKinematics, self).__init__()
-        self.prof = prof;
-        self.srh1km = prof.srh1km
-        self.srh3km = prof.srh3km
-        self.esrh = prof.right_esrh
-        
-        self.mean_1km = prof.mean_1km
-        self.mean_3km = prof.mean_3km
-        self.mean_6km = prof.mean_6km
-        self.mean_8km = prof.mean_8km
-        self.mean_lcl_el = prof.mean_lcl_el
-        mean_eff = prof.mean_eff
-        mean_ebw = prof.mean_ebw
-        
-        self.srw_1km = prof.srw_1km
-        self.srw_3km = prof.srw_3km
-        self.srw_6km = prof.srw_6km
-        self.srw_8km = prof.srw_8km
-        self.srw_lcl_el = prof.srw_lcl_el
-        self.srw_4_5km = prof.srw_4_5km
-        srw_eff = prof.srw_eff
-        srw_ebw = prof.srw_ebw
-        
-        self.sfc_1km_shear = prof.sfc_1km_shear
-        self.sfc_3km_shear = prof.sfc_3km_shear
-        self.sfc_6km_shear = prof.sfc_6km_shear
-        self.sfc_8km_shear = prof.sfc_8km_shear
-        self.lcl_el_shear = prof.lcl_el_shear
-        self.eff_shear = prof.eff_shear
-        self.ebwd = prof.ebwd
-        
-        if prof.etop is np.ma.masked or prof.ebottom is np.ma.masked:
-            self.mean_eff = [np.ma.masked, np.ma.masked]
-            self.mean_ebw = [np.ma.masked, np.ma.masked]
-            self.srw_eff = [np.ma.masked, np.ma.masked]
-            self.srw_ebw = [np.ma.masked, np.ma.masked]
-        else:
-            self.mean_eff = tab.utils.comp2vec(mean_eff[0], mean_eff[1])
-            self.mean_ebw = tab.utils.comp2vec(mean_ebw[0], mean_ebw[1])
-            self.srw_eff = tab.utils.comp2vec(srw_eff[0], srw_eff[1])
-            self.srw_ebw = tab.utils.comp2vec(srw_ebw[0], srw_ebw[1])
-        
-        self.brn_shear = prof.mupcl.brnshear
-        self.bunkers_right_vec = tab.utils.comp2vec(prof.srwind[0], prof.srwind[1])
-        self.bunkers_left_vec = tab.utils.comp2vec(prof.srwind[2], prof.srwind[3])
-        self.upshear = tab.utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
-        self.downshear = tab.utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
+        self.prof = None;
 
     def setProf(self, prof):
         self.ylast = self.label_height
@@ -272,6 +227,9 @@ class plotKinematics(backgroundKinematics):
         '''
         Handles the drawing of the text on the frame.
         '''
+        if self.prof is None:
+            return
+
         x1 = self.brx / 10
         y1 = self.bry / 19
         origin_x = x1*8.5

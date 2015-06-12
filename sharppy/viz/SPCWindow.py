@@ -166,7 +166,6 @@ class SPCWidget(QWidget):
         self.initData()
         self.loadWidgets()
 
-
     def getParcelObj(self, prof, name):
         if name == "SFC":
             return prof.sfcpcl
@@ -226,18 +225,8 @@ class SPCWidget(QWidget):
         :return:
         """
 
-        ## set the plot title that will be displayed in the Skew frame.
-        self.plot_title = self.getPlotTitle()
-
-        profs = self.prof_collections[0].getCurrentProfs().values()
-        default_prof = self.prof_collections[0].getHighlightedProf()
-        default_pcl = default_prof.mupcl
-
-        member_profs = profs if self.isensemble else []
-
-        self.sound = plotSkewT(default_prof, pcl=default_pcl, title=self.plot_title,
-                           proflist=member_profs, dgz=self.dgz)
-        self.hodo = plotHodo(default_prof, proflist=member_profs)
+        self.sound = plotSkewT(pcl=default_pcl, title=self.plot_title, dgz=self.dgz)
+        self.hodo = plotHodo()
 
         self.sound.parcel.connect(self.defineUserParcel)
         if not self.isensemble:
@@ -248,37 +237,27 @@ class SPCWidget(QWidget):
             self.hodo.reset.connect(self.resetProf)
 
         ## initialize the non-swappable insets
-        self.speed_vs_height = plotSpeed( default_prof )
+        self.speed_vs_height = plotSpeed()
 
-        self.inferred_temp_advection = plotAdvection(default_prof)
+        self.inferred_temp_advection = plotAdvection()
 
-        self.storm_slinky = plotSlinky(default_prof, pcl=default_pcl)
-        self.thetae_vs_pressure = plotThetae(default_prof)
-        self.srwinds_vs_height = plotWinds(default_prof)
-        self.watch_type = plotWatch(default_prof)
-        self.convective = plotText(default_prof, self.parcel_types)
-        self.kinematic = plotKinematics(default_prof)
+        self.storm_slinky = plotSlinky()
+        self.thetae_vs_pressure = plotThetae()
+        self.srwinds_vs_height = plotWinds()
+        self.watch_type = plotWatch()
+        self.convective = plotText(self.parcel_types)
+        self.kinematic = plotKinematics()
 
         self.convective.updatepcl.connect(self.updateParcel)
 
-        self.makeInsets()
+        # intialize swappable insets
+        for inset, inset_gen in SPCWidget.inset_generators.iteritems():
+            self.insets[inset] = inset_gen()
+
         self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
-    def makeInsets(self):
-        """
-        Create the swappable insets
-        :return:
-        """
-
-        profs = self.prof_collections[0].getCurrentProfs().values()
-        default_prof = self.prof_collections[0].getHighlightedProf()
-
-        for inset, inset_gen in SPCWidget.inset_generators.iteritems():
-            self.insets[inset] = inset_gen(default_prof)
-
-    @Slot()
     def updateProfs(self):
         profs = self.prof_collections[0].getCurrentProfs().values()
         default_prof = self.prof_collections[0].getHighlightedProf()
@@ -310,8 +289,6 @@ class SPCWidget(QWidget):
     def updateParcel(self, pcl):
 
         default_prof = self.prof_collections[0].getHighlightedProf()
-
-        modified_str = ""
         self.parcel_type = self.getParcelName(default_prof, pcl)
 
         self.sound.setParcel(pcl)
@@ -439,7 +416,7 @@ class SPCWidget(QWidget):
             #   delete something you want to remove from the layout.
             default_prof = self.prof_collections[0].getHighlightedProf()
             self.left_inset_ob.deleteLater()
-            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset](default_prof)
+            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -455,7 +432,7 @@ class SPCWidget(QWidget):
             #   delete something you want to remove from the layout.
             default_prof = self.prof_collections[0].getHighlightedProf()
             self.right_inset_ob.deleteLater()
-            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset](default_prof)
+            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]

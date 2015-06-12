@@ -192,7 +192,7 @@ class plotThetae(backgroundThetae):
     class that handles plotting of the frame. Draws the contours
     to the QPixmap inherited by the backgroundThetae class.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         '''
         Initializes the data needed from the Profile object.
         
@@ -203,14 +203,16 @@ class plotThetae(backgroundThetae):
         '''
         super(plotThetae, self).__init__()
         ## set the varables for pressure and thetae
-        self.prof = prof
-        self.thetae = prof.thetae
-        self.pres = prof.pres
+        self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
         self.thetae = prof.thetae
         self.pres = prof.pres
+
+        idx = np.where( self.pres > 400. )[0]
+        self.tmin = self.thetae[idx].min() - 10.
+        self.tmax = self.thetae[idx].max() + 10.
 
         self.clear()
         self.plotBackground()
@@ -227,9 +229,10 @@ class plotThetae(backgroundThetae):
         
         '''
         super(plotThetae, self).resizeEvent(e)
-        idx = np.where( self.pres > 400. )[0]
-        self.tmin = self.thetae[idx].min() - 10.
-        self.tmax = self.thetae[idx].max() + 10.
+        if self.prof is not None:
+            idx = np.where( self.pres > 400. )[0]
+            self.tmin = self.thetae[idx].min() - 10.
+            self.tmax = self.thetae[idx].max() + 10.
         self.update()
         self.plotData()
     
@@ -252,6 +255,9 @@ class plotThetae(backgroundThetae):
         '''
         Plots the data onto the QPixmap.
         '''
+        if self.prof is None:
+            return
+
         ## this function handles painting the plot
         ## create a new painter obkect
         qp = QtGui.QPainter()

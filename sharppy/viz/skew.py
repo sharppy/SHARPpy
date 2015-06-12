@@ -347,21 +347,16 @@ class plotSkewT(backgroundSkewT):
     parcel = Signal(tab.params.Parcel)
     reset = Signal(list)
 
-    def __init__(self, prof, **kwargs):
-        super(plotSkewT, self).__init__(plot_omega=(prof.omeg.count() != 0))
+    def __init__(self, **kwargs):
+        super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
-        self.prof = prof
-        self.pres = prof.pres; self.hght = prof.hght
-        self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
-        self.dew_stdev = prof.dew_stdev
-        self.tmp_stdev = prof.tmp_stdev
-        self.u = prof.u; self.v = prof.v
-        self.wetbulb = prof.wetbulb
-        self.logp = np.log10(prof.pres)
+        self.prof = None
+        self.proflist = []
+
         self.pcl = kwargs.get('pcl', None)
-        self.proflist = kwargs.get('proflist', None)
         self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
+
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
@@ -518,7 +513,6 @@ class plotSkewT(backgroundSkewT):
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
-        self.logp = np.log10(prof.pres)
 #       self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
 #       self.plotdgz = kwargs.get('dgz', False)
@@ -588,6 +582,9 @@ class plotSkewT(backgroundSkewT):
         self.drag_prof = None
 
     def mousePressEvent(self, e):
+        if self.prof is None:
+            return
+
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if not self.was_right_click and not self.readout:
@@ -812,6 +809,9 @@ class plotSkewT(backgroundSkewT):
         Plot the data used in a Skew-T.
 
         '''
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setClipRect(self.clip)
