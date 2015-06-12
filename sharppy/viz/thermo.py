@@ -190,9 +190,7 @@ class plotText(backgroundText):
         self.parcels["EFF"] = prof.effpcl
         self.parcels["USER"] = prof.usrpcl
 
-
-    def setProf(self, prof, pcl_types):
-        self.pcl_types = pcl_types
+    def setProf(self, prof):
         self.ylast = self.label_height
         self.setParcels(prof)
         self.prof = prof;

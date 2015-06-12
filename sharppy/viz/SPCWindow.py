@@ -297,7 +297,7 @@ class SPCWidget(QWidget):
         self.srwinds_vs_height.setProf(default_prof)
         self.thetae_vs_pressure.setProf(default_prof)
         self.watch_type.setProf(default_prof)
-        self.convective.setProf(default_prof, self.convective.pcl_types)
+        self.convective.setProf(default_prof)
         self.kinematic.setProf(default_prof)
 
         for inset in self.insets.keys():
@@ -311,7 +311,6 @@ class SPCWidget(QWidget):
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
-        profs = self.prof_collections[0].getCurrentProfs().values()
         default_prof = self.prof_collections[0].getHighlightedProf()
 
         modified_str = ""
