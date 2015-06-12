@@ -2,7 +2,7 @@
 <sourcelist>
     <datasource name="MPAS" ensemble="false">
 	<outlet name="HWT" url="http://sharp.weather.ou.edu/soundings/mpas/20{date}{cycle}/{srcid}.txt" format="pecan" >
-            <time range="120" delta="3" offset="0" delay="12" cycle="24" archive="24"/>
+            <time range="72" delta="1" offset="0" delay="13" cycle="24" archive="72"/>
             <points csv="mpas.csv" />
         </outlet>
     </datasource>
