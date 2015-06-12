@@ -351,9 +351,9 @@ class plotSkewT(backgroundSkewT):
         super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
         self.prof = None
+        self.pcl = None
         self.proflist = []
 
-        self.pcl = kwargs.get('pcl', None)
         self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
 
@@ -513,9 +513,7 @@ class plotSkewT(backgroundSkewT):
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
-#       self.pcl = kwargs.get('pcl', None)
         self.proflist = kwargs.get('proflist', None)
-#       self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
         self.title = kwargs.get('title', '')
 

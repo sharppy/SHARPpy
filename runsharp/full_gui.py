@@ -174,6 +174,7 @@ class Picker(QWidget):
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
+        self.skew = None
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
@@ -529,8 +530,18 @@ class Picker(QWidget):
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
             prof_collection.setMeta('fhour', fhours)
-            self.skew = SPCWindow(prof_collection, cfg=self.config, observed=observed)
-            self.skew.show()
+            prof_collection.setMeta('observed', observed)
+
+            if self.skew is None:
+                self.skew = SPCWindow(cfg=self.config)
+                self.skew.closed.connect(self.skewAppClosed)
+                self.skew.show()
+
+            self.skew.raise_()
+            self.skew.addProfileCollection(prof_collection)
+
+    def skewAppClosed(self):
+        self.skew = None
 
     def loadArchive(self, filename):
         """

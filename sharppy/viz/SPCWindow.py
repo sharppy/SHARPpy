@@ -42,33 +42,20 @@ class SPCWidget(QWidget):
         'VROT':'EF-Scale Probs (V-Rot)',
     }
 
-    def __init__(self, prof_col, **kwargs):
+    def __init__(self, **kwargs):
 
         super(SPCWidget, self).__init__()
         """
         """
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
-        self.prof_collections = [ prof_col ]
-#       self.profs = profs
-#       self.proflist = []
-#       self.dates = dates
-        self.model = prof_col.getMeta('model')
-        self.run = prof_col.getMeta('run')
-        self.loc = prof_col.getMeta('loc')
-        self.fhour = prof_col.getMeta('fhour')
-        self.isobserved = kwargs.get("observed")
+        self.prof_collections = []
+        self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
-        self.isensemble = self.prof_collections[0].isEnsemble()
         self.plot_title = ""
 
         ## these are used to display profiles
-#       self.current_idx = 0
-#       self.prof = profs[self.current_idx]
-#       self.original_profs = self.profs[:]
-#       self.modified_skew = [ False for p in self.original_profs ]
-#       self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
 
         if not self.config.has_section('insets'):
@@ -81,7 +68,6 @@ class SPCWidget(QWidget):
             self.config.set('parcel_types', 'pcl2', 'ML')
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
-
 
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
@@ -195,19 +181,24 @@ class SPCWidget(QWidget):
             return "USER"
 
     def getPlotTitle(self):
-        modified = self.prof_collections[0].isModified()
+        modified = self.prof_collections[self.pc_idx].isModified()
         modified_str = "; Modified" if modified else ""
 
-        date = self.prof_collections[0].getCurrentDate()
+        prof_col = self.prof_collections[self.pc_idx]
+        loc = prof_col.getMeta('loc')
+        date = prof_col.getCurrentDate()
+        run = prof_col.getMeta('run')
+        model = prof_col.getMeta('model')
+        observed = prof_col.getMeta('observed')
 
-        plot_title = self.loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
-        if self.model == "Archive":
+        plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
+        if model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
-        elif self.isobserved:
+        elif observed:
             plot_title += "  (Observed" + modified_str + ")"
         else:
-            fhour = self.prof_collections[0].getMeta('fhour', index=True)
-            plot_title += "  (" + self.run + "  " + self.model + "  " + fhour + modified_str + ")"
+            fhour = self.prof_collections[self.pc_idx].getMeta('fhour', index=True)
+            plot_title += "  (" + run + "  " + model + "  " + fhour + modified_str + ")"
         return plot_title
 
     def saveimage(self):
@@ -225,22 +216,12 @@ class SPCWidget(QWidget):
         :return:
         """
 
-        self.sound = plotSkewT(pcl=default_pcl, title=self.plot_title, dgz=self.dgz)
+        self.sound = plotSkewT(dgz=self.dgz)
         self.hodo = plotHodo()
-
-        self.sound.parcel.connect(self.defineUserParcel)
-        if not self.isensemble:
-            self.sound.modified.connect(self.modifyProf)
-            self.sound.reset.connect(self.resetProf)
-
-            self.hodo.modified.connect(self.modifyProf)
-            self.hodo.reset.connect(self.resetProf)
 
         ## initialize the non-swappable insets
         self.speed_vs_height = plotSpeed()
-
         self.inferred_temp_advection = plotAdvection()
-
         self.storm_slinky = plotSlinky()
         self.thetae_vs_pressure = plotThetae()
         self.srwinds_vs_height = plotWinds()
@@ -248,19 +229,33 @@ class SPCWidget(QWidget):
         self.convective = plotText(self.parcel_types)
         self.kinematic = plotKinematics()
 
-        self.convective.updatepcl.connect(self.updateParcel)
-
         # intialize swappable insets
         for inset, inset_gen in SPCWidget.inset_generators.iteritems():
             self.insets[inset] = inset_gen()
 
-        self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
+        # Connect signals to slots
+        self.convective.updatepcl.connect(self.updateParcel)
+
+        self.sound.parcel.connect(self.defineUserParcel)
+        self.sound.modified.connect(self.modifyProf)
+        self.sound.reset.connect(self.resetProf)
+
+        self.hodo.modified.connect(self.modifyProf)
+        self.hodo.reset.connect(self.resetProf)
+
+        self.insets["SARS"].updatematch.connect(self.updateSARS)
+
+    def addProfileCollection(self, prof_col):
+        self.prof_collections.append(prof_col)
+        self.pc_idx = len(self.prof_collections) - 1
+        self.updateProfs()
+
     def updateProfs(self):
-        profs = self.prof_collections[0].getCurrentProfs().values()
-        default_prof = self.prof_collections[0].getHighlightedProf()
+        profs = self.prof_collections[self.pc_idx].getCurrentProfs().values()
+        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
 
         self.plot_title = self.getPlotTitle()
 
@@ -288,7 +283,7 @@ class SPCWidget(QWidget):
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
-        default_prof = self.prof_collections[0].getHighlightedProf()
+        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
         self.parcel_type = self.getParcelName(default_prof, pcl)
 
         self.sound.setParcel(pcl)
@@ -301,10 +296,11 @@ class SPCWidget(QWidget):
 
     @Slot(str)
     def updateSARS(self, filematch):
-        if not self.isensemble:
+        prof_col = self.prof_collections[self.pc_idx]
+        if not prof_col.isEnsemble():
 
-            profs = self.prof_collections[0].getCurrentProfs().values()
-            default_prof = self.prof_collections[0].getHighlightedProf()
+            profs = prof_col.getCurrentProfs().values()
+            default_prof = prof_col.getHighlightedProf()
 
             if filematch != "":
                 dec = io.spc_decoder.SPCDecoder(filematch)
@@ -317,23 +313,22 @@ class SPCWidget(QWidget):
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
-        self.prof_collections[0].defineUserParcel(parcel)
+        self.prof_collections[self.pc_idx].defineUserParcel(parcel)
         self.updateProfs()
         self.setFocus()
 
     @Slot(int, dict)
     def modifyProf(self, idx, kwargs):
-        self.prof_collections[0].modify(idx, **kwargs)
+        self.prof_collections[self.pc_idx].modify(idx, **kwargs)
         self.updateProfs()
         self.setFocus()
 
     @Slot(list)
     def resetProf(self, args):
-        self.prof_collections[0].reset(*args)
+        self.prof_collections[self.pc_idx].reset(*args)
 
         self.updateProfs()
         self.setFocus()
-
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -364,9 +359,21 @@ class SPCWidget(QWidget):
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
     def advanceTime(self, direction):
-        self.prof_collections[0].advanceTime(direction)
+        if len(self.prof_collections) == 0:
+            return
+
+        self.prof_collections[self.pc_idx].advanceTime(direction)
 
         self.parcel_types = self.convective.pcl_types
+        self.updateProfs()
+        self.updateSARS("")
+        self.insets['SARS'].clearSelection()
+
+    def swapProfCollections(self):
+        self.pc_idx +=1
+        if self.pc_idx == len(self.prof_collections):
+            self.pc_idx = 0
+
         self.updateProfs()
         self.updateSARS("")
         self.insets['SARS'].clearSelection()
@@ -414,7 +421,7 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[0].getHighlightedProf()
+            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
 
@@ -430,7 +437,7 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[0].getHighlightedProf()
+            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
 
@@ -447,13 +454,15 @@ class SPCWidget(QWidget):
         self.update()
 
 class SPCWindow(QMainWindow):
-    def __init__(self, prof_col, **kwargs):
+    closed = Signal()
+
+    def __init__(self, **kwargs):
         super(SPCWindow, self).__init__()
 
-        self.__initUI(prof_col, **kwargs)
+        self.__initUI(**kwargs)
 
-    def __initUI(self, prof_col, **kwargs):
-        self.spc_widget = SPCWidget(prof_col, **kwargs)
+    def __initUI(self, **kwargs):
+        self.spc_widget = SPCWidget(**kwargs)
         self.setCentralWidget(self.spc_widget)
 
         self.createMenuBar()
@@ -482,12 +491,16 @@ class SPCWindow(QMainWindow):
         savetext = QAction("Save Text", self)
         filemenu.addAction(savetext)
 
-    def keyPressEvent(self, e):
+    def addProfileCollection(self, prof_col):
+        self.spc_widget.addProfileCollection(prof_col)
 
+    def keyPressEvent(self, e):
         if e.key() == Qt.Key_Left:
             self.spc_widget.advanceTime(-1)
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
+        elif e.key() == Qt.Key_Space:
+            self.spc_widget.swapProfCollections()
         elif e.matches(QKeySequence.Save):
             # Save an image
             self.spc_widget.saveimage()
@@ -495,3 +508,4 @@ class SPCWindow(QMainWindow):
 
     def closeEvent(self, e):
         self.spc_widget.closeEvent(e)
+        self.closed.emit()
