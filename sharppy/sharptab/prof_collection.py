@@ -26,9 +26,15 @@ class ProfCollection(object):
         return meta
 
     def getCurrentDate(self):
+        if not self.hasCurrentProf():
+            return
+
         return self._dates[self._prof_idx]
 
     def getHighlightedProf(self):
+        if not self.hasCurrentProf():
+            return
+
         cur_prof = self._profs[self._highlight][self._prof_idx]
         if type(cur_prof) != profile.ConvectiveProfile:
             self._profs[self._highlight][self._prof_idx] = profile.ConvectiveProfile.copy(cur_prof)
@@ -36,6 +42,9 @@ class ProfCollection(object):
         return self._profs[self._highlight][self._prof_idx]
 
     def getCurrentProfs(self):
+        if not self.hasCurrentProf():
+            return {}
+
         for mem, profs in self._profs.iteritems():
             # Copy the profiles on the fly
             cur_prof = profs[self._prof_idx]
@@ -49,16 +58,27 @@ class ProfCollection(object):
         return profs
 
     def isModified(self):
+        if not self.hasCurrentProf():
+            return False
         return self._mod_therm[self._prof_idx] or self._mod_wind[self._prof_idx]
 
     def isEnsemble(self):
         return len(self._profs.keys()) > 1
+
+    def hasCurrentProf(self):
+        return self._prof_idx >= 0
 
     def setMeta(self, key, value):
         self._meta[key] = value
 
     def setHighlightedMember(self, member_name):
         self._highlight = member_name
+
+    def setCurrentDate(self, cur_dt):
+        try:
+            self._prof_idx = self._dates.index(cur_dt)
+        except ValueError:
+            self._prof_idx = -1
 
     def advanceTime(self, direction):
         length = len(self._dates)
@@ -68,6 +88,7 @@ class ProfCollection(object):
             self._prof_idx = length - 1
         else:
             self._prof_idx += direction
+        return self._dates[self._prof_idx]
 
     def advanceHighlight(self, direction):
         mem_names = sorted(self._profs.keys())
@@ -84,7 +105,8 @@ class ProfCollection(object):
         self._highlight = mem_names[adv_idx]
 
     def defineUserParcel(self, parcel):
-        self._profs[self._highlight][self._prof_idx].usrpcl = parcel
+        if self.hasCurrentProf():
+            self._profs[self._highlight][self._prof_idx].usrpcl = parcel
 
     def modify(self, idx, **kwargs):
         if self.isEnsemble():
@@ -126,7 +148,7 @@ class ProfCollection(object):
         prof_vars = dict( (k, prof.__dict__[k]) for k in args )
 
         # Make a copy of the profile object with the original variables inserted
-        self._profs[''][self._prof_idx] = cls.copy(prof, **prof_vars)
+        self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
 
         # Update bookkeeping
         if 'tmpc' in args or 'dwpc' in args:

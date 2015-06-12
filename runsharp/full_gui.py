@@ -538,6 +538,7 @@ class Picker(QWidget):
                 self.skew.show()
 
             self.skew.raise_()
+            self.skew.setFocus()
             self.skew.addProfileCollection(prof_collection)
 
     def skewAppClosed(self):

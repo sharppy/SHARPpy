@@ -251,6 +251,11 @@ class SPCWidget(QWidget):
     def addProfileCollection(self, prof_col):
         self.prof_collections.append(prof_col)
         self.pc_idx = len(self.prof_collections) - 1
+
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for prof_col in self.prof_collections:
+            prof_col.setCurrentDate(cur_dt)
+
         self.updateProfs()
 
     def updateProfs(self):
@@ -362,7 +367,9 @@ class SPCWidget(QWidget):
         if len(self.prof_collections) == 0:
             return
 
-        self.prof_collections[self.pc_idx].advanceTime(direction)
+        cur_dt = self.prof_collections[self.pc_idx].advanceTime(direction)
+        for prof_col in self.prof_collections:
+            prof_col.setCurrentDate(cur_dt)
 
         self.parcel_types = self.convective.pcl_types
         self.updateProfs()
@@ -370,9 +377,13 @@ class SPCWidget(QWidget):
         self.insets['SARS'].clearSelection()
 
     def swapProfCollections(self):
-        self.pc_idx +=1
-        if self.pc_idx == len(self.prof_collections):
-            self.pc_idx = 0
+        n_coll = len(self.prof_collections)
+        idx = (self.pc_idx + 1) % n_coll
+
+        while not self.prof_collections[idx % n_coll].hasCurrentProf():
+            idx = (idx + 1) % n_coll
+
+        self.pc_idx = idx
 
         self.updateProfs()
         self.updateSARS("")
