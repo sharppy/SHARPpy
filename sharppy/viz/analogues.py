@@ -170,7 +170,7 @@ class plotAnalogues(backgroundAnalogues):
     drawing on it, finally rendering the
     QPixmap via the function paintEvent.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         '''
         Initializes the data needed for drawing the
         data onto the QPixmap. 
@@ -183,14 +183,8 @@ class plotAnalogues(backgroundAnalogues):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
-        self.prof = prof
-        self.hail_matches = prof.matches
-        self.sup_matches = prof.supercell_matches
-        ## pixel bounds of supercell matches
-        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
-        ## pixel bounds of hail matches
-        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
         super(plotAnalogues, self).__init__()
+        self.prof = None 
 
     def setProf(self, prof):
         self.prof = prof
@@ -248,6 +242,9 @@ class plotAnalogues(backgroundAnalogues):
         Handles the drawing of the SARS
         matches onto the QPixmap.
         '''
+        if self.prof is None:
+            return
+
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
@@ -406,6 +403,9 @@ class plotAnalogues(backgroundAnalogues):
             self.ylast = self.tpad
 
     def mousePressEvent(self, e):
+        if self.prof is None:
+            return
+
         pos = e.pos()
         ## is this a supercell match?
         if pos.x() < (self.brx / 2.):

@@ -115,7 +115,7 @@ class plotText(backgroundText):
     gets done on this QPixmap, and then the QPixmap
     gets rendered by the paintEvent function.
     '''
-    def __init__(self, prof, pcl_types):
+    def __init__(self, pcl_types):
         '''
         Initialize the data from a Profile object passed to 
         this class. It then takes the data it needs from the
@@ -128,48 +128,14 @@ class plotText(backgroundText):
         
         '''
         ## get the parcels to be displayed in the GUI
+        super(plotText, self).__init__()
+
+        self.prof = None;
         self.pcl_types = pcl_types
         self.parcels = {}
-        self.setParcels(prof)
-        self.prof = prof;
         self.bounds = np.empty((4,2))
         self.setDefaultParcel()
 
-        ## either get or calculate the indices, round to the nearest int, and
-        ## convert them to strings.
-        ## K Index
-        self.k_idx = tab.utils.INT2STR( prof.k_idx )
-        ## precipitable water
-        self.pwat = tab.utils.FLOAT2STR( prof.pwat, 2 )
-        ## 0-3km agl lapse rate
-        self.lapserate_3km = tab.utils.FLOAT2STR( prof.lapserate_3km, 1 )
-        ## 3-6km agl lapse rate
-        self.lapserate_3_6km = tab.utils.FLOAT2STR( prof.lapserate_3_6km, 1 )
-        ## 850-500mb lapse rate
-        self.lapserate_850_500 = tab.utils.FLOAT2STR( prof.lapserate_850_500, 1 )
-        ## 700-500mb lapse rate
-        self.lapserate_700_500 = tab.utils.FLOAT2STR( prof.lapserate_700_500, 1 )
-        ## convective temperature
-        self.convT = tab.utils.INT2STR( prof.convT )
-        ## sounding forecast surface temperature
-        self.maxT = tab.utils.INT2STR( prof.maxT )
-        #fzl = str(int(self.sfcparcel.hght0c))
-        ## 100mb mean mixing ratio
-        self.mean_mixr = tab.utils.FLOAT2STR( prof.mean_mixr, 1 )
-        ## 150mb mean rh
-        self.low_rh = tab.utils.INT2STR( prof.low_rh )
-        self.mid_rh = tab.utils.INT2STR( prof.mid_rh )
-        ## calculate the totals totals index
-        self.totals_totals = tab.utils.INT2STR( prof.totals_totals )
-        self.dcape = tab.utils.INT2STR( prof.dcape )
-        self.drush = tab.utils.INT2STR( prof.drush )
-        self.sigsevere = tab.utils.INT2STR( prof.sig_severe )
-        self.mmp = tab.utils.FLOAT2STR( prof.mmp, 2 )
-        self.esp = tab.utils.FLOAT2STR( prof.esp, 1 )
-        self.wndg = tab.utils.FLOAT2STR( prof.wndg, 1 )
-        self.tei = tab.utils.INT2STR( prof.tei )
-        
-        super(plotText, self).__init__()
         self.w = SelectParcels(self.pcl_types, self)
 
     def setDefaultParcel(self):
@@ -190,9 +156,7 @@ class plotText(backgroundText):
         self.parcels["EFF"] = prof.effpcl
         self.parcels["USER"] = prof.usrpcl
 
-
-    def setProf(self, prof, pcl_types):
-        self.pcl_types = pcl_types
+    def setProf(self, prof):
         self.ylast = self.label_height
         self.setParcels(prof)
         self.prof = prof;
@@ -270,6 +234,9 @@ class plotText(backgroundText):
         Handles the drawing of the text onto the QPixmap.
         This is where the actual data gets plotted/drawn.
         '''
+        if self.prof is None:
+            return
+
         ## initialize a QPainter object
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)

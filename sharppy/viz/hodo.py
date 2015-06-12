@@ -295,14 +295,14 @@ class plotHodo(backgroundHodo):
     modified = Signal(int, dict)
     reset = Signal(list)
 
-    def __init__(self, hght, u, v, **kwargs):
+    def __init__(self, **kwargs):
         '''
         Initialize the data used in the class.
         '''
         super(plotHodo, self).__init__()
-        ## initialize the variables needed to plot the hodo.
-        self.hght = hght
-        self.u = u; self.v = v
+        self.prof = None
+        self.proflist = []
+
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.cursor_type = kwargs.get('cursor', 'none')
@@ -318,31 +318,9 @@ class plotHodo(backgroundHodo):
         self.drag_buffer = 5
         self.clickradius = 6
 
-        self.prof = kwargs.get('prof', None)
-        self.proflist = kwargs.get("proflist", [])
-        self.original_prof = self.prof
-
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
-        self.srwind = self.prof.srwind
-        self.ptop = self.prof.etop
-        self.pbottom = self.prof.ebottom
 
-        mean_lcl_el = self.prof.mean_lcl_el
-        if not tab.utils.QC(mean_lcl_el[0]):
-            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
-        else:
-            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
-
-        self.corfidi_up_u = self.prof.upshear_downshear[0]
-        self.corfidi_up_v = self.prof.upshear_downshear[1]
-        self.corfidi_dn_u = self.prof.upshear_downshear[2]
-        self.corfidi_dn_v = self.prof.upshear_downshear[3]
-        self.bunkers_right_vec = tab.utils.comp2vec(self.prof.srwind[0], self.prof.srwind[1])
-        self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
-        self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
-        self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
-        self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
         ## the following is used for the dynamic readout
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
@@ -438,14 +416,13 @@ class plotHodo(backgroundHodo):
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
-    def setProf(self, hght, u, v, **kwargs):
-        self.hght = hght
-        self.u = u; self.v = v
+    def setProf(self, prof, **kwargs):
+        self.prof = prof
+        self.hght = prof.hght
+        self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
-        self.prof = kwargs.get('prof', None)
         self.proflist = kwargs.get("proflist", [])
-#       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -465,13 +442,6 @@ class plotHodo(backgroundHodo):
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
-
-#       if self.center_loc == 'centered':
-#           self.setNormalCenter()
-#       elif self.center_loc == 'meanwind':
-#           self.setMWCenter()
-#       elif self.center_loc == 'stormrelative':
-#           self.setSRCenter()
 
         self.clearData()
         self.plotData()
@@ -577,6 +547,9 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
+        if self.prof is None:
+            return
+
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if self.cursor_type == 'none' and not self.was_right_click:
@@ -933,6 +906,9 @@ class plotHodo(backgroundHodo):
         Handles the plotting of the data in the QPixmap.
         '''
         ## initialize a QPainter object
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)

@@ -48,7 +48,7 @@ class backgroundThetae(QtGui.QFrame):
         self.label_font = QtGui.QFont('Helvetica', fsize)
         ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.clear()
         ## and draw the background
         self.plotBackground()
 
@@ -80,6 +80,12 @@ class backgroundThetae(QtGui.QFrame):
         for t in np.arange( 200, 400, 10):
             self.draw_thetae(t, qp)
         qp.end()
+
+    def clear(self):
+        '''
+        Clear the widget
+        '''
+        self.plotBitMap.fill(QtCore.Qt.black)
 
     def draw_frame(self, qp):
         '''
@@ -186,7 +192,7 @@ class plotThetae(backgroundThetae):
     class that handles plotting of the frame. Draws the contours
     to the QPixmap inherited by the backgroundThetae class.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         '''
         Initializes the data needed from the Profile object.
         
@@ -197,9 +203,21 @@ class plotThetae(backgroundThetae):
         '''
         super(plotThetae, self).__init__()
         ## set the varables for pressure and thetae
+        self.prof = None
+
+    def setProf(self, prof):
         self.prof = prof
         self.thetae = prof.thetae
         self.pres = prof.pres
+
+        idx = np.where( self.pres > 400. )[0]
+        self.tmin = self.thetae[idx].min() - 10.
+        self.tmax = self.thetae[idx].max() + 10.
+
+        self.clear()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''
@@ -211,9 +229,10 @@ class plotThetae(backgroundThetae):
         
         '''
         super(plotThetae, self).resizeEvent(e)
-        idx = np.where( self.pres > 400. )[0]
-        self.tmin = self.thetae[idx].min() - 10.
-        self.tmax = self.thetae[idx].max() + 10.
+        if self.prof is not None:
+            idx = np.where( self.pres > 400. )[0]
+            self.tmin = self.thetae[idx].min() - 10.
+            self.tmax = self.thetae[idx].max() + 10.
         self.update()
         self.plotData()
     
@@ -236,6 +255,9 @@ class plotThetae(backgroundThetae):
         '''
         Plots the data onto the QPixmap.
         '''
+        if self.prof is None:
+            return
+
         ## this function handles painting the plot
         ## create a new painter obkect
         qp = QtGui.QPainter()

@@ -86,11 +86,9 @@ class plotWatch(backgroundWatch):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
-        self.prof = prof
+    def __init__(self):
         super(plotWatch, self).__init__()
-        self.watch_type = self.prof.watch_type
-        self.watch_type_color = self.prof.watch_type_color
+        self.prof = None 
 
     def setProf(self, prof):
         self.prof = prof
@@ -131,6 +129,9 @@ class plotWatch(backgroundWatch):
         self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self):
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)

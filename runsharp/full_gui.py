@@ -174,6 +174,7 @@ class Picker(QWidget):
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
+        self.skew = None
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
@@ -494,12 +495,14 @@ class Picker(QWidget):
 
             run = None
             fhours = None
+            observed = True
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -527,8 +530,19 @@ class Picker(QWidget):
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
             prof_collection.setMeta('fhour', fhours)
-            self.skew = SPCWindow(prof_collection, cfg=self.config)
-            self.skew.show()
+            prof_collection.setMeta('observed', observed)
+
+            if self.skew is None:
+                self.skew = SPCWindow(cfg=self.config)
+                self.skew.closed.connect(self.skewAppClosed)
+                self.skew.show()
+
+            self.skew.raise_()
+            self.skew.setFocus()
+            self.skew.addProfileCollection(prof_collection)
+
+    def skewAppClosed(self):
+        self.skew = None
 
     def loadArchive(self, filename):
         """

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?> 
 <sourcelist>
-    <datasource name="MPAS" ensemble="false">
+    <datasource name="MPAS" ensemble="false" observed="false">
 	<outlet name="HWT" url="http://sharp.weather.ou.edu/soundings/mpas/20{date}{cycle}/{srcid}.txt" format="pecan" >
             <time range="72" delta="1" offset="0" delay="13" cycle="24" archive="72"/>
             <points csv="mpas.csv" />

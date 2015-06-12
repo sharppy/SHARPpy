@@ -115,13 +115,13 @@ class plotAdvection(backgroundAdvection):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotAdvection, self).__init__()
-        self.inf_temp_adv = prof.inf_temp_adv[0]
-        self.pressure_bounds = prof.inf_temp_adv[1]
+        self.prof = None
 
     def setProf(self, prof):
 
+        self.prof = prof
         self.inf_temp_adv = prof.inf_temp_adv[0]
         self.pressure_bounds = prof.inf_temp_adv[1]
 
@@ -159,6 +159,9 @@ class plotAdvection(backgroundAdvection):
         self.plotBitMap.fill(QtCore.Qt.black)
 
     def plotData(self, qp):
+        if self.prof is None:
+            return
+
         for i in xrange(len(self.inf_temp_adv)):
             ptop = self.pressure_bounds[i][0]
             pbot = self.pressure_bounds[i][1]

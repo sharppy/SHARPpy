@@ -139,27 +139,12 @@ class plotFire(backgroundFire):
     '''
     Handles plotting the indices in the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
         super(plotFire, self).__init__()
-        self.prof = prof;
-        
-        # Fire indices
-        self.fosberg = prof.fosberg
-        self.sfc_rh = prof.sfc_rh
-        self.rh01km = prof.rh01km
-        self.pblrh = prof.pblrh
-        self.meanwind01km = tab.utils.comp2vec(prof.meanwind01km[0], prof.meanwind01km[1])
-        self.meanwindpbl = tab.utils.comp2vec(prof.meanwindpbl[0], prof.meanwindpbl[1])
-        self.sfc_wind = (prof.wdir[prof.get_sfc()], prof.wspd[prof.get_sfc()])
-        self.pwat = prof.pwat
-        if not tab.utils.QC(prof.pblmaxwind[0]):
-            self.maxwindpbl = [np.ma.masked, np.ma.masked]
-        else:
-            self.maxwindpbl = tab.utils.comp2vec(prof.pblmaxwind[0], prof.pblmaxwind[1])
-        self.bplus_fire = prof.bplus_fire
+        self.prof = None
 
     def setProf(self, prof):
         self.prof = prof;
@@ -210,6 +195,9 @@ class plotFire(backgroundFire):
         '''
         Handles the drawing of the text on the frame.
         '''
+        if self.prof is None:
+            return
+
         x1 = self.brx / 10
         y1 = self.bry / 19
         origin_x = x1*8.5

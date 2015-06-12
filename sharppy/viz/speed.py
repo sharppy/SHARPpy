@@ -109,12 +109,10 @@ class plotSpeed(backgroundSpeed):
     '''
     Handles plotting the data in the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotSpeed, self).__init__()
         ## initialize values to be accessable to functions
-        self.prof = prof
-        self.u = prof.u; self.v = prof.v
-        self.hght = prof.hght; self.pres = prof.pres
+        self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
@@ -153,6 +151,10 @@ class plotSpeed(backgroundSpeed):
         Handles drawing the data on the frame.
         '''
         ## initialize a QPainter object
+
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
