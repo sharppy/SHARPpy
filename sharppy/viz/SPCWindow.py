@@ -435,6 +435,7 @@ class SPCWidget(QWidget):
             default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
+            self.insets[self.left_inset].setProf(default_prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -451,6 +452,7 @@ class SPCWidget(QWidget):
             default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
+            self.insets[self.right_inset].setProf(default_prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
