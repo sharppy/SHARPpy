@@ -278,10 +278,8 @@ class SPCWidget(QWidget):
         for inset, inset_gen in SPCWidget.inset_generators.iteritems():
             self.insets[inset] = inset_gen(default_prof)
 
-
     @Slot()
     def updateProfs(self):
- 
         profs = self.prof_collections[0].getCurrentProfs().values()
         default_prof = self.prof_collections[0].getHighlightedProf()
 
@@ -333,7 +331,7 @@ class SPCWidget(QWidget):
 
             if filematch != "":
                 dec = io.spc_decoder.SPCDecoder(filematch)
-                matchprof = dec.getProfiles()[0]
+                matchprof = dec.getProfiles().getHighlightedProf()
 
                 profs.append(matchprof)
 
