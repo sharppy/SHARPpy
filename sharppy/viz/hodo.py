@@ -301,7 +301,7 @@ class plotHodo(backgroundHodo):
         '''
         super(plotHodo, self).__init__()
         self.prof = None
-        self.proflist = []
+        self.prof_collections = []
 
         ## if you want the storm motion vector, you need to
         ## provide the profile.
@@ -416,13 +416,16 @@ class plotHodo(backgroundHodo):
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
-    def setProf(self, prof, **kwargs):
+    def setProf(self, prof_coll, **kwargs):
+        prof = prof_coll.getHighlightedProf()
+
+        self.prof_collections = [ prof_coll ]
         self.prof = prof
+
         self.hght = prof.hght
         self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
-        self.proflist = kwargs.get("proflist", [])
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -913,8 +916,11 @@ class plotHodo(backgroundHodo):
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
-        for prof in self.proflist:
+
+        proflist = self.prof_collections[0].getCurrentProfs().values()
+        for prof in proflist:
             self.draw_profile(prof, qp)
+
         ## draw the hodograph
         self.draw_hodo(qp)
         ## draw the storm motion vector

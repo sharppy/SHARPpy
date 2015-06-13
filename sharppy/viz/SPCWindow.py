@@ -263,14 +263,14 @@ class SPCWidget(QWidget):
         self.updateProfs()
 
     def updateProfs(self):
-        profs = self.prof_collections[self.pc_idx].getCurrentProfs().values()
-        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
+        prof_col = self.prof_collections[self.pc_idx]
+        default_prof = prof_col.getHighlightedProf()
 
         self.plot_title = self.getPlotTitle()
 
         # update the profiles
-        self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
-        self.hodo.setProf(default_prof, proflist=profs)
+        self.sound.setProf(prof_col, title=self.plot_title)
+        self.hodo.setProf(prof_col)
 
         self.storm_slinky.setProf(default_prof)
         self.inferred_temp_advection.setProf(default_prof)
@@ -317,8 +317,9 @@ class SPCWidget(QWidget):
 
                 profs.append(matchprof)
 
-            self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
-            self.hodo.setProf(default_prof, proflist=profs)
+            #XXX: This is broken for now; will not actually add the profile to the widgets.  Need to fix that ...
+            self.sound.setProf(prof_col, title=self.plot_title)
+            self.hodo.setProf(prof_col)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):

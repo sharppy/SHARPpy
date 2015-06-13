@@ -75,7 +75,7 @@ class ProfCollection(object):
 
         cur_prof = self._profs[self._highlight][self._prof_idx]
         if type(cur_prof) != profile.ConvectiveProfile:
-            self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
+            self._profs[self._highlight][self._prof_idx] = self._target_type.copy(cur_prof)
         return self._profs[self._highlight][self._prof_idx]
 
     def getCurrentProfs(self):

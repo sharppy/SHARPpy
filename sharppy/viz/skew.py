@@ -351,8 +351,8 @@ class plotSkewT(backgroundSkewT):
         super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
         self.prof = None
+        self.prof_collections = []
         self.pcl = None
-        self.proflist = []
 
         self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
@@ -361,7 +361,9 @@ class plotSkewT(backgroundSkewT):
         self.title = kwargs.get('title', '')
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
+        self.ens_temp_color = kwargs.get('ens_temp_color', '#880000')
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
+        self.ens_dewp_color = kwargs.get('ens_dewp_color', '#008800')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.setMouseTracking(True)
         self.was_right_click = False
@@ -505,15 +507,18 @@ class plotSkewT(backgroundSkewT):
                                           dwpc=user_initpcl.dwpc)
         self.parcel.emit(usrpcl) # Emit a signal that a new profile has been created
 
-    def setProf(self, prof, **kwargs):
+    def setProf(self, prof_coll, **kwargs):
+        prof = prof_coll.getHighlightedProf()
+
+        self.prof_collections = [ prof_coll ]
         self.prof = prof
+
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
         self.dew_stdev = prof.dew_stdev
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
-        self.proflist = kwargs.get('proflist', None)
         self.interpWinds = kwargs.get('interpWinds', True)
         self.title = kwargs.get('title', '')
 
@@ -817,13 +822,14 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         self.drawTitle(qp)
-        if self.proflist is not None:
-            for profile in self.proflist:
-                #purple #666699
-                self.drawTrace(profile.tmpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
-                #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
-                self.drawBarbs(profile, qp, color="#6666CC")
+
+        proflist = self.prof_collections[0].getCurrentProfs().values()
+        for profile in proflist:
+            #purple #6666CC
+            self.drawTrace(profile.tmpc, QtGui.QColor(self.ens_temp_color), qp, p=profile.pres, width=1)
+            self.drawTrace(profile.dwpc, QtGui.QColor(self.ens_dewp_color), qp, p=profile.pres, width=1)
+            self.drawBarbs(profile, qp, color="#666666")
+
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
