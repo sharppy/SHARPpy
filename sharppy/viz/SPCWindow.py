@@ -54,6 +54,7 @@ class SPCWidget(QWidget):
         self.config = kwargs.get("cfg")
         self.dgz = False
         self.plot_title = ""
+        self.mode = ""
 
         ## these are used to display profiles
         self.parcel_type = "MU"
@@ -252,9 +253,12 @@ class SPCWidget(QWidget):
         self.prof_collections.append(prof_col)
         self.pc_idx = len(self.prof_collections) - 1
 
-        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
-        for prof_col in self.prof_collections:
-            prof_col.setCurrentDate(cur_dt)
+        self.mode = "model" if any( not pc.getMeta("observed") for pc in self.prof_collections ) else "observed"
+
+        if self.mode == "model":
+            cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+            for prof_col in self.prof_collections:
+                prof_col.setCurrentDate(cur_dt)
 
         self.updateProfs()
 
@@ -367,9 +371,18 @@ class SPCWidget(QWidget):
         if len(self.prof_collections) == 0:
             return
 
-        cur_dt = self.prof_collections[self.pc_idx].advanceTime(direction)
-        for prof_col in self.prof_collections:
-            prof_col.setCurrentDate(cur_dt)
+        if self.mode == "model":
+            cur_dt = self.prof_collections[self.pc_idx].advanceTime(direction)
+            for prof_col in self.prof_collections:
+                prof_col.setCurrentDate(cur_dt)
+        elif self.mode == "observed":
+            dt = self.prof_collections[self.pc_idx].getCurrentDate()
+            loc = self.prof_collections[self.pc_idx].getMeta('loc')
+            idxs, dts = zip(*sorted(((idx, pc.getCurrentDate()) for idx, pc in enumerate(self.prof_collections) if pc.getMeta('loc') == loc), key=lambda x: x[1]))
+
+            dt_idx = dts.index(dt)
+            dt_idx = (dt_idx + direction) % len(dts)
+            self.pc_idx = idxs[dt_idx]
 
         self.parcel_types = self.convective.pcl_types
         self.updateProfs()
@@ -377,13 +390,21 @@ class SPCWidget(QWidget):
         self.insets['SARS'].clearSelection()
 
     def swapProfCollections(self):
-        n_coll = len(self.prof_collections)
-        idx = (self.pc_idx + 1) % n_coll
+        if self.mode == "model":
+            n_coll = len(self.prof_collections)
+            idx = (self.pc_idx + 1) % n_coll
 
-        while not self.prof_collections[idx % n_coll].hasCurrentProf():
-            idx = (idx + 1) % n_coll
+            while not self.prof_collections[idx % n_coll].hasCurrentProf():
+                idx = (idx + 1) % n_coll
 
-        self.pc_idx = idx
+            self.pc_idx = idx
+        elif self.mode == "observed":
+            # See if we have any other observed profiles loaded at this time.
+            dt = self.prof_collections[self.pc_idx].getCurrentDate()
+            idxs, locs = zip(*[ (idx, pc.getMeta('loc')) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt ])
+            loc_idx = locs.index(self.prof_collections[self.pc_idx].getMeta('loc'))
+            loc_idx = (loc_idx + 1) % len(locs)
+            self.pc_idx = idxs[loc_idx]
 
         self.updateProfs()
         self.updateSARS("")

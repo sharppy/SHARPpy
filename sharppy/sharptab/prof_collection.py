@@ -54,7 +54,8 @@ class ProfCollection(object):
     def cancelCopy(self):
         for proc in self._procs:
             proc.terminate()
-        self._async.clearQueue()
+        if self._async is not None:
+            self._async.clearQueue()
 
     def getMeta(self, key, index=False):
         meta = self._meta[key]
