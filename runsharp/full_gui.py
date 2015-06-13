@@ -28,25 +28,39 @@ import hashlib
 import cProfile
 from os.path import expanduser
 import ConfigParser
+import Queue
 
 class AsyncThreads(QObject):
-    def __init__(self):
+    def __init__(self, max_threads):
         super(AsyncThreads, self).__init__()
         self.threads = {}
         self.callbacks = {}
+
+        self.max_threads = max_threads
+        self.running = 0
+        self.queue = Queue.PriorityQueue(0)
         return
 
     def post(self, func, callback, *args, **kwargs):
         thd_id = self._genThreadId()
 
+        background = kwargs.get('background', False)
+        if 'background' in kwargs:
+            del kwargs['background']
+
         thd = self._threadFactory(func, thd_id, *args, **kwargs)
         thd.finished.connect(self.finish)
-        thd.start()
+
+        priority = 1 if background else 0
+        self.queue.put((priority, thd_id))
 
         self.threads[thd_id] = thd
         if callback is None:
             callback = lambda x: x
         self.callbacks[thd_id] = callback
+
+        if not background or self.running < self.max_threads:
+            self.startNext()
         return thd_id
 
     def isFinished(self, thread_id):
@@ -55,6 +69,24 @@ class AsyncThreads(QObject):
     def join(self, thread_id):
         while not self.isFinished(thread_id):
             QCoreApplication.processEvents()
+
+    def clearQueue(self):
+        self.queue = Queue.PriorityQueue(0)
+        for thd_id, thd in self.threads.iteritems():
+            if thd.isRunning():
+                thd.terminate()
+
+        self.threads = {}
+        self.callbacks = {}
+
+    def startNext(self):
+        try:
+            prio, thd_id = self.queue.get(block=False)
+        except Queue.Empty:
+            return
+
+        self.threads[thd_id].start()
+        self.running += 1
 
     @Slot(str, tuple)
     def finish(self, thread_id, ret_val):
@@ -65,6 +97,11 @@ class AsyncThreads(QObject):
 
         del self.threads[thread_id]
         del self.callbacks[thread_id]
+
+        self.running -= 1
+        if self.running < self.max_threads:
+            # Might not be the case if we just started a high-priority thread
+            self.startNext()
 
     def _genThreadId(self):
         time_stamp = date.datetime.utcnow().isoformat()
@@ -161,7 +198,7 @@ class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
 
-    async = AsyncThreads()
+    async = AsyncThreads(2)
 
     def __init__(self, config, **kwargs):
         """
@@ -531,6 +568,9 @@ class Picker(QWidget):
             prof_collection.setMeta('loc', disp_name)
             prof_collection.setMeta('fhour', fhours)
             prof_collection.setMeta('observed', observed)
+
+            if not observed:
+                prof_collection.setAsync(Picker.async)
 
             if self.skew is None:
                 self.skew = SPCWindow(cfg=self.config)

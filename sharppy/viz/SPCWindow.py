@@ -392,6 +392,9 @@ class SPCWidget(QWidget):
     def closeEvent(self, e):
         self.sound.closeEvent(e)
 
+        for prof_coll in self.prof_collections:
+            prof_coll.cancelCopy()
+
     def makeInsetMenu(self, *exclude):
 
         # This will make the menu of the available insets.
