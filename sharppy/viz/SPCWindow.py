@@ -53,7 +53,6 @@ class SPCWidget(QWidget):
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
-        self.plot_title = ""
         self.mode = ""
 
         ## these are used to display profiles
@@ -181,27 +180,6 @@ class SPCWidget(QWidget):
         elif pcl == prof.usrpcl:
             return "USER"
 
-    def getPlotTitle(self):
-        modified = self.prof_collections[self.pc_idx].isModified()
-        modified_str = "; Modified" if modified else ""
-
-        prof_col = self.prof_collections[self.pc_idx]
-        loc = prof_col.getMeta('loc')
-        date = prof_col.getCurrentDate()
-        run = prof_col.getMeta('run')
-        model = prof_col.getMeta('model')
-        observed = prof_col.getMeta('observed')
-
-        plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
-        if model == "Archive":
-            plot_title += "  (User Selected" + modified_str + ")"
-        elif observed:
-            plot_title += "  (Observed" + modified_str + ")"
-        else:
-            fhour = self.prof_collections[self.pc_idx].getMeta('fhour', index=True)
-            plot_title += "  (" + run + "  " + model + "  " + fhour + modified_str + ")"
-        return plot_title
-
     def saveimage(self):
         self.home_path = expanduser('~')
         files_types = "PNG (*.png)"
@@ -251,6 +229,9 @@ class SPCWidget(QWidget):
 
     def addProfileCollection(self, prof_col):
         self.prof_collections.append(prof_col)
+        self.sound.addProfileCollection(prof_col)
+        self.hodo.addProfileCollection(prof_col)
+
         self.pc_idx = len(self.prof_collections) - 1
 
         self.mode = "model" if any( not pc.getMeta("observed") for pc in self.prof_collections ) else "observed"
@@ -266,11 +247,9 @@ class SPCWidget(QWidget):
         prof_col = self.prof_collections[self.pc_idx]
         default_prof = prof_col.getHighlightedProf()
 
-        self.plot_title = self.getPlotTitle()
-
         # update the profiles
-        self.sound.setProf(prof_col, title=self.plot_title)
-        self.hodo.setProf(prof_col)
+        self.sound.setActiveCollection(self.pc_idx)
+        self.hodo.setActiveCollection(self.pc_idx)
 
         self.storm_slinky.setProf(default_prof)
         self.inferred_temp_advection.setProf(default_prof)
@@ -318,8 +297,8 @@ class SPCWidget(QWidget):
                 profs.append(matchprof)
 
             #XXX: This is broken for now; will not actually add the profile to the widgets.  Need to fix that ...
-            self.sound.setProf(prof_col, title=self.plot_title)
-            self.hodo.setProf(prof_col)
+            self.sound.setActiveCollection(self.pc_idx)
+            self.hodo.setActiveCollection(self.pc_idx)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):

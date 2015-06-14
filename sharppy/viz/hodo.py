@@ -301,7 +301,22 @@ class plotHodo(backgroundHodo):
         '''
         super(plotHodo, self).__init__()
         self.prof = None
+        self.pc_idx = 0
         self.prof_collections = []
+
+        self.colors = [
+            QtGui.QColor("#FF0000"), 
+            QtGui.QColor("#00FF00"), 
+            QtGui.QColor("#FFFF00"), 
+            QtGui.QColor("#00FFFF") 
+        ]
+
+        self.ens_colors = [
+            QtGui.QColor("#880000"), 
+            QtGui.QColor("#008800"), 
+            QtGui.QColor("#888800"), 
+            QtGui.QColor("#008888") 
+        ]
 
         ## if you want the storm motion vector, you need to
         ## provide the profile.
@@ -416,12 +431,14 @@ class plotHodo(backgroundHodo):
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
-    def setProf(self, prof_coll, **kwargs):
-        prof = prof_coll.getHighlightedProf()
+    def addProfileCollection(self, prof_coll):
+        self.prof_collections.append(prof_coll)
 
-        self.prof_collections = [ prof_coll ]
+    def setActiveCollection(self, pc_idx, **kwargs):
+        self.pc_idx = pc_idx
+        prof = self.prof_collections[pc_idx].getHighlightedProf()
+
         self.prof = prof
-
         self.hght = prof.hght
         self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
@@ -917,12 +934,28 @@ class plotHodo(backgroundHodo):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
 
-        proflist = self.prof_collections[0].getCurrentProfs().values()
-        for prof in proflist:
-            self.draw_profile(prof, qp)
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for idx, prof_coll in enumerate(self.prof_collections):
+            # Draw all unhighlighed members
+            if prof_coll.getCurrentDate() == cur_dt:
+                proflist = prof_coll.getCurrentProfs().values()
+
+                if idx == self.pc_idx:
+                    for prof in proflist:
+                        self.draw_hodo(qp, prof, self.ens_colors, width=1)
+                else:
+                    for prof in proflist:
+                        self.draw_profile(qp, prof, width=1)
+
+        for idx, prof_coll in enumerate(self.prof_collections):
+            # Draw all highlighted members that aren't the active one.
+            if idx != self.pc_idx and prof_coll.getCurrentDate() == cur_dt:
+                prof = prof_coll.getHighlightedProf()
+                self.draw_profile(qp, prof)
 
         ## draw the hodograph
-        self.draw_hodo(qp)
+        prof = self.prof_collections[self.pc_idx].getHighlightedProf()
+        self.draw_hodo(qp, prof, self.colors)
         ## draw the storm motion vector
         self.drawSMV(qp)
         self.drawCorfidi(qp)
@@ -1128,7 +1161,7 @@ class plotHodo(backgroundHodo):
             offset = 10
             qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
 
-    def draw_hodo(self, qp):
+    def draw_hodo(self, qp, prof, colors, width=2):
         '''
         Plot the Hodograph.
         
@@ -1139,26 +1172,19 @@ class plotHodo(backgroundHodo):
         '''
         ## check for masked daata
         try:
-            mask = np.maximum(self.u.mask, self.v.mask)
-            z = tab.interp.to_agl(self.prof, self.hght[~mask])
-            u = self.u[~mask]
-            v = self.v[~mask]
+            mask = np.maximum(prof.u.mask, prof.v.mask)
+            z = tab.interp.to_agl(prof, prof.hght[~mask])
+            u = prof.u[~mask]
+            v = prof.v[~mask]
         ## otherwise the data is fine
         except:
-            z = tab.interp.to_agl(self.prof, self.hght )
-            u = self.u
-            v = self.v
+            z = tab.interp.to_agl(prof, prof.hght )
+            u = prof.u
+            v = prof.v
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
-        colors = [ 
-            QtGui.QColor("#FF0000"), 
-            QtGui.QColor("#00FF00"), 
-            QtGui.QColor("#FFFF00"), 
-            QtGui.QColor("#00FFFF") 
-        ]
-
-        penwidth = 2
+        penwidth = width
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
@@ -1178,7 +1204,7 @@ class plotHodo(backgroundHodo):
 
             qp.drawPath(path)
 
-    def draw_profile(self, prof, qp, color="#6666CC"):
+    def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
         Plot the Hodograph.
 
@@ -1201,7 +1227,7 @@ class plotHodo(backgroundHodo):
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
 
-        penwidth = 2
+        penwidth = width
         pen = QtGui.QPen(QtGui.QColor(color), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1213,6 +1239,10 @@ class plotHodo(backgroundHodo):
 
         seg_idxs = np.searchsorted(z, seg_bnds)
         for idx in xrange(len(seg_bnds) - 1):
+            ## define a pen to draw with
+            pen = QtGui.QPen(QtGui.QColor(color), penwidth)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
@@ -1221,3 +1251,4 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+
