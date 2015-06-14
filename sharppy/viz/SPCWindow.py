@@ -237,9 +237,11 @@ class SPCWidget(QWidget):
         if focus:
             self.pc_idx = len(self.prof_collections) - 1
 
-#       self.mode = "model" if any( not pc.getMeta("observed") for pc in self.prof_collections ) else "observed"
+        if not prof_col.getMeta('observed'):
+            self.coll_observed = False
+            self.sound.setAllObserved(self.coll_observed, update_gui=False)
+            self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
-#       if self.mode == "model":
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
             if not prof_col.getMeta('observed'):
@@ -335,6 +337,8 @@ class SPCWidget(QWidget):
     @Slot()
     def toggleCollectObserved(self):
         self.coll_observed = not self.coll_observed
+        self.sound.setAllObserved(self.coll_observed)
+        self.hodo.setAllObserved(self.coll_observed)
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -365,7 +369,7 @@ class SPCWidget(QWidget):
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
     def advanceTime(self, direction):
-        if len(self.prof_collections) == 0:
+        if len(self.prof_collections) == 0 or self.coll_observed:
             return
 
         prof_col = self.prof_collections[self.pc_idx]
@@ -377,6 +381,7 @@ class SPCWidget(QWidget):
             dt_idx = dts.index(cur_dt)
             dt_idx = (dt_idx + direction) % len(dts)
             self.pc_idx = idxs[dt_idx]
+
             cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         else:
             cur_dt = prof_col.advanceTime(direction)
@@ -403,7 +408,7 @@ class SPCWidget(QWidget):
         # See if we have any other observed profiles loaded at this time.
         prof_col = self.prof_collections[self.pc_idx]
         dt = prof_col.getCurrentDate()
-        idxs, pcs = zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt ])
+        idxs, pcs = zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt or self.coll_observed ])
         loc_idx = pcs.index(prof_col)
         loc_idx = (loc_idx + 1) % len(pcs)
         self.pc_idx = idxs[loc_idx]
@@ -538,11 +543,15 @@ class SPCWindow(QMainWindow):
         filemenu.addAction(savetext)
 
         self.profilemenu = bar.addMenu("Profiles")
-        allobserved = QAction("Collect Observed", self, checkable=True)
-        allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
-        self.profilemenu.addAction(allobserved)
+        self.allobserved = QAction("Collect Observed", self, checkable=True)
+        self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
+        self.profilemenu.addAction(self.allobserved)
 
     def addProfileCollection(self, prof_col):
+        if not prof_col.getMeta('observed'):
+            self.allobserved.setChecked(False)
+            self.allobserved.setDisabled(True)
+
         self.spc_widget.addProfileCollection(prof_col)
 
     def keyPressEvent(self, e):

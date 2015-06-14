@@ -304,6 +304,8 @@ class plotHodo(backgroundHodo):
         self.pc_idx = 0
         self.prof_collections = []
 
+        self.all_observed = False
+
         self.colors = [
             QtGui.QColor("#FF0000"), 
             QtGui.QColor("#00FF00"), 
@@ -542,6 +544,14 @@ class plotHodo(backgroundHodo):
         self.update()
         self.parentWidget().setFocus()
 
+    def setAllObserved(self, all_observed, update_gui=True):
+        self.all_observed = all_observed
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
+            self.parentWidget().setFocus()
 
     def wheelEvent(self, e):
         '''
@@ -949,7 +959,7 @@ class plotHodo(backgroundHodo):
 
         for idx, prof_coll in enumerate(self.prof_collections):
             # Draw all highlighted members that aren't the active one.
-            if idx != self.pc_idx and prof_coll.getCurrentDate() == cur_dt:
+            if idx != self.pc_idx and (prof_coll.getCurrentDate() == cur_dt or self.all_observed):
                 prof = prof_coll.getHighlightedProf()
                 self.draw_profile(qp, prof)
 

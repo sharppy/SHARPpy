@@ -355,6 +355,7 @@ class plotSkewT(backgroundSkewT):
         self.pc_idx = 0
         self.pcl = None
 
+        self.all_observed = False
         self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
 
@@ -568,6 +569,14 @@ class plotSkewT(backgroundSkewT):
         self.plotData()
         self.update()
         return
+
+    def setAllObserved(self, all_observed, update_gui=True):
+        self.all_observed = all_observed
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
 
     def interpProfile(self):
         # Step 1, interpolate the profile to 25 mb pressure levels
@@ -867,7 +876,7 @@ class plotSkewT(backgroundSkewT):
                     self.drawBarbs(profile, qp, color="#666666")
 
         for idx, prof_col in enumerate(self.prof_collections):
-            if idx != self.pc_idx and prof_col.getCurrentDate() == cur_dt:
+            if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
                 profile = prof_col.getHighlightedProf()
                 self.drawTrace(profile.tmpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
                 self.drawTrace(profile.dwpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
@@ -945,7 +954,7 @@ class plotSkewT(backgroundSkewT):
         box_width = 150
 
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
-        idxs, titles = zip(*[ (idx, self.getPlotTitle(pc)) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == cur_dt ])
+        idxs, titles = zip(*[ (idx, self.getPlotTitle(pc)) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == cur_dt or self.all_observed ])
         titles = list(titles)
         main_title = titles.pop(idxs.index(self.pc_idx))
 
