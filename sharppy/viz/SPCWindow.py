@@ -227,12 +227,13 @@ class SPCWidget(QWidget):
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
-    def addProfileCollection(self, prof_col):
+    def addProfileCollection(self, prof_col, focus=True):
         self.prof_collections.append(prof_col)
         self.sound.addProfileCollection(prof_col)
         self.hodo.addProfileCollection(prof_col)
 
-        self.pc_idx = len(self.prof_collections) - 1
+        if focus:
+            self.pc_idx = len(self.prof_collections) - 1
 
         self.mode = "model" if any( not pc.getMeta("observed") for pc in self.prof_collections ) else "observed"
 
@@ -285,20 +286,29 @@ class SPCWidget(QWidget):
     @Slot(str)
     def updateSARS(self, filematch):
         prof_col = self.prof_collections[self.pc_idx]
-        if not prof_col.isEnsemble():
 
-            profs = prof_col.getCurrentProfs().values()
-            default_prof = prof_col.getHighlightedProf()
+        profs = prof_col.getCurrentProfs().values()
+        default_prof = prof_col.getHighlightedProf()
 
-            if filematch != "":
-                dec = io.spc_decoder.SPCDecoder(filematch)
-                matchprof = dec.getProfiles().getHighlightedProf()
+        dec = io.spc_decoder.SPCDecoder(filematch)
+        match_col = dec.getProfiles()
 
-                profs.append(matchprof)
+        match_col.setMeta('model', 'Analog')
+        match_col.setMeta('run', None)
+        match_col.setMeta('fhour', None)
+        match_col.setMeta('observed', True)
+        match_col.setAnalogToDate(prof_col.getCurrentDate())
 
-            #XXX: This is broken for now; will not actually add the profile to the widgets.  Need to fix that ...
-            self.sound.setActiveCollection(self.pc_idx)
-            self.hodo.setActiveCollection(self.pc_idx)
+        dt = prof_col.getCurrentDate()
+        if prof_col.hasMeta('analogfile'):
+            analogfiles = prof_col.getMeta('analogfile')
+            analogfiles[dt] = filematch
+        else:
+            analogfiles = {dt:filematch}
+
+        prof_col.setMeta('analogfile', analogfiles)
+
+        self.addProfileCollection(match_col, focus=False)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
@@ -366,8 +376,17 @@ class SPCWidget(QWidget):
 
         self.parcel_types = self.convective.pcl_types
         self.updateProfs()
-        self.updateSARS("")
-        self.insets['SARS'].clearSelection()
+
+        prof_col = self.prof_collections[self.pc_idx]
+        if prof_col.hasMeta('analogfile'):
+            match = prof_col.getMeta('analogfile')
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
+            else:
+                self.insets['SARS'].clearSelection()
+        else:
+            self.insets['SARS'].clearSelection()
 
     def swapProfCollections(self):
         if self.mode == "model":
@@ -387,8 +406,15 @@ class SPCWidget(QWidget):
             self.pc_idx = idxs[loc_idx]
 
         self.updateProfs()
-        self.updateSARS("")
-        self.insets['SARS'].clearSelection()
+
+        if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
+            match = self.prof_collections[self.pc_idx].getMeta('analogfile')
+            if self.pc_idx in match:
+                self.insets['SARS'].setSelection(match[self.pc_idx])
+            else:
+                self.insets['SARS'].clearSelection()
+        else:
+            self.insets['SARS'].clearSelection()
 
     def closeEvent(self, e):
         self.sound.closeEvent(e)

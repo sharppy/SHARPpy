@@ -439,6 +439,24 @@ class plotAnalogues(backgroundAnalogues):
         self.update()
         self.parentWidget().setFocus()
 
+    def setSelection(self, filematch):
+        match_name = os.path.basename(filematch)
+        if match_name in self.sup_matches[0]:
+            idx = np.where(self.sup_matches[0] == match_name)[0][0]
+            lbx = 0.
+            ybounds = self.ybounds_sup
+        if match_name in self.hail_matches[0]:
+            idx = np.where(self.hail_matches[0] == match_name)[0][0]
+            lbx = self.brx / 2.
+            ybounds = self.ybounds_hail
+
+        self.selectRect = QtCore.QRect(lbx, ybounds[idx, 0],
+                        self.brx / 2., ybounds[idx, 1] - ybounds[idx, 0])
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def clearSelection(self):
         self.selectRect = None
 

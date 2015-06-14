@@ -502,6 +502,10 @@ class plotSkewT(backgroundSkewT):
         plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if model == "Archive":
             plot_title += "  (User Selected" + modified_str + ")"
+        elif model == "Analog":
+            date = prof_coll.getAnalogDate()
+            plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
+            plot_title += "  (Analog" + modified_str + ")"
         elif observed:
             plot_title += "  (Observed" + modified_str + ")"
         else:

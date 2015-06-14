@@ -11,6 +11,7 @@ class ProfCollection(object):
         self._target_type = target_type
         self._highlight = profiles.keys()[0]
         self._prof_idx = 0
+        self._analog_date = None
 
         self._mod_therm = [ False for d in self._dates ]
         self._mod_wind = [ False for d in self._dates ]
@@ -94,6 +95,9 @@ class ProfCollection(object):
         profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.iteritems() ) 
         return profs
 
+    def getAnalogDate(self):
+        return self._analog_date
+
     def isModified(self):
         if not self.hasCurrentProf():
             return False
@@ -104,6 +108,9 @@ class ProfCollection(object):
 
     def hasCurrentProf(self):
         return self._prof_idx >= 0
+
+    def hasMeta(self, key):
+        return key in self._meta
 
     def setMeta(self, key, value):
         self._meta[key] = value
@@ -116,6 +123,10 @@ class ProfCollection(object):
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
             self._prof_idx = -1
+
+    def setAnalogToDate(self, analog_to_date):
+        self._analog_date = self._dates[0]
+        self._dates = [ analog_to_date ]
 
     def advanceTime(self, direction):
         length = len(self._dates)
