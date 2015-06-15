@@ -436,6 +436,9 @@ class plotHodo(backgroundHodo):
     def addProfileCollection(self, prof_coll):
         self.prof_collections.append(prof_coll)
 
+    def rmProfileCollection(self, prof_coll):
+        self.prof_collections.remove(prof_coll)
+
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()

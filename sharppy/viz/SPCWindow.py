@@ -249,6 +249,47 @@ class SPCWidget(QWidget):
 
         self.updateProfs()
 
+    def setProfileCollection(self, prof_col):
+        try:
+            self.pc_idx = self.prof_collections.index(prof_col)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be focused ..."
+            return
+
+        self.updateProfs()
+
+    def rmProfileCollection(self, prof_col):
+        try:
+            pc_idx = self.prof_collections.index(prof_col)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be removed ..."
+
+        self.prof_collections.pop(pc_idx)
+        self.sound.rmProfileCollection(prof_col)
+        self.hodo.rmProfileCollection(prof_col)
+
+        # If we've removed an analog, remove it from the profile it's an analog to.
+        if prof_col.hasMeta('filematch'):
+            filematch = prof_col.getMeta('filematch')
+            for pc in self.prof_collections:
+                if pc.hasMeta('analogfile'):
+                    keys, vals = zip(*pc.getMeta('analogfile').items())
+                    if filematch in vals:
+                        keys = list(keys); vals = list(vals)
+
+                        idx = vals.index(filematch)
+                        vals.pop(idx)
+                        keys.pop(idx)
+
+                        pc.setMeta('analogfile', dict(zip(keys, vals)))
+            self.insets['SARS'].clearSelection()
+
+        if self.pc_idx == pc_idx:
+            self.pc_idx = 0
+        elif self.pc_idx > pc_idx:
+            self.pc_idx -= 1
+        self.updateProfs()
+
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
         default_prof = prof_col.getHighlightedProf()
@@ -302,6 +343,7 @@ class SPCWidget(QWidget):
         match_col.setMeta('run', None)
         match_col.setMeta('fhour', None)
         match_col.setMeta('observed', True)
+        match_col.setMeta('filematch', filematch)
         match_col.setAnalogToDate(prof_col.getCurrentDate())
 
         dt = prof_col.getCurrentDate()
@@ -313,7 +355,7 @@ class SPCWidget(QWidget):
 
         prof_col.setMeta('analogfile', analogfiles)
 
-        self.addProfileCollection(match_col, focus=False)
+        self.parentWidget().addProfileCollection(match_col, focus=False)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
@@ -417,8 +459,9 @@ class SPCWidget(QWidget):
 
         if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
             match = self.prof_collections[self.pc_idx].getMeta('analogfile')
-            if self.pc_idx in match:
-                self.insets['SARS'].setSelection(match[self.pc_idx])
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
             else:
                 self.insets['SARS'].clearSelection()
         else:
@@ -431,7 +474,6 @@ class SPCWidget(QWidget):
             prof_coll.cancelCopy()
 
     def makeInsetMenu(self, *exclude):
-
         # This will make the menu of the available insets.
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
@@ -510,6 +552,7 @@ class SPCWindow(QMainWindow):
     def __init__(self, **kwargs):
         super(SPCWindow, self).__init__()
 
+        self.prof_collections = []
         self.__initUI(**kwargs)
 
     def __initUI(self, **kwargs):
@@ -543,16 +586,57 @@ class SPCWindow(QMainWindow):
         filemenu.addAction(savetext)
 
         self.profilemenu = bar.addMenu("Profiles")
+
         self.allobserved = QAction("Collect Observed", self, checkable=True)
         self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
-        self.profilemenu.addAction(self.allobserved)
 
-    def addProfileCollection(self, prof_col):
+        self.createProfilesMenu()
+
+    def createProfilesMenu(self):
+        def slotFactory(target, prof_col):
+            @Slot()
+            def doAction():
+                target(prof_col)
+            return doAction
+            
+        self.profilemenu.clear()
+        self.profilemenu.addAction(self.allobserved)
+        self.profilemenu.addSeparator()
+
+        for prof_col in self.prof_collections:
+            pc_loc = prof_col.getMeta('loc')
+            pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
+            pc_model = prof_col.getMeta('model')
+
+            menu_name = "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+            prof_menu = self.profilemenu.addMenu(menu_name)
+
+            focus = QAction("Focus", self)
+            focus.triggered.connect(slotFactory(self.spc_widget.setProfileCollection, prof_col))
+            prof_menu.addAction(focus)
+
+            if len(self.prof_collections) > 1:
+                remove = QAction("Remove", self)
+                remove.triggered.connect(slotFactory(self.rmProfileCollection, prof_col))
+                prof_menu.addAction(remove)
+
+    def addProfileCollection(self, prof_col, focus=True):
         if not prof_col.getMeta('observed'):
             self.allobserved.setChecked(False)
             self.allobserved.setDisabled(True)
 
-        self.spc_widget.addProfileCollection(prof_col)
+        self.prof_collections.append(prof_col)
+        self.createProfilesMenu()
+        self.spc_widget.addProfileCollection(prof_col, focus=focus)
+
+    def rmProfileCollection(self, prof_col):
+        self.prof_collections.remove(prof_col)
+
+        if all( pc.getMeta('observed') for pc in self.prof_collections ):
+            self.allobserved.setDisabled(False)
+
+        self.createProfilesMenu()
+        self.spc_widget.rmProfileCollection(prof_col)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Left:
