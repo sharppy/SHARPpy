@@ -120,14 +120,17 @@ def _available_psu(model, nam=False, off=False):
         dt -= timedelta(hours=6)
     return [ dt ]
 
-pecan_base_url = 'http://weather.ou.edu/~map/real_time_data/'
+## PECAN MAPS ENSEMBLE CODE
+pecan_base_url = 'http://weather.ou.edu/~map/real_time_data/PECAN/'
+#http://weather.ou.edu/~map/real_time_data/PECAN/2015061112/soundings/TOP_2015061113.txt
 
 def _available_oupecan():
-    test_dt = datetime.strptime("13062500", '%y%m%d%H')
-    return [test_dt]
+    text = urllib2.urlopen(pecan_base_url).read()
+    matches = sorted(list(set(re.findall("([\d]{10})", text))))
+    return [ datetime.strptime(m, "%Y%m%d%H") for m in matches ]
 
 def _availableat_oupecan(dt):
-    dt_string = datetime.strftime(dt, '%y%m%d%H')
+    dt_string = datetime.strftime(dt, '%Y%m%d%H')
     url = "%s%s/soundings/" % (pecan_base_url, dt_string)
     url_obj = urllib2.urlopen(url)
     text = url_obj.read()
@@ -135,6 +138,7 @@ def _availableat_oupecan(dt):
     stns = re.findall("([\w]{3})_%s.txt" % dt_string, text)
     return np.unique(stns)
 
+## NCAR ENSEMBLE CODE
 ncarens_base_url = 'http://sharp.weather.ou.edu/soundings/ncarens/'
 
 def _available_ncarens():
@@ -192,5 +196,7 @@ if __name__ == "__main__":
     stns = availableat['psu']['gfs'](dt[0])
     #dt = available['spc']['observed']()
     #stns = availableat['spc']['observed'](dt[-1])
-    dt = available['ou_pecan']
-    stns = availableat['ou_pecan'](dt[0])
+    dt = available['ou_pecan']['pecan ensemble']()
+    print dt
+    stns = availableat['ou_pecan']['pecan ensemble'](dt[-2])
+    print stns
