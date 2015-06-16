@@ -7,6 +7,7 @@ from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
+import sharppy.sharptab.prof_collection as prof_collection
 import sharppy.sharptab as tab
 import sharppy.io as io
 from datetime import datetime, timedelta
@@ -50,6 +51,7 @@ class SPCWidget(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.prof_collections = []
+        self.prof_ids = []
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
@@ -229,8 +231,9 @@ class SPCWidget(QWidget):
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
-    def addProfileCollection(self, prof_col, focus=True):
+    def addProfileCollection(self, prof_col, prof_id, focus=True):
         self.prof_collections.append(prof_col)
+        self.prof_ids.append(prof_id)
         self.sound.addProfileCollection(prof_col)
         self.hodo.addProfileCollection(prof_col)
 
@@ -249,22 +252,24 @@ class SPCWidget(QWidget):
 
         self.updateProfs()
 
-    def setProfileCollection(self, prof_col):
+    @Slot(str)
+    def setProfileCollection(self, prof_id):
         try:
-            self.pc_idx = self.prof_collections.index(prof_col)
+            self.pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
             print "Hmmm, that profile doesn't exist to be focused ..."
             return
  
         self.updateProfs()
 
-    def rmProfileCollection(self, prof_col):
+    def rmProfileCollection(self, prof_id):
         try:
-            pc_idx = self.prof_collections.index(prof_col)
+            pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
             print "Hmmm, that profile doesn't exist to be removed ..."
 
-        self.prof_collections.pop(pc_idx)
+        prof_col = self.prof_collections.pop(pc_idx)
+        self.prof_ids.pop(pc_idx)
         self.sound.rmProfileCollection(prof_col)
         self.hodo.rmProfileCollection(prof_col)
 
@@ -596,30 +601,32 @@ class SPCWindow(QMainWindow):
         self.profilemenu.addAction(self.allobserved)
         self.profilemenu.addSeparator()
 
+        self.focus_mapper = QSignalMapper(self)
+        self.remove_mapper = QSignalMapper(self)
+
+        self.focus_mapper.mapped[str].connect(self.spc_widget.setProfileCollection)
+        self.remove_mapper.mapped[str].connect(self.rmProfileCollection)
+
     def createProfileMenu(self, prof_col):
-        def slotFactory(target, prof_col):
-            @Slot()
-            def doAction():
-                target(prof_col)
-            return doAction
- 
         menu_name = self.createMenuName(prof_col)
         prof_menu = self.profilemenu.addMenu(menu_name)
 
         focus = QAction("Focus", self)
-        focus.triggered.connect(slotFactory(self.spc_widget.setProfileCollection, prof_col))
+        focus.triggered.connect(self.focus_mapper.map)
+        self.focus_mapper.setMapping(focus, menu_name)
         prof_menu.addAction(focus)
 
         remove = QAction("Remove", self)
-        remove.triggered.connect(slotFactory(self.rmProfileCollection, prof_col))
+        remove.triggered.connect(self.remove_mapper.map)
+        self.remove_mapper.setMapping(remove, menu_name)
         prof_menu.addAction(remove)
+
         if len(self.menu_items) == 0:
             remove.setVisible(False)
 
         self.menu_items.append(prof_menu)
 
-    def removeProfileMenu(self, prof_col):
-        menu_name = self.createMenuName(prof_col)
+    def removeProfileMenu(self, menu_name):
         menu_items = [ mitem for mitem in self.menu_items if mitem.title() == menu_name ]
         for mitem in menu_items:
             mitem.menuAction().setVisible(False)
@@ -637,11 +644,13 @@ class SPCWindow(QMainWindow):
             names = [ act.text() for act in actions ]
             actions[names.index("Remove")].setVisible(True)
 
-        self.spc_widget.addProfileCollection(prof_col, focus=focus)
+        menu_name = self.createMenuName(prof_col)
+        self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
 
-    def rmProfileCollection(self, prof_col):
-        self.removeProfileMenu(prof_col)
-        self.spc_widget.rmProfileCollection(prof_col)
+    @Slot(str)
+    def rmProfileCollection(self, menu_name):
+        self.removeProfileMenu(menu_name)
+        self.spc_widget.rmProfileCollection(menu_name)
 
         if self.spc_widget.isAllObserved():
             self.allobserved.setDisabled(False)
