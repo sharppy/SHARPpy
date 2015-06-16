@@ -1,23 +1,62 @@
 
 import sharppy.sharptab.profile as profile
 
+from multiprocessing import Process, Queue
+
 class ProfCollection(object):
-    def __init__(self, profiles, dates, **kwargs):
+    def __init__(self, profiles, dates, target_type=profile.ConvectiveProfile, **kwargs):
         self._profs = profiles
         self._dates = dates
         self._meta = kwargs
+        self._target_type = target_type
         self._highlight = profiles.keys()[0]
         self._prof_idx = 0
+        self._analog_date = None
 
         self._mod_therm = [ False for d in self._dates ]
         self._mod_wind = [ False for d in self._dates ]
 
         self._orig_profs = {}
+        self._async = None
+        self._cancel_copy = False
+        self._procs = []
 
     def subset(self, idxs):
         profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.iteritems() )
         dates = [ self._dates[idx] for idx in idxs ]
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
+
+    def _backgroundCopy(self, member, max_procs=2):
+        def doCopy(target_type, prof, idx, pipe):
+            pipe.put((target_type.copy(prof), idx))
+
+        pipe = Queue(max_procs)
+
+        for idx, prof in enumerate(self._profs[member]):
+            proc = Process(target=doCopy, args=(self._target_type, prof, idx, pipe))
+            proc.start()
+
+            self._procs.append(proc)
+
+            if (idx % max_procs) == 0 or idx == len(self._profs[member]) - 1:
+                for proc in self._procs:
+                    proc.join()
+
+                    prof, copy_idx  = pipe.get()
+                    self._profs[member][copy_idx] = prof
+
+                self._procs = []
+        return
+
+    def setAsync(self, async):
+        self._async = async
+        self._async.post(self._backgroundCopy, None, self._highlight)
+
+    def cancelCopy(self):
+        for proc in self._procs:
+            proc.terminate()
+        if self._async is not None:
+            self._async.clearQueue()
 
     def getMeta(self, key, index=False):
         meta = self._meta[key]
@@ -37,8 +76,7 @@ class ProfCollection(object):
 
         cur_prof = self._profs[self._highlight][self._prof_idx]
         if type(cur_prof) != profile.ConvectiveProfile:
-            self._profs[self._highlight][self._prof_idx] = profile.ConvectiveProfile.copy(cur_prof)
-
+            self._profs[self._highlight][self._prof_idx] = self._target_type.copy(cur_prof)
         return self._profs[self._highlight][self._prof_idx]
 
     def getCurrentProfs(self):
@@ -49,13 +87,16 @@ class ProfCollection(object):
             # Copy the profiles on the fly
             cur_prof = profs[self._prof_idx]
 
-            if mem == self._highlight and type(cur_prof) != profile.ConvectiveProfile:
-                self._profs[mem][self._prof_idx] = profile.ConvectiveProfile.copy(cur_prof)
-            elif type(cur_prof) not in [ profile.BasicProfile, profile.ConvectiveProfile ]:
+            if mem == self._highlight and type(cur_prof) != self._target_type:
+                self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
+            elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
                 self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
 
         profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.iteritems() ) 
         return profs
+
+    def getAnalogDate(self):
+        return self._analog_date
 
     def isModified(self):
         if not self.hasCurrentProf():
@@ -68,6 +109,9 @@ class ProfCollection(object):
     def hasCurrentProf(self):
         return self._prof_idx >= 0
 
+    def hasMeta(self, key):
+        return key in self._meta
+
     def setMeta(self, key, value):
         self._meta[key] = value
 
@@ -79,6 +123,10 @@ class ProfCollection(object):
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
             self._prof_idx = -1
+
+    def setAnalogToDate(self, analog_to_date):
+        self._analog_date = self._dates[0]
+        self._dates = [ analog_to_date ]
 
     def advanceTime(self, direction):
         length = len(self._dates)

@@ -50,13 +50,16 @@ class SPCWidget(QWidget):
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
         self.prof_collections = []
+        self.prof_ids = []
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
-        self.plot_title = ""
+        self.mode = ""
 
         ## these are used to display profiles
         self.parcel_type = "MU"
+
+        self.coll_observed = False
 
         if not self.config.has_section('insets'):
             self.config.add_section('insets')
@@ -180,27 +183,6 @@ class SPCWidget(QWidget):
         elif pcl == prof.usrpcl:
             return "USER"
 
-    def getPlotTitle(self):
-        modified = self.prof_collections[self.pc_idx].isModified()
-        modified_str = "; Modified" if modified else ""
-
-        prof_col = self.prof_collections[self.pc_idx]
-        loc = prof_col.getMeta('loc')
-        date = prof_col.getCurrentDate()
-        run = prof_col.getMeta('run')
-        model = prof_col.getMeta('model')
-        observed = prof_col.getMeta('observed')
-
-        plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
-        if model == "Archive":
-            plot_title += "  (User Selected" + modified_str + ")"
-        elif observed:
-            plot_title += "  (Observed" + modified_str + ")"
-        else:
-            fhour = self.prof_collections[self.pc_idx].getMeta('fhour', index=True)
-            plot_title += "  (" + run + "  " + model + "  " + fhour + modified_str + ")"
-        return plot_title
-
     def saveimage(self):
         self.home_path = expanduser('~')
         files_types = "PNG (*.png)"
@@ -248,25 +230,85 @@ class SPCWidget(QWidget):
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
-    def addProfileCollection(self, prof_col):
+    def addProfileCollection(self, prof_col, prof_id, focus=True):
         self.prof_collections.append(prof_col)
-        self.pc_idx = len(self.prof_collections) - 1
+        self.prof_ids.append(prof_id)
+        self.sound.addProfileCollection(prof_col)
+        self.hodo.addProfileCollection(prof_col)
+
+        if focus:
+            self.pc_idx = len(self.prof_collections) - 1
+
+        if not prof_col.getMeta('observed'):
+            self.coll_observed = False
+            self.sound.setAllObserved(self.coll_observed, update_gui=False)
+            self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
-            prof_col.setCurrentDate(cur_dt)
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
 
         self.updateProfs()
 
-    def updateProfs(self):
-        profs = self.prof_collections[self.pc_idx].getCurrentProfs().values()
-        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
+    @Slot(str)
+    def setProfileCollection(self, prof_id):
+        try:
+            self.pc_idx = self.prof_ids.index(prof_id)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be focused ..."
+            return
+ 
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for prof_col in self.prof_collections:
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
 
-        self.plot_title = self.getPlotTitle()
+        self.updateProfs()
+
+    def rmProfileCollection(self, prof_id):
+        try:
+            pc_idx = self.prof_ids.index(prof_id)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be removed ..."
+
+        prof_col = self.prof_collections.pop(pc_idx)
+        self.prof_ids.pop(pc_idx)
+        self.sound.rmProfileCollection(prof_col)
+        self.hodo.rmProfileCollection(prof_col)
+
+        # If we've removed an analog, remove it from the profile it's an analog to.
+        if prof_col.hasMeta('filematch'):
+            filematch = prof_col.getMeta('filematch')
+            for pc in self.prof_collections:
+                if pc.hasMeta('analogfile'):
+                    keys, vals = zip(*pc.getMeta('analogfile').items())
+                    if filematch in vals:
+                        keys = list(keys); vals = list(vals)
+
+                        idx = vals.index(filematch)
+                        vals.pop(idx)
+                        keys.pop(idx)
+
+                        pc.setMeta('analogfile', dict(zip(keys, vals)))
+            self.insets['SARS'].clearSelection()
+
+        if self.pc_idx == pc_idx:
+            self.pc_idx = 0
+        elif self.pc_idx > pc_idx:
+            self.pc_idx -= 1
+        self.updateProfs()
+
+    def isAllObserved(self):
+        return all( pc.getMeta('observed') for pc in self.prof_collections )
+
+    def updateProfs(self):
+        prof_col = self.prof_collections[self.pc_idx]
+        default_prof = prof_col.getHighlightedProf()
 
         # update the profiles
-        self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
-        self.hodo.setProf(default_prof, proflist=profs)
+        self.sound.setActiveCollection(self.pc_idx)
+        self.hodo.setActiveCollection(self.pc_idx)
 
         self.storm_slinky.setProf(default_prof)
         self.inferred_temp_advection.setProf(default_prof)
@@ -302,19 +344,30 @@ class SPCWidget(QWidget):
     @Slot(str)
     def updateSARS(self, filematch):
         prof_col = self.prof_collections[self.pc_idx]
-        if not prof_col.isEnsemble():
 
-            profs = prof_col.getCurrentProfs().values()
-            default_prof = prof_col.getHighlightedProf()
+        profs = prof_col.getCurrentProfs().values()
+        default_prof = prof_col.getHighlightedProf()
 
-            if filematch != "":
-                dec = io.spc_decoder.SPCDecoder(filematch)
-                matchprof = dec.getProfiles().getHighlightedProf()
+        dec = io.spc_decoder.SPCDecoder(filematch)
+        match_col = dec.getProfiles()
 
-                profs.append(matchprof)
+        match_col.setMeta('model', 'Analog')
+        match_col.setMeta('run', None)
+        match_col.setMeta('fhour', None)
+        match_col.setMeta('observed', True)
+        match_col.setMeta('filematch', filematch)
+        match_col.setAnalogToDate(prof_col.getCurrentDate())
 
-            self.sound.setProf(default_prof, title=self.plot_title, proflist=profs)
-            self.hodo.setProf(default_prof, proflist=profs)
+        dt = prof_col.getCurrentDate()
+        if prof_col.hasMeta('analogfile'):
+            analogfiles = prof_col.getMeta('analogfile')
+            analogfiles[dt] = filematch
+        else:
+            analogfiles = {dt:filematch}
+
+        prof_col.setMeta('analogfile', analogfiles)
+
+        self.parentWidget().addProfileCollection(match_col, focus=False)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
@@ -334,6 +387,12 @@ class SPCWidget(QWidget):
 
         self.updateProfs()
         self.setFocus()
+
+    @Slot()
+    def toggleCollectObserved(self):
+        self.coll_observed = not self.coll_observed
+        self.sound.setAllObserved(self.coll_observed)
+        self.hodo.setAllObserved(self.coll_observed)
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -364,36 +423,69 @@ class SPCWidget(QWidget):
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
     def advanceTime(self, direction):
-        if len(self.prof_collections) == 0:
+        if len(self.prof_collections) == 0 or self.coll_observed:
             return
 
-        cur_dt = self.prof_collections[self.pc_idx].advanceTime(direction)
+        prof_col = self.prof_collections[self.pc_idx]
+        if prof_col.getMeta('observed'):
+            cur_dt = prof_col.getCurrentDate()
+            cur_loc = prof_col.getMeta('loc')
+            idxs, dts = zip(*sorted(((idx, pc.getCurrentDate()) for idx, pc in enumerate(self.prof_collections) if pc.getMeta('loc') == cur_loc and pc.getMeta('observed')), key=lambda x: x[1]))
+
+            dt_idx = dts.index(cur_dt)
+            dt_idx = (dt_idx + direction) % len(dts)
+            self.pc_idx = idxs[dt_idx]
+
+            cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        else:
+            cur_dt = prof_col.advanceTime(direction)
+
         for prof_col in self.prof_collections:
-            prof_col.setCurrentDate(cur_dt)
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
 
         self.parcel_types = self.convective.pcl_types
         self.updateProfs()
-        self.updateSARS("")
-        self.insets['SARS'].clearSelection()
+
+        prof_col = self.prof_collections[self.pc_idx]
+        if prof_col.hasMeta('analogfile'):
+            match = prof_col.getMeta('analogfile')
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
+            else:
+                self.insets['SARS'].clearSelection()
+        else:
+            self.insets['SARS'].clearSelection()
 
     def swapProfCollections(self):
-        n_coll = len(self.prof_collections)
-        idx = (self.pc_idx + 1) % n_coll
-
-        while not self.prof_collections[idx % n_coll].hasCurrentProf():
-            idx = (idx + 1) % n_coll
-
-        self.pc_idx = idx
+        # See if we have any other observed profiles loaded at this time.
+        prof_col = self.prof_collections[self.pc_idx]
+        dt = prof_col.getCurrentDate()
+        idxs, pcs = zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt or self.coll_observed ])
+        loc_idx = pcs.index(prof_col)
+        loc_idx = (loc_idx + 1) % len(pcs)
+        self.pc_idx = idxs[loc_idx]
 
         self.updateProfs()
-        self.updateSARS("")
-        self.insets['SARS'].clearSelection()
+
+        if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
+            match = self.prof_collections[self.pc_idx].getMeta('analogfile')
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
+            else:
+                self.insets['SARS'].clearSelection()
+        else:
+            self.insets['SARS'].clearSelection()
 
     def closeEvent(self, e):
         self.sound.closeEvent(e)
 
-    def makeInsetMenu(self, *exclude):
+        for prof_coll in self.prof_collections:
+            prof_coll.cancelCopy()
 
+    def makeInsetMenu(self, *exclude):
         # This will make the menu of the available insets.
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
@@ -472,6 +564,7 @@ class SPCWindow(QMainWindow):
     def __init__(self, **kwargs):
         super(SPCWindow, self).__init__()
 
+        self.menu_items = []
         self.__initUI(**kwargs)
 
     def __initUI(self, **kwargs):
@@ -504,8 +597,73 @@ class SPCWindow(QMainWindow):
         savetext = QAction("Save Text", self)
         filemenu.addAction(savetext)
 
-    def addProfileCollection(self, prof_col):
-        self.spc_widget.addProfileCollection(prof_col)
+        self.profilemenu = bar.addMenu("Profiles")
+
+        self.allobserved = QAction("Collect Observed", self, checkable=True)
+        self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
+
+        self.profilemenu.addAction(self.allobserved)
+        self.profilemenu.addSeparator()
+
+        self.focus_mapper = QSignalMapper(self)
+        self.remove_mapper = QSignalMapper(self)
+
+        self.focus_mapper.mapped[str].connect(self.spc_widget.setProfileCollection)
+        self.remove_mapper.mapped[str].connect(self.rmProfileCollection)
+
+    def createProfileMenu(self, prof_col):
+        menu_name = self.createMenuName(prof_col)
+        prof_menu = self.profilemenu.addMenu(menu_name)
+
+        focus = QAction("Focus", self)
+        focus.triggered.connect(self.focus_mapper.map)
+        self.focus_mapper.setMapping(focus, menu_name)
+        prof_menu.addAction(focus)
+
+        remove = QAction("Remove", self)
+        remove.triggered.connect(self.remove_mapper.map)
+        self.remove_mapper.setMapping(remove, menu_name)
+        prof_menu.addAction(remove)
+
+        if len(self.menu_items) == 0:
+            remove.setVisible(False)
+
+        self.menu_items.append(prof_menu)
+
+    def removeProfileMenu(self, menu_name):
+        menu_items = [ mitem for mitem in self.menu_items if mitem.title() == menu_name ]
+        for mitem in menu_items:
+            mitem.menuAction().setVisible(False)
+
+    def addProfileCollection(self, prof_col, focus=True):
+        if not prof_col.getMeta('observed'):
+            self.allobserved.setDisabled(True)
+            self.allobserved.setChecked(False)
+
+        self.createProfileMenu(prof_col)
+
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) > 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(True)
+
+        menu_name = self.createMenuName(prof_col)
+        self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
+
+    @Slot(str)
+    def rmProfileCollection(self, menu_name):
+        self.removeProfileMenu(menu_name)
+        self.spc_widget.rmProfileCollection(menu_name)
+
+        if self.spc_widget.isAllObserved():
+            self.allobserved.setDisabled(False)
+
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) == 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(False)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Left:
@@ -522,3 +680,11 @@ class SPCWindow(QMainWindow):
     def closeEvent(self, e):
         self.spc_widget.closeEvent(e)
         self.closed.emit()
+
+    def createMenuName(self, prof_col):
+        pc_loc = prof_col.getMeta('loc')
+        pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
+        pc_model = prof_col.getMeta('model')
+
+        return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<sourcelist>
+    <datasource name="PECAN Ensemble" ensemble="true" observed="false">
+            <outlet name="ou_pecan" url="http://weather.ou.edu/~map/real_time_data/20{date}{cycle}/soundings/{srcid}_20{date}{cycle}.txt" format="pecan" >
+            <time range="24" delta="1" offset="0" delay="1" cycle="13" archive="168"/>
+            <points csv="pecan.csv" />
+        </outlet>
+    </datasource>
+</sourcelist>
