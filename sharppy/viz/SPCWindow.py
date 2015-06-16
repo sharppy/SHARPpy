@@ -7,7 +7,6 @@ from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *
 from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
-import sharppy.sharptab.prof_collection as prof_collection
 import sharppy.sharptab as tab
 import sharppy.io as io
 from datetime import datetime, timedelta
@@ -260,6 +259,11 @@ class SPCWidget(QWidget):
             print "Hmmm, that profile doesn't exist to be focused ..."
             return
  
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for prof_col in self.prof_collections:
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
+
         self.updateProfs()
 
     def rmProfileCollection(self, prof_id):
