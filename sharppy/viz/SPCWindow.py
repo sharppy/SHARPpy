@@ -255,7 +255,7 @@ class SPCWidget(QWidget):
         except ValueError:
             print "Hmmm, that profile doesn't exist to be focused ..."
             return
-
+ 
         self.updateProfs()
 
     def rmProfileCollection(self, prof_col):
@@ -289,6 +289,9 @@ class SPCWidget(QWidget):
         elif self.pc_idx > pc_idx:
             self.pc_idx -= 1
         self.updateProfs()
+
+    def isAllObserved(self):
+        return all( pc.getMeta('observed') for pc in self.prof_collections )
 
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
@@ -552,7 +555,7 @@ class SPCWindow(QMainWindow):
     def __init__(self, **kwargs):
         super(SPCWindow, self).__init__()
 
-        self.prof_collections = []
+        self.menu_items = []
         self.__initUI(**kwargs)
 
     def __initUI(self, **kwargs):
@@ -590,53 +593,64 @@ class SPCWindow(QMainWindow):
         self.allobserved = QAction("Collect Observed", self, checkable=True)
         self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
 
-        self.createProfilesMenu()
+        self.profilemenu.addAction(self.allobserved)
+        self.profilemenu.addSeparator()
 
-    def createProfilesMenu(self):
+    def createProfileMenu(self, prof_col):
         def slotFactory(target, prof_col):
             @Slot()
             def doAction():
                 target(prof_col)
             return doAction
-            
-        self.profilemenu.clear()
-        self.profilemenu.addAction(self.allobserved)
-        self.profilemenu.addSeparator()
+ 
+        menu_name = self.createMenuName(prof_col)
+        prof_menu = self.profilemenu.addMenu(menu_name)
 
-        for prof_col in self.prof_collections:
-            pc_loc = prof_col.getMeta('loc')
-            pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
-            pc_model = prof_col.getMeta('model')
+        focus = QAction("Focus", self)
+        focus.triggered.connect(slotFactory(self.spc_widget.setProfileCollection, prof_col))
+        prof_menu.addAction(focus)
 
-            menu_name = "%s (%s %s)" % (pc_loc, pc_date, pc_model)
-            prof_menu = self.profilemenu.addMenu(menu_name)
+        remove = QAction("Remove", self)
+        remove.triggered.connect(slotFactory(self.rmProfileCollection, prof_col))
+        prof_menu.addAction(remove)
+        if len(self.menu_items) == 0:
+            remove.setVisible(False)
 
-            focus = QAction("Focus", self)
-            focus.triggered.connect(slotFactory(self.spc_widget.setProfileCollection, prof_col))
-            prof_menu.addAction(focus)
+        self.menu_items.append(prof_menu)
 
-            if len(self.prof_collections) > 1:
-                remove = QAction("Remove", self)
-                remove.triggered.connect(slotFactory(self.rmProfileCollection, prof_col))
-                prof_menu.addAction(remove)
+    def removeProfileMenu(self, prof_col):
+        menu_name = self.createMenuName(prof_col)
+        menu_items = [ mitem for mitem in self.menu_items if mitem.title() == menu_name ]
+        for mitem in menu_items:
+            mitem.menuAction().setVisible(False)
 
     def addProfileCollection(self, prof_col, focus=True):
         if not prof_col.getMeta('observed'):
-            self.allobserved.setChecked(False)
             self.allobserved.setDisabled(True)
+            self.allobserved.setChecked(False)
 
-        self.prof_collections.append(prof_col)
-        self.createProfilesMenu()
+        self.createProfileMenu(prof_col)
+
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) > 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(True)
+
         self.spc_widget.addProfileCollection(prof_col, focus=focus)
 
     def rmProfileCollection(self, prof_col):
-        self.prof_collections.remove(prof_col)
+        self.removeProfileMenu(prof_col)
+        self.spc_widget.rmProfileCollection(prof_col)
 
-        if all( pc.getMeta('observed') for pc in self.prof_collections ):
+        if self.spc_widget.isAllObserved():
             self.allobserved.setDisabled(False)
 
-        self.createProfilesMenu()
-        self.spc_widget.rmProfileCollection(prof_col)
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) == 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(False)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Left:
@@ -653,3 +667,11 @@ class SPCWindow(QMainWindow):
     def closeEvent(self, e):
         self.spc_widget.closeEvent(e)
         self.closed.emit()
+
+    def createMenuName(self, prof_col):
+        pc_loc = prof_col.getMeta('loc')
+        pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
+        pc_model = prof_col.getMeta('model')
+
+        return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+
