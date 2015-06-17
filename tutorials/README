@@ -1,5 +1,5 @@
 This folder contains tutorials for interacting with the SHARPpy libraries.
-All tutorials are presented in the IPython Notebook format and require IPython. The tutorials also require the matplotlib package.
+All tutorials are presented in the IPython Notebook format and require IPython. The tutorials also require the matplotlib package.  These come installed by default with the Anaconda distribution described in the main README.
 
 To make sure you have IPython installed, open up a Python terminal and type in
 "import IPython".  If this command runs without error, you have IPython.
