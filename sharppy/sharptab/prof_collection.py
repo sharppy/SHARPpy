@@ -2,7 +2,11 @@
 import sharppy.sharptab.profile as profile
 
 from multiprocessing import Process, Queue
+import platform
 
+def doCopy(target_type, prof, idx, pipe):
+    pipe.put((target_type.copy(prof), idx))
+    
 class ProfCollection(object):
     def __init__(self, profiles, dates, target_type=profile.ConvectiveProfile, **kwargs):
         self._profs = profiles
@@ -27,9 +31,6 @@ class ProfCollection(object):
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
 
     def _backgroundCopy(self, member, max_procs=2):
-        def doCopy(target_type, prof, idx, pipe):
-            pipe.put((target_type.copy(prof), idx))
-
         pipe = Queue(max_procs)
 
         for idx, prof in enumerate(self._profs[member]):
@@ -37,14 +38,17 @@ class ProfCollection(object):
             proc.start()
 
             self._procs.append(proc)
-
+            
             if (idx % max_procs) == 0 or idx == len(self._profs[member]) - 1:
                 for proc in self._procs:
-                    proc.join()
 
+                    if platform.system() != "Windows":
+                        # Windows hangs here for some reason, but runs fine without it.
+                        proc.join()
+                        
                     prof, copy_idx  = pipe.get()
                     self._profs[member][copy_idx] = prof
-
+                    
                 self._procs = []
         return
 

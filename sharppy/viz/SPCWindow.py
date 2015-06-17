@@ -636,6 +636,11 @@ class SPCWindow(QMainWindow):
             mitem.menuAction().setVisible(False)
 
     def addProfileCollection(self, prof_col, focus=True):
+        menu_name = self.createMenuName(prof_col)
+        if any( mitem.title() == menu_name for mitem in self.menu_items ):
+            self.spc_widget.setProfileCollection(menu_name)
+            return
+            
         if not prof_col.getMeta('observed'):
             self.allobserved.setDisabled(True)
             self.allobserved.setChecked(False)
@@ -648,7 +653,6 @@ class SPCWindow(QMainWindow):
             names = [ act.text() for act in actions ]
             actions[names.index("Remove")].setVisible(True)
 
-        menu_name = self.createMenuName(prof_col)
         self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
 
     @Slot(str)
