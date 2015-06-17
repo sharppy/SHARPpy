@@ -18,181 +18,17 @@ from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
 from sharppy.version import __version__, __version_name__
 from datasources import data_source
+from utils.async import AsyncThreads
+from utils.progress import progress
 
 from PySide.QtCore import *
 from PySide.QtGui import *
 import datetime as date
 import traceback
 from functools import wraps, partial
-import hashlib
 import cProfile
 from os.path import expanduser
 import ConfigParser
-import Queue
-
-class AsyncThreads(QObject):
-    def __init__(self, max_threads):
-        super(AsyncThreads, self).__init__()
-        self.threads = {}
-        self.callbacks = {}
-
-        self.max_threads = max_threads
-        self.running = 0
-        self.queue = Queue.PriorityQueue(0)
-        return
-
-    def post(self, func, callback, *args, **kwargs):
-        thd_id = self._genThreadId()
-
-        background = kwargs.get('background', False)
-        if 'background' in kwargs:
-            del kwargs['background']
-
-        thd = self._threadFactory(func, thd_id, *args, **kwargs)
-        thd.finished.connect(self.finish)
-
-        priority = 1 if background else 0
-        self.queue.put((priority, thd_id))
-
-        self.threads[thd_id] = thd
-        if callback is None:
-            callback = lambda x: x
-        self.callbacks[thd_id] = callback
-
-        if not background or self.running < self.max_threads:
-            self.startNext()
-        return thd_id
-
-    def isFinished(self, thread_id):
-        return not (thread_id in self.threads)
-
-    def join(self, thread_id):
-        while not self.isFinished(thread_id):
-            QCoreApplication.processEvents()
-
-    def clearQueue(self):
-        self.queue = Queue.PriorityQueue(0)
-        for thd_id, thd in self.threads.iteritems():
-            if thd.isRunning():
-                thd.terminate()
-
-        self.threads = {}
-        self.callbacks = {}
-
-    def startNext(self):
-        try:
-            prio, thd_id = self.queue.get(block=False)
-        except Queue.Empty:
-            return
-
-        self.threads[thd_id].start()
-        self.running += 1
-
-    @Slot(str, tuple)
-    def finish(self, thread_id, ret_val):
-        thd = self.threads[thread_id]
-        callback = self.callbacks[thread_id]
-
-        callback(ret_val)
-
-        del self.threads[thread_id]
-        del self.callbacks[thread_id]
-
-        self.running -= 1
-        if self.running < self.max_threads:
-            # Might not be the case if we just started a high-priority thread
-            self.startNext()
-
-    def _genThreadId(self):
-        time_stamp = date.datetime.utcnow().isoformat()
-        return hashlib.md5(time_stamp).hexdigest()
-
-    def _threadFactory(self, func, thread_id, *args, **kwargs):
-
-        class AsyncThread(QThread):
-            finished = Signal(str, tuple)
-
-            def __init__(self):
-                super(AsyncThread, self).__init__()
-            
-            def run(self):
-                try:
-                    ret_val = func(*args, **kwargs)
-                except Exception as e:
-                    if debug:
-                        print traceback.format_exc()
-                    ret_val = e
-                if type(ret_val) != tuple:
-                    ret_val = (ret_val, )
-
-                self.finished.emit(thread_id, ret_val)
-
-        return AsyncThread()
-
-class progress(QObject):
-    _progress = Signal(int, int)
-    _text = Signal(str)
-
-    def __init__(self, *args, **kwargs):
-        super(progress, self).__init__()
-        self._func = None
-        self._async = args[0]
-        self._ret_val = None
-
-    def __get__(self, obj, cls):
-        return partial(self.__call__, obj)
-
-    def __call__(self, *args, **kwargs):
-        if len(args) > 0 and hasattr(args[0], '__call__'):
-            self._func = args[0]
-            ret = self.doasync
-        else:
-            ret = self.doasync(*args, **kwargs)
-        return ret
-
-    def doasync(self, *args, **kwargs):
-        self._args = args
-        self._kwargs = kwargs
-
-        self._kwargs['__prog__'] = self._progress
-        self._kwargs['__text__'] = self._text
-
-        self._progress_dialog = QProgressDialog()
-        self._progress.connect(self.updateProgress)
-        self._text.connect(self.updateText)
-        self._progress_dialog.setMinimum(0)
-        self._progress_dialog.setValue(0)
-
-        self._progress_dialog.open()
-        self._isfinished = False
-
-        def finish(ret_val):
-            self._isfinished = True
-            self._progress_dialog.close()
-            self._ret_val = ret_val
-
-        self._async.post(self._func, finish, *self._args, **self._kwargs)
-
-        while not self._isfinished:
-            QCoreApplication.processEvents()
-
-        return self._ret_val
-
-    @Slot(int, int)
-    def updateProgress(self, value, maximum):
-        text = self._prog_text
-
-        self._progress_dialog.setMaximum(maximum)
-        self._progress_dialog.setValue(value)
-
-        if maximum > 0:
-            text += " (%d / %d)" % (value, maximum)
-        self._progress_dialog.setLabelText(text)
-
-    @Slot(str)
-    def updateText(self, text):
-        self._prog_text = text
-        self._progress_dialog.setLabelText(text)
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -202,9 +38,7 @@ class Picker(QWidget):
 
     def __init__(self, config, **kwargs):
         """
-        Construct the main window and handle all of the
-        necessary events. This window serves as the SHARPpy
-        sounding picker - a means for interactively selecting
+        Construct the main picker widget: a means for interactively selecting
         which sounding profile(s) to view.
         """
 
@@ -582,6 +416,9 @@ class Picker(QWidget):
             self.skew.addProfileCollection(prof_collection)
 
     def skewAppClosed(self):
+        """
+        Handles the user closing the SPC window.
+        """
         self.skew = None
 
     def loadArchive(self, filename):
@@ -604,7 +441,9 @@ class Picker(QWidget):
 
 @progress(Picker.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
-
+    """
+    Loads the data from a remote source. Has hooks for progress bars.
+    """
     if __text__ is not None:
         __text__.emit("Decoding File")
 
@@ -619,10 +458,14 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     return profs
 
 class Main(QMainWindow):
+    
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
     cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
     def __init__(self):
+        """
+        Initializes the window and reads in the configuration from the file.
+        """
         super(Main, self).__init__()
 
         ## All of these variables get set/reset by the various menus in the GUI
@@ -632,6 +475,9 @@ class Main(QMainWindow):
         self.__initUI()
 
     def __initUI(self):
+        """
+        Puts the user inteface together
+        """
         self.picker = Picker(self.config)
         self.setCentralWidget(self.picker)
         self.createMenuBar()
@@ -643,6 +489,9 @@ class Main(QMainWindow):
         self.raise_()
 
     def createMenuBar(self):
+        """
+        Creates the menu bar
+        """
         bar = self.menuBar()
         filemenu = bar.addMenu("File")
 
@@ -668,6 +517,9 @@ class Main(QMainWindow):
         self.close()
 
     def openFile(self):
+        """
+        Opens a file on the local disk.
+        """
         if self.config.has_section('archive'):
             path = self.config.get('archive', 'path')
         else:
@@ -686,6 +538,9 @@ class Main(QMainWindow):
         self.picker.skewApp(filename=link)
 
     def aboutbox(self):
+        """
+        Creates and shows the "about" box.
+        """
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
         str = """
@@ -718,6 +573,9 @@ class Main(QMainWindow):
         msgBox.exec_()
 
     def keyPressEvent(self, e):
+        """
+        Handles key press events sent to the picker window.
+        """
         if e.matches(QKeySequence.Open):
             self.openFile()
 
@@ -725,6 +583,9 @@ class Main(QMainWindow):
             self.exitApp()
 
     def closeEvent(self, e):
+        """
+        Handles close events (gets called when the window closes).
+        """
         self.config.write(open(Main.cfg_file_name, 'w'))
 
 if __name__ == '__main__':

@@ -8,7 +8,19 @@ def doCopy(target_type, prof, idx, pipe):
     pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
+    """
+    ProfCollection: A class to keep track of profiles from a single data source. Handles time switching, ensemble member switching,
+        and modifications to profiles.
+    """
     def __init__(self, profiles, dates, target_type=profile.ConvectiveProfile, **kwargs):
+        """
+        Initialize the collection.
+        profiles:   A dictionary of lists of profiles.  The keys of the dictionary are the ensemble member names, the
+            values are lists of profiles for those members over time.
+        dates:      A list of datetime objects corresponding to the times for each element of the lists in profiles.
+        target_type:    The type to copy the profiles to when requested. Default is a ConvectiveProfile.
+        **kwargs:   Metadata for the profile.
+        """
         self._profs = profiles
         self._dates = dates
         self._meta = kwargs
@@ -26,6 +38,10 @@ class ProfCollection(object):
         self._procs = []
 
     def subset(self, idxs):
+        """
+        Subset the profile collection over time.
+        idxs:   The time indices to include in the subsetted collection.
+        """
         profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.iteritems() )
         dates = [ self._dates[idx] for idx in idxs ]
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
@@ -53,28 +69,47 @@ class ProfCollection(object):
         return
 
     def setAsync(self, async):
+        """
+        Start an asynchronous process to load objects of type 'target_type' in the background.
+        async:  An AsyncThreads instance.
+        """
         self._async = async
         self._async.post(self._backgroundCopy, None, self._highlight)
 
     def cancelCopy(self):
+        """
+        Terminates any threads that are running in the background.
+        """
         for proc in self._procs:
             proc.terminate()
         if self._async is not None:
             self._async.clearQueue()
 
     def getMeta(self, key, index=False):
+        """
+        Returns metadata about the profile.
+        key:    What metadata to return.
+        index [optional]: If true, treat the metadata as an array with the same length as dates passed in the constructor.
+            Returns value of that array at this time index..
+        """
         meta = self._meta[key]
         if index:
             meta = meta[self._prof_idx]
         return meta
 
     def getCurrentDate(self):
+        """
+        Returns the current date in the profile object
+        """
         if not self.hasCurrentProf():
             return
 
         return self._dates[self._prof_idx]
 
     def getHighlightedProf(self):
+        """
+        Returns which profile is highlighted.
+        """
         if not self.hasCurrentProf():
             return
 
@@ -84,6 +119,9 @@ class ProfCollection(object):
         return self._profs[self._highlight][self._prof_idx]
 
     def getCurrentProfs(self):
+        """
+        Returns the profiles at the current time.
+        """
         if not self.hasCurrentProf():
             return {}
 
@@ -100,39 +138,74 @@ class ProfCollection(object):
         return profs
 
     def getAnalogDate(self):
+        """
+        If this is an analog, return the date of the analog. Otherwise, returns None.
+        """
         return self._analog_date
 
     def isModified(self):
+        """
+        Returns True if the profiles at the current time have been modified.  Returns False otherwise.
+        """
         if not self.hasCurrentProf():
             return False
         return self._mod_therm[self._prof_idx] or self._mod_wind[self._prof_idx]
 
     def isEnsemble(self):
+        """
+        Returns True if this collection has multiple ensemble members. Otherwise, returns False.
+        """
         return len(self._profs.keys()) > 1
 
     def hasCurrentProf(self):
+        """
+        Returns True if the collection has a profile at the current time. Otherwise, returns False.
+        """
         return self._prof_idx >= 0
 
     def hasMeta(self, key):
+        """
+        Returns True if the collection has metadata corresponding to 'key'. Otherwise returns False.
+        """
         return key in self._meta
 
     def setMeta(self, key, value):
+        """
+        Sets the metadata 'key' to 'value'.
+        """
         self._meta[key] = value
 
     def setHighlightedMember(self, member_name):
+        """
+        Sets the highlighted ensemble member to be 'member_name'.
+        """
         self._highlight = member_name
 
     def setCurrentDate(self, cur_dt):
+        """
+        Sets the current date to be 'cur_dt'.
+        cur_dt:     A datetime object specifiying which date to set it to.
+        """
         try:
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
             self._prof_idx = -1
 
     def setAnalogToDate(self, analog_to_date):
+        """
+        Specify that this collection represents an analog; the date is set to 'analog_to_date', and the 
+            analog date is set to the former date.
+        analog_to_date: A datetime object that specifies the date to which this collection is an analog.
+        """
         self._analog_date = self._dates[0]
         self._dates = [ analog_to_date ]
 
     def advanceTime(self, direction):
+        """
+        Advance time in a direction specified by 'direction'. Returns a datetime object containing the new time.
+        direction:  An integer (ether 1 or -1) specifying which direction to move time in. 1 moves time forward,
+            -1 moves time backward.
+        """
         length = len(self._dates)
         if direction > 0 and self._prof_idx == length - 1:
             self._prof_idx = 0
@@ -143,6 +216,11 @@ class ProfCollection(object):
         return self._dates[self._prof_idx]
 
     def advanceHighlight(self, direction):
+        """
+        Change which member is highlighted.
+        direction:  An integer (either 1 or -1) specifying which direction to go in the list. The list is in
+            alphabetical order, so the members will be gone through in that order. 
+        """
         mem_names = sorted(self._profs.keys())
         high_idx = mem_names.index(self._highlight)
         length = len(mem_names)
@@ -157,10 +235,19 @@ class ProfCollection(object):
         self._highlight = mem_names[adv_idx]
 
     def defineUserParcel(self, parcel):
+        """
+        Defines a custom parcel for the current profile.
+        parcel:     A parcel object to use as the custom parcel.
+        """
         if self.hasCurrentProf():
             self._profs[self._highlight][self._prof_idx].usrpcl = parcel
 
     def modify(self, idx, **kwargs):
+        """
+        Modify the profile at the current time.
+        idx:    The vertical index to modify
+        **kwargs:   The variables to modify ('tmpc', 'dwpc', 'u', or 'v')
+        """
         if self.isEnsemble():
             raise ValueError("Can't modify ensemble profiles")
 
@@ -190,6 +277,10 @@ class ProfCollection(object):
             self._mod_wind[self._prof_idx] = True
 
     def reset(self, *args):
+        """
+        Reset the profile to its original state.
+        *args:  The variables to reset ('tmpc', 'dwpc', 'u', or 'v').
+        """
         if not self._prof_idx in self._orig_profs:
             return
 
