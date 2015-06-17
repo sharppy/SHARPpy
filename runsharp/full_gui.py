@@ -12,7 +12,7 @@ else:
 
 sys.path.insert(0, os.path.normpath(os.path.join(os.path.expanduser("~"), ".sharppy")))
 
-from sharppy.viz import SkewApp, MapWidget 
+from sharppy.viz import SPCWindow, MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
@@ -28,25 +28,39 @@ import hashlib
 import cProfile
 from os.path import expanduser
 import ConfigParser
+import Queue
 
 class AsyncThreads(QObject):
-    def __init__(self):
+    def __init__(self, max_threads):
         super(AsyncThreads, self).__init__()
         self.threads = {}
         self.callbacks = {}
+
+        self.max_threads = max_threads
+        self.running = 0
+        self.queue = Queue.PriorityQueue(0)
         return
 
     def post(self, func, callback, *args, **kwargs):
         thd_id = self._genThreadId()
 
+        background = kwargs.get('background', False)
+        if 'background' in kwargs:
+            del kwargs['background']
+
         thd = self._threadFactory(func, thd_id, *args, **kwargs)
         thd.finished.connect(self.finish)
-        thd.start()
+
+        priority = 1 if background else 0
+        self.queue.put((priority, thd_id))
 
         self.threads[thd_id] = thd
         if callback is None:
             callback = lambda x: x
         self.callbacks[thd_id] = callback
+
+        if not background or self.running < self.max_threads:
+            self.startNext()
         return thd_id
 
     def isFinished(self, thread_id):
@@ -55,6 +69,24 @@ class AsyncThreads(QObject):
     def join(self, thread_id):
         while not self.isFinished(thread_id):
             QCoreApplication.processEvents()
+
+    def clearQueue(self):
+        self.queue = Queue.PriorityQueue(0)
+        for thd_id, thd in self.threads.iteritems():
+            if thd.isRunning():
+                thd.terminate()
+
+        self.threads = {}
+        self.callbacks = {}
+
+    def startNext(self):
+        try:
+            prio, thd_id = self.queue.get(block=False)
+        except Queue.Empty:
+            return
+
+        self.threads[thd_id].start()
+        self.running += 1
 
     @Slot(str, tuple)
     def finish(self, thread_id, ret_val):
@@ -65,6 +97,11 @@ class AsyncThreads(QObject):
 
         del self.threads[thread_id]
         del self.callbacks[thread_id]
+
+        self.running -= 1
+        if self.running < self.max_threads:
+            # Might not be the case if we just started a high-priority thread
+            self.startNext()
 
     def _genThreadId(self):
         time_stamp = date.datetime.utcnow().isoformat()
@@ -161,7 +198,7 @@ class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
 
-    async = AsyncThreads()
+    async = AsyncThreads(2)
 
     def __init__(self, config, **kwargs):
         """
@@ -174,6 +211,7 @@ class Picker(QWidget):
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
+        self.skew = None
 
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
@@ -483,7 +521,7 @@ class Picker(QWidget):
         if filename is not None:
             model = "Archive"
             try:
-                profs, dates, stn_id = self.loadArchive(filename)
+                prof_collection, stn_id = self.loadArchive(filename)
                 disp_name = stn_id
                 prof_idx = range(len(dates))
             except Exception as e:
@@ -494,12 +532,14 @@ class Picker(QWidget):
 
             run = None
             fhours = None
+            observed = True
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -510,7 +550,7 @@ class Picker(QWidget):
                 exc = str(ret[0])
                 failure = True
             else:
-                profs, dates = ret
+                prof_collection = ret[0]
 
             run = "%02dZ" % run.hour
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
@@ -523,9 +563,26 @@ class Picker(QWidget):
             msgbox.setIcon(QMessageBox.Critical)
             msgbox.exec_()
         else:
-            self.skew = SkewApp(profs, dates, model, location=disp_name,
-                run=run, idx=prof_idx, fhour=fhours, cfg=self.config)
-            self.skew.show()
+            prof_collection.setMeta('model', model)
+            prof_collection.setMeta('run', run)
+            prof_collection.setMeta('loc', disp_name)
+            prof_collection.setMeta('fhour', fhours)
+            prof_collection.setMeta('observed', observed)
+
+            if not observed:
+                prof_collection.setAsync(Picker.async)
+
+            if self.skew is None:
+                self.skew = SPCWindow(cfg=self.config)
+                self.skew.closed.connect(self.skewAppClosed)
+                self.skew.show()
+
+            self.skew.raise_()
+            self.skew.setFocus()
+            self.skew.addProfileCollection(prof_collection)
+
+    def skewAppClosed(self):
+        self.skew = None
 
     def loadArchive(self, filename):
         """
@@ -540,11 +597,10 @@ class Picker(QWidget):
             except:
                 raise IOError("Could not figure out the format of '%s'!" % filename)
 
-        prof = dec.getProfiles()
-        dates = dec.getProfileTimes()
+        profs = dec.getProfiles()
         stn_id = dec.getStnId()
 
-        return prof, dates, stn_id
+        return profs, stn_id
 
 @progress(Picker.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
@@ -559,10 +615,8 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     if __text__ is not None:
         __text__.emit("Creating Profiles")
 
-    dates = dec.getProfileTimes(indexes)
-    profs = dec.getProfiles(indexes, __prog__)
-
-    return profs, dates
+    profs = dec.getProfiles(indexes=indexes)
+    return profs
 
 class Main(QMainWindow):
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")

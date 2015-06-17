@@ -292,17 +292,34 @@ class plotHodo(backgroundHodo):
     class that plots the background frame onto a QPixmap.
     '''
 
-    updated = Signal(Profile, str, bool, tab.params.Parcel)
-    reset = Signal(str)
+    modified = Signal(int, dict)
+    reset = Signal(list)
 
-    def __init__(self, hght, u, v, **kwargs):
+    def __init__(self, **kwargs):
         '''
         Initialize the data used in the class.
         '''
         super(plotHodo, self).__init__()
-        ## initialize the variables needed to plot the hodo.
-        self.hght = hght
-        self.u = u; self.v = v
+        self.prof = None
+        self.pc_idx = 0
+        self.prof_collections = []
+
+        self.all_observed = False
+
+        self.colors = [
+            QtGui.QColor("#FF0000"), 
+            QtGui.QColor("#00FF00"), 
+            QtGui.QColor("#FFFF00"), 
+            QtGui.QColor("#00FFFF") 
+        ]
+
+        self.ens_colors = [
+            QtGui.QColor("#880000"), 
+            QtGui.QColor("#008800"), 
+            QtGui.QColor("#888800"), 
+            QtGui.QColor("#008888") 
+        ]
+
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.cursor_type = kwargs.get('cursor', 'none')
@@ -318,31 +335,9 @@ class plotHodo(backgroundHodo):
         self.drag_buffer = 5
         self.clickradius = 6
 
-        self.prof = kwargs.get('prof', None)
-        self.proflist = kwargs.get("proflist", [])
-        self.original_prof = self.prof
-
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
-        self.srwind = self.prof.srwind
-        self.ptop = self.prof.etop
-        self.pbottom = self.prof.ebottom
 
-        mean_lcl_el = self.prof.mean_lcl_el
-        if not tab.utils.QC(mean_lcl_el[0]):
-            self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
-        else:
-            self.mean_lcl_el = (np.ma.masked, np.ma.masked)
-
-        self.corfidi_up_u = self.prof.upshear_downshear[0]
-        self.corfidi_up_v = self.prof.upshear_downshear[1]
-        self.corfidi_dn_u = self.prof.upshear_downshear[2]
-        self.corfidi_dn_v = self.prof.upshear_downshear[3]
-        self.bunkers_right_vec = tab.utils.comp2vec(self.prof.srwind[0], self.prof.srwind[1])
-        self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
-        self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
-        self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
-        self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
         ## the following is used for the dynamic readout
         self.setMouseTracking(True)
         self.wndReadout = QLabel(parent=self)
@@ -435,17 +430,24 @@ class plotHodo(backgroundHodo):
         
         reset = QAction(self)
         reset.setText("Reset Hodograph")
-        reset.triggered.connect(lambda: self.reset.emit('hodo'))
+        reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
 
-    def setProf(self, hght, u, v, **kwargs):
-        self.hght = hght
-        self.u = u; self.v = v
+    def addProfileCollection(self, prof_coll):
+        self.prof_collections.append(prof_coll)
+
+    def rmProfileCollection(self, prof_coll):
+        self.prof_collections.remove(prof_coll)
+
+    def setActiveCollection(self, pc_idx, **kwargs):
+        self.pc_idx = pc_idx
+        prof = self.prof_collections[pc_idx].getHighlightedProf()
+
+        self.prof = prof
+        self.hght = prof.hght
+        self.u = prof.u; self.v = prof.v
         ## if you want the storm motion vector, you need to
         ## provide the profile.
-        self.prof = kwargs.get('prof', None)
-        self.proflist = kwargs.get("proflist", [])
-#       self.centered = kwargs.get('centered', self.centered)
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
@@ -465,13 +467,6 @@ class plotHodo(backgroundHodo):
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
         self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
-
-#       if self.center_loc == 'centered':
-#           self.setNormalCenter()
-#       elif self.center_loc == 'meanwind':
-#           self.setMWCenter()
-#       elif self.center_loc == 'stormrelative':
-#           self.setSRCenter()
 
         self.clearData()
         self.plotData()
@@ -552,6 +547,14 @@ class plotHodo(backgroundHodo):
         self.update()
         self.parentWidget().setFocus()
 
+    def setAllObserved(self, all_observed, update_gui=True):
+        self.all_observed = all_observed
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
+            self.parentWidget().setFocus()
 
     def wheelEvent(self, e):
         '''
@@ -577,6 +580,9 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
+        if self.prof is None:
+            return
+
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if self.cursor_type == 'none' and not self.was_right_click:
@@ -703,18 +709,19 @@ class plotHodo(backgroundHodo):
         elif self.cursor_type == 'none' and (self.dragging or self.initdrag):
             u, v = self.pix_to_uv(e.x(), e.y())
 
-            new_u = self.u.copy()
-            new_v = self.v.copy()
-            new_u[self.drag_idx] = u
-            new_v[self.drag_idx] = v
+#           new_u = self.u.copy()
+#           new_v = self.v.copy()
+#           new_u[self.drag_idx] = u
+#           new_v[self.drag_idx] = v
 
-            new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
+#           new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
+
+            self.modified.emit(self.drag_idx, {'u':u, 'v':v})
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, 'hodo', True, None)
         self.initdrag = False
 
     def setBlackPen(self, qp):
@@ -932,14 +939,36 @@ class plotHodo(backgroundHodo):
         Handles the plotting of the data in the QPixmap.
         '''
         ## initialize a QPainter object
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
-        for prof in self.proflist:
-            self.draw_profile(prof, qp)
+
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for idx, prof_coll in enumerate(self.prof_collections):
+            # Draw all unhighlighed members
+            if prof_coll.getCurrentDate() == cur_dt:
+                proflist = prof_coll.getCurrentProfs().values()
+
+                if idx == self.pc_idx:
+                    for prof in proflist:
+                        self.draw_hodo(qp, prof, self.ens_colors, width=1)
+                else:
+                    for prof in proflist:
+                        self.draw_profile(qp, prof, width=1)
+
+        for idx, prof_coll in enumerate(self.prof_collections):
+            # Draw all highlighted members that aren't the active one.
+            if idx != self.pc_idx and (prof_coll.getCurrentDate() == cur_dt or self.all_observed):
+                prof = prof_coll.getHighlightedProf()
+                self.draw_profile(qp, prof)
+
         ## draw the hodograph
-        self.draw_hodo(qp)
+        prof = self.prof_collections[self.pc_idx].getHighlightedProf()
+        self.draw_hodo(qp, prof, self.colors)
         ## draw the storm motion vector
         self.drawSMV(qp)
         self.drawCorfidi(qp)
@@ -1145,7 +1174,7 @@ class plotHodo(backgroundHodo):
             offset = 10
             qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
 
-    def draw_hodo(self, qp):
+    def draw_hodo(self, qp, prof, colors, width=2):
         '''
         Plot the Hodograph.
         
@@ -1156,26 +1185,19 @@ class plotHodo(backgroundHodo):
         '''
         ## check for masked daata
         try:
-            mask = np.maximum(self.u.mask, self.v.mask)
-            z = tab.interp.to_agl(self.prof, self.hght[~mask])
-            u = self.u[~mask]
-            v = self.v[~mask]
+            mask = np.maximum(prof.u.mask, prof.v.mask)
+            z = tab.interp.to_agl(prof, prof.hght[~mask])
+            u = prof.u[~mask]
+            v = prof.v[~mask]
         ## otherwise the data is fine
         except:
-            z = tab.interp.to_agl(self.prof, self.hght )
-            u = self.u
-            v = self.v
+            z = tab.interp.to_agl(prof, prof.hght )
+            u = prof.u
+            v = prof.v
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
-        colors = [ 
-            QtGui.QColor("#FF0000"), 
-            QtGui.QColor("#00FF00"), 
-            QtGui.QColor("#FFFF00"), 
-            QtGui.QColor("#00FFFF") 
-        ]
-
-        penwidth = 2
+        penwidth = width
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
@@ -1195,7 +1217,7 @@ class plotHodo(backgroundHodo):
 
             qp.drawPath(path)
 
-    def draw_profile(self, prof, qp, color="#6666CC"):
+    def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
         Plot the Hodograph.
 
@@ -1218,7 +1240,7 @@ class plotHodo(backgroundHodo):
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
 
-        penwidth = 2
+        penwidth = width
         pen = QtGui.QPen(QtGui.QColor(color), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1230,6 +1252,10 @@ class plotHodo(backgroundHodo):
 
         seg_idxs = np.searchsorted(z, seg_bnds)
         for idx in xrange(len(seg_bnds) - 1):
+            ## define a pen to draw with
+            pen = QtGui.QPen(QtGui.QColor(color), penwidth)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
@@ -1238,3 +1264,4 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+

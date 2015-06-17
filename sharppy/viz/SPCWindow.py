@@ -16,7 +16,7 @@ from os.path import expanduser
 import os
 from sharppy.version import __version__, __version_name__
 
-class SkewApp(QWidget):
+class SPCWidget(QWidget):
     """
     This will create the full SPC window, handle the organization
     of the insets, and handle all click/key events and features.
@@ -42,33 +42,24 @@ class SkewApp(QWidget):
         'VROT':'EF-Scale Probs (V-Rot)',
     }
 
-    def __init__(self, profs, dates, model, **kwargs):
+    def __init__(self, **kwargs):
 
-        super(SkewApp, self).__init__()
+        super(SPCWidget, self).__init__()
         """
         """
         ## these are the keyword arguments used to define what
         ## sort of profile is being viewed
-        self.profs = profs
-        self.proflist = []
-        self.dates = dates
-        self.model = model
-        self.prof_idx = kwargs.get("idx")
-        self.run = kwargs.get("run")
-        self.loc = kwargs.get("location")
-        self.fhour = kwargs.get("fhour", [ None ])
+        self.prof_collections = []
+        self.prof_ids = []
+        self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
-        self.isensemble = type(self.profs[0]) == list # Is this an ensemble?
-        self.plot_title = ""
+        self.mode = ""
 
         ## these are used to display profiles
-        self.current_idx = 0
-        self.prof = profs[self.current_idx]
-        self.original_profs = self.profs[:]
-        self.modified_skew = [ False for p in self.original_profs ]
-        self.modified_hodo = [ False for p in self.original_profs ]
         self.parcel_type = "MU"
+
+        self.coll_observed = False
 
         if not self.config.has_section('insets'):
             self.config.add_section('insets')
@@ -81,7 +72,6 @@ class SkewApp(QWidget):
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
 
-
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
 
@@ -91,7 +81,7 @@ class SkewApp(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        insets = sorted(SkewApp.inset_names.items(), key=lambda i: i[1])
+        insets = sorted(SPCWidget.inset_names.items(), key=lambda i: i[1])
         inset_ids, inset_names = zip(*insets)
         self.available_insets = inset_ids
         self.left_inset = self.config.get('insets', 'left_inset')
@@ -103,14 +93,6 @@ class SkewApp(QWidget):
 
         ## initialize the rest of the window attributes, layout managers, etc
 
-        ## handle the attribute of the main window
-        if platform.system() == 'Windows':
-            self.setGeometry(10,30,1180,800)
-        else:
-            self.setGeometry(0, 0, 1180, 800)
-        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
-        title += 'in Python'
-        self.setWindowTitle(title)
         self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
         ## set the the whole window's layout manager
         self.grid = QGridLayout()
@@ -173,7 +155,6 @@ class SkewApp(QWidget):
         self.initData()
         self.loadWidgets()
 
-
     def getParcelObj(self, prof, name):
         if name == "SFC":
             return prof.sfcpcl
@@ -202,19 +183,6 @@ class SkewApp(QWidget):
         elif pcl == prof.usrpcl:
             return "USER"
 
-    def getPlotTitle(self):
-        modified = self.modified_skew[self.current_idx] or self.modified_hodo[self.current_idx]
-        modified_str = "; Modified" if modified else ""
-
-        plot_title = self.loc + '   ' + datetime.strftime(self.dates[self.current_idx], "%Y%m%d/%H%M")
-        if self.model == "Archive":
-            plot_title += "  (User Selected" + modified_str + ")"
-        elif self.fhour == [ 'F000' ]:
-            plot_title += "  (Observed" + modified_str + ")"
-        else:
-             plot_title += "  (" + self.run + "  " + self.model + "  " + self.fhour[self.current_idx] + modified_str + ")"
-        return plot_title
-
     def saveimage(self):
         self.home_path = expanduser('~')
         files_types = "PNG (*.png)"
@@ -230,138 +198,143 @@ class SkewApp(QWidget):
         :return:
         """
 
-        ## set the plot title that will be displayed in the Skew frame.
-        self.plot_title = self.getPlotTitle()
-
-        if self.isensemble:
-            self.prof = self.profs[self.current_idx][0]
-            default_pcl = self.prof.mupcl
-            self.sound = plotSkewT(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
-            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                                 proflist=self.profs[self.current_idx][:], parent=self)
-        else:
-            self.prof = self.profs[self.current_idx]
-            default_pcl = self.prof.mupcl
-            self.sound = plotSkewT(self.prof, pcl=default_pcl, title=self.plot_title, brand=self.brand,
-                                   dgz=self.dgz, proflist=self.proflist)
-            self.sound.updated.connect(self.updateProfs)
-            self.sound.reset.connect(self.resetProf)
-            self.hodo = plotHodo(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
-                                 proflist=self.proflist)
+        self.sound = plotSkewT(dgz=self.dgz)
+        self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
-        self.speed_vs_height = plotSpeed( self.prof )
+        self.speed_vs_height = plotSpeed()
+        self.inferred_temp_advection = plotAdvection()
+        self.storm_slinky = plotSlinky()
+        self.thetae_vs_pressure = plotThetae()
+        self.srwinds_vs_height = plotWinds()
+        self.watch_type = plotWatch()
+        self.convective = plotText(self.parcel_types)
+        self.kinematic = plotKinematics()
 
-        self.inferred_temp_advection = plotAdvection(self.prof)
+        # intialize swappable insets
+        for inset, inset_gen in SPCWidget.inset_generators.iteritems():
+            self.insets[inset] = inset_gen()
 
-
-
-        self.hodo.updated.connect(self.updateProfs)
-        self.hodo.reset.connect(self.resetProf)
-
-        self.storm_slinky = plotSlinky(self.prof, pcl=default_pcl)
-        self.thetae_vs_pressure = plotGeneric(self.prof.thetae[self.prof.pres > 500.],
-                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
-                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
-
-        self.srwinds_vs_height = plotWinds(self.prof)
-        self.watch_type = plotWatch(self.prof)
-        self.convective = plotText(self.prof, self.parcel_types)
-        self.kinematic = plotKinematics(self.prof)
-
-        self.convective.updatepcl.connect(self.updateParcel)
-
-        self.makeInsets()
-        self.insets["SARS"].updatematch.connect(self.updateSARS)
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
-    def makeInsets(self):
-        """
-        Create the swappable insets
-        :return:
-        """
+        # Connect signals to slots
+        self.convective.updatepcl.connect(self.updateParcel)
 
-        for inset, inset_gen in SkewApp.inset_generators.iteritems():
-            self.insets[inset] = inset_gen(self.prof)
+        self.sound.parcel.connect(self.defineUserParcel)
+        self.sound.modified.connect(self.modifyProf)
+        self.sound.reset.connect(self.resetProf)
 
+        self.hodo.modified.connect(self.modifyProf)
+        self.hodo.reset.connect(self.resetProf)
 
-    @Slot(profile.Profile, str, bool) # Note to myself...could add an additional argument to allow emit to change pcl types to be shown.
-    def updateProfs(self, prof, panel, modified):
-        if panel == 'skew':
-            self.modified_skew[self.current_idx] = modified
-        elif panel == 'hodo':
-            self.modified_hodo[self.current_idx] = modified
+        self.insets["SARS"].updatematch.connect(self.updateSARS)
 
-        self.plot_title = self.getPlotTitle()
-        if self.isensemble:
-            self.profs[self.current_idx][0] = prof[0]
-            self.prof = self.profs[self.current_idx][0]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                               brand=self.brand, proflist=self.profs[self.current_idx][:], dgz=self.dgz)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                              proflist=self.profs[self.current_idx][:], parent=self)
-        else:
-            self.profs[self.current_idx] = prof
-            self.prof = self.profs[self.current_idx]
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                               brand=self.brand, dgz=self.dgz, proflist=self.proflist)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof,
-                              proflist=self.proflist, parent=self)
+    def addProfileCollection(self, prof_col, prof_id, focus=True):
+        self.prof_collections.append(prof_col)
+        self.prof_ids.append(prof_id)
+        self.sound.addProfileCollection(prof_col)
+        self.hodo.addProfileCollection(prof_col)
 
-        self.storm_slinky.setProf(self.prof, self.getParcelObj(self.prof, self.parcel_type))
+        if focus:
+            self.pc_idx = len(self.prof_collections) - 1
 
-        self.inferred_temp_advection.setProf(self.prof)
+        if not prof_col.getMeta('observed'):
+            self.coll_observed = False
+            self.sound.setAllObserved(self.coll_observed, update_gui=False)
+            self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
-        self.speed_vs_height.setProf(self.prof)
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for prof_col in self.prof_collections:
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
 
-        self.srwinds_vs_height.setProf(self.prof)
-
-        self.thetae_vs_pressure.setProf(self.prof.thetae[self.prof.pres > 500.],
-                                self.prof.pres[self.prof.pres > 500.], xticks=np.arange(220,360,10),
-                                 yticks=np.arange(500, 1000, 100), title="ThetaE v.\nPres" )
-
-        self.watch_type.setProf(self.prof)
-
-        self.convective.setProf(self.prof, self.convective.pcl_types)
-        self.kinematic.setProf(self.prof)
-
-
-
-        for inset in self.insets.keys():
-            self.insets[inset].setProf(self.prof)
+        self.updateProfs()
 
     @Slot(str)
-    def resetProf(self, panel):
-        current = self.profs[self.current_idx]
-        orig = self.original_profs[self.current_idx]
-        self.proflist = []
+    def setProfileCollection(self, prof_id):
+        try:
+            self.pc_idx = self.prof_ids.index(prof_id)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be focused ..."
+            return
+ 
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for prof_col in self.prof_collections:
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
 
-        if panel == 'hodo':
-            kwargs = {'u':orig.u, 'v':orig.v}
-        elif panel == 'skew':
-            kwargs = {'tmpc':orig.tmpc, 'dwpc':orig.dwpc}
+        self.updateProfs()
 
-        self.profs[self.current_idx] = type(current).copy(current, **kwargs)
+    def rmProfileCollection(self, prof_id):
+        try:
+            pc_idx = self.prof_ids.index(prof_id)
+        except ValueError:
+            print "Hmmm, that profile doesn't exist to be removed ..."
 
-        self.updateProfs(self.profs[self.current_idx], panel, modified=False) #, pcl=self.getParcelObj(self.profs[self.current_idx], self.parcel_type))
-        self.setFocus()
+        prof_col = self.prof_collections.pop(pc_idx)
+        self.prof_ids.pop(pc_idx)
+        self.sound.rmProfileCollection(prof_col)
+        self.hodo.rmProfileCollection(prof_col)
+
+        # If we've removed an analog, remove it from the profile it's an analog to.
+        if prof_col.hasMeta('filematch'):
+            filematch = prof_col.getMeta('filematch')
+            for pc in self.prof_collections:
+                if pc.hasMeta('analogfile'):
+                    keys, vals = zip(*pc.getMeta('analogfile').items())
+                    if filematch in vals:
+                        keys = list(keys); vals = list(vals)
+
+                        idx = vals.index(filematch)
+                        vals.pop(idx)
+                        keys.pop(idx)
+
+                        pc.setMeta('analogfile', dict(zip(keys, vals)))
+            self.insets['SARS'].clearSelection()
+
+        if self.pc_idx == pc_idx:
+            self.pc_idx = 0
+        elif self.pc_idx > pc_idx:
+            self.pc_idx -= 1
+        self.updateProfs()
+
+    def isAllObserved(self):
+        return all( pc.getMeta('observed') for pc in self.prof_collections )
+
+    def updateProfs(self):
+        prof_col = self.prof_collections[self.pc_idx]
+        default_prof = prof_col.getHighlightedProf()
+
+        # update the profiles
+        self.sound.setActiveCollection(self.pc_idx)
+        self.hodo.setActiveCollection(self.pc_idx)
+
+        self.storm_slinky.setProf(default_prof)
+        self.inferred_temp_advection.setProf(default_prof)
+        self.speed_vs_height.setProf(default_prof)
+        self.srwinds_vs_height.setProf(default_prof)
+        self.thetae_vs_pressure.setProf(default_prof)
+        self.watch_type.setProf(default_prof)
+        self.convective.setProf(default_prof)
+        self.kinematic.setProf(default_prof)
+
+        for inset in self.insets.keys():
+            self.insets[inset].setProf(default_prof)
+
+        # Update the parcels to match the new profiles
+        parcel = self.getParcelObj(default_prof, self.parcel_type)
+        self.sound.setParcel(parcel)
+        self.storm_slinky.setParcel(parcel)
 
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
-        modified_str = ""
-        self.parcel_type = self.getParcelName(self.prof, pcl)
 
-        self.plot_title = self.getPlotTitle()
-        if self.isensemble:
-            self.sound.setProf(self.prof, pcl=self.prof.mupcl, title=self.plot_title, brand=self.brand,
-                               proflist=self.profs[self.current_idx][:], dgz=self.dgz)
-        else:
-            self.sound.setProf(self.prof, pcl=pcl, title=self.plot_title, brand=self.brand,
-                               dgz=self.dgz, proflist=self.proflist)
+        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
+        self.parcel_type = self.getParcelName(default_prof, pcl)
 
-        self.storm_slinky.setProf(self.prof, pcl=pcl)
+        self.sound.setParcel(pcl)
+        self.storm_slinky.setParcel(pcl)
 
         self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
         self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
@@ -370,24 +343,56 @@ class SkewApp(QWidget):
 
     @Slot(str)
     def updateSARS(self, filematch):
-        if not self.isensemble:
-            self.proflist = []
-#           data = io.spc_decoder.SNDFile(filematch)
-#           matchprof = tab.profile.create_profile(pres=data.pres, hght=data.hght,
-#                                              tmpc=data.tmpc, dwpc=data.dwpc,
-#                                              wspd=data.wspd, wdir=data.wdir,
-#                                              profile="convective")
+        prof_col = self.prof_collections[self.pc_idx]
 
-            if filematch != "":
-                dec = io.spc_decoder.SPCDecoder(filematch)
-                matchprof = dec.getProfiles()[0]
+        profs = prof_col.getCurrentProfs().values()
+        default_prof = prof_col.getHighlightedProf()
 
-                self.proflist.append(matchprof)
+        dec = io.spc_decoder.SPCDecoder(filematch)
+        match_col = dec.getProfiles()
 
-            self.sound.setProf(self.prof, pcl=self.getParcelObj(self.prof, self.parcel_type), title=self.plot_title,
-                           brand=self.brand, dgz=self.dgz, proflist=self.proflist)
-            self.hodo.setProf(self.prof.hght, self.prof.u, self.prof.v, prof=self.prof, parent=self,
-                              proflist=self.proflist)
+        match_col.setMeta('model', 'Analog')
+        match_col.setMeta('run', None)
+        match_col.setMeta('fhour', None)
+        match_col.setMeta('observed', True)
+        match_col.setMeta('filematch', filematch)
+        match_col.setAnalogToDate(prof_col.getCurrentDate())
+
+        dt = prof_col.getCurrentDate()
+        if prof_col.hasMeta('analogfile'):
+            analogfiles = prof_col.getMeta('analogfile')
+            analogfiles[dt] = filematch
+        else:
+            analogfiles = {dt:filematch}
+
+        prof_col.setMeta('analogfile', analogfiles)
+
+        self.parentWidget().addProfileCollection(match_col, focus=False)
+
+    @Slot(tab.params.Parcel)
+    def defineUserParcel(self, parcel):
+        self.prof_collections[self.pc_idx].defineUserParcel(parcel)
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot(int, dict)
+    def modifyProf(self, idx, kwargs):
+        self.prof_collections[self.pc_idx].modify(idx, **kwargs)
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot(list)
+    def resetProf(self, args):
+        self.prof_collections[self.pc_idx].reset(*args)
+
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot()
+    def toggleCollectObserved(self):
+        self.coll_observed = not self.coll_observed
+        self.sound.setAllObserved(self.coll_observed)
+        self.hodo.setAllObserved(self.coll_observed)
 
     def loadWidgets(self):
         ## add the upper-right window insets
@@ -417,41 +422,70 @@ class SkewApp(QWidget):
         self.grid.addWidget(self.sound, 0, 0, 3, 1)
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
-    def keyPressEvent(self, e):
-        key = e.key()
-        length = len(self.profs)
-        if key == Qt.Key_Right:
-            if self.current_idx != length - 1:
-                self.current_idx += 1
+    def advanceTime(self, direction):
+        if len(self.prof_collections) == 0 or self.coll_observed:
+            return
+
+        prof_col = self.prof_collections[self.pc_idx]
+        if prof_col.getMeta('observed'):
+            cur_dt = prof_col.getCurrentDate()
+            cur_loc = prof_col.getMeta('loc')
+            idxs, dts = zip(*sorted(((idx, pc.getCurrentDate()) for idx, pc in enumerate(self.prof_collections) if pc.getMeta('loc') == cur_loc and pc.getMeta('observed')), key=lambda x: x[1]))
+
+            dt_idx = dts.index(cur_dt)
+            dt_idx = (dt_idx + direction) % len(dts)
+            self.pc_idx = idxs[dt_idx]
+
+            cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        else:
+            cur_dt = prof_col.advanceTime(direction)
+
+        for prof_col in self.prof_collections:
+            if not prof_col.getMeta('observed'):
+                prof_col.setCurrentDate(cur_dt)
+
+        self.parcel_types = self.convective.pcl_types
+        self.updateProfs()
+
+        prof_col = self.prof_collections[self.pc_idx]
+        if prof_col.hasMeta('analogfile'):
+            match = prof_col.getMeta('analogfile')
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
             else:
-                self.current_idx = 0
-            self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', False)
-            self.updateSARS("")
+                self.insets['SARS'].clearSelection()
+        else:
             self.insets['SARS'].clearSelection()
-            return
 
-        if key == Qt.Key_Left:
-            if self.current_idx != 0:
-                self.current_idx -= 1
-            elif self.current_idx == 0:
-                self.current_idx = length -1
-            self.parcel_types = self.convective.pcl_types
-            self.updateProfs(self.profs[self.current_idx], 'none', False)
-            self.updateSARS("")
+    def swapProfCollections(self):
+        # See if we have any other observed profiles loaded at this time.
+        prof_col = self.prof_collections[self.pc_idx]
+        dt = prof_col.getCurrentDate()
+        idxs, pcs = zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt or self.coll_observed ])
+        loc_idx = pcs.index(prof_col)
+        loc_idx = (loc_idx + 1) % len(pcs)
+        self.pc_idx = idxs[loc_idx]
+
+        self.updateProfs()
+
+        if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
+            match = self.prof_collections[self.pc_idx].getMeta('analogfile')
+            dt = prof_col.getCurrentDate()
+            if dt in match:
+                self.insets['SARS'].setSelection(match[dt])
+            else:
+                self.insets['SARS'].clearSelection()
+        else:
             self.insets['SARS'].clearSelection()
-            return
-
-        if e.matches(QKeySequence.Save):
-            # Save an image
-            self.saveimage()
-            return
 
     def closeEvent(self, e):
         self.sound.closeEvent(e)
 
-    def makeInsetMenu(self, *exclude):
+        for prof_coll in self.prof_collections:
+            prof_coll.cancelCopy()
 
+    def makeInsetMenu(self, *exclude):
         # This will make the menu of the available insets.
         self.popupmenu=QMenu("Inset Menu")
         self.menu_ag = QActionGroup(self, exclusive=True)
@@ -459,7 +493,7 @@ class SkewApp(QWidget):
         for inset in self.available_insets:
             if inset not in exclude:
                 inset_action = QAction(self)
-                inset_action.setText(SkewApp.inset_names[inset])
+                inset_action.setText(SPCWidget.inset_names[inset])
                 inset_action.setData(inset)
                 inset_action.setCheckable(True)
                 inset_action.triggered.connect(self.swapInset)
@@ -467,7 +501,6 @@ class SkewApp(QWidget):
                 self.popupmenu.addAction(a)
 
     def showCursorMenu(self, pos):
-
         self.makeInsetMenu(self.left_inset, self.right_inset)
         if self.childAt(pos.x(), pos.y()) is self.right_inset_ob:
             self.inset_to_swap = "RIGHT"
@@ -491,8 +524,10 @@ class SkewApp(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
+            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.left_inset_ob.deleteLater()
-            self.insets[self.left_inset] = SkewApp.inset_generators[self.left_inset](self.prof)
+            self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
+            self.insets[self.left_inset].setProf(default_prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -506,8 +541,10 @@ class SkewApp(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
+            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.right_inset_ob.deleteLater()
-            self.insets[self.right_inset] = SkewApp.inset_generators[self.right_inset](self.prof)
+            self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
+            self.insets[self.right_inset].setProf(default_prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
@@ -520,3 +557,134 @@ class SkewApp(QWidget):
 
         self.setFocus()
         self.update()
+
+class SPCWindow(QMainWindow):
+    closed = Signal()
+
+    def __init__(self, **kwargs):
+        super(SPCWindow, self).__init__()
+
+        self.menu_items = []
+        self.__initUI(**kwargs)
+
+    def __initUI(self, **kwargs):
+        self.spc_widget = SPCWidget(**kwargs)
+        self.setCentralWidget(self.spc_widget)
+
+        self.createMenuBar()
+
+        title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
+        title += 'in Python'
+        self.setWindowTitle(title)
+
+        ## handle the attribute of the main window
+        if platform.system() == 'Windows':
+            self.setGeometry(10,30,1180,800)
+        else:
+            self.setGeometry(0, 0, 1180, 800)
+
+        self.show()
+        self.raise_()
+
+    def createMenuBar(self):
+        bar = self.menuBar()
+        filemenu = bar.addMenu("File")
+
+        saveimage = QAction("Save Image", self, shortcut=QKeySequence("Ctrl+S"))
+        saveimage.triggered.connect(self.spc_widget.saveimage)
+        filemenu.addAction(saveimage)
+
+        savetext = QAction("Save Text", self)
+        filemenu.addAction(savetext)
+
+        self.profilemenu = bar.addMenu("Profiles")
+
+        self.allobserved = QAction("Collect Observed", self, checkable=True)
+        self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
+
+        self.profilemenu.addAction(self.allobserved)
+        self.profilemenu.addSeparator()
+
+        self.focus_mapper = QSignalMapper(self)
+        self.remove_mapper = QSignalMapper(self)
+
+        self.focus_mapper.mapped[str].connect(self.spc_widget.setProfileCollection)
+        self.remove_mapper.mapped[str].connect(self.rmProfileCollection)
+
+    def createProfileMenu(self, prof_col):
+        menu_name = self.createMenuName(prof_col)
+        prof_menu = self.profilemenu.addMenu(menu_name)
+
+        focus = QAction("Focus", self)
+        focus.triggered.connect(self.focus_mapper.map)
+        self.focus_mapper.setMapping(focus, menu_name)
+        prof_menu.addAction(focus)
+
+        remove = QAction("Remove", self)
+        remove.triggered.connect(self.remove_mapper.map)
+        self.remove_mapper.setMapping(remove, menu_name)
+        prof_menu.addAction(remove)
+
+        if len(self.menu_items) == 0:
+            remove.setVisible(False)
+
+        self.menu_items.append(prof_menu)
+
+    def removeProfileMenu(self, menu_name):
+        menu_items = [ mitem for mitem in self.menu_items if mitem.title() == menu_name ]
+        for mitem in menu_items:
+            mitem.menuAction().setVisible(False)
+
+    def addProfileCollection(self, prof_col, focus=True):
+        if not prof_col.getMeta('observed'):
+            self.allobserved.setDisabled(True)
+            self.allobserved.setChecked(False)
+
+        self.createProfileMenu(prof_col)
+
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) > 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(True)
+
+        menu_name = self.createMenuName(prof_col)
+        self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
+
+    @Slot(str)
+    def rmProfileCollection(self, menu_name):
+        self.removeProfileMenu(menu_name)
+        self.spc_widget.rmProfileCollection(menu_name)
+
+        if self.spc_widget.isAllObserved():
+            self.allobserved.setDisabled(False)
+
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) == 1:
+            actions = visible_mitems[0].actions()
+            names = [ act.text() for act in actions ]
+            actions[names.index("Remove")].setVisible(False)
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Left:
+            self.spc_widget.advanceTime(-1)
+        elif e.key() == Qt.Key_Right:
+            self.spc_widget.advanceTime(1)
+        elif e.key() == Qt.Key_Space:
+            self.spc_widget.swapProfCollections()
+        elif e.matches(QKeySequence.Save):
+            # Save an image
+            self.spc_widget.saveimage()
+            return
+
+    def closeEvent(self, e):
+        self.spc_widget.closeEvent(e)
+        self.closed.emit()
+
+    def createMenuName(self, prof_col):
+        pc_loc = prof_col.getMeta('loc')
+        pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
+        pc_model = prof_col.getMeta('model')
+
+        return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+

@@ -150,11 +150,12 @@ class plotSHIP(backgroundSHIP):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotSHIP, self).__init__()
-        self.ship = prof.ship
+        self.prof = None
 
     def setProf(self, prof):
+        self.prof = prof
         self.ship = prof.ship
 
         self.clearData()
@@ -189,6 +190,9 @@ class plotSHIP(backgroundSHIP):
         '''
         Handles painting on the frame
         '''
+        if self.prof is None:
+            return
+
         ## this function handles painting the plot
         ## create a new painter obkect
         qp = QtGui.QPainter()

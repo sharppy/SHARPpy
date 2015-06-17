@@ -2,6 +2,7 @@
 import numpy as np
 
 import sharppy.sharptab.profile as profile
+import sharppy.sharptab.prof_collection as prof_collection
 from decoder import Decoder
 
 from datetime import datetime
@@ -19,14 +20,19 @@ class BufDecoder(Decoder):
         num_members = len(members)
         profiles = {}
         dates = None
+        mean_member = None
 
         for n, mem_txt in enumerate(members):
             mem_name, mem_profs, mem_dates = self._parseMember(mem_txt)
             profiles[mem_name] = mem_profs
             dates = mem_dates
-        #f.close()
 
-        return profiles, dates
+            if mean_member is None:
+                mean_member = mem_name
+
+        prof_coll = prof_collection.ProfCollection(profiles, dates)
+        prof_coll.setHighlightedMember(mean_member)
+        return prof_coll
 
     def _parseMember(self, text):
         data = np.array(text.split('\r\n'))

@@ -183,6 +183,7 @@ class DataSource(object):
     def __init__(self, config):
         self._name = config.get('name')
         self._ensemble = config.get('ensemble').lower() == "true"
+        self._observed = config.get('observed').lower() == "true"
         self._outlets = dict( (c.get('name'), Outlet(self._name, c)) for c in config )
 
     def _get(self, name, outlet, flatten=True, **kwargs):
@@ -271,6 +272,9 @@ class DataSource(object):
 
     def isEnsemble(self):
         return self._ensemble
+
+    def isObserved(self):
+        return self._observed
 
 if __name__ == "__main__":
     ds = loadDataSources()

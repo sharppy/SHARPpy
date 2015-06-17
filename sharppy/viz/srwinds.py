@@ -189,7 +189,7 @@ class plotWinds(backgroundWinds):
     contains the QPixmap with the background frame
     drawn on it.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         '''
         Initializes the data from the Profile object
         used to draw the profile.
@@ -201,16 +201,7 @@ class plotWinds(backgroundWinds):
         '''
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
-        self.prof = prof
-        self.srw_0_2km = tab.utils.comp2vec(self.prof.srw_0_2km[0], self.prof.srw_0_2km[1])[1]
-        self.srw_4_6km = tab.utils.comp2vec(self.prof.srw_4_6km[0], self.prof.srw_4_6km[1])[1]
-        self.srw_9_11km = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])[1]
-        self.u = prof.u; self.v = prof.v
-        ## calculate the storm relative wind from the bunkers motion function
-        self.srwind = prof.srwind
-        ## get only the right mover u and v components
-        self.sru = self.u - self.srwind[0]
-        self.srv = self.v - self.srwind[1]
+        self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
@@ -270,6 +261,9 @@ class plotWinds(backgroundWinds):
         Handles painting the plot data onto the
         QPixmap.
         '''
+        if self.prof is None:
+            return
+
         ## initialize a QPainter objext
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)

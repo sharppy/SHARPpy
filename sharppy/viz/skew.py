@@ -343,30 +343,31 @@ class backgroundSkewT(QtGui.QWidget):
 
 
 class plotSkewT(backgroundSkewT):
-    updated = Signal(Profile, str, bool, tab.params.Parcel)
-    reset = Signal(str)
+    modified = Signal(int, dict)
+    parcel = Signal(tab.params.Parcel)
+    reset = Signal(list)
 
-    def __init__(self, prof, **kwargs):
-        super(plotSkewT, self).__init__(plot_omega=(prof.omeg.count() != 0))
+    def __init__(self, **kwargs):
+        super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
-        self.prof = prof
-        self.pres = prof.pres; self.hght = prof.hght
-        self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
-        self.dew_stdev = prof.dew_stdev
-        self.tmp_stdev = prof.tmp_stdev
-        self.u = prof.u; self.v = prof.v
-        self.wetbulb = prof.wetbulb
-        self.logp = np.log10(prof.pres)
-        self.pcl = kwargs.get('pcl', None)
-        self.proflist = kwargs.get('proflist', None)
+        self.prof = None
+        self.prof_collections = []
+        self.pc_idx = 0
+        self.pcl = None
+
+        self.all_observed = False
         self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
+
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
         self.temp_color = kwargs.get('temp_color', '#FF0000')
+        self.ens_temp_color = kwargs.get('ens_temp_color', '#880000')
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
+        self.ens_dewp_color = kwargs.get('ens_dewp_color', '#008800')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
+        self.background_color = kwargs.get('background_color', '#6666CC')
         self.setMouseTracking(True)
         self.was_right_click = False
         self.track_cursor = False
@@ -486,16 +487,39 @@ class plotSkewT(backgroundSkewT):
 
         reset = QAction(self)
         reset.setText("Reset Skew-T")
-        reset.triggered.connect(lambda: self.reset.emit('skew'))
+        reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
         self.popupmenu.addAction(reset)
+
+    def getPlotTitle(self, prof_coll):
+        modified = prof_coll.isModified()
+        modified_str = "; Modified" if modified else ""
+
+        loc = prof_coll.getMeta('loc')
+        date = prof_coll.getCurrentDate()
+        run = prof_coll.getMeta('run')
+        model = prof_coll.getMeta('model')
+        observed = prof_coll.getMeta('observed')
+
+        plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
+        if model == "Archive":
+            plot_title += "  (User Selected" + modified_str + ")"
+        elif model == "Analog":
+            date = prof_coll.getAnalogDate()
+            plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
+            plot_title += "  (Analog" + modified_str + ")"
+        elif observed:
+            plot_title += "  (Observed" + modified_str + ")"
+        else:
+            fhour = prof_coll.getMeta('fhour', index=True)
+            plot_title += "  (" + run + "  " + model + "  " + fhour + modified_str + ")"
+        return plot_title
 
     def liftparcellevel(self, i):
         pres = self.pix_to_pres( self.cursor_loc.y())
         tmp = tab.interp.temp(self.prof, pres)
         dwp = tab.interp.dwpt(self.prof, pres)
         if i == 0:
-
-            self.prof.usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
+            usrpcl = tab.params.parcelx(self.prof, flag=5, pres=pres, tmpc=tmp, dwpc=dwp)
         else:
             if i == -9999:
                 depth, result = QInputDialog.getText(None, "Parcel Depth (" + str(int(pres)) + "to __)",\
@@ -505,29 +529,40 @@ class plotSkewT(backgroundSkewT):
                 except:
                     return
             user_initpcl = tab.params.DefineParcel(self.prof, flag=4, pbot=pres, pres=i)
-            self.prof.usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
+            usrpcl = tab.params.parcelx(self.prof, pres=user_initpcl.pres, tmpc=user_initpcl.tmpc,\
                                           dwpc=user_initpcl.dwpc)
-        self.updated.emit(self.prof, 'none', False, self.prof.usrpcl) # Emit a signal that a new profile has been created
+        self.parcel.emit(usrpcl) # Emit a signal that a new profile has been created
 
-    def setProf(self, prof, **kwargs):
+    def addProfileCollection(self, prof_coll):
+        self.prof_collections.append(prof_coll)
+
+    def rmProfileCollection(self, prof_coll):
+        self.prof_collections.remove(prof_coll)
+
+    def setActiveCollection(self, pc_idx, **kwargs):
+        self.pc_idx = pc_idx
+        prof = self.prof_collections[pc_idx].getHighlightedProf()
         self.prof = prof
+
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
         self.dew_stdev = prof.dew_stdev
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
-        self.logp = np.log10(prof.pres)
-        self.pcl = kwargs.get('pcl', None)
-        self.proflist = kwargs.get('proflist', None)
-        self.plotdgz = kwargs.get('dgz', False)
         self.interpWinds = kwargs.get('interpWinds', True)
-        self.title = kwargs.get('title', '')
 
         self.clearData()
         self.plotData()
         if self.readout:
             self.updateReadout()
+        self.update()
+
+    def setParcel(self, parcel):
+        self.pcl = parcel
+
+        self.clearData()
+        self.plotData()
         self.update()
 
     def setDGZ(self, flag):
@@ -537,6 +572,14 @@ class plotSkewT(backgroundSkewT):
         self.plotData()
         self.update()
         return
+
+    def setAllObserved(self, all_observed, update_gui=True):
+        self.all_observed = all_observed
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
 
     def interpProfile(self):
         # Step 1, interpolate the profile to 25 mb pressure levels
@@ -567,15 +610,12 @@ class plotSkewT(backgroundSkewT):
             elif prof_name == 'dwpc':
                 tmpc = min(tmpc, self.tmpc[self.drag_idx])
 
-            new_prof = prof.copy()
-            new_prof[self.drag_idx] = tmpc
-            new_prof = type(self.prof).copy(self.prof, **{prof_name:new_prof})
+            self.modified.emit(self.drag_idx, {prof_name:tmpc})
 
             self.drag_idx = None
             self.dragging = False
             self.saveBitMap = None
 
-            self.updated.emit(new_prof, 'skew', True, self.pcl)
         elif self.initdrag:
             self.initdrag = False
 
@@ -583,6 +623,9 @@ class plotSkewT(backgroundSkewT):
         self.drag_prof = None
 
     def mousePressEvent(self, e):
+        if self.prof is None:
+            return
+
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if not self.was_right_click and not self.readout:
@@ -807,20 +850,41 @@ class plotSkewT(backgroundSkewT):
         Plot the data used in a Skew-T.
 
         '''
+        if self.prof is None:
+            return
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setClipRect(self.clip)
 
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
-        self.drawTitle(qp)
-        if self.proflist is not None:
-            for profile in self.proflist:
-                #purple #666699
-                self.drawTrace(profile.tmpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor("#6666CC"), qp, p=profile.pres)
-                #self.drawVirtualParcelTrace(profile.mupcl.ttrace, profile.mupcl.ptrace, qp, color="#666666")
-                self.drawBarbs(profile, qp, color="#6666CC")
+        self.drawTitles(qp)
+
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        for idx, prof_col in enumerate(self.prof_collections):
+            # Plot all unhighlighted members at this time
+            if prof_col.getCurrentDate() == cur_dt:
+                proflist = prof_col.getCurrentProfs().values()
+                if idx == self.pc_idx:
+                    temp_color = self.ens_temp_color
+                    dewp_color = self.ens_dewp_color
+                else:
+                    temp_color = self.background_color
+                    dewp_color = self.background_color
+
+                for profile in proflist:
+                    self.drawTrace(profile.tmpc, QtGui.QColor(temp_color), qp, p=profile.pres, width=1)
+                    self.drawTrace(profile.dwpc, QtGui.QColor(dewp_color), qp, p=profile.pres, width=1)
+                    self.drawBarbs(profile, qp, color="#666666")
+
+        for idx, prof_col in enumerate(self.prof_collections):
+            if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
+                profile = prof_col.getHighlightedProf()
+                self.drawTrace(profile.tmpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
+                self.drawBarbs(profile, qp, color=self.background_color)
+
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
 
@@ -889,15 +953,30 @@ class plotSkewT(backgroundSkewT):
                 drawBarb( qp, self.barbx, y, dd, ss, color=color)
         qp.setClipRect(self.clip)
 
-    def drawTitle(self, qp):
+    def drawTitles(self, qp):
+        box_width = 150
+
+        cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        idxs, titles = zip(*[ (idx, self.getPlotTitle(pc)) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == cur_dt or self.all_observed ])
+        titles = list(titles)
+        main_title = titles.pop(idxs.index(self.pc_idx))
+
         qp.setClipping(False)
+        qp.setFont(self.title_font)
+
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        qp.setFont(self.title_font)
-        rect0 = QtCore.QRect(self.lpad, 0, 150, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, self.title)
-    
-    
+
+        rect0 = QtCore.QRect(self.lpad, 2, box_width, self.title_height)
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, main_title)
+
+        pen = QtGui.QPen(QtGui.QColor(self.background_color), 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+
+        for idx, title in enumerate(titles):
+            rect0 = QtCore.QRect(self.width() - box_width, 2 + idx * self.title_height, box_width, self.title_height)
+            qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, title)
+
     def draw_height(self, h, qp):
         qp.setClipping(True)
         self.hght_font = QtGui.QFont('Helvetica', 9)

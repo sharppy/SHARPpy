@@ -234,10 +234,10 @@ class plotVROT(backgroundVROT):
     Plot the data on the frame. Inherits the background class that
     plots the frame.
     '''
-    def __init__(self, prof):
+    def __init__(self):
         super(plotVROT, self).__init__()
+        self.prof = None
         self.vrot = 0
-
 
     def resizeEvent(self, e):
         '''
