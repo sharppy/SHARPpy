@@ -4,15 +4,17 @@ from PySide.QtGui import *
 import Queue
 import hashlib
 from datetime import datetime
+import traceback
 
 class AsyncThreads(QObject):
     """
     AsyncThreads: A class to generate threads for whenever something can't run in the main process.
     """
-    def __init__(self, max_threads):
+    def __init__(self, max_threads, debug=False):
         super(AsyncThreads, self).__init__()
         self.threads = {}
         self.callbacks = {}
+        self.debug = debug
 
         self.max_threads = max_threads
         self.running = 0
@@ -107,14 +109,15 @@ class AsyncThreads(QObject):
         class AsyncThread(QThread):
             finished = Signal(str, tuple)
 
-            def __init__(self):
+            def __init__(self, debug=False):
                 super(AsyncThread, self).__init__()
-            
+                self.debug = debug            
+
             def run(self):
                 try:
                     ret_val = func(*args, **kwargs)
                 except Exception as e:
-                    if debug:
+                    if self.debug:
                         print traceback.format_exc()
                     ret_val = e
                 if type(ret_val) != tuple:
@@ -122,4 +125,4 @@ class AsyncThreads(QObject):
 
                 self.finished.emit(thread_id, ret_val)
 
-        return AsyncThread()
+        return AsyncThread(debug=self.debug)

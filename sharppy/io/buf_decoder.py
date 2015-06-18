@@ -7,12 +7,15 @@ from decoder import Decoder
 
 from datetime import datetime
 
+__fmtname__ = "bufkit"
+__classname__ = "BufDecoder"
+
 class BufDecoder(Decoder):
     def __init__(self, file_name):
         super(BufDecoder, self).__init__(file_name)
 
-    def _parse(self, file_name):
-        file_data = self._downloadFile(file_name)
+    def _parse(self):
+        file_data = self._downloadFile()
 
         string = '\r\n\r\n\r\n'
         members = np.array(file_data.split(string))

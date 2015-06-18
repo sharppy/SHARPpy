@@ -5,12 +5,15 @@ from datetime import datetime
 from sharppy.io.decoder import Decoder
 from StringIO import StringIO
 
+__fmtname__ = "pecan"
+__classname__ = "PECANDecoder"
+
 class PECANDecoder(Decoder):
     def __init__(self, file_name):
         super(PECANDecoder, self).__init__(file_name)
 
-    def _parse(self, file_name):
-        file_data = self._downloadFile(file_name)
+    def _parse(self):
+        file_data = self._downloadFile()
 
         file_profiles = file_data.split('\n\n\n')
 

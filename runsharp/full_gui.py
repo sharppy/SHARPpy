@@ -24,7 +24,6 @@ from utils.progress import progress
 from PySide.QtCore import *
 from PySide.QtGui import *
 import datetime as date
-import traceback
 from functools import wraps, partial
 import cProfile
 from os.path import expanduser
@@ -34,7 +33,7 @@ class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
 
-    async = AsyncThreads(2)
+    async = AsyncThreads(2, debug)
 
     def __init__(self, config, **kwargs):
         """

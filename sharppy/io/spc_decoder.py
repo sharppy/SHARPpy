@@ -8,12 +8,15 @@ from decoder import Decoder
 from StringIO import StringIO
 from datetime import datetime
 
+__fmtname__ = "spc"
+__classname__ = "SPCDecoder"
+
 class SPCDecoder(Decoder):
     def __init__(self, file_name):
         super(SPCDecoder, self).__init__(file_name)
 
-    def _parse(self, file_name):
-        file_data = self._downloadFile(file_name)           
+    def _parse(self):
+        file_data = self._downloadFile()
         ## read in the file
         data = np.array([l.strip() for l in file_data.split('\n')])
 
