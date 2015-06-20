@@ -2039,7 +2039,10 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
                 if pcl.bplus >= ecape and pcl.bminus > ecinh:
                     pbot = prof.pres[i]
                     break
-            if not utils.QC(pbot): return ma.masked, ma.masked
+
+            if not utils.QC(pbot): 
+                return ma.masked, ma.masked
+
             bptr = i
             # Keep searching upward for the effective top
             for i in xrange(bptr+1, prof.top):
@@ -2051,6 +2054,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
                     ptop = prof.pres[i-j]
                     if ptop > pbot: ptop = pbot
                     break
+
     return pbot, ptop
 
 def bunkers_storm_motion(prof, **kwargs):

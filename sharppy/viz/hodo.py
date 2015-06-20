@@ -6,8 +6,6 @@ from sharppy.sharptab.constants import *
 from PySide.QtGui import *
 from PySide.QtCore import *
 
-import copy
-
 __all__ = ['backgroundHodo', 'plotHodo']
 
 
@@ -799,7 +797,7 @@ class plotHodo(backgroundHodo):
             ## do some sanity checks to prevent crashing if there is no
             ## effective inflow layer
             etop, ebot = self.prof.etopm, self.prof.ebotm
-            if etop is np.ma.masked or ebot is np.ma.masked:
+            if tab.utils.QC(etop) or tab.utils.QC(ebot):
                 esrh = np.ma.masked
                 self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
             else:
@@ -1067,12 +1065,11 @@ class plotHodo(backgroundHodo):
         ## draw circles around the sorm motion vectors
         qp.drawEllipse(center_rm, 5, 5)
         qp.drawEllipse(center_lm, 5, 5)
+
         ## get the effective inflow layer
         ptop, pbottom = self.ptop, self.pbottom
         ## make sure the effective inflow layer exists
-        if ptop is np.ma.masked and pbottom is np.ma.masked:
-            pass
-        else:
+        if tab.utils.QC(ptop) and tab.utils.QC(pbottom):
             ## get the interpolated wind at the bottom and top
             ## of the effective inflow layer
             utop,vtop = tab.interp.components(self.prof, ptop)
@@ -1087,6 +1084,7 @@ class plotHodo(backgroundHodo):
             ## draw lines showing the effective inflow layer
             qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
             qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
+
         color = QtGui.QColor('#000000')
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
@@ -1115,9 +1113,7 @@ class plotHodo(backgroundHodo):
         qp : QtGui.QPainter object
         '''
 
-        if self.ptop is np.ma.masked and self.pbottom is np.ma.masked:
-            pass
-        elif self.prof.pres[self.prof.get_sfc()] == self.pbottom:
+        if tab.utils.QC(self.ptop) and tab.utils.QC(self.pbottom):
             # There is an effective inflow layer at the surface so draw the critical angle line
             ca_color = QtGui.QColor("#FF00FF")
             pres_500m = tab.interp.pres(self.prof, tab.interp.to_msl(self.prof, 500))
