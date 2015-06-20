@@ -2046,11 +2046,13 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
             bptr = i
             # Keep searching upward for the effective top
             for i in xrange(bptr+1, prof.top):
+                if not prof.dwpc[i] or not prof.tmpc[i]:
+                    continue
                 pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-                if pcl.bplus < ecape or pcl.bminus <= ecinh:
+                if pcl.bplus < ecape or pcl.bminus <= ecinh: #Is this a potential "top"?
                     j = 1
-                    while not utils.QC(prof.dwpc[i-j]) and \
-                        not utils.QC(prof.tmpc[i-j]): j += 1
+                    while not utils.QC(prof.dwpc[i-j]) and not utils.QC(prof.tmpc[i-j]):
+                        j += 1
                     ptop = prof.pres[i-j]
                     if ptop > pbot: ptop = pbot
                     break
@@ -2516,14 +2518,14 @@ def dcape(prof):
     prof_wetbulb = prof.wetbulb
     mask1 = prof_thetae.mask
     mask2 = prof.pres.mask
-    mask = np.maximum( mask1, mask2 ) 
+    mask = np.maximum( mask1, mask2 )
     prof_thetae = prof_thetae[~mask]
     prof_wetbulb = prof_wetbulb[~mask]
     pres = prof.pres[~mask]
     hght = prof.hght[~mask]
     dwpc = prof.dwpc[~mask]
     tmpc = prof.tmpc[~mask]
-    idx = np.where(prof.pres >= sfc_pres - 400.)[0]
+    idx = np.where(pres >= sfc_pres - 400.)[0]
 
     # Find the minimum average theta-e in a 100 mb layer
     mine = 1000.0
