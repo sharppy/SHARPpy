@@ -1021,7 +1021,7 @@ class plotSkewT(backgroundSkewT):
         elp = self.pcl.elpres
 
         # Plot LCL
-        if lclp is not np.ma.masked:
+        if tab.utils.QC(lclp):
             y = self.originy + self.pres_to_pix(lclp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1029,7 +1029,7 @@ class plotSkewT(backgroundSkewT):
             rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
         # Plot LFC
-        if lfcp is not np.ma.masked:
+        if tab.utils.QC(lfcp):
             y = self.originy + self.pres_to_pix(lfcp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1037,7 +1037,7 @@ class plotSkewT(backgroundSkewT):
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
         # Plot EL
-        if elp is not np.ma.masked and elp != lclp:
+        if tab.utils.QC(elp) and elp != lclp:
             y = self.originy + self.pres_to_pix(elp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1066,7 +1066,7 @@ class plotSkewT(backgroundSkewT):
 
         for i in range(len(self.prof.omeg)):
             pres_y = self.originy + self.pres_to_pix(self.prof.pres[i]) / self.scale
-            if self.prof.omeg[i] == np.ma.masked or self.prof.pres[i] < 111:
+            if tab.utils.QC(self.prof.omeg[i]) or self.prof.pres[i] < 111:
                 continue
             if self.prof.omeg[i] > 0:
                 pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)
@@ -1087,9 +1087,7 @@ class plotSkewT(backgroundSkewT):
         ptop = self.prof.etop; pbot = self.prof.ebottom
         len = 15
         text_offset = 10
-        if ptop is np.ma.masked and pbot is np.ma.masked:
-            pass
-        else:
+        if tab.utils.QC(ptop) and tab.utils.QC(pbot):
             x1 = self.tmpc_to_pix(-20, 1000)
             x2 = self.tmpc_to_pix(-33, 1000)
             y1 = self.originy + self.pres_to_pix(pbot) / self.scale
