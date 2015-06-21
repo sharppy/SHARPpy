@@ -90,32 +90,6 @@ class backgroundSkewT(QtGui.QWidget):
         for p in xrange(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
 
-        if self.plot_omega:
-            plus10_bound = -49
-            minus10_bound = -41
-            x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
-            y1_m10 = self.pres_to_pix(1000)
-            y2_m10 = self.pres_to_pix(111)
-            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
-            qp.setPen(pen)
-            qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
-            x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
-            y1_10 = self.pres_to_pix(1000)
-            y2_10 = self.pres_to_pix(111)
-            qp.drawLine(x1_10, y1_10, x1_10, y2_10)
-            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
-            y1 = self.pres_to_pix(1000)
-            y2 = self.pres_to_pix(111)
-            qp.drawLine(x1, y1, x1, y2)
-            rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
-            rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
-            rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
-
         qp.end()
         self.backgroundBitMap = self.plotBitMap.copy(0, 0, self.width(), self.height())
 
@@ -1063,6 +1037,30 @@ class plotSkewT(backgroundSkewT):
         qp.setClipping(True)
         plus10_bound = -49
         minus10_bound = -41
+
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        y1_m10 = self.pres_to_pix(1000)
+        y2_m10 = self.pres_to_pix(111)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
+        qp.setPen(pen)
+        qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        y1_10 = self.pres_to_pix(1000)
+        y2_10 = self.pres_to_pix(111)
+        qp.drawLine(x1_10, y1_10, x1_10, y2_10)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        y1 = self.pres_to_pix(1000)
+        y2 = self.pres_to_pix(111)
+        qp.drawLine(x1, y1, x1, y2)
+        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
+        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
+        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+
         x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
 
         for i in range(len(self.prof.omeg)):
