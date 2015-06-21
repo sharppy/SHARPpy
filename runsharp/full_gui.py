@@ -28,6 +28,7 @@ from functools import wraps, partial
 import cProfile
 from os.path import expanduser
 import ConfigParser
+import traceback
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -427,7 +428,7 @@ class Picker(QWidget):
 
         try:
             dec = SPCDecoder(filename)
-        except:
+        except Exception as e:
             try:
                 dec = BufDecoder(filename)
             except:

@@ -73,9 +73,9 @@ class Decoder(object):
             f = urllib2.urlopen(self._file_name)
         except (ValueError, IOError):
             try:
-                f = open(file_name, 'r')
+                f = open(self._file_name, 'r')
             except IOError:
-                raise IOError("File '%s' cannot be found" % file_name)
+                raise IOError("File '%s' cannot be found" % self._file_name)
         file_data = f.read()
 #       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
         return file_data
