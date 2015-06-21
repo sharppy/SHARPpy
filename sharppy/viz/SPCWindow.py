@@ -121,6 +121,7 @@ class SPCWidget(QWidget):
                              "  background-color: rgb(0, 0, 0);"
                              "  text-align: right;"
                              "  font-size: 11px;"
+                             "  padding-top: 5px;"
                              "  color: #FFFFFF;}")
 
         ## this layout manager will handle the upper right portion of the window
