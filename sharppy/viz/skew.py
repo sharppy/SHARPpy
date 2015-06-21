@@ -1067,7 +1067,7 @@ class plotSkewT(backgroundSkewT):
 
         for i in range(len(self.prof.omeg)):
             pres_y = self.originy + self.pres_to_pix(self.prof.pres[i]) / self.scale
-            if tab.utils.QC(self.prof.omeg[i]) or self.prof.pres[i] < 111:
+            if not tab.utils.QC(self.prof.omeg[i]) or self.prof.pres[i] < 111:
                 continue
             if self.prof.omeg[i] > 0:
                 pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)

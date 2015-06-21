@@ -804,12 +804,12 @@ class plotHodo(backgroundHodo):
             ## do some sanity checks to prevent crashing if there is no
             ## effective inflow layer
             etop, ebot = self.prof.etopm, self.prof.ebotm
-            if tab.utils.QC(etop) or tab.utils.QC(ebot):
-                esrh = np.ma.masked
-                self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
-            else:
+            if tab.utils.QC(etop) and tab.utils.QC(ebot):
                 esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
                 self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
+            else:
+                esrh = np.ma.masked
+                self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
             ## set the crosshair in the window
             self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
             self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
