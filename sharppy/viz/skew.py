@@ -542,6 +542,7 @@ class plotSkewT(backgroundSkewT):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.plot_omega = not self.prof_collections[pc_idx].getMeta('observed')
         self.prof = prof
 
         self.pres = prof.pres; self.hght = prof.hght
