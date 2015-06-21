@@ -1025,17 +1025,19 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
-    
-        try:
-            up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
-            dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
-            center_up = QtCore.QPointF(up_u, up_v)
-            center_dn = QtCore.QPointF(dn_u, dn_v)
-            ## draw circles around the center point of the Corfidi vectors
-            qp.drawEllipse(center_up, 3, 3)
-            qp.drawEllipse(center_dn, 3, 3)
-        except:
+
+        if not (np.isfinite(self.corfidi_up_u) and np.isfinite(self.corfidi_up_v) and
+            np.isfinite(self.corfidi_dn_u) and np.isfinite(self.corfidi_dn_v)):
             return
+    
+        up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
+        dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
+        center_up = QtCore.QPointF(up_u, up_v)
+        center_dn = QtCore.QPointF(dn_u, dn_v)
+        ## draw circles around the center point of the Corfidi vectors
+        qp.drawEllipse(center_up, 3, 3)
+        qp.drawEllipse(center_dn, 3, 3)
+
         color = QtGui.QColor('#000000')
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
