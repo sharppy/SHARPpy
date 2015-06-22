@@ -51,6 +51,7 @@ class SPCWidget(QWidget):
         ## sort of profile is being viewed
         self.prof_collections = []
         self.prof_ids = []
+        self.default_prof = None
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
@@ -305,34 +306,33 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
-        default_prof = prof_col.getHighlightedProf()
+        self.default_prof = prof_col.getHighlightedProf()
 
         # update the profiles
-        self.sound.setActiveCollection(self.pc_idx)
+        self.sound.setActiveCollection(self.pc_idx, update_gui=False)
         self.hodo.setActiveCollection(self.pc_idx)
 
-        self.storm_slinky.setProf(default_prof)
-        self.inferred_temp_advection.setProf(default_prof)
-        self.speed_vs_height.setProf(default_prof)
-        self.srwinds_vs_height.setProf(default_prof)
-        self.thetae_vs_pressure.setProf(default_prof)
-        self.watch_type.setProf(default_prof)
-        self.convective.setProf(default_prof)
-        self.kinematic.setProf(default_prof)
+        self.storm_slinky.setProf(self.default_prof)
+        self.inferred_temp_advection.setProf(self.default_prof)
+        self.speed_vs_height.setProf(self.default_prof)
+        self.srwinds_vs_height.setProf(self.default_prof)
+        self.thetae_vs_pressure.setProf(self.default_prof)
+        self.watch_type.setProf(self.default_prof)
+        self.convective.setProf(self.default_prof)
+        self.kinematic.setProf(self.default_prof)
 
         for inset in self.insets.keys():
-            self.insets[inset].setProf(default_prof)
+            self.insets[inset].setProf(self.default_prof)
 
         # Update the parcels to match the new profiles
-        parcel = self.getParcelObj(default_prof, self.parcel_type)
+        parcel = self.getParcelObj(self.default_prof, self.parcel_type)
         self.sound.setParcel(parcel)
         self.storm_slinky.setParcel(parcel)
 
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
-        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
-        self.parcel_type = self.getParcelName(default_prof, pcl)
+        self.parcel_type = self.getParcelName(self.default_prof, pcl)
 
         self.sound.setParcel(pcl)
         self.storm_slinky.setParcel(pcl)
@@ -345,9 +345,6 @@ class SPCWidget(QWidget):
     @Slot(str)
     def updateSARS(self, filematch):
         prof_col = self.prof_collections[self.pc_idx]
-
-        profs = prof_col.getCurrentProfs().values()
-        default_prof = prof_col.getHighlightedProf()
 
         dec = io.spc_decoder.SPCDecoder(filematch)
         match_col = dec.getProfiles()
@@ -525,10 +522,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
-            self.insets[self.left_inset].setProf(default_prof)
+            self.insets[self.left_inset].setProf(self.default_prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -542,10 +538,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
-            self.insets[self.right_inset].setProf(default_prof)
+            self.insets[self.right_inset].setProf(self.default_prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]

@@ -527,17 +527,20 @@ class plotSkewT(backgroundSkewT):
         self.wetbulb = prof.wetbulb
         self.interpWinds = kwargs.get('interpWinds', True)
 
-        self.clearData()
-        self.plotData()
-        if self.readout:
-            self.updateReadout()
-        self.update()
+        if kwargs.get('update_gui', True):
+            self.clearData()
+            self.plotData()
+            if self.readout:
+                self.updateReadout()
+            self.update()
 
     def setParcel(self, parcel):
         self.pcl = parcel
 
         self.clearData()
         self.plotData()
+        if self.readout:
+            self.updateReadout()
         self.update()
 
     def setDGZ(self, flag):

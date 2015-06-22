@@ -965,8 +965,7 @@ class plotHodo(backgroundHodo):
                 self.draw_profile(qp, prof)
 
         ## draw the hodograph
-        prof = self.prof_collections[self.pc_idx].getHighlightedProf()
-        self.draw_hodo(qp, prof, self.colors)
+        self.draw_hodo(qp, self.prof, self.colors)
         ## draw the storm motion vector
         self.drawSMV(qp)
         self.drawCorfidi(qp)
