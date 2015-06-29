@@ -48,6 +48,10 @@ has helped your work at this address so we may track the success of the project:
 
 https://github.com/sharppy/SHARPpy/issues
 
+Please also consider posting to the sharppy group on Google Groups.  Other users may have encountered your problem already, and may be able to help you!
+
+https://groups.google.com/forum/#!forum/sharppy
+
 =======================================================================
 ### Installing SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
