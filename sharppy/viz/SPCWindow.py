@@ -72,6 +72,9 @@ class SPCWidget(QWidget):
             self.config.set('parcel_types', 'pcl2', 'ML')
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
+        if not self.config.has_option('paths', 'save_img'):
+            self.config.set('paths', 'save_img', expanduser('~'))
+            self.config.set('paths', 'save_txt', expanduser('~'))
 
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
@@ -186,19 +189,21 @@ class SPCWidget(QWidget):
             return "USER"
 
     def saveimage(self):
-        self.home_path = expanduser('~')
+        path = self.config.get('paths', 'save_img')
         file_types = "PNG (*.png)"
-        file_name, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, file_types)
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Image", path, file_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
             pixmap.save(file_name, 'PNG', 100)
+            self.config.set('paths', 'save_img', os.path.dirname(file_name))
 
     def savetext(self):
-        self.home_path = expanduser('~')
+        path = self.config.get('paths', 'save_txt')
         file_types = "TXT (*.txt)"
-        file_name, result = QFileDialog.getSaveFileName(self, "Save Sounding Text", self.home_path, file_types)
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Sounding Text", path, file_types)
         if result:
             self.default_prof.toFile(file_name)
+            self.config.set('paths', 'save_txt', os.path.dirname(file_name))
 
     def initData(self):
         """

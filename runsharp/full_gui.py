@@ -471,6 +471,9 @@ class Main(QMainWindow):
         ## All of these variables get set/reset by the various menus in the GUI
         self.config = ConfigParser.RawConfigParser()
         self.config.read(Main.cfg_file_name)
+        if not self.config.has_section('paths'):
+            self.config.add_section('paths')
+            self.config.set('paths', 'load_txt', expanduser('~'))
 
         self.__initUI()
 
@@ -520,20 +523,15 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        if self.config.has_section('archive'):
-            path = self.config.get('archive', 'path')
-        else:
-            path = expanduser('~')
+        path = self.config.get('paths', 'load_txt')
 
         link, _ = QFileDialog.getOpenFileName(self, 'Open file', path)
 
         if link == '':
             return
 
-        path, _ = os.path.split(link)
-        if not self.config.has_section('archive'):
-            self.config.add_section('archive')
-        self.config.set('archive', 'path', path)
+        path = os.path.dirname(link)
+        self.config.set('paths', 'load_txt', path)
 
         self.picker.skewApp(filename=link)
 
