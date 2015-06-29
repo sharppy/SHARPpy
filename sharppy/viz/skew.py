@@ -521,6 +521,7 @@ class plotSkewT(backgroundSkewT):
 
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
+        self.vtmp = prof.vtmp
         self.dew_stdev = prof.dew_stdev
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
@@ -865,6 +866,7 @@ class plotSkewT(backgroundSkewT):
 
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
+        self.drawTrace(self.vtmp, QtGui.QColor(self.temp_color), qp, width=1, style=QtCore.Qt.DashLine, label=False)
 
         if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
 #           idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
@@ -898,10 +900,10 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
     def drawBarbs(self, prof, qp, color="#FFFFFF"):
-        qp.setClipping(True)
+        qp.setClipping(False)
 
         rect_size = self.clip.size()
-        rect_size.setHeight(rect_size.height() + self.bpad / 2)
+        rect_size.setHeight(rect_size.height() + self.bpad)
         mod_clip = QRect(self.clip.topLeft(), rect_size)
         qp.setClipRect(mod_clip)
 
@@ -1118,7 +1120,9 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
+            qp.setClipping(False)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
+            qp.setClipping(True)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
@@ -1149,13 +1153,13 @@ class plotSkewT(backgroundSkewT):
             path.lineTo(x, y)
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None, label=True):
+    def drawTrace(self, data, color, qp, width=3, style=QtCore.Qt.SolidLine, p=None, stdev=None, label=True):
         '''
         Draw an environmental trace.
 
         '''
         qp.setClipping(True)
-        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(color), width, style)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
@@ -1186,6 +1190,7 @@ class plotSkewT(backgroundSkewT):
         qp.drawPath(path)
 
         if label is True:
+            qp.setClipping(False)
             label = (1.8 * data[0]) + 32.
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
@@ -1197,6 +1202,7 @@ class plotSkewT(backgroundSkewT):
             qp.setPen(pen)
             qp.setFont(self.environment_trace_font)
             qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
+            qp.setClipping(True)
 
     def drawSTDEV(self, pres, data, stdev, color, qp, width=1):
         '''
