@@ -187,11 +187,18 @@ class SPCWidget(QWidget):
 
     def saveimage(self):
         self.home_path = expanduser('~')
-        files_types = "PNG (*.png)"
-        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, files_types)
+        file_types = "PNG (*.png)"
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, file_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
-            pixmap.save(fileName, 'PNG', 100)
+            pixmap.save(file_name, 'PNG', 100)
+
+    def savetext(self):
+        self.home_path = expanduser('~')
+        file_types = "TXT (*.txt)"
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Sounding Text", self.home_path, file_types)
+        if result:
+            self.default_prof.toFile(file_name)
 
     def initData(self):
         """
@@ -590,7 +597,8 @@ class SPCWindow(QMainWindow):
         saveimage.triggered.connect(self.spc_widget.saveimage)
         filemenu.addAction(saveimage)
 
-        savetext = QAction("Save Text", self)
+        savetext = QAction("Save Text", self, shortcut=QKeySequence("Ctrl+Shift+S"))
+        savetext.triggered.connect(self.spc_widget.savetext)
         filemenu.addAction(savetext)
 
         self.profilemenu = bar.addMenu("Profiles")
