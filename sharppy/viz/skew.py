@@ -678,10 +678,12 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
         self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
 
-        self.presReadout.move(self.lpad, y)
-        self.hghtReadout.move(self.lpad, y - 15)
-        self.tmpcReadout.move(self.brx-self.rpad, y)
-        self.dwpcReadout.move(self.brx-self.rpad, y - 15)
+        self.presReadout.move(self.lpad, e.y())
+        self.hghtReadout.move(self.lpad, e.y() - 15)
+        self.tmpcReadout.move(self.brx-self.rpad, e.y() - 15)
+        self.dwpcReadout.move(self.brx-self.rpad, e.y())
+        self.centerp = self.pix_to_pres(e.y())
+        self.centert = tmp
         self.rubberBand.show()
 
     def dragLine(self, e):
