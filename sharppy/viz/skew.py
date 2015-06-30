@@ -372,22 +372,22 @@ class plotSkewT(backgroundSkewT):
         self.dwpcReadout.setFixedWidth(0)
         ## set the style sheet for text size, color, etc
         self.presReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
+            "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #FFFFFF;}")
         self.hghtReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
+            "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #FF0000;}")
         self.tmpcReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
+            "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #FF0000;}")
         self.dwpcReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
+            "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #00FF00;}")
@@ -678,11 +678,11 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
         self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
 
-        self.presReadout.move(self.lpad, e.y())
-        self.hghtReadout.move(self.lpad, e.y() - 15)
-        self.tmpcReadout.move(self.brx-self.rpad, e.y() - 15)
-        self.dwpcReadout.move(self.brx-self.rpad, e.y())
-        self.centerp = self.pix_to_pres(e.y())
+        self.presReadout.move(self.lpad, y+2)
+        self.hghtReadout.move(self.lpad, y - 15)
+        self.tmpcReadout.move(self.brx-self.rpad, y - 15)
+        self.dwpcReadout.move(self.brx-self.rpad, y+2)
+        self.centerp = self.pix_to_pres(y)
         self.centert = tmp
         self.rubberBand.show()
 
