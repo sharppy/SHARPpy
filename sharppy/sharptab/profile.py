@@ -2,6 +2,8 @@
 from __future__ import division
 import numpy as np
 import numpy.ma as ma
+import getpass
+from datetime import datetime
 from sharppy.sharptab import utils, winds, params, interp, thermo, watch_type, fire
 import sharppy.io.qc_tools as qc_tools
 from sharppy.databases.sars import hail, supercell
@@ -154,8 +156,10 @@ class Profile(object):
 
         snd_loc = (" " * (4 - len(self.location))) + self.location
 
+        now = datetime.utcnow()
+        user = getpass.getuser()
         snd_file.write("%TITLE%\n")
-        snd_file.write("%s   %s\n\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M")))
+        snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")
