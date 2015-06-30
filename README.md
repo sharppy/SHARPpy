@@ -4,7 +4,9 @@
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
-**REMINDER: You must re-run the "python setup.py install" script for updates to take hold***
+**REMINDER: You must re-run the "python setup.py install" script for updates to take hold**
+
+**NOTICE: If you have any custom data sources, you must add an "observed" flag to each data source your XML file, or SHARPpy will fail to load (see the [Adding Custom Data Sources](#adding-custom-data-sources) section).**
 
 **Table of Contents**
 
@@ -45,6 +47,10 @@ has helped your work at this address so we may track the success of the project:
 3.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
 
 https://github.com/sharppy/SHARPpy/issues
+
+Please also consider posting to the sharppy group on Google Groups.  Other users may have encountered your problem already, and may be able to help you!
+
+https://groups.google.com/forum/#!forum/sharppy
 
 =======================================================================
 ### Installing SHARPpy
@@ -179,7 +185,7 @@ The XML file contains the information for how the data source behaves. Questions
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <sourcelist>
-    <datasource name="My Data Source" ensemble="false">
+    <datasource name="My Data Source" observed="false" ensemble="false">
         <outlet name="My Server" url="http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf" format="bufkit" >
             <time range="24" delta="1" cycle="6" offset="0" delay="2" archive="24"/>
             <points csv="mydatasource.csv" />

@@ -292,12 +292,20 @@ class plotAnalogues(backgroundAnalogues):
             ## [1] palcement are set in this tuple.
             place2 = (x1*3+10, x1*5.5-5)
             self.ybounds = self.ybounds_hail
+
         ## if there are no matches, leave the function to prevent crashing
+        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         if self.matches[0] == []:
-            return
+            pen.setColor(QtCore.Qt.white)
+            qp.setPen(pen)
+            qp.setFont(self.match_font)
+            ## draw the text 2/5 from the top
+            rect2 = QtCore.QRect(x1*place, self.bry * (2./5.), x1, self.match_height)
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
+                'No Quality Matches')
+
         else:
             ## set the pen, font
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.plot_font)
             ## self.ylast has to be this way in order to plot relative to the bottom

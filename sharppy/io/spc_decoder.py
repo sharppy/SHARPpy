@@ -8,12 +8,15 @@ from decoder import Decoder
 from StringIO import StringIO
 from datetime import datetime
 
+__fmtname__ = "spc"
+__classname__ = "SPCDecoder"
+
 class SPCDecoder(Decoder):
     def __init__(self, file_name):
         super(SPCDecoder, self).__init__(file_name)
 
-    def _parse(self, file_name):
-        file_data = self._downloadFile(file_name)           
+    def _parse(self):
+        file_data = self._downloadFile()
         ## read in the file
         data = np.array([l.strip() for l in file_data.split('\n')])
 
@@ -25,7 +28,7 @@ class SPCDecoder(Decoder):
         ## create the plot title
         data_header = data[title_idx + 1].split()
         location = data_header[0]
-        time = data_header[1][:11]
+        time = datetime.strptime(data_header[1][:11], '%y%m%d/%H%M')
 
         ## put it all together for StringIO
         full_data = '\n'.join(data[start_idx : finish_idx][:])
@@ -44,11 +47,11 @@ class SPCDecoder(Decoder):
 
         # Force latitude to be 35 N. Figure out a way to fix this later.
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
-            wdir=wdir, wspd=wspd, location=location, latitude=35.)
+            wdir=wdir, wspd=wspd, location=location, date=time, latitude=35.)
 
         prof_coll = prof_collection.ProfCollection(
             {'':[ prof ]}, 
-            [ datetime.strptime(time, '%y%m%d/%H%M') ],
+            [ time ],
         )
 
         prof_coll.setMeta('loc', location)

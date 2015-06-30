@@ -134,10 +134,11 @@ class Profile(object):
 
         ## optional keyword argument for location
         self.location = kwargs.get('location', None)
- 
+        self.date = kwargs.get('date', None)
+
     @classmethod
     def copy(cls, prof, **kwargs):
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'latitude' ])
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude' ])
         if 'u' in kwargs or 'v' in kwargs:
             new_kwargs.update({'u':prof.u, 'v':prof.v})
         else:   
@@ -146,6 +147,26 @@ class Profile(object):
         new_kwargs.update(kwargs)
         return cls(**new_kwargs)
 
+    def toFile(self, file_name):
+        snd_file = open(file_name, 'w')
+        def qc(val):
+            return -9999. if not utils.QC(val) else val
+
+        snd_loc = (" " * (4 - len(self.location))) + self.location
+
+        snd_file.write("%TITLE%\n")
+        snd_file.write("%s   %s\n\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M")))
+        snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
+        snd_file.write("-------------------------------------------------------------------\n")
+        snd_file.write("%RAW%\n")
+        for idx in xrange(self.pres.shape[0]):
+            str = ""
+            for col in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']:
+                str += "%8.2f,  " % qc(self.__dict__[col][idx])
+
+            snd_file.write(str[:-3] + "\n")
+        snd_file.write("%END%\n")
+        snd_file.close()
 
 class BasicProfile(Profile):
     '''

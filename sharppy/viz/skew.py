@@ -90,32 +90,6 @@ class backgroundSkewT(QtGui.QWidget):
         for p in xrange(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
 
-        if self.plot_omega:
-            plus10_bound = -49
-            minus10_bound = -41
-            x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
-            y1_m10 = self.pres_to_pix(1000)
-            y2_m10 = self.pres_to_pix(111)
-            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
-            qp.setPen(pen)
-            qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
-            x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
-            y1_10 = self.pres_to_pix(1000)
-            y2_10 = self.pres_to_pix(111)
-            qp.drawLine(x1_10, y1_10, x1_10, y2_10)
-            pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
-            y1 = self.pres_to_pix(1000)
-            y2 = self.pres_to_pix(111)
-            qp.drawLine(x1, y1, x1, y2)
-            rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
-            rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
-            rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
-            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
-
         qp.end()
         self.backgroundBitMap = self.plotBitMap.copy(0, 0, self.width(), self.height())
 
@@ -542,27 +516,32 @@ class plotSkewT(backgroundSkewT):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.plot_omega = not self.prof_collections[pc_idx].getMeta('observed')
         self.prof = prof
 
         self.pres = prof.pres; self.hght = prof.hght
         self.tmpc = prof.tmpc; self.dwpc = prof.dwpc
+        self.vtmp = prof.vtmp
         self.dew_stdev = prof.dew_stdev
         self.tmp_stdev = prof.tmp_stdev
         self.u = prof.u; self.v = prof.v
         self.wetbulb = prof.wetbulb
         self.interpWinds = kwargs.get('interpWinds', True)
 
-        self.clearData()
-        self.plotData()
-        if self.readout:
-            self.updateReadout()
-        self.update()
+        if kwargs.get('update_gui', True):
+            self.clearData()
+            self.plotData()
+            if self.readout:
+                self.updateReadout()
+            self.update()
 
     def setParcel(self, parcel):
         self.pcl = parcel
 
         self.clearData()
         self.plotData()
+        if self.readout:
+            self.updateReadout()
         self.update()
 
     def setDGZ(self, flag):
@@ -887,6 +866,7 @@ class plotSkewT(backgroundSkewT):
 
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
+        self.drawTrace(self.vtmp, QtGui.QColor(self.temp_color), qp, width=1, style=QtCore.Qt.DashLine, label=False)
 
         if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
 #           idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
@@ -920,10 +900,10 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
     def drawBarbs(self, prof, qp, color="#FFFFFF"):
-        qp.setClipping(True)
+        qp.setClipping(False)
 
         rect_size = self.clip.size()
-        rect_size.setHeight(rect_size.height() + self.bpad / 2)
+        rect_size.setHeight(rect_size.height() + self.bpad)
         mod_clip = QRect(self.clip.topLeft(), rect_size)
         qp.setClipRect(mod_clip)
 
@@ -1021,7 +1001,7 @@ class plotSkewT(backgroundSkewT):
         elp = self.pcl.elpres
 
         # Plot LCL
-        if lclp is not np.ma.masked:
+        if tab.utils.QC(lclp):
             y = self.originy + self.pres_to_pix(lclp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1029,7 +1009,7 @@ class plotSkewT(backgroundSkewT):
             rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
         # Plot LFC
-        if lfcp is not np.ma.masked:
+        if tab.utils.QC(lfcp):
             y = self.originy + self.pres_to_pix(lfcp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1037,7 +1017,7 @@ class plotSkewT(backgroundSkewT):
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
         # Plot EL
-        if elp is not np.ma.masked and elp != lclp:
+        if tab.utils.QC(elp) and elp != lclp:
             y = self.originy + self.pres_to_pix(elp) / self.scale
             pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -1062,11 +1042,35 @@ class plotSkewT(backgroundSkewT):
         qp.setClipping(True)
         plus10_bound = -49
         minus10_bound = -41
+
+        x1_m10 = self.tmpc_to_pix(minus10_bound, 1000)
+        y1_m10 = self.pres_to_pix(1000)
+        y2_m10 = self.pres_to_pix(111)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.DashDotLine)
+        qp.setPen(pen)
+        qp.drawLine(x1_m10, y1_m10, x1_m10, y2_m10)
+        x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
+        y1_10 = self.pres_to_pix(1000)
+        y2_10 = self.pres_to_pix(111)
+        qp.drawLine(x1_10, y1_10, x1_10, y2_10)
+        pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
+        y1 = self.pres_to_pix(1000)
+        y2 = self.pres_to_pix(111)
+        qp.drawLine(x1, y1, x1, y2)
+        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
+        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
+        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
+
         x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
 
         for i in range(len(self.prof.omeg)):
             pres_y = self.originy + self.pres_to_pix(self.prof.pres[i]) / self.scale
-            if self.prof.omeg[i] == np.ma.masked or self.prof.pres[i] < 111:
+            if not tab.utils.QC(self.prof.omeg[i]) or self.prof.pres[i] < 111:
                 continue
             if self.prof.omeg[i] > 0:
                 pen = QtGui.QPen(QtGui.QColor("#0066CC"), 1.5, QtCore.Qt.SolidLine)
@@ -1087,9 +1091,7 @@ class plotSkewT(backgroundSkewT):
         ptop = self.prof.etop; pbot = self.prof.ebottom
         len = 15
         text_offset = 10
-        if ptop is np.ma.masked and pbot is np.ma.masked:
-            pass
-        else:
+        if tab.utils.QC(ptop) and tab.utils.QC(pbot):
             x1 = self.tmpc_to_pix(-20, 1000)
             x2 = self.tmpc_to_pix(-33, 1000)
             y1 = self.originy + self.pres_to_pix(pbot) / self.scale
@@ -1118,7 +1120,9 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x1-len, y1, x1+len, y1)
             qp.drawLine(x1-len, y2, x1+len, y2)
             qp.drawLine(x1, y1, x1, y2)
+            qp.setClipping(False)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
+            qp.setClipping(True)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
@@ -1149,13 +1153,13 @@ class plotSkewT(backgroundSkewT):
             path.lineTo(x, y)
         qp.drawPath(path)
 
-    def drawTrace(self, data, color, qp, width=3, p=None, stdev=None, label=True):
+    def drawTrace(self, data, color, qp, width=3, style=QtCore.Qt.SolidLine, p=None, stdev=None, label=True):
         '''
         Draw an environmental trace.
 
         '''
         qp.setClipping(True)
-        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(color), width, style)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
@@ -1186,6 +1190,7 @@ class plotSkewT(backgroundSkewT):
         qp.drawPath(path)
 
         if label is True:
+            qp.setClipping(False)
             label = (1.8 * data[0]) + 32.
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
@@ -1197,6 +1202,7 @@ class plotSkewT(backgroundSkewT):
             qp.setPen(pen)
             qp.setFont(self.environment_trace_font)
             qp.drawText(rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(label))
+            qp.setClipping(True)
 
     def drawSTDEV(self, pres, data, stdev, color, qp, width=1):
         '''

@@ -5,19 +5,7 @@ from datetime import datetime, timedelta
 import urllib
 
 import available
-
-# Move this to a function in decoder.py
-from sharppy.io.buf_decoder import BufDecoder
-from sharppy.io.spc_decoder import SPCDecoder
-from sharppy.io.pecan_decoder import PECANDecoder
-
-_decoder = {
-    'spc':SPCDecoder,
-    'bufkit':BufDecoder,
-    'pecan':PECANDecoder
-    }
-
-# End move
+import sharppy.io.decoder as decoder
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 
@@ -149,7 +137,7 @@ class Outlet(object):
         return self._url
 
     def getDecoder(self):
-        return _decoder[self._format]
+        return decoder.getDecoder(self._format)
 
     def hasProfile(self, point, cycle):
         times = self.getAvailableTimes()

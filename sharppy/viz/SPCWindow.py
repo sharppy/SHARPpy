@@ -51,6 +51,7 @@ class SPCWidget(QWidget):
         ## sort of profile is being viewed
         self.prof_collections = []
         self.prof_ids = []
+        self.default_prof = None
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
@@ -71,6 +72,9 @@ class SPCWidget(QWidget):
             self.config.set('parcel_types', 'pcl2', 'ML')
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
+        if not self.config.has_option('paths', 'save_img'):
+            self.config.set('paths', 'save_img', expanduser('~'))
+            self.config.set('paths', 'save_txt', expanduser('~'))
 
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
@@ -121,6 +125,7 @@ class SPCWidget(QWidget):
                              "  background-color: rgb(0, 0, 0);"
                              "  text-align: right;"
                              "  font-size: 11px;"
+                             "  padding-top: 5px;"
                              "  color: #FFFFFF;}")
 
         ## this layout manager will handle the upper right portion of the window
@@ -184,12 +189,21 @@ class SPCWidget(QWidget):
             return "USER"
 
     def saveimage(self):
-        self.home_path = expanduser('~')
-        files_types = "PNG (*.png)"
-        fileName, result = QFileDialog.getSaveFileName(self, "Save Image", self.home_path, files_types)
+        path = self.config.get('paths', 'save_img')
+        file_types = "PNG (*.png)"
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Image", path, file_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
-            pixmap.save(fileName, 'PNG', 100)
+            pixmap.save(file_name, 'PNG', 100)
+            self.config.set('paths', 'save_img', os.path.dirname(file_name))
+
+    def savetext(self):
+        path = self.config.get('paths', 'save_txt')
+        file_types = "TXT (*.txt)"
+        file_name, result = QFileDialog.getSaveFileName(self, "Save Sounding Text", path, file_types)
+        if result:
+            self.default_prof.toFile(file_name)
+            self.config.set('paths', 'save_txt', os.path.dirname(file_name))
 
     def initData(self):
         """
@@ -304,34 +318,33 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
-        default_prof = prof_col.getHighlightedProf()
+        self.default_prof = prof_col.getHighlightedProf()
 
         # update the profiles
-        self.sound.setActiveCollection(self.pc_idx)
+        self.sound.setActiveCollection(self.pc_idx, update_gui=False)
         self.hodo.setActiveCollection(self.pc_idx)
 
-        self.storm_slinky.setProf(default_prof)
-        self.inferred_temp_advection.setProf(default_prof)
-        self.speed_vs_height.setProf(default_prof)
-        self.srwinds_vs_height.setProf(default_prof)
-        self.thetae_vs_pressure.setProf(default_prof)
-        self.watch_type.setProf(default_prof)
-        self.convective.setProf(default_prof)
-        self.kinematic.setProf(default_prof)
+        self.storm_slinky.setProf(self.default_prof)
+        self.inferred_temp_advection.setProf(self.default_prof)
+        self.speed_vs_height.setProf(self.default_prof)
+        self.srwinds_vs_height.setProf(self.default_prof)
+        self.thetae_vs_pressure.setProf(self.default_prof)
+        self.watch_type.setProf(self.default_prof)
+        self.convective.setProf(self.default_prof)
+        self.kinematic.setProf(self.default_prof)
 
         for inset in self.insets.keys():
-            self.insets[inset].setProf(default_prof)
+            self.insets[inset].setProf(self.default_prof)
 
         # Update the parcels to match the new profiles
-        parcel = self.getParcelObj(default_prof, self.parcel_type)
+        parcel = self.getParcelObj(self.default_prof, self.parcel_type)
         self.sound.setParcel(parcel)
         self.storm_slinky.setParcel(parcel)
 
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
-        default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
-        self.parcel_type = self.getParcelName(default_prof, pcl)
+        self.parcel_type = self.getParcelName(self.default_prof, pcl)
 
         self.sound.setParcel(pcl)
         self.storm_slinky.setParcel(pcl)
@@ -344,9 +357,6 @@ class SPCWidget(QWidget):
     @Slot(str)
     def updateSARS(self, filematch):
         prof_col = self.prof_collections[self.pc_idx]
-
-        profs = prof_col.getCurrentProfs().values()
-        default_prof = prof_col.getHighlightedProf()
 
         dec = io.spc_decoder.SPCDecoder(filematch)
         match_col = dec.getProfiles()
@@ -524,10 +534,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
-            self.insets[self.left_inset].setProf(default_prof)
+            self.insets[self.left_inset].setProf(self.default_prof)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -541,10 +550,9 @@ class SPCWidget(QWidget):
 
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
-            default_prof = self.prof_collections[self.pc_idx].getHighlightedProf()
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
-            self.insets[self.right_inset].setProf(default_prof)
+            self.insets[self.right_inset].setProf(self.default_prof)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
@@ -594,7 +602,8 @@ class SPCWindow(QMainWindow):
         saveimage.triggered.connect(self.spc_widget.saveimage)
         filemenu.addAction(saveimage)
 
-        savetext = QAction("Save Text", self)
+        savetext = QAction("Save Text", self, shortcut=QKeySequence("Ctrl+Shift+S"))
+        savetext.triggered.connect(self.spc_widget.savetext)
         filemenu.addAction(savetext)
 
         self.profilemenu = bar.addMenu("Profiles")
