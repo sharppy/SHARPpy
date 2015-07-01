@@ -56,6 +56,7 @@ class BufDecoder(Decoder):
                 slon = float(data[i+1].split()[5])
                 selv = float(data[i+1].split()[8])
                 stim = float(data[i+2].split()[2])
+
             if data[i].find('HGHT') >= 0 and new_record == False:
                 # we've found a new data chunk
                 new_record = True
@@ -102,7 +103,7 @@ class BufDecoder(Decoder):
                 omeg[j / 2] = float(data_stuff[j].split()[7])
 
             prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
-                wdir=wdir, wspd=wspd, omeg=omeg, location=station, latitude=slat)
+                wdir=wdir, wspd=wspd, omeg=omeg, location=station, date=dates[i], latitude=slat)
 
             profiles.append(prof)
 
