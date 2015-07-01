@@ -140,6 +140,9 @@ class Profile(object):
 
     @classmethod
     def copy(cls, prof, **kwargs):
+        '''
+            Copies a profile object.
+        '''            
         new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude' ])
         if 'u' in kwargs or 'v' in kwargs:
             new_kwargs.update({'u':prof.u, 'v':prof.v})

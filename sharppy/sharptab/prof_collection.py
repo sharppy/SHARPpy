@@ -1,8 +1,9 @@
 
 import sharppy.sharptab.profile as profile
-
+import sharppy.sharptab.interp as interp
 from multiprocessing import Process, Queue
 import platform
+import numpy as np
 
 def doCopy(target_type, prof, idx, pipe):
     pipe.put((target_type.copy(prof), idx))
@@ -264,9 +265,8 @@ class ProfCollection(object):
         # Do the modification
         for var, val in kwargs.iteritems():
             prof_vars[var][idx] = val
-
-        # Make a copy of the profile object with the newly modified variables inserted.
         
+        # Make a copy of the profile object with the newly modified variables inserted.
         self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
 
         # Update bookkeeping
@@ -275,6 +275,41 @@ class ProfCollection(object):
 
         if 'u' in kwargs or 'v' in kwargs or 'wdir' in kwargs or 'wspd' in kwargs:
             self._mod_wind[self._prof_idx] = True
+
+    def interp(self, dp=-25):
+        """
+        Interpolate the profile object to a specific pressure level spacing.
+        """
+
+        if self.isEnsemble():
+            raise ValueError("Cannot interpolate the ensemble profiles.")
+
+        prof = self._profs[self._highlight][self._prof_idx]
+
+        # Save the original like in modify()
+        if self._prof_idx not in self._orig_profs:
+            self._orig_profs[self._prof_idx] = prof
+
+        cls = type(prof)
+        # Copy the tmpc, dwpc, etc. profiles to be inteprolated
+        keys = ['tmpc', 'dwpc', 'hght', 'wspd', 'wdir', 'omeg']
+        
+        prof_vars = {'pres': np.arange(prof.pres[prof.sfc], prof.pres[prof.top], dp)}
+        prof_vars['tmpc'] = interp.temp(prof, prof_vars['pres'])
+        prof_vars['dwpc'] = interp.dwpt(prof, prof_vars['pres'])
+        prof_vars['hght'] = interp.hght(prof, prof_vars['pres'])
+        if prof.omeg.all() is not np.ma.masked:
+            prof_vars['omeg'] = interp.omeg(prof, prof_vars['pres'])
+        else:
+            prof_vars['omeg'] = np.ma.masked_array(prof_vars['pres'], mask=np.ones(len(prof_vars['pres']), dtype=int))
+        u, v = interp.components(prof, prof_vars['pres'])
+        prof_vars['u'] = u
+        prof_vars['v'] = v
+
+        self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
+        
+        # Update bookkeeping (however this is the generalized because I was under the impression that I needed this)
+        self._mod_therm[self._prof_idx] = True
 
     def reset(self, *args):
         """
