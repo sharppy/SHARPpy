@@ -391,10 +391,15 @@ class SPCWidget(QWidget):
         self.updateProfs()
         self.setFocus()
 
+    def interpProf(self):
+        self.prof_collections[self.pc_idx].interp()
+        self.updateProfs()
+        self.setFocus()
+
     @Slot(list)
     def resetProf(self, args):
+        self.sound.interp_prof.setChecked(False)
         self.prof_collections[self.pc_idx].reset(*args)
-
         self.updateProfs()
         self.setFocus()
 
@@ -679,11 +684,13 @@ class SPCWindow(QMainWindow):
             actions[names.index("Remove")].setVisible(False)
 
     def keyPressEvent(self, e):
+        #TODO: Up and down keys to loop through profile collection members.
         if e.key() == Qt.Key_Left:
             self.spc_widget.advanceTime(-1)
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
         elif e.key() == Qt.Key_Space:
+            # Swap the profile collections
             self.spc_widget.swapProfCollections()
         elif e.matches(QKeySequence.Save):
             # Save an image

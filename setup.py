@@ -16,8 +16,8 @@ sys.path.pop()
 ### ACTUAL SETUP VALUES ###
 name = pkgname
 version = ver
-author = "Patrick Marsh, Kelton Halbert, and Greg Blumberg"
-author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu"
+author = "Patrick Marsh, Kelton Halbert, Greg Blumberg, and Tim Supinie"
+author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu, tsupinie@ou.edu"
 description = "Sounding/Hodograph Analysis and Research Program for Python"
 long_description = ""
 license = "BSD"
