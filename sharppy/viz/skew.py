@@ -561,7 +561,10 @@ class plotSkewT(backgroundSkewT):
             self.update()
 
     def interpProfile(self):
-        self.parentWidget().interpProf()
+        if self.interp_prof.isChecked() is True:
+            self.parentWidget().interpProf()
+        else:
+            self.reset.emit(['tmpc', 'dwpc'])
 
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
