@@ -319,11 +319,12 @@ class ProfCollection(object):
         if not self._prof_idx in self._orig_profs:
             return
 
-        prof = self._orig_profs[self._prof_idx]
+        orig_prof = self._orig_profs[self._prof_idx]
+        prof = self._profs[self._highlight][self._prof_idx]
         cls = type(prof)
 
         # Get the original variables
-        prof_vars = dict( (k, prof.__dict__[k]) for k in args )
+        prof_vars = dict( (k, orig_prof.__dict__[k]) for k in args )
 
         # Make a copy of the profile object with the original variables inserted
         self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
