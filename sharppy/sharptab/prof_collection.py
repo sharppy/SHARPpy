@@ -310,6 +310,7 @@ class ProfCollection(object):
         
         # Update bookkeeping (however this is the generalized because I was under the impression that I needed this)
         self._mod_therm[self._prof_idx] = True
+        self._mod_wind[self._prof_idx] = True
 
     def reset(self, *args):
         """

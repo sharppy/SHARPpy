@@ -37,8 +37,6 @@ class backgroundSkewT(QtGui.QWidget):
         self.xrange = self.brtmpc - self.bltmpc
         self.yrange = np.tan(np.deg2rad(self.xskew)) * self.xrange
         self.clip = QRect(QPoint(self.lpad, self.tly), QPoint(self.brx + self.rpad, self.bry))
-#       self.centert = (self.brtmpc - self.bltmpc) / 2.
-#       self.centerp = self.pix_to_pres(self.hgt/2.)
         self.originx = 0. # self.size().width() / 2
         self.originy = 0. # self.size().height() / 2
         self.scale = 1.
@@ -564,7 +562,7 @@ class plotSkewT(backgroundSkewT):
         if self.interp_prof.isChecked() is True:
             self.parentWidget().interpProf()
         else:
-            self.reset.emit(['tmpc', 'dwpc'])
+            self.reset.emit(['tmpc', 'dwpc', 'u', 'v', 'hght', 'pres', 'omeg'])
 
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
@@ -676,8 +674,6 @@ class plotSkewT(backgroundSkewT):
         self.hghtReadout.move(self.lpad, y - 15)
         self.tmpcReadout.move(self.brx-self.rpad, y - 15)
         self.dwpcReadout.move(self.brx-self.rpad, y+2)
-        self.centerp = self.pix_to_pres(y)
-        self.centert = tmp
         self.rubberBand.show()
 
     def dragLine(self, e):
