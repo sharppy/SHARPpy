@@ -651,7 +651,7 @@ class SPCWindow(QMainWindow):
 
     def addProfileCollection(self, prof_col, focus=True):
         menu_name = self.createMenuName(prof_col)
-        if any( mitem.title() == menu_name for mitem in self.menu_items ):
+        if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):
             self.spc_widget.setProfileCollection(menu_name)
             return
             
