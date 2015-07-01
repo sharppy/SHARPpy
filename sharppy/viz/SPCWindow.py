@@ -110,6 +110,7 @@ class SPCWidget(QWidget):
         self.urparent = QFrame()
         self.urparent_grid = QGridLayout()
         self.urparent_grid.setContentsMargins(0, 0, 0, 0)
+        self.urparent_grid.setVerticalSpacing(0)
         self.urparent.setLayout(self.urparent_grid)
         self.ur = QFrame()
         self.ur.setStyleSheet("QFrame {"
@@ -124,8 +125,9 @@ class SPCWidget(QWidget):
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"
                              "  text-align: right;"
+                             "  padding-top: 4px;"
+                             "  padding-bottom: 4px;"
                              "  font-size: 11px;"
-                             "  padding-top: 5px;"
                              "  color: #FFFFFF;}")
 
         ## this layout manager will handle the upper right portion of the window
