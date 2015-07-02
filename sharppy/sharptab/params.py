@@ -2739,7 +2739,7 @@ def mburst(prof):
     tt = getattr(prof, 'totals_totals', t_totals( prof ))
     dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
     pwat = getattr(prof, 'pwat', precip_water( prof ))
-    tei_val = getattr(prof, 'tei', tei(prof))
+    tei_val = thetae_diff(prof)
 
     sfc_thetae = thermo.thetae(sbpcl.lplvals.pres, sbpcl.lplvals.tmpc, sbpcl.lplvals.dwpc)
 
@@ -2898,3 +2898,40 @@ def sweat(prof):
     sweat = term1 + term2 + term3 + term4 + term5
 
     return sweat
+
+
+def thetae_diff(prof):
+    '''
+        thetae_diff()
+
+        Adapted from code for thetae_diff2() provided by Rich Thompson (SPC)
+
+        Find the maximum and minimum Theta-E values in the lowest 3000 m of
+        the sounding and returns the difference.  Only positive difference values
+        (where the minimum Theta-E is above the maximum) are returned.
+
+        Parameters
+        ----------
+        prof : Profile object
+
+        Returns
+        -------
+        thetae_diff : the Theta-E difference between the max and min values (K)
+    '''
+
+    thetae = getattr(prof, 'thetae', prof.get_thetae_profile())
+    idx = np.where(interp.to_agl(prof, prof.hght) <= 3000)[0]
+    maxe_idx = np.ma.argmax(thetae[idx])
+    mine_idx = np.ma.argmin(thetae[idx])
+
+    maxe_pres = prof.pres[idx][maxe_idx]
+    mine_pres = prof.pres[idx][mine_idx]
+
+    thetae_diff = thetae[idx][maxe_idx] - thetae[idx][mine_idx]
+
+    if maxe_pres < mine_pres:
+        return 0
+    else:
+        return thetae_diff
+
+
