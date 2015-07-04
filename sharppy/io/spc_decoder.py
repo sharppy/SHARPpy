@@ -29,6 +29,11 @@ class SPCDecoder(Decoder):
         data_header = data[title_idx + 1].split()
         location = data_header[0]
         time = datetime.strptime(data_header[1][:11], '%y%m%d/%H%M')
+        
+        if time > datetime.utcnow(): #If the strptime accidently makes the sounding the future:
+            # If the strptime accidently makes the sounding in the future (like with SARS archive)
+            # i.e. a 1957 sounding becomes 2057 sounding...ensure that it's a part of the 20th century
+            time = datetime.strptime('19' + data_header[1][:11], '%Y%m%d/%H%M')
 
         ## put it all together for StringIO
         full_data = '\n'.join(data[start_idx : finish_idx][:])

@@ -448,6 +448,9 @@ class plotAnalogues(backgroundAnalogues):
         self.parentWidget().setFocus()
 
     def setSelection(self, filematch):
+        """
+            Load in the SARS analog you've clicked.
+        """
         match_name = os.path.basename(filematch)
         if match_name in self.sup_matches[0]:
             idx = np.where(self.sup_matches[0] == match_name)[0][0]

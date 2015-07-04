@@ -390,6 +390,7 @@ class Picker(QWidget):
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
+            # This conditional is if there is an issue with the actual loading of the data.
             msgbox = QMessageBox()
             msgbox.setText("An error has occurred while retrieving the data.")
             msgbox.setInformativeText("This probably means the data are missing for some reason. Try another site or model or try again later.")
@@ -404,9 +405,11 @@ class Picker(QWidget):
             prof_collection.setMeta('observed', observed)
 
             if not observed:
+                # If it's not an observed profile, then generate profile objects in background.
                 prof_collection.setAsync(Picker.async)
 
             if self.skew is None:
+                # If the SPCWindow isn't shown, set it up.
                 self.skew = SPCWindow(cfg=self.config)
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
@@ -424,6 +427,8 @@ class Picker(QWidget):
     def loadArchive(self, filename):
         """
         Get the archive sounding based on the user's selections.
+        Also reads it using the Decoders and gets both the stationID and the profile objects
+        for that archive sounding.
         """
 
         try:
@@ -525,15 +530,17 @@ class Main(QMainWindow):
         """
         path = self.config.get('paths', 'load_txt')
 
-        link, _ = QFileDialog.getOpenFileName(self, 'Open file', path)
-
-        if link == '':
+        link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
+        
+        if len(link) == 0 or link[0] == '':
             return
 
-        path = os.path.dirname(link)
+        path = os.path.dirname(link[0])
         self.config.set('paths', 'load_txt', path)
 
-        self.picker.skewApp(filename=link)
+        # Loop through all of the files selected and load them into the SPCWindow 
+        for l in link:
+            self.picker.skewApp(filename=l)
 
     def aboutbox(self):
         """
