@@ -234,7 +234,7 @@ class plotSlinky(backgroundSlinky):
         pen = QtGui.QPen(QtGui.QColor(WHITE), 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## scale the vector to be visible in the window
-        if not tab.utils.QC(self.smu) or not tab.utils.QC(self.smv):
+        if tab.utils.QC(self.smu) and tab.utils.QC(self.smv):
             wdir, wspd = tab.utils.comp2vec(self.smu, self.smv)
             u, v = tab.utils.vec2comp(wdir, 3000)
             ## convert the unit space to pixel space
