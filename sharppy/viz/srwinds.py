@@ -308,35 +308,38 @@ class plotWinds(backgroundWinds):
                 ## calculate the storm relative wind speed
                 spd1 = np.sqrt( sru1**2 + srv1**2 )
                 spd2 = np.sqrt( sru2**2 + srv2**2 )
-                ## convert the wind speeds to x pixels
-                x1 = self.speed_to_pix( spd1 ); x2 = self.speed_to_pix(spd2)
-                ## convert the height values to y pixels
-                y1 = self.hgt_to_pix(hgt1); y2 = self.hgt_to_pix(hgt2)
-                ## draw a line between the two points
-                qp.setPen(pen)
-                qp.drawLine(x1, y1, x2, y2)
+                if tab.utils.QC(spd1) and tab.utils.QC(spd2):
+                    ## convert the wind speeds to x pixels
+                    x1 = self.speed_to_pix( spd1 ); x2 = self.speed_to_pix(spd2)
+                    ## convert the height values to y pixels
+                    y1 = self.hgt_to_pix(hgt1); y2 = self.hgt_to_pix(hgt2)
+                    ## draw a line between the two points
+                    qp.setPen(pen)
+                    qp.drawLine(x1, y1, x2, y2)
         
         # Plot the 0-2 km mean SRW
-        pen = QtGui.QPen(QtGui.QColor("#8B0000"), 2)
-        pen.setStyle(QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        x1 = self.speed_to_pix(self.srw_0_2km); x2 = self.speed_to_pix(self.srw_0_2km)
-        y1 = self.hgt_to_pix(0.0); y2 = self.hgt_to_pix(2.0)
-        qp.drawLine(x1, y1, x2, y2)
+        if tab.utils.QC(self.srw_0_2km):
+            pen = QtGui.QPen(QtGui.QColor("#8B0000"), 2)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            x1 = self.speed_to_pix(self.srw_0_2km); x2 = self.speed_to_pix(self.srw_0_2km)
+            y1 = self.hgt_to_pix(0.0); y2 = self.hgt_to_pix(2.0)
+            qp.drawLine(x1, y1, x2, y2)
                     
         # Plot the 4-6 km mean SRW
-        pen = QtGui.QPen(QtGui.QColor("#6495ED"), 2)
-        pen.setStyle(QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        x1 = self.speed_to_pix(self.srw_4_6km); x2 = self.speed_to_pix(self.srw_4_6km)
-        y1 = self.hgt_to_pix(4.0); y2 = self.hgt_to_pix(6.0)
-        qp.drawLine(x1, y1, x2, y2)
+        if tab.utils.QC(self.srw_4_6km):
+            pen = QtGui.QPen(QtGui.QColor("#6495ED"), 2)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            x1 = self.speed_to_pix(self.srw_4_6km); x2 = self.speed_to_pix(self.srw_4_6km)
+            y1 = self.hgt_to_pix(4.0); y2 = self.hgt_to_pix(6.0)
+            qp.drawLine(x1, y1, x2, y2)
                     
         # Plot the 9-11 km mean SRW
-        pen = QtGui.QPen(QtGui.QColor("#9400D3"), 2)
-        pen.setStyle(QtCore.Qt.SolidLine)
-        qp.setPen(pen)
         if tab.utils.QC(self.srw_9_11km):
+            pen = QtGui.QPen(QtGui.QColor("#9400D3"), 2)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
             x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
             y1 = self.hgt_to_pix(9.0); y2 = self.hgt_to_pix(11.0)
             qp.drawLine(x1, y1, x2, y2)
