@@ -43,8 +43,9 @@ class SPCWidget(QWidget):
     }
 
     def __init__(self, **kwargs):
+        parent = kwargs.get('parent', None)
 
-        super(SPCWidget, self).__init__()
+        super(SPCWidget, self).__init__(parent=parent)
         """
         """
         ## these are the keyword arguments used to define what
@@ -577,12 +578,14 @@ class SPCWindow(QMainWindow):
     closed = Signal()
 
     def __init__(self, **kwargs):
-        super(SPCWindow, self).__init__()
+        parent = kwargs.get('parent', None)
+        super(SPCWindow, self).__init__(parent=parent)
 
         self.menu_items = []
         self.__initUI(**kwargs)
 
     def __initUI(self, **kwargs):
+        kwargs['parent'] = self
         self.spc_widget = SPCWidget(**kwargs)
         self.setCentralWidget(self.spc_widget)
 
@@ -697,7 +700,8 @@ class SPCWindow(QMainWindow):
         elif e.matches(QKeySequence.Save):
             # Save an image
             self.spc_widget.saveimage()
-            return
+        elif e.key() == Qt.Key_W:
+            self.focusPicker()
 
     def closeEvent(self, e):
         self.spc_widget.closeEvent(e)
@@ -710,3 +714,7 @@ class SPCWindow(QMainWindow):
 
         return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
 
+    def focusPicker(self):
+        picker_window = self.parent()
+        picker_window.activateWindow()
+        picker_window.raise_()

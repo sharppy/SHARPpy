@@ -410,12 +410,11 @@ class Picker(QWidget):
 
             if self.skew is None:
                 # If the SPCWindow isn't shown, set it up.
-                self.skew = SPCWindow(cfg=self.config)
+                self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
 
-            self.skew.raise_()
-            self.skew.setFocus()
+            self.focusSkewApp()
             self.skew.addProfileCollection(prof_collection)
 
     def skewAppClosed(self):
@@ -423,6 +422,11 @@ class Picker(QWidget):
         Handles the user closing the SPC window.
         """
         self.skew = None
+
+    def focusSkewApp(self):
+        if self.skew is not None:
+            self.skew.activateWindow()
+            self.skew.raise_()
 
     def loadArchive(self, filename):
         """
@@ -486,7 +490,7 @@ class Main(QMainWindow):
         """
         Puts the user inteface together
         """
-        self.picker = Picker(self.config)
+        self.picker = Picker(self.config, parent=self)
         self.setCentralWidget(self.picker)
         self.createMenuBar()
         
@@ -586,6 +590,9 @@ class Main(QMainWindow):
 
         if e.matches(QKeySequence.Quit):
             self.exitApp()
+
+        if e.key() == Qt.Key_W:
+            self.picker.focusSkewApp()
 
     def closeEvent(self, e):
         """
