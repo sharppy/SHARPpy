@@ -284,6 +284,9 @@ def comp2vec(u, v, missing=MISSING):
         Magnitudes of wind vector (input units == output units)
 
     '''
+    if u is ma.masked or v is ma.masked:
+        return ma.masked, ma.masked
+
     u = ma.asanyarray(u).astype(np.float64)
     v = ma.asanyarray(v).astype(np.float64)
     u.set_fill_value(missing)
@@ -326,6 +329,9 @@ def mag(u, v, missing=MISSING):
         The magnitude of the vector (units are the same as input)
 
     '''
+    if u is ma.masked or v is ma.masked:
+        return ma.masked
+
     u = np.ma.asanyarray(u).astype(np.float64)
     v = np.ma.asanyarray(v).astype(np.float64)
     u.set_fill_value(missing)
