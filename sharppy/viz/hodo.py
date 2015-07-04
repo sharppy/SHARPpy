@@ -960,6 +960,7 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#B8860B"), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
+
         try:
             mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
             half_length = (8./2.)
@@ -996,7 +997,11 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
-    
+
+        if not np.isfinite(self.corfidi_up_u) or not np.isfinite(self.corfidi_up_v) or \
+            not np.isfinite(self.corfidi_dn_u) or not np.isfinite(self.corfidi_dn_v):
+            return
+
         try:
             up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
             dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
@@ -1056,6 +1061,11 @@ class plotHodo(backgroundHodo):
             hght = self.hght
             u = self.u; v = self.v
             rstu,rstv,lstu,lstv = self.srwind
+
+        # make sure the storm motion exists
+        if not tab.utils.QC(rstu) or not tab.utils.QC(lstu):
+            return
+
         ## convert the left and right mover vector components to pixel values
         ruu, rvv = self.uv_to_pix(rstu,rstv)
         luu, lvv = self.uv_to_pix(lstu, lstv)
@@ -1131,15 +1141,17 @@ class plotHodo(backgroundHodo):
                 rstu = rstu[~mask]; rstv = rstv[~mask]
             except:
                 rstu,rstv,lstu,lstv = self.srwind
-            qp = self.setBlackPen(qp)
-            rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
-            qp.drawRect(rect)     
-            ca_text_color = QtGui.QColor("#00FFFF")
-            pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            qp.setFont(self.critical_font)
-            offset = 10
-            qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
+
+            if tab.utils.QC(rstu) and tab.utils.QC(lstu):
+                qp = self.setBlackPen(qp)
+                rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
+                qp.drawRect(rect)     
+                ca_text_color = QtGui.QColor("#00FFFF")
+                pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                qp.setFont(self.critical_font)
+                offset = 10
+                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
 
     def draw_hodo(self, qp):
         '''

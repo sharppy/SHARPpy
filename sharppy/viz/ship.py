@@ -195,6 +195,9 @@ class plotSHIP(backgroundSHIP):
         self.draw_ship(qp)
 
     def draw_ship(self, qp):
+        if not tab.utils.QC(self.ship):
+            return
+
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)

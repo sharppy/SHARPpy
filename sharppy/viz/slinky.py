@@ -234,12 +234,13 @@ class plotSlinky(backgroundSlinky):
         pen = QtGui.QPen(QtGui.QColor(WHITE), 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## scale the vector to be visible in the window
-        wdir, wspd = tab.utils.comp2vec(self.smu, self.smv)
-        u, v = tab.utils.vec2comp(wdir, 3000)
-        ## convert the unit space to pixel space
-        motion_x, motion_y = self.xy_to_pix(u,v)
-        center_x, center_y = self.xy_to_pix(0,0)
-        qp.drawLine(motion_x,motion_y, center_x,center_y)
+        if not tab.utils.QC(self.smu) or not tab.utils.QC(self.smv):
+            wdir, wspd = tab.utils.comp2vec(self.smu, self.smv)
+            u, v = tab.utils.vec2comp(wdir, 3000)
+            ## convert the unit space to pixel space
+            motion_x, motion_y = self.xy_to_pix(u,v)
+            center_x, center_y = self.xy_to_pix(0,0)
+            qp.drawLine(motion_x,motion_y, center_x,center_y)
 
     def plotTilt(self, qp):
         '''
@@ -286,6 +287,10 @@ class plotSlinky(backgroundSlinky):
             x = tradj[0]
             y = tradj[1]
             z = tradj[2]
+
+            if not tab.utils.QC(x) or not tab.utils.QC(y):
+                continue
+
             ## set the various colors
             if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)

@@ -234,6 +234,9 @@ def vec2comp(wdir, wspd, missing=MISSING):
         V-component of the wind (units are the same as those of input speed)
 
     '''
+    if not QC(wdir) or not QC(wspd):
+        return ma.masked, ma.masked
+
     wdir = ma.asanyarray(wdir).astype(np.float64)
     wspd = ma.asanyarray(wspd).astype(np.float64)
     wdir.set_fill_value(missing)
@@ -284,7 +287,7 @@ def comp2vec(u, v, missing=MISSING):
         Magnitudes of wind vector (input units == output units)
 
     '''
-    if u is ma.masked or v is ma.masked:
+    if not QC(u) or not QC(v):
         return ma.masked, ma.masked
 
     u = ma.asanyarray(u).astype(np.float64)
@@ -329,7 +332,7 @@ def mag(u, v, missing=MISSING):
         The magnitude of the vector (units are the same as input)
 
     '''
-    if u is ma.masked or v is ma.masked:
+    if not QC(u) or not QC(v):
         return ma.masked
 
     u = np.ma.asanyarray(u).astype(np.float64)

@@ -177,7 +177,6 @@ class SkewApp(QWidget):
         self.initData()
         self.loadWidgets()
 
-
     def getParcelObj(self, prof, name):
         if name == "SFC":
             return prof.sfcpcl
@@ -330,7 +329,6 @@ class SkewApp(QWidget):
 
         self.convective.setProf(self.prof, self.convective.pcl_types)
         self.kinematic.setProf(self.prof)
-
 
 
         for inset in self.insets.keys():
