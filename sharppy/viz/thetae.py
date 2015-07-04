@@ -285,7 +285,7 @@ class plotThetae(backgroundThetae):
         mask = np.maximum(mask1, mask2)
         pres = self.pres[~mask]
         thetae = self.thetae[~mask]
-        for i in xrange( pres.shape[0] ):
+        for i in xrange( pres.shape[0] - 1 ):
             ## we really only want to plot the data in the lowest 500mb
             if pres[i] > 400:
                 ## get two pressure, temperature, and dewpoint values
