@@ -638,8 +638,8 @@ class plotSkewT(backgroundSkewT):
 
         self.presReadout.move(self.lpad, e.y())
         self.hghtReadout.move(self.lpad, e.y() - 15)
-        self.tmpcReadout.move(self.brx-self.rpad, e.y())
-        self.dwpcReadout.move(self.brx-self.rpad, e.y() - 15)
+        self.tmpcReadout.move(self.brx-self.rpad, e.y() - 15)
+        self.dwpcReadout.move(self.brx-self.rpad, e.y())
         self.centerp = self.pix_to_pres(e.y())
         self.centert = tmp
         self.rubberBand.show()
