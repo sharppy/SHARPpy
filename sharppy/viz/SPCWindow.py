@@ -615,7 +615,7 @@ class SPCWindow(QMainWindow):
 
         self.profilemenu = bar.addMenu("Profiles")
 
-        self.allobserved = QAction("Collect Observed", self, checkable=True)
+        self.allobserved = QAction("Collect Observed", self, checkable=True, shortcut=QKeySequence("C"))
         self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
 
         self.profilemenu.addAction(self.allobserved)
