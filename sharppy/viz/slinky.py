@@ -297,6 +297,7 @@ class plotSlinky(backgroundSlinky):
             x = tradj[0]
             y = tradj[1]
             z = tradj[2]
+
             if not tab.utils.QC(x) or not tab.utils.QC(y):
                 continue
 
