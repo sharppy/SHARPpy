@@ -1086,6 +1086,10 @@ class plotHodo(backgroundHodo):
             hght = self.hght
             u = self.u; v = self.v
             rstu,rstv,lstu,lstv = self.srwind
+
+        if not tab.utils.QC(rstu) or not tab.utils.QC(lstu):
+            return
+
         ## convert the left and right mover vector components to pixel values
         ruu, rvv = self.uv_to_pix(rstu,rstv)
         luu, lvv = self.uv_to_pix(lstu, lstv)
@@ -1099,7 +1103,7 @@ class plotHodo(backgroundHodo):
         ## get the effective inflow layer
         ptop, pbottom = self.ptop, self.pbottom
         ## make sure the effective inflow layer and storm motion vectors exist
-        if tab.utils.QC(ptop) and tab.utils.QC(pbottom) and tab.utils.QC(rstu) and tab.utils.QC(lstu):
+        if tab.utils.QC(ptop) and tab.utils.QC(pbottom):
             ## get the interpolated wind at the bottom and top
             ## of the effective inflow layer
             utop,vtop = tab.interp.components(self.prof, ptop)

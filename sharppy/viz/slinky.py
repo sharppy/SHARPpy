@@ -297,6 +297,9 @@ class plotSlinky(backgroundSlinky):
             x = tradj[0]
             y = tradj[1]
             z = tradj[2]
+            if not tab.utils.QC(x) or not tab.utils.QC(y):
+                continue
+
             ## set the various colors
             if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
