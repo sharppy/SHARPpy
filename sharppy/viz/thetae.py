@@ -1,5 +1,6 @@
 import numpy as np
 from PySide import QtGui, QtCore
+from PySide.QtOpenGL import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 
@@ -285,11 +286,17 @@ class plotThetae(backgroundThetae):
         mask = np.maximum(mask1, mask2)
         pres = self.pres[~mask]
         thetae = self.thetae[~mask]
+
+        # TODO: Update this drawing routine to work with QPainterPath
         for i in xrange( pres.shape[0] ):
             ## we really only want to plot the data in the lowest 500mb
             if pres[i] > 400:
                 ## get two pressure, temperature, and dewpoint values
-                p1 = pres[i]; p2 = pres[i+1]
+                try:
+                    p1 = pres[i];
+                    p2 = pres[i+1]
+                except:
+                    break
                 ## get two theta-e values from the above sounding profile data
                 thte1 = thetae[i]; thte2 = thetae[i+1]
                 ## convert the theta-e values to x pixel coordinates
