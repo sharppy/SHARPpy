@@ -1098,8 +1098,8 @@ class plotHodo(backgroundHodo):
 
         ## get the effective inflow layer
         ptop, pbottom = self.ptop, self.pbottom
-        ## make sure the effective inflow layer exists
-        if tab.utils.QC(ptop) and tab.utils.QC(pbottom):
+        ## make sure the effective inflow layer and storm motion vectors exist
+        if tab.utils.QC(ptop) and tab.utils.QC(pbottom) and tab.utils.QC(rstu) and tab.utils.QC(lstu):
             ## get the interpolated wind at the bottom and top
             ## of the effective inflow layer
             utop,vtop = tab.interp.components(self.prof, ptop)
@@ -1114,7 +1114,7 @@ class plotHodo(backgroundHodo):
             ## draw lines showing the effective inflow layer
             qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
             qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
-
+                
         color = QtGui.QColor('#000000')
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)

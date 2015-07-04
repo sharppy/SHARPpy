@@ -271,8 +271,8 @@ class plotKinematics(backgroundKinematics):
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
         ## format the text
-        srh1km = str(np.int(self.srh1km[0]))
-        srh3km = str(np.int(self.srh3km[0]))
+        srh1km = tab.utils.INT2STR(self.srh1km[0])
+        srh3km = tab.utils.INT2STR(self.srh3km[0])
         
         sfc1km = tab.utils.INT2STR(tab.utils.mag(self.sfc_1km_shear[0], self.sfc_1km_shear[1]))
         sfc3km = tab.utils.INT2STR(tab.utils.mag(self.sfc_3km_shear[0], self.sfc_3km_shear[1]))
