@@ -77,8 +77,7 @@ class Picker(QWidget):
         self.view = self.create_map_view()
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
-        if not self.has_connection:
-            self.button.setDisabled(True)
+        self.button.setDisabled(True)
 
         self.select_flag = False
         self.all_profs = QPushButton("Select All")
@@ -262,6 +261,7 @@ class Picker(QWidget):
             self.loc = None
             self.disp_name = None
             self.button.setText('Generate Profiles')
+            self.button.setDisabled(True)
         else:
             self.loc = point #url.toString().split('/')[-1]
             if point['icao'] != "":
@@ -272,6 +272,8 @@ class Picker(QWidget):
                 self.disp_name = point['srcid'].upper()
 
             self.button.setText(self.disp_name + ' | Generate Profiles')
+            if self.has_connection:
+                self.button.setEnabled(True) 
 
     def complete_name(self):
         """
