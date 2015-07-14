@@ -39,7 +39,7 @@ def _availableat_spc(dt):
     '''
     recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H_OBS'))
     text = urllib2.urlopen(recent_url).read()
-    matches = re.findall("alt=\"([\w]{3}|[\d]{5})\"", text)
+    matches = re.findall("show_soundings\(\"([\w]{3}|[\d]{5})\"\)", text)
     return matches
 
 psu_base_url = "ftp://ftp.meteo.psu.edu/pub/bufkit/"
