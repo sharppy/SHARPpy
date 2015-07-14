@@ -433,6 +433,7 @@ class Picker(QWidget):
     def focusSkewApp(self):
         if self.skew is not None:
             self.skew.activateWindow()
+            self.skew.setFocus()
             self.skew.raise_()
 
     def loadArchive(self, filename):

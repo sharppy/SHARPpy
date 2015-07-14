@@ -717,4 +717,5 @@ class SPCWindow(QMainWindow):
     def focusPicker(self):
         picker_window = self.parent()
         picker_window.activateWindow()
+        picker_window.setFocus()
         picker_window.raise_()
