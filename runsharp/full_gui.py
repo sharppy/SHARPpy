@@ -56,6 +56,10 @@ class Picker(QWidget):
         self.model = "Observed"
         ## this is the default model initialization time.
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
+
+        urls = data_source.pingURLs(self.data_sources)
+        self.has_connection = any( urls.values() )
+
         ## initialize the UI
         self.__initUI()
 
@@ -73,6 +77,9 @@ class Picker(QWidget):
         self.view = self.create_map_view()
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
+        if not self.has_connection:
+            self.button.setDisabled(True)
+
         self.select_flag = False
         self.all_profs = QPushButton("Select All")
         self.all_profs.clicked.connect(self.select_all)
@@ -448,6 +455,9 @@ class Picker(QWidget):
 
         return profs, stn_id
 
+    def hasConnection(self):
+        return self.has_connection
+
 @progress(Picker.async)
 def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     """
@@ -495,7 +505,10 @@ class Main(QMainWindow):
         self.createMenuBar()
         
         ## set the window title
-        self.setWindowTitle('SHARPpy Sounding Picker')
+        window_title = 'SHARPpy Sounding Picker'
+        if not self.picker.hasConnection():
+            window_title += ' (No Internet Connection)'
+        self.setWindowTitle(window_title)
         
         self.show()
         self.raise_()

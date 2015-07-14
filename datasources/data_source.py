@@ -2,7 +2,9 @@
 import xml.etree.ElementTree as ET
 import glob, os
 from datetime import datetime, timedelta
-import urllib
+import urllib, urllib2
+import urlparse
+import platform, subprocess, re
 
 import available
 import sharppy.io.decoder as decoder
@@ -21,6 +23,29 @@ def loadDataSources(ds_dir=HOME_DIR):
             ds[name] = DataSource(src)
     return ds
 
+def _pingURL(hostname, timeout=1):
+    if platform.system() == "Windows":
+        command = "ping %s -n 1 -w %d" % (hostname, timeout * 1000)
+    else:
+        command = "ping -W %d -c 1 %s" % (timeout, hostname)
+
+    proccess = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output = proccess.stdout.read()
+    return 'round-trip' in output
+
+def pingURLs(ds_dict):
+    urls = {}
+
+    for ds in ds_dict.values():
+        ds_urls = ds.getURLList()
+        for url in ds_urls:
+            base_url = urlparse.urlparse(url).netloc
+            urls[base_url] = None
+
+    for url in urls.iterkeys():
+        urls[url] = _pingURL(url)
+    return urls
+
 class Outlet(object):
     def __init__(self, ds_name, config):
         self._ds_name = ds_name
@@ -35,6 +60,9 @@ class Outlet(object):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
             self._points[idx]['lon'] = float(self._points[idx]['lon'])
             self._points[idx]['elev'] = int(self._points[idx]['elev'])
+
+        self._custom_avail = self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]
+        self._is_available = True
 
     def getForecastHours(self):
         times = []
@@ -59,10 +87,18 @@ class Outlet(object):
         return int(self._time.get('delay'))
 
     def getMostRecentCycle(self):
-        if self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]:
-            times = available.available[self._name.lower()][self._ds_name.lower()]()
-            recent = max(times)
-        else:
+        custom_failed = False
+
+        if self._custom_avail:
+            try:
+                times = available.available[self._name.lower()][self._ds_name.lower()]()
+                recent = max(times)
+                self._is_available = True
+            except urllib2.URLError:
+                custom_failed = True
+                self._is_available = False
+
+        if not self._custom_avail or custom_failed:
             now = datetime.utcnow()
             cycles = self.getCycles()
             delay = self.getDelay()
@@ -103,30 +139,42 @@ class Outlet(object):
         if dt is None:
             dt = self.getMostRecentCycle()
 
+        stns_avail = self.getPoints()
+
         if self._name.lower() in available.availableat and self._ds_name.lower() in available.availableat[self._name.lower()]:
-            avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)
+            try:
+                avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)
+                stns_avail = []
+                points = self.getPoints()
+                srcids = [ p['srcid'] for p in points ]
 
-            stns_avail = []
-            points = self.getPoints()
-            srcids = [ p['srcid'] for p in points ]
+                for stn in avail:
+                    try:
+                        idx = srcids.index(stn)
+                        stns_avail.append(points[idx])
+                    except ValueError:
+                        pass
 
-            for stn in avail:
-                try:
-                    idx = srcids.index(stn)
-                    stns_avail.append(points[idx])
-                except ValueError:
-                    pass
-        else:
-            stns_avail = self.getPoints()
+                self._is_available = True
 
+            except urllib2.URLError:
+                self._is_available = False
         return stns_avail
 
     def getAvailableTimes(self, max_cycles=100):
-        if self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]:
-            times = available.available[self._name.lower()][self._ds_name.lower()]()
-            if len(times) == 1:
-                times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
-        else:
+        custom_failed = False
+
+        if self._custom_avail:
+            try:
+                times = available.available[self._name.lower()][self._ds_name.lower()]()
+                if len(times) == 1:
+                    times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
+                self._is_available = True
+            except urllib2.URLError:
+                custom_failed = True
+                self._is_available = False
+
+        if not self._custom_avail or custom_failed:
             times = self.getArchivedCycles(max_cycles=max_cycles)
         return times[-max_cycles:]
 
@@ -154,6 +202,9 @@ class Outlet(object):
 
     def getFields(self):
         return self._csv_fields
+
+    def isAvailable(self):
+        return self._is_available
 
     def _loadCSV(self, csv_file_name):
         csv = []
@@ -254,6 +305,9 @@ class DataSource(object):
 
         url = url_base.format(**fmt)
         return url
+
+    def getURLList(self, outlet=None):
+        return self._get('getURL', outlet=None, flatten=False)
 
     def getName(self):
         return self._name

@@ -19,6 +19,7 @@ def _available_spc():
             of sounding data on the SPC site.
     '''
     text = urllib2.urlopen(spc_base_url).read()
+
     matches = sorted(list(set(re.findall("([\d]{8})_OBS", text))))
     return [ datetime.strptime(m, '%y%m%d%H') for m in matches ]
 
@@ -61,10 +62,10 @@ def _download_psu():
     global psu_time, psu_text
     now = datetime.utcnow()
     if psu_time is None or psu_time < now - timedelta(minutes=5):
-        psu_time = now
-
         url_obj = urllib2.urlopen(psu_base_url)
         psu_text = url_obj.read()
+
+        psu_time = now
 
     return psu_text 
 
@@ -89,6 +90,7 @@ def _availableat_psu(model, dt):
     url = "%s%s/%02d/" % (psu_base_url, model.upper(), cycle)
     url_obj = urllib2.urlopen(url)
     text = url_obj.read()
+
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
     return stns
 
@@ -143,6 +145,7 @@ ncarens_base_url = 'http://sharp.weather.ou.edu/soundings/ncarens/'
 
 def _available_ncarens():
     text = urllib2.urlopen(ncarens_base_url).read()
+
     matches = sorted(list(set(re.findall("([\d]{8}_[\d]{2})", text))))
     return [ datetime.strptime(m, '%Y%m%d_%H') for m in matches ]
 
@@ -151,10 +154,10 @@ def _availableat_ncarens(dt):
     url = "%s%s/" % (ncarens_base_url, dt_string)
     url_obj = urllib2.urlopen(url)
     text = url_obj.read()
+
     dt_string = datetime.strftime(dt, '%Y%m%d%H')
     stns = re.findall("([\w]{3}).txt", text)
     return stns
-
 
 def _available_nssl(ens=False):
     path_to_nssl_wrf = ''
@@ -185,8 +188,7 @@ availableat = {
     'ncar_ens': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) },
 }
 
-# Loop through the various models and get all the times and stations for them
-# This is test code.
+# Set the available and available-at-time functions for the PSU data.
 for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     available['psu'][model] = (lambda m: lambda: _available_psu(m, nam=(m in [ 'nam', '4km nam' ]), off=False))(model)
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
