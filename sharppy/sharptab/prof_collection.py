@@ -32,8 +32,10 @@ class ProfCollection(object):
 
         self._mod_therm = [ False for d in self._dates ]
         self._mod_wind = [ False for d in self._dates ]
+        self._interp = [ False for d in self._dates ]
 
         self._orig_profs = {}
+        self._interp_profs = {}
         self._async = None
         self._cancel_copy = False
         self._procs = []
@@ -151,6 +153,14 @@ class ProfCollection(object):
         if not self.hasCurrentProf():
             return False
         return self._mod_therm[self._prof_idx] or self._mod_wind[self._prof_idx]
+
+    def isInterpolated(self):
+        """
+        Returns True if the profiles at the current time have been modified.  Returns False otherwise.
+        """
+        if not self.hasCurrentProf():
+            return False
+        return self._interp[self._prof_idx]
 
     def isEnsemble(self):
         """
@@ -286,7 +296,7 @@ class ProfCollection(object):
 
         prof = self._profs[self._highlight][self._prof_idx]
 
-        # Save the original like in modify()
+        # Save original, if one hasn't already been saved
         if self._prof_idx not in self._orig_profs:
             self._orig_profs[self._prof_idx] = prof
 
@@ -306,13 +316,17 @@ class ProfCollection(object):
         prof_vars['u'] = u
         prof_vars['v'] = v
 
-        self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
-        
-        # Update bookkeeping (however this is the generalized because I was under the impression that I needed this)
-        self._mod_therm[self._prof_idx] = True
-        self._mod_wind[self._prof_idx] = True
+        interp_prof = cls.copy(prof, **prof_vars)
+        self._profs[self._highlight][self._prof_idx] = interp_prof
 
-    def reset(self, *args):
+         # Save the original like in modify()
+        if self._prof_idx not in self._interp_profs:
+            self._interp_profs[self._prof_idx] = interp_prof
+       
+        # Update bookkeeping
+        self._interp[self._prof_idx] = True
+
+    def resetModification(self, *args):
         """
         Reset the profile to its original state.
         *args:  The variables to reset ('tmpc', 'dwpc', 'u', or 'v').
@@ -320,7 +334,11 @@ class ProfCollection(object):
         if not self._prof_idx in self._orig_profs:
             return
 
-        orig_prof = self._orig_profs[self._prof_idx]
+        if self._interp[self._prof_idx]:
+            orig_prof = self._interp_profs[self._prof_idx]
+        else:
+            orig_prof = self._orig_profs[self._prof_idx]
+
         prof = self._profs[self._highlight][self._prof_idx]
         cls = type(prof)
 
@@ -337,5 +355,21 @@ class ProfCollection(object):
         if 'u' in args or 'v' in args or 'wdir' in args or 'wspd' in args:
             self._mod_wind[self._prof_idx] = False
 
-        if not self.isModified():
+        if not self.isModified() and not self.isInterpolated():
             del self._orig_profs[self._prof_idx]
+
+    def resetInterpolation(self):
+        if not self._prof_idx in self._interp_profs:
+            return
+
+        self._profs[self._highlight][self._prof_idx] = self._orig_profs[self._prof_idx]
+
+        prof = self._profs[self._highlight][self._prof_idx]
+#       print dict( (k, prof.__dict__[k].shape[0]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'u', 'v' ])
+
+        del self._orig_profs[self._prof_idx]
+        del self._interp_profs[self._prof_idx]
+
+        self._mod_wind[self._prof_idx] = False
+        self._mod_therm[self._prof_idx] = False
+        self._interp[self._prof_idx] = False

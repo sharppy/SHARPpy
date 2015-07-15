@@ -449,12 +449,6 @@ class plotSkewT(backgroundSkewT):
         #modify_sfc.triggered.connect(self.setReadoutCursor)
         #self.popupmenu.addAction(modify_sfc)
 
-        self.interp_prof = QAction(self)
-        self.interp_prof.setText("Interpolate Profile")
-        self.interp_prof.setCheckable(True)
-        self.interp_prof.triggered.connect(self.interpProfile)
-        self.popupmenu.addAction(self.interp_prof)
-
         self.popupmenu.addSeparator()
 
         reset = QAction(self)
@@ -463,7 +457,7 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addAction(reset)
 
     def getPlotTitle(self, prof_coll):
-        modified = prof_coll.isModified()
+        modified = prof_coll.isModified() or prof_coll.isInterpolated()
         modified_str = "; Modified" if modified else ""
 
         loc = prof_coll.getMeta('loc')
@@ -557,12 +551,6 @@ class plotSkewT(backgroundSkewT):
             self.clearData()
             self.plotData()
             self.update()
-
-    def interpProfile(self):
-        if self.interp_prof.isChecked() is True:
-            self.parentWidget().interpProf()
-        else:
-            self.reset.emit(['tmpc', 'dwpc', 'u', 'v', 'hght', 'pres', 'omeg'])
 
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:

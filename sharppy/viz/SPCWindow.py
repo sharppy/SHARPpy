@@ -240,10 +240,10 @@ class SPCWidget(QWidget):
 
         self.sound.parcel.connect(self.defineUserParcel)
         self.sound.modified.connect(self.modifyProf)
-        self.sound.reset.connect(self.resetProf)
+        self.sound.reset.connect(self.resetProfModifications)
 
         self.hodo.modified.connect(self.modifyProf)
-        self.hodo.reset.connect(self.resetProf)
+        self.hodo.reset.connect(self.resetProfModifications)
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
@@ -318,6 +318,9 @@ class SPCWidget(QWidget):
 
     def isAllObserved(self):
         return all( pc.getMeta('observed') for pc in self.prof_collections )
+
+    def isInterpolated(self):
+        return self.prof_collections[self.pc_idx].isInterpolated()
 
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
@@ -400,9 +403,13 @@ class SPCWidget(QWidget):
         self.setFocus()
 
     @Slot(list)
-    def resetProf(self, args):
-        self.sound.interp_prof.setChecked(False)
-        self.prof_collections[self.pc_idx].reset(*args)
+    def resetProfModifications(self, args):
+        self.prof_collections[self.pc_idx].resetModification(*args)
+        self.updateProfs()
+        self.setFocus()
+
+    def resetProfInterpolation(self):
+        self.prof_collections[self.pc_idx].resetInterpolation()
         self.updateProfs()
         self.setFocus()
 
@@ -620,8 +627,17 @@ class SPCWindow(QMainWindow):
 
         self.allobserved = QAction("Collect Observed", self, checkable=True, shortcut=QKeySequence("C"))
         self.allobserved.triggered.connect(self.spc_widget.toggleCollectObserved)
-
         self.profilemenu.addAction(self.allobserved)
+
+        self.interpolate = QAction("Interpolate Focused Profile", self, shortcut=QKeySequence("I"))
+        self.interpolate.triggered.connect(self.interpProf)
+        self.profilemenu.addAction(self.interpolate)
+
+        self.resetinterp = QAction("Reset Interpolation", self, shortcut=QKeySequence("I"))
+        self.resetinterp.triggered.connect(self.resetProf)
+        self.resetinterp.setVisible(False)
+        self.profilemenu.addAction(self.resetinterp)
+
         self.profilemenu.addSeparator()
 
         self.focus_mapper = QSignalMapper(self)
@@ -692,11 +708,14 @@ class SPCWindow(QMainWindow):
         #TODO: Up and down keys to loop through profile collection members.
         if e.key() == Qt.Key_Left:
             self.spc_widget.advanceTime(-1)
+            self.setInterpolated(self.spc_widget.isInterpolated())
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
+            self.setInterpolated(self.spc_widget.isInterpolated())
         elif e.key() == Qt.Key_Space:
             # Swap the profile collections
             self.spc_widget.swapProfCollections()
+            self.setInterpolated(self.spc_widget.isInterpolated())
         elif e.matches(QKeySequence.Save):
             # Save an image
             self.spc_widget.saveimage()
@@ -713,6 +732,18 @@ class SPCWindow(QMainWindow):
         pc_model = prof_col.getMeta('model')
 
         return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+
+    def interpProf(self):
+        self.setInterpolated(True)
+        self.spc_widget.interpProf()
+
+    def resetProf(self):
+        self.setInterpolated(False)
+        self.spc_widget.resetProfInterpolation()
+
+    def setInterpolated(self, is_interpolated):
+        self.resetinterp.setVisible(is_interpolated)
+        self.interpolate.setVisible(not is_interpolated)
 
     def focusPicker(self):
         picker_window = self.parent()
