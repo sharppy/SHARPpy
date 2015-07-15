@@ -76,6 +76,8 @@ class Picker(QWidget):
         self.setLayout(self.layout)
 
         self.view = self.create_map_view()
+        self.view.hasInternet(self.has_connection)
+
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.button.setDisabled(True)
@@ -510,8 +512,6 @@ class Main(QMainWindow):
         
         ## set the window title
         window_title = 'SHARPpy Sounding Picker'
-        if not self.picker.hasConnection():
-            window_title += ' (No Internet Connection)'
         self.setWindowTitle(window_title)
         
         self.show()

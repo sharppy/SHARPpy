@@ -323,6 +323,14 @@ class MapWidget(QtGui.QWidget):
         self.latlon_readout.show()
         self.latlon_readout.move(10, 10)
 
+        self.no_internet = QtGui.QLabel(parent=self)
+        self.no_internet.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 32px; color: #FFFFFF; }")
+        self.no_internet.setText("No Internet Connection")
+        self.no_internet.show()
+        txt_width = self.no_internet.fontMetrics().width(self.no_internet.text())
+        self.no_internet.setFixedWidth(txt_width)
+        self.no_internet.move(self.width(), self.height())
+
         self.async = async
         self.setDataSource(data_source, init_time, init=True)
 
@@ -613,6 +621,15 @@ class MapWidget(QtGui.QWidget):
         config.set('map', 'scale', self.scale)
         config.set('map', 'center_x', map_center_x)
         config.set('map', 'center_y', map_center_y)
+
+    def hasInternet(self, has_connection):
+        if has_connection:
+            self.no_internet.move(self.width(), self.height())
+        else:
+            met = self.no_internet.fontMetrics()
+            txt_width = met.width(self.no_internet.text())
+            txt_height = met.height()
+            self.no_internet.move((self.width() - txt_width) / 2, (self.height() - txt_height) / 2)
 
     def _showLoading(self):
         self.load_readout.move(10, self.height() - 25)
