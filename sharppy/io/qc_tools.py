@@ -1,5 +1,5 @@
 import numpy as np
-from sharppy.sharptab import *
+from sharppy.sharptab import thermo
 
 __all__ = ['raiseError', 'numMasked', 'isPRESValid', 'isHGHTValid', 'isWSPDValid']
 __all__ += ['isDWPCValid', 'isTMPCValid']

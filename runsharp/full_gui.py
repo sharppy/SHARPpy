@@ -12,7 +12,8 @@ else:
 
     sys.path.insert(0, os.path.normpath(os.path.join(os.path.expanduser("~"), ".sharppy")))
 
-from sharppy.viz import SPCWindow, MapWidget 
+from sharppy.viz.SPCWindow import SPCWindow
+from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder

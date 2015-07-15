@@ -1,7 +1,7 @@
 __author__ = 'keltonhalbert, wblumberg'
 
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
-from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics, plotGeneric
+from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics #, plotGeneric
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
 from sharppy.viz import plotSHIP, plotSTPEF, plotFire, plotVROT
 from PySide.QtCore import *

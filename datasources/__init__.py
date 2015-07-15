@@ -1,1 +1,1 @@
-all = [ 'data_source.py' ]
+all = [ 'data_source', 'available' ]

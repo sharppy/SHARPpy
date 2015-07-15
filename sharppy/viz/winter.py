@@ -1,7 +1,6 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
-from sharppy.viz import drawBarb
 from sharppy.sharptab.constants import *
 import platform
 
