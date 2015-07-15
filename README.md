@@ -12,23 +12,24 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 - [Developer Requests](#developer-requests)
 - [Installing SHARPpy](#installing-sharppy)
-- [Running the SHARPpy GUI](#running-the-sharppy-gui)
-- [Using the SHARPpy Sounding Picker GUI](#using-the-sharppy-sounding-picker-gui)
-    - [Loading in Multiple Soundings](#loading-in-multiple-soundings)
-    - [Loading in Custom Data](#loading-in-custom-data)
-- [Using the Sounding Window](#using-the-sounding-window)
-    - [Zooming and Changing Views](#zooming-and-changing-views)
-    - [Swapping Insets](#swapping-insets)
-    - [Color Ranking](#color-ranking)
-    - [Interacting with the Focused Sounding](#interacting-with-the-focused-sounding)
-        - [Modifying the Sounding](#modifying-the-sounding)
-        - [Storm Mode Functions](#storm-mode-functions)
-        - [Lifting Parcels](#lifting-parcels)
-        - [Saving the Data](#saving-the-data)
-    - [Interacting with Multiple Soundings](#interacting-with-multiple-soundings)
-- [Known GUI Issues](#known-gui-issues)
-- [Adding Custom Data Sources](#adding-custom-data-sources)
-- [Scripting with SHARPpy](#scripting-with-sharppy)
+- [Using the SHARPpy GUI](#using-the-sharppy-gui)
+    - [Running the SHARPpy GUI](#running-the-sharppy-gui)
+    - [Using the SHARPpy Sounding Picker GUI](#using-the-sharppy-sounding-picker-gui)
+        - [Loading in Multiple Soundings](#loading-in-multiple-soundings)
+        - [Loading in Custom Data](#loading-in-custom-data)
+        - [Adding Custom Data Sources](#adding-custom-data-sources)
+    - [Using the Sounding Window](#using-the-sounding-window)
+        - [Zooming and Changing Views](#zooming-and-changing-views)
+        - [Swapping Insets](#swapping-insets)
+        - [Color Ranking](#color-ranking)
+        - [Interacting with the Focused Sounding](#interacting-with-the-focused-sounding)
+            - [Modifying the Sounding](#modifying-the-sounding)
+            - [Storm Mode Functions](#storm-mode-functions)
+            - [Lifting Parcels](#lifting-parcels)
+            - [Saving the Data](#saving-the-data)
+        - [Interacting with Multiple Soundings](#interacting-with-multiple-soundings)
+    - [Known GUI Issues](#known-gui-issues)
+- [Scripting with SHARPpy Libraries](#scripting-with-sharppy)
 - [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
@@ -99,6 +100,10 @@ After installing the package, you can run the SHARPpy GUI and interact with the 
 A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/6375163/SHARPpy.mp4
 
 =======================================================================
+### Using the SHARPpy GUI
+
+For those who wish to use the SHARPpy GUI application, this section is for you!
+
 ### Running the SHARPpy GUI
 <sup>[[Return to Top]](#sharppy)</sup>
 
