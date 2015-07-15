@@ -365,7 +365,7 @@ class SPCWidget(QWidget):
         match_col = dec.getProfiles()
 
         match_col.setMeta('model', 'Analog')
-        match_col.setMeta('run', None)
+        match_col.setMeta('run', prof_col.getCurrentDate())
         match_col.setMeta('fhour', None)
         match_col.setMeta('observed', True)
         match_col.setMeta('filematch', filematch)
@@ -709,7 +709,7 @@ class SPCWindow(QMainWindow):
 
     def createMenuName(self, prof_col):
         pc_loc = prof_col.getMeta('loc')
-        pc_date = prof_col.getCurrentDate().strftime("%d/%HZ")
+        pc_date = prof_col.getMeta('run').strftime("%d/%HZ")
         pc_model = prof_col.getMeta('model')
 
         return "%s (%s %s)" % (pc_loc, pc_date, pc_model)

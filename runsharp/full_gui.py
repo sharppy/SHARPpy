@@ -376,7 +376,7 @@ class Picker(QWidget):
                     print traceback.format_exc()
                 failure = True
 
-            run = None
+            run = prof_collection.getCurrentDate()
             fhours = None
             observed = True
         else:
@@ -398,7 +398,6 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            run = "%02dZ" % run.hour
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
