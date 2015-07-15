@@ -85,7 +85,7 @@ class Picker(QWidget):
         self.all_profs.clicked.connect(self.select_all)
         self.all_profs.setDisabled(True)
 
-        self.save_view_button = QPushButton('Save View as Default')
+        self.save_view_button = QPushButton('Save Map View as Default')
         self.save_view_button.clicked.connect(self.save_view)
 
         self.profile_list = QListWidget()
