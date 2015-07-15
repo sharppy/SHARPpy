@@ -119,7 +119,9 @@ As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the 
 
 SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
 
+=======================================================================
 ### Using the Sounding Window
+<sup>[[Return to Top]](#sharppy)</sup>
 
 ##### Zooming and Changing Views
 
@@ -147,6 +149,8 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 4. WHITE
 5. LIGHT BROWN
 6. DARK BROWN
+
+The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by Matthew Bunkers; NWS).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
 
 #### Interacting with the Focused Sounding
 
@@ -198,8 +202,9 @@ The space bar on your keyboard is used to swap the focus between the profiles sh
 <sup>[[Return to Top]](#sharppy)</sup>
 
 Known Issues:
+- Some of our sounding data sources (HRRR, GFS, etc.) can sometimes go down.  This is outside of our control. (All OSes)
 - Text can sometimes overlap. (Windows)
-- The program’s menu bar does not display (minimal issue since there are very few menu bar functions) (Windows)
+- The program’s menu bar does not display on Windows (Fixed as of 1.3.0 release)
 - SHARPpy will not work with QT 4.8.6.0 on Linux.  There is a bug in the QT package affects the ability of the GUI to render.  UPDATE: This bug has been fixed by a new release from QT (Noted 4/24/2015).
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
