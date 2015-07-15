@@ -103,13 +103,9 @@ From this point on, you will be able to access both the SHARPpy application and 
 
 =======================================================================
 ## Using the SHARPpy Application
-
-For those who wish to use the SHARPpy GUI application, this section is for you!
-
-### Running the SHARPpy Application
 <sup>[[Return to Top]](#sharppy)</sup>
 
-To run the SHARPpy GUI and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
+To run the SHARPpy application and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
     python full_gui.py
 
