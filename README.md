@@ -131,8 +131,7 @@ As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the 
 
 SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
 
-=======================================================================
-### Adding Custom Data Sources
+#### Adding Custom Data Sources
 <sup>[[Return to Top]](#sharppy)</sup>
 
 To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
