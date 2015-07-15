@@ -12,9 +12,9 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 - [Developer Requests](#developer-requests)
 - [Installing SHARPpy](#installing-sharppy)
-- [Using the SHARPpy GUI](#using-the-sharppy-gui)
-    - [Running the SHARPpy GUI](#running-the-sharppy-gui)
-    - [Using the SHARPpy Sounding Picker GUI](#using-the-sharppy-sounding-picker-gui)
+- [Using the SHARPpy Application](#using-the-sharppy-gui)
+    - [Running the SHARPpy Application](#running-the-sharppy-application)
+    - [Using the SHARPpy Sounding Picker](#using-the-sharppy-sounding-picker-application)
         - [Loading in Multiple Soundings](#loading-in-multiple-soundings)
         - [Loading in Archived Data Files](#loading-in-archived-data-files)
         - [Adding Custom Data Sources](#adding-custom-data-sources)
@@ -102,11 +102,11 @@ A video tutorial for installing on Windows: https://dl.dropboxusercontent.com/u/
 From this point on, you will be able to access both the SHARPpy application and the libraries behind it.  If you are more interested in using the SHARPpy libraries for scripting, see the [Scripting with SHARPpy Libraries](#scripting-with-sharppy) section.  If you would like to use the SHARPpy application for viewing real-time data and interacting with soundings, continue to the [Using the SHARPpy GUI](#using-the-sharppy-gui) section.
 
 =======================================================================
-### Using the SHARPpy GUI
+## Using the SHARPpy Application
 
 For those who wish to use the SHARPpy GUI application, this section is for you!
 
-### Running the SHARPpy GUI
+### Running the SHARPpy Application
 <sup>[[Return to Top]](#sharppy)</sup>
 
 To run the SHARPpy GUI and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
@@ -119,7 +119,7 @@ As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or 
 
 =======================================================================
 
-### Using the SHARPpy Sounding Picker GUI
+### Using the SHARPpy Sounding Picker
 <sup>[[Return to Top]](#sharppy)</sup>
 
 Upon running the 'python full_gui.py' script, the "SHARPpy Sounding Picker" window should pop up displaying a list of available default and custom data sources.  This window also shows where the soundings are located for each source.  To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles" to view the sounding data.  After the program downloads the data, it will appear in a sounding window for use.
