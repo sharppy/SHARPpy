@@ -76,6 +76,8 @@ class Picker(QWidget):
         self.setLayout(self.layout)
 
         self.view = self.create_map_view()
+        self.view.hasInternet(self.has_connection)
+
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.button.setDisabled(True)
@@ -374,7 +376,7 @@ class Picker(QWidget):
                     print traceback.format_exc()
                 failure = True
 
-            run = None
+            run = prof_collection.getCurrentDate()
             fhours = None
             observed = True
         else:
@@ -396,7 +398,6 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            run = "%02dZ" % run.hour
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
@@ -510,8 +511,6 @@ class Main(QMainWindow):
         
         ## set the window title
         window_title = 'SHARPpy Sounding Picker'
-        if not self.picker.hasConnection():
-            window_title += ' (No Internet Connection)'
         self.setWindowTitle(window_title)
         
         self.show()

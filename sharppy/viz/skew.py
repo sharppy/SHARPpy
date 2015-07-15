@@ -468,7 +468,7 @@ class plotSkewT(backgroundSkewT):
 
         loc = prof_coll.getMeta('loc')
         date = prof_coll.getCurrentDate()
-        run = prof_coll.getMeta('run')
+        run = prof_coll.getMeta('run').strftime("%HZ")
         model = prof_coll.getMeta('model')
         observed = prof_coll.getMeta('observed')
 

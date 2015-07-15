@@ -96,51 +96,27 @@ To run the SHARPpy GUI and interact with real-time observed and forecast soundin
 
     python full_gui.py
 
+This will load the SHARPpy Sounding Picker GUI.
+
 As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
 
 =======================================================================
 
-### Using the GUI
+### Using the SHARPpy Sounding Picker GUI
 <sup>[[Return to Top]](#sharppy)</sup>
 
-Upon running the 'python full_gui.py' script, the "SHARPpy Sounding Picker" window should pop up displaying a list of available data sources and a map that shows where the soundings are located for each source.  From this 
+Upon running the 'python full_gui.py' script, the "SHARPpy Sounding Picker" window should pop up displaying a list of available default and custom data sources.  This window also shows where the soundings are located for each source.  To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles" to view the sounding data.  After the program downloads the data, it will appear in a sounding window for use. 
 
+If the program is unable to detect an Internet connection, it will display a message on the map for the user.  However, you can still pull up sounding data if it resides on your local hard disk.  If you are able to reconnect to the Internet, you'll need to restart the SHARPpy program in order to remove this message and access the data online.
 
-To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
+##### Loading in Multiple Soundings
 
-After all profiles have been generated, a window should show up with your desired sounding data.  The  Below are things you can do:
+As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the sounding window.  This allows the user to have a large amount of flexiblity in making comparisons between different sounding data.  For example, SHARPpy can now be used to perform visual comparsions between GFS and NAM forecast soundings, D(prog)/Dt of the HRRR forecast soundings, or compare observed soundings to model data.  Once a sounding window is open, you can change focus back to the SHARPpy Sounding Picker and add additional sounding data to your open sounding window by repeating the process to generate the first sounding window.  At this point the sounding window will have one profile that is in "focus" and other(s) that are not.
 
-1. Advance through the profiles (if more than one is selected) using the left and right arrow keys.
-2. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
-3. Modify the right 2 insets by right clicking on either one.  Different insets are available to help the user interrogate the data.
-4. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
-5. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  (Added 2/19/2015 by Tim Supinie.)
-6. View different parcels that can be lifted and lift custom parcels.  
-7. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
-8. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
-9. Open up a text file that contains observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format similar to what is seen on the SPC soundings page.  See the OAX file in the tutorials folder for an example.  
+### Using the Sounding Window
 
-#### Available Insets
-<sup>[[Return to Top]](#sharppy)</sup>
-
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
-3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC.
-5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
-6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value.)
-
-The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
-
-1. MAGENTA
-2. RED
-3. YELLOW
-4. WHITE
-5. LIGHT BROWN
-6. DARK BROWN
-
-#### Lifting Parcels
+##### Viewing Different Diagnostics
+Lifting Parcels
 <sup>[[Return to Top]](#sharppy)</sup>
 
 By default, soundings opened up in the GUI show these 4 parcels in the lower left inset window:
@@ -164,6 +140,67 @@ parcel to lift.  The location of the cursor (or readout cursor) selects the leve
 you are lifting.
 
 Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)
+
+###### Swapping Insets
+
+1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.
+2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
+3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
+4. STP COND - Conditional probablities for different tornado strengths based on STPC.
+5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
+6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
+7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value.)
+
+###### Color Ranking
+
+The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
+
+1. MAGENTA
+2. RED
+3. YELLOW
+4. WHITE
+5. LIGHT BROWN
+6. DARK BROWN
+
+###### 
+
+##### Interacting with the Focused Sounding
+
+The current sounding that is in "focus" in the program has the traditional "red/green" temperature and dewpoint profiles, while all other soundings in the background will be colored purple.
+
+The sounding that is in focus
+
+##### Interacting with Multiple Soundings
+
+When this is done, 
+
+After adding other soundings into the sounding window, the user change which sounding is the "focus" by accessing the list of available profiles.  This list is kept underneath the "Profiles" menu on the menu bar.   SHARPpy keeps track of the time aspect of all data loaded into the sounding window and attempts to show all profiles valid at a given time.  When the user is 
+
+The right and left buttons on your keyboard will step through the data that is in focus and will attempt to show any other data 
+
+
+
+The space bar on your keyboard is used to swap the focus between the profiles shown in the sounding window.    Additionally, to swap between the SHARPpy Sounding Picker and sounding window, hit "W" on your keyboard.  With this change, the right and left arrow keys now will step through the profiles available from the sounding data source that is active.  SHARPpy will match up other  
+
+With the sounding window open, you can interact with the data in a variety of ways:
+
+1. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
+2. Modify the right 2 insets by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.
+3. Zoom in/out the Skew-T or hodograph by using the scroll wheel function on your mouse or trackpad.
+4. Graphically modify the Skew-T and hodograph by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.
+5. View different parcels that can be lifted and lift custom parcels.  The current parcel shown in the Skew-T is highlighed by a brown box within the Thermo inset.  Clicking other parcels will change the parcel trace shown in the Skew-T.  To lift custom parcels, double click on the Thermo (lower left) inset and select the "User Parcel".  Then, right click on the Skew-T and select the "Readout Cursor".  Once you find the location in your profile you wish to lift, right click again and look under the "Lift Parcel" menu.  
+6. Compare the profiles and hodograph from severe weather sounding analogs retrieved by SARS by clicking on any of the analogs displayed.
+7. Save an image of the sounding you are viewing (Control+S; Windows/Linux, Command+S; OS X)
+8. Open up text files that contain observed sounding data you wish to view.  While in the sounding picker, use the keys Control+O for Windows/Linux, Command+O for OS X.  Text files must be in a tabular format similar to what is seen on the SPC soundings page.  See the OAX file in the tutorials folder for an example.
+
+
+
+#### Available Insets
+<sup>[[Return to Top]](#sharppy)</sup>
+
+
+
+#### 
 
 =======================================================================
 

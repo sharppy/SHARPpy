@@ -158,6 +158,7 @@ class Outlet(object):
                 self._is_available = True
 
             except urllib2.URLError:
+                stns_avail = []
                 self._is_available = False
         return stns_avail
 
