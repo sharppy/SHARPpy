@@ -103,9 +103,12 @@ As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or 
 ### Using the GUI
 <sup>[[Return to Top]](#sharppy)</sup>
 
+Upon running the 'python full_gui.py' script, the "SHARPpy Sounding Picker" window should pop up displaying a list of available data sources and a map that shows where the soundings are located for each source.  From this 
+
+
 To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles".
 
-After all profiles have been generated, a window should show up with your desired data.  Below are things you can do:
+After all profiles have been generated, a window should show up with your desired sounding data.  The  Below are things you can do:
 
 1. Advance through the profiles (if more than one is selected) using the left and right arrow keys.
 2. Change the hodograph cursor or point the hodograph window is centered on by right clicking on the hodograph.
@@ -233,6 +236,8 @@ To learn more about interacting with the SHARPpy libraries using the Python
 programming language, see the tutorial listed in tutorials/ and check out the link:
 
 http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
+
+To write scripts interacting with the SHARPpy libraries, you do NOT have to have the PySide package installed.
 
 =======================================================================
 
