@@ -282,7 +282,7 @@ class plotWinds(backgroundWinds):
         qp: QtGui.QPainter object
         
         '''
-        ## initialize a pen with a red color, thickness of 2, solid line
+        ## initialize a pen with a red color, thickness of 1, solid line
         pen = QtGui.QPen(QtGui.QColor(RED), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the mask

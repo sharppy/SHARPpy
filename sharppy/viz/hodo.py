@@ -451,7 +451,7 @@ class plotHodo(backgroundHodo):
         self.pbottom = self.prof.ebottom
 
         mean_lcl_el = self.prof.mean_lcl_el
-        if not tab.utils.QC(mean_lcl_el[0]):
+        if tab.utils.QC(mean_lcl_el[0]):
             self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
         else:
             self.mean_lcl_el = (np.ma.masked, np.ma.masked)
