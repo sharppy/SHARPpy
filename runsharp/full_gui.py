@@ -577,14 +577,14 @@ class Main(QMainWindow):
         (C) 2014-%d by Patrick Marsh, John Hart,
         Kelton Halbert, Greg Blumberg, and Tim Supinie.
 
-        SHARPPy is a collection of open source sounding
+        SHARPpy is a collection of open source sounding
         and hodograph analysis routines, a sounding
         plotting package, and an interactive application
         for analyzing real-time soundings all written in
         Python. It was developed to provide the
         atmospheric science community a free and
-        consistent source of routines for convective
-        indices. SHARPPy is constantly updated and
+        consistent source of routines for analyzing sounding
+        data. SHARPpy is constantly updated and
         vetted by professional meteorologists and
         climatologists within the scientific community to
         help maintain a standard source of sounding
