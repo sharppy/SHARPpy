@@ -26,12 +26,14 @@ def loadDataSources(ds_dir=HOME_DIR):
 def _pingURL(hostname, timeout=1):
     if platform.system() == "Windows":
         command = "ping %s -n 1 -w %d" % (hostname, timeout * 1000)
+        success_marker = 'Reply from'
     else:
         command = "ping -W %d -c 1 %s" % (timeout, hostname)
+        success_marker = 'round-trip'
 
     proccess = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = proccess.stdout.read()
-    return 'round-trip' in output
+    return success_marker in output
 
 def pingURLs(ds_dict):
     urls = {}
