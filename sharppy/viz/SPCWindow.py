@@ -602,6 +602,7 @@ class SPCWindow(QMainWindow):
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
         self.setWindowTitle(title)
+        self.setStyleSheet("background-color: rgb(0, 0, 0);")
 
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
