@@ -747,6 +747,7 @@ class SPCWindow(QMainWindow):
         self.interpolate.setVisible(not is_interpolated)
 
     def focusPicker(self):
-        self.picker_window.activateWindow()
-        self.picker_window.setFocus()
-        self.picker_window.raise_()
+        if self.picker_window is not None:
+            self.picker_window.activateWindow()
+            self.picker_window.setFocus()
+            self.picker_window.raise_()
