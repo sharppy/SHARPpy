@@ -586,9 +586,10 @@ class SPCWindow(QMainWindow):
 
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
-        super(SPCWindow, self).__init__(parent=parent)
+        super(SPCWindow, self).__init__()
 
         self.menu_items = []
+        self.picker_window = parent
         self.__initUI(**kwargs)
 
     def __initUI(self, **kwargs):
@@ -746,7 +747,6 @@ class SPCWindow(QMainWindow):
         self.interpolate.setVisible(not is_interpolated)
 
     def focusPicker(self):
-        picker_window = self.parent()
-        picker_window.activateWindow()
-        picker_window.setFocus()
-        picker_window.raise_()
+        self.picker_window.activateWindow()
+        self.picker_window.setFocus()
+        self.picker_window.raise_()
