@@ -213,7 +213,7 @@ class plotSpeed(backgroundSpeed):
                 pen = QtGui.QPen(mid_level_color, 2)
             elif hgt1 < 9000:
                 pen = QtGui.QPen(upper_level_color, 2)
-            elif hgt1 < 12000:
+            else:
                 pen = QtGui.QPen(trop_level_color, 2)
             ## Draw a horizontal line with the length of the wind speed
             qp.setPen(pen)

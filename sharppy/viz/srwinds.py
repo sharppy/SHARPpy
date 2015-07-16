@@ -283,7 +283,7 @@ class plotWinds(backgroundWinds):
         
         '''
         ## initialize a pen with a red color, thickness of 2, solid line
-        pen = QtGui.QPen(QtGui.QColor(RED), 2)
+        pen = QtGui.QPen(QtGui.QColor(RED), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the mask
         try:
@@ -295,27 +295,23 @@ class plotWinds(backgroundWinds):
         except:
             sru = self.sru
             srv = self.srv
-            hgt = self.prof.hgtht
-        ## loop through the vertical profile.
-        ## we go through length - 1 because we index i and i+1
-        for i in range( hgt.shape[0] - 1 ):
-            ## get the height and winds at two consecutive heights
-            ## don't forget to convert the height from meters to
-            ## kilometers; divide by 1000
-            hgt1 = (hgt[i] - self.prof.hght[self.prof.sfc]) / 1000; hgt2 = (hgt[i+1] - self.prof.hght[self.prof.sfc]) / 1000
-            sru1 = sru[i]; sru2 = sru[i+1]
-            srv1 = srv[i]; srv2 = srv[i+1]
-            ## calculate the storm relative wind speed
-            spd1 = np.sqrt( sru1**2 + srv1**2 )
-            spd2 = np.sqrt( sru2**2 + srv2**2 )
+            hgt = self.prof.hght
 
+        interp_hght = np.arange(self.prof.hght[self.prof.sfc], min(hgt[-1], self.hmax * 1000.), 10)
+        interp_sru = np.interp(interp_hght, hgt, sru)
+        interp_srv = np.interp(interp_hght, hgt, srv)
+        sr_spd = np.hypot(interp_sru, interp_srv)
+
+        qp.setPen(pen)
+        for i in xrange(interp_hght.shape[0] - 1):
+            spd1 = sr_spd[i]; spd2 = sr_spd[i+1]
             if tab.utils.QC(spd1) and tab.utils.QC(spd2):
+                hgt1 = (interp_hght[i] - interp_hght[0]) / 1000; hgt2 = (interp_hght[i+1] - interp_hght[0]) / 1000
                 ## convert the wind speeds to x pixels
-                x1 = self.speed_to_pix( spd1 ); x2 = self.speed_to_pix(spd2)
+                x1 = self.speed_to_pix(spd1); x2 = self.speed_to_pix(spd2)
                 ## convert the height values to y pixels
                 y1 = self.hgt_to_pix(hgt1); y2 = self.hgt_to_pix(hgt2)
                 ## draw a line between the two points
-                qp.setPen(pen)
                 qp.drawLine(x1, y1, x2, y2)
 
         if tab.utils.QC(self.srw_0_2km):       
