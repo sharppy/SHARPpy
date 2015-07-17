@@ -500,10 +500,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
     else:
         cinh_term = ((mlcinh + 200.) / 150.)
 
-    stp_cin = cape_term * eshr_term * ebwd_term * lcl_term * cinh_term
-    if stp_cin is np.ma.masked or stp_cin < 0:
-        stp_cin = 0.0
-
+    stp_cin = np.maximum(cape_term * eshr_term * ebwd_term * lcl_term * cinh_term, 0)
     return stp_cin
 
 
