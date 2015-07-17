@@ -281,7 +281,7 @@ class plotSTP(backgroundSTP):
             prob = .42
             color = QtGui.QColor(RED)
         else:
-            prob = 0.06
+            prob = np.ma.masked
             color = QtGui.QColor(DBROWN)
         return prob, color
     
@@ -314,7 +314,7 @@ class plotSTP(backgroundSTP):
             prob = .26
             color = QtGui.QColor(YELLOW)
         else:
-            prob = 0.0
+            prob = np.ma.masked
             color = QtGui.QColor(DBROWN)
         return prob, color
 
@@ -421,9 +421,13 @@ class plotSTP(backgroundSTP):
         self.draw_box(qp)
 
     def draw_stp(self, qp):
+        if not tab.utils.QC(self.stpc):
+            return
+
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
+
         if self.stpc < 0:
             self.stpc = 0
         elif self.stpc > 11.:
