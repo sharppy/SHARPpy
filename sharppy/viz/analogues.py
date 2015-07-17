@@ -411,7 +411,7 @@ class plotAnalogues(backgroundAnalogues):
             self.ylast = self.tpad
 
     def mousePressEvent(self, e):
-        if self.prof is None:
+        if self.prof is None or (len(self.sup_matches[0]) == 0 and len(self.hail_matches[0]) == 0):
             return
 
         pos = e.pos()
