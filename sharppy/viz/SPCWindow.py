@@ -690,7 +690,10 @@ class SPCWindow(QMainWindow):
             names = [ act.text() for act in actions ]
             actions[names.index("Remove")].setVisible(True)
 
-        self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
+        try:
+            self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
+        except Exception as exc:
+            self.abortProfileAdd(menu_name, str(exc))
 
     @Slot(str)
     def rmProfileCollection(self, menu_name):
@@ -705,6 +708,20 @@ class SPCWindow(QMainWindow):
             actions = visible_mitems[0].actions()
             names = [ act.text() for act in actions ]
             actions[names.index("Remove")].setVisible(False)
+
+    def abortProfileAdd(self, menu_name, exc):
+        msgbox = QMessageBox()
+        msgbox.setText("An error has occurred while retrieving the data.")
+        msgbox.setInformativeText("Try another site or model or try again later.")
+        msgbox.setDetailedText(exc)
+        msgbox.setIcon(QMessageBox.Critical)
+        msgbox.exec_()
+
+        if len(self.menu_items) == 1:
+            self.focusPicker()
+            self.close()
+        else:
+            self.rmProfileCollection(menu_name)
 
     def keyPressEvent(self, e):
         #TODO: Up and down keys to loop through profile collection members.
@@ -752,3 +769,4 @@ class SPCWindow(QMainWindow):
             self.picker_window.activateWindow()
             self.picker_window.setFocus()
             self.picker_window.raise_()
+

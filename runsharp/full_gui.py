@@ -400,33 +400,24 @@ class Picker(QWidget):
 
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
-        if failure:
-            # This conditional is if there is an issue with the actual loading of the data.
-            msgbox = QMessageBox()
-            msgbox.setText("An error has occurred while retrieving the data.")
-            msgbox.setInformativeText("This probably means the data are missing for some reason. Try another site or model or try again later.")
-            msgbox.setDetailedText(exc)
-            msgbox.setIcon(QMessageBox.Critical)
-            msgbox.exec_()
-        else:
-            prof_collection.setMeta('model', model)
-            prof_collection.setMeta('run', run)
-            prof_collection.setMeta('loc', disp_name)
-            prof_collection.setMeta('fhour', fhours)
-            prof_collection.setMeta('observed', observed)
+        prof_collection.setMeta('model', model)
+        prof_collection.setMeta('run', run)
+        prof_collection.setMeta('loc', disp_name)
+        prof_collection.setMeta('fhour', fhours)
+        prof_collection.setMeta('observed', observed)
 
-            if not observed:
-                # If it's not an observed profile, then generate profile objects in background.
-                prof_collection.setAsync(Picker.async)
+        if not observed:
+            # If it's not an observed profile, then generate profile objects in background.
+            prof_collection.setAsync(Picker.async)
 
-            if self.skew is None:
-                # If the SPCWindow isn't shown, set it up.
-                self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
-                self.skew.closed.connect(self.skewAppClosed)
-                self.skew.show()
+        if self.skew is None:
+            # If the SPCWindow isn't shown, set it up.
+            self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
+            self.skew.closed.connect(self.skewAppClosed)
+            self.skew.show()
 
-            self.focusSkewApp()
-            self.skew.addProfileCollection(prof_collection)
+        self.focusSkewApp()
+        self.skew.addProfileCollection(prof_collection)
 
     def skewAppClosed(self):
         """
