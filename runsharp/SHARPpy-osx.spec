@@ -3,8 +3,8 @@ import sharppy
 import glob
 
 a = Analysis(['SHARPpy.py'],
-             pathex=['/Users/keltonhalbert/PYTHON/SHARPpy-binary/runsharp'],
-             hiddenimports=[],
+             pathex=['/Users/tsupinie/SHARPpy/runsharp'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder'],
              hookspath=None,
              runtime_hooks=None)
 
@@ -16,7 +16,7 @@ a.datas += [("sharppy/databases/sars_supercell.txt", os.path.join(os.path.dirnam
 sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases/sars/hail/") + "*")
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases/sars/supercell/") + "*")
 shapefiles = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases/shapefiles/") + "*")
-datasrouces = glob.glob("../datasources/" + "*")
+datasources = glob.glob("../datasources/*.csv") + glob.glob("../datasources/*.xml")
 
 for hail in sars_hail:
     a.datas += [("sharppy/databases/sars/hail/" + hail.split("/")[-1], hail, "DATA")]
@@ -26,9 +26,8 @@ for supr in sars_supr:
 for sf in shapefiles:
     a.datas += [("sharppy/databases/shapefiles/" + sf.split("/")[-1], sf, "DATA")]
 
-for ds in datasrouces:
+for ds in datasources:
     a.datas += [("sharppy/datasources/" + ds.split("/")[-1], ds, "DATA")]
-
 
 pyz = PYZ(a.pure)
 
