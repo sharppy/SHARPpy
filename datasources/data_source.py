@@ -1,6 +1,6 @@
 
 import xml.etree.ElementTree as ET
-import glob, os
+import glob, os, sys, shutil
 from datetime import datetime, timedelta
 import urllib, urllib2
 import urlparse
@@ -14,7 +14,18 @@ HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 # TAS: Comment this file and available.py
 
 def loadDataSources(ds_dir=HOME_DIR):
-    files = glob.glob(ds_dir + '/*.xml')
+
+    if getattr(sys, 'frozen', False):
+        if not os.path.exists(ds_dir):
+            os.makedirs(ds_dir)
+
+        files = glob.glob(os.path.join(sys._MEIPASS, 'sharppy', 'datasources', '*.xml')) +  \
+                glob.glob(os.path.join(sys._MEIPASS, 'sharppy', 'datasources', '*.csv'))
+
+        for file_name in files:
+            shutil.copy(file_name, ds_dir)
+
+    files = glob.glob(os.path.join(ds_dir, '*.xml'))
     ds = {}
     for ds_file in files:
         root = ET.parse(ds_file).getroot()
