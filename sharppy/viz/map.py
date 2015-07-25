@@ -535,6 +535,7 @@ class MapWidget(QtGui.QWidget):
         self.map_center_x += (new_size.width() - old_size.width()) / 2.
         self.map_center_y += (new_size.height() - old_size.height()) / 2.
         self._hideLoading()
+        self.no_internet.move(self.width(), self.height())
 
         self.initUI()
 

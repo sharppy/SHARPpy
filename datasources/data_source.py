@@ -40,7 +40,10 @@ def _pingURL(hostname, timeout=1):
         success_marker = 'Reply from'
     else:
         command = "ping -W %d -c 1 %s" % (timeout, hostname)
-        success_marker = 'round-trip'
+        if platform.system() == "Darwin":
+            success_marker = 'round-trip'
+        else:
+            success_marker = '1 received'
 
     proccess = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = proccess.stdout.read()
