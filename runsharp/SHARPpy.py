@@ -608,8 +608,11 @@ class Main(QMainWindow):
         """
         self.config.write(open(Main.cfg_file_name, 'w'))
 
-if __name__ == '__main__':
+def main():
     # Create an application
     app = QApplication([])
     win = Main()
     sys.exit(app.exec_())
+    
+if __name__ == '__main__':
+    main()
