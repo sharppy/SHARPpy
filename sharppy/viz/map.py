@@ -277,6 +277,8 @@ class MapWidget(QtGui.QWidget):
         self.map_rot = 0.0
         self.setMouseTracking(True)
 
+        self.has_internet = True
+
         self.init_scale = 0.6
         if config is None or not config.has_section('map'):
             self.scale = self.init_scale
@@ -535,7 +537,7 @@ class MapWidget(QtGui.QWidget):
         self.map_center_x += (new_size.width() - old_size.width()) / 2.
         self.map_center_y += (new_size.height() - old_size.height()) / 2.
         self._hideLoading()
-        self.no_internet.move(self.width(), self.height())
+        self.hasInternet(self.has_internet)
 
         self.initUI()
 
@@ -624,6 +626,8 @@ class MapWidget(QtGui.QWidget):
         config.set('map', 'center_y', map_center_y)
 
     def hasInternet(self, has_connection):
+        self.has_internet = has_connection
+
         if has_connection:
             self.no_internet.move(self.width(), self.height())
         else:
