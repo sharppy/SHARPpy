@@ -12,8 +12,6 @@ else:
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
-    sys.path.insert(0, HOMEDIR)
-
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile

@@ -23,7 +23,7 @@ long_description = ""
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
-packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils']
+packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
                      "databases/shapefiles/*"],}
 include_package_data = True
@@ -58,13 +58,9 @@ if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
     # Copy over available.py and data_source.py
     shutil.copy(os.path.join(HOME_DSDIR, "available.py"),
                 os.path.join(HOME_DSDIR, "available.py.old"))
-    shutil.copy(os.path.join(HOME_DSDIR, "data_source.py"),
-                os.path.join(HOME_DSDIR, "data_source.py.old"))
  
     shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
                 os.path.join(HOME_DSDIR, "available.py"))
-    shutil.copy(os.path.join(SRC_DSDIR, "data_source.py"),
-                os.path.join(HOME_DSDIR, "data_source.py"))
 
 if platform.system() in [ 'Darwin', 'Linux' ] and getpass.getuser() == 'root':
     # If we're running with sudo, chown the directories and files to the user actually running the process.

@@ -5,11 +5,13 @@ from datetime import datetime, timedelta
 import urllib, urllib2
 import urlparse
 import platform, subprocess, re
+import imp
 
-import available
 import sharppy.io.decoder as decoder
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
+avail_loc = os.path.join(HOME_DIR, 'available.py')
+available = imp.load_source('available', avail_loc)
 
 # TAS: Comment this file and available.py
 
