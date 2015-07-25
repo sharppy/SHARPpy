@@ -596,14 +596,13 @@ class SPCWindow(QMainWindow):
         kwargs['parent'] = self
         self.spc_widget = SPCWidget(**kwargs)
         self.setCentralWidget(self.spc_widget)
-
         self.createMenuBar()
 
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
         self.setWindowTitle(title)
-        self.setStyleSheet("background-color: rgb(0, 0, 0);")
-
+        self.setStyleSheet("QMainWindow { background-color: rgb(0, 0, 0); }")
+        
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
             self.setGeometry(10,30,1180,800)
