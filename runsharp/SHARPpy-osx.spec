@@ -4,7 +4,7 @@ import glob
 
 a = Analysis(['SHARPpy.py'],
              pathex=['/Users/tsupinie/SHARPpy/runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'datasources.available'],
              hookspath=None,
              runtime_hooks=None)
 

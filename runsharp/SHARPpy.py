@@ -2,8 +2,6 @@ import sys, os
 import numpy as np
 import warnings
 
-HOMEDIR = os.path.normpath(os.path.join(os.path.expanduser("~"), ".sharppy"))
-
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))

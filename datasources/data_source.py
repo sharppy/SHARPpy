@@ -10,8 +10,12 @@ import imp
 import sharppy.io.decoder as decoder
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
-avail_loc = os.path.join(HOME_DIR, 'available.py')
-available = imp.load_source('available', avail_loc)
+
+if getattr(sys, 'frozen', False):
+    import available
+else:
+    avail_loc = os.path.join(HOME_DIR, 'available.py')
+    available = imp.load_source('available', avail_loc)
 
 # TAS: Comment this file and available.py
 
