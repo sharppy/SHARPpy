@@ -10,8 +10,6 @@ else:
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
-    sys.path.insert(0, os.path.normpath(os.path.join(os.path.expanduser("~"), ".sharppy")))
-
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
