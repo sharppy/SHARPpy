@@ -8,6 +8,8 @@ a = Analysis(['SHARPpy.py'],
              hookspath=None,
              runtime_hooks=None)
 
+a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
+
 a.datas += [("sharppy/databases/PW-mean-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-mean-inches.txt"), "DATA")]
 a.datas += [("sharppy/databases/PW-stdev-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-stdev-inches.txt"), "DATA")]
 a.datas += [("sharppy/databases/sars_hail.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/sars_hail.txt"), "DATA")]

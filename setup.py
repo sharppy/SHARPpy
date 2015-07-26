@@ -44,23 +44,23 @@ if os.path.exists(os.path.join(HOME_DSDIR, "standard.xml")):
     shutil.copy(os.path.join(HOME_DSDIR, "standard.xml"),
                 os.path.join(HOME_DSDIR, "standard.xml.old"))
 
-    ## copy over other XML files
-    XMLs = glob.glob(os.path.join(SRC_DSDIR, "*.xml"))
-    for xml in XMLs:
-        shutil.copy(xml, os.path.join(HOME_DSDIR, os.path.basename(xml)))
+## copy over other XML files
+XMLs = glob.glob(os.path.join(SRC_DSDIR, "*.xml"))
+for xml in XMLs:
+    shutil.copy(xml, os.path.join(HOME_DSDIR, os.path.basename(xml)))
 
-    ## copy over the standard CSV files
-    CSVs = glob.glob(os.path.join(SRC_DSDIR, "*.csv"))
-    for csv in CSVs:
-        shutil.copy(csv, os.path.join(HOME_DSDIR, os.path.basename(csv)))
+## copy over the standard CSV files
+CSVs = glob.glob(os.path.join(SRC_DSDIR, "*.csv"))
+for csv in CSVs:
+    shutil.copy(csv, os.path.join(HOME_DSDIR, os.path.basename(csv)))
 
 if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
     # Copy over available.py and data_source.py
     shutil.copy(os.path.join(HOME_DSDIR, "available.py"),
                 os.path.join(HOME_DSDIR, "available.py.old"))
  
-    shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
-                os.path.join(HOME_DSDIR, "available.py"))
+shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
+            os.path.join(HOME_DSDIR, "available.py"))
 
 if platform.system() in [ 'Darwin', 'Linux' ] and getpass.getuser() == 'root':
     # If we're running with sudo, chown the directories and files to the user actually running the process.

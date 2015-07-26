@@ -1,2 +1,2 @@
-import SHARPpy
+import SHARPppy
 SHARPpy.main()
