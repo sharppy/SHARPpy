@@ -10,6 +10,11 @@ else:
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
+if getattr(sys, 'frozen', False):
+    outfile = open('sharppy-out.txt', 'w')
+    sys.stdout = outfile
+    sys.stderr = outfile
+    
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
@@ -53,7 +58,7 @@ class Picker(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## this is the default model initialization time.
+        ## this is the default model initialization time. 
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
 
         urls = data_source.pingURLs(self.data_sources)
@@ -118,7 +123,11 @@ class Picker(QWidget):
         self.map_dropdown.setCurrentIndex(proj_idx)
 
         self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
-        self.run_dropdown.setCurrentIndex(times.index(self.run))
+        try:
+            self.run_dropdown.setCurrentIndex(times.index(self.run))
+        except ValueError:
+            print "Run dropdown is missing its times ... ?"
+            print times
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)

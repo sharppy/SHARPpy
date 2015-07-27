@@ -41,19 +41,12 @@ def loadDataSources(ds_dir=HOME_DIR):
     return ds
 
 def _pingURL(hostname, timeout=1):
-    if platform.system() == "Windows":
-        command = "ping %s -n 1 -w %d" % (hostname, timeout * 1000)
-        success_marker = 'Reply from'
-    else:
-        command = "ping -W %d -c 1 %s" % (timeout, hostname)
-        if platform.system() == "Darwin":
-            success_marker = 'round-trip'
-        else:
-            success_marker = '1 received'
-
-    proccess = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output = proccess.stdout.read()
-    return success_marker in output
+    try:
+        urllib2.urlopen(hostname, timeout=timeout)
+    except urllib2.URLError:
+        return False
+        
+    return True
 
 def pingURLs(ds_dict):
     urls = {}
@@ -61,7 +54,8 @@ def pingURLs(ds_dict):
     for ds in ds_dict.values():
         ds_urls = ds.getURLList()
         for url in ds_urls:
-            base_url = urlparse.urlparse(url).netloc
+            urlp = urlparse.urlparse(url)
+            base_url = urlparse.urlunsplit((urlp.scheme, urlp.netloc, '', '', ''))
             urls[base_url] = None
 
     for url in urls.iterkeys():
