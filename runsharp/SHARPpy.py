@@ -1,6 +1,9 @@
 import sys, os
 import numpy as np
 import warnings
+import utils.frozenutils as frozenutils
+
+HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
 if len(sys.argv) > 1 and sys.argv[1] == '--debug':
     debug = True
@@ -10,8 +13,12 @@ else:
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
-if getattr(sys, 'frozen', False):
-    outfile = open('sharppy-out.txt', 'w')
+if frozenutils.isFrozen():
+    if not os.path.exists(HOME_DIR):
+        os.makedirs(HOME_DIR)
+
+    outfile = open(os.path.join(HOME_DIR, 'sharppy-out.txt'), 'w')
+
     sys.stdout = outfile
     sys.stderr = outfile
     
@@ -620,10 +627,10 @@ class Main(QMainWindow):
         self.config.write(open(Main.cfg_file_name, 'w'))
 
 def main():
-    # Create an application
     if platform.system() == "Windows":
         multiprocessing.freeze_support()
         
+    # Create an application
     app = QApplication([])
     win = Main()
     sys.exit(app.exec_())
