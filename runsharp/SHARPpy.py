@@ -40,8 +40,46 @@ import cProfile
 from os.path import expanduser
 import ConfigParser
 import traceback
-import multiprocessing
-import platform
+from functools import wraps, partial
+
+class crasher(object):
+    def __init__(self, **kwargs):
+        self._exit = kwargs.get('exit', False)
+
+    def __get__(self, obj, cls):
+        return partial(self.__call__, obj)
+
+    def __call__(self, func):
+        def doCrasher(*args, **kwargs):
+            try:
+                ret = func(*args, **kwargs)
+            except:
+                ret = None
+                msg = "Well, this is embarrassing.\nSHARPpy broke. This is probably due to an issue with one of the data source servers, but if it keeps happening, send the detailed information to the developers."
+                data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
+                       "Crash time: %s\n" % str(date.datetime.now()) + \
+                       traceback.format_exc()
+
+                if frozenutils.isFrozen():
+                    msg1, msg2 = msg.split("\n")
+
+                    msgbox = QMessageBox()
+                    msgbox.setText(msg1)
+                    msgbox.setInformativeText(msg2)
+                    msgbox.setDetailedText(data)
+                    msgbox.setIcon(QMessageBox.Critical)
+                    msgbox.exec_()
+                else:
+                    print
+                    print msg
+                    print
+                    print "Detailed Information:"
+                    print data
+
+                if self._exit:
+                    sys.exit(1)
+            return ret
+        return doCrasher
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -67,7 +105,7 @@ class Picker(QWidget):
         self.prof_idx = []
         ## set the default profile type to Observed
         self.model = "Observed"
-        ## this is the default model initialization time. 
+        ## this is the default model initialization time
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
 
         urls = data_source.pingURLs(self.data_sources)
@@ -294,6 +332,7 @@ class Picker(QWidget):
             if self.has_connection:
                 self.button.setEnabled(True) 
 
+    @crasher(exit=False)
     def complete_name(self):
         """
         Handles what happens when the user clicks a point on the map
@@ -409,7 +448,7 @@ class Picker(QWidget):
             ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
 
             if isinstance(ret[0], Exception):
-                exc = str(ret[0])
+                exc = ret[0]
                 failure = True
             else:
                 prof_collection = ret[0]
@@ -417,7 +456,7 @@ class Picker(QWidget):
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
         if failure:
-            print exc
+            print str(exc)
         else:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
@@ -627,12 +666,15 @@ class Main(QMainWindow):
         self.config.write(open(Main.cfg_file_name, 'w'))
 
 def main():
-    if platform.system() == "Windows":
-        multiprocessing.freeze_support()
-        
+    frozenutils.freezeSupport()
+
+    @crasher(exit=True)
+    def createWindow():
+        return Main()
+
     # Create an application
     app = QApplication([])
-    win = Main()
+    win = createWindow()
     sys.exit(app.exec_())
     
 if __name__ == '__main__':

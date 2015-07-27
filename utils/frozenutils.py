@@ -1,5 +1,6 @@
 import sys, os
 import multiprocessing.forking
+import platform
 
 _env_frozen = 'frozen'
 _env_frozen_path = '_MEIPASS'
@@ -10,6 +11,10 @@ def isFrozen():
     
 def frozenPath():
     return getattr(sys, _env_frozen_path, None)
+
+def freezeSupport():
+    if platform.system() == "Windows" and isFrozen():
+        multiprocessing.freeze_support()
 
 class _Popen(multiprocessing.forking.Popen):
     def __init__(self, *args, **kw):

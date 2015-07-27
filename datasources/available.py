@@ -4,7 +4,22 @@ import re
 import numpy as np
 from datetime import datetime, timedelta
 
+cache_len = timedelta(minutes=5)
+
 spc_base_url = "http://www.spc.noaa.gov/exper/soundings/"
+spc_text = ""
+spc_time = None
+
+def _download_spc():
+    global spc_time, spc_text
+    now = datetime.utcnow()
+    if spc_time is None or spc_time < now - cache_len:
+        url_obj = urllib2.urlopen(spc_base_url)
+        spc_text = url_obj.read()
+
+        spc_time = now
+
+    return spc_text
 
 def _available_spc():
     '''
@@ -18,7 +33,7 @@ def _available_spc():
             Array of datetime objects that represents all the available times
             of sounding data on the SPC site.
     '''
-    text = urllib2.urlopen(spc_base_url).read()
+    text = _download_spc()
 
     matches = sorted(list(set(re.findall("([\d]{8})_OBS", text))))
     return [ datetime.strptime(m, '%y%m%d%H') for m in matches ]
@@ -61,7 +76,7 @@ def _download_psu():
     '''
     global psu_time, psu_text
     now = datetime.utcnow()
-    if psu_time is None or psu_time < now - timedelta(minutes=5):
+    if psu_time is None or psu_time < now - cache_len:
         url_obj = urllib2.urlopen(psu_base_url)
         psu_text = url_obj.read()
 
