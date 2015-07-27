@@ -8,10 +8,11 @@ import platform, subprocess, re
 import imp
 
 import sharppy.io.decoder as decoder
+import utils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 
-if getattr(sys, 'frozen', False):
+if frozenutils.isFrozen():
     import available
 else:
     avail_loc = os.path.join(HOME_DIR, 'available.py')
@@ -21,12 +22,13 @@ else:
 
 def loadDataSources(ds_dir=HOME_DIR):
 
-    if getattr(sys, 'frozen', False):
+    if frozenutils.isFrozen():
         if not os.path.exists(ds_dir):
             os.makedirs(ds_dir)
 
-        files = glob.glob(os.path.join(sys._MEIPASS, 'sharppy', 'datasources', '*.xml')) +  \
-                glob.glob(os.path.join(sys._MEIPASS, 'sharppy', 'datasources', '*.csv'))
+        frozen_path = frozenutils.frozenPath()
+        files = glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.xml')) +  \
+                glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.csv'))
 
         for file_name in files:
             shutil.copy(file_name, ds_dir)

@@ -33,6 +33,8 @@ import cProfile
 from os.path import expanduser
 import ConfigParser
 import traceback
+import multiprocessing
+import platform
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -619,6 +621,9 @@ class Main(QMainWindow):
 
 def main():
     # Create an application
+    if platform.system() == "Windows":
+        multiprocessing.freeze_support()
+        
     app = QApplication([])
     win = Main()
     sys.exit(app.exec_())

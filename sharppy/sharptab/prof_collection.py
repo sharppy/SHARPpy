@@ -1,7 +1,9 @@
 
+from __future__ import absolute_import
+
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.interp as interp
-from multiprocessing import Process, Queue
+from utils.frozenutils import Process, Queue
 import platform
 import numpy as np
 
