@@ -421,15 +421,9 @@ class Picker(QWidget):
         ## the hard disk
         if filename is not None:
             model = "Archive"
-            try:
-                prof_collection, stn_id = self.loadArchive(filename)
-                disp_name = stn_id
-                prof_idx = range(len(dates))
-            except Exception as e:
-                exc = str(e)
-                if debug:
-                    print traceback.format_exc()
-                failure = True
+            prof_collection, stn_id = self.loadArchive(filename)
+            disp_name = stn_id
+            prof_idx = range(len(dates))
 
             run = prof_collection.getCurrentDate()
             fhours = None
@@ -455,9 +449,7 @@ class Picker(QWidget):
 
             fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
 
-        if failure:
-            print str(exc)
-        else:
+        if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
@@ -593,6 +585,7 @@ class Main(QMainWindow):
     def exitApp(self):
         self.close()
 
+    @crasher(exit=False)
     def openFile(self):
         """
         Opens a file on the local disk.
