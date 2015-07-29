@@ -12,6 +12,8 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 - [Developer Requests](#developer-requests)
 - [Installing SHARPpy](#installing-sharppy)
+    - [Installing a Pre-compiled Binary](#installing-a-pre-compiled-binary)
+    - [Installing the Code](#installing-the-code)
 - [Using the SHARPpy Application](#using-the-sharppy-application)
     - [Using the SHARPpy Sounding Picker](#using-the-sharppy-sounding-picker)
         - [Loading in Multiple Soundings](#loading-in-multiple-soundings)
@@ -66,7 +68,17 @@ https://groups.google.com/forum/#!forum/sharppy
 ### Installing SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running SHARPpy requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
+SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), Mac OS X 10.6+ (Snow Leopard and later; 64 bit only), and Red Hat Linux (64 bit only).  If you do not have one of those, then you will need to download the code.
+
+#### Installing a Pre-compiled Binary
+<sup>[[Return to Top]](#sharppy)</sup>
+
+Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The SHARPpy program can be placed on your computer anywhere you like.
+
+#### Installing the Code
+<sup>[[Return to Top]](#sharppy)</sup>
+
+SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
 
@@ -104,20 +116,20 @@ From this point on, you will be able to access both the SHARPpy application and 
 ## Using the SHARPpy Application
 <sup>[[Return to Top]](#sharppy)</sup>
 
-To run the SHARPpy application and interact with real-time observed and forecast soundings, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
+To run the pre-compiled binary program, double click on the icon.
+
+To run SHARPpy from the code, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
     python full_gui.py
 
-This will load the SHARPpy Sounding Picker GUI.
-
-As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
+Either of these will load the SHARPpy Sounding Picker GUI.
 
 =======================================================================
 
 ### Using the SHARPpy Sounding Picker
 <sup>[[Return to Top]](#sharppy)</sup>
 
-Upon running the 'python full_gui.py' script, the "SHARPpy Sounding Picker" window should pop up displaying a list of available default and custom data sources.  This window also shows where the soundings are located for each source.  To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles" to view the sounding data.  After the program downloads the data, it will appear in a sounding window for use.
+Upon running SHARPpy, the "SHARPpy Sounding Picker" window should pop up displaying a list of available default and custom data sources.  This window also shows where the soundings are located for each source.  To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles" to view the sounding data.  After the program downloads the data, it will appear in a sounding window for use.
 
 The map views can be altered using your mouse.  Scrolling with your mouse wheel or trackpad will zoom in and out of the map.  Clicking and dragging will change the view of the map.  Double clicking will re-center the map on your cursor (i.e. for changing from US to Europe views.)  Clicking the "Save Map View as Default" button will save this map view so each time you load the Sounding Picker, it will be centered where you want it.
 
