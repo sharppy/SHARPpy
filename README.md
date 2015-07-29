@@ -120,11 +120,9 @@ To run the pre-compiled binary program, double click on the icon.
 
 To run SHARPpy from the code, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
-    python SHARPpy.py
+    python full_gui.py
 
 Either of these will load the SHARPpy Sounding Picker GUI.
-
-As of May 8th, 2015, we recommend you __do not__ move the `runsharp/` folder or `full_gui.py` from its original downloaded location. This will break your SHARPpy program. This "feature" will be fixed in a future release.
 
 =======================================================================
 
