@@ -18,6 +18,7 @@ def freezeSupport():
 
 class _Popen(multiprocessing.forking.Popen):
     def __init__(self, *args, **kw):
+        print "In the __init__() for custom _Popen"
         if isFrozen():
             # We have to set original _MEIPASS2 value from sys._MEIPASS
             # to get --onefile mode working.
@@ -42,13 +43,3 @@ class Process(multiprocessing.Process):
     _Popen = _Popen
 
 Queue = multiprocessing.Queue
-    
-class SendeventProcess(Process):
-    def __init__(self, resultQueue):
-        self.resultQueue = resultQueue
-
-        multiprocessing.Process.__init__(self)
-        self.start()
-
-    def run(self):
-        self.resultQueue.put((1, 2))

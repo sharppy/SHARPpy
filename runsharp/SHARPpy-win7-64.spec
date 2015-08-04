@@ -38,10 +38,6 @@ for d in a.datas:
         a.datas.remove(d)
         break
         
-#print a.scripts
-#print a.binaries
-#print a.zipfiles
-        
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
@@ -52,4 +48,4 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False, icon=None) #'radar.ico'
+          console=False, icon='SHARPpy.png')

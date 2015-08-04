@@ -92,7 +92,7 @@ class Picker(QWidget):
         Construct the main picker widget: a means for interactively selecting
         which sounding profile(s) to view.
         """
-
+        
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
@@ -659,8 +659,6 @@ class Main(QMainWindow):
         self.config.write(open(Main.cfg_file_name, 'w'))
 
 def main():
-    frozenutils.freezeSupport()
-
     @crasher(exit=True)
     def createWindow():
         return Main()
