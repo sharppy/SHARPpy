@@ -236,7 +236,7 @@ The current sounding that is in "focus" in the program has the traditional "red/
 
 The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.
 
-New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the 'I' key on the keyboard or by selecting Profiles->Interpolate on the menu bar.  Interpolating the profile will take into account any modifications you've done to the original profile. However, un-interpolating will revert to the original profile, undoing all modifications, so be sure you want to un-interpolate before doing so.
+New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the 'I' key on the keyboard or by selecting Profiles->Interpolate on the menu bar. Interpolating the profile will take into account any modifications you've done to the original profile.  Pressing the 'I' key again or selecting Profiles->Reset Interpolation will reset the profile, undoing all modifications, so be sure you want to reset the profile before doing so.
 
 ##### Storm Mode Functions
 
