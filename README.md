@@ -116,7 +116,7 @@ From this point on, you will be able to access both the SHARPpy application and 
 ## Using the SHARPpy Application
 <sup>[[Return to Top]](#sharppy)</sup>
 
-To run the pre-compiled binary program, double click on the icon.
+To run the pre-compiled binary program, double click on the icon.  It may take 20-30 seconds for the window to open so please be patient.
 
 To run SHARPpy from the code, navigate to the `runsharp/` folder contained within the SHARPpy directory you downloaded.  Once there, run the following command:
 
@@ -236,7 +236,7 @@ The current sounding that is in "focus" in the program has the traditional "red/
 
 The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.
 
-__ADD INTERPOLATING SOUNDING___
+New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the 'I' key on the keyboard or by selecting Profiles->Interpolate on the menu bar.  Interpolating the profile will take into account any modifications you've done to the original profile. However, un-interpolating will revert to the original profile, undoing all modifications, so be sure you want to un-interpolate before doing so.
 
 ##### Storm Mode Functions
 
