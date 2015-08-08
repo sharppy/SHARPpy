@@ -73,7 +73,7 @@ SHARPpy can be installed in one of two forms: either a pre-compiled binary execu
 #### Installing a Pre-compiled Binary
 <sup>[[Return to Top]](#sharppy)</sup>
 
-Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The SHARPpy program can be placed on your computer anywhere you like.
+Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
 
 #### Installing the Code
 <sup>[[Return to Top]](#sharppy)</sup>
