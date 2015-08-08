@@ -68,7 +68,7 @@ https://groups.google.com/forum/#!forum/sharppy
 ### Installing SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), Mac OS X 10.6+ (Snow Leopard and later; 64 bit only), and Red Hat Linux (64 bit only).  If you do not have one of those, then you will need to download the code.
+SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), and Mac OS X 10.6+ (Snow Leopard and later; 64 bit only).  If you do not have one of those, then you will need to download the code.
 
 #### Installing a Pre-compiled Binary
 <sup>[[Return to Top]](#sharppy)</sup>
@@ -279,9 +279,9 @@ The space bar on your keyboard is used to swap the focus between the profiles sh
 
 Known Issues:
 - Some of our sounding data sources (HRRR, GFS, etc.) can sometimes go down.  This is outside of our control. (All OSes)
-- Text can sometimes overlap. (Windows)
+- Moving through time with model profiles may be slow in the Windows binaries because of a backend bug. Running from the code should be fine.
+- Text can sometimes overlap. (Windows and Linux)
 - The program’s menu bar does not display on Windows (Fixed as of 1.3.0 release)
-- SHARPpy will not work with QT 4.8.6.0 on Linux.  There is a bug in the QT package affects the ability of the GUI to render.  UPDATE: This bug has been fixed by a new release from QT (Noted 4/24/2015).
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
 
 =======================================================================

@@ -46,4 +46,4 @@ exe = EXE(pyz,
 
 app = BUNDLE(exe,
              name='SHARPpy.app',
-             icon='SHARPpy.icns')
+             icon='icons/SHARPpy.icns')

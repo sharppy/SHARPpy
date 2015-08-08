@@ -53,4 +53,4 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           console=False, 
-          icon="SHARPpy.ico")
+          icon="icons\\SHARPpy.ico")
