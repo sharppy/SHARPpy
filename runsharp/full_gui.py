@@ -24,6 +24,7 @@ if frozenutils.isFrozen():
     
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
+from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
@@ -574,6 +575,7 @@ class Main(QMainWindow):
 
         pref = QAction("Preferences", self)
         filemenu.addAction(pref)
+        pref.triggered.connect(self.preferencesbox)
 
         helpmenu = bar.addMenu("Help")
 
@@ -638,6 +640,10 @@ class Main(QMainWindow):
         """ % (__version__, __version_name__, cur_year)
         msgBox.setText(str)
         msgBox.exec_()
+
+    def preferencesbox(self):
+        pref_dialog = PrefDialog(parent=self)
+        pref_dialog.exec_()
 
     def keyPressEvent(self, e):
         """
