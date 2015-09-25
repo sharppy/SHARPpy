@@ -540,6 +540,7 @@ class Main(QMainWindow):
         if not self.config.has_section('paths'):
             self.config.add_section('paths')
             self.config.set('paths', 'load_txt', expanduser('~'))
+        PrefDialog.initConfig(self.config)
 
         self.__initUI()
 
@@ -642,7 +643,7 @@ class Main(QMainWindow):
         msgBox.exec_()
 
     def preferencesbox(self):
-        pref_dialog = PrefDialog(parent=self)
+        pref_dialog = PrefDialog(self.config, parent=self)
         pref_dialog.exec_()
 
     def keyPressEvent(self, e):

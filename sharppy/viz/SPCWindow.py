@@ -215,7 +215,9 @@ class SPCWidget(QWidget):
         :return:
         """
 
-        self.sound = plotSkewT(dgz=self.dgz)
+        temp_color = self.config.get('preferences', 'temp_color')
+        dewp_color = self.config.get('preferences', 'dewp_color')
+        self.sound = plotSkewT(temp_color=temp_color, dewp_color=dewp_color, dgz=self.dgz)
         self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
