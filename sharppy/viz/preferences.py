@@ -33,6 +33,12 @@ class ColorSwatch(QWidget):
         if color_choice.isValid():
             self.setColor(color_choice)
 
+    def enterEvent(self, e):
+        self.setCursor(Qt.PointingHandCursor)
+
+    def leaveEvent(self, e):
+        self.unsetCursor()
+
 class PrefDialog(QDialog):
     _color_names = OrderedDict([('temp_color', 'Temperature'), ('dewp_color', 'Dewpoint')])
     def __init__(self, config, parent=None):
