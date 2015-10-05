@@ -51,10 +51,13 @@ def findDecoders():
         _decoders[fmt_name] = getattr(dec_imp, dec_name)
 
 def getDecoder(dec_name):
+    return getDecoders()[dec_name]
+
+def getDecoders():
     if _decoders == {}:
         findDecoders()
 
-    return _decoders[dec_name]
+    return _decoders
 
 class Decoder(object):
     def __init__(self, file_name):
