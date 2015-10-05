@@ -26,8 +26,7 @@ from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
-from sharppy.io.spc_decoder import SPCDecoder
-from sharppy.io.buf_decoder import BufDecoder
+from sharppy.io.decoder import getDecoders
 from sharppy.version import __version__, __version_name__
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -489,13 +488,16 @@ class Picker(QWidget):
         for that archive sounding.
         """
 
-        try:
-            dec = SPCDecoder(filename)
-        except Exception as e:
+        for decname, deccls in getDecoders().iteritems():
             try:
-                dec = BufDecoder(filename)
+                dec = deccls(filename)
+                break
             except:
-                raise IOError("Could not figure out the format of '%s'!" % filename)
+                dec = None
+                continue
+
+        if dec is None:
+            raise IOError("Could not figure out the format of '%s'!" % filename)
 
         profs = dec.getProfiles()
         stn_id = dec.getStnId()
