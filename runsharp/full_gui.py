@@ -524,7 +524,8 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     return profs
 
 class Main(QMainWindow):
-    
+    config_changed = Signal()
+
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
     cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
@@ -634,7 +635,7 @@ class Main(QMainWindow):
         climatologists within the scientific community to
         help maintain a standard source of sounding
         routines.
-
+i
         Website: http://sharppy.github.io/SHARPpy/
         Contact: sharppy.project@gmail.com
         Contribute: https://github.com/sharppy/SHARPpy/
@@ -645,6 +646,7 @@ class Main(QMainWindow):
     def preferencesbox(self):
         pref_dialog = PrefDialog(self.config, parent=self)
         pref_dialog.exec_()
+        self.config_changed.emit()
 
     def keyPressEvent(self, e):
         """

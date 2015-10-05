@@ -618,6 +618,10 @@ class SPCWindow(QMainWindow):
         bar = self.menuBar()
         filemenu = bar.addMenu("File")
 
+        pref = QAction("Preferences", self)
+        filemenu.addAction(pref)
+#       pref.triggered.connect(self.preferencesbox)
+
         saveimage = QAction("Save Image", self, shortcut=QKeySequence("Ctrl+S"))
         saveimage.triggered.connect(self.spc_widget.saveimage)
         filemenu.addAction(saveimage)
