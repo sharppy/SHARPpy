@@ -526,7 +526,7 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     return profs
 
 class Main(QMainWindow):
-    config_changed = Signal()
+    config_changed = Signal(ConfigParser.RawConfigParser)
 
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
     cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
@@ -648,7 +648,7 @@ i
     def preferencesbox(self):
         pref_dialog = PrefDialog(self.config, parent=self)
         pref_dialog.exec_()
-        self.config_changed.emit()
+        self.config_changed.emit(self.config)
 
     def keyPressEvent(self, e):
         """

@@ -14,6 +14,7 @@ import numpy as np
 import platform
 from os.path import expanduser
 import os
+import ConfigParser
 from sharppy.version import __version__, __version_name__
 
 class SPCWidget(QWidget):
@@ -217,7 +218,8 @@ class SPCWidget(QWidget):
 
         temp_color = self.config.get('preferences', 'temp_color')
         dewp_color = self.config.get('preferences', 'dewp_color')
-        self.sound = plotSkewT(temp_color=temp_color, dewp_color=dewp_color, dgz=self.dgz)
+        self.sound = plotSkewT(dgz=self.dgz)
+        self.sound.setColors(temp_color=temp_color, dewp_color=dewp_color, update_gui=False)
         self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
@@ -386,6 +388,13 @@ class SPCWidget(QWidget):
         prof_col.setMeta('analogfile', analogfiles)
 
         self.parentWidget().addProfileCollection(match_col, focus=False)
+
+    @Slot(ConfigParser.RawConfigParser)
+    def updateConfig(self, config):
+        self.config = config
+
+        colors = dict( (k, self.config.get('preferences', k)) for k in ['temp_color', 'dewp_color'] )
+        self.sound.setColors(**colors)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
@@ -588,7 +597,7 @@ class SPCWindow(QMainWindow):
 
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
-        super(SPCWindow, self).__init__()
+        super(SPCWindow, self).__init__(parent=parent)
 
         self.menu_items = []
         self.picker_window = parent
@@ -597,6 +606,7 @@ class SPCWindow(QMainWindow):
     def __initUI(self, **kwargs):
         kwargs['parent'] = self
         self.spc_widget = SPCWidget(**kwargs)
+        self.parent().config_changed.connect(self.spc_widget.updateProfs)
         self.setCentralWidget(self.spc_widget)
         self.createMenuBar()
 
@@ -620,7 +630,7 @@ class SPCWindow(QMainWindow):
 
         pref = QAction("Preferences", self)
         filemenu.addAction(pref)
-#       pref.triggered.connect(self.preferencesbox)
+        pref.triggered.connect(self.parent().preferencesbox)
 
         saveimage = QAction("Save Image", self, shortcut=QKeySequence("Ctrl+S"))
         saveimage.triggered.connect(self.spc_widget.saveimage)

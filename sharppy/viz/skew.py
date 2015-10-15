@@ -552,6 +552,15 @@ class plotSkewT(backgroundSkewT):
             self.plotData()
             self.update()
 
+    def setColors(self, update_gui=True, **kwargs):
+        for key, val in kwargs:
+            setattr(self, key, val)
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
+
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
             self.track_cursor = not self.track_cursor
