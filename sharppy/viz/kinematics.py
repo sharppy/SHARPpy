@@ -254,8 +254,8 @@ class plotKinematics(backgroundKinematics):
         qp.setFont(self.label_font)
         rect0 = QtCore.QRect(x1*7, self.ylast + self.tpad, x1*2, self.label_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '1km & 6km AGL\nWind Barbs' )
-        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000')
-        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6')
+        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000', shemis=(self.prof.latitude < 0))
+        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6', shemis=(self.prof.latitude < 0))
     
     
     def drawKinematics(self, qp):

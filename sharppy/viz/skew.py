@@ -900,17 +900,18 @@ class plotSkewT(backgroundSkewT):
             for y in yvals:
                 dd = wdir[i]
                 ss = wspd[i]
-                drawBarb( qp, self.barbx, y, dd, vv )
+                drawBarb( qp, self.barbx, y, dd, vv, shemis=(prof.latitude < 0) )
                 i += 1
         else:
             pres = np.arange(prof.pres[prof.sfc], prof.pres[prof.top], -40)
             wdir, wspd = tab.interp.vec(prof, pres)
+
             for p, dd, ss in zip(pres, wdir, wspd):
                 if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
 
                 y = self.originy + self.pres_to_pix(p) / self.scale
-                drawBarb( qp, self.barbx, y, dd, ss, color=color)
+                drawBarb( qp, self.barbx, y, dd, ss, color=color, shemis=(prof.latitude < 0) )
         qp.setClipRect(self.clip)
 
     def drawTitles(self, qp):
