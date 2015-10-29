@@ -108,7 +108,7 @@ class Profile(object):
         if 'wdir' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
-
+            #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
 
@@ -117,6 +117,7 @@ class Profile(object):
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
 
+            #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
             self.wspd = None
 

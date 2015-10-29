@@ -28,6 +28,7 @@ from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.spc_decoder import SPCDecoder
 from sharppy.io.buf_decoder import BufDecoder
+from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.version import __version__, __version_name__
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -42,6 +43,13 @@ from os.path import expanduser
 import ConfigParser
 import traceback
 from functools import wraps, partial
+
+try:
+    from netCDF4 import Dataset
+    nc = True
+except:
+    nc = False
+    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -297,7 +305,7 @@ class Picker(QWidget):
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
-
+ 
             if self.model == "Observed":
                 self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
             else:
@@ -320,6 +328,13 @@ class Picker(QWidget):
             self.disp_name = None
             self.button.setText('Generate Profiles')
             self.button.setDisabled(True)
+        elif self.model == "Local WRF-ARW":
+            self.loc = point
+            self.disp_name = "User Selected"
+            self.button.setText(self.disp_name + ' | Generate Profiles')
+            self.button.setEnabled(True)
+            self.areal_lon, self.areal_y = point
+
         else:
             self.loc = point #url.toString().split('/')[-1]
             if point['icao'] != "":
@@ -512,10 +527,14 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     """
     if __text__ is not None:
         __text__.emit("Decoding File")
-
-    url = data_source.getURL(loc, run)
-    decoder = data_source.getDecoder(loc, run)
-    dec = decoder(url)
+    if data_source.getName() == "Local WRF-ARW":
+        url = data_source.getURLList(outlet="Local")[0].replace("file://", "")
+        decoder = ARWDecoder
+        dec = decoder((url, loc[0], loc[1]))
+    else:
+        url = data_source.getURL(loc, run)
+        decoder = data_source.getDecoder(loc, run)
+        dec = decoder(url)
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
@@ -603,9 +622,63 @@ class Main(QMainWindow):
         path = os.path.dirname(link[0])
         self.config.set('paths', 'load_txt', path)
 
-        # Loop through all of the files selected and load them into the SPCWindow 
-        for l in link:
-            self.picker.skewApp(filename=l)
+        # Loop through all of the files selected and load them into the SPCWindow
+        if link[0].endswith("nc") and nc:
+           ncfile = Dataset(link[0])
+         
+           xlon1 = ncfile.variables["XLONG"][0][:, 0]
+           xlat1 = ncfile.variables["XLAT"][0][:, 0]
+
+           xlon2 = ncfile.variables["XLONG"][0][:, -1]
+           xlat2 = ncfile.variables["XLAT"][0][:, -1]
+
+           xlon3 = ncfile.variables["XLONG"][0][0, :]
+           xlat3 = ncfile.variables["XLAT"][0][0, :]
+
+           xlon4 = ncfile.variables["XLONG"][0][-1, :]
+           xlat4 = ncfile.variables["XLAT"][0][-1, :]
+
+           delta = ncfile.variables["XTIME"][1] / 60.
+           maxt = ncfile.variables["XTIME"][-1] / 60.
+
+
+           ## write the CSV file 
+           csvfile = open(HOME_DIR + "/datasources/wrf-arw.csv", 'w')
+           csvfile.write("icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid\n")
+
+           for idx, val in np.ndenumerate(xlon1):
+               lat = xlat1[idx]
+               lon = xlon1[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon2):
+               lat = xlat2[idx]
+               lon = xlon2[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon3):
+               lat = xlat3[idx]
+               lon = xlon3[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon4):
+               lat = xlat4[idx]
+               lon = xlon4[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           csvfile.close()
+
+           ## write the xml file
+           xmlfile = open(HOME_DIR + "/datasources/wrf-arw.xml", 'w')
+           xmlfile.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+           xmlfile.write('<sourcelist>\n')
+           xmlfile.write('    <datasource name="Local WRF-ARW" ensemble="false" observed="false">\n')
+           xmlfile.write('        <outlet name="Local" url="file://' + link[0] + '" format="wrf-arw">\n')
+           xmlfile.write('            <time range="' + str(int(maxt)) + '" delta="' + str(int(delta)) + '" offset="0" delay="0" cycle="24" archive="1"/>\n')
+           xmlfile.write('            <points csv="wrf-arw.csv" />\n')
+           xmlfile.write('        </outlet>\n')
+           xmlfile.write('    </datasource>\n')
+           xmlfile.write('</sourcelist>\n')
+           xmlfile.close()
+        else: 
+            for l in link:
+                self.picker.skewApp(filename=l)
 
     def aboutbox(self):
         """

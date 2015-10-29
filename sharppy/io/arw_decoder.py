@@ -113,6 +113,7 @@ class ARWDecoder(Decoder):
             ## convert from m/s to kts
             muwin = utils.MS2KTS(U)
             mvwin = utils.MS2KTS(V)
+            mwdir, mwspd = utils.comp2vec(muwin, mvwin)
 
         ## if the data is not 4D, then it must be assumed that this is a file containing only a single time
         else:
@@ -137,6 +138,7 @@ class ARWDecoder(Decoder):
             ## convert from m/s to kts
             muwin = utils.MS2KTS(U)
             mvwin = utils.MS2KTS(V)
+            mwdir, mwspd = utils.comp2vec(muwin, mvwin)
 
         ## get the model start time of the file
         inittime = dattim.datetime.strptime( str( file_data.START_DATE ), '%Y-%m-%d_%H:%M:%S')
@@ -152,7 +154,8 @@ class ARWDecoder(Decoder):
             prof_dwpc = mdwpc[i].flatten()
             prof_uwin = muwin[i].flatten()
             prof_vwin = mvwin[i].flatten()
-
+            prof_wdir = mwdir[i].flatten()
+            prof_wspd = mwspd[i].flatten()
             ## compute the time of the profile
             delta = dattim.timedelta( minutes=int(file_data.variables["XTIME"][i]) )
             curtime = inittime + delta
@@ -160,7 +163,7 @@ class ARWDecoder(Decoder):
 
             ## construct the profile object
             prof = profile.create_profile(profile="raw", pres=prof_pres, 
-                hght=prof_hght, tmpc=prof_tmpc, u=prof_uwin[i], v=prof_vwin,
+                hght=prof_hght, tmpc=prof_tmpc, dwpc=prof_dwpc, wdir=prof_wdir, wspd=prof_wspd,
                 location=str(gridx) + "," + str(gridy), date=date_obj, missing=-999.0,
                 latitude=gridy)
 
