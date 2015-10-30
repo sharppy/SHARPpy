@@ -1265,7 +1265,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         
         pos_vector.append((x_1, y_1, z_1))
         speed_vector.append((u_0, v_0, w_1))
-        
+
         # Update parcel position
         z_0 = z_1
         y_0 = y_1
