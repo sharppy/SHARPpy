@@ -279,9 +279,10 @@ def generic_interp_hght(h, hght, field, log=False):
     field_intrp = np.interp(h, hght[not_masked], field[not_masked],
                          left=ma.masked, right=ma.masked)
 
-    # Bug fix for Numpy v1.10: returns nan on the boundary.
-    field_intrp = np.where(np.isclose(h, hght[not_masked][0]), field[not_masked][0], field_intrp)
-    field_intrp = np.where(np.isclose(h, hght[not_masked][-1]), field[not_masked][-1], field_intrp)
+    if type(h) != type(ma.masked):
+        # Bug fix for Numpy v1.10: returns nan on the boundary.
+        field_intrp = np.where(np.isclose(h, hght[not_masked][0]), field[not_masked][0], field_intrp)
+        field_intrp = np.where(np.isclose(h, hght[not_masked][-1]), field[not_masked][-1], field_intrp)
 
     # Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!
     field_intrp = np.where(np.isnan(field_intrp), ma.masked, field_intrp)
@@ -326,9 +327,10 @@ def generic_interp_pres(p, pres, field):
     field_intrp = np.interp(p, pres[not_masked], field[not_masked], left=ma.masked,
                  right=ma.masked)
 
-    # Bug fix for Numpy v1.10: returns nan on the boundary.
-    field_intrp = np.where(np.isclose(p, pres[not_masked][0]), field[not_masked][0], field_intrp)
-    field_intrp = np.where(np.isclose(p, pres[not_masked][-1]), field[not_masked][-1], field_intrp)
+    if type(p) != type(ma.masked):
+        # Bug fix for Numpy v1.10: returns nan on the boundary.
+        field_intrp = np.where(np.isclose(p, pres[not_masked][0]), field[not_masked][0], field_intrp)
+        field_intrp = np.where(np.isclose(p, pres[not_masked][-1]), field[not_masked][-1], field_intrp)
 
     # Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!
     field_intrp = np.where(np.isnan(field_intrp), ma.masked, field_intrp)
