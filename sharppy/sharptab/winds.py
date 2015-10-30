@@ -309,6 +309,8 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         upper = interp.to_msl(prof, upper)
         plower = interp.pres(prof, lower)
         pupper = interp.pres(prof, upper)
+        if np.isnan(plower) or np.isnan(pupper):
+            return np.ma.masked, np.ma.masked, np.ma.masked
         if exact:
             ind1 = np.where(plower >= prof.pres)[0].min()
             ind2 = np.where(pupper <= prof.pres)[0].max()
