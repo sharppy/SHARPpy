@@ -1,6 +1,7 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+from sharppy.viz.draggable import Draggable
 from sharppy.sharptab.profile import Profile, create_profile
 from sharppy.sharptab.constants import *
 from PySide.QtGui import *
@@ -327,11 +328,7 @@ class plotHodo(backgroundHodo):
 
         self.track_cursor = False
         self.was_right_click = False
-        self.initdrag = False
-        self.dragging = False
-        self.drag_idx = None
-        self.drag_buffer = 5
-        self.clickradius = 6
+        self.drag_hodo = None
 
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
@@ -450,6 +447,9 @@ class plotHodo(backgroundHodo):
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
 
+        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
+        self.drag_hodo = Draggable(xs, ys, self.plotBitMap)
+
         mean_lcl_el = self.prof.mean_lcl_el
         if tab.utils.QC(mean_lcl_el[0]):
             self.mean_lcl_el = tab.utils.vec2comp(*self.prof.mean_lcl_el)
@@ -564,9 +564,8 @@ class plotHodo(backgroundHodo):
         
         '''
         super(plotHodo, self).wheelEvent(e)
-#       self.clearData()
-#       self.plotData()
-
+        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
+        self.drag_hodo.setCoords(xs, ys)
 
     def mousePressEvent(self, e):
         '''
@@ -584,14 +583,7 @@ class plotHodo(backgroundHodo):
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if self.cursor_type == 'none' and not self.was_right_click:
-            visible = np.where(self.hght <= 12000)
-            
-            xs, ys = self.uv_to_pix(self.u[visible], self.v[visible])
-            dists = np.hypot(xs - e.x(), ys - e.y())
-
-            if dists.min() < self.clickradius:
-                self.initdrag = True
-                self.drag_idx = np.argmin(dists)
+            self.drag_hodo.click(e.x(), e.y())
 
     def mouseReleaseEvent(self, e):
         if self.cursor_type == 'stormmotion' and not self.was_right_click:
@@ -704,21 +696,12 @@ class plotHodo(backgroundHodo):
                 self.plotData()
                 self.update()               
                 self.track_cursor = True
-        elif self.cursor_type == 'none' and (self.dragging or self.initdrag):
-            u, v = self.pix_to_uv(e.x(), e.y())
+        elif self.cursor_type == 'none':
+            if self.drag_hodo.isDragging():
+                drag_idx, rls_x, rls_y = self.drag_hodo.release(e.x(), e.y())
+                u, v = self.pix_to_uv(rls_x, rls_y)
 
-#           new_u = self.u.copy()
-#           new_v = self.v.copy()
-#           new_u[self.drag_idx] = u
-#           new_v[self.drag_idx] = v
-
-#           new_prof = type(self.prof).copy(self.prof, u=new_u, v=new_v)
-
-            self.modified.emit(self.drag_idx, {'u':u, 'v':v})
-
-            self.drag_idx = None
-            self.dragging = False
-            self.saveBitMap = None
+                self.modified.emit(drag_idx, {'u':u, 'v':v})
 
         self.initdrag = False
 
@@ -792,45 +775,7 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
-        if self.cursor_type == 'stormmotion' and self.track_cursor:
-            ## convert the location of the mouse to u,v space
-            u, v = self.pix_to_uv(e.x(), e.y())
-            ## get the direction and speed from u,v
-            dir, spd = tab.utils.comp2vec(u,v)
-            ## calculate the storm relative helicity for a storm motion
-            ## vector with a u,v at the mouse pointer
-            srh1km = tab.winds.helicity(self.prof, 0, 1000., stu=u, stv=v)[0]
-            srh3km = tab.winds.helicity(self.prof, 0, 3000., stu=u, stv=v)[0]
-            ## do some sanity checks to prevent crashing if there is no
-            ## effective inflow layer
-            etop, ebot = self.prof.etopm, self.prof.ebotm
-            if tab.utils.QC(etop) and tab.utils.QC(ebot):
-                esrh = tab.winds.helicity(self.prof, ebot, etop, stu=u, stv=v)[0]
-                self.esrhReadout.setText('effective: ' + tab.utils.INT2STR(esrh) + ' m2/s2')
-            else:
-                esrh = np.ma.masked
-                self.esrhReadout.setText('effective: ' + str(esrh) + ' m2/s2')
-            ## set the crosshair in the window
-            self.hband.setGeometry(QRect(QPoint(self.lpad,e.y()), QPoint(self.brx,e.y())).normalized())
-            self.vband.setGeometry(QRect(QPoint(e.x(), self.tpad), QPoint(e.x(),self.bry)).normalized())
-            ## set the readout texts
-            self.wndReadout.setText(tab.utils.INT2STR(dir) + '/' + tab.utils.FLOAT2STR(spd, 1))
-            self.srh1kmReadout.setText('sfc-1km: ' + tab.utils.INT2STR(srh1km) + ' m2/s2')
-            self.srh3kmReadout.setText('sfc-3km: ' + tab.utils.INT2STR(srh3km) + ' m2/s2')
-            ## set the readout width
-            self.wndReadout.setFixedWidth(50)
-            self.srh1kmReadout.setFixedWidth(120)
-            self.srh3kmReadout.setFixedWidth(120)
-            self.esrhReadout.setFixedWidth(120)
-            ## place the readout
-            self.wndReadout.move(1, self.bry-15)
-            self.srh1kmReadout.move(self.brx-130, self.bry-45)
-            self.srh3kmReadout.move(self.brx-130, self.bry-30)
-            self.esrhReadout.move(self.brx-130, self.bry-15)
-            ## show the crosshair
-            self.hband.show()
-            self.vband.show()
-        elif self.cursor_type == 'boundary':
+        if self.cursor_type == 'boundary':
             self.hband.hide()
             self.vband.hide()
             u, v = self.pix_to_uv(e.x(), e.y())
@@ -841,63 +786,9 @@ class plotHodo(backgroundHodo):
             self.srh3kmReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
             self.srh3kmReadout.setFixedWidth(120)
             self.srh3kmReadout.move(self.brx-130, self.bry-30)
-        elif self.cursor_type == 'none' and (self.initdrag or self.dragging):
-            self.initdrag = False
-            self.dragging = True
-            self.dragHodo(e)
-
-    def dragHodo(self, e):
-        idx = self.drag_idx
-        u, v = self.pix_to_uv(e.x(), e.y())
-
-        u_pts = [ u ]
-        v_pts = [ v ]
-
-        lb_idx, ub_idx = max(idx - 1, 0), min(idx + 1, self.u.shape[0] - 1)
-
-        while lb_idx >= 0 and (self.u.mask[lb_idx] or self.v.mask[lb_idx]):
-            lb_idx -= 1
-
-        while ub_idx < self.u.shape[0] and (self.u.mask[ub_idx] or self.v.mask[ub_idx]):
-            ub_idx += 1
-
-        if lb_idx != -1:
-            u_pts.append(self.u[lb_idx])
-            v_pts.append(self.v[lb_idx])
-        if ub_idx != self.u.shape[0]:
-            u_pts.append(self.u[ub_idx])
-            v_pts.append(self.v[ub_idx])
-
-        lb_u, ub_u = min(u_pts), max(u_pts)
-        lb_v, ub_v = min(v_pts), max(v_pts)
-
-        lb_x, lb_y = self.uv_to_pix(lb_u, ub_v)
-        ub_x, ub_y = self.uv_to_pix(ub_u, lb_v)
-
-        qp = QtGui.QPainter()
-        qp.begin(self.plotBitMap)
-
-        if self.saveBitMap is not None:
-            (origin, size, bmap) = self.saveBitMap
-            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
-
-        # Capture the new portion of the image to save
-        origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
-        size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
-        bmap = self.plotBitMap.copy(QRect(origin, size))
-        self.saveBitMap = (origin, size, bmap)
-
-        pen = QtGui.QPen(QtGui.QColor('#FFFFFF'), 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        if lb_idx != -1:
-            prof_x, prof_y = self.uv_to_pix(self.u[lb_idx], self.v[lb_idx])
-            qp.drawLine(prof_x, prof_y, e.x(), e.y())
-        if ub_idx != self.u.shape[0]:
-            prof_x, prof_y = self.uv_to_pix(self.u[ub_idx], self.v[ub_idx])
-            qp.drawLine(e.x(), e.y(), prof_x, prof_y)
-
-        qp.end()
-        self.update()
+        elif self.cursor_type == 'none':
+            self.drag_hodo.drag(e.x(), e.y())
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -931,7 +822,8 @@ class plotHodo(backgroundHodo):
         Clears/resets the base QPixmap.
         '''
         self.plotBitMap = self.backgroundBitMap.copy()
-    
+        self.drag_hodo.setBackground(self.plotBitMap)    
+
     def plotData(self):
         '''
         Handles the plotting of the data in the QPixmap.
@@ -1085,19 +977,7 @@ class plotHodo(backgroundHodo):
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## check and make sure there is no missing data
-        try:
-            mask = np.maximum( self.u, self.v )
-            hght = self.hght[~mask]
-            u = self.u[~mask]; v = self.v[~mask]
-            ## calculate the left and right storm motion vectors
-            rstu,rstv,lstu,lstv = self.srwind
-            rstu = rstu[~mask]; rstv = rstv[~mask]
-            lstu = lstu[~mask]; lstv = lstv[~mask]
-        ## otherwise the data is fine
-        except:
-            hght = self.hght
-            u = self.u; v = self.v
-            rstu,rstv,lstu,lstv = self.srwind
+        rstu,rstv,lstu,lstv = self.srwind
 
         # make sure the storm motion exists
         if not tab.utils.QC(rstu) or not tab.utils.QC(lstu):
