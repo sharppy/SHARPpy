@@ -29,7 +29,7 @@ class Draggable(object):
         return self._drag_idx is not None
 
     def drag(self, drag_x, drag_y, restrictions=None):
-        if not self._drag_idx:
+        if self._drag_idx is None:
             return
 
         if self._lock_dim == 'x':
