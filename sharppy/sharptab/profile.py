@@ -464,6 +464,7 @@ class ConvectiveProfile(BasicProfile):
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
+        self.user_srwind = None
 
         # Generate the fire weather paramters
         self.get_fire()
@@ -667,7 +668,10 @@ class ConvectiveProfile(BasicProfile):
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
             self.etopm = ma.masked; self.ebotm = ma.masked
-            self.srwind = winds.non_parcel_bunkers_motion( self )
+            self.bunkers = winds.non_parcel_bunkers_motion( self )
+            if self.user_srwind is None:
+                self.user_srwind = self.bunkers
+            self.srwind = self.user_srwind
             self.eff_shear = [MISSING, MISSING]
             self.ebwd = [MISSING, MISSING, MISSING]
             self.ebwspd = MISSING
@@ -679,7 +683,10 @@ class ConvectiveProfile(BasicProfile):
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
             self.critical_angle = ma.masked
         else:
-            self.srwind = params.bunkers_storm_motion(self, mupcl=self.mupcl, pbot=self.ebottom)
+            self.bunkers = params.bunkers_storm_motion(self, mupcl=self.mupcl, pbot=self.ebottom)
+            if self.user_srwind is None:
+                self.user_srwind = self.bunkers
+            self.srwind = self.user_srwind
             depth = ( self.mupcl.elhght - self.ebotm ) / 2
             elh = interp.pres(self, interp.to_msl(self, self.ebotm + depth))
             ## calculate mean wind
@@ -930,3 +937,11 @@ class ConvectiveProfile(BasicProfile):
         self.dcape, self.dpcl_ttrace, self.dpcl_ptrace = params.dcape(self)
         self.drush = thermo.ctof(self.dpcl_ttrace[-1])
         self.mburst = params.mburst(self)
+
+    def set_srleft(self, lm_u, lm_v):
+        self.user_srwind = self.user_srwind[:2] + (lm_u, lm_v)
+        self.get_kinematics()
+
+    def set_srright(self, rm_u, rm_v):
+        self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
+        self.get_kinematics()

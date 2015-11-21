@@ -292,6 +292,7 @@ class plotHodo(backgroundHodo):
     '''
 
     modified = Signal(int, dict)
+    modified_vector = Signal(str, float, float)
     reset = Signal(list)
 
     def __init__(self, **kwargs):
@@ -329,6 +330,8 @@ class plotHodo(backgroundHodo):
         self.track_cursor = False
         self.was_right_click = False
         self.drag_hodo = None
+        self.drag_lm = None
+        self.drag_rm = None
 
         self.centered = kwargs.get('centered', (0,0))
         self.center_loc = 'centered'
@@ -449,6 +452,10 @@ class plotHodo(backgroundHodo):
 
         xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
         self.drag_hodo = Draggable(xs, ys, self.plotBitMap)
+        rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
+        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
+        lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
+        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
 
         mean_lcl_el = self.prof.mean_lcl_el
         if tab.utils.QC(mean_lcl_el[0]):
@@ -566,6 +573,10 @@ class plotHodo(backgroundHodo):
         super(plotHodo, self).wheelEvent(e)
         xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
         self.drag_hodo.setCoords(xs, ys)
+        rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
+        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
+        lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
+        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
 
     def mousePressEvent(self, e):
         '''
@@ -583,6 +594,8 @@ class plotHodo(backgroundHodo):
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if self.cursor_type == 'none' and not self.was_right_click:
+            self.drag_rm.click(e.x(), e.y())
+            self.drag_lm.click(e.x(), e.y())
             self.drag_hodo.click(e.x(), e.y())
 
     def mouseReleaseEvent(self, e):
@@ -702,8 +715,15 @@ class plotHodo(backgroundHodo):
                 u, v = self.pix_to_uv(rls_x, rls_y)
 
                 self.modified.emit(drag_idx, {'u':u, 'v':v})
+            elif self.drag_rm.isDragging():
+                drag_idx, rls_x, rls_y = self.drag_rm.release(e.x(), e.y())
+                u, v = self.pix_to_uv(rls_x, rls_y)
+                self.modified_vector.emit('right', u, v)
 
-        self.initdrag = False
+            elif self.drag_lm.isDragging():
+                drag_idx, rls_x, rls_y = self.drag_lm.release(e.x(), e.y())
+                u, v = self.pix_to_uv(rls_x, rls_y)
+                self.modified_vector.emit('left', u, v)
 
     def setBlackPen(self, qp):
         color = QtGui.QColor('#000000')
@@ -788,6 +808,8 @@ class plotHodo(backgroundHodo):
             self.srh3kmReadout.move(self.brx-130, self.bry-30)
         elif self.cursor_type == 'none':
             self.drag_hodo.drag(e.x(), e.y())
+            self.drag_rm.drag(e.x(), e.y())
+            self.drag_lm.drag(e.x(), e.y())
             self.update()
 
     def resizeEvent(self, e):
@@ -823,6 +845,8 @@ class plotHodo(backgroundHodo):
         '''
         self.plotBitMap = self.backgroundBitMap.copy()
         self.drag_hodo.setBackground(self.plotBitMap)    
+        self.drag_rm.setBackground(self.plotBitMap)    
+        self.drag_lm.setBackground(self.plotBitMap)    
 
     def plotData(self):
         '''

@@ -347,11 +347,11 @@ class plotSkewT(backgroundSkewT):
         self.readout = False
         self.readout_pres = 1000.
         self.initdrag = False
-        self.dragging = False
-        self.drag_idx = None
-        self.drag_prof = None
-        self.drag_buffer = 5
-        self.clickradius = 6
+#       self.dragging = False
+#       self.drag_idx = None
+#       self.drag_prof = None
+#       self.drag_buffer = 5
+#       self.clickradius = 6
         self.cursor_loc = None
         ## create the readout labels
         self.presReadout = QLabel(parent=self)

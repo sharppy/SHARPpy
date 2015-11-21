@@ -40,6 +40,12 @@ class Draggable(object):
         if restrictions is not None:
             drag_x, drag_y = restrictions(drag_x, drag_y)
 
+        if len(self._x_obj) == 1:
+            self._dragPoint(drag_x, drag_y)
+        else:
+            self._dragLine(drag_x, drag_y)
+
+    def _dragLine(self, drag_x, drag_y):
         lb_idx, ub_idx = max(self._drag_idx - 1, 0), min(self._drag_idx + 1, self._x_obj.shape[0] - 1)
 
         while lb_idx >= 0 and (self._x_obj.mask[lb_idx] or self._y_obj.mask[lb_idx]):
@@ -62,14 +68,8 @@ class Draggable(object):
         qp = QPainter()
         qp.begin(self._background)
 
-        if self._save_bitmap is not None:
-            (origin, size, bmap) = self._save_bitmap
-            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
-
-        origin = QPoint(max(lb_x - self._drag_buffer, 0), max(lb_y - self._drag_buffer, 0))
-        size = QSize(ub_x - lb_x + 2 * self._drag_buffer, ub_y - lb_y + 2 * self._drag_buffer)
-        bmap = self._background.copy(QRect(origin, size))
-        self._save_bitmap = (origin, size, bmap)
+        self._restoreBitmap(qp)
+        self._saveBitmap(lb_x, lb_y, ub_x, ub_y)
 
         pen = QPen(QColor(self._line_color), 1, Qt.SolidLine)
         qp.setPen(pen)
@@ -84,8 +84,21 @@ class Draggable(object):
 
         qp.end()
 
+    def _dragPoint(self, drag_x, drag_y):
+        qp = QPainter()
+        qp.begin(self._background)
+
+        self._restoreBitmap(qp)
+        self._saveBitmap(drag_x, drag_y, drag_x, drag_y)
+
+        pen = QPen(QColor(self._line_color), 1, Qt.SolidLine)
+        qp.setPen(pen)
+
+        qp.drawEllipse(QPointF(drag_x, drag_y), 3, 3)
+        qp.end()
+       
     def release(self, rls_x, rls_y, restrictions=None):
-        if not self._drag_idx:
+        if self._drag_idx is None:
             return
 
         if self._lock_dim == 'x':
@@ -119,3 +132,15 @@ class Draggable(object):
 
     def isDragging(self):
         return self._drag_idx is not None
+
+    def _saveBitmap(self, lb_x, lb_y, ub_x, ub_y):
+        origin = QPoint(max(lb_x - self._drag_buffer, 0), max(lb_y - self._drag_buffer, 0))
+        size = QSize(ub_x - lb_x + 2 * self._drag_buffer, ub_y - lb_y + 2 * self._drag_buffer)
+        bmap = self._background.copy(QRect(origin, size))
+        self._save_bitmap = (origin, size, bmap)
+
+    def _restoreBitmap(self, qp):
+        if self._save_bitmap is not None:
+            (origin, size, bmap) = self._save_bitmap
+            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
+
