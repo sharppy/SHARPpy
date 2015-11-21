@@ -294,6 +294,7 @@ class plotHodo(backgroundHodo):
     modified = Signal(int, dict)
     modified_vector = Signal(str, float, float)
     reset = Signal(list)
+    reset_vector = Signal()
 
     def __init__(self, **kwargs):
         '''
@@ -338,39 +339,16 @@ class plotHodo(backgroundHodo):
 
         ## the following is used for the dynamic readout
         self.setMouseTracking(True)
-        self.wndReadout = QLabel(parent=self)
-        self.srh1kmReadout = QLabel(parent=self)
         self.srh3kmReadout = QLabel(parent=self)
-        self.esrhReadout = QLabel(parent=self)
-
-        self.wndReadout.setFixedWidth(0)
-        self.srh1kmReadout.setFixedWidth(0)
         self.srh3kmReadout.setFixedWidth(0)
-        self.esrhReadout.setFixedWidth(0)
+
         ## these stylesheets have to be set for
         ## each readout
-        self.wndReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FFFFFF;}")
-        self.srh1kmReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FF0000;}")
         self.srh3kmReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #00FF00;}")
-        self.esrhReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0);"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #00FFFF;}")
-        self.hband = QRubberBand(QRubberBand.Line, self)
-        self.vband = QRubberBand(QRubberBand.Line, self)
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
@@ -383,13 +361,6 @@ class plotHodo(backgroundHodo):
         nocurs.setChecked(True)
         nocurs.triggered.connect(self.setNoCursor)
         a = ag.addAction(nocurs)
-        self.popupmenu.addAction(a)
-
-        storm_motion = QAction(self)
-        storm_motion.setText("Strm Motion Cursor")
-        storm_motion.setCheckable(True)
-        storm_motion.triggered.connect(self.setStormMotionCursor)
-        a = ag.addAction(storm_motion)
         self.popupmenu.addAction(a)
 
         bnd = QAction(self)
@@ -430,6 +401,11 @@ class plotHodo(backgroundHodo):
         reset.setText("Reset Hodograph")
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
         self.popupmenu.addAction(reset)
+
+        reset_vec = QAction(self)
+        reset_vec.setText("Reset Storm Motion")
+        reset_vec.triggered.connect(lambda: self.reset_vector.emit())
+        self.popupmenu.addAction(reset_vec)
 
     def addProfileCollection(self, prof_coll):
         self.prof_collections.append(prof_coll)
@@ -481,10 +457,7 @@ class plotHodo(backgroundHodo):
         self.track_cursor = True
         self.cursor_type = 'boundary'
         self.plotBndy(self.bndy_dir)
-        self.wndReadout.hide()
-        self.srh1kmReadout.hide()
         self.srh3kmReadout.show()
-        self.esrhReadout.hide()
         self.clearData()
         self.plotData()
         self.update()
@@ -494,28 +467,10 @@ class plotHodo(backgroundHodo):
         self.track_cursor = False 
         self.cursor_type = 'none'
         self.unsetCursor()
-        self.hband.hide()
-        self.vband.hide()
         self.clearData()
         self.plotData()
         self.update()
-        self.wndReadout.hide()
-        self.srh1kmReadout.hide()
         self.srh3kmReadout.hide()
-        self.esrhReadout.hide()
-        self.parentWidget().setFocus()
-
-    def setStormMotionCursor(self):
-        self.unsetCursor()
-        self.track_cursor = True
-        self.cursor_type = 'stormmotion'
-        self.wndReadout.show()
-        self.srh1kmReadout.show()
-        self.srh3kmReadout.show()
-        self.esrhReadout.show()      
-        self.clearData()
-        self.plotData()
-        self.update()
         self.parentWidget().setFocus()
 
     def showCursorMenu(self, pos):
@@ -526,6 +481,7 @@ class plotHodo(backgroundHodo):
         self.center_loc = 'centered'
         self.clearData()
         self.center_hodo(self.centered)
+        self.updateDraggables()
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -538,6 +494,7 @@ class plotHodo(backgroundHodo):
         self.center_loc = 'meanwind'
         self.clearData()
         self.center_hodo(self.centered)
+        self.updateDraggables()
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -548,6 +505,7 @@ class plotHodo(backgroundHodo):
         self.center_loc = 'stormrelative'
         self.clearData()
         self.center_hodo(self.centered)
+        self.updateDraggables()
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
@@ -571,12 +529,7 @@ class plotHodo(backgroundHodo):
         
         '''
         super(plotHodo, self).wheelEvent(e)
-        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
-        self.drag_hodo.setCoords(xs, ys)
-        rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
-        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
-        lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
-        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
+        self.updateDraggables()
 
     def mousePressEvent(self, e):
         '''
@@ -796,8 +749,8 @@ class plotHodo(backgroundHodo):
         
         '''
         if self.cursor_type == 'boundary':
-            self.hband.hide()
-            self.vband.hide()
+#           self.hband.hide()
+#           self.vband.hide()
             u, v = self.pix_to_uv(e.x(), e.y())
 
             ## get the direction and speed from u,v
@@ -811,6 +764,14 @@ class plotHodo(backgroundHodo):
             self.drag_rm.drag(e.x(), e.y())
             self.drag_lm.drag(e.x(), e.y())
             self.update()
+
+    def updateDraggables(self):
+        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
+        self.drag_hodo.setCoords(xs, ys)
+        rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
+        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
+        lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
+        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
 
     def resizeEvent(self, e):
         '''
@@ -1002,18 +963,30 @@ class plotHodo(backgroundHodo):
         qp.setPen(pen)
         ## check and make sure there is no missing data
         rstu,rstv,lstu,lstv = self.srwind
+        bkru,bkrv,bklu,bklv = self.prof.bunkers
 
         # make sure the storm motion exists
         if not tab.utils.QC(rstu) or not tab.utils.QC(lstu):
             return
 
         ## convert the left and right mover vector components to pixel values
-        ruu, rvv = self.uv_to_pix(rstu,rstv)
-        luu, lvv = self.uv_to_pix(lstu, lstv)
+        ruu, rvv = self.uv_to_pix(bkru, bkrv)
+        luu, lvv = self.uv_to_pix(bklu, bklv)
         ## calculate the center points of the storm motion vectors
+        center_rm = QtCore.QPointF(ruu, rvv)
+        center_lm = QtCore.QPointF(luu, lvv)
+        # Draw +'s at the bunkers vector locations
+        qp.drawLine(center_rm - QPoint(2, 0), center_rm + QPoint(2, 0))
+        qp.drawLine(center_rm - QPoint(0, 2), center_rm + QPoint(0, 2))
+        qp.drawLine(center_lm - QPoint(2, 0), center_lm + QPoint(2, 0))
+        qp.drawLine(center_lm - QPoint(0, 2), center_lm + QPoint(0, 2))
+
+        # Repeat for the user storm motion vectors
+        ruu, rvv = self.uv_to_pix(rstu,rstv)
+        luu, lvv = self.uv_to_pix(lstu,lstv)
         center_rm = QtCore.QPointF(ruu,rvv)
         center_lm = QtCore.QPointF(luu,lvv)
-        ## draw circles around the sorm motion vectors
+        ## draw circles around the storm motion vectors
         qp.drawEllipse(center_rm, 5, 5)
         qp.drawEllipse(center_lm, 5, 5)
 

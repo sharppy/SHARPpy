@@ -294,6 +294,9 @@ class ProfCollection(object):
         elif deviant == 'right':
             self._profs[self._highlight][self._prof_idx].set_srright(vec_u, vec_v)
 
+    def resetStormMotion(self):
+        self._profs[self._highlight][self._prof_idx].reset_srm()
+
     def interp(self, dp=-25):
         """
         Interpolate the profile object to a specific pressure level spacing.

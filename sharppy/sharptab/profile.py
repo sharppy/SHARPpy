@@ -150,7 +150,14 @@ class Profile(object):
             new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
 
         new_kwargs.update(kwargs)
-        return cls(**new_kwargs)
+        new_prof = cls(**new_kwargs)
+
+        if hasattr(prof, 'srwind'):
+            rmu, rmv, lmu, lmv = prof.srwind
+            new_prof.set_srright(rmu, rmv)
+            new_prof.set_srleft(lmu, lmv)
+
+        return new_prof
 
     def toFile(self, file_name):
         snd_file = open(file_name, 'w')
@@ -944,4 +951,8 @@ class ConvectiveProfile(BasicProfile):
 
     def set_srright(self, rm_u, rm_v):
         self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
+        self.get_kinematics()
+
+    def reset_srm(self):
+        self.user_srwind = self.bunkers
         self.get_kinematics()

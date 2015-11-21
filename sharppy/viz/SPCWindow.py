@@ -245,6 +245,7 @@ class SPCWidget(QWidget):
         self.hodo.modified.connect(self.modifyProf)
         self.hodo.modified_vector.connect(self.modifyVector)
         self.hodo.reset.connect(self.resetProfModifications)
+        self.hodo.reset_vector.connect(self.resetVector)
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
@@ -417,6 +418,11 @@ class SPCWidget(QWidget):
 
     def resetProfInterpolation(self):
         self.prof_collections[self.pc_idx].resetInterpolation()
+        self.updateProfs()
+        self.setFocus()
+
+    def resetVector(self):
+        self.prof_collections[self.pc_idx].resetStormMotion()
         self.updateProfs()
         self.setFocus()
 
