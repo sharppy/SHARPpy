@@ -108,8 +108,15 @@ def isHGHTValid(hght):
                         3.) if the height array is increasing with the index
                             and there are no repeat values.
     '''
-    idx_diff = np.ma.diff(hght)
     num_ok, total = numMasked(hght)
+
+    try:
+        hght = hght[~hght.mask]
+    except:
+        pass
+
+    idx_diff = np.ma.diff(hght)
+
     if np.all(idx_diff > 0) and num_ok > 1:
         return True
     else:

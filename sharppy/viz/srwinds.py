@@ -297,6 +297,9 @@ class plotWinds(backgroundWinds):
             srv = self.srv
             hgt = self.prof.hght
 
+        if len(sru) == 0 or len(srv) == 0 or len(hgt) == 0:
+            return
+
         interp_hght = np.arange(self.prof.hght[self.prof.sfc], min(hgt[-1], self.hmax * 1000.), 10)
         interp_sru = np.interp(interp_hght, hgt, sru)
         interp_srv = np.interp(interp_hght, hgt, srv)

@@ -159,8 +159,7 @@ class plotSlinky(backgroundSlinky):
         self.smu = self.prof.srwind[0]
         self.smv = self.prof.srwind[1]
 
-        if self.pcl is not None:
-            self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(prof, self.pcl, self.smu, self.smv)
+        self.pcl = None
 
         self.clearData()
         self.plotBackground()
