@@ -245,9 +245,13 @@ class SPCWidget(QWidget):
         self.sound.parcel.connect(self.defineUserParcel)
         self.sound.modified.connect(self.modifyProf)
         self.sound.reset.connect(self.resetProfModifications)
+        self.sound.cursor_toggle.connect(self.hodo.cursorToggle)
+        self.sound.cursor_move.connect(self.hodo.cursorMove)
 
         self.hodo.modified.connect(self.modifyProf)
+        self.hodo.modified_vector.connect(self.modifyVector)
         self.hodo.reset.connect(self.resetProfModifications)
+        self.hodo.reset_vector.connect(self.resetVector)
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
@@ -408,6 +412,12 @@ class SPCWidget(QWidget):
         self.updateProfs()
         self.setFocus()
 
+    @Slot(str, float, float)
+    def modifyVector(self, deviant, vec_u, vec_v):
+        self.prof_collections[self.pc_idx].modifyStormMotion(deviant, vec_u, vec_v)
+        self.updateProfs()
+        self.setFocus()
+
     def interpProf(self):
         self.prof_collections[self.pc_idx].interp()
         self.updateProfs()
@@ -421,6 +431,11 @@ class SPCWidget(QWidget):
 
     def resetProfInterpolation(self):
         self.prof_collections[self.pc_idx].resetInterpolation()
+        self.updateProfs()
+        self.setFocus()
+
+    def resetVector(self):
+        self.prof_collections[self.pc_idx].resetStormMotion()
         self.updateProfs()
         self.setFocus()
 

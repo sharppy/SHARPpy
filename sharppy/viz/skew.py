@@ -2,6 +2,7 @@ import numpy as np
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 from sharppy.sharptab.profile import Profile, create_profile
+from sharppy.viz.draggable import Draggable
 from sharppy.viz.barbs import drawBarb
 from PySide import QtGui, QtCore
 from PySide.QtGui import *
@@ -316,6 +317,8 @@ class backgroundSkewT(QtGui.QWidget):
 
 class plotSkewT(backgroundSkewT):
     modified = Signal(int, dict)
+    cursor_toggle = Signal(bool)
+    cursor_move = Signal(float)
     parcel = Signal(tab.params.Parcel)
     reset = Signal(list)
 
@@ -346,11 +349,6 @@ class plotSkewT(backgroundSkewT):
         self.readout = False
         self.readout_pres = 1000.
         self.initdrag = False
-        self.dragging = False
-        self.drag_idx = None
-        self.drag_prof = None
-        self.drag_buffer = 5
-        self.clickradius = 6
         self.cursor_loc = None
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
@@ -520,6 +518,13 @@ class plotSkewT(backgroundSkewT):
         self.wetbulb = prof.wetbulb
         self.interpWinds = kwargs.get('interpWinds', True)
 
+        trans_tmx = self.originx + self.tmpc_to_pix(self.tmpc, self.pres) / self.scale
+        trans_dwx = self.originx + self.tmpc_to_pix(self.dwpc, self.pres) / self.scale
+        trans_y = self.originy + self.pres_to_pix(self.pres) / self.scale
+
+        self.drag_tmpc = Draggable(trans_tmx, trans_y, self.plotBitMap, lock_dim='y', line_color="#9F0101")
+        self.drag_dwpc = Draggable(trans_dwx, trans_y, self.plotBitMap, lock_dim='y', line_color="#019B06")
+
         if kwargs.get('update_gui', True):
             self.clearData()
             self.plotData()
@@ -561,34 +566,37 @@ class plotSkewT(backgroundSkewT):
             self.plotData()
             self.update()
 
+    def _restTmpc(self, x, y):
+        xs, ys = self.drag_dwpc.getCoords()
+        idx = np.argmin(np.abs(y - ys))
+        return max(xs[idx], x),  y
+
+    def _restDwpc(self, x, y):
+        xs, ys = self.drag_tmpc.getCoords()
+        idx = np.argmin(np.abs(y - ys))
+        return min(xs[idx], x),  y
+
     def mouseReleaseEvent(self, e):
         if not self.was_right_click and self.readout:
             self.track_cursor = not self.track_cursor
             self.cursor_loc = e.pos()
-        if self.dragging:
-            trans_inv = self.transform.inverted()[0]
-            trans_x = (e.x() - self.originx) * self.scale
-            trans_y = (e.y() - self.originy) * self.scale
+
+        drag_idx = None
+        if self.drag_tmpc.isDragging():
+            drag_idx, rls_x, rls_y = self.drag_tmpc.release(e.x(), e.y(), restrictions=self._restTmpc)
+            prof_name = 'tmpc'
+        elif self.drag_dwpc.isDragging():
+            drag_idx, rls_x, rls_y = self.drag_dwpc.release(e.x(), e.y(), restrictions=self._restDwpc)
+            prof_name = 'dwpc'
+
+        if drag_idx is not None:
+            trans_x = (rls_x - self.originx) * self.scale
+            trans_y = (rls_y - self.originy) * self.scale
             tmpc = self.pix_to_tmpc(trans_x, trans_y)
-            prof_name, prof = self.drag_prof
-    
-            # looks like this if statement is to prevent supersaturated conditions
-            if prof_name == 'tmpc':
-                tmpc = max(tmpc, self.dwpc[self.drag_idx])
-            elif prof_name == 'dwpc':
-                tmpc = min(tmpc, self.tmpc[self.drag_idx])
 
-            self.modified.emit(self.drag_idx, {prof_name:tmpc})
-
-            self.drag_idx = None
-            self.dragging = False
-            self.saveBitMap = None
-
-        elif self.initdrag:
-            self.initdrag = False
+            self.modified.emit(drag_idx, {prof_name:tmpc})
 
         self.was_right_click = False
-        self.drag_prof = None
 
     def mousePressEvent(self, e):
         if self.prof is None:
@@ -597,59 +605,20 @@ class plotSkewT(backgroundSkewT):
         self.was_right_click = e.button() & QtCore.Qt.RightButton
 
         if not self.was_right_click and not self.readout:
-            self.initDrag(e)
-
-    def initDrag(self, e):
-        prof_ys = self.pres_to_pix(self.pres)
-        tmpc_xs = self.tmpc_to_pix(self.tmpc, self.pres)
-        dwpc_xs = self.tmpc_to_pix(self.dwpc, self.pres)
-
-        trans_x = (e.x() - self.originx) * self.scale
-        trans_y = (e.y() - self.originy) * self.scale
-
-        dist_tmpc = np.min(np.hypot(tmpc_xs - trans_x, prof_ys - trans_y))
-        dist_dwpc = np.min(np.hypot(dwpc_xs - trans_x, prof_ys - trans_y))
-
-        self.initdrag = True
-        if dist_tmpc <= self.clickradius and dist_dwpc > self.clickradius:
-            # Temperature was in the click radius and dewpoint wasn't; take the temperature
-            prof_name = 'tmpc'
-        elif dist_dwpc <= self.clickradius and dist_tmpc > self.clickradius:
-            # Dewpoint was within the click radius and temperature wasn't; take the dewpoint
-            prof_name = 'dwpc'
-        elif dist_tmpc <= self.clickradius and dist_dwpc <= self.clickradius:
-            # Both profiles have points within the click radius
-            if dist_tmpc < dist_dwpc:
-                # The temperature point is closer than the dewpoint point, so take the temperature
-                prof_name = 'tmpc'
-            elif dist_dwpc < dist_tmpc:
-                # The dewpoint point is closer than the temperature point, so take the dewpoint
-                prof_name = 'dwpc'
-            else:
-                # They were both the same distance away (probably a saturated profile).  If the click
-                #   was to the left, take the dewpoint, if it was to the right, take the temperature.
-                idx = np.argmin(np.abs(prof_ys - trans_y))
-                prof_x = self.tmpc_to_pix(self.tmpc[idx], self.pres[idx])
-                if trans_x < prof_x:
-                    prof_name = 'dwpc'
-                else:
-                    prof_name = 'tmpc'
-        else:
-            # Click wasn't within range of any points.  Move along, folks, nothing to see here.
-            self.initdrag = False
-
-        if self.initdrag:
-            self.drag_prof = (prof_name, self.__dict__[prof_name])
+            drag_started = False
+            for drag in [ self.drag_dwpc, self.drag_tmpc ]:
+                if not drag_started:
+                    drag_started = drag.click(e.x(), e.y())
 
     def mouseMoveEvent(self, e):
         if self.track_cursor:
             self.readout_pres = self.pix_to_pres((e.y() - self.originy) * self.scale)
             self.updateReadout()
 
-        elif self.initdrag or self.dragging:
-            self.dragging = True
-            self.initdrag = False
-            self.dragLine(e)
+        for drag, rest in [ (self.drag_dwpc, self._restDwpc), (self.drag_tmpc, self._restTmpc) ]:
+            drag.drag(e.x(), e.y(), restrictions=rest)
+
+        self.update()
 
     def updateReadout(self):
         y = self.originy + self.pres_to_pix(self.readout_pres) / self.scale
@@ -672,80 +641,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.move(self.brx-self.rpad, y - 15)
         self.dwpcReadout.move(self.brx-self.rpad, y+2)
         self.rubberBand.show()
-
-    def dragLine(self, e):
-        trans_x = (e.x() - self.originx) * self.scale
-        trans_y = (e.y() - self.originy) * self.scale
-        tmpc = self.pix_to_tmpc(trans_x, trans_y)
-
-        if self.drag_idx is None:
-            pres = self.pix_to_pres(trans_y)
-            idx = np.argmin(np.abs(pres - self.pres))
-            while self.tmpc.mask[idx] or self.dwpc.mask[idx]:
-                idx += 1
-            self.drag_idx = idx
-        else:
-            idx = self.drag_idx
- 
-        prof_name, drag_prof = self.drag_prof
-
-        if prof_name == 'tmpc':
-            tmpc = max(tmpc, self.dwpc[idx])
-        elif prof_name == 'dwpc':
-            tmpc = min(tmpc, self.tmpc[idx])
-
-        # Figure out the bounds of the box we need to update
-        if idx == 0 or self.pres.mask[idx - 1] or self.tmpc.mask[idx - 1] or self.dwpc.mask[idx - 1]:
-            lb_p, ub_p = self.pres[idx], self.pres[idx + 1]
-            t_points = [ (tmpc, self.pres[idx]), (drag_prof[idx + 1], self.pres[idx + 1]) ]
-        elif idx == self.pres.shape[0] - 1:
-            lb_p, ub_p = self.pres[idx - 1], self.pres[idx]
-            t_points = [ (drag_prof[idx - 1], self.pres[idx - 1]), (tmpc, self.pres[idx]) ]
-        else:
-            lb_p, ub_p = self.pres[idx - 1], self.pres[idx + 1]
-            t_points = [ (drag_prof[idx - 1], self.pres[idx - 1]), (tmpc, self.pres[idx]), (drag_prof[idx + 1], self.pres[idx + 1]) ]
-
-        x_points = [ self.tmpc_to_pix(*pt) for pt in t_points ]
-        lb_x = self.originx + min(x_points) / self.scale
-        ub_x = self.originx + max(x_points) / self.scale
-        lb_y = self.originy + self.pres_to_pix(ub_p) / self.scale
-        ub_y = self.originy + self.pres_to_pix(lb_p) / self.scale
-
-        qp = QtGui.QPainter()
-        qp.begin(self.plotBitMap)
-        # If we have something saved, restore it
-        if self.saveBitMap is not None:
-            origin, size, bmap = self.saveBitMap
-            qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
-
-        # Capture the new portion of the image to save
-        origin = QPoint(max(lb_x - self.drag_buffer, 0), max(lb_y - self.drag_buffer, 0))
-        size = QSize(ub_x - lb_x + 2 * self.drag_buffer, ub_y - lb_y + 2 * self.drag_buffer)
-        bmap = self.plotBitMap.copy(QRect(origin, size))
-        self.saveBitMap = (origin, size, bmap)
-
-        # Draw lines
-        if prof_name == 'dwpc':
-            color = QtGui.QColor("#019B06")
-        else:
-            color = QtGui.QColor("#9F0101")
-        pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-        if idx != 0 and not self.pres.mask[idx - 1] and not self.tmpc.mask[idx - 1] and not self.dwpc.mask[idx - 1]:
-            x1 = self.originx + self.tmpc_to_pix(drag_prof[idx - 1], self.pres[idx - 1]) / self.scale
-            x2 = self.originx + self.tmpc_to_pix(tmpc, self.pres[idx]) / self.scale
-            y1 = self.originy + self.pres_to_pix(self.pres[idx - 1]) / self.scale
-            y2 = self.originy + self.pres_to_pix(self.pres[idx]) / self.scale
-            qp.drawLine(x1, y1, x2, y2)
-        if idx != self.pres.shape[0] - 1:
-            x1 = self.originx + self.tmpc_to_pix(tmpc, self.pres[idx]) / self.scale
-            x2 = self.originx + self.tmpc_to_pix(drag_prof[idx + 1], self.pres[idx + 1]) / self.scale
-            y1 = self.originy + self.pres_to_pix(self.pres[idx]) / self.scale
-            y2 = self.originy + self.pres_to_pix(self.pres[idx + 1]) / self.scale
-            qp.drawLine(x1, y1, x2, y2)
-
-        qp.end()
-        self.update()
+        self.cursor_move.emit(hgt)
 
     def setReadoutCursor(self):
         self.parcelmenu.setEnabled(True)
@@ -756,6 +652,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.show()
         self.dwpcReadout.show()
         self.rubberBand.show()
+        self.cursor_toggle.emit(True)
         self.clearData()
         self.plotData()
         self.update()
@@ -770,6 +667,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.hide()
         self.dwpcReadout.hide()      
         self.rubberBand.hide()
+        self.cursor_toggle.emit(False)
         self.clearData()
         self.plotData()
         self.update()
@@ -793,6 +691,14 @@ class plotSkewT(backgroundSkewT):
 
     def wheelEvent(self, e):
         super(plotSkewT, self).wheelEvent(e)
+
+        trans_tmx = self.originx + self.tmpc_to_pix(self.tmpc, self.pres) / self.scale
+        trans_dwx = self.originx + self.tmpc_to_pix(self.dwpc, self.pres) / self.scale
+        trans_y = self.originy + self.pres_to_pix(self.pres) / self.scale
+
+        self.drag_tmpc.setCoords(trans_tmx, trans_y)
+        self.drag_dwpc.setCoords(trans_dwx, trans_y)
+
         self.plotBitMap.fill(QtCore.Qt.black)
         if self.readout:
             self.updateReadout()
@@ -812,7 +718,9 @@ class plotSkewT(backgroundSkewT):
         in the frame.
         '''
         self.plotBitMap = self.backgroundBitMap.copy(0, 0, self.width(), self.height())
-    
+        for drag in [ self.drag_dwpc, self.drag_tmpc ]:
+            drag.setBackground(self.plotBitMap)
+
     def plotData(self):
         '''
         Plot the data used in a Skew-T.

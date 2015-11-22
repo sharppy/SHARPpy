@@ -288,6 +288,15 @@ class ProfCollection(object):
         if 'u' in kwargs or 'v' in kwargs or 'wdir' in kwargs or 'wspd' in kwargs:
             self._mod_wind[self._prof_idx] = True
 
+    def modifyStormMotion(self, deviant, vec_u, vec_v):
+        if deviant == 'left':
+            self._profs[self._highlight][self._prof_idx].set_srleft(vec_u, vec_v)
+        elif deviant == 'right':
+            self._profs[self._highlight][self._prof_idx].set_srright(vec_u, vec_v)
+
+    def resetStormMotion(self):
+        self._profs[self._highlight][self._prof_idx].reset_srm()
+
     def interp(self, dp=-25):
         """
         Interpolate the profile object to a specific pressure level spacing.
