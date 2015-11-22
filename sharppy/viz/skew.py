@@ -317,6 +317,8 @@ class backgroundSkewT(QtGui.QWidget):
 
 class plotSkewT(backgroundSkewT):
     modified = Signal(int, dict)
+    cursor_toggle = Signal(bool)
+    cursor_move = Signal(float)
     parcel = Signal(tab.params.Parcel)
     reset = Signal(list)
 
@@ -347,11 +349,6 @@ class plotSkewT(backgroundSkewT):
         self.readout = False
         self.readout_pres = 1000.
         self.initdrag = False
-#       self.dragging = False
-#       self.drag_idx = None
-#       self.drag_prof = None
-#       self.drag_buffer = 5
-#       self.clickradius = 6
         self.cursor_loc = None
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
@@ -635,6 +632,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.move(self.brx-self.rpad, y - 15)
         self.dwpcReadout.move(self.brx-self.rpad, y+2)
         self.rubberBand.show()
+        self.cursor_move.emit(hgt)
 
     def setReadoutCursor(self):
         self.parcelmenu.setEnabled(True)
@@ -645,6 +643,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.show()
         self.dwpcReadout.show()
         self.rubberBand.show()
+        self.cursor_toggle.emit(True)
         self.clearData()
         self.plotData()
         self.update()
@@ -659,6 +658,7 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.hide()
         self.dwpcReadout.hide()      
         self.rubberBand.hide()
+        self.cursor_toggle.emit(False)
         self.clearData()
         self.plotData()
         self.update()

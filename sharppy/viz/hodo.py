@@ -51,6 +51,7 @@ class backgroundHodo(QtGui.QFrame):
             fsize = 9
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.critical_font = QtGui.QFont('Helvetica', fsize + 2)
+        self.readout_font = QtGui.QFont('Helvetica', 11)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.critical_metrics = QtGui.QFontMetrics( self.critical_font )
         self.label_height = self.label_metrics.xHeight() + 5
@@ -355,6 +356,9 @@ class plotHodo(backgroundHodo):
         self.popupmenu=QMenu("Cursor Type:")
         ag = QtGui.QActionGroup(self, exclusive=True)
 
+        self.readout_hght = -999.
+        self.readout_visible = False
+
         nocurs = QAction(self)
         nocurs.setText("No Cursor")
         nocurs.setCheckable(True)
@@ -552,9 +556,7 @@ class plotHodo(backgroundHodo):
             self.drag_hodo.click(e.x(), e.y())
 
     def mouseReleaseEvent(self, e):
-        if self.cursor_type == 'stormmotion' and not self.was_right_click:
-            self.track_cursor = not self.track_cursor
-        elif self.cursor_type == 'boundary' and not self.was_right_click:
+        if self.cursor_type == 'boundary' and not self.was_right_click:
             if self.track_cursor:
                 qp = QtGui.QPainter()
                 self.bndy_u, self.bndy_v = self.pix_to_uv(e.x(), e.y())
@@ -773,6 +775,16 @@ class plotHodo(backgroundHodo):
         lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
         self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
 
+    @Slot(bool)
+    def cursorToggle(self, toggle):
+        self.readout_visible = toggle
+        self.update()
+
+    @Slot(float)
+    def cursorMove(self, hght):
+        self.readout_hght = hght
+        self.update()
+
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
@@ -794,10 +806,38 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
+
+        if self.prof:
+            draw_readout = self.readout_visible and self.readout_hght >= 0 and self.readout_hght <= 12000.
+        else:
+            draw_readout = False
+
+        if draw_readout:
+            hght_agl = tab.interp.to_agl(self.prof, self.prof.hght)
+            u_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.u)
+            v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
+
+            wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+            xx, yy = self.uv_to_pix(u_interp, v_interp)
+            readout = "%03d/%02d kts" % (wd_interp, ws_interp)
+
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
+
+        if draw_readout:
+            h_offset = 2; v_offset=5; width = 55; hght = 16;
+            text_rect = QtCore.QRectF(xx+h_offset, yy+v_offset, width, hght)
+            qp.fillRect(text_rect, QtGui.QColor("#000000"))
+
+            qp.setPen(QtGui.QPen(QtGui.QColor("#FFFFFF"), 1))
+            qp.drawEllipse(QPointF(xx, yy), 4, 4)
+            ## now make the pen white and draw text using
+            ## the invisible rectangles
+            qp.setFont(self.readout_font)
+            qp.drawText(text_rect, QtCore.Qt.AlignCenter, readout)
+
         qp.end()
     
     def clearData(self):

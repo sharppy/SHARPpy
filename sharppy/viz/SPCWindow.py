@@ -241,6 +241,8 @@ class SPCWidget(QWidget):
         self.sound.parcel.connect(self.defineUserParcel)
         self.sound.modified.connect(self.modifyProf)
         self.sound.reset.connect(self.resetProfModifications)
+        self.sound.cursor_toggle.connect(self.hodo.cursorToggle)
+        self.sound.cursor_move.connect(self.hodo.cursorMove)
 
         self.hodo.modified.connect(self.modifyProf)
         self.hodo.modified_vector.connect(self.modifyVector)
