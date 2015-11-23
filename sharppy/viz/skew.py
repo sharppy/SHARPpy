@@ -348,8 +348,9 @@ class plotSkewT(backgroundSkewT):
         self.track_cursor = False
         self.readout = False
         self.readout_pres = 1000.
-        self.initdrag = False
         self.cursor_loc = None
+        self.drag_tmpc = None
+        self.drag_dwpc = None
         ## create the readout labels
         self.presReadout = QLabel(parent=self)
         self.hghtReadout = QLabel(parent=self)
@@ -440,7 +441,7 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
 
-        #odify_sfc = QAction(self)
+        #modify_sfc = QAction(self)
         #modify_sfc.setText("Modify Surface")
         #modify_sfc.setCheckable(True)
         #modify_sfc.setEnabled(False)
@@ -719,7 +720,8 @@ class plotSkewT(backgroundSkewT):
         '''
         self.plotBitMap = self.backgroundBitMap.copy(0, 0, self.width(), self.height())
         for drag in [ self.drag_dwpc, self.drag_tmpc ]:
-            drag.setBackground(self.plotBitMap)
+            if drag is not None:
+                drag.setBackground(self.plotBitMap)
 
     def plotData(self):
         '''
