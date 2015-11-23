@@ -335,12 +335,13 @@ class MapWidget(QtGui.QWidget):
 
         self.async = async
         self.setDataSource(data_source, init_time, init=True)
-
         self.setWindowTitle('SHARPpy')
 
         if not init_from_config:
             self.resetViewport()
             self.saveProjection(config)
+
+        self.pt_x, self.pt_y = None, None
 
         self.initMap()
         self.initUI()
@@ -492,6 +493,8 @@ class MapWidget(QtGui.QWidget):
         self.drawStations(qp)
         qp.end()
 
+        
+
     def drawStations(self, qp):
         stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
         lb_lat, ub_lat = self.mapper.getLatBounds()
@@ -520,6 +523,9 @@ class MapWidget(QtGui.QWidget):
             qp.setPen(QtGui.QPen(color))
             qp.setBrush(QtGui.QBrush(color))
             qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
+
+        if self.cur_source.getName() == "Local WRF-ARW" and self.pt_x != None:
+            qp.drawEllipse(QtCore.QPointF(self.pt_x, self.pt_y), size, size)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
@@ -577,6 +583,13 @@ class MapWidget(QtGui.QWidget):
 
                 self.drawMap()
                 self.update()
+        if not self.dragging and self.cur_source.getName() == "Local WRF-ARW":
+            trans_inv, is_invertible = self.transform.inverted()
+            self.pt_x, self.pt_y = trans_inv.map(e.x(), e.y())
+            lat, lon = self.mapper(self.pt_x, self.pt_y, inverse=True)
+            self.clicked.emit((lon, lat))
+            self.drawMap()
+            self.update()
 
         self.dragging = False
 
