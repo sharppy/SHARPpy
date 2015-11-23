@@ -558,7 +558,7 @@ class plotSkewT(backgroundSkewT):
             self.update()
 
     def setColors(self, update_gui=True, **kwargs):
-        for key, val in kwargs:
+        for key, val in kwargs.iteritems():
             setattr(self, key, val)
 
         if update_gui:

@@ -67,10 +67,10 @@ class PrefDialog(QDialog):
         main_layout.addLayout(self.layout)
         main_layout.addLayout(button_layout)
 
-        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Temperature Units", ["Fahrenheit", "Celsius"], default=self._config.get('preferences', 'temp_units'))
+        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Temperature Units", ["Fahrenheit", "Celsius"], default=self._config['preferences', 'temp_units'])
         self.layout.addWidget(temp_units_box, 0, 0, 1, 1)
 
-        wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config.get('preferences', 'wind_units'))
+        wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
         self.layout.addWidget(wind_units_box, 1, 0, 1, 1)
 
         colors_box = QGroupBox("Colors")
@@ -80,7 +80,7 @@ class PrefDialog(QDialog):
 
         self.colors = {}
         for cid, cname in PrefDialog._color_names.iteritems():
-            cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config.get('preferences', cid))
+            cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config['preferences', cid])
             colors_layout.addWidget(cbox)
 
         self.layout.addWidget(colors_box, 2, 0, 1, 1)
@@ -124,14 +124,14 @@ class PrefDialog(QDialog):
     def _applyRadio(self, config_name, radio):
         for radio_name, rad in radio.iteritems():
             if rad.isChecked():
-                self._config.set('preferences', config_name, radio_name)
+                self._config['preferences', config_name] = radio_name
 
     def applyChanges(self):
         self._applyRadio('temp_units', self.temp_units)
         self._applyRadio('wind_units', self.wind_units)
 
         for cid, cbox in self.colors.iteritems():
-            self._config.set('preferences', cid, cbox.getHexColor())
+            self._config['preferences', cid] = cbox.getHexColor()
 
         self.accept()
 
@@ -140,9 +140,11 @@ class PrefDialog(QDialog):
 
     @staticmethod
     def initConfig(config):
-        if not config.has_section('preferences'):
-            config.add_section('preferences')
-            config.set('preferences', 'temp_units', 'Fahrenheit')
-            config.set('preferences', 'wind_units', 'knots')
-            config.set('preferences', 'temp_color', '#ff0000')
-            config.set('preferences', 'dewp_color', '#00ff00')
+        pref_config = {
+            ('preferences', 'temp_units'):'Fahrenheit',
+            ('preferences', 'wind_units'):'knots',
+            ('preferences', 'temp_color'):'#ff0000',
+            ('preferences', 'dewp_color'):'#00ff00',
+        }
+
+        config.initialize(pref_config)

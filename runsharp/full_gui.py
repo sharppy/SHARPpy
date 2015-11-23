@@ -38,7 +38,7 @@ import datetime as date
 from functools import wraps, partial
 import cProfile
 from os.path import expanduser
-import ConfigParser
+from utils.config import Config
 import traceback
 from functools import wraps, partial
 
@@ -161,8 +161,8 @@ class Picker(QWidget):
         self.model_dropdown.setCurrentIndex(models.index(self.model))
 
         projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
-        if self.config.has_section('map'):
-            proj = self.config.get('map', 'proj')
+        if ('map', 'proj') in self.config:
+            proj = self.config['map', 'proj']
             proj_idx = zip(*projs)[0].index(proj)
         else:
             proj_idx = 0
@@ -463,6 +463,7 @@ class Picker(QWidget):
             if self.skew is None:
                 # If the SPCWindow isn't shown, set it up.
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
+                self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
 
@@ -526,7 +527,7 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     return profs
 
 class Main(QMainWindow):
-    config_changed = Signal(ConfigParser.RawConfigParser)
+    config_changed = Signal(Config)
 
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
     cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
@@ -538,11 +539,15 @@ class Main(QMainWindow):
         super(Main, self).__init__()
 
         ## All of these variables get set/reset by the various menus in the GUI
-        self.config = ConfigParser.RawConfigParser()
-        self.config.read(Main.cfg_file_name)
-        if not self.config.has_section('paths'):
-            self.config.add_section('paths')
-            self.config.set('paths', 'load_txt', expanduser('~'))
+#       self.config = ConfigParser.RawConfigParser()
+#       self.config.read(Main.cfg_file_name)
+#       if not self.config.has_section('paths'):
+#           self.config.add_section('paths')
+#           self.config.set('paths', 'load_txt', expanduser('~'))
+        self.config = Config(Main.cfg_file_name)
+        paths_init = { ('paths', 'load_txt'):expanduser("~") }
+        self.config.initialize(paths_init)
+
         PrefDialog.initConfig(self.config)
 
         self.__initUI()
@@ -596,7 +601,7 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        path = self.config.get('paths', 'load_txt')
+        path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
         
@@ -604,7 +609,7 @@ class Main(QMainWindow):
             return
 
         path = os.path.dirname(link[0])
-        self.config.set('paths', 'load_txt', path)
+        self.config['paths', 'load_txt'] = path
 
         # Loop through all of the files selected and load them into the SPCWindow 
         for l in link:
@@ -667,7 +672,7 @@ i
         """
         Handles close events (gets called when the window closes).
         """
-        self.config.write(open(Main.cfg_file_name, 'w'))
+        self.config.toFile()
 
 def main():
     @crasher(exit=True)

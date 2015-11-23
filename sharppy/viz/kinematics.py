@@ -191,8 +191,8 @@ class plotKinematics(backgroundKinematics):
             self.srw_ebw = tab.utils.comp2vec(srw_ebw[0], srw_ebw[1])
 
         self.brn_shear = prof.mupcl.brnshear
-        self.bunkers_right_vec = tab.utils.comp2vec(prof.srwind[0], prof.srwind[1])
-        self.bunkers_left_vec = tab.utils.comp2vec(prof.srwind[2], prof.srwind[3])
+        self.bunkers_right_vec = tab.utils.comp2vec(prof.bunkers[0], prof.bunkers[1])
+        self.bunkers_left_vec = tab.utils.comp2vec(prof.bunkers[2], prof.bunkers[3])
         self.upshear = tab.utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(prof.upshear_downshear[2],prof.upshear_downshear[3])
 

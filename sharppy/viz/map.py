@@ -280,18 +280,18 @@ class MapWidget(QtGui.QWidget):
         self.has_internet = True
 
         self.init_scale = 0.6
-        if config is None or not config.has_section('map'):
+        if config is None or not ('map', 'proj') in config:
             self.scale = self.init_scale
             self.map_center_x, self.map_center_y = 0., 0.
             std_lon = -97.5
             proj = 'npstere'
             init_from_config = False
         else:
-            proj = config.get('map', 'proj')
-            std_lon = float(config.get('map', 'std_lon'))
-            self.scale = float(config.get('map', 'scale'))
-            self.map_center_x = float(config.get('map', 'center_x'))
-            self.map_center_y = float(config.get('map', 'center_y'))
+            proj = config['map', 'proj']
+            std_lon = float(config['map', 'std_lon'])
+            self.scale = float(config['map', 'scale'])
+            self.map_center_x = float(config['map', 'center_x'])
+            self.map_center_y = float(config['map', 'center_y'])
             init_from_config = True
 
         self.mapper = Mapper(std_lon, 60., proj=proj)
@@ -617,13 +617,11 @@ class MapWidget(QtGui.QWidget):
         map_center_x = self.map_center_x + (self.default_width  - self.width() ) / 2.
         map_center_y = self.map_center_y + (self.default_height - self.height()) / 2.
 
-        if not config.has_section('map'):
-            config.add_section('map')
-        config.set('map', 'proj', self.mapper.getProjection())
-        config.set('map', 'std_lon', self.mapper.getLambda0())
-        config.set('map', 'scale', self.scale)
-        config.set('map', 'center_x', map_center_x)
-        config.set('map', 'center_y', map_center_y)
+        config['map', 'proj']     = self.mapper.getProjection()
+        config['map', 'std_lon']  = self.mapper.getLambda0()
+        config['map', 'scale']    = self.scale
+        config['map', 'center_x'] = map_center_x
+        config['map', 'center_y'] = map_center_y
 
     def hasInternet(self, has_connection):
         self.has_internet = has_connection
