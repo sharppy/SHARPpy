@@ -5,23 +5,43 @@ from PySide.QtGui import *
 from collections import OrderedDict
 
 class ColorSwatch(QWidget):
+    """
+    A color swatch widget for displaying and selecting colors.
+    """
     def __init__(self, color, parent=None):
+        """
+        Construct a ColorSwatch class
+        color:  A QColor specifying the starting color for the swatch.
+        """
         super(ColorSwatch, self).__init__(parent=parent)
         self._color = color
 
     def setColor(self, new_color):
+        """
+        Set the color of the swatch.
+        new_color:  A QColor containing the new color.
+        """
         self._color = new_color
 
     def getColor(self):
+        """
+        Returns the current color as a QColor
+        """
         return self._color
 
     def getHexColor(self):
+        """
+        Returns the current color as a hex string.
+        """
         red = "%02x" % self.getColor().red()
         green = "%02x" % self.getColor().green()
         blue = "%02x" % self.getColor().blue()
         return "#%s%s%s" % (red, green, blue)
 
     def paintEvent(self, e):
+        """
+        Paint event handler
+        """
         qp = QPainter()
         qp.begin(self)
         qp.setBrush(QBrush(self._color))
@@ -29,25 +49,45 @@ class ColorSwatch(QWidget):
         qp.end()
 
     def mousePressEvent(self, e):
+        """
+        Mouse press event handler (opens a dialog to select a new color for the swatch).
+        """
         color_choice = QColorDialog.getColor(self.getColor()) 
         if color_choice.isValid():
             self.setColor(color_choice)
 
     def enterEvent(self, e):
+        """
+        Enter event handler (sets the cursor to a pointing hand).
+        """
         self.setCursor(Qt.PointingHandCursor)
 
     def leaveEvent(self, e):
+        """
+        Leave event handler (sets the cursor to whatever it was before).
+        """
         self.unsetCursor()
 
 class PrefDialog(QDialog):
+    """
+    The preferences dialog box for SHARPpy.
+    """
+
     _color_names = OrderedDict([('temp_color', 'Temperature'), ('dewp_color', 'Dewpoint')])
     def __init__(self, config, parent=None):
+        """
+        Construct the preferences dialog box.
+        config: A Config object containing the user's configuration.
+        """
         super(PrefDialog, self).__init__(parent=parent)
         self._config = config
 
         self.__initUI()
 
     def __initUI(self):
+        """
+        Set up the user interface [private method].
+        """
         self.setWindowTitle("SHARPpy Preferences")
         main_layout = QVBoxLayout()
         button_layout = QHBoxLayout()
@@ -87,6 +127,13 @@ class PrefDialog(QDialog):
 
     @staticmethod
     def _createColorBox(name, default_color):
+        """
+        Create a color swatch and label [private static method]
+        name:   The label on the color swatch.
+        default_color:  The starting color for the swatch as a hex string.
+
+        Returns a QWidget and a ColorSwatch object.
+        """
         swatch = ColorSwatch(QColor(default_color))
         swatch.setMaximumWidth(40)
 
@@ -103,6 +150,15 @@ class PrefDialog(QDialog):
 
     @staticmethod
     def _createRadioSet(set_name, opt_names, default=None, orientation='horizontal'):
+        """
+        Create a set of radio buttons [private static method]
+        set_name:    Name of the group of buttons
+        opt_names:   A list of names for the radio buttons.
+        default:     The name of the button to be selected initially.
+        orientation: The direction to arrange the radio buttons. Accepted values are 'horizontal'
+                        and 'vertical'. Default is 'horizontal'.
+        Returns a QGroupBox and a dictionary with names as keys of QRadioButton's as values.
+        """
         radios = {}
         radio_box = QGroupBox(set_name)
 
@@ -122,11 +178,19 @@ class PrefDialog(QDialog):
         return radio_box, radios
 
     def _applyRadio(self, config_name, radio):
+        """
+        Apply the radio button selection to the configuration [private method].
+        config_name:    Field in the configuration file to set.
+        radio:          Dictionary with names of the radio buttons as keys and QRadioButtons as values.
+        """
         for radio_name, rad in radio.iteritems():
             if rad.isChecked():
                 self._config['preferences', config_name] = radio_name
 
     def applyChanges(self):
+        """
+        Apply the state of the preferences box to the configuration and close the box.
+        """
         self._applyRadio('temp_units', self.temp_units)
         self._applyRadio('wind_units', self.wind_units)
 
@@ -136,10 +200,17 @@ class PrefDialog(QDialog):
         self.accept()
 
     def rejectChanges(self):
+        """
+        Close the box without applying the changes to the configuration.
+        """
         self.reject()
 
     @staticmethod
     def initConfig(config):
+        """
+        Initialize the configuration with the user preferences [static method].
+        config: A Config object containing the configuration.
+        """
         pref_config = {
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',

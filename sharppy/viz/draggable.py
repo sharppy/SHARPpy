@@ -5,7 +5,21 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 
 class Draggable(object):
+    """
+    The Draggable class implements low-level clicking and dragging on widgets.
+    """
     def __init__(self, x_obj, y_obj, background, cutoff=5, lock_dim=None, line_color='#FFFFFF'):
+        """
+        Construct a draggable object
+        x_obj:  Numpy array or Python float containing the x coordinate(s) in pixels of the draggable object.
+        y_obj:  Numpy array or Python float containing the y coordinate(s) in pixels of the draggable object.
+        background: A QPixmap containing the image displayed in the widget.
+        cutoff: The radius of the buffer around each vertex when looking for clicks. Default is 5 px.
+        lock_dim: A dimension to lock in place when doing the dragging. Allowed values are 'x' (dragging
+                    is allowed in the y dimension only), 'y' (dragging is allowed in the x direction 
+                    only). Default is to allow dragging in both dimensions.
+        line_color: The color to use for the line drawn while dragging.
+        """
         self._background = background
         self._x_obj = x_obj
         self._y_obj = y_obj
@@ -22,6 +36,13 @@ class Draggable(object):
             self._y_obj = np.ma.array([ self._y_obj ])
 
     def click(self, click_x, click_y):
+        """
+        Check to see whether the user clicked on a vertex in this profile. If they did, initialize
+            the drag operation.
+        click_x:    x coordinate in pixels of the click
+        click_y:    y coordinate in pixels of the click
+        Returns a boolean specifying whether a drag operation was initialized.
+        """
         dists = np.hypot(click_x - self._x_obj, click_y - self._y_obj)
         if np.any(dists <= self._cutoff):
             self._drag_idx = np.argmin(dists)
@@ -29,6 +50,16 @@ class Draggable(object):
         return self._drag_idx is not None
 
     def drag(self, drag_x, drag_y, restrictions=None):
+        """
+        Drag a point or a vertex in a line. Applies restrictions to the drag point based on the lock_dim
+            argument to the constructor and the restrictions argument to this method.
+        drag_x: x coordinate in pixels of the point to drag to.
+        drag_y: y coordinate in pixels of the point to drag to.
+        restrictions:   A callable object (e.g. callback function) that takes two arguments (x and y 
+                            coordinates) and returns a modified x and y based on restrictions on the
+                            dragging. Used, for example, to restrict dragging on the temperature line
+                            to be greater than the dewpoint.
+        """
         if self._drag_idx is None:
             return
 
@@ -46,6 +77,11 @@ class Draggable(object):
             self._dragLine(drag_x, drag_y)
 
     def _dragLine(self, drag_x, drag_y):
+        """
+        Drag a line [private method].
+        drag_x: x coordinate in pixels of the drag point.
+        drag_y: y coordinate in pixels of the drag point.
+        """
         lb_idx, ub_idx = max(self._drag_idx - 1, 0), min(self._drag_idx + 1, self._x_obj.shape[0] - 1)
 
         while lb_idx >= 0 and (self._x_obj.mask[lb_idx] or self._y_obj.mask[lb_idx]):
@@ -85,6 +121,11 @@ class Draggable(object):
         qp.end()
 
     def _dragPoint(self, drag_x, drag_y):
+        """
+        Drag a point [private method].
+        drag_x: x coordinate in pixels of the drag point
+        drag_y: y coordinate in pixels of the drag point
+        """
         qp = QPainter()
         qp.begin(self._background)
 
@@ -98,6 +139,12 @@ class Draggable(object):
         qp.end()
        
     def release(self, rls_x, rls_y, restrictions=None):
+        """
+        Release the drag, which finishes the drag operation.
+        rls_x:  x coordinate in pixels of the release point
+        rls_y:  y coordinate in pixels of the release point
+        restrictions: [See the release argument to the drag method]
+        """
         if self._drag_idx is None:
             return
 
@@ -118,28 +165,59 @@ class Draggable(object):
         return drag_idx, rls_x, rls_y
 
     def setBackground(self, background):
+        """
+        Change the background pixmap.
+        background: A QPixmap containing the new background
+        """
         self._background = background
 
     def setCoords(self, x_obj, y_obj):
+        """
+        Change the coordinates.
+        x_obj:  x coordinate(s) in pixels of the new object
+        y_obj:  y coordinate(s) in pixesl of the new object
+        """
         self._x_obj = x_obj
         self._y_obj = y_obj
 
     def getBackground(self):
+        """
+        Returns the current background as a QPixmap
+        """
         return self._background
 
     def getCoords(self):
+        """
+        Returns the current coordinates as numpy arrays
+        """
         return self._x_obj, self._y_obj
 
     def isDragging(self):
+        """
+        Returns a boolean specifying whether or not this object is in the 
+        middle of a drag operation.
+        """
         return self._drag_idx is not None
 
     def _saveBitmap(self, lb_x, lb_y, ub_x, ub_y):
+        """
+        Save a section of the background image [private method]. A 5 px buffer is applied 
+            in all directions.
+        lb_x:   Lower bound on the x coordinate in pixels.
+        ub_x:   Upper bound on the x coordinate in pixels.
+        lb_y:   Lower bound on the y coordinate in pixels.
+        ub_y:   Upper bound on the y coordinate in pixels.
+        """
         origin = QPoint(max(lb_x - self._drag_buffer, 0), max(lb_y - self._drag_buffer, 0))
         size = QSize(ub_x - lb_x + 2 * self._drag_buffer, ub_y - lb_y + 2 * self._drag_buffer)
         bmap = self._background.copy(QRect(origin, size))
         self._save_bitmap = (origin, size, bmap)
 
     def _restoreBitmap(self, qp):
+        """
+        Restore the section of the background image saved by _saveBitmap [private method].
+        qp: A QPainter to use to draw the bitmap.
+        """
         if self._save_bitmap is not None:
             (origin, size, bmap) = self._save_bitmap
             qp.drawPixmap(origin, bmap, QRect(QPoint(0, 0), size))
