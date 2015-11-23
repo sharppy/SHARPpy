@@ -17,7 +17,7 @@ except (ImportError):
     "No netCDF install found. Cannot read netCDF file."
     sys.exit()
 
-__fmtname__ = "wrf_arw"
+__fmtname__ = "wrf-arw"
 __classname__ = "ARWDecoder"
 
 
