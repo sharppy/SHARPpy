@@ -949,11 +949,14 @@ class ConvectiveProfile(BasicProfile):
     def set_srleft(self, lm_u, lm_v):
         self.user_srwind = self.user_srwind[:2] + (lm_u, lm_v)
         self.get_kinematics()
+        self.get_severe()
 
     def set_srright(self, rm_u, rm_v):
         self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
         self.get_kinematics()
+        self.get_severe()
 
     def reset_srm(self):
         self.user_srwind = self.bunkers
         self.get_kinematics()
+        self.get_severe()
