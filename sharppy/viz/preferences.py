@@ -113,6 +113,9 @@ class PrefDialog(QDialog):
         wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
         self.layout.addWidget(wind_units_box, 1, 0, 1, 1)
 
+        calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
+        self.layout.addWidget(calc_vector_box, 2, 0, 1, 1)
+
         colors_box = QGroupBox("Colors")
         colors_layout = QVBoxLayout()
         colors_layout.setContentsMargins(22, 4, 22, 4)
@@ -123,7 +126,7 @@ class PrefDialog(QDialog):
             cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config['preferences', cid])
             colors_layout.addWidget(cbox)
 
-        self.layout.addWidget(colors_box, 2, 0, 1, 1)
+        self.layout.addWidget(colors_box, 3, 0, 1, 1)
 
     @staticmethod
     def _createColorBox(name, default_color):
@@ -193,6 +196,7 @@ class PrefDialog(QDialog):
         """
         self._applyRadio('temp_units', self.temp_units)
         self._applyRadio('wind_units', self.wind_units)
+        self._applyRadio('calc_vector', self.calc_vector)
 
         for cid, cbox in self.colors.iteritems():
             self._config['preferences', cid] = cbox.getHexColor()
@@ -214,6 +218,9 @@ class PrefDialog(QDialog):
         pref_config = {
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',
+
+            ('preferences', 'calc_vector'):'Right Mover',
+
             ('preferences', 'temp_color'):'#ff0000',
             ('preferences', 'dewp_color'):'#00ff00',
         }
