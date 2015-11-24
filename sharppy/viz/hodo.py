@@ -874,7 +874,7 @@ class plotHodo(backgroundHodo):
             draw_readout = False
 
         if draw_readout:
-            hght_agl = tab.interp.to_agl(self.prof, self.prof.hght)
+            hght_agl = tab.interp.to_agl(self.prof, self.hght)
             u_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.u)
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
 
