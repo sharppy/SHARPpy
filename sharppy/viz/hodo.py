@@ -359,12 +359,12 @@ class plotHodo(backgroundHodo):
 
         ## the following is used for the dynamic readout
         self.setMouseTracking(True)
-        self.srh3kmReadout = QLabel(parent=self)
-        self.srh3kmReadout.setFixedWidth(0)
+        self.bndyReadout = QLabel(parent=self)
+        self.bndyReadout.setFixedWidth(0)
 
         ## these stylesheets have to be set for
         ## each readout
-        self.srh3kmReadout.setStyleSheet("QLabel {"
+        self.bndyReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0);"
             "  border-width: 0px;"
             "  font-size: 11px;"
@@ -492,7 +492,7 @@ class plotHodo(backgroundHodo):
         self.track_cursor = True
         self.cursor_type = 'boundary'
         self.plotBndy(self.bndy_dir)
-        self.srh3kmReadout.show()
+        self.bndyReadout.show()
         self.clearData()
         self.plotData()
         self.update()
@@ -505,7 +505,7 @@ class plotHodo(backgroundHodo):
         self.clearData()
         self.plotData()
         self.update()
-        self.srh3kmReadout.hide()
+        self.bndyReadout.hide()
         self.parentWidget().setFocus()
 
     def showCursorMenu(self, pos):
@@ -818,9 +818,9 @@ class plotHodo(backgroundHodo):
             ## get the direction and speed from u,v
             dir, spd = tab.utils.comp2vec(u,v)
             self.plotBndy(dir)
-            self.srh3kmReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
-            self.srh3kmReadout.setFixedWidth(120)
-            self.srh3kmReadout.move(self.brx-130, self.bry-30)
+            self.bndyReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
+            self.bndyReadout.setFixedWidth(120)
+            self.bndyReadout.move(self.brx-130, self.bry-30)
         elif self.cursor_type == 'none':
             self.drag_hodo.drag(e.x(), e.y())
             self.drag_rm.drag(e.x(), e.y())
@@ -1179,7 +1179,7 @@ class plotHodo(backgroundHodo):
 
             if tab.utils.QC(rstu) and tab.utils.QC(lstu):
                 qp = self.setBlackPen(qp)
-                rect = QtCore.QRectF(15, self.bry-36, 140, self.critical_height + 5)
+                rect = QtCore.QRectF(15, self.bry-36, 100, self.critical_height + 5)
                 qp.drawRect(rect)     
                 ca_text_color = QtGui.QColor("#00FFFF")
                 pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
