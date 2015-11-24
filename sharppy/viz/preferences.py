@@ -107,7 +107,7 @@ class PrefDialog(QDialog):
         main_layout.addLayout(self.layout)
         main_layout.addLayout(button_layout)
 
-        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Temperature Units", ["Fahrenheit", "Celsius"], default=self._config['preferences', 'temp_units'])
+        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Surface Temperature Units", ["Fahrenheit", "Celsius"], default=self._config['preferences', 'temp_units'])
         self.layout.addWidget(temp_units_box, 0, 0, 1, 1)
 
         wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])

@@ -343,6 +343,8 @@ class plotSkewT(backgroundSkewT):
         self.ens_dewp_color = kwargs.get('ens_dewp_color', '#008800')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
         self.background_color = kwargs.get('background_color', '#6666CC')
+        self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
+        self.wind_units = kwargs.get('wind_units', 'knots')
         self.setMouseTracking(True)
         self.was_right_click = False
         self.track_cursor = False
@@ -558,9 +560,11 @@ class plotSkewT(backgroundSkewT):
             self.plotData()
             self.update()
 
-    def setColors(self, update_gui=True, **kwargs):
-        for key, val in kwargs.iteritems():
-            setattr(self, key, val)
+    def setPreferences(self, update_gui=True, **kwargs):
+        self.temp_color = kwargs['temp_color']
+        self.dewp_color = kwargs['dewp_color']
+        self.sfc_units = kwargs['temp_units']
+        self.wind_units = kwargs['wind_units']
 
         if update_gui:
             self.clearData()
@@ -819,6 +823,8 @@ class plotSkewT(backgroundSkewT):
             for y in yvals:
                 dd = wdir[i]
                 ss = wspd[i]
+                if self.wind_units == 'm/s':
+                    ss = tab.utils.KTS2MS(ss)
                 drawBarb( qp, self.barbx, y, dd, vv )
                 i += 1
         else:
@@ -827,6 +833,9 @@ class plotSkewT(backgroundSkewT):
             for p, dd, ss in zip(pres, wdir, wspd):
                 if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
+
+                if self.wind_units == 'm/s':
+                    ss = tab.utils.KTS2MS(ss)
 
                 y = self.originy + self.pres_to_pix(p) / self.scale
                 drawBarb( qp, self.barbx, y, dd, ss, color=color)
@@ -1090,7 +1099,10 @@ class plotSkewT(backgroundSkewT):
 
         if label is True:
             qp.setClipping(False)
-            label = (1.8 * data[0]) + 32.
+            if self.sfc_units == 'Celsius':
+                label = data[0]
+            else:
+                label = tab.thermo.ctof(data[0]) #(1.8 * data[0]) + 32.
             pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
             brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
             qp.setPen(pen)

@@ -19,9 +19,16 @@ class backgroundHodo(QtGui.QFrame):
     This is so that the background can be redrawn when 
     the hodograph gets centered on a vector.
     '''
-    def __init__(self):
-        super(backgroundHodo, self).__init__()
-        self.first = True
+    def __init__(self, **kwargs):
+        super(backgroundHodo, self).__init__(**kwargs)
+        self.wind_units = kwargs.get('wind_units', 'knots')
+
+        self.hodomag = 160.
+        ## ring increment
+        self.ring_increment = 10
+        self.min_zoom = 40.
+        self.max_zoom = 200.
+
         self.initUI()
 
     def initUI(self):
@@ -38,11 +45,8 @@ class backgroundHodo(QtGui.QFrame):
         self.brx = self.wid; self.bry = self.hgt
         ## set default center to the origin
         self.point = (0,0)
-        self.hodomag = 160.
         self.centerx = self.wid / 2; self.centery = self.hgt / 2
         self.scale = (self.brx - self.tlx) / self.hodomag
-        ## ring increment
-        self.ring_increment = 10
         self.rings = xrange(self.ring_increment, 100+self.ring_increment,
             self.ring_increment)
         if self.physicalDpiX() > 75:
@@ -103,14 +107,19 @@ class backgroundHodo(QtGui.QFrame):
         new_mag = self.hodomag + e.delta() / 5
         ## make sure the user doesn't zoom out of
         ## bounds to prevent drawing issues
-        if new_mag >= 40. and new_mag <= 200.:
+        if new_mag >= self.min_zoom and new_mag <= self.max_zoom:
             self.hodomag = new_mag
         ## if it is out of bounds, do nothing
         else:
             self.hodomag = self.hodomag
+
+        if self.wind_units == 'm/s':
+            conv = tab.utils.KTS2MS
+        else:
+            conv = lambda s: s
         ## get the maximum speed value in the frame for the ring increment.
         ## this is to help reduce drawing resources
-        max_uv = int(self.pix_to_uv(self.brx, 0)[0])
+        max_uv = int(conv(np.hypot(*self.pix_to_uv(self.brx, self.bry))))
         self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
                            self.ring_increment)
         ## reassign the new scale
@@ -265,8 +274,13 @@ class backgroundHodo(QtGui.QFrame):
         v: the v wind component
 
         '''
-        xx = self.centerx + (u * self.scale)
-        yy = self.centery - (v * self.scale)
+        if self.wind_units == 'm/s':
+            conv = tab.utils.KTS2MS
+        else:
+            conv = lambda s: s
+
+        xx = self.centerx + (conv(u) * self.scale)
+        yy = self.centery - (conv(v) * self.scale)
         return xx, yy
 
     def pix_to_uv(self, xx, yy):
@@ -279,8 +293,13 @@ class backgroundHodo(QtGui.QFrame):
         yy: the y pixel value
         
         '''
-        u = (xx - self.centerx) / self.scale
-        v = (self.centery - yy) / self.scale
+        if self.wind_units == 'm/s':
+            conv = tab.utils.MS2KTS
+        else:
+            conv = lambda s: s
+
+        u = conv((xx - self.centerx) / self.scale)
+        v = conv((self.centery - yy) / self.scale)
         return u, v
 
 
@@ -301,7 +320,7 @@ class plotHodo(backgroundHodo):
         '''
         Initialize the data used in the class.
         '''
-        super(plotHodo, self).__init__()
+        super(plotHodo, self).__init__(**kwargs)
         self.prof = None
         self.pc_idx = 0
         self.prof_collections = []
@@ -454,6 +473,7 @@ class plotHodo(backgroundHodo):
         self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
 
         self.clearData()
+#       self.plotBackground()
         self.plotData()
         self.update()
 
@@ -516,6 +536,37 @@ class plotHodo(backgroundHodo):
 
     def setAllObserved(self, all_observed, update_gui=True):
         self.all_observed = all_observed
+
+        if update_gui:
+            self.clearData()
+            self.plotData()
+            self.update()
+            self.parentWidget().setFocus()
+
+    def setPreferences(self, update_gui=True, **kwargs):
+        self.wind_units = kwargs['wind_units']
+
+        if self.wind_units == 'm/s':
+            self.ring_increment = 5
+            self.hodomag = 80.
+            self.min_zoom = 20.
+            self.max_zoom = 100.
+            conv = tab.utils.KTS2MS
+        else:
+            self.ring_increment = 10
+            self.hodomag = 160.
+            self.min_zoom = 40.
+            self.max_zoom = 200.
+            conv = lambda s: s         
+
+        self.scale = (self.brx - self.tlx) / self.hodomag
+        max_uv = int(conv(np.hypot(*self.pix_to_uv(self.brx, self.bry))))
+        self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
+                           self.ring_increment)
+
+        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBackground()
+        self.backgroundBitMap = self.plotBitMap.copy()
 
         if update_gui:
             self.clearData()
@@ -926,7 +977,12 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#B8860B"))
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        mw_str = tab.utils.INT2STR(self.mean_lcl_el_vec[0]) + '/' + tab.utils.INT2STR(self.mean_lcl_el_vec[1])
+        mw_spd = self.mean_lcl_el_vec[1]
+
+        if self.wind_units == 'm/s':
+            mw_spd = tab.utils.KTS2MS(mw_spd)
+
+        mw_str = tab.utils.INT2STR(self.mean_lcl_el_vec[0]) + '/' + tab.utils.INT2STR(mw_spd)
         qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
 
     def drawCorfidi(self, qp):
@@ -981,8 +1037,16 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"))
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        up_stuff = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(self.upshear[1])
-        dn_stuff = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(self.downshear[1])
+
+        up_spd = self.upshear[1]
+        dn_spd = self.downshear[1]
+
+        if self.wind_units == 'm/s':
+            up_spd = tab.utils.KTS2MS(up_spd)
+            dn_spd = tab.utils.KTS2MS(dn_spd)
+
+        up_stuff = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(up_spd)
+        dn_stuff = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(dn_spd)
         qp.drawText(up_rect, QtCore.Qt.AlignCenter, "UP=" + up_stuff)
         qp.drawText(dn_rect, QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
 
@@ -1063,8 +1127,15 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
         qp.setPen(pen)
         qp.setFont(self.label_font)
-        rm_stuff = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_right_vec[1])
-        lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(self.bunkers_left_vec[1])
+        rm_spd = self.bunkers_right_vec[1]
+        lm_spd = self.bunkers_left_vec[1]
+
+        if self.wind_units == 'm/s':
+            rm_spd = tab.utils.KTS2MS(rm_spd)
+            lm_spd = tab.utils.KTS2MS(lm_spd)
+
+        rm_stuff = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(rm_spd)
+        lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(lm_spd)
         qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
         qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
 

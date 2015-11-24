@@ -223,10 +223,8 @@ class SPCWidget(QWidget):
         :return:
         """
 
-        temp_color = self.config['preferences', 'temp_color']
-        dewp_color = self.config['preferences', 'dewp_color']
         self.sound = plotSkewT(dgz=self.dgz)
-        self.sound.setColors(temp_color=temp_color, dewp_color=dewp_color, update_gui=False)
+#       self.sound.setPreferences(temp_color=temp_color, dewp_color=dewp_color, update_gui=False)
         self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
@@ -242,6 +240,8 @@ class SPCWidget(QWidget):
         # intialize swappable insets
         for inset, inset_gen in SPCWidget.inset_generators.iteritems():
             self.insets[inset] = inset_gen()
+
+        self.updateConfig(self.config, update_gui=False)
 
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
@@ -401,11 +401,13 @@ class SPCWidget(QWidget):
         self.parentWidget().addProfileCollection(match_col, focus=False)
 
     @Slot(Config)
-    def updateConfig(self, config):
+    def updateConfig(self, config, update_gui=True):
         self.config = config
+        prefs = dict( (field, value) for (section, field), value in config if section == 'preferences')
 
-        colors = dict( (k, self.config['preferences', k]) for k in ['temp_color', 'dewp_color'] )
-        self.sound.setColors(**colors)
+        self.sound.setPreferences(update_gui=update_gui, **prefs)
+        self.hodo.setPreferences(update_gui=update_gui, **prefs)
+        self.kinematic.setPreferences(update_gui=update_gui, **prefs)
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):

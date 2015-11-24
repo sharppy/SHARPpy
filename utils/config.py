@@ -49,6 +49,15 @@ class Config(QObject):
         section, field = item
         return self._cfg.has_option(section, field)
 
+    def __iter__(self):
+        """
+        Iterate over all the fields in the configuration. The call might look like this:
+        for (section, field), value in config: # ...
+        """
+        for section in self._cfg.sections():
+            for field in self._cfg.options(section):
+                yield (section, field), self[section, field]
+
     def initialize(self, cfg_dict):
         """
         Add items in the configuration. This function doesn't modify items that already exist.
