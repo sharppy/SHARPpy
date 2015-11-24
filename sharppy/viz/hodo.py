@@ -1216,7 +1216,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx] + 1, seg_idxs[idx + 1]):
+            for z_idx in xrange(seg_idxs[idx], seg_idxs[idx + 1]):
                 path.lineTo(xx[z_idx], yy[z_idx])
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
@@ -1264,7 +1264,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx] + 1, seg_idxs[idx + 1]):
+            for z_idx in xrange(seg_idxs[idx], seg_idxs[idx + 1]):
                 path.lineTo(xx[z_idx], yy[z_idx])
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
