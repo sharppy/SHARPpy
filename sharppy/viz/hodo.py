@@ -442,14 +442,26 @@ class plotHodo(backgroundHodo):
 
         self.prof = prof
         self.hght = prof.hght
+        hght_agl = tab.interp.to_agl(self.prof, self.hght)
         self.u = prof.u; self.v = prof.v
+
+        cutoff_msl = tab.interp.to_msl(self.prof, 12000.)
+        u_12km = tab.interp.generic_interp_hght(12000., hght_agl, self.u)
+        v_12km = tab.interp.generic_interp_hght(12000., hght_agl, self.v)
+
+        idx_12km = np.searchsorted(hght_agl, 12000.)
+        self.u = np.ma.append(self.u[:idx_12km], np.ma.append(u_12km, self.u[idx_12km:]))
+        self.v = np.ma.append(self.v[:idx_12km], np.ma.append(v_12km, self.v[idx_12km:]))
+        self.hght = np.append(self.hght[:idx_12km], np.ma.append(cutoff_msl, self.hght[idx_12km:]))
+        hght_agl = tab.interp.to_agl(self.prof, self.hght)
+
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.srwind = self.prof.srwind
         self.ptop = self.prof.etop
         self.pbottom = self.prof.ebottom
 
-        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
+        xs, ys = self.uv_to_pix(self.u[hght_agl <= 12000.], self.v[hght_agl <= 12000.])
         self.drag_hodo = Draggable(xs, ys, self.plotBitMap)
         rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
         self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
@@ -470,10 +482,9 @@ class plotHodo(backgroundHodo):
         self.bunkers_left_vec = tab.utils.comp2vec(self.prof.srwind[2], self.prof.srwind[3])
         self.upshear = tab.utils.comp2vec(self.prof.upshear_downshear[0],self.prof.upshear_downshear[1])
         self.downshear = tab.utils.comp2vec(self.prof.upshear_downshear[2],self.prof.upshear_downshear[3])
-        self.mean_lcl_el_vec = self.prof.mean_lcl_el #tab.utils.comp2vec(self.prof.mean_lcl_el[0], self.prof.mean_lcl_el[1])
+        self.mean_lcl_el_vec = self.prof.mean_lcl_el
 
         self.clearData()
-#       self.plotBackground()
         self.plotData()
         self.update()
 
@@ -802,8 +813,6 @@ class plotHodo(backgroundHodo):
         
         '''
         if self.cursor_type == 'boundary':
-#           self.hband.hide()
-#           self.vband.hide()
             u, v = self.pix_to_uv(e.x(), e.y())
 
             ## get the direction and speed from u,v
@@ -819,12 +828,13 @@ class plotHodo(backgroundHodo):
             self.update()
 
     def updateDraggables(self):
-        xs, ys = self.uv_to_pix(self.u[self.hght <= 12000.], self.v[self.hght <= 12000.])
+        hght_agl = tab.interp.to_agl(self.prof, self.hght)
+        xs, ys = self.uv_to_pix(self.u[hght_agl <= 12000.], self.v[hght_agl <= 12000.])
         self.drag_hodo.setCoords(xs, ys)
         rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
-        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
+        self.drag_rm.setCoords(rm_x, rm_y)
         lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
-        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
+        self.drag_lm.setCoords(lm_x, lm_y)
 
     @Slot(bool)
     def cursorToggle(self, toggle):

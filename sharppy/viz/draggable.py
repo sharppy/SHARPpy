@@ -180,6 +180,11 @@ class Draggable(object):
         self._x_obj = x_obj
         self._y_obj = y_obj
 
+        if type(self._x_obj) != np.ma.MaskedArray:
+            self._x_obj = np.ma.array([ self._x_obj ])
+        if type(self._y_obj) != np.ma.MaskedArray:
+            self._y_obj = np.ma.array([ self._y_obj ])
+
     def getBackground(self):
         """
         Returns the current background as a QPixmap
