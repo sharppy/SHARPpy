@@ -48,7 +48,7 @@ class backgroundWinter(QtGui.QFrame):
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(QtCore.Qt.black)
         self.plotBackground()
-    
+
     def draw_frame(self, qp):
         '''
         Draws the background frame and the text headers for indices.
@@ -69,7 +69,7 @@ class backgroundWinter(QtGui.QFrame):
         sep = 5
         y1 = 3 * self.label_height + self.tpad + sep + self.os_mod
         self.layers_y1 = y1
-        
+
         label = ['', '', '']
         for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
@@ -79,24 +79,24 @@ class backgroundWinter(QtGui.QFrame):
         y1 = 3 * (self.label_height + self.os_mod) + self.tpad + sep + self.label_height + sep + self.os_mod
         begin = y1
         label = ['', '']
-        for i in label: 
+        for i in label:
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
             y1 += self.label_height + sep + self.os_mod
-        
+
         qp.drawLine( 0, y1, self.brx, y1 )
         qp.drawLine( self.brx* .48, y1, self.brx*.48, begin )
         y1 = y1+3
-        
+
         self.init_phase_y1 = y1
-       
+
         label = ['']
-        for i in label: 
+        for i in label:
             rect1 = QtCore.QRect(self.lpad, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
             y1 += self.label_height + sep + self.os_mod
         qp.drawLine( 0, y1, self.brx, y1 )
-        
+
         y1 = y1+3
         backup = y1
         label = ['','', '', '']
@@ -107,11 +107,11 @@ class backgroundWinter(QtGui.QFrame):
 
         y1 = backup
         label = ['','', '', '']
-        for i in label: 
+        for i in label:
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
             y1 += self.label_height + sep + self.os_mod
-        
+
         self.energy_y1 = backup
         qp.drawLine( 0, y1+6, self.brx, y1 +6)
         qp.drawLine( self.brx* .48, y1+6, self.brx*.48, backup )
@@ -119,7 +119,8 @@ class backgroundWinter(QtGui.QFrame):
         rect1 = QtCore.QRect(0, y1, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '*** BEST GUESS PRECIP TYPE ***')
         self.precip_type_y1 = y1 + self.label_height + 3 + 2 * self.os_mod
-    
+        self.ptype_tmpf_y1 = self.precip_type_y1 + self.label_height + 10 + 2 * self.os_mod
+
     def resizeEvent(self, e):
         '''
         Handles when the window gets resized.
@@ -148,7 +149,7 @@ class plotWinter(backgroundWinter):
         ## profile itself.
         super(plotWinter, self).__init__()
         self.prof = None
-        
+
     def setProf(self, prof):
         self.prof = prof;
 
@@ -185,6 +186,10 @@ class plotWinter(backgroundWinter):
         # PRECIP TYPE
         self.precip_type = prof.precip_type
 
+        # PRECIP TYPE SFC TEMPERATURE
+        self.ptype_tmpf = tab.thermo.ctof(prof.tmpc[prof.get_sfc()])
+        self.ptype_tmpf_string = "Based on SFC Temperature of %.2f F" % self.ptype_tmpf
+
         self.clearData()
         self.plotBackground()
         self.plotData()
@@ -196,7 +201,7 @@ class plotWinter(backgroundWinter):
         '''
         super(plotWinter, self).resizeEvent(e)
         self.plotData()
-    
+
     def paintEvent(self, e):
         super(plotWinter, self).paintEvent(e)
         qp = QtGui.QPainter()
@@ -231,12 +236,13 @@ class plotWinter(backgroundWinter):
         qp.setRenderHint(qp.TextAntialiasing)
         ## draw the indices
         self.drawPrecipType(qp)
+        self.drawPrecipTypeTemp(qp)
         self.drawOPRH(qp)
-        self.drawInitial(qp) 
+        self.drawInitial(qp)
         self.drawDGZLayer(qp)
         self.drawWCLayer(qp)
         qp.end()
-    
+
     def drawOPRH(self, qp):
         if self.oprh < -.1 and tab.utils.QC(self.oprh) and self.dgz_meanomeg != -99990.0:
             pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
@@ -247,7 +253,7 @@ class plotWinter(backgroundWinter):
         rect1 = QtCore.QRect(0, self.oprh_y1, self.wid, self.label_height)
         if self.dgz_meanomeg == -99990.0:
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): N/A')
-        else:    
+        else:
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + tab.utils.FLOAT2STR(self.oprh,2))
 
     def drawPrecipType(self, qp):
@@ -259,6 +265,16 @@ class plotWinter(backgroundWinter):
         qp.setFont(big)
         rect1 = QtCore.QRect(0, self.precip_type_y1, self.wid, height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.precip_type)
+
+    def drawPrecipTypeTemp(self, qp):
+        small = QtGui.QFont('Helvetica', 9, bold=False)
+        small_metrics = QtGui.QFontMetrics( small )
+        height = small_metrics.xHeight() + self.tpad
+        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.setFont(small)
+        rect1 = QtCore.QRect(0, self.ptype_tmpf_y1, self.wid, height)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.ptype_tmpf_string)
 
     def drawWCLayer(self, qp):
         sep = 5
@@ -318,7 +334,7 @@ class plotWinter(backgroundWinter):
             omeg = tab.utils.FLOAT2STR(self.dgz_meanomeg,1) + ' ub/s'
         label = ['Mean Layer MixRat: ' + tab.utils.FLOAT2STR(self.dgz_meanq,1) + ' g/kg', \
                  'Mean Layer Omega: ' + omeg]
-        for i in label: 
+        for i in label:
             rect1 = QtCore.QRect(self.brx/2 + 2, y1, self.wid/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, i)
             y1 += self.label_height + sep + self.os_mod
@@ -334,11 +350,9 @@ class plotWinter(backgroundWinter):
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(self.lpad, self.init_phase_y1,  self.wid/10, self.label_height)
-        if self.plevel > 100: 
+        if self.plevel > 100:
             hght = tab.utils.M2FT(tab.interp.hght(self.prof, self.plevel))
             string = "Inital Phase: " + self.init_st + ' from: ' + tab.utils.INT2STR(self.plevel) + ' mb (' + tab.utils.INT2STR(hght) + ' ft msl; ' + tab.utils.FLOAT2STR(self.init_tmp,1) + ' C)'
         else:
             string = "Initial Phase:  No Precipitation layers found."
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, string)
-
-
