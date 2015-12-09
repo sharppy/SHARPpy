@@ -23,9 +23,9 @@ long_description = ""
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
-packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources']
+packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources', 'sharppy.io.bufrpy']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
-                     "databases/shapefiles/*"],}
+                     "databases/shapefiles/*", 'io/bufrpy/*_table'],}
 include_package_data = True
 classifiers = ["Development Status :: 4 - Beta"]
 

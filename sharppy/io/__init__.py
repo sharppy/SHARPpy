@@ -1,1 +1,1 @@
-__all__ = ['qc_tools', 'decoder', 'pecan_decoder', 'buf_decoder', 'spc_decoder']
+__all__ = ['qc_tools', 'decoder', 'pecan_decoder', 'buf_decoder', 'spc_decoder', 'ibufr_decoder']
