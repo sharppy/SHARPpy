@@ -547,6 +547,24 @@ class MapWidget(QtGui.QWidget):
 
         self.initUI()
 
+    def keyPressEvent(self, e):
+        if e.key() == 61:
+            delta = -100
+        elif e.key() == 45:
+            delta = 100
+        scale_fac = 10 ** (delta / 1000.)
+
+        scaled_size = float(min(self.default_width, self.default_height)) / min(self.width(), self.height())
+        if self.scale * scale_fac > 2.5 * scaled_size:
+            scale_fac = 2.5 * scaled_size / self.scale
+
+        self.scale *= scale_fac
+        self.map_center_x = self.center_x - (self.center_x - self.map_center_x) / scale_fac
+        self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / scale_fac
+
+        self.drawMap()
+        self.update()
+
     def mousePressEvent(self, e):
         self.init_drag_x, self.init_drag_y = e.x(), e.y()
 

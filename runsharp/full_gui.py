@@ -511,6 +511,10 @@ class Picker(QWidget):
             self.skew.setFocus()
             self.skew.raise_()
 
+    def keyPressEvent(self, e):
+        if e.key() == 61 or e.key() == 45:
+            self.view.keyPressEvent(e)
+
     def loadArchive(self, filename):
         """
         Get the archive sounding based on the user's selections.
