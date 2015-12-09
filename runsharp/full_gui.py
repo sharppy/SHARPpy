@@ -42,13 +42,6 @@ from utils.config import Config
 import traceback
 from functools import wraps, partial
 
-try:
-    from netCDF4 import Dataset
-    nc = True
-except:
-    nc = False
-    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
-
 class crasher(object):
     def __init__(self, **kwargs):
         self._exit = kwargs.get('exit', False)
@@ -290,6 +283,23 @@ class Picker(QWidget):
         self.profile_list.update()
         self.all_profs.setText("Select All")
         self.select_flag = False
+
+    def update_datasource_dropdown(self, selected="Observed"):
+        """
+        Updates the dropdown menu that contains the available
+        data sources
+        :return:
+        """
+        for i in range(self.model_dropdown.count()):
+            self.model_dropdown.removeItem(0)
+
+        self.data_sources = data_source.loadDataSources()
+        models = sorted(self.data_sources.keys())
+        for model in models:
+            self.model_dropdown.addItem(model)
+
+        self.model_dropdown.setCurrentIndex(models.index(selected))
+        self.get_model(models.index(selected))
 
     def update_run_dropdown(self):
         """
@@ -619,6 +629,14 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
+        try:
+            from netCDF4 import Dataset
+            nc = True
+        except(ImportError):
+            nc = False
+            print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
+            pass
+        print nc
         path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
@@ -682,7 +700,9 @@ class Main(QMainWindow):
            xmlfile.write('    </datasource>\n')
            xmlfile.write('</sourcelist>\n')
            xmlfile.close()
-        else: 
+
+           self.picker.update_datasource_dropdown(selected="Local WRF-ARW")
+        else:
             for l in link:
                 self.picker.skewApp(filename=l)
 

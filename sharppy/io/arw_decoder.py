@@ -10,13 +10,6 @@ from datetime import datetime
 from sharppy.io.decoder import Decoder
 from StringIO import StringIO
 
-## check to make sure that the netCDF4 library is installed
-try:
-    from netCDF4 import Dataset
-except (ImportError):
-    "No netCDF install found. Cannot read netCDF file."
-    sys.exit()
-
 __fmtname__ = "wrf-arw"
 __classname__ = "ARWDecoder"
 
@@ -32,9 +25,14 @@ class ARWDecoder(Decoder):
         file is found. The netCDF4 library will automatically
         distinguish between a URL and local file.
         """
+        ## check to make sure that the netCDF4 library is installed
         try:
+            from netCDF4 import Dataset
             data = Dataset(self._file_name[0])
             return data
+        except (ImportError):
+            print "No netCDF install found. Cannot read netCDF file."
+            pass
         except (RuntimeError): 
             print "No such file found"
 
