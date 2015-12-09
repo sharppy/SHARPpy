@@ -163,7 +163,7 @@ class ARWDecoder(Decoder):
             prof = profile.create_profile(profile="raw", pres=prof_pres, 
                 hght=prof_hght, tmpc=prof_tmpc, dwpc=prof_dwpc, wdir=prof_wdir, wspd=prof_wspd,
                 location=str(gridx) + "," + str(gridy), date=date_obj, missing=-999.0,
-                latitude=gridy)
+                latitude=gridy, strictQC=False)
 
             ## append the dates and profiles
             profiles.append(prof)
