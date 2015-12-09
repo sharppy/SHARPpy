@@ -27,6 +27,7 @@ from sharppy.viz.map import MapWidget
 from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
+from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.version import __version__, __version_name__
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -540,12 +541,13 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     if __text__ is not None:
         __text__.emit("Decoding File")
 
-    url = data_source.getURL(loc, run)
-    decoder = data_source.getDecoder(loc, run)
-
     if data_source.getName() == "Local WRF-ARW":
+        url = data_source.getURLList(outlet="Local")[0].replace("file://", "")
+        decoder = ARWDecoder
         dec = decoder((url, loc[0], loc[1]))
     else:
+        decoder = data_source.getDecoder(loc, run)
+        url = data_source.getURL(loc, run)
         dec = decoder(url)
 
     if __text__ is not None:
