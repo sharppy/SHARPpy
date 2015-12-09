@@ -91,7 +91,7 @@ class ARWDecoder(Decoder):
         ## If it does, open and compute the variables as 4D variables
         if len(file_data.variables["T"][:].shape) == 4:        
             ## read in the data from the WRF file and conduct necessary processing
-	    theta = file_data.variables["T"][:, :, idx[0], idx[1]] + 300.0
+            theta = file_data.variables["T"][:, :, idx[0], idx[1]] + 300.0
             qvapr = file_data.variables["QVAPOR"][:, :, idx[0], idx[1]] * 10**3 #g/kg
             mpres = (file_data.variables["P"][:, :, idx[0], idx[1]] + file_data.variables["PB"][:, :, idx[0], idx[1]]) * .01
             mhght = file_data.variables["PH"][:, :, idx[0], idx[1]] + file_data.variables["PHB"][:, :, idx[0], idx[1]] / G
@@ -111,12 +111,11 @@ class ARWDecoder(Decoder):
             ## convert from m/s to kts
             muwin = utils.MS2KTS(U)
             mvwin = utils.MS2KTS(V)
-            mwdir, mwspd = utils.comp2vec(muwin, mvwin)
 
         ## if the data is not 4D, then it must be assumed that this is a file containing only a single time
         else:
             ## read in the data from the WRF file and conduct necessary processing
-	    theta = file_data.variables["T"][:, idx[0], idx[1]] + 300.0
+            theta = file_data.variables["T"][:, idx[0], idx[1]] + 300.0
             qvapr = file_data.variables["QVAPOR"][:, idx[0], idx[1]] * 10**3 #g/kg
             mpres = (file_data.variables["P"][:, idx[0], idx[1]] + file_data.variables["PB"][:, idx[0], idx[1]]) * .01
             mhght = file_data.variables["PH"][:, idx[0], idx[1]] + file_data.variables["PHB"][:, idx[0], idx[1]] / G
@@ -136,7 +135,6 @@ class ARWDecoder(Decoder):
             ## convert from m/s to kts
             muwin = utils.MS2KTS(U)
             mvwin = utils.MS2KTS(V)
-            mwdir, mwspd = utils.comp2vec(muwin, mvwin)
 
         ## get the model start time of the file
         inittime = dattim.datetime.strptime( str( file_data.START_DATE ), '%Y-%m-%d_%H:%M:%S')
@@ -152,8 +150,6 @@ class ARWDecoder(Decoder):
             prof_dwpc = mdwpc[i].flatten()
             prof_uwin = muwin[i].flatten()
             prof_vwin = mvwin[i].flatten()
-            prof_wdir = mwdir[i].flatten()
-            prof_wspd = mwspd[i].flatten()
             ## compute the time of the profile
             delta = dattim.timedelta( minutes=int(file_data.variables["XTIME"][i]) )
             curtime = inittime + delta
@@ -161,7 +157,7 @@ class ARWDecoder(Decoder):
 
             ## construct the profile object
             prof = profile.create_profile(profile="raw", pres=prof_pres, 
-                hght=prof_hght, tmpc=prof_tmpc, dwpc=prof_dwpc, wdir=prof_wdir, wspd=prof_wspd,
+                hght=prof_hght, tmpc=prof_tmpc, dwpc=prof_dwpc, u=prof_uwin, v=prof_vwin,
                 location=str(gridx) + "," + str(gridy), date=date_obj, missing=-999.0,
                 latitude=gridy, strictQC=False)
 
