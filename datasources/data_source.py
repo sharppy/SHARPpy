@@ -180,12 +180,14 @@ class Outlet(object):
                 self._is_available = False
         return stns_avail
 
-    def getAvailableTimes(self, max_cycles=100):
+    def getAvailableTimes(self, max_cycles=100, **kwargs):
         custom_failed = False
-
         if self._custom_avail:
             try:
-                times = available.available[self._name.lower()][self._ds_name.lower()]()
+                if self._name.lower() == "local":
+                    times = available.available[self._name.lower()][self._ds_name.lower()](kwargs.get("filename"))
+                else:
+                    times = available.available[self._name.lower()][self._ds_name.lower()]()
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
@@ -291,8 +293,8 @@ class DataSource(object):
         cycles = self._get('getMostRecentCycle', outlet, flatten=False)
         return max(cycles)
 
-    def getAvailableTimes(self, outlet=None, max_cycles=100):
-        cycles = self._get('getAvailableTimes', outlet, max_cycles=max_cycles)
+    def getAvailableTimes(self, filename=None, outlet=None, max_cycles=100):
+        cycles = self._get('getAvailableTimes', outlet, filename=filename, max_cycles=max_cycles)
         return cycles[-max_cycles:]
 
     def getAvailableAtTime(self, dt, outlet=None):

@@ -308,9 +308,13 @@ class Picker(QWidget):
         information.
         :return:
         """
+        if self.model.startswith("Local"):
+            url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
+            print getTimes()
+        else:
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
 
-        getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
-        
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
