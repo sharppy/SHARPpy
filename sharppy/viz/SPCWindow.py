@@ -14,7 +14,7 @@ import numpy as np
 import platform
 from os.path import expanduser
 import os
-from sharppy.version import __version__, __version_name__
+from sharppy.version import __version__, __version_name__, __brand__
 
 class SPCWidget(QWidget):
     """
@@ -121,7 +121,7 @@ class SPCWidget(QWidget):
                          "  border-color: rgb(255, 255, 255);"
                          "  margin: 0px;}")
 
-        self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
+        self.brand = QLabel("%s v%s %s" % (__brand__, __version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: rgb(0, 0, 0);"

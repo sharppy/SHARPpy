@@ -7,7 +7,7 @@ from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.viz import plotGeneric
 from sharppy.sharptab.constants import *
 from sharppy.sounding import prof, plot_title
-
+from sharppy.version import __brand__
 
 # Setup Application
 app = QtGui.QApplication(sys.argv)
@@ -29,7 +29,7 @@ centralWidget.setLayout(grid)
 # Handle the Upper Left
 ## plot the main sounding
 #print prof.right_scp, prof.left_scp
-brand = 'SHARPpy Beta'
+brand = __brand__
 sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
 grid.addWidget(sound, 0, 0, 3, 1)
@@ -46,7 +46,7 @@ ur.setStyleSheet("QFrame {"
                  "  border-style: solid;"
                  "  border-color: rgb(255, 255, 255);"
                  "  margin: 0px;}")
-brand = QtGui.QLabel('SHARPpy Beta')
+brand = QtGui.QLabel(brand)
 brand.setAlignment(QtCore.Qt.AlignRight)
 brand.setStyleSheet("QFrame {"
                     "  background-color: rgb(0, 0, 0);"
