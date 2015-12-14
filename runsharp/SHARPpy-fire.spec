@@ -54,5 +54,5 @@ exe = EXE(pyz,
           name='SHARPpy',
           debug=False,
           strip=None,
-          upx=False,
+          upx=True,
           console=False, icon='icons\\SHARPpy_imet.ico') #'radar.ico'
