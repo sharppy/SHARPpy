@@ -6,6 +6,7 @@ from bufrpy.bufrdec import decode_file
 from bufrpy.table import get_table
 from bufrpy.value import BufrValue
 from datetime import datetime
+from io import BytesIO
 
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
@@ -33,7 +34,7 @@ class IMETBufrDecoder(Decoder):
         super(IMETBufrDecoder, self).__init__(file_name)
 
     def _parse(self):
-        with open(self._file_name, 'rb') as bufr_file:
+        with BytesIO(self._downloadFile()) as bufr_file:
             contents = decode_file(bufr_file, get_table())
         profiles = []
         dates = []
