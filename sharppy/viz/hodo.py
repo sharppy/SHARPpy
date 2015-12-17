@@ -668,9 +668,13 @@ class plotHodo(backgroundHodo):
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
+                if self.use_left:
+                    srw_9_11km = self.prof.left_srw_9_11km
+                else:
+                    srw_9_11km = self.prof.right_srw_9_11km
+                x2, y2 = self.uv_to_pix(srw_9_11km[0] + to_add[0], srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
-                dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                dir, spd = tab.utils.comp2vec(srw_9_11km[0], srw_9_11km[1])
                 if spd >= 70:
                     supercell_type = "LP"
                 elif spd < 70 and spd > 40:
