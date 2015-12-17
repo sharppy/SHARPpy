@@ -1265,7 +1265,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         
         pos_vector.append((x_1, y_1, z_1))
         speed_vector.append((u_0, v_0, w_1))
-        
+
         # Update parcel position
         z_0 = z_1
         y_0 = y_1
@@ -1406,6 +1406,10 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         pbot = pe2
         pcl.blayer = pbot
 
+    if pbot < prof.pres[-1]:
+        # Check for the case where the LCL is above the 
+        # upper boundary of the data (e.g. a dropsonde)
+        return pcl
     
     # Find lowest observation in layer
     lptr = ma.where(pbot > prof.pres)[0].min()
@@ -1537,7 +1541,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         ptop = prof.pres[prof.pres.shape[0]-1]
         pcl.tlayer = ptop
         pcl.ptop = ptop
-    
     # Make sure this is a valid layer
     if pbot > pres:
         pbot = pres
@@ -1611,7 +1614,12 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm10c = hgtm10c
     pcl.hghtm20c = hgtm20c
     pcl.hghtm30c = hgtm30c
-    
+
+    if pbot < prof.pres[-1]:
+        # Check for the case where the LCL is above the 
+        # upper boundary of the data (e.g. a dropsonde)
+        return pcl
+
     # Find lowest observation in layer
     lptr = ma.where(pbot >= prof.pres)[0].min()
     uptr = ma.where(ptop <= prof.pres)[0].max()
@@ -1624,7 +1632,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tp1 = thermo.wetlift(pe2, tp2, pe1)
     lyre = 0
     lyrlast = 0
-
 
     iter_ranges = np.arange(lptr, prof.pres.shape[0])
     ttraces = ma.zeros(len(iter_ranges))
@@ -2747,68 +2754,91 @@ def mburst(prof):
         te = 0
 
     # Surface-based CAPE Term
-    if sbpcl.bplus < 2000:
-        sbcape_term = -5
-    if sbpcl.bplus >= 2000:
-        sbcape_term = 0
-    if sbpcl.bplus >= 3300:
-        sbcape_term = 1
-    if sbpcl.bplus >= 3700:
-        sbcape_term = 2
-    if sbpcl.bplus >= 4300:
-        sbcape_term = 4
+    if not utils.QC(sbpcl.bplus):
+        sbcape_term = np.nan
+    else:
+        if sbpcl.bplus < 2000:
+            sbcape_term = -5
+        if sbpcl.bplus >= 2000:
+            sbcape_term = 0
+        if sbpcl.bplus >= 3300:
+            sbcape_term = 1
+        if sbpcl.bplus >= 3700:
+            sbcape_term = 2
+        if sbpcl.bplus >= 4300:
+            sbcape_term = 4
 
     # Surface based LI term
-    if sbpcl.li5 > -7.5:
-        sbli_term = 0
-    if sbpcl.li5 <= -7.5:
-        sbli_term = 1
-    if sbpcl.li5 <= -9.0:
-        sbli_term = 2
-    if sbli_term <= -10.0:
-        sbli_term = 3
+    if not utils.QC(sbpcl.li5):
+        sbli_term = np.nan
+    else:
+        if sbpcl.li5 > -7.5:
+            sbli_term = 0
+        if sbpcl.li5 <= -7.5:
+            sbli_term = 1
+        if sbpcl.li5 <= -9.0:
+            sbli_term = 2
+        if sbpcl.li5 <= -10.0:
+            sbli_term = 3
 
     # PWAT Term
-    if pwat < 1.5:
-        pwat_term = -3
+    if not utils.QC(pwat):
+        pwat_term = np.nan
     else:
-        pwat_term = 0
+        if pwat < 1.5:
+            pwat_term = -3
+        else:
+            pwat_term = 0
 
     # DCAPE Term
-    if pwat > 1.70:
-        if dcape_val > 900:
-            dcape_term = 1
+    if not utils.QC(dcape_val):
+        dcape_term = np.nan
+    else:
+        if pwat > 1.70:
+            if dcape_val > 900:
+                dcape_term = 1
+            else:
+                dcape_term = 0
         else:
             dcape_term = 0
-    else:
-        dcape_term = 0
 
     # Lapse Rate Term
-    if lr03 <= 8.4:
-        lr03_term = 0
+    if not utils.QC(lr03):
+        lr03_term = np.nan
     else:
-        lr03_term = 1
+        if lr03 <= 8.4:
+            lr03_term = 0
+        else:
+            lr03_term = 1
 
     # Vertical Total Totals term
-    if tt < 27:
-        tt_term = 0
-    elif tt >= 27 and tt < 28:
-        tt_term = 1
-    elif tt >= 28 and tt < 29:
-        tt_term = 2
+    if not utils.QC(tt):
+        tt_term = np.nan
     else:
-        tt_term = 3
+        if tt < 27:
+            tt_term = 0
+        elif tt >= 27 and tt < 28:
+            tt_term = 1
+        elif tt >= 28 and tt < 29:
+            tt_term = 2
+        else:
+            tt_term = 3
 
     # TEI term?
-    if tei_val >= 35:
-        ted = 1
+    if not utils.QC(tei_val):
+        ted = np.nan
     else:
-        ted = 0
+        if tei_val >= 35:
+            ted = 1
+        else:
+            ted = 0
 
     mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + tt_term + ted
 
     if mburst < 0:
         mburst = 0
+    if np.isnan(mburst):
+        mburst = np.ma.masked
 
     return mburst
 

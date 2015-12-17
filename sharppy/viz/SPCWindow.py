@@ -716,6 +716,9 @@ class SPCWindow(QMainWindow):
         msgbox.setIcon(QMessageBox.Critical)
         msgbox.exec_()
 
+        import traceback
+        print traceback.format_exc()
+
         if len(self.menu_items) == 1:
             self.focusPicker()
             self.close()
@@ -746,7 +749,7 @@ class SPCWindow(QMainWindow):
 
     def createMenuName(self, prof_col):
         pc_loc = prof_col.getMeta('loc')
-        pc_date = prof_col.getMeta('run').strftime("%d/%HZ")
+        pc_date = prof_col.getMeta('run').strftime("%d/%H%MZ")
         pc_model = prof_col.getMeta('model')
 
         return "%s (%s %s)" % (pc_loc, pc_date, pc_model)

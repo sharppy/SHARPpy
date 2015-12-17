@@ -181,7 +181,7 @@ class plotSpeed(backgroundSpeed):
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the data mask
         try:
-            mask = np.maximum(self.u.mask, self.v.mask)
+            mask = np.maximum(np.maximum(self.u.mask, self.v.mask), self.hght.mask)
             hgt = tab.interp.to_agl(self.prof, self.hght[~mask])
             pres = self.pres[~mask]
             u = self.u[~mask]

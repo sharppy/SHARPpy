@@ -1201,8 +1201,8 @@ class plotHodo(backgroundHodo):
         '''
         ## check for masked daata
         try:
-            mask = np.maximum(prof.u.mask, prof.v.mask)
-            z = tab.interp.to_agl(prof, prof.hght[~mask])
+            mask = np.maximum(np.maximum(prof.u.mask, prof.v.mask), prof.hght.mask)
+            z = tab.interp.to_agl(prof, prof.hght)[~mask]
             u = prof.u[~mask]
             v = prof.v[~mask]
         ## otherwise the data is fine
@@ -1210,6 +1210,7 @@ class plotHodo(backgroundHodo):
             z = tab.interp.to_agl(prof, prof.hght )
             u = prof.u
             v = prof.v
+
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
@@ -1244,8 +1245,8 @@ class plotHodo(backgroundHodo):
         '''
         ## check for masked daata
         try:
-            mask = np.maximum(prof.u.mask, prof.v.mask)
-            z = tab.interp.to_agl(prof.prof, prof.hght[~mask])
+            mask = np.maximum(np.maximum(prof.u.mask, prof.v.mask), prof.hght.mask)
+            z = tab.interp.to_agl(prof, prof.hght[~mask])
             u = prof.u[~mask]
             v = prof.v[~mask]
         ## otherwise the data is fine
