@@ -884,8 +884,14 @@ class plotHodo(backgroundHodo):
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
 
             wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+            if self.wind_units == 'm/s':
+                ws_interp = tab.utils.KTS2MS(ws_interp)
+                units = 'm/s'
+            else:
+                units = 'kts'
+
             xx, yy = self.uv_to_pix(u_interp, v_interp)
-            readout = "%03d/%02d kts" % (wd_interp, ws_interp)
+            readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
 
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
