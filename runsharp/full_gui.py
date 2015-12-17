@@ -27,6 +27,7 @@ from sharppy.viz.map import MapWidget
 from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
+from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.version import __version__, __version_name__
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -41,13 +42,6 @@ from os.path import expanduser
 from utils.config import Config
 import traceback
 from functools import wraps, partial
-
-try:
-    from netCDF4 import Dataset
-    nc = True
-except:
-    nc = False
-    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -291,15 +285,36 @@ class Picker(QWidget):
         self.all_profs.setText("Select All")
         self.select_flag = False
 
+    def update_datasource_dropdown(self, selected="Observed"):
+        """
+        Updates the dropdown menu that contains the available
+        data sources
+        :return:
+        """
+        for i in range(self.model_dropdown.count()):
+            self.model_dropdown.removeItem(0)
+
+        self.data_sources = data_source.loadDataSources()
+        models = sorted(self.data_sources.keys())
+        for model in models:
+            self.model_dropdown.addItem(model)
+
+        self.model_dropdown.setCurrentIndex(models.index(selected))
+        self.get_model(models.index(selected))
+
     def update_run_dropdown(self):
         """
         Updates the dropdown menu that contains the model run
         information.
         :return:
         """
+        if self.model.startswith("Local"):
+            url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
+            print getTimes()
+        else:
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
 
-        getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
-        
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
@@ -496,6 +511,10 @@ class Picker(QWidget):
             self.skew.setFocus()
             self.skew.raise_()
 
+    def keyPressEvent(self, e):
+        if e.key() == 61 or e.key() == 45:
+            self.view.keyPressEvent(e)
+
     def loadArchive(self, filename):
         """
         Get the archive sounding based on the user's selections.
@@ -530,12 +549,13 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     if __text__ is not None:
         __text__.emit("Decoding File")
 
-    url = data_source.getURL(loc, run)
-    decoder = data_source.getDecoder(loc, run)
-
     if data_source.getName() == "Local WRF-ARW":
+        url = data_source.getURLList(outlet="Local")[0].replace("file://", "")
+        decoder = ARWDecoder
         dec = decoder((url, loc[0], loc[1]))
     else:
+        decoder = data_source.getDecoder(loc, run)
+        url = data_source.getURL(loc, run)
         dec = decoder(url)
 
     if __text__ is not None:
@@ -619,6 +639,14 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
+        try:
+            from netCDF4 import Dataset
+            nc = True
+        except(ImportError):
+            nc = False
+            print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
+            pass
+        print nc
         path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
@@ -682,7 +710,9 @@ class Main(QMainWindow):
            xmlfile.write('    </datasource>\n')
            xmlfile.write('</sourcelist>\n')
            xmlfile.close()
-        else: 
+
+           self.picker.update_datasource_dropdown(selected="Local WRF-ARW")
+        else:
             for l in link:
                 self.picker.skewApp(filename=l)
 

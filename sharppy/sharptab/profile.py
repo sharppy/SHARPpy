@@ -98,6 +98,7 @@ class Profile(object):
         self.missing = kwargs.get('missing', MISSING)
         self.profile = kwargs.get('profile')
         self.latitude = kwargs.get('latitude', ma.masked)
+        self.strictQC = kwargs.get('strictQC', True)
 
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
@@ -144,10 +145,11 @@ class Profile(object):
         '''
             Copies a profile object.
         '''            
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude' ])
-        if 'u' in kwargs or 'v' in kwargs:
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC' ])
+
+        if prof.u is not None and prof.v is not None:
             new_kwargs.update({'u':prof.u, 'v':prof.v})
-        else:   
+        else:
             new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
 
         new_kwargs.update(kwargs)
@@ -246,7 +248,7 @@ class BasicProfile(Profile):
         '''
         super(BasicProfile, self).__init__(**kwargs)
 
-        strictQC = kwargs.get('strictQC', True)
+        self.strictQC = kwargs.get('strictQC', True)
 
         assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
@@ -294,7 +296,7 @@ class BasicProfile(Profile):
 
         #if not qc_tools.isPRESValid(self.pres):
         ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
-        if not qc_tools.isHGHTValid(self.hght) and strictQC:
+        if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
             qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
         if not qc_tools.isTMPCValid(self.tmpc):
             qc_tools.raiseError("Invalid temperature array. Array contains a value < 273.15 Celsius.", ValueError)
