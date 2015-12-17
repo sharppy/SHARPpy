@@ -24,6 +24,7 @@ if frozenutils.isFrozen():
     
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
+from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
 from sharppy.version import __version__, __version_name__
@@ -37,9 +38,16 @@ import datetime as date
 from functools import wraps, partial
 import cProfile
 from os.path import expanduser
-import ConfigParser
+from utils.config import Config
 import traceback
 from functools import wraps, partial
+
+try:
+    from netCDF4 import Dataset
+    nc = True
+except:
+    nc = False
+    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -160,8 +168,8 @@ class Picker(QWidget):
         self.model_dropdown.setCurrentIndex(models.index(self.model))
 
         projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
-        if self.config.has_section('map'):
-            proj = self.config.get('map', 'proj')
+        if ('map', 'proj') in self.config:
+            proj = self.config['map', 'proj']
             proj_idx = zip(*projs)[0].index(proj)
         else:
             proj_idx = 0
@@ -295,7 +303,7 @@ class Picker(QWidget):
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
-
+ 
             if self.model == "Observed":
                 self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
             else:
@@ -318,6 +326,13 @@ class Picker(QWidget):
             self.disp_name = None
             self.button.setText('Generate Profiles')
             self.button.setDisabled(True)
+        elif self.model == "Local WRF-ARW":
+            self.loc = point
+            self.disp_name = "User Selected"
+            self.button.setText(self.disp_name + ' | Generate Profiles')
+            self.button.setEnabled(True)
+            self.areal_lon, self.areal_y = point
+
         else:
             self.loc = point #url.toString().split('/')[-1]
             if point['icao'] != "":
@@ -462,6 +477,7 @@ class Picker(QWidget):
             if self.skew is None:
                 # If the SPCWindow isn't shown, set it up.
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
+                self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
 
@@ -516,7 +532,11 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
 
     url = data_source.getURL(loc, run)
     decoder = data_source.getDecoder(loc, run)
-    dec = decoder(url)
+
+    if data_source.getName() == "Local WRF-ARW":
+        dec = decoder((url, loc[0], loc[1]))
+    else:
+        dec = decoder(url)
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
@@ -525,7 +545,8 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
     return profs
 
 class Main(QMainWindow):
-    
+    config_changed = Signal(Config)
+
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
     cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
 
@@ -536,11 +557,16 @@ class Main(QMainWindow):
         super(Main, self).__init__()
 
         ## All of these variables get set/reset by the various menus in the GUI
-        self.config = ConfigParser.RawConfigParser()
-        self.config.read(Main.cfg_file_name)
-        if not self.config.has_section('paths'):
-            self.config.add_section('paths')
-            self.config.set('paths', 'load_txt', expanduser('~'))
+#       self.config = ConfigParser.RawConfigParser()
+#       self.config.read(Main.cfg_file_name)
+#       if not self.config.has_section('paths'):
+#           self.config.add_section('paths')
+#           self.config.set('paths', 'load_txt', expanduser('~'))
+        self.config = Config(Main.cfg_file_name)
+        paths_init = { ('paths', 'load_txt'):expanduser("~") }
+        self.config.initialize(paths_init)
+
+        PrefDialog.initConfig(self.config)
 
         self.__initUI()
 
@@ -576,6 +602,7 @@ class Main(QMainWindow):
 
         pref = QAction("Preferences", self)
         filemenu.addAction(pref)
+        pref.triggered.connect(self.preferencesbox)
 
         helpmenu = bar.addMenu("Help")
 
@@ -592,7 +619,7 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        path = self.config.get('paths', 'load_txt')
+        path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
         
@@ -600,11 +627,64 @@ class Main(QMainWindow):
             return
 
         path = os.path.dirname(link[0])
-        self.config.set('paths', 'load_txt', path)
+        self.config['paths', 'load_txt'] = path
 
-        # Loop through all of the files selected and load them into the SPCWindow 
-        for l in link:
-            self.picker.skewApp(filename=l)
+        # Loop through all of the files selected and load them into the SPCWindow
+        if link[0].endswith("nc") and nc:
+           ncfile = Dataset(link[0])
+         
+           xlon1 = ncfile.variables["XLONG"][0][:, 0]
+           xlat1 = ncfile.variables["XLAT"][0][:, 0]
+
+           xlon2 = ncfile.variables["XLONG"][0][:, -1]
+           xlat2 = ncfile.variables["XLAT"][0][:, -1]
+
+           xlon3 = ncfile.variables["XLONG"][0][0, :]
+           xlat3 = ncfile.variables["XLAT"][0][0, :]
+
+           xlon4 = ncfile.variables["XLONG"][0][-1, :]
+           xlat4 = ncfile.variables["XLAT"][0][-1, :]
+
+           delta = ncfile.variables["XTIME"][1] / 60.
+           maxt = ncfile.variables["XTIME"][-1] / 60.
+
+           ## write the CSV file 
+           csvfile = open(HOME_DIR + "/datasources/wrf-arw.csv", 'w')
+           csvfile.write("icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid\n")
+
+           for idx, val in np.ndenumerate(xlon1):
+               lat = xlat1[idx]
+               lon = xlon1[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon2):
+               lat = xlat2[idx]
+               lon = xlon2[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon3):
+               lat = xlat3[idx]
+               lon = xlon3[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           for idx, val in np.ndenumerate(xlon4):
+               lat = xlat4[idx]
+               lon = xlon4[idx]
+               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+           csvfile.close()
+
+           ## write the xml file
+           xmlfile = open(HOME_DIR + "/datasources/wrf-arw.xml", 'w')
+           xmlfile.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+           xmlfile.write('<sourcelist>\n')
+           xmlfile.write('    <datasource name="Local WRF-ARW" ensemble="false" observed="false">\n')
+           xmlfile.write('        <outlet name="Local" url="file://' + link[0] + '" format="wrf-arw">\n')
+           xmlfile.write('            <time range="' + str(int(maxt)) + '" delta="' + str(int(delta)) + '" offset="0" delay="0" cycle="24" archive="1"/>\n')
+           xmlfile.write('            <points csv="wrf-arw.csv" />\n')
+           xmlfile.write('        </outlet>\n')
+           xmlfile.write('    </datasource>\n')
+           xmlfile.write('</sourcelist>\n')
+           xmlfile.close()
+        else: 
+            for l in link:
+                self.picker.skewApp(filename=l)
 
     def aboutbox(self):
         """
@@ -633,13 +713,18 @@ class Main(QMainWindow):
         climatologists within the scientific community to
         help maintain a standard source of sounding
         routines.
-
+i
         Website: http://sharppy.github.io/SHARPpy/
         Contact: sharppy.project@gmail.com
         Contribute: https://github.com/sharppy/SHARPpy/
         """ % (__version__, __version_name__, cur_year)
         msgBox.setText(str)
         msgBox.exec_()
+
+    def preferencesbox(self):
+        pref_dialog = PrefDialog(self.config, parent=self)
+        pref_dialog.exec_()
+        self.config_changed.emit(self.config)
 
     def keyPressEvent(self, e):
         """
@@ -658,7 +743,7 @@ class Main(QMainWindow):
         """
         Handles close events (gets called when the window closes).
         """
-        self.config.write(open(Main.cfg_file_name, 'w'))
+        self.config.toFile()
 
 def main():
     @crasher(exit=True)
