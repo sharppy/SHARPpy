@@ -462,7 +462,7 @@ def precip_type(prof):
     # if minimum cold layer temp is < -12 C and sfc_T_w < 33 F, it's snow and sleet
     return
 
-def possible_watch(prof):
+def possible_watch(prof, use_left=False):
     '''
         Possible Weather/Hazard/Watch Type
         
@@ -499,6 +499,8 @@ def possible_watch(prof):
         Parameters
         ----------
         prof : ConvectiveProfile object
+        use_left : If True, uses the parameters computed from the left-mover bunkers vector to decide the watch type. If False,
+            uses parameters from the right-mover vector. The default is False.
 
         Returns
         -------
@@ -510,13 +512,22 @@ def possible_watch(prof):
     colors = []
     
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
-    stp_eff = prof.stp_cin
-    stp_fixed = prof.stp_fixed
-    srw_4_6km = utils.mag(prof.srw_4_6km[0],prof.srw_4_6km[1])
+    if use_left:
+        stp_eff = prof.left_stp_cin
+        stp_fixed = prof.left_stp_fixed
+        srw_4_6km = utils.mag(prof.left_srw_4_6km[0],prof.left_srw_4_6km[1])
+        esrh = prof.left_esrh[0]
+        srh1km = prof.left_srh1km[0]
+    else:
+        stp_eff = prof.right_stp_cin
+        stp_fixed = prof.right_stp_fixed
+        srw_4_6km = utils.mag(prof.right_srw_4_6km[0],prof.right_srw_4_6km[1])
+        esrh = prof.right_esrh[0]
+        srh1km = prof.right_srh1km[0]
+
     sfc_8km_shear = utils.mag(prof.sfc_8km_shear[0],prof.sfc_8km_shear[1])
-    right_esrh = prof.right_esrh[0]
-    srh1km = prof.srh1km[0]
-    if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and right_esrh >= 200 and srw_4_6km >= 15.0 and \
+
+    if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and esrh >= 200 and srw_4_6km >= 15.0 and \
         sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("PDS TOR")
@@ -535,22 +546,27 @@ def possible_watch(prof):
     elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 0.5 and prof.right_esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
+    elif (stp_eff >= 0.5 and prof.esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
         colors.append("#FF0000")
 
     #SVR LOGIC
-    if (stp_fixed >= 1.0 or prof.right_scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
+    if use_left:
+        scp = prof.left_scp
+    else:
+        scp = prof.right_scp
+
+    if (stp_fixed >= 1.0 or scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
         colors.append("#FFFF00")
         watch_types.append("SVR")
-    elif prof.right_scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
+    elif scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
         colors.append("#FFFF00")
         watch_types.append("SVR")
     elif prof.sig_severe >= 30000 and prof.mmp >= 0.6 and prof.mupcl.bminus >= -50:
         colors.append("#FFFF00")
         watch_types.append("SVR")
-    elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or prof.right_scp >= 0.5):
+    elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or scp >= 0.5):
         colors.append("#0099CC")
         watch_types.append("MRGL SVR")
     

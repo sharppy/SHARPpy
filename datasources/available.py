@@ -178,6 +178,16 @@ def _available_nssl(ens=False):
     path_to_nssl_wrf = ''
     path_to_nssl_wrf_ens = ''
 
+def _available_local(filename=None):
+    try:
+        from netCDF4 import Dataset
+        data = Dataset(filename)
+        inittime = datetime.strptime( str( data.START_DATE ), '%Y-%m-%d_%H:%M:%S')
+        return [inittime]
+    except (ImportError):
+        print "No netCDF install found. Cannot read netCDF file."
+        pass
+
 # A dictionary of the available times for profiles from observations, forecast models, etc.
 available = {
     'psu':{}, 
@@ -188,6 +198,7 @@ available = {
     'spc':{'observed':_available_spc},
     'ou_pecan': {'pecan ensemble': _available_oupecan },
     'ncar_ens': {'ncar ensemble': _available_ncarens },
+    'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
 
 # A dictionary containing paths to the stations for different observations, forecast models, etc.

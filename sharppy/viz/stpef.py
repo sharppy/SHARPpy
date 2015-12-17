@@ -243,7 +243,12 @@ class plotSTPEF(backgroundSTPEF):
 
     def setProf(self, prof):
         self.prof = prof
-        self.stpc = prof.stp_cin
+        use_left = prof.latitude < 0
+
+        if use_left:
+            self.stpc = prof.left_stp_cin
+        else:
+            self.stpc = prof.right_stp_cin
 
         self.clearData()
         self.plotBackground()

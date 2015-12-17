@@ -9,6 +9,7 @@ from PySide.QtGui import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
 import sharppy.io as io
+from utils.config import Config
 from datetime import datetime, timedelta
 import numpy as np
 import platform
@@ -42,6 +43,23 @@ class SPCWidget(QWidget):
         'VROT':'EF-Scale Probs (V-Rot)',
     }
 
+    inset_cfg = {
+        ('insets', 'left_inset'):'SARS',
+        ('insets', 'right_inset'):'STP STATS',
+    }
+
+    parcel_cfg = {
+        ('parcel_types', 'pcl1'):'SFC',
+        ('parcel_types', 'pcl2'):'ML',
+        ('parcel_types', 'pcl3'):'FCST',
+        ('parcel_types', 'pcl4'):'MU',
+    }
+
+    paths_cfg = {
+        ('paths', 'save_img'):expanduser('~'),
+        ('paths', 'save_txt'):expanduser('~'),
+    }
+
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
 
@@ -63,19 +81,9 @@ class SPCWidget(QWidget):
 
         self.coll_observed = False
 
-        if not self.config.has_section('insets'):
-            self.config.add_section('insets')
-            self.config.set('insets', 'right_inset', 'STP STATS')
-            self.config.set('insets', 'left_inset', 'SARS')
-        if not self.config.has_section('parcel_types'):
-            self.config.add_section('parcel_types')
-            self.config.set('parcel_types', 'pcl1', 'SFC')
-            self.config.set('parcel_types', 'pcl2', 'ML')
-            self.config.set('parcel_types', 'pcl3', 'FCST')
-            self.config.set('parcel_types', 'pcl4', 'MU')
-        if not self.config.has_option('paths', 'save_img'):
-            self.config.set('paths', 'save_img', expanduser('~'))
-            self.config.set('paths', 'save_txt', expanduser('~'))
+        self.config.initialize(SPCWidget.inset_cfg)
+        self.config.initialize(SPCWidget.parcel_cfg)
+        self.config.initialize(SPCWidget.paths_cfg)
 
         ## these are the boolean flags used throughout the program
         self.swap_inset = False
@@ -89,12 +97,12 @@ class SPCWidget(QWidget):
         insets = sorted(SPCWidget.inset_names.items(), key=lambda i: i[1])
         inset_ids, inset_names = zip(*insets)
         self.available_insets = inset_ids
-        self.left_inset = self.config.get('insets', 'left_inset')
-        self.right_inset = self.config.get('insets', 'right_inset')
+        self.left_inset = self.config['insets', 'left_inset']
+        self.right_inset = self.config['insets', 'right_inset']
         self.insets = {}
 
-        self.parcel_types = [self.config.get('parcel_types', 'pcl1'), self.config.get('parcel_types', 'pcl2'), \
-                             self.config.get('parcel_types', 'pcl3'),self.config.get('parcel_types', 'pcl4')]
+        self.parcel_types = [self.config['parcel_types', 'pcl1'], self.config['parcel_types', 'pcl2'], \
+                             self.config['parcel_types', 'pcl3'], self.config['parcel_types', 'pcl4']]
 
         ## initialize the rest of the window attributes, layout managers, etc
 
@@ -192,21 +200,21 @@ class SPCWidget(QWidget):
             return "USER"
 
     def saveimage(self):
-        path = self.config.get('paths', 'save_img')
+        path = self.config['paths', 'save_img']
         file_types = "PNG (*.png)"
         file_name, result = QFileDialog.getSaveFileName(self, "Save Image", path, file_types)
         if result:
             pixmap = QPixmap.grabWidget(self)
             pixmap.save(file_name, 'PNG', 100)
-            self.config.set('paths', 'save_img', os.path.dirname(file_name))
+            self.config['paths', 'save_img'] = os.path.dirname(file_name)
 
     def savetext(self):
-        path = self.config.get('paths', 'save_txt')
+        path = self.config['paths', 'save_txt']
         file_types = "TXT (*.txt)"
         file_name, result = QFileDialog.getSaveFileName(self, "Save Sounding Text", path, file_types)
         if result:
             self.default_prof.toFile(file_name)
-            self.config.set('paths', 'save_txt', os.path.dirname(file_name))
+            self.config['paths', 'save_txt'] = os.path.dirname(file_name)
 
     def initData(self):
         """
@@ -216,6 +224,7 @@ class SPCWidget(QWidget):
         """
 
         self.sound = plotSkewT(dgz=self.dgz)
+#       self.sound.setPreferences(temp_color=temp_color, dewp_color=dewp_color, update_gui=False)
         self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
@@ -232,6 +241,8 @@ class SPCWidget(QWidget):
         for inset, inset_gen in SPCWidget.inset_generators.iteritems():
             self.insets[inset] = inset_gen()
 
+        self.updateConfig(self.config, update_gui=False)
+
         self.right_inset_ob = self.insets[self.right_inset]
         self.left_inset_ob = self.insets[self.left_inset]
 
@@ -241,9 +252,13 @@ class SPCWidget(QWidget):
         self.sound.parcel.connect(self.defineUserParcel)
         self.sound.modified.connect(self.modifyProf)
         self.sound.reset.connect(self.resetProfModifications)
+        self.sound.cursor_toggle.connect(self.hodo.cursorToggle)
+        self.sound.cursor_move.connect(self.hodo.cursorMove)
 
         self.hodo.modified.connect(self.modifyProf)
+        self.hodo.modified_vector.connect(self.modifyVector)
         self.hodo.reset.connect(self.resetProfModifications)
+        self.hodo.reset_vector.connect(self.resetVector)
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
@@ -355,10 +370,10 @@ class SPCWidget(QWidget):
         self.sound.setParcel(pcl)
         self.storm_slinky.setParcel(pcl)
 
-        self.config.set('parcel_types', 'pcl1', self.convective.pcl_types[0])
-        self.config.set('parcel_types', 'pcl2', self.convective.pcl_types[1])
-        self.config.set('parcel_types', 'pcl3', self.convective.pcl_types[2])
-        self.config.set('parcel_types', 'pcl4', self.convective.pcl_types[3])
+        self.config['parcel_types', 'pcl1'] = self.convective.pcl_types[0]
+        self.config['parcel_types', 'pcl2'] = self.convective.pcl_types[1]
+        self.config['parcel_types', 'pcl3'] = self.convective.pcl_types[2]
+        self.config['parcel_types', 'pcl4'] = self.convective.pcl_types[3]
 
     @Slot(str)
     def updateSARS(self, filematch):
@@ -385,6 +400,15 @@ class SPCWidget(QWidget):
 
         self.parentWidget().addProfileCollection(match_col, focus=False)
 
+    @Slot(Config)
+    def updateConfig(self, config, update_gui=True):
+        self.config = config
+        prefs = dict( (field, value) for (section, field), value in config if section == 'preferences')
+
+        self.sound.setPreferences(update_gui=update_gui, **prefs)
+        self.hodo.setPreferences(update_gui=update_gui, **prefs)
+        self.kinematic.setPreferences(update_gui=update_gui, **prefs)
+
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
         self.prof_collections[self.pc_idx].defineUserParcel(parcel)
@@ -394,6 +418,12 @@ class SPCWidget(QWidget):
     @Slot(int, dict)
     def modifyProf(self, idx, kwargs):
         self.prof_collections[self.pc_idx].modify(idx, **kwargs)
+        self.updateProfs()
+        self.setFocus()
+
+    @Slot(str, float, float)
+    def modifyVector(self, deviant, vec_u, vec_v):
+        self.prof_collections[self.pc_idx].modifyStormMotion(deviant, vec_u, vec_v)
         self.updateProfs()
         self.setFocus()
 
@@ -410,6 +440,11 @@ class SPCWidget(QWidget):
 
     def resetProfInterpolation(self):
         self.prof_collections[self.pc_idx].resetInterpolation()
+        self.updateProfs()
+        self.setFocus()
+
+    def resetVector(self):
+        self.prof_collections[self.pc_idx].resetStormMotion()
         self.updateProfs()
         self.setFocus()
 
@@ -556,7 +591,7 @@ class SPCWidget(QWidget):
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
             self.grid3.addWidget(self.left_inset_ob, 0, 2)
-            self.config.set('insets', 'left_inset', self.left_inset)
+            self.config['insets', 'left_inset'] = self.left_inset
 
         elif self.inset_to_swap == "RIGHT":
             if self.right_inset == "WINTER" and self.dgz:
@@ -572,7 +607,7 @@ class SPCWidget(QWidget):
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
             self.grid3.addWidget(self.right_inset_ob, 0, 3)
-            self.config.set('insets', 'right_inset', self.right_inset)
+            self.config['insets', 'right_inset'] = self.right_inset
 
         if a.data() == "WINTER":
             self.sound.setDGZ(True)
@@ -586,7 +621,7 @@ class SPCWindow(QMainWindow):
 
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
-        super(SPCWindow, self).__init__()
+        super(SPCWindow, self).__init__(parent=parent)
 
         self.menu_items = []
         self.picker_window = parent
@@ -595,6 +630,7 @@ class SPCWindow(QMainWindow):
     def __initUI(self, **kwargs):
         kwargs['parent'] = self
         self.spc_widget = SPCWidget(**kwargs)
+        self.parent().config_changed.connect(self.spc_widget.updateProfs)
         self.setCentralWidget(self.spc_widget)
         self.createMenuBar()
 
@@ -615,6 +651,10 @@ class SPCWindow(QMainWindow):
     def createMenuBar(self):
         bar = self.menuBar()
         filemenu = bar.addMenu("File")
+
+        pref = QAction("Preferences", self)
+        filemenu.addAction(pref)
+        pref.triggered.connect(self.parent().preferencesbox)
 
         saveimage = QAction("Save Image", self, shortcut=QKeySequence("Ctrl+S"))
         saveimage.triggered.connect(self.spc_widget.saveimage)

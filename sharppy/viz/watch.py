@@ -92,8 +92,13 @@ class plotWatch(backgroundWatch):
 
     def setProf(self, prof):
         self.prof = prof
-        self.watch_type = self.prof.watch_type
-        self.watch_type_color = self.prof.watch_type_color
+        use_left = prof.latitude < 0
+        if use_left:
+            self.watch_type = self.prof.left_watch_type
+            self.watch_type_color = self.prof.left_watch_type_color
+        else:
+            self.watch_type = self.prof.right_watch_type
+            self.watch_type_color = self.prof.right_watch_type_color
 
         self.clearData()
         self.plotBackground()

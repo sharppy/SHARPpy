@@ -188,8 +188,15 @@ class plotAnalogues(backgroundAnalogues):
 
     def setProf(self, prof):
         self.prof = prof
-        self.hail_matches = prof.matches
-        self.sup_matches = prof.supercell_matches
+
+        use_left = prof.latitude < 0
+        if use_left:
+            self.hail_matches = prof.left_matches
+            self.sup_matches = prof.left_supercell_matches
+        else:
+            self.hail_matches = prof.right_matches
+            self.sup_matches = prof.right_supercell_matches
+
         self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
         self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
 
