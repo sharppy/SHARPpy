@@ -817,8 +817,10 @@ class ConvectiveProfile(BasicProfile):
 
         Returns nothing, but sets the following variables:
 
-        self.stp_fixed - fixed layer significant tornado parameter
-        self.stp_cin - effective layer significant tornado parameter
+        self.right_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the left-mover vector)
+        self.right_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the left-mover vector)
         self.right_scp - right moving supercell composite parameter
         self.left_scp - left moving supercell composite parameter
 
