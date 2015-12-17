@@ -2,8 +2,8 @@
 import os.path
 import subprocess
 release = True
-__version__ = '1.3.0'
-__version_name__ = "Xenia"
+__version__ = '1.4.0'
+__version_name__ = "Andover"
 
 _repository_path = os.path.split(__file__)[0]
 _git_file_path = os.path.join(_repository_path, '__git_version__.py')
