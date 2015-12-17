@@ -160,6 +160,7 @@ class plotText(backgroundText):
         self.ylast = self.label_height
         self.setParcels(prof)
         self.prof = prof;
+        self.use_left = prof.latitude < 0
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -271,13 +272,18 @@ class plotText(backgroundText):
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
         ship = tab.utils.FLOAT2STR( self.prof.ship, 1 )
-        stp_fixed = tab.utils.FLOAT2STR( self.prof.stp_fixed, 1 )
-        stp_cin = tab.utils.FLOAT2STR( self.prof.stp_cin, 1 )
-        right_scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
+        if self.use_left:
+            stp_fixed = tab.utils.FLOAT2STR( self.prof.right_stp_fixed, 1 )
+            stp_cin = tab.utils.FLOAT2STR( self.prof.right_stp_cin, 1 )
+            scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
+        else:
+            stp_fixed = tab.utils.FLOAT2STR( self.prof.right_stp_fixed, 1 )
+            stp_cin = tab.utils.FLOAT2STR( self.prof.right_stp_cin, 1 )
+            scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
 
         # Coloring provided by Rich Thompson (SPC)
         labels = ['Supercell = ', 'STP (cin) = ', 'STP (fix) = ', 'SHIP = ']
-        indices = [right_scp, stp_cin, stp_fixed, ship]
+        indices = [scp, stp_cin, stp_fixed, ship]
         for label, index in zip(labels,indices):
             rect = QtCore.QRect(x1*7, y1, x1*8, self.label_height)
             if label == labels[0]: # STP uses a different color scale

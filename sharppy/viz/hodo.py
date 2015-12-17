@@ -439,6 +439,7 @@ class plotHodo(backgroundHodo):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.use_left = prof.latitude < 0
 
         self.prof = prof
         self.hght = prof.hght
@@ -1120,8 +1121,12 @@ class plotHodo(backgroundHodo):
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ## draw lines showing the effective inflow layer
-            qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
-            qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
+            if self.use_left:
+                qp.drawLine(center_lm.x(), center_lm.y(), uubot, vvbot)
+                qp.drawLine(center_lm.x(), center_lm.y(), uutop, vvtop)
+            else:
+                qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
+                qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
                 
         color = QtGui.QColor('#000000')
         color.setAlpha(0)
@@ -1186,7 +1191,11 @@ class plotHodo(backgroundHodo):
                 qp.setPen(pen)
                 qp.setFont(self.critical_font)
                 offset = 10
-                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
+                if self.use_left:
+                    critical_angle = self.prof.left_critical_angle
+                else:
+                    critical_angle = self.prof.right_critical_angle
+                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle))
 
     def draw_hodo(self, qp, prof, colors, width=2):
         '''

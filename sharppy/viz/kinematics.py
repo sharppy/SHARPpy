@@ -156,10 +156,35 @@ class plotKinematics(backgroundKinematics):
     def setProf(self, prof):
         self.ylast = self.label_height
 
-        self.prof = prof;
-        self.srh1km = prof.srh1km
-        self.srh3km = prof.srh3km
-        self.esrh = prof.right_esrh
+        self.prof = prof
+        use_left = prof.latitude < 0
+
+        if use_left:
+            self.srh1km = prof.left_srh1km
+            self.srh3km = prof.left_srh3km
+            self.esrh = prof.left_esrh
+
+            self.srw_1km = prof.left_srw_1km
+            self.srw_3km = prof.left_srw_3km
+            self.srw_6km = prof.left_srw_6km
+            self.srw_8km = prof.left_srw_8km
+            self.srw_lcl_el = prof.left_srw_lcl_el
+            self.srw_4_5km = prof.left_srw_4_5km
+            srw_eff = prof.left_srw_eff
+            srw_ebw = prof.left_srw_ebw
+        else:
+            self.srh1km = prof.right_srh1km
+            self.srh3km = prof.right_srh3km
+            self.esrh = prof.right_esrh
+
+            self.srw_1km = prof.right_srw_1km
+            self.srw_3km = prof.right_srw_3km
+            self.srw_6km = prof.right_srw_6km
+            self.srw_8km = prof.right_srw_8km
+            self.srw_lcl_el = prof.right_srw_lcl_el
+            self.srw_4_5km = prof.right_srw_4_5km
+            srw_eff = prof.right_srw_eff
+            srw_ebw = prof.right_srw_ebw
 
         self.mean_1km = prof.mean_1km
         self.mean_3km = prof.mean_3km
@@ -168,15 +193,6 @@ class plotKinematics(backgroundKinematics):
         self.mean_lcl_el = prof.mean_lcl_el
         mean_eff = prof.mean_eff
         mean_ebw = prof.mean_ebw
-
-        self.srw_1km = prof.srw_1km
-        self.srw_3km = prof.srw_3km
-        self.srw_6km = prof.srw_6km
-        self.srw_8km = prof.srw_8km
-        self.srw_lcl_el = prof.srw_lcl_el
-        self.srw_4_5km = prof.srw_4_5km
-        srw_eff = prof.srw_eff
-        srw_ebw = prof.srw_ebw
 
         self.sfc_1km_shear = prof.sfc_1km_shear
         self.sfc_3km_shear = prof.sfc_3km_shear

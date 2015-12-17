@@ -509,6 +509,7 @@ class plotSkewT(backgroundSkewT):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.use_left = prof.latitude < 0
         self.plot_omega = not self.prof_collections[pc_idx].getMeta('observed')
         self.prof = prof
 
@@ -1034,8 +1035,14 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
             qp.setClipping(True)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
+
+            if self.use_left:
+                esrh = self.prof.left_esrh[0]
+            else:
+                esrh = self.prof.right_esrh[0]
+
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
-                tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
+                tab.utils.INT2STR(esrh) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
