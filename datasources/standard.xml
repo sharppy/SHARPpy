@@ -8,11 +8,7 @@
     </datasource>
     <datasource name="NAM" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/{cycle}/nam_{srcid}.buf" format="bufkit" >
-            <time range="84" delta="1" offset="0" delay="3" cycle="12" archive="24"/>
-            <points csv="nam.csv" />
-        </outlet>
-        <outlet name="PSU_OFF" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/{cycle}/namm_{srcid}.buf" format="bufkit" >
-            <time range="84" delta="1" offset="6" delay="3" cycle="12" archive="24"/>
+            <time range="84" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam.csv" />
         </outlet>
     </datasource>
@@ -30,10 +26,6 @@
     </datasource>
     <datasource name="4km NAM" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM4KM/{cycle}/nam4km_{srcid}.buf" format="bufkit" >
-            <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
-            <points csv="nam4km.csv" />
-        </outlet>
-        <outlet name="PSU_OFF" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM4KM/{cycle}/nam4kmm_{srcid}.buf" format="bufkit" >
             <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam4km.csv" />
         </outlet>
