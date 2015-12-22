@@ -131,10 +131,6 @@ def _available_psu(model, nam=False, off=False):
     latest = re.search("%s\.([\d]{12})\.done" % model, psu_text).groups(0)[0]
     dt = datetime.strptime(latest, "%Y%m%d%H%M")
 
-    if nam and off and dt.hour in [ 0, 12 ]:
-        dt -= timedelta(hours=6)
-    if nam and not off and dt.hour in [ 6, 18 ]:
-        dt -= timedelta(hours=6)
     return [ dt ]
 
 ## PECAN MAPS ENSEMBLE CODE
@@ -181,10 +177,6 @@ def _available_nssl(ens=False):
 # A dictionary of the available times for profiles from observations, forecast models, etc.
 available = {
     'psu':{}, 
-    'psu_off':{
-        'nam':lambda: _available_psu('nam', nam=True, off=True),
-        '4km nam':lambda: _available_psu('4km nam', nam=True, off=True)
-    },
     'spc':{'observed':_available_spc},
     'ou_pecan': {'pecan ensemble': _available_oupecan },
     'ncar_ens': {'ncar ensemble': _available_ncarens },
@@ -194,10 +186,6 @@ available = {
 # given a specific datetime object.
 availableat = {
     'psu':{},
-    'psu_off':{
-        'nam':lambda dt: _availableat_psu('nam', dt),
-        '4km nam':lambda dt: _availableat_psu('4km nam', dt)
-    },
     'spc':{'observed':_availableat_spc},
     'ou_pecan': {'pecan ensemble': lambda dt: _availableat_oupecan(dt) },
     'ncar_ens': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) },
