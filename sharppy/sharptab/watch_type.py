@@ -546,7 +546,7 @@ def possible_watch(prof, use_left=False):
     elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
         colors.append("#FF0000")
-    elif (stp_eff >= 0.5 and prof.esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
+    elif (stp_eff >= 0.5 and esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
         colors.append("#FF0000")
