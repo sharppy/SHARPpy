@@ -113,13 +113,13 @@ class backgroundWinter(QtGui.QFrame):
             y1 += self.label_height + sep + self.os_mod
 
         self.energy_y1 = backup
-        qp.drawLine( 0, y1+6, self.brx, y1 +6)
-        qp.drawLine( self.brx* .48, y1+6, self.brx*.48, backup )
-        y1 = y1 +10
+        qp.drawLine( 0, y1 + 0, self.brx, y1 + 0)
+        qp.drawLine( self.brx* .48, y1 + 0, self.brx*.48, backup )
+        y1 += 4
         rect1 = QtCore.QRect(0, y1, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '*** BEST GUESS PRECIP TYPE ***')
         self.precip_type_y1 = y1 + self.label_height + 3 + 2 * self.os_mod
-        self.ptype_tmpf_y1 = self.precip_type_y1 + self.label_height + 10 + 2 * self.os_mod
+        self.ptype_tmpf_y1 = self.precip_type_y1 + self.label_height + 8 + 2 * self.os_mod
 
     def resizeEvent(self, e):
         '''
