@@ -30,9 +30,11 @@ class PECANDecoder(Decoder):
                 profiles[member] = profiles[member] + [prof]
             except Exception,e:
                 profiles[member] = [prof]
-            dates.append(dt_obj)
-
+            if not dt_obj in dates:
+                dates.append(dt_obj)
         prof_coll = prof_collection.ProfCollection(profiles, dates)
+        if "MEAN" in profiles.keys():
+            prof_coll.setHighlightedMember("MEAN")
         return prof_coll
 
     def _parseSection(self, section):
