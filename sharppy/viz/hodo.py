@@ -439,6 +439,7 @@ class plotHodo(backgroundHodo):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.use_left = prof.latitude < 0
 
         self.prof = prof
         self.hght = prof.hght
@@ -667,9 +668,13 @@ class plotHodo(backgroundHodo):
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
+                if self.use_left:
+                    srw_9_11km = self.prof.left_srw_9_11km
+                else:
+                    srw_9_11km = self.prof.right_srw_9_11km
+                x2, y2 = self.uv_to_pix(srw_9_11km[0] + to_add[0], srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
-                dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                dir, spd = tab.utils.comp2vec(srw_9_11km[0], srw_9_11km[1])
                 if spd >= 70:
                     supercell_type = "LP"
                 elif spd < 70 and spd > 40:
@@ -879,8 +884,14 @@ class plotHodo(backgroundHodo):
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
 
             wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+            if self.wind_units == 'm/s':
+                ws_interp = tab.utils.KTS2MS(ws_interp)
+                units = 'm/s'
+            else:
+                units = 'kts'
+
             xx, yy = self.uv_to_pix(u_interp, v_interp)
-            readout = "%03d/%02d kts" % (wd_interp, ws_interp)
+            readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
 
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
@@ -1120,8 +1131,12 @@ class plotHodo(backgroundHodo):
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ## draw lines showing the effective inflow layer
-            qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
-            qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
+            if self.use_left:
+                qp.drawLine(center_lm.x(), center_lm.y(), uubot, vvbot)
+                qp.drawLine(center_lm.x(), center_lm.y(), uutop, vvtop)
+            else:
+                qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
+                qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
                 
         color = QtGui.QColor('#000000')
         color.setAlpha(0)
@@ -1186,7 +1201,11 @@ class plotHodo(backgroundHodo):
                 qp.setPen(pen)
                 qp.setFont(self.critical_font)
                 offset = 10
-                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(self.prof.critical_angle))
+                if self.use_left:
+                    critical_angle = self.prof.left_critical_angle
+                else:
+                    critical_angle = self.prof.right_critical_angle
+                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle))
 
     def draw_hodo(self, qp, prof, colors, width=2):
         '''

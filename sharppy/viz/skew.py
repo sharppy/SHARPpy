@@ -509,6 +509,7 @@ class plotSkewT(backgroundSkewT):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
+        self.use_left = prof.latitude < 0
         self.plot_omega = not self.prof_collections[pc_idx].getMeta('observed')
         self.prof = prof
 
@@ -823,13 +824,15 @@ class plotSkewT(backgroundSkewT):
             for y in yvals:
                 dd = wdir[i]
                 ss = wspd[i]
+
                 if self.wind_units == 'm/s':
                     ss = tab.utils.KTS2MS(ss)
-                drawBarb( qp, self.barbx, y, dd, vv )
+                drawBarb( qp, self.barbx, y, dd, vv, shemis=(prof.latitude < 0) )
                 i += 1
         else:
             pres = np.arange(prof.pres[prof.sfc], prof.pres[prof.top], -40)
             wdir, wspd = tab.interp.vec(prof, pres)
+
             for p, dd, ss in zip(pres, wdir, wspd):
                 if not tab.utils.QC(dd) or np.isnan(ss) or p < self.pmin:
                     continue
@@ -838,7 +841,7 @@ class plotSkewT(backgroundSkewT):
                     ss = tab.utils.KTS2MS(ss)
 
                 y = self.originy + self.pres_to_pix(p) / self.scale
-                drawBarb( qp, self.barbx, y, dd, ss, color=color)
+                drawBarb( qp, self.barbx, y, dd, ss, color=color, shemis=(prof.latitude < 0) )
         qp.setClipRect(self.clip)
 
     def drawTitles(self, qp):
@@ -1032,8 +1035,14 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_bot)
             qp.setClipping(True)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text_top)
+
+            if self.use_left:
+                esrh = self.prof.left_esrh[0]
+            else:
+                esrh = self.prof.right_esrh[0]
+
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
-                tab.utils.INT2STR(self.prof.right_esrh[0]) + ' m2s2')
+                tab.utils.INT2STR(esrh) + ' m2s2')
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)

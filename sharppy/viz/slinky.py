@@ -156,8 +156,14 @@ class plotSlinky(backgroundSlinky):
 
     def setProf(self, prof):
         self.prof = prof
-        self.smu = self.prof.srwind[0]
-        self.smv = self.prof.srwind[1]
+        use_left = prof.latitude < 0
+
+        if use_left:
+            self.smu = self.prof.srwind[2]
+            self.smv = self.prof.srwind[3]
+        else:
+            self.smu = self.prof.srwind[0]
+            self.smv = self.prof.srwind[1]
 
         self.pcl = None
 

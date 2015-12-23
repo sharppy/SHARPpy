@@ -299,9 +299,9 @@ class BasicProfile(Profile):
         if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
             qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
         if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature array. Array contains a value < 273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid temperature array. Array contains a value < -273.15 Celsius.", ValueError)
         if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < 273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < -273.15 Celsius.", ValueError)
         if not qc_tools.isWSPDValid(self.wspd) and strictQC:
             qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
         if not qc_tools.isWDIRValid(self.wdir) and strictQC:
@@ -475,6 +475,7 @@ class ConvectiveProfile(BasicProfile):
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
         self.user_srwind = None
+        self.use_right = (self.latitude > 0)
 
         # Generate the fire weather paramters
         self.get_fire()
@@ -687,11 +688,16 @@ class ConvectiveProfile(BasicProfile):
             self.ebwspd = MISSING
             self.mean_eff = [MISSING, MISSING, MISSING]
             self.mean_ebw = [MISSING, MISSING, MISSING]
-            self.srw_eff = [MISSING, MISSING, MISSING]
-            self.srw_ebw = [MISSING, MISSING, MISSING]
+
+            self.right_srw_eff = [MISSING, MISSING, MISSING]
+            self.right_srw_ebw = [MISSING, MISSING, MISSING]
             self.right_esrh = [ma.masked, ma.masked, ma.masked]
+            self.right_critical_angle = ma.masked
+
+            self.left_srw_eff = [MISSING, MISSING, MISSING]
+            self.left_srw_ebw = [MISSING, MISSING, MISSING]
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
-            self.critical_angle = ma.masked
+            self.left_critical_angle = ma.masked
         else:
             self.bunkers = params.bunkers_storm_motion(self, mupcl=self.mupcl, pbot=self.ebottom)
             if self.user_srwind is None:
@@ -706,28 +712,47 @@ class ConvectiveProfile(BasicProfile):
             self.eff_shear = winds.wind_shear(self, pbot=self.ebottom, ptop=self.etop)
             self.ebwd = winds.wind_shear(self, pbot=self.ebottom, ptop=elh)
             self.ebwspd = utils.mag( self.ebwd[0], self.ebwd[1] )
-            ## calculate the mean sr wind
-            self.srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[0], stv=self.srwind[1] )
-            self.srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[0], stv=self.srwind[1] )
+            ## calculate quantities relative to the right-mover vector
+            self.right_srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[0], stv=self.srwind[1] )
+            self.right_srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[0], stv=self.srwind[1] )
             self.right_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[0], stv=self.srwind[1])
+            self.right_critical_angle = winds.critical_angle(self, stu=self.srwind[0], stv=self.srwind[1])
+            ## calculate quantities relative to the left-mover vector
+            self.left_srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[2], stv=self.srwind[3] )
+            self.left_srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[2], stv=self.srwind[3] )
             self.left_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[2], stv=self.srwind[3])
-            self.critical_angle = winds.critical_angle(self, stu=self.srwind[0], stv=self.srwind[1])
-        ## calculate mean srw
-        self.srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] ))
+            self.left_critical_angle = winds.critical_angle(self, stu=self.srwind[2], stv=self.srwind[3])
+
+        ## calculate quantities relative to the right-mover vector
+        self.right_srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] ))
         # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
-        self.srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
-        self.srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])
-        self.srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[0], stv=self.srwind[1])
+
+        ## calculate quantities relative to the left-mover vector
+        self.left_srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[2], stv=self.srwind[3] ))
+        # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
+        self.left_srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[2], stv=self.srwind[3])
         
         ## calculate upshear and downshear
         self.upshear_downshear = winds.mbe_vectors(self)
-        self.srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
-        self.srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[0], stv=self.srwind[1])
+        self.left_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[2], stv=self.srwind[3])
 
     def get_thermo(self):
         '''
@@ -794,8 +819,10 @@ class ConvectiveProfile(BasicProfile):
 
         Returns nothing, but sets the following variables:
 
-        self.stp_fixed - fixed layer significant tornado parameter
-        self.stp_cin - effective layer significant tornado parameter
+        self.right_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the left-mover vector)
+        self.right_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the left-mover vector)
         self.right_scp - right moving supercell composite parameter
         self.left_scp - left moving supercell composite parameter
 
@@ -808,14 +835,17 @@ class ConvectiveProfile(BasicProfile):
         None
         '''
         wspd = utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])
-        self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], utils.KTS2MS(wspd))
+        self.right_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.right_srh1km[0], utils.KTS2MS(wspd))
+        self.left_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.left_srh1km[0], utils.KTS2MS(wspd))
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
-            self.stp_cin = 0.0
+            self.right_stp_cin = 0.0; self.left_stp_cin = 0.0
         else:
             self.right_scp = params.scp( self.mupcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd))
             self.left_scp = params.scp( self.mupcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd))
-            self.stp_cin = params.stp_cin(self.mlpcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd),
+            self.right_stp_cin = params.stp_cin(self.mlpcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd),
+                self.mlpcl.lclhght, self.mlpcl.bminus)
+            self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
 
     def get_sars(self):
@@ -844,8 +874,10 @@ class ConvectiveProfile(BasicProfile):
         sfc_9km_shear = utils.KTS2MS( utils.mag( self.sfc_9km_shear[0], self.sfc_9km_shear[1]) )
         h500t = interp.temp(self, 500.)
         lapse_rate = params.lapse_rate( self, 700., 500., pres=True )
-        srh3km = self.srh3km[0]
-        srh1km = self.srh1km[0]
+        right_srh3km = self.right_srh3km[0]
+        right_srh1km = self.right_srh1km[0]
+        left_srh3km = self.left_srh3km[0]
+        left_srh1km = self.left_srh1km[0]
         mucape = self.mupcl.bplus
         mlcape = self.mlpcl.bplus
         mllcl = self.mlpcl.lclhght
@@ -855,14 +887,20 @@ class ConvectiveProfile(BasicProfile):
         self.hail_database = 'sars_hail.txt'
         self.supercell_database = 'sars_supercell.txt'
         try:
-            self.matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
-                sfc_9km_shear, sfc_3km_shear, srh3km)
+            self.right_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
+                sfc_9km_shear, sfc_3km_shear, right_srh3km)
+            self.left_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
+                sfc_9km_shear, sfc_3km_shear, left_srh3km)
         except:
-            self.matches = ([], [], 0, 0, 0)
+            self.right_matches = ([], [], 0, 0, 0)
+            self.left_matches = ([], [], 0, 0, 0)
+
         try:
-            self.supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), srh3km)
+            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), right_srh3km)
+            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), left_srh3km)
         except Exception as e:
-            self.supercell_matches = ([], [], 0, 0, 0)
+            self.right_supercell_matches = ([], [], 0, 0, 0)
+            self.left_supercell_matches = ([], [], 0, 0, 0)
                 
     def get_watch(self):
         '''
@@ -881,9 +919,13 @@ class ConvectiveProfile(BasicProfile):
         -------
         None
         '''
-        watch_types = watch_type.possible_watch(self)
-        self.watch_type = watch_types[0][0]
-        self.watch_type_color = watch_types[1][0]
+        watch_types = watch_type.possible_watch(self, use_left=False)
+        self.right_watch_type = watch_types[0][0]
+        self.right_watch_type_color = watch_types[1][0]
+
+        watch_types = watch_type.possible_watch(self, use_left=True)
+        self.left_watch_type = watch_types[0][0]
+        self.left_watch_type_color = watch_types[1][0]
 
     def get_traj(self):
         '''

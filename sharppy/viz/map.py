@@ -411,6 +411,7 @@ class MapWidget(QtGui.QWidget):
             self.async.post(getPoints, update)
 
     def setProjection(self, proj):
+        old_proj = self.mapper.getProjection()
         self.mapper.setProjection(proj)
         self.resetViewport()
         self._showLoading()
@@ -432,6 +433,7 @@ class MapWidget(QtGui.QWidget):
             self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / self.scale
         else:
             self.scale = self.init_scale
+            self.map_rot = 0.
             proj = self.mapper.getProjection()
             if proj == 'npstere':
                 self.map_center_y = -13 * self.height() / 10 + self.height() / 2 
@@ -443,7 +445,6 @@ class MapWidget(QtGui.QWidget):
     def drawMap(self):
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-#       qp.rotate(self.map_rot)
 
         self.plotBitMap.fill(QtCore.Qt.black)
 
@@ -451,6 +452,20 @@ class MapWidget(QtGui.QWidget):
         map_center_y = self.map_center_y + self.trans_y
 
         qp.translate(map_center_x, map_center_y)
+        proj = self.mapper.getProjection()
+
+        if proj == 'npstere':
+            qp.rotate(self.map_rot)
+        elif proj == 'merc':
+            map_center_lat, map_center_lon = self.mapper(map_center_x - self.width() / 2, map_center_y - self.height() / 2, inverse=True)
+            map_center_lon -= self.map_rot
+            new_center_x, new_center_y = self.mapper(map_center_lat, map_center_lon)
+            new_center_x += self.width() / 2
+            new_center_y += self.height() / 2
+            qp.translate((new_center_x - map_center_x) / self.scale, (new_center_y - map_center_y) / self.scale)
+        elif proj == 'spstere':
+            qp.rotate(-self.map_rot)
+
         qp.scale(1. / self.scale, 1. / self.scale)
         self.transform = qp.transform()
         window_rect = QtCore.QRect(0, 0, self.width(), self.height())
@@ -493,10 +508,8 @@ class MapWidget(QtGui.QWidget):
         self.drawStations(qp)
         qp.end()
 
-        
-
     def drawStations(self, qp):
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
         lb_lat, ub_lat = self.mapper.getLatBounds()
         size = 3 * self.scale
 
@@ -580,6 +593,8 @@ class MapWidget(QtGui.QWidget):
         trans_inv, is_invertible = self.transform.inverted()
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        lon -= self.map_rot
+
         self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
 
     def mouseReleaseEvent(self, e):
@@ -589,7 +604,7 @@ class MapWidget(QtGui.QWidget):
         self.trans_x, self.trans_y = 0, 0
 
         if not self.dragging and len(self.stn_lats) > 0:
-            stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+            stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
             stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ])
             stn_xs = np.array(stn_xs)
             stn_ys = np.array(stn_ys)
@@ -605,6 +620,7 @@ class MapWidget(QtGui.QWidget):
             trans_inv, is_invertible = self.transform.inverted()
             self.pt_x, self.pt_y = trans_inv.map(e.x(), e.y())
             lat, lon = self.mapper(self.pt_x, self.pt_y, inverse=True)
+            lon -= self.map_rot
             self.clicked.emit((lon, lat))
             self.drawMap()
             self.update()
@@ -615,6 +631,14 @@ class MapWidget(QtGui.QWidget):
         trans_inv, is_invertible = self.transform.inverted()
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        lon -= self.map_rot
+        self.map_rot += (lon - self.mapper.getLambda0())
+
+        if self.map_rot > 180:
+            self.map_rot -= 360
+        if self.map_rot <= -180:
+            self.map_rot += 360
+
         self.mapper.setLambda0(lon)
         self._showLoading()
 
@@ -625,7 +649,8 @@ class MapWidget(QtGui.QWidget):
             self.update()
             return
 
-        self.async.post(self.initMap, update)
+        update(None)
+#       self.async.post(self.initMap, update)
 
     def wheelEvent(self, e):
         max_speed = 75
@@ -672,7 +697,7 @@ class MapWidget(QtGui.QWidget):
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
         if len(stn_xs) == 0 or len(stn_ys) == 0:
             return
 

@@ -166,12 +166,20 @@ class plotSTP(backgroundSTP):
 
     def setProf(self, prof):
         self.prof = prof
+        use_left = prof.latitude < 0
+
         self.mlcape = prof.mlpcl.bplus
         self.mllcl = prof.mlpcl.lclhght
-        self.esrh = prof.right_esrh[0]
         self.ebwd = prof.ebwspd
-        self.stpc = prof.stp_cin
-        self.stpf = prof.stp_fixed
+
+        if use_left:
+            self.esrh = prof.left_esrh[0]
+            self.stpc = prof.left_stp_cin
+            self.stpf = prof.left_stp_fixed
+        else:
+            self.esrh = prof.right_esrh[0]
+            self.stpc = prof.right_stp_cin
+            self.stpf = prof.right_stp_fixed
         ## get the probabilities
         self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
         self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
