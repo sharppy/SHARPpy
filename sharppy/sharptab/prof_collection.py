@@ -237,7 +237,6 @@ class ProfCollection(object):
         mem_names = sorted(self._profs.keys())
         high_idx = mem_names.index(self._highlight)
         length = len(mem_names)
-
         if direction > 0 and high_idx == length - 1:
             adv_idx = 0
         if direction < 0 and high_idx == 0:

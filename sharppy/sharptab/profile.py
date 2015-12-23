@@ -145,7 +145,7 @@ class Profile(object):
         '''
             Copies a profile object.
         '''            
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC' ])
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC', 'missing' ])
 
         if prof.u is not None and prof.v is not None:
             new_kwargs.update({'u':prof.u, 'v':prof.v})
