@@ -1217,6 +1217,7 @@ class plotHodo(backgroundHodo):
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
 
+
         seg_idxs = np.searchsorted(z, seg_bnds)
         for idx in xrange(len(seg_bnds) - 1):
             ## define a pen to draw with
@@ -1231,6 +1232,9 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+
+
+
 
     def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
@@ -1279,4 +1283,5 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+
 
