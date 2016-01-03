@@ -47,9 +47,21 @@ class ProfCollection(object):
         Subset the profile collection over time.
         idxs:   The time indices to include in the subsetted collection.
         """
+        
+        if idxs is None:
+            idxs = range(len(self._dates))
+        
         profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.iteritems() )
         dates = [ self._dates[idx] for idx in idxs ]
-        return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
+        
+        meta = {}
+        for key in self._meta:
+            if type(self._meta[key]) == list:
+                meta[key] = [self._meta[key][idx] for idx in idxs]
+            else:
+                meta[key] = self._meta[key]
+        
+        return ProfCollection(profiles, dates, highlight=self._highlight, **meta)
 
     def _backgroundCopy(self, member, max_procs=2):
         pipe = Queue(max_procs)
@@ -375,3 +387,22 @@ class ProfCollection(object):
         self._mod_wind[self._prof_idx] = False
         self._mod_therm[self._prof_idx] = False
         self._interp[self._prof_idx] = False
+    
+    def serialize(self, stringify_date=True):
+        serial = {'profiles': {},
+                  'meta'    : dict([(x, self._meta[x]) for x in list(set(self._meta.keys()).difference(set(['highlight'])))]),
+                  'highlighted': self._highlight}
+        
+        for key in self._profs:
+            serial['profiles'][key] = [prof.serialize(stringify_date=stringify_date) for prof in self._profs[key]]
+        
+        for x in range(len(self._dates)):
+            date = self._dates[x]
+            for mem in serial['profiles']:
+                if 'date' not in serial['profiles'][mem][x]:
+                    if stringify_date == True:
+                        serial['profiles'][x]['date'] = date.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    else:
+                        serial['profiles'][x]['date'] = date
+        
+        return serial

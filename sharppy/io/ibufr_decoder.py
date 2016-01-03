@@ -77,4 +77,5 @@ class IMETBufrDecoder(Decoder):
             dates,
         )
         prof_coll.setMeta('loc', location)
+        prof_coll.setMeta('model', 'Observed')
         return prof_coll

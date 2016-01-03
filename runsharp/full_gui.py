@@ -419,14 +419,26 @@ class Picker(QWidget):
         ## if the profile is an archived file, load the file from
         ## the hard disk
         if filename is not None:
-            model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
             disp_name = stn_id
             prof_idx = range(len(dates))
 
             run = prof_collection.getCurrentDate()
-            fhours = None
-            observed = True
+            
+            if not prof_collection.hasMeta('fhours'):
+                fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
+            else:
+                fhours = prof_collection.getMeta('fhours')
+            
+            if not prof_collection.hasMeta('observed'):
+                observed = True
+            else:
+                observed = prof_collection.getMeta('observed')
+                
+            if not prof_collection.hasMeta('model'):
+                model = "Archive"
+            else:
+                model = prof_collection.getMeta('model')
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
@@ -498,7 +510,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
-        profs = dec.getProfiles()
+        profs = dec.getProfiles(indexes=None)
         stn_id = dec.getStnId()
 
         return profs, stn_id

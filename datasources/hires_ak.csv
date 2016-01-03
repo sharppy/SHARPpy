@@ -1,0 +1,199 @@
+icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
+,,,5af,,,56.0,-137.0,0,7,5af
+,,,5ag,,,58.0,-142.0,0,7,5ag
+PADT,DDT,,Slana Airport,AK,US,62.72,-143.97,687,7,5sz
+,,,a#2,,,74.3,-156.6,0,7,a#2
+,,,a#3,,,75.0,-140.0,0,7,a#3
+,,,a#4,,,60.6,-173.3,0,7,a#4
+,,,a#5,,,54.0,-143.0,0,7,a#5
+,,,a#6,,,55.0,-155.0,0,7,a#6
+,,,a#7,,,53.0,-139.0,0,7,a#7
+,,,a#8,,,51.1,-147.4,0,7,a#8
+,,,a#9,,,52.0,-162.0,0,7,a#9
+,,,a#a,,,49.5,-153.7,0,7,a#a
+,,,a#b,,,49.2,-168.8,0,7,a#b
+,,,a#c,,,59.89,-161.88,1,7,a#c
+,,,a#d,,,60.51,-149.82,667,7,a#d
+,,,a#e,,,60.97,-149.25,640,7,a#e
+KAHN,AHN,72311,Athens Muni,GA,US,33.96,-83.32,244,4,ahn
+,,,awr,,,67.75,-144.11,686,7,awr
+,,,b49,,,18.0,-67.04,65,7,b49
+,,,b#c,,,56.3,-148.2,0,7,b#c
+,,,bdp,,,69.5,-156.5,96,7,bdp
+,,,b#e,,,51.9,-155.9,0,7,b#e
+,,,b#f,,,46.1,-131.0,0,7,b#f
+,,70027,Barrow ARM-NSA,AK,US,71.32,-156.62,3,8,bfx
+,,,bir,,,65.59,-144.36,274,7,bir
+,,,b#l,,,57.0,-177.7,0,7,b#l
+,,,bls,,,61.95,-151.0,44,7,bls
+,,,W Kodiak Island,AK,US,57.27,-154.56,0,7,btl
+KBVR,BVR,,Beaver Rim,WY,US,42.58,-108.28,2072,9,bvr
+KCKN,CKN,,Crookston Muni,MN,US,47.86,-96.62,273,7,ckn
+KCOT,COT,,Cotulla,TX,US,28.45,-99.22,140,7,cot
+,,,crr,,,65.0,-120.0,332,7,crr
+CWKX,WKX,71222,Dease Lake,BC,CA,58.42,-130.0,793,7,cwkx
+CWZV,WZV,71107,Cape Saint James,BC,CA,51.94,-131.02,92,7,cwzv
+CYCB,YCB,71925,Cambridge Bay,NU,CA,69.1,-105.1,27,5,cycb
+CYDA,YDA,71966,Dawson,YK,CA,64.05,-139.13,369,6,cyda
+CYEV,YEV,71957,Inuvik,NT,CA,68.3,-133.5,68,5,cyev
+CYFS,YFS,71946,Fort Simpson,NT,CA,61.8,-121.2,169,6,cyfs
+CYOC,YOC,,Old Crow Airport,YK,CA,67.57,-139.84,251,6,cyoc
+CYQH,YQH,71953,Watson Lake,YK,CA,60.12,-128.82,690,6,cyqh
+CYQQ,YQQ,71893,Comox,BC,CA,49.73,-124.9,24,6,cyqq
+CYSY,YSY,71051,Sachs Harbour,NT,CA,72.0,-125.27,86,6,cysy
+CYVQ,YVQ,71043,Norman Wells,NT,CA,65.28,-126.8,74,5,cyvq
+CYWO,YWO,71496,Lupin,NU,CA,65.77,-111.25,494,6,cywo
+CYXS,YXS,71908,Prince George,BC,CA,53.89,-122.68,691,0,cyxs
+CYXY,YXY,71964,Whitehorse,YK,CA,60.73,-135.07,703,5,cyxy
+CYYE,YYE,71945,Fort Nelson,BC,CA,58.84,-122.6,382,5,cyye
+CYZF,YZF,71936,Yellow Knife,NT,CA,62.51,-114.5,206,6,cyzf
+CYZT,YZT,71109,Port Hardy,BC,CA,50.69,-127.37,22,0,cyzt
+,,,Santo Domingo Este,,DO,18.47,-69.88,14,8,dsd
+,,,efl,,,60.0,-120.0,437,7,efl
+KGRF,GRF,74207,Fort Lewis/Gray,WA,US,47.09,-122.58,92,6,grf
+KH02,H02,,High Island 334A,LA,US,28.06,-93.4,30,7,h02
+,,,hay,,,65.2,-161.15,92,7,hay
+PAHO,HOM,70341,Homer Muni,AK,US,59.64,-151.5,28,6,hom
+,,,icc,,,70.4,-161.9,0,7,icc
+,,,ink,,,63.39,-158.83,245,9,ink
+PAFE,AFE,,Kake Seaplane Base,AK,US,56.97,-134.0,0,7,kak
+,,,kan,,,66.08,-152.17,222,7,kan
+,,,kel,,,67.95,-162.31,69,7,kel
+,,,kil,,,60.32,-160.2,467,7,kil
+,,,kna,,,60.59,-150.32,125,7,kna
+,,,knl,,,60.37,-149.41,365,7,knl
+,,,mac,,,61.32,-142.59,967,7,mac
+,,,maz,,,18.17,-67.15,0,7,maz
+MDPC,,78479,Punta Cana,,DO,18.57,-68.37,12,6,mdpc
+MDPP,,78457,Puerto Plata Intl,,DO,19.75,-70.55,5,6,mdpp
+MDSD,,78485,Caucedo/De Las Amer,,DO,18.43,-69.67,18,6,mdsd
+MDST,,78460,Santiago Intl,,DO,19.47,-70.7,184,6,mdst
+MKJP,,78397,Kingston,,JM,17.93,-76.78,3,5,mkjp
+MTCH,,78409,Cap-Haitien,,HT,19.75,-72.1833333333,2,5,mtch
+,,,mtl,,,60.0,-140.0,569,7,mtl
+MTPP,,78439,Port-Au-Prince,,HT,18.55,-72.35,37,6,mtpp
+KMTV,MTV,,Martinsville,VA,US,36.63,-80.02,287,7,mtv
+MUBA,,78268,Baracoa Oriente,,CU,20.35,-74.5,9,7,muba
+MUBY,,,Bayamo,,CU,20.4,-76.6166666667,64,7,muby
+MUCU,,78264,Santiago De Cuba,Oriente,CU,19.966,-75.85,76,6,mucu
+MUGM,,78367,Guantanamo Bay,CU,CU,19.906,-75.207,17,6,mugm
+MUGT,,78267,Guantanamo,,CU,20.0833333333,-75.15,8,7,mugt
+MUMO,,,Moa,,CU,20.65,-74.92,5,7,mumo
+MUMZ,,78256,Manzanillo,,CU,20.2833333333,-77.1,60,7,mumz
+MUVT,,78357,Las Tumas,,CU,20.95,-76.95,106,7,muvt
+,,,nck,,,60.03,-151.66,38,7,nck
+,,,noa,,,68.07,-158.71,310,7,noa
+,,,nru,,,66.85,-154.34,317,7,nru
+,,,nw2,,,47.7,-144.1,0,7,nw2
+,,,nw4,,,47.0,-138.0,0,7,nw4
+,,,nw7,,,48.5,-129.5,0,7,nw7
+,,,nw8,,,44.6,-127.5,0,7,nw8
+,,,nw9,,,50.5,-141.38,0,7,nw9
+,,,opp1,,,48.09,-130.43,0,7,opp1
+,,,opp2,,,48.11,-126.68,0,7,opp2
+,,,opp3,,,45.27,-129.77,0,7,opp3
+PAAQ,PAQ,70274,Palmer Muni,AK,US,61.61,-149.09,73,6,paaq
+PABA,BTI,70086,Barter Island,AK,US,70.14,-143.59,2,7,paba
+PABE,BET,70219,Bethel,AK,US,60.78,-161.8,41,5,pabe
+PABI,BIG,70267,Ft. Greely,AK,US,63.97,-145.7,386,6,pabi
+PABR,BRW,70026,Barrow/Wiley Post-Will Rogers,AK,US,71.29,-156.77,7,5,pabr
+PABT,BTT,70174,Bettles Field,AK,US,66.92,-151.52,195,6,pabt
+PACD,CDB,70316,Cold Bay,AK,US,55.21,-162.72,30,5,pacd
+PACV,CDV,70296,Cordova,AK,US,60.5,-145.5,12,6,pacv
+PACZ,CZF,70212,Cape Romanzoff,AK,US,61.79,-166.04,146,6,pacz
+PADK,ADK,70454,Adak NAS,AK,US,51.89,-176.65,4,7,padk
+PADL,DLG,70321,Dillingham,AK,US,59.05,-158.52,26,6,padl
+PADQ,ADQ,70350,Kodiak,AK,US,57.76,-152.5,34,5,padq
+PADU,DUT,70489,Dutch Harbor,AK,US,53.89,-166.53,4,6,padu
+PAEC,AEC,,Chulitna,AK,US,62.89,-149.84,381,7,paec
+PAED,EDF,70272,Elmendorf AFB,AK,US,61.26,-149.81,59,6,paed
+PAEG,EAA,,Eagle,AK,US,64.78,-141.15,268,7,paeg
+PAEH,EHM,70305,Cape Newenham,AK,US,58.66,-162.07,161,6,paeh
+PAEI,EIL,70265,Eielson AFB,AK,US,64.67,-147.1,167,6,paei
+PAEN,ENA,70259,Kenai Muni,AK,US,60.57,-151.25,27,6,paen
+PAFA,FAI,70261,Fairbanks Intl,AK,US,64.82,-147.87,132,5,pafa
+PAFM,AFM,,Ambler,AK,US,67.1,-157.85,88,7,pafm
+PAGA,GAL,70222,Galena Airport,AK,US,64.74,-156.94,46,6,paga
+PAGK,GKN,70271,Gulkana,AK,US,62.15,-145.45,481,6,pagk
+PAGS,GST,70367,Gustavus,AK,US,58.42,-135.73,9,6,pags
+PAGY,SGY,70362,Skagway,AK,US,59.48,-135.32,5,6,pagy
+PAHN,HNS,,Haines,AK,US,59.25,-135.52,5,6,pahn
+PAHO,HOM,70341,Homer Muni,AK,US,59.64,-151.5,28,6,paho
+PAIL,ILI,70340,Iliamna,AK,US,59.76,-154.92,49,6,pail
+PAJN,JNU,70381,Juneau Intl,AK,US,58.38,-134.58,5,0,pajn
+PAKN,AKN,70326,King Salmon,AK,US,58.68,-156.65,17,5,pakn
+PAKT,KTN,70395,Ketchikan Intl,AK,US,55.35,-131.7,28,6,pakt
+PAKW,AKW,,Klawock,AK,US,55.562,-133.085,15,7,pakw
+PALU,LUR,70104,Cape Lisburne,AK,US,68.89,-166.14,3,6,palu
+PAMC,MCG,70231,McGrath,AK,US,62.95,-155.61,103,5,pamc
+PAMD,MDO,70343,Middleton Island,AK,US,59.44,-146.33,14,7,pamd
+PANC,ANC,70273,Anchorage Intl,AK,US,61.17,-150.0,38,5,panc
+PANI,ANI,70232,Aniak,AK,US,61.58,-159.53,26,7,pani
+PANT,ANN,70398,Annette Island,AK,US,55.04,-131.57,36,5,pant
+PAOM,OME,70200,Nome,AK,US,64.5,-165.44,11,5,paom
+PAOR,ORT,70291,Northway,AK,US,62.97,-141.94,523,6,paor
+PAOT,OTZ,70133,Kotzebue/Ralph Wien,AK,US,66.87,-162.64,3,5,paot
+PAPG,PSG,70386,Petersburg,AK,US,56.82,-132.945,15,6,papg
+PASC,SCC,,Deadhorse,AK,US,70.2,-148.47,15,6,pasc
+PASI,SIT,70371,Sitka,AK,US,57.07,-135.35,5,6,pasi
+PASN,SNP,70308,St Paul Island,AK,US,57.15,-170.22,29,5,pasn
+PASV,SVW,70235,Sparrevohn,AK,US,61.11,-155.59,484,7,pasv
+PASW,SKW,70255,Skwentna,AK,US,61.97,-151.18,48,7,pasw
+PATA,TAL,70178,Tanana,AK,US,65.17,-152.1,67,6,pata
+PATK,TKA,70251,Talkeetna,AK,US,62.3,-150.1,109,6,patk
+PATL,TLJ,,Tatalina,AK,US,62.91,-155.99,294,6,patl
+PATO,POR,,Portage Glacier Visitor Cntr,AK,US,60.79,-148.83,31,7,pato
+PAUM,UMT,70162,Umiat,AK,US,69.37,-152.13,104,7,paum
+PAUN,UNK,70207,Unalakleet,AK,US,63.89,-160.81,6,6,paun
+PAVD,VDZ,,Valdez,AK,US,61.13,-146.25,37,6,pavd
+PAVW,VWS,70275,Valdez,AK,US,61.13,-146.35,11,7,pavw
+PAWD,SWD,70277,Seward,AK,US,60.12,-149.45,23,7,pawd
+PAWG,WRG,70387,Wrangell,AK,US,56.48,-132.396,11,6,pawg
+PAWR,IEM,,Whittier,AK,US,60.77,-148.69,47,7,pawr
+PAXK,PXK,,Paxson,AK,US,63.04,-145.5,809,7,paxk
+PAYA,YAK,70361,Yakutat,AK,US,59.52,-139.67,11,5,paya
+PFYU,FYU,,Fort Yukon,AK,US,66.57,-145.27,131,7,pfyu
+,,,piko,,,52.95,-168.85,21,7,piko
+,,,Prudhoe Bay,AK,US,69.0,-149.0,493,8,pln
+,,,pls,,,67.75,-149.0,1130,7,pls
+PATO,POR,,Portage Glacier,AK,US,60.79,-148.83,31,7,por
+,,,pse,,,17.85,-66.52,0,7,pse
+,,,qrz,,,65.41,-164.66,76,7,qrz
+,,,s#1,,,50.0,-135.0,0,7,s#1
+PASD,SDP,,Sand Point,AK,US,55.32,-160.52,7,7,sdp
+KSRR,SRR,,Ruidoso,NM,US,33.463,-105.535,2076,7,srr
+,,,srv,,,61.64,-156.44,91,7,srv
+,,,sww,,,56.97,-126.95,1463,8,sww
+TAPA,,78862,Coolidge Airport,,AG,17.12,-61.78,14,6,tapa
+TDCF,,78906,Canefield,,DM,15.3333333333,-61.4,5,7,tdcf
+TDPD,,78905,Melville Hall Ar,,DM,15.55,-61.3,14,7,tdpd
+TDPR,,78907,Roseau,,DM,15.3,-61.3833333333,72,7,tdpr
+,,,tel,,,63.44,-153.36,185,7,tel
+TFFJ,,78894,Gustavia/St.Bart,,GP,17.9,-62.85,290,7,tffj
+TFFR,,78897,Le Raizet,,GP,16.2666666667,-61.5333333333,11,8,tffr
+TIST,,78543,C. Amalie/Cyril E.,,VI,18.33,-64.97,7,6,tist
+TISX,,78547,Christiansted/Alexander,,VI,17.7,-64.8,19,6,tisx
+TJBQ,,78514,Aguadilla/Borinquen,PR,US,18.5,-67.13,72,6,tjbq
+TJMZ,,,Mayaguez/Eugenio,PR,US,18.27,-67.15,9,6,tjmz
+TJPS,,,Ponce/Mercedita,PR,US,18.02,-66.57,9,6,tjps
+TJSJ,SJU,78526,San Juan Intl,PR,US,18.43,-66.0,21,5,tjsj
+TKPK,,78858,Golden Rock,,KN,17.3,-62.68,48,6,tkpk
+TKPN,,78859,Charlestown/Newc,,AG,17.1833333333,-62.5666666667,17,7,tkpn
+TNCE,,78873,Fdr/Oranjes,,AN,17.4666666667,-62.9666666667,39,7,tnce
+TNCM,,78866,Prinses Juliana,,VI,18.05,-63.12,4,8,tncm
+,,,tok,,,62.97,-143.34,636,7,tok
+TQPF,,78846,Wall Blake,,VI,18.1833333333,-63.0333333333,31,7,tqpf
+TRPM,,,Blackburne/Plymo,,AG,16.75,-62.1666666667,12,7,trpm
+TUPJ,,78550,Beef Is/Roadtown,,VI,18.45,-64.53,4,7,tupj
+,,,u#2,,,70.97,-178.53,3,7,u#2
+UHMR,,25677,Ugolnaya Bay/Be,,RU,63.05,179.32,85,7,u#6
+,,,u#c,,,66.17,-169.83,7,7,u#c
+,,,uhaz,,,64.73,177.5,5,7,uhaz
+UHMA,,25563,Anadyr',HA,RU,64.78,177.57,62,6,uhma
+UHMD,,25594,Buhta Providenja,HA,RU,64.43,-173.23,3,7,uhmd
+UHMI,,,Mys Schmidta,,RU,68.9,-179.45,1,8,uhmi
+CWNL,WNL,71462,Great Duck Island,ON,CA,45.64,-82.97,183,7,wnl
+,,,won,,,63.49,-150.88,605,7,won
+,,,wrp,,,69.9,-128.97,15,7,wrp
+,,,wxk,,,69.58,-120.75,27,7,wxk
+CWKM,WKM,71046,Komakuk Beach,YK,CA,69.58,-140.18,19,7,yaj

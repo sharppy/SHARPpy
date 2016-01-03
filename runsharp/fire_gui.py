@@ -2,6 +2,7 @@ import sys, os
 import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
+from pip._vendor.distlib.wheel import ARCH
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
@@ -21,12 +22,20 @@ if frozenutils.isFrozen():
 
     sys.stdout = outfile
     sys.stderr = outfile
-    
+
+DATA_DIR = os.path.abspath(os.path.join(os.getcwd(), 'data'))
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+
+ARCHIVE_DIR = os.path.abspath(os.path.join(os.getcwd(), 'archive'))
+if not os.path.exists(ARCHIVE_DIR):
+    os.makedirs(ARCHIVE_DIR)
+
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
-from sharppy.io.decoder import getDecoders
-from sharppy.version import __version__, __version_name__, __upstream_version_name__
+from sharppy.io.decoder import getDecoders, getDecoder
+from sharppy.version import __version__, __version_name__, __upstream_version_name__, __upstream_version__
 
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -42,6 +51,9 @@ from os import listdir, getcwd
 import ConfigParser
 import traceback
 from functools import wraps, partial
+from bson import dumps
+from bz2 import compress
+from datetime import datetime
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -81,15 +93,137 @@ class crasher(object):
                     sys.exit(1)
             return ret
         return doCrasher
-
+class ArchivePicker(QWidget):
+    def __init__(self, picker, **kwargs):
+        super(ArchivePicker, self).__init__(**kwargs)
+        self.picker = picker
+        
+        self.toNiceModels = dict([(mod.lower().replace(' ', '_'), mod) for mod in self.picker.data_sources.keys()])
+        self.fromNiceModels = dict([(mod, mod.lower().replace(' ', '_')) for mod in self.picker.data_sources.keys()])
+        
+        self.__initUI()
+        self.update_date_list()
+    def get_nice_model_name(self, *args):
+        model = '_'.join(*args)
+        if model in self.toNiceModels:
+            return self.toNiceModels[model]
+        else:
+            return model.replace('_', ' ')
+    def get_model_file_name(self, name):
+        if name in self.fromNiceModels:
+            return self.fromNiceModels[name]
+        else:
+            return name.lower().replace(' ', '_')
+    def update_date_list(self):
+        self.file_date_list.clear()
+        self.file_model_list.clear()
+        self.file_site_list.clear()
+        self.load_button.setDisabled(True)
+        self.archive_files = {}
+        
+        files = listdir(ARCHIVE_DIR)
+        files.sort()
+        
+        for item in files:
+            item_array = splitext(item)[0].split('_')
+            if len(item_array) >= 3:
+                date_string = datetime.strptime(item_array[0], '%Y%m%d%H').strftime(Picker.run_format)
+                if date_string not in self.archive_files:
+                    self.archive_files[date_string] = {}
+                if self.get_nice_model_name(item_array[1:-1]) not in self.archive_files[date_string]:
+                    self.archive_files[date_string][self.get_nice_model_name(item_array[1:-1])] = []
+                self.archive_files[date_string][self.get_nice_model_name(item_array[1:-1])].append(item_array[-1].upper())
+        
+        dates = self.archive_files.keys()
+        dates.sort()
+        for item in dates:
+            self.file_date_list.addItem(item)
+        self.file_date_list.update()
+    def update_model_list(self):
+        self.file_model_list.clear()
+        self.file_site_list.clear()
+        self.load_button.setDisabled(True)
+        
+        models = self.archive_files[self.file_date_list.currentItem().text()].keys()
+        models.sort()
+        
+        for item in models:
+            self.file_model_list.addItem(item)
+        self.file_model_list.update()
+    def update_site_list(self):
+        self.file_site_list.clear()
+        self.load_button.setDisabled(True)
+        
+        sites = self.archive_files[self.file_date_list.currentItem().text()][self.file_model_list.currentItem().text()]
+        sites.sort()
+        for item in sites:
+            self.file_site_list.addItem(item)
+        self.file_site_list.update()
+    def station_selected(self):
+        self.load_button.setDisabled(False)
+    def load_archive_file(self):
+        file_name = join(ARCHIVE_DIR, '_'.join([datetime.strptime(self.file_date_list.currentItem().text(), Picker.run_format).strftime('%Y%m%d%H'),
+                                                                  self.get_model_file_name(self.file_model_list.currentItem().text()),
+                                                                  self.file_site_list.currentItem().text().lower()])+'.sharppy')
+        self.picker.skewApp(filename=file_name)
+    def __initUI(self):
+        self.control_widget = QVBoxLayout()
+        self.setLayout(self.control_widget)
+        self.file_list_frame = QWidget()
+        self.file_list_layout = QHBoxLayout()
+        self.file_list_frame.setLayout(self.file_list_layout)
+        self.file_date_frame = QWidget()
+        self.file_date_layout = QVBoxLayout()
+        self.file_date_frame.setLayout(self.file_date_layout)
+        self.file_date_label = QLabel('Date:')
+        self.file_date_list = QListWidget()
+        self.file_date_list.itemClicked.connect(self.update_model_list)
+        self.file_date_layout.addWidget(self.file_date_label)
+        self.file_date_layout.addWidget(self.file_date_list)
+        self.file_model_frame = QWidget()
+        self.file_model_layout = QVBoxLayout()
+        self.file_model_frame.setLayout(self.file_model_layout)
+        self.file_model_label = QLabel('Model:')
+        self.file_model_list = QListWidget()
+        self.file_model_list.itemClicked.connect(self.update_site_list)
+        self.file_model_layout.addWidget(self.file_model_label)
+        self.file_model_layout.addWidget(self.file_model_list)
+        self.file_site_frame = QWidget()
+        self.file_site_layout = QVBoxLayout()
+        self.file_site_frame.setLayout(self.file_site_layout)
+        self.file_site_label = QLabel('Site:')
+        self.file_site_list = QListWidget()
+        self.file_site_list.itemClicked.connect(self.station_selected)
+        self.file_site_layout.addWidget(self.file_site_label)
+        self.file_site_layout.addWidget(self.file_site_list)
+        self.button_frame = QWidget()
+        self.button_layout = QHBoxLayout()
+        self.button_frame.setLayout(self.button_layout)
+        self.refresh_button = QPushButton('Refresh')
+        self.refresh_button.clicked.connect(self.update_date_list)
+        self.load_button = QPushButton('Load')
+        self.load_button.clicked.connect(self.load_archive_file)
+        self.spacer = QLabel('')
+        self.spacer2 = QLabel('')
+        self.spacer3 = QLabel('')
+        self.spacer4 = QLabel('')
+        self.file_list_layout.addWidget(self.file_date_frame)
+        self.file_list_layout.addWidget(self.file_model_frame)
+        self.file_list_layout.addWidget(self.file_site_frame)
+        self.control_widget.addWidget(self.file_list_frame)
+        self.button_layout.addWidget(self.spacer)
+        self.button_layout.addWidget(self.spacer2)
+        self.button_layout.addWidget(self.spacer3)
+        self.button_layout.addWidget(self.spacer4)
+        self.button_layout.addWidget(self.refresh_button)
+        self.button_layout.addWidget(self.load_button)
+        self.control_widget.addWidget(self.button_frame)
 class LocalPicker(QWidget):
     async = AsyncThreads(2, debug)
     def __init__(self, picker, **kwargs):
         super(LocalPicker, self).__init__(**kwargs)
         self.picker = picker
         self.search_directory = abspath(join(getcwd(), 'data'))
-        if not exists(self.search_directory):
-            self.search_directory = abspath(dirname(__file__))
         self.__initUI()
     def __initUI(self):
         self.control_layout = QVBoxLayout()
@@ -182,18 +316,12 @@ class Picker(QWidget):
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.button.setDisabled(True)
-
-        self.select_flag = False
-        self.all_profs = QPushButton("Select All")
-        self.all_profs.clicked.connect(self.select_all)
-        self.all_profs.setDisabled(True)
+        
+        self.archive_sounding = QCheckBox('Archive')
+        self.archive_sounding.setCheckState(Qt.CheckState.Checked)
 
         self.save_view_button = QPushButton('Save Map View as Default')
         self.save_view_button.clicked.connect(self.save_view)
-
-        self.profile_list = QListWidget()
-        self.profile_list.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.profile_list.setDisabled(True)
 
         ## create subwidgets that will hold the individual GUI items
         self.left_data_frame = QWidget()
@@ -220,9 +348,11 @@ class Picker(QWidget):
         self.map_dropdown = self.dropdown_menu(zip(*projs)[1])
         self.map_dropdown.setCurrentIndex(proj_idx)
 
-        self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
+        self.run_list = QListWidget()
+        for item in [ t.strftime(Picker.run_format) for t in times ]:
+            self.run_list.addItem(item)
         try:
-            self.run_dropdown.setCurrentIndex(times.index(self.run))
+            self.run_list.setCurrentRow(times.index(self.run))
         except ValueError:
             print "Run dropdown is missing its times ... ?"
             print times
@@ -230,7 +360,8 @@ class Picker(QWidget):
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
-        self.run_dropdown.activated.connect(self.get_run)
+        #self.run_dropdown.activated.connect(self.get_run)
+        self.run_list.itemClicked.connect(self.get_run)
 
         ## Create text labels to describe the various menus
         self.type_label = QLabel("Select Sounding Source")
@@ -243,10 +374,8 @@ class Picker(QWidget):
         self.left_layout.addWidget(self.type_label)
         self.left_layout.addWidget(self.model_dropdown)
         self.left_layout.addWidget(self.run_label)
-        self.left_layout.addWidget(self.run_dropdown)
-        self.left_layout.addWidget(self.date_label)
-        self.left_layout.addWidget(self.profile_list)
-        self.left_layout.addWidget(self.all_profs)
+        self.left_layout.addWidget(self.run_list)
+        self.left_layout.addWidget(self.archive_sounding)
         self.left_layout.addWidget(self.button)
 
         ## add the elements to the right side of the GUI
@@ -309,8 +438,6 @@ class Picker(QWidget):
         :return:
         """
 
-        if self.select_flag:
-            self.select_all()
         self.profile_list.clear()
         self.prof_idx = []
         timelist = []
@@ -346,7 +473,7 @@ class Picker(QWidget):
         
         def update(times):
             times = times[0]
-            self.run_dropdown.clear()
+            self.run_list.clear()
 
             if self.model == "Observed":
                 self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
@@ -354,10 +481,10 @@ class Picker(QWidget):
                 self.run = times[-1]
 
             for data_time in times:
-                self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
+                self.run_list.addItem(data_time.strftime(Picker.run_format))
 
-            self.run_dropdown.update()
-            self.run_dropdown.setCurrentIndex(times.index(self.run))
+            self.run_list.update()
+            self.run_list.setCurrentRow(times.index(self.run))
 
         self.async_id = self.async.post(getTimes, update)
 
@@ -391,20 +518,7 @@ class Picker(QWidget):
         if self.loc is None:
             return
         else:
-            self.prof_idx = []
-            selected = self.profile_list.selectedItems()
-            for item in selected:
-                idx = self.profile_list.indexFromItem(item).row()
-                if idx in self.prof_idx:
-                    continue
-                else:
-                    self.prof_idx.append(idx)
-
-            fcst_hours = self.data_sources[self.model].getForecastHours()
-
-            if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
-                self.prof_idx.sort()
-                self.skewApp()
+            self.skewApp()
 
     def get_model(self, index):
         """
@@ -415,16 +529,14 @@ class Picker(QWidget):
         self.update_run_dropdown()
         self.async.join(self.async_id)
 
-        self.update_list()
         self.view.setDataSource(self.data_sources[self.model], self.run)
 
     def get_run(self, index):
         """
         Get the user's run hour selection for the model
         """
-        self.run = date.datetime.strptime(self.run_dropdown.currentText(), Picker.run_format)
+        self.run = date.datetime.strptime(self.run_list.currentItem().text(), Picker.run_format)
         self.view.setCurrentTime(self.run)
-        self.update_list()
 
     def get_map(self):
         """
@@ -471,20 +583,29 @@ class Picker(QWidget):
         ## if the profile is an archived file, load the file from
         ## the hard disk
         if filename is not None:
-            if splitext(filename)[1] == ".bufr":
-                model = "Observed"
-            else:
-                model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
             disp_name = stn_id
             prof_idx = range(len(dates))
 
             run = prof_collection.getCurrentDate()
-            fhours = None
-            observed = True
+            
+            if not prof_collection.hasMeta('fhours'):
+                fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
+            else:
+                fhours = prof_collection.getMeta('fhours')
+            
+            if not prof_collection.hasMeta('observed'):
+                observed = True
+            else:
+                observed = prof_collection.getMeta('observed')
+                
+            if not prof_collection.hasMeta('model'):
+                model = "Archive"
+            else:
+                model = prof_collection.getMeta('model')
         else:
         ## otherwise, download with the data thread
-            prof_idx = self.prof_idx
+            prof_idx = None
             disp_name = self.disp_name
             run = self.run
             model = self.model
@@ -493,7 +614,7 @@ class Picker(QWidget):
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
-            ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx, archive=self.archive_sounding.isChecked())
 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
@@ -501,8 +622,7 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
-
+            fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
@@ -554,7 +674,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
-        profs = dec.getProfiles()
+        profs = dec.getProfiles(indexes=None)
         stn_id = dec.getStnId()
 
         return profs, stn_id
@@ -563,20 +683,31 @@ class Picker(QWidget):
         return self.has_connection
 
 @progress(Picker.async)
-def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archive=False):
     """
     Loads the data from a remote source. Has hooks for progress bars.
     """
+    
+    arc_file = join(ARCHIVE_DIR, '{date:s}_{model:s}_{site:s}.sharppy'.format(date=run.strftime('%Y%m%d%H'), model=data_source.getName().lower().replace(' ', '_'), site=loc['srcid'].lower()))
+    
     if __text__ is not None:
         __text__.emit("Decoding File")
-
-    url = data_source.getURL(loc, run)
-    decoder = data_source.getDecoder(loc, run)
+    
+    if exists(arc_file):
+        url = arc_file
+        decoder  = getDecoder('archive')
+    else:
+        url = data_source.getURL(loc, run)
+        decoder = data_source.getDecoder(loc, run)
     dec = decoder(url)
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
-
+    
+    if archive:
+        with open(arc_file, 'wb') as out_file:
+            out_file.write(compress(dumps(dec.getProfiles(indexes=None).serialize(stringify_date=False))))
+    
     profs = dec.getProfiles(indexes=indexes)
     return profs
 
@@ -598,6 +729,8 @@ class Main(QMainWindow):
             self.config.add_section('paths')
             self.config.set('paths', 'load_txt', expanduser('~'))
 
+        self.resize(969, 635)
+
         self.__initUI()
 
     def __initUI(self):
@@ -608,8 +741,10 @@ class Main(QMainWindow):
         
         self.picker = Picker(self.config, parent=self)
         self.local_picker = LocalPicker(self.picker, parent=self)
+        self.archive_picker = ArchivePicker(self.picker, parent=self)
         self.imet_tabs.addTab(self.local_picker, 'Incident Sounding')
         self.imet_tabs.addTab(self.picker, 'Model Data')
+        self.imet_tabs.addTab(self.archive_picker, 'Archive')
         self.setCentralWidget(self.imet_tabs)
         self.createMenuBar()
         
@@ -635,9 +770,6 @@ class Main(QMainWindow):
         exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
         exit.triggered.connect(self.exitApp)        
         filemenu.addAction(exit)
-
-        #pref = QAction("Preferences", self)
-        #filemenu.addAction(pref)
 
         helpmenu = bar.addMenu("Help")
 
@@ -679,11 +811,11 @@ class Main(QMainWindow):
 
         Developed by Nickolai Reimer WFO Billings
 
-        Based on SHARPpy Beta v{0:s} {2:s}
+        Based on SHARPpy Beta v{3:s} {2:s}
         Sounding and Hodograph Analysis and Research
         Program for Python
 
-        (C) 2014-{3:d} by Patrick Marsh, John Hart,
+        (C) 2014-{4:d} by Patrick Marsh, John Hart,
         Kelton Halbert, Greg Blumberg, and Tim Supinie.
 
         SHARPpy is a collection of open source sounding
@@ -706,7 +838,7 @@ class Main(QMainWindow):
         Using Bufrpy (C) Tuure Laurinolli / FMI
         
         Contribute: https://github.com/tazle/bufrpy
-        """.format(__version__, __version_name__, __upstream_version_name__, cur_year)
+        """.format(__version__, __version_name__, __upstream_version_name__, __upstream_version__, cur_year)
         msgBox.setText(str)
         msgBox.exec_()
 

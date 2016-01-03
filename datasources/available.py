@@ -99,7 +99,9 @@ def _availableat_psu(model, dt):
             A datetime object that represents the model initalization time.
     '''
     if model == '4km nam': model = 'nam4km'
-    _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4kmm?', 'hrrr':'hrrr', 'sref':'sref'}
+    if model.find('hiresw') != -1: model = 'hiresw'
+    
+    _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4kmm?', 'hrrr':'hrrr', 'sref':'sref', 'hiresw':'hiresw'}
 
     cycle = dt.hour
     url = "%s%s/%02d/" % (psu_base_url, model.upper(), cycle)
@@ -126,7 +128,8 @@ def _available_psu(model, nam=False, off=False):
             Specifies whether or not this is an off-hour run
     '''
     if model == '4km nam': model = 'nam4km'
-
+    if model.find('hiresw') != -1: model = 'hiresw'
+    
     psu_text = _download_psu()
     latest = re.search("%s\.([\d]{12})\.done" % model, psu_text).groups(0)[0]
     dt = datetime.strptime(latest, "%Y%m%d%H%M")

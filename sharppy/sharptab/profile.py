@@ -174,6 +174,43 @@ class Profile(object):
             snd_file.write(str[:-3] + "\n")
         snd_file.write("%END%\n")
         snd_file.close()
+    
+    def serialize(self, stringify_date=True):
+        def qc(val):
+            return self.missing if not utils.QC(val) else val
+        
+        serial = {'missing': self.missing}
+        
+        if self.latitude != ma.masked:
+            serial['latitude'] = self.latitude
+        
+        if self.location != None:
+            serial['location'] = self.location
+        
+        
+        if self.date != None:
+            if stringify_date == True:
+                serial['date'] = self.date.strftime('%Y-%m-%dT%H:%M:%SZ')
+            else:
+                serial['date'] = self.date
+        
+        fields = ['pres', 'hght', 'tmpc', 'dwpc']
+        
+        if self.wspd is not None:
+            fields.extend(['wspd', 'wdir'])
+        elif self.u is not None:
+            fields.extend(['u', 'v'])
+
+        if self.tmp_stdev is not None:
+            fields.extend(['tmp_stdev', 'dew_stdev'])
+
+        if self.omeg is not None:
+            fields.append('omeg')
+
+        for field in fields:
+            serial[field] = [qc(x) for x in self.__getattribute__(field)]
+        
+        return serial
 
 class BasicProfile(Profile):
     '''
