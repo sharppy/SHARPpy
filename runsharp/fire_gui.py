@@ -2,7 +2,6 @@ import sys, os
 import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
-from pip._vendor.distlib.wheel import ARCH
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
@@ -622,8 +621,8 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
         if not failure:
+            fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)

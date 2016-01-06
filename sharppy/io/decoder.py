@@ -24,7 +24,7 @@ _decoders = {}
 def findDecoders():
     global _decoders
 
-    built_ins = [ 'buf_decoder', 'spc_decoder', 'pecan_decoder', 'archive_decoder', 'ibufr_decoder' ]
+    built_ins = [ 'buf_decoder', 'spc_decoder', 'archive_decoder', 'ibufr_decoder' ]
     io = __import__('sharppy.io', globals(), locals(), built_ins, -1)
 
     for dec in built_ins:

@@ -4,7 +4,7 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'C:\Users\nickolai\dev\SHARPpy\runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'bson', 'dateutil', 'six'],
              hookspath=None,
              runtime_hooks=None)
 
