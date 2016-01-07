@@ -22,11 +22,11 @@ if frozenutils.isFrozen():
     sys.stdout = outfile
     sys.stderr = outfile
 
-DATA_DIR = os.path.abspath(os.path.join(os.getcwd(), 'data'))
+DATA_DIR = os.path.abspath(os.path.join(os.getcwd(), 'sharppy_soundings'))
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
-ARCHIVE_DIR = os.path.abspath(os.path.join(os.getcwd(), 'archive'))
+ARCHIVE_DIR = os.path.abspath(os.path.join(os.getcwd(), 'sharppy_archive'))
 if not os.path.exists(ARCHIVE_DIR):
     os.makedirs(ARCHIVE_DIR)
 
@@ -96,7 +96,7 @@ class ArchivePicker(QWidget):
     def __init__(self, picker, **kwargs):
         super(ArchivePicker, self).__init__(**kwargs)
         self.picker = picker
-        
+        self.picker.add_archive_picker(self)
         self.toNiceModels = dict([(mod.lower().replace(' ', '_'), mod) for mod in self.picker.data_sources.keys()])
         self.fromNiceModels = dict([(mod, mod.lower().replace(' ', '_')) for mod in self.picker.data_sources.keys()])
         
@@ -126,7 +126,7 @@ class ArchivePicker(QWidget):
         for item in files:
             item_array = splitext(item)[0].split('_')
             if len(item_array) >= 3:
-                date_string = datetime.strptime(item_array[0], '%Y%m%d%H').strftime(Picker.run_format)
+                date_string = item_array[0]
                 if date_string not in self.archive_files:
                     self.archive_files[date_string] = {}
                 if self.get_nice_model_name(item_array[1:-1]) not in self.archive_files[date_string]:
@@ -136,14 +136,14 @@ class ArchivePicker(QWidget):
         dates = self.archive_files.keys()
         dates.sort()
         for item in dates:
-            self.file_date_list.addItem(item)
+            self.file_date_list.addItem(datetime.strptime(item, '%Y%m%d%H').strftime(Picker.run_format))
         self.file_date_list.update()
     def update_model_list(self):
         self.file_model_list.clear()
         self.file_site_list.clear()
         self.load_button.setDisabled(True)
         
-        models = self.archive_files[self.file_date_list.currentItem().text()].keys()
+        models = self.archive_files[datetime.strptime(self.file_date_list.currentItem().text(),Picker.run_format).strftime('%Y%m%d%H')].keys()
         models.sort()
         
         for item in models:
@@ -153,7 +153,7 @@ class ArchivePicker(QWidget):
         self.file_site_list.clear()
         self.load_button.setDisabled(True)
         
-        sites = self.archive_files[self.file_date_list.currentItem().text()][self.file_model_list.currentItem().text()]
+        sites = self.archive_files[datetime.strptime(self.file_date_list.currentItem().text(),Picker.run_format).strftime('%Y%m%d%H')][self.file_model_list.currentItem().text()]
         sites.sort()
         for item in sites:
             self.file_site_list.addItem(item)
@@ -222,7 +222,7 @@ class LocalPicker(QWidget):
     def __init__(self, picker, **kwargs):
         super(LocalPicker, self).__init__(**kwargs)
         self.picker = picker
-        self.search_directory = abspath(join(getcwd(), 'data'))
+        self.search_directory = DATA_DIR
         self.__initUI()
     def __initUI(self):
         self.control_layout = QVBoxLayout()
@@ -256,7 +256,7 @@ class LocalPicker(QWidget):
     def update_files(self):
         self.file_list.clear()
         for item in listdir(self.search_directory):
-            if splitext(item)[1].lower() == '.bufr':
+            if splitext(item)[1].lower() == '.bufr' or splitext(item)[1].lower() == '.buf' or splitext(item)[1].lower() == '.txt':
                 self.file_list.addItem(item)
         self.file_list.update()
     def change_folder(self):
@@ -281,7 +281,7 @@ class Picker(QWidget):
         self.data_sources = data_source.loadDataSources()
         self.config = config
         self.skew = None
-
+        self.archive_picker = None
         ## default the sounding location to OUN because obviously I'm biased
         self.loc = None
         ## the index of the item in the list that corresponds
@@ -388,6 +388,9 @@ class Picker(QWidget):
         self.layout.addWidget(self.left_data_frame, 0, 0, 1, 1)
         self.layout.addWidget(self.right_map_frame, 0, 1, 1, 1)
         self.left_data_frame.setMaximumWidth(280)
+
+    def add_archive_picker(self, picker):
+        self.archive_picker = picker
 
     def create_map_view(self):
         """
@@ -620,6 +623,8 @@ class Picker(QWidget):
                 failure = True
             else:
                 prof_collection = ret[0]
+                if self.archive_picker is not None:
+                    self.archive_picker.update_date_list()
 
         if not failure:
             fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
