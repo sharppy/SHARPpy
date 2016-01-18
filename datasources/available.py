@@ -107,6 +107,7 @@ def _availableat_psu(model, dt):
     text = url_obj.read()
 
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
+    print stns
     return stns
 
 def _available_psu(model, nam=False, off=False):
@@ -166,8 +167,7 @@ def _availableat_ncarens(dt):
     url_obj = urllib2.urlopen(url)
     text = url_obj.read()
 
-    dt_string = datetime.strftime(dt, '%Y%m%d%H')
-    stns = re.findall("([\w]{3}).txt", text)
+    stns = re.findall("(N[\w]{2}.[\w]{2}W.[\w]{2,3}.[\w]{2}).txt", text)
     return stns
 
 def _available_nssl(ens=False):
@@ -189,7 +189,7 @@ available = {
     'psu':{}, 
     'spc':{'observed':_available_spc},
     'ou_pecan': {'pecan ensemble': _available_oupecan },
-    'ncar_ens': {'ncar ensemble': _available_ncarens },
+    'sharp': {'ncar ensemble': _available_ncarens },
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
 
@@ -199,7 +199,7 @@ availableat = {
     'psu':{},
     'spc':{'observed':_availableat_spc},
     'ou_pecan': {'pecan ensemble': lambda dt: _availableat_oupecan(dt) },
-    'ncar_ens': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) },
+    'sharp': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) },
 }
 
 # Set the available and available-at-time functions for the PSU data.
