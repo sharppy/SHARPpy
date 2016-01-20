@@ -453,7 +453,7 @@ class plotHodo(backgroundHodo):
         idx_12km = np.searchsorted(hght_agl, 12000.)
         self.u = np.ma.append(self.u[:idx_12km], np.ma.append(u_12km, self.u[idx_12km:]))
         self.v = np.ma.append(self.v[:idx_12km], np.ma.append(v_12km, self.v[idx_12km:]))
-        self.hght = np.append(self.hght[:idx_12km], np.ma.append(cutoff_msl, self.hght[idx_12km:]))
+        self.hght = np.ma.append(self.hght[:idx_12km], np.ma.append(cutoff_msl, self.hght[idx_12km:]))
         hght_agl = tab.interp.to_agl(self.prof, self.hght)
 
         ## if you want the storm motion vector, you need to
