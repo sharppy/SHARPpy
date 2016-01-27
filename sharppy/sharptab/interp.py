@@ -267,11 +267,13 @@ def generic_interp_hght(h, hght, field, log=False):
 
     '''
     if ma.isMaskedArray(hght):
-        not_masked1 = ~hght.mask
+        # Multiplying by ones ensures that the result is an array, not a single value ... which 
+        # happens sometimes ... >.<
+        not_masked1 = ~hght.mask * np.ones(hght.shape, dtype=bool) 
     else:
         not_masked1 = np.ones(hght.shape)
     if ma.isMaskedArray(field):
-        not_masked2 = ~field.mask
+        not_masked2 = ~field.mask * np.ones(field.shape, dtype=bool)
     else:
         not_masked2 = np.ones(field.shape)
     not_masked = not_masked1 * not_masked2
@@ -313,12 +315,12 @@ def generic_interp_pres(p, pres, field):
 
     '''
     if ma.isMaskedArray(pres):
-        not_masked1 = ~pres.mask
+        not_masked1 = ~pres.mask * np.ones(pres.shape, dtype=bool)
     else:
         not_masked1 = np.ones(pres.shape, dtype=bool)
         not_masked1[:] = True
     if ma.isMaskedArray(field):
-        not_masked2 = ~field.mask
+        not_masked2 = ~field.mask * np.ones(pres.shape, dtype=bool)
     else:
         not_masked2 = np.ones(field.shape, dtype=bool)
         not_masked2[:] = True
