@@ -168,7 +168,8 @@ def _availableat_ncarens(dt):
     text = url_obj.read()
 
     stns = re.findall("(N[\w]{2}.[\w]{2}W.[\w]{2,3}.[\w]{2}).txt", text)
-    return stns
+    stns2 = re.findall("([\w]{3}).txt", text)
+    return stns + stns2 
 
 def _available_nssl(ens=False):
     path_to_nssl_wrf = ''
