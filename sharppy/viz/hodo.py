@@ -453,7 +453,7 @@ class plotHodo(backgroundHodo):
         idx_12km = np.searchsorted(hght_agl, 12000.)
         self.u = np.ma.append(self.u[:idx_12km], np.ma.append(u_12km, self.u[idx_12km:]))
         self.v = np.ma.append(self.v[:idx_12km], np.ma.append(v_12km, self.v[idx_12km:]))
-        self.hght = np.append(self.hght[:idx_12km], np.ma.append(cutoff_msl, self.hght[idx_12km:]))
+        self.hght = np.ma.append(self.hght[:idx_12km], np.ma.append(cutoff_msl, self.hght[idx_12km:]))
         hght_agl = tab.interp.to_agl(self.prof, self.hght)
 
         ## if you want the storm motion vector, you need to
@@ -668,9 +668,13 @@ class plotHodo(backgroundHodo):
                 srw_color = QtGui.QColor("#FF00FF")
                 pen = QtGui.QPen(srw_color, penwidth)
                 qp.setPen(pen)
-                x2, y2 = self.uv_to_pix(self.prof.srw_9_11km[0] + to_add[0], self.prof.srw_9_11km[1] + to_add[1])
+                if self.use_left:
+                    srw_9_11km = self.prof.left_srw_9_11km
+                else:
+                    srw_9_11km = self.prof.right_srw_9_11km
+                x2, y2 = self.uv_to_pix(srw_9_11km[0] + to_add[0], srw_9_11km[1] + to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
-                dir, spd = tab.utils.comp2vec(self.prof.srw_9_11km[0], self.prof.srw_9_11km[1])
+                dir, spd = tab.utils.comp2vec(srw_9_11km[0], srw_9_11km[1])
                 if spd >= 70:
                     supercell_type = "LP"
                 elif spd < 70 and spd > 40:
@@ -880,8 +884,14 @@ class plotHodo(backgroundHodo):
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
 
             wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+            if self.wind_units == 'm/s':
+                ws_interp = tab.utils.KTS2MS(ws_interp)
+                units = 'm/s'
+            else:
+                units = 'kts'
+
             xx, yy = self.uv_to_pix(u_interp, v_interp)
-            readout = "%03d/%02d kts" % (wd_interp, ws_interp)
+            readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
 
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
@@ -1223,11 +1233,12 @@ class plotHodo(backgroundHodo):
         ## define the colors for the different hodograph heights
         penwidth = width
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
-        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
-        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
+
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_bnds) - 1):
+        for idx in xrange(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(colors[idx], penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -1240,6 +1251,9 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+
+
+
 
     def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
@@ -1271,11 +1285,11 @@ class plotHodo(backgroundHodo):
         qp.setBrush(Qt.NoBrush)
 
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
-        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
-        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_bnds) - 1):
+        for idx in xrange(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(QtGui.QColor(color), penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -1288,4 +1302,5 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
+
 

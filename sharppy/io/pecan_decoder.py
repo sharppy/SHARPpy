@@ -30,9 +30,11 @@ class PECANDecoder(Decoder):
                 profiles[member] = profiles[member] + [prof]
             except Exception,e:
                 profiles[member] = [prof]
-            dates.append(dt_obj)
-
+            if not dt_obj in dates:
+                dates.append(dt_obj)
         prof_coll = prof_collection.ProfCollection(profiles, dates)
+        if "MEAN" in profiles.keys():
+            prof_coll.setHighlightedMember("MEAN")
         return prof_coll
 
     def _parseSection(self, section):
@@ -42,10 +44,10 @@ class PECANDecoder(Decoder):
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
         data = '\n'.join(parts[5:])
         sound_data = StringIO( data )
-        p, h, t, td, wdir, wspd, omeg = np.genfromtxt( sound_data, delimiter=',', unpack=True)
+        p, h, t, td, u, v, omeg = np.genfromtxt( sound_data, delimiter=',', unpack=True)
 
-        prof = profile.create_profile(profile='raw', pres=p[1:], hght=h[1:], tmpc=t[1:], dwpc=td[1:], wspd=wspd[1:],\
-                                      wdir=wdir[1:], omeg=omeg[1:], location=location, date=dt_obj, missing=-999.0)
+        prof = profile.create_profile(profile='raw', pres=p[1:], hght=h[1:], tmpc=t[1:], dwpc=td[1:], u=u[1:],\
+                                      v=v[1:], omeg=omeg[1:], location=location, date=dt_obj, missing=-999.0)
         return prof, dt_obj, member
 
 if __name__ == '__main__':

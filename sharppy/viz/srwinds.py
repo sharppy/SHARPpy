@@ -311,9 +311,13 @@ class plotWinds(backgroundWinds):
         if len(sru) == 0 or len(srv) == 0 or len(hgt) == 0:
             return
 
-        interp_hght = np.arange(self.prof.hght[self.prof.sfc], min(hgt[-1], self.hmax * 1000.), 10)
-        interp_sru = np.interp(interp_hght, hgt, sru)
-        interp_srv = np.interp(interp_hght, hgt, srv)
+        max_hght_idx = len(hgt) - 1
+        while type(hgt[max_hght_idx]) == type(np.ma.masked):
+            max_hght_idx -= 1
+
+        interp_hght = np.arange(self.prof.hght[self.prof.sfc], min(hgt[max_hght_idx], self.hmax * 1000.), 10)
+        interp_sru = np.interp(interp_hght, hgt[:(max_hght_idx + 1)], sru[:(max_hght_idx + 1)])
+        interp_srv = np.interp(interp_hght, hgt[:(max_hght_idx + 1)], srv[:(max_hght_idx + 1)])
         sr_spd = np.hypot(interp_sru, interp_srv)
 
         qp.setPen(pen)
