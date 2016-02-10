@@ -47,7 +47,10 @@ def _pingURL(hostname, timeout=1):
         urllib2.urlopen(hostname, timeout=timeout)
     except urllib2.URLError:
         return False
-        
+    except Exception as e:
+        print type(e)
+        return False
+
     return True
 
 def pingURLs(ds_dict):
