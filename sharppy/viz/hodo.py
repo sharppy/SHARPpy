@@ -1233,12 +1233,12 @@ class plotHodo(backgroundHodo):
         ## define the colors for the different hodograph heights
         penwidth = width
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
-        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
-        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_bnds) - 1):
+        for idx in xrange(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(colors[idx], penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -1285,11 +1285,11 @@ class plotHodo(backgroundHodo):
         qp.setBrush(Qt.NoBrush)
 
         seg_bnds = [0., 3000., 6000., 9000., 12000.]
-        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds ]
-        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds ]
+        seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
+        seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_bnds) - 1):
+        for idx in xrange(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(QtGui.QColor(color), penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
