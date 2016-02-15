@@ -59,7 +59,7 @@ class SPCDecoder(Decoder):
 
         # Force latitude to be 35 N. Figure out a way to fix this later.
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
-            wdir=wdir, wspd=wspd, location=location, date=time, latitude=lat, missing=-999.00)
+            wdir=wdir, wspd=wspd, location=location, date=time, latitude=lat, missing=-9999.00)
 
         prof_coll = prof_collection.ProfCollection(
             {'':[ prof ]}, 
@@ -69,5 +69,3 @@ class SPCDecoder(Decoder):
         prof_coll.setMeta('loc', location)
         return prof_coll
 
-if __name__ == "__main__":
-    SPCDecoder("/Users/keltonhalbert/out/24.5602N110.0088W.txt")
