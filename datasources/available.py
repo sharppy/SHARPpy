@@ -54,9 +54,9 @@ def _availableat_goes(dt):
         matches : array of strings
             An array that contains all of the three letter station identfiers.
     '''
-    recent_url = "%s%s/" % (goes_base_url, dt.strftime('%Y%m%d%H/'))
+    recent_url = "%s%s/available.txt" % (goes_base_url, dt.strftime('%Y%m%d%H/'))
     text = urllib2.urlopen(recent_url).read()
-    matches = re.findall("a href=\"(.+).txt\"", text)
+    matches = re.findall("(.+).txt", text)
     return matches
 
 
