@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?> 
+<sourcelist>
+    <datasource name="GOES" ensemble="false" observed="true">
+	<outlet name="sharp" url="http://sharp.weather.ou.edu/soundings/goes/20{date}{cycle}/{srcid}.txt" format="spc" >
+            <time range="0" delta="0" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="goes.csv" />
+        </outlet>
+    </datasource>
+</sourcelist>

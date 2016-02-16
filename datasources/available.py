@@ -6,6 +6,113 @@ from datetime import datetime, timedelta
 
 cache_len = timedelta(minutes=5)
 
+
+goes_base_url = "http://sharp.weather.ou.edu/soundings/goes/"
+goes_text = ""
+goes_time = None
+
+# SHARP OBSERVED AVAILBILITY
+def _download_goes():
+    global goes_time, goes_text
+    now = datetime.utcnow()
+    if goes_time is None or goes_time < now - cache_len:
+        url_obj = urllib2.urlopen(goes_base_url)
+        goes_text = url_obj.read()
+        goes_time = now
+
+    return goes_text
+
+def _available_goes():
+    '''
+        _available_sharp()
+
+        Gets all of the available sounding times from the SHARP observed site.
+
+        Returns
+        -------
+        matches : array
+            Array of datetime objects that represents all the available times
+            of sounding data on the SHARP site.
+    '''
+    text = _download_goes()
+
+    matches = sorted(list(set(re.findall("([\d]{10})/", text))))
+    return [ datetime.strptime(m, '%Y%m%d%H') for m in matches ]
+
+def _availableat_goes(dt):
+    '''
+        _availableat_sharp(dt)
+
+        Get all the station locations where data was available for a certain dt object.
+
+        Parameters
+        ----------
+        dt : datetime object
+
+        Returns
+        -------
+        matches : array of strings
+            An array that contains all of the three letter station identfiers.
+    '''
+    recent_url = "%s%s/available.txt" % (goes_base_url, dt.strftime('%Y%m%d%H'))
+    text = urllib2.urlopen(recent_url).read()
+    matches = re.findall("(.+).txt", text)
+    return matches
+
+
+sharp_base_url = "http://sharp.weather.ou.edu/soundings/obs/"
+sharp_text = ""
+sharp_time = None
+
+# SHARP OBSERVED AVAILBILITY
+def _download_sharp():
+    global sharp_time, sharp_text
+    now = datetime.utcnow()
+    if sharp_time is None or sharp_time < now - cache_len:
+        url_obj = urllib2.urlopen(sharp_base_url)
+        sharp_text = url_obj.read()
+        sharp_time = now
+
+    return sharp_text
+
+def _available_sharp():
+    '''
+        _available_sharp()
+
+        Gets all of the available sounding times from the SHARP observed site.
+
+        Returns
+        -------
+        matches : array
+            Array of datetime objects that represents all the available times
+            of sounding data on the SHARP site.
+    '''
+    text = _download_sharp()
+
+    matches = sorted(list(set(re.findall("([\d]{10})/", text))))
+    return [ datetime.strptime(m, '%Y%m%d%H') for m in matches ]
+
+def _availableat_sharp(dt):
+    '''
+        _availableat_sharp(dt)
+
+        Get all the station locations where data was available for a certain dt object.
+
+        Parameters
+        ----------
+        dt : datetime object
+
+        Returns
+        -------
+        matches : array of strings
+            An array that contains all of the three letter station identfiers.
+    '''
+    recent_url = "%s%s/" % (sharp_base_url, dt.strftime('%Y%m%d%H/'))
+    text = urllib2.urlopen(recent_url).read()
+    matches = re.findall("a href=\"(.+).txt\"", text)
+    return matches
+
+# SPC DATA AVAILABLILY
 spc_base_url = "http://www.spc.noaa.gov/exper/soundings/"
 spc_text = ""
 spc_time = None
@@ -53,7 +160,7 @@ def _availableat_spc(dt):
         matches : array of strings
             An array that contains all of the three letter station identfiers.
     '''
-    recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H_OBS'))
+    recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H'))
     text = urllib2.urlopen(recent_url).read()
     matches = re.findall("show_soundings\(\"([\w]{3}|[\d]{5})\"\)", text)
     return matches
@@ -175,22 +282,13 @@ def _available_nssl(ens=False):
     path_to_nssl_wrf = ''
     path_to_nssl_wrf_ens = ''
 
-def _available_local(filename=None):
-    try:
-        from netCDF4 import Dataset
-        data = Dataset(filename)
-        inittime = datetime.strptime( str( data.START_DATE ), '%Y-%m-%d_%H:%M:%S')
-        return [inittime]
-    except (ImportError):
-        print "No netCDF install found. Cannot read netCDF file."
-        pass
-
 # A dictionary of the available times for profiles from observations, forecast models, etc.
 available = {
     'psu':{}, 
     'spc':{'observed':_available_spc},
     'ou_pecan': {'pecan ensemble': _available_oupecan },
-    'sharp': {'ncar ensemble': _available_ncarens },
+    'ncar_ens': {'ncar ensemble': _available_ncarens },
+    'sharp': {'ncar ensemble': _available_ncarens, 'observed':_available_sharp, 'goes':_available_goes },
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
 
@@ -200,7 +298,7 @@ availableat = {
     'psu':{},
     'spc':{'observed':_availableat_spc},
     'ou_pecan': {'pecan ensemble': lambda dt: _availableat_oupecan(dt) },
-    'sharp': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) },
+    'sharp': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) , 'observed':_availableat_sharp, 'goes':_availableat_goes,},
 }
 
 # Set the available and available-at-time functions for the PSU data.
@@ -209,6 +307,10 @@ for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 if __name__ == "__main__":
+    dt = available['sharp']['observed']()
+    print dt
+    print availableat['sharp']['observed'](dt[-1])
+    stop
     dt = available['psu']['gfs']()
     stns = availableat['psu']['gfs'](dt[0])
     #dt = available['spc']['observed']()
