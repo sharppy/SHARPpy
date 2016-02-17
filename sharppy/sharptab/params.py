@@ -1842,12 +1842,17 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             pe2 = pe1
             pe3 = pelast
             if interp.vtmp(prof, pe3) < thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
+                # Found an LFC, store height/pres and reset EL/MPL
                 pcl.lfcpres = pe3
                 pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
-                
+                pcl.elpres = ma.masked
+                pcl.elhght = ma.masked
+                pcl.mplpres = ma.masked
             else:
-                while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)):
+                while interp.vtmp(prof, pe3) > thermo.virtemp(pe3, thermo.wetlift(pe2, tp3, pe3), thermo.wetlift(pe2, tp3, pe3)) and pe3 > 0:
                     pe3 -= 5
+                if pe3 > 0:
+                    # Found a LFC, store height/pres and reset EL/MPL
                     pcl.lfcpres = pe3
                     pcl.lfchght = interp.to_agl(prof, interp.hght(prof, pe3))
                     cinh_old = totn
@@ -1857,9 +1862,9 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     pcl.cap = cap_strength
                     pcl.cappres = cap_strengthpres
 
-            pcl.elpres = ma.masked
-            pcl.elhght = ma.masked
-            pcl.mplpres = ma.masked
+                    pcl.elpres = ma.masked
+                    pcl.elhght = ma.masked
+                    pcl.mplpres = ma.masked
 
             # Hack to force LFC to be at least at the LCL
             if pcl.lfcpres >= pcl.lclpres:
@@ -2511,7 +2516,7 @@ def dcape(prof):
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
         correction) and the energy accumulated is called the DCAPE.
 
-		Future adaptations of this function may utilize the Parcel/DefineParcel object.
+        Future adaptations of this function may utilize the Parcel/DefineParcel object.
 
         Parameters
         ----------

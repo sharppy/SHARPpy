@@ -80,9 +80,16 @@ class BufDecoder(Decoder):
             if "STID" in data[i]:
                 # Here is information about the record
                 spl = data[i].split()
-                station = spl[2]
-                wmo_id = spl[5]
-                dates.append(datetime.strptime(spl[8], '%y%m%d/%H%M'))
+
+                if spl[2].strip() == "STNM":
+                    station = "" # The bufkit file has a blank space for the station name
+                    wmo_id = spl[4]
+                    dates.append(datetime.strptime(spl[7], '%y%m%d/%H%M'))
+                else:
+                    station = spl[2]
+                    wmo_id = spl[5]
+                    dates.append(datetime.strptime(spl[8], '%y%m%d/%H%M'))
+
                 slat = float(data[i+1].split()[2])
                 slon = float(data[i+1].split()[5])
                 selv = float(data[i+1].split()[8])

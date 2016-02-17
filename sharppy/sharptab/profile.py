@@ -326,9 +326,9 @@ class BasicProfile(Profile):
         if not qc_tools.isHGHTValid(self.hght) and strictQC:
             qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
         if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature array. Array contains a value < 273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid temperature array. Array contains a value < -273.15 Celsius.", ValueError)
         if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < 273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < -273.15 Celsius.", ValueError)
         if not qc_tools.isWSPDValid(self.wspd) and strictQC:
             qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
         if not qc_tools.isWDIRValid(self.wdir) and strictQC:
