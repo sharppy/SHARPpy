@@ -443,6 +443,15 @@ class MapWidget(QtGui.QWidget):
                 self.map_center_y = 13 * self.height() / 10 + self.height() / 2
 
     def drawMap(self):
+        def mercRotate(qp, center_x, center_y, angle):
+            center_lat, center_lon = self.mapper(center_x - self.width() / 2, center_y - self.height() / 2, inverse=True)
+            center_lon -= angle
+            new_center_x, new_center_y = self.mapper(center_lat, center_lon)
+            new_center_x += self.width() / 2
+            new_center_y += self.height() / 2
+            qp.translate((new_center_x - center_x) / self.scale, (new_center_y - center_y) / self.scale)
+            return new_center_x, new_center_y
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
 
@@ -457,16 +466,18 @@ class MapWidget(QtGui.QWidget):
         if proj == 'npstere':
             qp.rotate(self.map_rot)
         elif proj == 'merc':
-            map_center_lat, map_center_lon = self.mapper(map_center_x - self.width() / 2, map_center_y - self.height() / 2, inverse=True)
-            map_center_lon -= self.map_rot
-            new_center_x, new_center_y = self.mapper(map_center_lat, map_center_lon)
-            new_center_x += self.width() / 2
-            new_center_y += self.height() / 2
-            qp.translate((new_center_x - map_center_x) / self.scale, (new_center_y - map_center_y) / self.scale)
+            new_center_x, new_center_y = mercRotate(qp, map_center_x, map_center_y, self.map_rot)
         elif proj == 'spstere':
             qp.rotate(-self.map_rot)
 
         qp.scale(1. / self.scale, 1. / self.scale)
+
+        self.drawPolitical(qp)
+        self.drawStations(qp)
+
+        qp.end()
+
+    def drawPolitical(self, qp):
         self.transform = qp.transform()
         window_rect = QtCore.QRect(0, 0, self.width(), self.height())
 
@@ -504,9 +515,6 @@ class MapWidget(QtGui.QWidget):
         for cp in self._country_path:
             if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                 qp.drawPath(cp)
-
-        self.drawStations(qp)
-        qp.end()
 
     def drawStations(self, qp):
         stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
@@ -595,6 +603,11 @@ class MapWidget(QtGui.QWidget):
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
         lon -= self.map_rot
 
+        if lon > 180: 
+            lon -= 360.
+        elif lon <= -180: 
+            lon += 360.
+
         self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
 
     def mouseReleaseEvent(self, e):
@@ -632,12 +645,13 @@ class MapWidget(QtGui.QWidget):
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
         lon -= self.map_rot
+
         self.map_rot += (lon - self.mapper.getLambda0())
 
-        if self.map_rot > 180:
-            self.map_rot -= 360
-        if self.map_rot <= -180:
-            self.map_rot += 360
+#       if self.map_rot > 180:
+#           self.map_rot -= 360
+#       if self.map_rot <= -180:
+#           self.map_rot += 360
 
         self.mapper.setLambda0(lon)
         self._showLoading()
