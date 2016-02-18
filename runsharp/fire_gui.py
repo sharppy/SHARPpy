@@ -592,7 +592,7 @@ class Picker(QWidget):
             run = prof_collection.getCurrentDate()
             
             if not prof_collection.hasMeta('fhours'):
-                fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
+                fhours = ["F{0:03d}".format((lambda y: int(round(((y.days*86400.0)+y.seconds)/3600.0 )))(prof_collection._dates[x]-prof_collection._dates[0])) for x in range(len(prof_collection._dates))]
             else:
                 fhours = prof_collection.getMeta('fhours')
             
@@ -627,7 +627,7 @@ class Picker(QWidget):
                     self.archive_picker.update_date_list()
 
         if not failure:
-            fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
+            fhours = ["F{0:03d}".format((lambda y: int(round(((y.days*86400.0)+y.seconds)/3600.0 )))(prof_collection._dates[x]-prof_collection._dates[0])) for x in range(len(prof_collection._dates))]
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
