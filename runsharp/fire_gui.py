@@ -50,7 +50,7 @@ from os import listdir, getcwd
 import ConfigParser
 import traceback
 from functools import wraps, partial
-from bson import dumps
+from json import dumps
 from bz2 import compress
 from datetime import datetime
 
@@ -710,7 +710,7 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archi
     
     if archive:
         with open(arc_file, 'wb') as out_file:
-            out_file.write(compress(dumps(dec.getProfiles(indexes=None).serialize(stringify_date=False))))
+            out_file.write(compress(dumps(dec.getProfiles(indexes=None).serialize(stringify_date=True))))
     
     profs = dec.getProfiles(indexes=indexes)
     return profs

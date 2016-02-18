@@ -7,7 +7,7 @@ from decoder import Decoder
 
 from datetime import datetime
 from dateutil import parser
-from bson import loads
+from json import loads
 from bz2 import decompress
 
 __fmtname__ = "archive"
@@ -24,7 +24,7 @@ class ArchiveDecoder(Decoder):
         dates = []
         for mem in serialized_data['profiles']:
             for prof in range(len(serialized_data['profiles'][mem])):
-                #serialized_data['profiles'][mem][prof]['date'] = parser.parse(serialized_data['profiles'][mem][prof]['date'])
+                serialized_data['profiles'][mem][prof]['date'] = parser.parse(serialized_data['profiles'][mem][prof]['date'])
                 if serialized_data['profiles'][mem][prof]['date'] not in dates:
                     dates.append(serialized_data['profiles'][mem][prof]['date'])
                 serialized_data['profiles'][mem][prof]['profile'] = 'raw'
