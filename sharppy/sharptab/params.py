@@ -2967,3 +2967,43 @@ def thetae_diff(prof):
         return thetae_diff
 
 
+def bore_lift(prof, hbot=0., htop=3000., pbot=None, ptop=None):
+    """
+    Lift all parcels in the layer. Calculate and return the difference between 
+    the liften parcel level height and the LFC height. 
+    
+    hbot: bottom of layer in meters (AGL)
+    htop: top of layer in meters(AGL)
+
+    OR
+
+    pbot: bottom of layer (in hPa)
+    ptop: top of layer  (in hPa)
+    
+    """
+    
+    pres = prof.pres; hght = prof.hght
+    tmpc = prof.tmpc; dwpc = prof.dwpc
+    mask = ~prof.pres.mask * ~prof.hght.mask * ~prof.tmpc.mask * ~prof.dwpc.mask
+
+    if pbot is not None:
+        layer_idxs = np.where( (prof.pres[mask] <= pbot ) & ( prof.pres[mask] >= ptop ) )[0]
+
+    else:
+        hbot = interp.to_msl(prof, hbot)
+        htop = interp.to_msl(prof, htop)
+        pbot = interp.pres(prof, hbot)
+        ptop = interp.pres(prof, htop)
+        layer_idxs = np.where( ( prof.hght[mask] >= hbot ) & ( prof.hght[mask] <= htop ) )[0]
+
+    delta_lfc = np.zeros((len(layer_idxs)))
+    delta_lfc[:] = np.ma.masked
+
+    i = 0
+    for idx in layer_idxs:
+       lpl = DefineParcel(prof, 5, pres=pres[idx])
+       pcl = parcelx(prof, pres=pres[idx], tmpc=tmpc[idx], dwpc=dwpc[idx], pbot=pres[idx])
+       delta_lfc[i] = pcl.lfchght - hght[idx]
+       i += 1   
+
+    return np.ma.masked_invalid(delta_lfc)
