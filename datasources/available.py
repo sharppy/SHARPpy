@@ -160,7 +160,7 @@ def _availableat_spc(dt):
         matches : array of strings
             An array that contains all of the three letter station identfiers.
     '''
-    recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H'))
+    recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H_OBS'))
     text = urllib2.urlopen(recent_url).read()
     matches = re.findall("show_soundings\(\"([\w]{3}|[\d]{5})\"\)", text)
     return matches
