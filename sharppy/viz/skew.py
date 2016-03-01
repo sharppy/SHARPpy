@@ -342,7 +342,7 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = kwargs.get('dewp_color', '#00FF00')
         self.ens_dewp_color = kwargs.get('ens_dewp_color', '#008800')
         self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
-        self.background_color = kwargs.get('background_color', '#6666CC')
+        self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
         self.setMouseTracking(True)
@@ -744,6 +744,8 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.TextAntialiasing)
         self.drawTitles(qp)
 
+        bg_color_idx = 0
+
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for idx, prof_col in enumerate(self.prof_collections):
             # Plot all unhighlighted members at this time
@@ -753,20 +755,28 @@ class plotSkewT(backgroundSkewT):
                     temp_color = self.ens_temp_color
                     dewp_color = self.ens_dewp_color
                 else:
-                    temp_color = self.background_color
-                    dewp_color = self.background_color
+                    temp_color = self.background_colors[bg_color_idx]
+                    dewp_color = self.background_colors[bg_color_idx]
+
+                    bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
                 for profile in proflist:
                     self.drawTrace(profile.tmpc, QtGui.QColor(temp_color), qp, p=profile.pres, width=1)
                     self.drawTrace(profile.dwpc, QtGui.QColor(dewp_color), qp, p=profile.pres, width=1)
                     self.drawBarbs(profile, qp, color="#666666")
 
+        bg_color_idx = 0
         for idx, prof_col in enumerate(self.prof_collections):
             if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
                 profile = prof_col.getHighlightedProf()
-                self.drawTrace(profile.tmpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor(self.background_color), qp, p=profile.pres)
-                self.drawBarbs(profile, qp, color=self.background_color)
+
+                color = self.background_colors[bg_color_idx]
+
+                self.drawTrace(profile.tmpc, QtGui.QColor(color), qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, QtGui.QColor(color), qp, p=profile.pres)
+                self.drawBarbs(profile, qp, color=color)
+
+                bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
         self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
         self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
@@ -861,12 +871,15 @@ class plotSkewT(backgroundSkewT):
         rect0 = QtCore.QRect(self.lpad, 2, box_width, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, main_title)
 
-        pen = QtGui.QPen(QtGui.QColor(self.background_color), 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-
+        bg_color_idx = 0
         for idx, title in enumerate(titles):
+            pen = QtGui.QPen(QtGui.QColor(self.background_colors[bg_color_idx]), 1, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+
             rect0 = QtCore.QRect(self.width() - box_width, 2 + idx * self.title_height, box_width, self.title_height)
             qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, title)
+
+            bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
     def draw_height(self, h, qp):
         qp.setClipping(True)

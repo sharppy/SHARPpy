@@ -350,6 +350,7 @@ class MapWidget(QtGui.QWidget):
         self.center_x, self.center_y = self.width() / 2, self.height() / 2
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.backgroundBitMap = self.plotBitMap.copy()
         self.drawMap()
 
     def initMap(self):
@@ -473,6 +474,7 @@ class MapWidget(QtGui.QWidget):
         qp.scale(1. / self.scale, 1. / self.scale)
 
         self.drawPolitical(qp)
+        self.backgroundBitMap = self.plotBitMap.copy()
         self.drawStations(qp)
 
         qp.end()
@@ -692,6 +694,9 @@ class MapWidget(QtGui.QWidget):
         config['map', 'scale']    = self.scale
         config['map', 'center_x'] = map_center_x
         config['map', 'center_y'] = map_center_y
+
+    def getBackground(self):
+        return self.backgroundBitMap
 
     def hasInternet(self, has_connection):
         self.has_internet = has_connection
