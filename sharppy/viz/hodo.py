@@ -341,6 +341,7 @@ class plotHodo(backgroundHodo):
             QtGui.QColor("#008888") 
         ]
 
+        self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         ## if you want the storm motion vector, you need to
         ## provide the profile.
         self.cursor_type = kwargs.get('cursor', 'none')
@@ -935,6 +936,7 @@ class plotHodo(backgroundHodo):
         qp.setRenderHint(qp.TextAntialiasing)
 
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
+        bc_idx = 0
         for idx, prof_coll in enumerate(self.prof_collections):
             # Draw all unhighlighed members
             if prof_coll.getCurrentDate() == cur_dt:
@@ -945,13 +947,16 @@ class plotHodo(backgroundHodo):
                         self.draw_hodo(qp, prof, self.ens_colors, width=1)
                 else:
                     for prof in proflist:
-                        self.draw_profile(qp, prof, width=1)
+                        self.draw_profile(qp, prof, color=self.background_colors[bc_idx], width=1)
+                    bc_idx = (bc_idx + 1) % len(self.background_colors)
 
+        bc_idx = 0
         for idx, prof_coll in enumerate(self.prof_collections):
             # Draw all highlighted members that aren't the active one.
             if idx != self.pc_idx and (prof_coll.getCurrentDate() == cur_dt or self.all_observed):
                 prof = prof_coll.getHighlightedProf()
-                self.draw_profile(qp, prof)
+                self.draw_profile(qp, prof, color=self.background_colors[bc_idx])
+                bc_idx = (bc_idx + 1) % len(self.background_colors)
 
         ## draw the hodograph
         self.draw_hodo(qp, self.prof, self.colors)

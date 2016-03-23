@@ -43,6 +43,13 @@ from utils.config import Config
 import traceback
 from functools import wraps, partial
 
+try:
+    from netCDF4 import Dataset
+    has_nc = True
+except ImportError:
+    has_nc = False
+    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
+
 class crasher(object):
     def __init__(self, **kwargs):
         self._exit = kwargs.get('exit', False)
@@ -639,14 +646,6 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        try:
-            from netCDF4 import Dataset
-            nc = True
-        except(ImportError):
-            nc = False
-            print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
-            pass
-        print nc
         path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
@@ -658,7 +657,7 @@ class Main(QMainWindow):
         self.config['paths', 'load_txt'] = path
 
         # Loop through all of the files selected and load them into the SPCWindow
-        if link[0].endswith("nc") and nc:
+        if link[0].endswith("nc") and has_nc:
            ncfile = Dataset(link[0])
          
            xlon1 = ncfile.variables["XLONG"][0][:, 0]
@@ -743,7 +742,7 @@ class Main(QMainWindow):
         climatologists within the scientific community to
         help maintain a standard source of sounding
         routines.
-i
+
         Website: http://sharppy.github.io/SHARPpy/
         Contact: sharppy.project@gmail.com
         Contribute: https://github.com/sharppy/SHARPpy/

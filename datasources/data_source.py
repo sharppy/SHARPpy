@@ -21,7 +21,10 @@ else:
 # TAS: Comment this file and available.py
 
 def loadDataSources(ds_dir=HOME_DIR):
-
+    """
+    Load the data source information from the XML files. 
+    Returns a dictionary associating data source names to DataSource objects.
+    """
     if frozenutils.isFrozen():
         if not os.path.exists(ds_dir):
             os.makedirs(ds_dir)
@@ -54,6 +57,11 @@ def _pingURL(hostname, timeout=1):
     return True
 
 def pingURLs(ds_dict):
+    """
+    Try to ping all the URLs in any XML file. 
+    Takes a dictionary associating data source names to DataSource objects.
+    Returns a dictionary associating URLs with a boolean specifying whether or not they were reachable.
+    """
     urls = {}
 
     for ds in ds_dict.values():
@@ -68,6 +76,10 @@ def pingURLs(ds_dict):
     return urls
 
 class Outlet(object):
+    """
+    An Outlet object contains all the information for a data outlet (for example, the observed 
+    sounding feed from SPC, which is distinct from the observed sounding feed from, say, Europe).
+    """
     def __init__(self, ds_name, config):
         self._ds_name = ds_name
         self._name = config.get('name')
@@ -86,6 +98,10 @@ class Outlet(object):
         self._is_available = True
 
     def getForecastHours(self):
+        """
+        Return a list of forecast hours that this outlet serves. If the 'delta' attribute is set to 0,
+        then the data source only has the 0-hour.
+        """
         times = []
         t = self._time
         f_range = int(t.get('range'))
@@ -97,6 +113,9 @@ class Outlet(object):
         return times
 
     def getCycles(self):
+        """
+        Return a list of data cycles that this outlet serves.
+        """
         times = []
 
         t = self._time
