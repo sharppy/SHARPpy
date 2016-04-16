@@ -73,7 +73,10 @@ class PrefDialog(QDialog):
     The preferences dialog box for SHARPpy.
     """
 
-    _color_names = OrderedDict([('temp_color', 'Temperature'), ('dewp_color', 'Dewpoint')])
+    _color_names = OrderedDict([
+        ('Skew-T', OrderedDict([('temp_color', 'Temperature'), ('dewp_color', 'Dewpoint')])),
+        ('Heights', OrderedDict([('0_3_color', '0-3 km'), ('3_6_color', '3-6 km'), ('6_9_color', '6-9 km'), ('9_12_color', '9-12 km'), ('12_15_color', '12-15 km')]))
+    ])
     def __init__(self, config, parent=None):
         """
         Construct the preferences dialog box.
@@ -107,26 +110,55 @@ class PrefDialog(QDialog):
         main_layout.addLayout(self.layout)
         main_layout.addLayout(button_layout)
 
-        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Surface Temperature Units", ["Fahrenheit", "Celsius"], default=self._config['preferences', 'temp_units'])
-        self.layout.addWidget(temp_units_box, 0, 0, 1, 1)
+        tab_widget = QTabWidget()
 
-        wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
-        self.layout.addWidget(wind_units_box, 1, 0, 1, 1)
+        color_widget = self._createColorWidget()
+        tab_widget.addTab(color_widget, "Colors")
 
-        calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
-        self.layout.addWidget(calc_vector_box, 2, 0, 1, 1)
+        map_widget = self._createMapWidget()
+        tab_widget.addTab(map_widget, "Map")
 
-        colors_box = QGroupBox("Colors")
+        misc_widget = self._createMiscWidget()
+        tab_widget.addTab(misc_widget, "Miscellaneous")
+
+        self.layout.addWidget(tab_widget, 0, 0, 1, 1)
+
+    def _createColorWidget(self):
+        colors_box = QWidget()
         colors_layout = QVBoxLayout()
         colors_layout.setContentsMargins(22, 4, 22, 4)
         colors_box.setLayout(colors_layout)
 
         self.colors = {}
-        for cid, cname in PrefDialog._color_names.iteritems():
-            cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config['preferences', cid])
-            colors_layout.addWidget(cbox)
+        for gname, color_list in PrefDialog._color_names.iteritems():
+            group = QGroupBox(gname)
+            group_layout = QHBoxLayout()
+            group.setLayout(group_layout)
 
-        self.layout.addWidget(colors_box, 3, 0, 1, 1)
+            for cid, cname in color_list.iteritems():
+                cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config['preferences', cid])
+                group_layout.addWidget(cbox)
+
+            colors_layout.addWidget(group)
+        return colors_box
+
+    def _createMapWidget(self):
+        return QWidget()
+
+    def _createMiscWidget(self):
+        misc_box = QWidget()
+        layout = QVBoxLayout()
+        misc_box.setLayout(layout)
+
+        temp_units_box, self.temp_units = PrefDialog._createRadioSet("Surface Temperature Units", ["Fahrenheit", "Celsius"], default=self._config['preferences', 'temp_units'])
+        layout.addWidget(temp_units_box)
+
+        wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
+        layout.addWidget(wind_units_box)
+
+        calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
+        layout.addWidget(calc_vector_box)
+        return misc_box
 
     @staticmethod
     def _createColorBox(name, default_color):
@@ -139,6 +171,7 @@ class PrefDialog(QDialog):
         """
         swatch = ColorSwatch(QColor(default_color))
         swatch.setMaximumWidth(40)
+        swatch.setMinimumWidth(40)
 
         label = QLabel(name)
 
@@ -223,6 +256,11 @@ class PrefDialog(QDialog):
 
             ('preferences', 'temp_color'):'#ff0000',
             ('preferences', 'dewp_color'):'#00ff00',
+            ('preferences', '0_3_color'):'#ff0000',
+            ('preferences', '3_6_color'):'#00ff00',
+            ('preferences', '6_9_color'):'#ffff00',
+            ('preferences', '9_12_color'):'#00ffff',
+            ('preferences', '12_15_color'):'#00ffff',
         }
 
         config.initialize(pref_config)

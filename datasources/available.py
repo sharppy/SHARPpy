@@ -214,7 +214,6 @@ def _availableat_psu(model, dt):
     text = url_obj.read()
 
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
-    print stns
     return stns
 
 def _available_psu(model, nam=False, off=False):
