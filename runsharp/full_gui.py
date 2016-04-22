@@ -467,6 +467,8 @@ class Picker(QWidget):
 
             self.focusSkewApp()
             self.skew.addProfileCollection(prof_collection)
+        else:
+            raise exc
 
     def skewAppClosed(self):
         """
