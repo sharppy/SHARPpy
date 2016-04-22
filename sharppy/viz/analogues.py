@@ -6,6 +6,8 @@ from sharppy.sharptab.constants import *
 import sharppy.databases.sars as sars
 import platform
 
+from datetime import datetime
+
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
 
@@ -38,7 +40,7 @@ class backgroundAnalogues(QtGui.QFrame):
             "  border-style: solid;"
             "  border-color: #3399CC;}")
         ## Set the padding constants
-        self.lpad = 5; self.rpad = 5
+        self.lpad = 3; self.rpad = 5
         self.tpad = 5; self.bpad = 5
 
 
@@ -286,7 +288,7 @@ class plotAnalogues(backgroundAnalogues):
             place = 1
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
-            place2 = (self.lpad, (self.brx/2.) - x1 * 3./4.)
+            place2 = (self.lpad, (self.brx/2.) - x1 * 3./4. + 2)
             self.ybounds = self.ybounds_sup
         else:
             self.matches = self.hail_matches
@@ -297,7 +299,7 @@ class plotAnalogues(backgroundAnalogues):
             place = 4
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
-            place2 = (x1*3+10, x1*5.5-5)
+            place2 = (x1*3+7, x1*5.5-5)
             self.ybounds = self.ybounds_hail
 
         ## if there are no matches, leave the function to prevent crashing
@@ -369,6 +371,9 @@ class plotAnalogues(backgroundAnalogues):
                 ## loop through each of the matches
                 i = 0
                 for m in self.matches[0]:
+                    mdate, mloc = m.split(".")
+                    mdate = datetime.strptime(mdate, "%y%m%d%H").strftime("%d %b %y %HZ")
+                    match_str = "%s (%s)" % (mdate, mloc)
                     ## these are the rectangles that matches will plot inside of
                     rect3 = QtCore.QRect(place2[0], self.ylast, x1, self.match_height)
                     rect4 = QtCore.QRect(place2[1], self.ylast, x1, self.match_height)
@@ -396,7 +401,7 @@ class plotAnalogues(backgroundAnalogues):
                             pen.setColor(QtGui.QColor(LBLUE))
                             qp.setPen(pen)
                     ## draw the text
-                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
+                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, match_str )
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
                     ## is there is a selected match, draw the bounds
                     if self.selectRect is not None:
