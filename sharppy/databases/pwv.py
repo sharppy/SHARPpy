@@ -144,7 +144,8 @@ def pwv_climo(prof, station, month=None):
     if pwv_means is np.ma.masked:
         return 0
     elif pwv_means is None:
-	return 0
+        return 0
+
     month_mean = float(pwv_means[month-1])
     month_std = float(pwv_stds[month-1])
 
@@ -175,4 +176,33 @@ def pwv_climo(prof, station, month=None):
         flag = 0
 
     return flag
+
+class PWDatabase(object):
+    def __init__(self, data_path=os.path.dirname(__file__)):
+        pass
+
+    def get_stddev(self, stddev, loc, month=None):
+        pass
+
+    def get_climo(self, loc, month=None):
+        pass
+
+    def _triangle_interp(self, lat, lon, pt_lats, pt_lons, pt_vals, tris):
+        tri_lats = pt_lats[tris].T
+        tri_lons = pt_lons[tris].T
+        tri_areas = 0.5 * (-tri_lats[1] * tri_lons[2] + tri_lats[0] * (tri_lons[2] - tri_lons[1]) + tri_lons[0] * (tri_lats[1] - tri_lats[2]) + tri_lons[1] * tri_lats[2])
+        s = 1. / (2. * tri_areas) * (tri_lats[0] * tri_lons[2] - tri_lons[0] * tri_lats[2] + (tri_lats[2] - tri_lats[0]) * lon + (tri_lons[0] - tri_lons[2]) * lat)
+        t = 1. / (2. * tri_areas) * (tri_lons[0] * tri_lats[1] - tri_lats[0] * tri_lons[1] + (tri_lats[0] - tri_lats[1]) * lon + (tri_lons[1] - tri_lons[0]) * lat)
+
+        tris_select = np.where((s >= 0) & (t >= 0) & (1 - s - t >= 0))[0]
+
+        if len(tris_select) == 0:
+            val = None
+        else:
+            tri = tris_select[0]
+            tri_vals = pt_vals[tris[tri]]
+            val = s[tri] * tri_vals[1] + t[tri] * tri_vals[2] + (1 - s[tri] - t[tri]) * tri_vals[0]
+
+        return val
+
 
