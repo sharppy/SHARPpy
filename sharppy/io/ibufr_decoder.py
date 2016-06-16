@@ -11,7 +11,7 @@ from io import BytesIO
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
 
-meta_fields = {'SHIP OR MOBILE LAND STATION IDENTIFIER'                     : ['id',     lambda x: str(x).replace('\x00','').strip()], \
+meta_fields = {'SHIP OR MOBILE LAND STATION IDENTIFIER'                     : ['id',     lambda x: ''.join([i if ord(i) < 128 else '' for i in x.replace('\x00','').strip()])], \
                'YEAR'                                                       : ['year',   lambda x: int(x)], \
                'MONTH'                                                      : ['month',  lambda x: int(x)], \
                'DAY'                                                        : ['day',    lambda x: int(x)], \
@@ -34,7 +34,14 @@ class IMETBufrDecoder(Decoder):
         super(IMETBufrDecoder, self).__init__(file_name)
 
     def _parse(self):
-        with BytesIO(self._downloadFile()) as bufr_file:
+        binary_bufr = self._downloadFile()
+        bufr_start = 0
+        bufr_length = len(binary_bufr)
+        while binary_bufr[bufr_start:bufr_start+4] != 'BUFR':
+            bufr_start += 1
+            if bufr_start > bufr_length - 4:
+                raise IOError('Not a BUFR file')
+        with BytesIO(binary_bufr[bufr_start:]) as bufr_file:
             contents = decode_file(bufr_file, get_table())
         profiles = []
         dates = []
@@ -68,6 +75,16 @@ class IMETBufrDecoder(Decoder):
             if location is None:
                 location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'], abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
             # Force latitude to be 35 N. Figure out a way to fix this later.
+            
+            # Force pressure to be always increasing
+            mask = []
+            for x in range(1, len(data['hght'])):
+                if data['hght'][x] - data['hght'][x-1] < 1:
+                    mask.append(x-1)
+            for x in mask:
+                for field in data:
+                    data[field].pop(x)
+            
             profiles.append(profile.create_profile(profile='raw', pres=data['pres'], hght=data['hght'], tmpc=data['temp'], dwpc=data['dwpt'],
                 wdir=data['wdir'], wspd=data['wspd'], location=location, date=meta_data['date'], latitude=35.))
             dates.append(meta_data['date'])

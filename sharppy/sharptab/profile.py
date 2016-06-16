@@ -550,16 +550,20 @@ class ConvectiveProfile(BasicProfile):
         None
         '''
         self.fosberg = fire.fosberg(self)
+        self.haines_hght = fire.haines_height(self)
+        self.haines_low = fire.haines_low(self)
+        self.haines_mid = fire.haines_mid(self)
+        self.haines_high = fire.haines_high(self)
         self.ppbl_top = params.pbl_top(self)
         self.sfc_rh = thermo.relh(self.pres[self.sfc], self.tmpc[self.sfc], self.dwpc[self.sfc])
         pres_sfc = self.pres[self.sfc]
         pres_1km = interp.pres(self, interp.to_msl(self, 1000.))
-        pbl_h = interp.to_agl(self, interp.hght(self, self.ppbl_top))
+        self.pbl_h = interp.to_agl(self, interp.hght(self, self.ppbl_top))
         self.rh01km = params.mean_relh(self, pbot=pres_sfc, ptop=pres_1km)
         self.pblrh = params.mean_relh(self, pbot=pres_sfc, ptop=self.ppbl_top)
         self.meanwind01km = winds.mean_wind(self, pbot=pres_sfc, ptop=pres_1km)
         self.meanwindpbl = winds.mean_wind(self, pbot=pres_sfc, ptop=self.ppbl_top)
-        self.pblmaxwind = winds.max_wind(self, lower=0, upper=pbl_h)
+        self.pblmaxwind = winds.max_wind(self, lower=0, upper=self.pbl_h)
         #self.pblmaxwind = [np.ma.masked, np.ma.masked]
         mulplvals = params.DefineParcel(self, flag=3, pres=500)
         mupcl = params.cape(self, lplvals=mulplvals)

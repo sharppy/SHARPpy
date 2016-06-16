@@ -2,7 +2,7 @@
 import os.path
 import subprocess
 release = True
-__version__ = '1.3.1'
+__version__ = '1.3.4'
 __version_name__ = 'Twisp'
 __upstream_version_name__ = "Xenia"
 __upstream_version__ = '1.3.0'
