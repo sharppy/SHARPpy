@@ -56,6 +56,7 @@ class SPCWidget(QWidget):
         self.pc_idx = 0
         self.config = kwargs.get("cfg")
         self.dgz = False
+        self.pbl = False
         self.mode = ""
 
         ## these are used to display profiles
@@ -215,7 +216,7 @@ class SPCWidget(QWidget):
         :return:
         """
 
-        self.sound = plotSkewT(dgz=self.dgz)
+        self.sound = plotSkewT(dgz=self.dgz, pbl=self.pbl)
         self.hodo = plotHodo()
 
         ## initialize the non-swappable insets
@@ -443,7 +444,12 @@ class SPCWidget(QWidget):
         if self.left_inset == "WINTER" or self.right_inset == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
-
+        
+        ## Do a check for setting the pbl
+        if self.left_inset == "FIRE" or self.right_inset == "FIRE":
+            self.sound.setPBLLevel(True)
+            self.pbl = True
+        
         self.grid.addWidget(self.sound, 0, 0, 3, 1)
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
@@ -546,7 +552,11 @@ class SPCWidget(QWidget):
             if self.left_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
                 self.dgz = False
-
+            
+            if self.left_inset == "FIRE" and self.pbl:
+                self.sound.setPBLLevel(False)
+                self.pbl = False
+            
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()
@@ -563,6 +573,10 @@ class SPCWidget(QWidget):
                 self.sound.setDGZ(False)
                 self.dgz = False
 
+            if self.right_inset == "FIRE" and self.pbl:
+                self.sound.setPBLLevel(False)
+                self.pbl = False
+
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
             self.right_inset_ob.deleteLater()
@@ -577,7 +591,9 @@ class SPCWidget(QWidget):
         if a.data() == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
-
+        if a.data() == "FIRE":
+            self.sound.setPBLLevel(True)
+            self.pbl = True
         self.setFocus()
         self.update()
 

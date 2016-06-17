@@ -329,6 +329,7 @@ class plotSkewT(backgroundSkewT):
 
         self.all_observed = False
         self.plotdgz = kwargs.get('dgz', False)
+        self.plotpbl = kwargs.get('pbl', False)
         self.interpWinds = kwargs.get('interpWinds', True)
 
         ## ui stuff
@@ -539,6 +540,14 @@ class plotSkewT(backgroundSkewT):
     def setDGZ(self, flag):
         self.plotdgz = flag
 
+        self.clearData()
+        self.plotData()
+        self.update()
+        return
+
+    def setPBLLevel(self, flag):
+        self.plotpbl = flag
+        
         self.clearData()
         self.plotData()
         self.update()
@@ -868,7 +877,10 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
-        self.draw_pbl_level(qp)
+            
+        if self.plotpbl:
+            self.draw_pbl_level(qp)
+        
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(self.prof, qp)
