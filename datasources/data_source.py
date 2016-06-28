@@ -8,6 +8,7 @@ import platform, subprocess, re
 import imp
 
 import sharppy.io.decoder as decoder
+from sharppy.io.csv import loadCSV
 import utils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
@@ -91,7 +92,7 @@ class Outlet(object):
         self._format = config.get('format')
         self._time = config.find('time')
         point_csv = config.find('points')
-        self._points = self._loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+        self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
 
         for idx in xrange(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
@@ -253,17 +254,6 @@ class Outlet(object):
     def isAvailable(self):
         return self._is_available
 
-    def _loadCSV(self, csv_file_name):
-        csv = []
-        csv_file = open(csv_file_name, 'r')
-        self._csv_fields = [ f.lower() for f in csv_file.readline().strip().split(',') ]
-
-        for line in csv_file:
-            line_dict = dict( (f, v) for f, v in zip(self._csv_fields, line.strip().split(',')))
-            csv.append(line_dict)
-
-        csv_file.close()
-        return csv
 
 class DataSource(object):
     def __init__(self, config):

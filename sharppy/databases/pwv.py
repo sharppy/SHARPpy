@@ -1,4 +1,6 @@
 from sharppy.sharptab import params
+from sharppy.io.csv import loadCSV
+
 from datetime import datetime
 import numpy as np
 import os
@@ -179,15 +181,29 @@ def pwv_climo(prof, station, month=None):
 
 class PWDatabase(object):
     def __init__(self, data_path=os.path.dirname(__file__)):
+        self._pwv_mn_fields, self._pwv_mn = loadCSV(os.path.join(data_path, 'PW-mean-inches.txt'))
+        self._pwv_st_fields, self._pwv_st = loadCSV(os.path.join(data_path, 'PW-stdev-inches.txt'))
+        stn_fields, stns = loadCSV(os.path.join(os.path.dirname(__file__), '..', '..', 'datasources', 'spc_ua.csv'))
+
+        stn_ids = [ stn['icao'] for stn in stns ]
+        for idx in xrange(len(self._pwv_mn)):
+            try:
+                stn_idx = stn_ids.index(self._pwv_mn['SITE'])
+
+                self._pwv_mn['lat'] = stns[stn_idx]['lat']
+                self._pwv_mn['lon'] = stns[stn_idx]['lon']
+                self._pwv_st['lat'] = stns[stn_idx]['lat']
+                self._pwv_st['lon'] = stns[stn_idx]['lon']
+            except IndexError:
+                pass
+
+    def getStddev(self, stddev, loc, month=None):
         pass
 
-    def get_stddev(self, stddev, loc, month=None):
+    def getClimo(self, loc, month=None):
         pass
 
-    def get_climo(self, loc, month=None):
-        pass
-
-    def _triangle_interp(self, lat, lon, pt_lats, pt_lons, pt_vals, tris):
+    def _triangleInterp(self, lat, lon, pt_lats, pt_lons, pt_vals, tris):
         tri_lats = pt_lats[tris].T
         tri_lons = pt_lons[tris].T
         tri_areas = 0.5 * (-tri_lats[1] * tri_lons[2] + tri_lats[0] * (tri_lons[2] - tri_lons[1]) + tri_lons[0] * (tri_lats[1] - tri_lats[2]) + tri_lons[1] * tri_lats[2])
@@ -204,5 +220,3 @@ class PWDatabase(object):
             val = s[tri] * tri_vals[1] + t[tri] * tri_vals[2] + (1 - s[tri] - t[tri]) * tri_vals[0]
 
         return val
-
-
