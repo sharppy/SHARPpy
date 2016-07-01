@@ -7,7 +7,7 @@ pkgname = "SHARPpy"
 ### GET VERSION INFORMATION ###
 setup_path = os.path.split(os.path.abspath(__file__))[0]
 sys.path.append(os.path.join(setup_path, pkgname.lower()))
-import version
+import _sharppy_version as version
 version.write_git_version()
 ver = version.get_version().split("+")[0]
 sys.path.pop()
