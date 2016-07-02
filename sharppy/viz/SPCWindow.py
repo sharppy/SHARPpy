@@ -15,7 +15,7 @@ import numpy as np
 import platform
 from os.path import expanduser
 import os
-from sharppy.version import __version__, __version_name__
+from sharppy._sharppy_version import __version__, __version_name__
 
 class SPCWidget(QWidget):
     """
