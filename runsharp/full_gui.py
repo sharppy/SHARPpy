@@ -594,7 +594,10 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        path = self.config.get('paths', 'load_txt')
+        if self.config.has_option('paths', 'load_txt'):
+            path = self.config.get('paths', 'load_txt')
+        else:
+            path = expanduser('~')
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
         

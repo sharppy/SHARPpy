@@ -73,7 +73,7 @@ class SPCWidget(QWidget):
             self.config.set('parcel_types', 'pcl2', 'ML')
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
-        if not self.config.has_option('paths', 'save_img'):
+        if not self.config.has_option('paths', 'save_img') or not self.config.has_option('paths', 'save_txt'):
             self.config.set('paths', 'save_img', expanduser('~'))
             self.config.set('paths', 'save_txt', expanduser('~'))
 
