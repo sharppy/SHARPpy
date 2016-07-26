@@ -35,6 +35,7 @@ class BufDecoder(Decoder):
 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         prof_coll.setHighlightedMember(mean_member)
+        prof_coll.setMeta('loc', profiles[mean_member][0].location)
         return prof_coll
 
     def _parseMember(self, text):
