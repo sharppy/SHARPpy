@@ -62,19 +62,6 @@ if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
 shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
-if platform.system() in [ 'Darwin', 'Linux' ] and getpass.getuser() == 'root':
-    # If we're running with sudo, chown the directories and files to the user actually running the process.
-    uid = int(os.environ['SUDO_UID'])
-    gid = int(os.environ['SUDO_GID'])
-
-    os.chown(HOME_PATH, uid, gid)
-
-    for root, dirs, files in os.walk(HOME_PATH):
-        for dirname in dirs:
-            os.chown(os.path.join(root, dirname), uid, gid)
-
-        for filename in files:
-            os.chown(os.path.join(root, filename), uid, gid)
 
 setup(
     name = name,
