@@ -42,6 +42,7 @@ from os.path import expanduser
 from utils.config import Config
 import traceback
 from functools import wraps, partial
+import argparse
 
 try:
     from netCDF4 import Dataset
@@ -777,13 +778,35 @@ class Main(QMainWindow):
         self.config.toFile()
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('file_names', nargs='*')
+    ap.add_argument('--debug', dest='debug', action='store_true')
+    ap.add_argument('--collect', dest='collect', nargs=1, default=[])
+    ap.add_argument('--noclose', dest='close', action='store_false')
+    args = ap.parse_args()
+
     @crasher(exit=True)
-    def createWindow():
-        return Main()
+    def createWindow(file_names, collect=False):
+        main_win = Main()
+        for fname in file_names:
+            main_win.picker.skewApp(filename=fname)
+            if not collect:
+                img_name = ".".join(fname.split(".")[:-1] + [ 'png' ])
+                main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+
+        if collect:
+            main_win.picker.skew.spc_widget.toggleCollectObserved()
+
+        return main_win
 
     # Create an application
     app = QApplication([])
-    win = createWindow()
+    win = createWindow(args.file_names, collect=args.collect)
+
+    if args.file_names != [] and args.close:
+        pass
+#       win.picker.skew.
+
     sys.exit(app.exec_())
     
 if __name__ == '__main__':

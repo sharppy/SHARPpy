@@ -204,9 +204,13 @@ class SPCWidget(QWidget):
         file_types = "PNG (*.png)"
         file_name, result = QFileDialog.getSaveFileName(self, "Save Image", path, file_types)
         if result:
-            pixmap = QPixmap.grabWidget(self)
-            pixmap.save(file_name, 'PNG', 100)
+            self.pixmapToFile(file_name)
             self.config['paths', 'save_img'] = os.path.dirname(file_name)
+
+    def pixmapToFile(self, file_name):
+        fmt = file_name.split(".")[-1].upper()
+        pixmap = QPixmap.grabWidget(self)
+        pixmap.save(file_name, fmt, 100)
 
     def savetext(self):
         path = self.config['paths', 'save_txt']
