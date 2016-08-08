@@ -2388,6 +2388,9 @@ def mmp(prof, **kwargs):
     pbots = interp.pres(prof, prof.hght[lowest_idx])
     ptops = interp.pres(prof, prof.hght[highest_idx])
 
+    if len(lowest_idx) == 0 or len(highest_idx) == 0:
+        return np.ma.masked
+
     for b in xrange(len(pbots)):
         for t in xrange(len(ptops)):
             if b < t: continue
