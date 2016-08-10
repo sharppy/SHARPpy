@@ -1241,7 +1241,6 @@ class plotHodo(backgroundHodo):
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
-
         seg_idxs = np.searchsorted(z, seg_bnds)
         for idx in xrange(len(seg_x) - 1):
             ## define a pen to draw with
@@ -1257,8 +1256,19 @@ class plotHodo(backgroundHodo):
 
             qp.drawPath(path)
 
+        if z.max() < max(seg_bnds):
+            idx = len(seg_x) - 1
+            pen = QtGui.QPen(colors[idx], penwidth)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
 
+            path = QPainterPath()
+            path.moveTo(seg_x[idx], seg_y[idx])
+            for z_idx in xrange(seg_idxs[idx], len(xx)):
+                path.lineTo(xx[z_idx], yy[z_idx])
 
+            qp.drawPath(path)
+         
 
     def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
@@ -1307,5 +1317,4 @@ class plotHodo(backgroundHodo):
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
             qp.drawPath(path)
-
 
