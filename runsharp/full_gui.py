@@ -781,33 +781,38 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('file_names', nargs='*')
     ap.add_argument('--debug', dest='debug', action='store_true')
-    ap.add_argument('--collect', dest='collect', nargs=1, default=[])
+    ap.add_argument('--collect', dest='collect', nargs=1, default=None)
     ap.add_argument('--noclose', dest='close', action='store_false')
     args = ap.parse_args()
 
     @crasher(exit=True)
-    def createWindow(file_names, collect=False):
+    def createWindow(file_names, collect=False, close=True):
         main_win = Main()
         for fname in file_names:
             main_win.picker.skewApp(filename=fname)
             if not collect:
                 img_name = ".".join(fname.split(".")[:-1] + [ 'png' ])
                 main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+                if fname != file_names[-1] or close:
+                    main_win.picker.skew.close()
 
         if collect:
             main_win.picker.skew.spc_widget.toggleCollectObserved()
+            img_name = collect
+            main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+            if close:
+                main_win.picker.skew.close()
 
         return main_win
 
     # Create an application
     app = QApplication([])
-    win = createWindow(args.file_names, collect=args.collect)
+    win = createWindow(args.file_names, collect=args.collect, close=args.close)
 
     if args.file_names != [] and args.close:
-        pass
-#       win.picker.skew.
-
-    sys.exit(app.exec_())
+        win.close()
+    else:
+        sys.exit(app.exec_())
     
 if __name__ == '__main__':
     main()
