@@ -1318,3 +1318,16 @@ class plotHodo(backgroundHodo):
 
             qp.drawPath(path)
 
+        if z.max() < max(seg_bnds):
+            idx = len(seg_x) - 1
+            pen = QtGui.QPen(QtGui.QColor(color), penwidth)
+            pen.setStyle(QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+
+            path = QPainterPath()
+            path.moveTo(seg_x[idx], seg_y[idx])
+            for z_idx in xrange(seg_idxs[idx], len(xx)):
+                path.lineTo(xx[z_idx], yy[z_idx])
+
+            qp.drawPath(path)
+

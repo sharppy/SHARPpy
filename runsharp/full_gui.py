@@ -806,7 +806,7 @@ def main():
 
         if collect:
             main_win.picker.skew.spc_widget.toggleCollectObserved()
-            img_name = collect
+            img_name = collect[0]
             main_win.picker.skew.spc_widget.pixmapToFile(img_name)
             if close:
                 main_win.picker.skew.close()
