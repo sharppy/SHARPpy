@@ -5,7 +5,7 @@ import utils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
-if len(sys.argv) > 1 and sys.argv[1] == '--debug':
+if len(sys.argv) > 1 and '--debug' in sys.argv:
     debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
 else:
@@ -789,9 +789,17 @@ def main():
     def createWindow(file_names, collect=False, close=True):
         main_win = Main()
         for fname in file_names:
+            print "Creating image for '%s' ..." % fname
             main_win.picker.skewApp(filename=fname)
             if not collect:
-                img_name = ".".join(fname.split(".")[:-1] + [ 'png' ])
+                fpath, fbase = os.path.split(fname)
+
+                if '.' in fbase:
+                    img_base = ".".join(fbase.split(".")[:-1] + [ 'png' ])
+                else:
+                    img_base = fbase + '.png'
+
+                img_name = os.path.join(fpath, img_base)
                 main_win.picker.skew.spc_widget.pixmapToFile(img_name)
                 if fname != file_names[-1] or close:
                     main_win.picker.skew.close()
