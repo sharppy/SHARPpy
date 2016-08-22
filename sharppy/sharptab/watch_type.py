@@ -488,11 +488,7 @@ def possible_watch(prof, use_left=False):
         - MRGL SVR
         - FLASH FLOOD
         - BLIZZARD
-        - WINTER STORM
-        - WIND CHILL
-        - FIRE WEATHER
         - EXCESSIVE HEAT
-        - FREEZE
     
         Suggestions for severe/tornado thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
 
@@ -573,6 +569,8 @@ def possible_watch(prof, use_left=False):
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
     # This is trying to capture the ingredients of moisture and advection speed, but cannot
     # handle precipitation efficiency or vertical motion
+
+    # Likely is good for handling slow moving MCSes.
     pw_climo_flag = prof.pwv_flag
     pwat = prof.pwat
     upshear = utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
@@ -586,30 +584,32 @@ def possible_watch(prof, use_left=False):
     # Blizzard if sfc winds > 35 mph and precip type detects snow 
     # Still needs to be tied into the 
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
-    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0:
+    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0 and "Snow" in prof.precip_type:
         watch_types.append("BLIZZARD")
         colors.append("#3366FF")
     
     # Wind Chill (if wind chill gets below -20 F)
-    if wind_chill(prof) < -20.:
-        watch_types.append("WIND CHILL")
-        colors.append("#3366FF")
+    # TODO: Be reinstated in future releases if the logic becomes a little more solid.
+    #if wind_chill(prof) < -20.:
+    #    watch_types.append("WIND CHILL")
+    #    colors.append("#3366FF")
     
     # Fire WX (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
-    if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
-        watch_types.append("FIRE WEATHER")
-        colors.append("#FF9900")
+    # TODO: Be reinstated in future releases once the logic becomes a little more solid
+    #if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
+        #watch_types.append("FIRE WEATHER")
+        #colors.append("#FF9900")
     
-    # Excessive Heat (if Max_temp > 105 F and sfc dewpoint > 75 F)
+    # Excessive Heat (use the heat index calculation (and the max temperature algorithm))
     if thermo.ctof(prof.dwpc[prof.get_sfc()]) > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
     
     # Freeze (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
-    # Still in testing.
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
-        watch_types.append("FREEZE")
-        colors.append("#3366FF")
+    # Still in testing.  To be reinstated in future releases.
+    #if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
+    #    watch_types.append("FREEZE")
+    #    colors.append("#3366FF")
     
     watch_types.append("NONE")
     colors.append("#FFCC33")
