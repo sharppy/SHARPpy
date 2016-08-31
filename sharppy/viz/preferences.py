@@ -198,7 +198,7 @@ class PrefDialog(QDialog):
         colors_box.setLayout(colors_layout)
 
         color_styles = ['Standard', 'Inverted', 'Protanopia']
-        self._color_style = 'standard'
+        self._color_style = 'standard' # Figure out how to set this default properly
 
         def updateStyle(style_idx):
             self._color_style = color_styles[style_idx].lower()
