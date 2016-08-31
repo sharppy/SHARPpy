@@ -4,6 +4,8 @@ from PySide.QtGui import *
 
 from collections import OrderedDict
 
+import os
+
 class ColorSwatch(QWidget):
     """
     A color swatch widget for displaying and selecting colors.
@@ -68,15 +70,82 @@ class ColorSwatch(QWidget):
         """
         self.unsetCursor()
 
+
+class ColorPreview(QWidget):
+
+    _color_imgs = {
+        'standard': 'sample_std.png',
+        'inverted': 'sample_inv.png',
+        'protanopia': 'sample_pro.png',
+    }
+
+    def __init__(self, styles, default='standard', **kwargs):
+        super(ColorPreview, self).__init__(**kwargs)
+        self._img_path = os.path.join(os.path.dirname(__file__), "..", "..", "rc")
+        self._styles = [ s.lower() for s in styles ]
+        self.changeImage(self._styles.index(default))
+
+        self._base_x, self._base_y = 118, 80
+        self._aspect = float(self._base_x) / self._base_y
+
+        self.setMinimumSize(self._base_x, self._base_y)
+        self.show()
+
+    @Slot(str)
+    def changeImage(self, img_index):
+        self._current = self._styles[img_index]
+        self._img = QPixmap(os.path.join(self._img_path, ColorPreview._color_imgs[self._current]))
+        self.update()
+
+    def paintEvent(self, e):
+        qp = QPainter()
+        qp.begin(self)
+        qp.setBrush(QBrush(QColor("#000000")))
+        qp.drawPixmap(0, 0, self.width(), self.height(), self._img, 0, 0, self._img.width(), self._img.height())
+        qp.end()
+
+
 class PrefDialog(QDialog):
     """
     The preferences dialog box for SHARPpy.
     """
 
-    _color_names = OrderedDict([
-        ('Skew-T', OrderedDict([('temp_color', 'Temperature'), ('dewp_color', 'Dewpoint')])),
-        ('Heights', OrderedDict([('0_3_color', '0-3 km'), ('3_6_color', '3-6 km'), ('6_9_color', '6-9 km'), ('9_12_color', '9-12 km'), ('12_15_color', '12-15 km')]))
-    ])
+    _styles = {
+        'standard': {
+            'bg_color': '#000000',
+            'fg_color': '#ffffff',
+            'temp_color': '#ff0000',
+            'dewp_color': '#00ff00',
+            '0_3_color': '#ff0000',
+            '3_6_color': '#00ff00',
+            '6_9_color': '#ffff00',
+            '9_12_color': '#00ffff',
+            '12_15_color': '#00ffff',
+        },
+        'inverted': {
+            'bg_color': '#ffffff',
+            'fg_color': '#000000',
+            'temp_color': '#ff0000',
+            'dewp_color': '#00ff00',
+            '0_3_color': '#ff0000',
+            '3_6_color': '#00ff00',
+            '6_9_color': '#ffff00',
+            '9_12_color': '#00ffff',
+            '12_15_color': '#00ffff',
+        },
+        'protanopia': {
+            'bg_color': '#000000',
+            'fg_color': '#ffffff',
+            'temp_color': '#ff0000',
+            'dewp_color': '#00ff00',
+            '0_3_color': '#ff0000',
+            '3_6_color': '#00ff00',
+            '6_9_color': '#ffff00',
+            '9_12_color': '#00ffff',
+            '12_15_color': '#00ffff',
+        }
+    }
+
     def __init__(self, config, parent=None):
         """
         Construct the preferences dialog box.
@@ -125,21 +194,23 @@ class PrefDialog(QDialog):
 
     def _createColorWidget(self):
         colors_box = QWidget()
-        colors_layout = QVBoxLayout()
-        colors_layout.setContentsMargins(22, 4, 22, 4)
+        colors_layout = QHBoxLayout()
         colors_box.setLayout(colors_layout)
 
-        self.colors = {}
-        for gname, color_list in PrefDialog._color_names.iteritems():
-            group = QGroupBox(gname)
-            group_layout = QHBoxLayout()
-            group.setLayout(group_layout)
+        color_styles = ['Standard', 'Inverted', 'Protanopia']
+        self._color_style = 'standard'
 
-            for cid, cname in color_list.iteritems():
-                cbox, self.colors[cid] = PrefDialog._createColorBox(cname, self._config['preferences', cid])
-                group_layout.addWidget(cbox)
+        def updateStyle(style_idx):
+            self._color_style = color_styles[style_idx].lower()
 
-            colors_layout.addWidget(group)
+        colors_list = QComboBox()
+        colors_list.addItems(color_styles)
+        colors_layout.addWidget(colors_list)
+
+        colors_prvw = ColorPreview(color_styles, parent=self)
+        colors_layout.addWidget(colors_prvw)
+        colors_list.activated.connect(colors_prvw.changeImage)
+        colors_list.activated.connect(updateStyle)
         return colors_box
 
     def _createMapWidget(self):
@@ -231,8 +302,8 @@ class PrefDialog(QDialog):
         self._applyRadio('wind_units', self.wind_units)
         self._applyRadio('calc_vector', self.calc_vector)
 
-        for cid, cbox in self.colors.iteritems():
-            self._config['preferences', cid] = cbox.getHexColor()
+        for item, color in PrefDialog._styles[self._color_style].iteritems():
+            self._config['preferences', item] = color
 
         self.accept()
 
@@ -253,14 +324,9 @@ class PrefDialog(QDialog):
             ('preferences', 'wind_units'):'knots',
 
             ('preferences', 'calc_vector'):'Right Mover',
-
-            ('preferences', 'temp_color'):'#ff0000',
-            ('preferences', 'dewp_color'):'#00ff00',
-            ('preferences', '0_3_color'):'#ff0000',
-            ('preferences', '3_6_color'):'#00ff00',
-            ('preferences', '6_9_color'):'#ffff00',
-            ('preferences', '9_12_color'):'#00ffff',
-            ('preferences', '12_15_color'):'#00ffff',
         }
+
+        color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].iteritems())
+        pref_config.update(color_config)
 
         config.initialize(pref_config)
