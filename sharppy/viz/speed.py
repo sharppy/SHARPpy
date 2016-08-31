@@ -33,7 +33,7 @@ class backgroundSpeed(QtGui.QFrame):
         self.smax = 140.; self.smin = 0.
         self.label_font = QtGui.QFont('Helvetica', 7)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(QtGui.QColor(self.bg_color))
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -63,7 +63,7 @@ class backgroundSpeed(QtGui.QFrame):
         Draws the frame boarders.
         '''
         ## initialize a pen with white color, thickness 2, solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(self.fg_color), 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
         qp.drawLine(self.brx, self.tly, self.brx, self.bry)
@@ -110,9 +110,19 @@ class plotSpeed(backgroundSpeed):
     Handles plotting the data in the frame.
     '''
     def __init__(self):
+        self.bg_color = '#000000'
+        self.fg_color = '#ffffff'
+
         super(plotSpeed, self).__init__()
         ## initialize values to be accessable to functions
         self.prof = None
+
+        ## give different colors for different height values.
+        ## these are consistent with the hodograph colors.
+        self.low_level_color = QtGui.QColor("#FF0000")
+        self.mid_level_color = QtGui.QColor("#00FF00")
+        self.upper_level_color = QtGui.QColor("#FFFF00")
+        self.trop_level_color = QtGui.QColor("#00FFFF")
 
     def setProf(self, prof):
         self.prof = prof
@@ -123,6 +133,20 @@ class plotSpeed(backgroundSpeed):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = prefs['bg_color']
+        self.fg_color = prefs['fg_color']
+        self.low_level_color = QtGui.QColor(prefs['0_3_color'])
+        self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
+        self.upper_level_color = QtGui.QColor(prefs['6_9_color'])
+        self.trop_level_color = QtGui.QColor(prefs['9_12_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -144,7 +168,7 @@ class plotSpeed(backgroundSpeed):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(QtGui.QColor(self.bg_color))
     
     def plotData(self):
         '''
@@ -169,15 +193,9 @@ class plotSpeed(backgroundSpeed):
         --------
         qp: QtGui.QPainter object
         '''
-        ## give different colors for different height values.
-        ## these are consistent with the hodograph colors.
-        low_level_color = QtGui.QColor("#FF0000")
-        mid_level_color = QtGui.QColor("#00FF00")
-        upper_level_color = QtGui.QColor("#FFFF00")
-        trop_level_color = QtGui.QColor("#00FFFF")
         ## initialize a pen starting with the low level color,
         ## thickness of 2, solid line.
-        pen = QtGui.QPen(low_level_color, 1)
+        pen = QtGui.QPen(self.low_level_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the data mask
         try:
@@ -208,13 +226,13 @@ class plotSpeed(backgroundSpeed):
             y1 = self.pres_to_pix(p1)
             ## now color code the different heights
             if hgt1 < 3000:
-                pen = QtGui.QPen(low_level_color, 2)
+                pen = QtGui.QPen(self.low_level_color, 2)
             elif hgt1 < 6000:
-                pen = QtGui.QPen(mid_level_color, 2)
+                pen = QtGui.QPen(self.mid_level_color, 2)
             elif hgt1 < 9000:
-                pen = QtGui.QPen(upper_level_color, 2)
+                pen = QtGui.QPen(self.upper_level_color, 2)
             else:
-                pen = QtGui.QPen(trop_level_color, 2)
+                pen = QtGui.QPen(self.trop_level_color, 2)
             ## Draw a horizontal line with the length of the wind speed
             qp.setPen(pen)
             qp.drawLine(0, y1, x1, y1)
