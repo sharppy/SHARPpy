@@ -171,7 +171,7 @@ class backgroundHodo(QtGui.QFrame):
 
         '''
         ## initialize a white pen to draw the frame
-        pen = QtGui.QPen(QtGui.QColor(self.fg_color), 2)
+        pen = QtGui.QPen(self.fg_color, 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame borders
@@ -190,7 +190,7 @@ class backgroundHodo(QtGui.QFrame):
 
         '''
         ## initialize a white pen to draw the frame axes
-        pen = QtGui.QPen(QtGui.QColor(self.fg_color), 2)
+        pen = QtGui.QPen(self.fg_color, 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame axes
@@ -223,7 +223,7 @@ class backgroundHodo(QtGui.QFrame):
         qp.setFont(self.label_font)
         ## reset the pen to draw with. Color is set to black and width zero
         ## because we actually don't want to draw and lines yet.
-        pen = QtGui.QPen(QtGui.QColor(self.bg_color), 0, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         offset = 5; width = 15; hght = 15;
         ## crete some rectangles
@@ -241,7 +241,7 @@ class backgroundHodo(QtGui.QFrame):
         qp.drawRect(bottom_rect); qp.drawRect(left_rect)
         ## now make the pen white and draw text using
         ## the invisible rectangles
-        pen = QtGui.QPen(QtGui.QColor(self.fg_color))
+        pen = QtGui.QPen(self.fg_color)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         qp.drawText(top_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
@@ -320,8 +320,8 @@ class plotHodo(backgroundHodo):
         '''
         Initialize the data used in the class.
         '''
-        self.bg_color = "#000000"
-        self.fg_color = "#FFFFFF"
+        self.bg_color = QtGui.QColor("#000000")
+        self.fg_color = QtGui.QColor("#FFFFFF")
 
         super(plotHodo, self).__init__(**kwargs)
         self.prof = None
@@ -562,8 +562,8 @@ class plotHodo(backgroundHodo):
     def setPreferences(self, update_gui=True, **kwargs):
         self.wind_units = kwargs['wind_units']
 
-        self.bg_color = kwargs['bg_color']
-        self.fg_color = kwargs['fg_color']
+        self.bg_color = QtGui.QColor(kwargs['bg_color'])
+        self.fg_color = QtGui.QColor(kwargs['fg_color'])
         self.colors = [
             QtGui.QColor(kwargs['0_3_color']),
             QtGui.QColor(kwargs['3_6_color']),
@@ -761,10 +761,10 @@ class plotHodo(backgroundHodo):
                 self.modified_vector.emit('left', u, v)
 
     def setBlackPen(self, qp):
-        color = QtGui.QColor(self.bg_color)
+        color = self.bg_color
         color.setAlphaF(.5)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtGui.QColor(self.bg_color), QtCore.Qt.SolidPattern)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
         qp.setPen(pen)
         qp.setBrush(brush)
         return qp
@@ -914,9 +914,9 @@ class plotHodo(backgroundHodo):
         if draw_readout:
             h_offset = 2; v_offset=5; width = 55; hght = 16;
             text_rect = QtCore.QRectF(xx+h_offset, yy+v_offset, width, hght)
-            qp.fillRect(text_rect, QtGui.QColor(self.bg_color))
+            qp.fillRect(text_rect, self.bg_color)
 
-            qp.setPen(QtGui.QPen(QtGui.QColor(self.fg_color), 1))
+            qp.setPen(QtGui.QPen(self.fg_color, 1))
             qp.drawEllipse(QPointF(xx, yy), 4, 4)
             ## now make the pen white and draw text using
             ## the invisible rectangles
@@ -1003,7 +1003,7 @@ class plotHodo(backgroundHodo):
             return
         # This probably needs to be checked. 
 
-        color = QtGui.QColor(self.bg_color)
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1060,7 +1060,7 @@ class plotHodo(backgroundHodo):
         qp.drawEllipse(center_up, 3, 3)
         qp.drawEllipse(center_dn, 3, 3)
 
-        color = QtGui.QColor(self.bg_color)
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1100,7 +1100,7 @@ class plotHodo(backgroundHodo):
         '''
         ## set a pen with white color, width 1, solid line.
         penwidth = 1
-        pen = QtGui.QPen(QtGui.QColor(self.fg_color), penwidth)
+        pen = QtGui.QPen(self.fg_color, penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## check and make sure there is no missing data
@@ -1155,7 +1155,7 @@ class plotHodo(backgroundHodo):
                 qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
                 qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
                 
-        color = QtGui.QColor(self.bg_color)
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1166,7 +1166,7 @@ class plotHodo(backgroundHodo):
         qp.drawRect(lm_rect) 
         ## now make the pen white and draw text using
         ## the invisible rectangles
-        pen = QtGui.QPen(QtGui.QColor(self.fg_color))
+        pen = QtGui.QPen(self.fg_color)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rm_spd = self.bunkers_right_vec[1]
