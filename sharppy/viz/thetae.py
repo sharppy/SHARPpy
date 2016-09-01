@@ -86,7 +86,7 @@ class backgroundThetae(QtGui.QFrame):
         '''
         Clear the widget
         '''
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def draw_frame(self, qp):
         '''
@@ -97,7 +97,7 @@ class backgroundThetae(QtGui.QFrame):
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the borders in white
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
@@ -121,7 +121,7 @@ class backgroundThetae(QtGui.QFrame):
         
         '''
         ## set a new pen with a white color and solid line of thickness 1
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert the pressure to pixel coordinates
@@ -147,7 +147,7 @@ class backgroundThetae(QtGui.QFrame):
         
         '''
         ## set a new pen with a white color, thickness one, solid line
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert theta-E to pixel values
@@ -202,6 +202,9 @@ class plotThetae(backgroundThetae):
         prof: a Profile object
         
         '''
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotThetae, self).__init__()
         ## set the varables for pressure and thetae
         self.prof = None
@@ -219,6 +222,16 @@ class plotThetae(backgroundThetae):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clear()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''

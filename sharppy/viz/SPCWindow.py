@@ -412,8 +412,13 @@ class SPCWidget(QWidget):
         self.sound.setPreferences(update_gui=update_gui, **prefs)
         self.hodo.setPreferences(update_gui=update_gui, **prefs)
 
+        self.storm_slinky.setPreferences(update_gui=update_gui, **prefs)
         self.inferred_temp_advection.setPreferences(update_gui=update_gui, **prefs)
         self.speed_vs_height.setPreferences(update_gui=update_gui, **prefs)
+        self.srwinds_vs_height.setPreferences(update_gui=update_gui, **prefs)
+        self.thetae_vs_pressure.setPreferences(update_gui=update_gui, **prefs)
+        self.watch_type.setPreferences(update_gui=update_gui, **prefs)
+        self.convective.setPreferences(update_gui=update_gui, **prefs)
         self.kinematic.setPreferences(update_gui=update_gui, **prefs)
 
     @Slot(tab.params.Parcel)

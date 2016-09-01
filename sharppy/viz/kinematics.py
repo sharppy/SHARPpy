@@ -46,7 +46,7 @@ class backgroundKinematics(QtGui.QFrame):
         self.ylast = self.label_height
         self.barby = 0
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
     
     def draw_frame(self, qp):
@@ -54,7 +54,7 @@ class backgroundKinematics(QtGui.QFrame):
         Draws the background frame and the text headers for indices.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## make the initial x value relative to the width of the frame
@@ -150,6 +150,10 @@ class plotKinematics(backgroundKinematics):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotKinematics, self).__init__(**kwargs)
         self.prof = None
 
@@ -224,8 +228,11 @@ class plotKinematics(backgroundKinematics):
         self.plotData()
         self.update()
 
-    def setPreferences(self, update_gui=True, **kwargs):
-        self.wind_units = kwargs['wind_units']
+    def setPreferences(self, update_gui=True, **prefs):
+        self.wind_units = prefs['wind_units']
+
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
 
         if update_gui:
             self.clearData()
@@ -253,7 +260,7 @@ class plotKinematics(backgroundKinematics):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -302,7 +309,7 @@ class plotKinematics(backgroundKinematics):
         qp: QtGui.QPainter object
         '''
         ## initialize a pen to draw with.
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         x1 = self.brx / 10
@@ -462,7 +469,7 @@ class plotKinematics(backgroundKinematics):
                 vspace += self.label_metrics.descent()
             y1 += vspace
         self.ylast = y1
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## upshear and downshear vectors
         texts = [downshear, upshear]

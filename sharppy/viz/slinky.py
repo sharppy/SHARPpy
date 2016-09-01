@@ -49,7 +49,7 @@ class backgroundSlinky(QtGui.QFrame):
         self.plot_height = self.plot_metrics.xHeight() + self.fpad
         ## initialize the QPixmap that the frame and data will be drawn on
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         ## plot the background
         self.plotBackground()  
 
@@ -78,7 +78,7 @@ class backgroundSlinky(QtGui.QFrame):
         
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
         
@@ -150,9 +150,17 @@ class plotSlinky(backgroundSlinky):
         prof: a Profile Object
         
         '''
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotSlinky, self).__init__()
         self.prof = None
         self.pcl = None
+
+        self.low_level_color = QtGui.QColor(RED)
+        self.mid_level_color = QtGui.QColor("#00FF00")
+        self.upper_level_color = QtGui.QColor(YELLOW)
+        self.trop_level_color = QtGui.QColor("#00FFFF")
 
     def setProf(self, prof):
         self.prof = prof
@@ -182,6 +190,21 @@ class plotSlinky(backgroundSlinky):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        self.low_level_color = QtGui.QColor(prefs['0_3_color'])
+        self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
+        self.upper_level_color = QtGui.QColor(prefs['6_9_color'])
+        self.trop_level_color = QtGui.QColor(prefs['9_12_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -234,7 +257,7 @@ class plotSlinky(backgroundSlinky):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
    
     def plotSMV(self, qp):
         '''
@@ -246,7 +269,7 @@ class plotSlinky(backgroundSlinky):
         
         '''
         ## set the pen
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## scale the vector to be visible in the window
         if tab.utils.QC(self.smu) and tab.utils.QC(self.smv):
@@ -283,13 +306,8 @@ class plotSlinky(backgroundSlinky):
         qp: a QtGui.QPainter object
         
         '''
-        ## set the various colors
-        low_level_color = QtGui.QColor(RED)
-        mid_level_color = QtGui.QColor("#00FF00")
-        upper_level_color = QtGui.QColor(YELLOW)
-        trop_level_color = QtGui.QColor("#00FFFF")
         ## set the pen
-        pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.trop_level_color, 1, QtCore.Qt.SolidLine)
         ## if there is no storm slinky, don't plot it!
         if self.slinky_traj is np.ma.masked:
             return
@@ -310,13 +328,13 @@ class plotSlinky(backgroundSlinky):
             if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
             elif z < 3000:
-                pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.low_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 6000:
-                pen = QtGui.QPen(mid_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.mid_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 9000:
-                pen = QtGui.QPen(upper_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.upper_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 12000:
-                pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.trop_level_color, 1, QtCore.Qt.SolidLine)
             else:
                 continue
             ## draw the circle
