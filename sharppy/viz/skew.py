@@ -345,6 +345,7 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = QtGui.QColor(kwargs.get('dewp_color', '#00FF00'))
         self.ens_dewp_color = QtGui.QColor(kwargs.get('ens_dewp_color', '#008800'))
         self.wetbulb_color = QtGui.QColor(kwargs.get('wetbulb_color', '#00FFFF'))
+        self.eff_layer_color = QtGui.QColor(kwargs.get('eff_layer_color', '#00FFFF'))
         self.background_colors =[ QtGui.QColor(c) for c in kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99']) ]
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
@@ -568,8 +569,12 @@ class plotSkewT(backgroundSkewT):
     def setPreferences(self, update_gui=True, **kwargs):
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
+
         self.temp_color = QtGui.QColor(kwargs['temp_color'])
         self.dewp_color = QtGui.QColor(kwargs['dewp_color'])
+        self.wetbulb_color = QtGui.QColor(kwargs['wetb_color'])
+        self.eff_layer_color = QtGui.QColor(kwargs['eff_inflow_color'])
+
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
 
@@ -1052,7 +1057,7 @@ class plotSkewT(backgroundSkewT):
             qp.drawRect(rect1)
             qp.drawRect(rect2)
             qp.drawRect(rect3)
-            pen = QtGui.QPen(QtGui.QColor('#04DBD8'), 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.eff_layer_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.esrh_font)
             qp.drawLine(x1-len, y1, x1+len, y1)

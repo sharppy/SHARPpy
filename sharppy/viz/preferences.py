@@ -114,8 +114,13 @@ class PrefDialog(QDialog):
         'standard': {
             'bg_color': '#000000',
             'fg_color': '#ffffff',
+
             'temp_color': '#ff0000',
             'dewp_color': '#00ff00',
+            'wetb_color': '#00ffff',
+
+            'eff_inflow_color': '#00ffff',
+
             '0_3_color': '#ff0000',
             '3_6_color': '#00ff00',
             '6_9_color': '#ffff00',
@@ -125,19 +130,29 @@ class PrefDialog(QDialog):
         'inverted': {
             'bg_color': '#ffffff',
             'fg_color': '#000000',
-            'temp_color': '#ff0000',
-            'dewp_color': '#00ff00',
-            '0_3_color': '#ff0000',
-            '3_6_color': '#00ff00',
-            '6_9_color': '#ffff00',
-            '9_12_color': '#00ffff',
-            '12_15_color': '#00ffff',
+
+            'temp_color': '#cc0000',
+            'dewp_color': '#00cc00',
+            'wetb_color': '#00cccc',
+
+            'eff_inflow_color': '#00cccc',
+
+            '0_3_color': '#cc0000',
+            '3_6_color': '#00cc00',
+            '6_9_color': '#cccc00',
+            '9_12_color': '#00cccc',
+            '12_15_color': '#00cccc',
         },
         'protanopia': {
             'bg_color': '#000000',
             'fg_color': '#ffffff',
+
             'temp_color': '#ff0000',
             'dewp_color': '#00ff00',
+            'wetb_color': '#00ffff',
+
+            'eff_inflow_color': '#00ffff',
+
             '0_3_color': '#ff0000',
             '3_6_color': '#00ff00',
             '6_9_color': '#ffff00',
@@ -333,3 +348,7 @@ class PrefDialog(QDialog):
         pref_config.update(color_config)
 
         config.initialize(pref_config)
+
+        color_style = config['preferences', 'color_style']
+        for item, color in PrefDialog._styles[color_style].iteritems():
+            config['preferences', item] = color

@@ -344,6 +344,8 @@ class plotHodo(backgroundHodo):
             QtGui.QColor("#008888") 
         ]
 
+        self.eff_inflow_color = QtGui.QColor("#00FFFF")
+
         self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         ## if you want the storm motion vector, you need to
         ## provide the profile.
@@ -570,6 +572,8 @@ class plotHodo(backgroundHodo):
             QtGui.QColor(kwargs['6_9_color']),
             QtGui.QColor(kwargs['9_12_color']),
         ]
+
+        self.eff_inflow_color = QtGui.QColor(kwargs['eff_inflow_color'])
 
         if self.wind_units == 'm/s':
             self.ring_increment = 5
@@ -1144,7 +1148,7 @@ class plotHodo(backgroundHodo):
             uutop, vvtop = self.uv_to_pix(utop, vtop)
             uubot, vvbot = self.uv_to_pix(ubot, vbot)
             ## set a pen
-            pen = QtGui.QPen(QtGui.QColor("#00FFFF"), penwidth)
+            pen = QtGui.QPen(self.eff_inflow_color, penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ## draw lines showing the effective inflow layer
