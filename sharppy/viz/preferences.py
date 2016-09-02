@@ -198,16 +198,17 @@ class PrefDialog(QDialog):
         colors_box.setLayout(colors_layout)
 
         color_styles = ['Standard', 'Inverted', 'Protanopia']
-        self._color_style = 'standard' # Figure out how to set this default properly
+        self._color_style = self._config['preferences', 'color_style']
 
         def updateStyle(style_idx):
             self._color_style = color_styles[style_idx].lower()
 
         colors_list = QComboBox()
         colors_list.addItems(color_styles)
+        colors_list.setCurrentIndex(color_styles.index(self._color_style.title()))
         colors_layout.addWidget(colors_list)
 
-        colors_prvw = ColorPreview(color_styles, parent=self)
+        colors_prvw = ColorPreview(color_styles, default=self._color_style, parent=self)
         colors_layout.addWidget(colors_prvw)
         colors_list.activated.connect(colors_prvw.changeImage)
         colors_list.activated.connect(updateStyle)
@@ -302,6 +303,7 @@ class PrefDialog(QDialog):
         self._applyRadio('wind_units', self.wind_units)
         self._applyRadio('calc_vector', self.calc_vector)
 
+        self._config['preferences', 'color_style'] = self._color_style
         for item, color in PrefDialog._styles[self._color_style].iteritems():
             self._config['preferences', item] = color
 
@@ -324,6 +326,7 @@ class PrefDialog(QDialog):
             ('preferences', 'wind_units'):'knots',
 
             ('preferences', 'calc_vector'):'Right Mover',
+            ('preferences', 'color_style'):'standard'
         }
 
         color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].iteritems())
