@@ -51,7 +51,7 @@ class backgroundVROT(QtGui.QFrame):
         self.EF23_color = "#FFCC33"
         self.EF45_color = "#FF00FF"
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -73,7 +73,7 @@ class backgroundVROT(QtGui.QFrame):
         qp.end()
 
     def setBlackPen(self, qp):
-        color = QtGui.QColor('#000000')
+        color = QtGui.QColor(self.bg_color)
         color.setAlphaF(.5)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
@@ -88,7 +88,7 @@ class backgroundVROT(QtGui.QFrame):
         '''
         ## set a new pen to draw with
 
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
         rect1 = QtCore.QRectF(1.5, 2, self.brx, self.plot_height)
@@ -134,13 +134,13 @@ class backgroundVROT(QtGui.QFrame):
                 qp.drawLine(self.tlx, self.prob_to_pix(int(texts[i])), self.brx, self.prob_to_pix(int(texts[i])))
             except:
                 continue
-            color = QtGui.QColor('#000000')
+            color = QtGui.QColor(self.bg_color)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ypos = spacing*(i+1) - (spacing/4.)
             ypos = self.prob_to_pix(int(texts[i])) - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
@@ -151,12 +151,12 @@ class backgroundVROT(QtGui.QFrame):
         
         qp.setFont(QtGui.QFont('Helvetica', 8))
         for i in xrange(texts.shape[0]):
-            color = QtGui.QColor('#000000')
+            color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             rect = QtCore.QRectF(self.vrot_to_pix(texts[i]) - width/2, self.prob_to_pix(-2), width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, str(texts[i]))
         
@@ -235,6 +235,9 @@ class plotVROT(backgroundVROT):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotVROT, self).__init__()
         self.prof = None
         self.vrot = 0
@@ -256,6 +259,17 @@ class plotVROT(backgroundVROT):
 
     def setProf(self, prof):
         return
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.plotBitMap.fill(self.bg_color)
+            self.plotBackground()
+            self.interp_vrot()
+            self.plotData()
+            self.update()
 
     def plotData(self):
         '''
@@ -293,7 +307,7 @@ class plotVROT(backgroundVROT):
         qp.setRenderHint(qp.TextAntialiasing)
         vrot_pix = self.vrot_to_pix(self.vrot)
         # plot the white dashed line
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1.5, QtCore.Qt.DotLine)
+        pen = QtGui.QPen(self.fg_color, 1.5, QtCore.Qt.DotLine)
         qp.setPen(pen)
         qp.drawLine(vrot_pix, self.prob_to_pix(0), vrot_pix, self.prob_to_pix(70))
         

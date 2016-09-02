@@ -48,7 +48,7 @@ class backgroundFire(QtGui.QFrame):
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
     
     def draw_frame(self, qp):
@@ -56,7 +56,7 @@ class backgroundFire(QtGui.QFrame):
         Draws the background frame and the text headers for indices.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.fosberg_font)
         ## make the initial x value relative to the width of the frame
@@ -66,7 +66,7 @@ class backgroundFire(QtGui.QFrame):
         rect1 = QtCore.QRect(0, self.tpad, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fire Weather Parameters')
         self.labels = 2 * self.label_height + self.tpad + self.os_mod # Beginning of next line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 2
         y1 = self.labels + 4
@@ -96,7 +96,7 @@ class backgroundFire(QtGui.QFrame):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, i)
             y1 += self.label_height + sep + self.os_mod
         
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine( 0, y1 + 3, self.brx, y1 + 3 )
         
@@ -143,6 +143,9 @@ class plotFire(backgroundFire):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotFire, self).__init__()
         self.prof = None
 
@@ -169,6 +172,16 @@ class plotFire(backgroundFire):
         self.plotData()
         self.update()
 
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -189,7 +202,7 @@ class plotFire(backgroundFire):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -231,7 +244,7 @@ class plotFire(backgroundFire):
         elif self.fosberg < 40:
             color = QtGui.QColor(LBROWN)
         elif self.fosberg < 50:
-            color = QtGui.QColor(WHITE)
+            color = QtGui.QColor(self.fg_color)
         elif self.fosberg < 60:
             color = QtGui.QColor(YELLOW)
         elif self.fosberg < 70:
@@ -248,7 +261,7 @@ class plotFire(backgroundFire):
         elif int(self.maxwindpbl[1]) <= 20:
             color = QtGui.QColor(LBROWN)
         elif int(self.maxwindpbl[1]) <= 30:
-            color = QtGui.QColor(WHITE)
+            color = QtGui.QColor(self.fg_color)
         elif int(self.maxwindpbl[1]) <= 40:
             color = QtGui.QColor(YELLOW)
         elif int(self.maxwindpbl[1]) <= 50:
@@ -259,7 +272,7 @@ class plotFire(backgroundFire):
         return color, fontsize            
 
     def drawPBLchar(self, qp):
-        color = QtGui.QColor(WHITE)
+        color = QtGui.QColor(self.fg_color)
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)        
@@ -274,7 +287,7 @@ class plotFire(backgroundFire):
             if i == 3:
                 color, fontsize = self.getMaxWindFormat()
             else:
-                color = QtGui.QColor(WHITE)
+                color = QtGui.QColor(self.fg_color)
                 fontsize = 10
 
             qp.setFont(self.label_font) 
@@ -294,7 +307,7 @@ class plotFire(backgroundFire):
             if i == 0:
                 color, fontsize = self.getSfcRHFormat()
             elif i == 1 or i == 2:
-                color = QtGui.QColor(WHITE)
+                color = QtGui.QColor(self.fg_color)
                 fontsize = 10
             else:
                 color, fontsize = self.getPWColor()
@@ -312,7 +325,7 @@ class plotFire(backgroundFire):
             color = QtGui.QColor(RED)
             fontsize = 12
         else:
-            color = QtGui.QColor(WHITE)
+            color = QtGui.QColor(self.fg_color)
             fontsize = 10
         return color, fontsize
 
@@ -325,7 +338,7 @@ class plotFire(backgroundFire):
         elif self.sfc_rh <= 20:
             color = QtGui.QColor(YELLOW)
         elif self.sfc_rh <= 30:
-            color = QtGui.QColor(WHITE)
+            color = QtGui.QColor(self.fg_color)
         elif self.sfc_rh <= 35:
             color = QtGui.QColor(LBROWN)
         else:

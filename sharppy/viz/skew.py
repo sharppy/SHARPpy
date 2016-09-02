@@ -798,8 +798,8 @@ class plotSkewT(backgroundSkewT):
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
 
             self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
-            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
-            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
 
         self.drawTrace(self.dwpc, self.dewp_color, qp, stdev=self.dew_stdev)
 

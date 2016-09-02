@@ -94,7 +94,7 @@ class backgroundAnalogues(QtGui.QFrame):
 
         ## The widget will be drawn on a QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         ## plot the background
         self.plotBackground()
     
@@ -103,7 +103,7 @@ class backgroundAnalogues(QtGui.QFrame):
         Draws the background frame and the text headers.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         
         ## make the initial x value relative to the width of the frame
@@ -185,6 +185,9 @@ class plotAnalogues(backgroundAnalogues):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotAnalogues, self).__init__()
         self.prof = None 
 
@@ -207,6 +210,18 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
 
     def resizeEvent(self, e):
         '''
@@ -244,7 +259,7 @@ class plotAnalogues(backgroundAnalogues):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -303,9 +318,9 @@ class plotAnalogues(backgroundAnalogues):
             self.ybounds = self.ybounds_hail
 
         ## if there are no matches, leave the function to prevent crashing
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         if self.matches[0] == []:
-            pen.setColor(QtCore.Qt.white)
+            pen.setColor(self.fg_color)
             qp.setPen(pen)
             qp.setFont(self.match_font)
             ## draw the text 2/5 from the top
@@ -335,7 +350,7 @@ class plotAnalogues(backgroundAnalogues):
                     pen.setColor(QtCore.Qt.magenta)
                     qp.setPen(pen)
                 else:
-                    pen.setColor(QtCore.Qt.white)
+                    pen.setColor(self.fg_color)
                     qp.setPen(pen)
                 ## draw the text
                 rect0 = QtCore.QRect(x1*place, self.ylast, x1, self.match_height)
@@ -353,7 +368,7 @@ class plotAnalogues(backgroundAnalogues):
             
             ## if there are no quality matches, let the gui know
             if len(self.matches[0]) == 0:
-                pen.setColor(QtCore.Qt.white)
+                pen.setColor(self.fg_color)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## draw the text 2/5 from the top
@@ -362,7 +377,7 @@ class plotAnalogues(backgroundAnalogues):
                     'No Quality Matches')
             ## if there are more than 0 quality matches...
             else:
-                pen.setColor(QtCore.Qt.white)
+                pen.setColor(self.fg_color)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## start the vertical sum at the reference point
