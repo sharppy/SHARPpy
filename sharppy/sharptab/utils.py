@@ -6,6 +6,7 @@ from sharppy.sharptab.constants import MISSING, TOL
 
 __all__ = ['INT2STR','FLOAT2STR','MS2KTS', 'KTS2MS', 'MS2MPH']
 __all__ += ['MPH2MS', 'MPH2KTS', 'KTS2MPH', 'M2FT', 'FT2M']
+__all__ += ['IN2CM', 'CM2IN']
 __all__ += ['vec2comp', 'comp2vec', 'mag', 'QC']
 
 def INT2STR(val):
@@ -187,6 +188,35 @@ def FT2M(val):
     '''
     return val * 0.3048
 
+def IN2CM(val):
+    '''
+    Convert inches to centimeters
+
+    Parameters
+    ----------
+    val : float, numpy_array
+          Distance (inches)
+
+    Returns
+    -------
+        Val converted to centimeters (float)
+    '''
+    return val * 2.54
+
+def CM2IN(val):
+    '''
+    Convert centimeters to inches
+
+    Parameters
+    ----------
+    val : float, numpy_array
+          Distance (centimeters)
+
+    Returns
+    -------
+        Val converted to inches (float)
+    '''
+    return val / 2.54
 
 def _vec2comp(wdir, wspd):
     '''
