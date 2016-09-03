@@ -386,6 +386,7 @@ class plotText(backgroundText):
             dist_string = '(1-2' + u"\u03C3" + ')'
         elif self.prof.pwv_flag == 0:
             color = QtGui.QColor('#FFFFFF')
+            dist_string = ''
         elif self.prof.pwv_flag == 1:
             color = QtGui.QColor('#98FB98')
             dist_string = '(1-2' + u"\u03C3" + ')'
