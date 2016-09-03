@@ -1,4 +1,4 @@
-from sharppy.sharptab import thermo, utils
+from sharppy.sharptab import thermo, utils, interp, constants
 import numpy as np
 
 ## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
