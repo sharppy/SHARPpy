@@ -55,3 +55,214 @@ def fosberg(prof):
     param = (fmdc*np.sqrt(1+u_sq))/0.3002
 
     return param
+
+def haines_height(prof):
+    '''
+        Haines Index Height calculation
+        
+        Calculates the appropriate height category(Low/Mid/High) given the 
+        the lowest height in the sounding. 
+        
+        Adapted from S-591 course
+        Added by Nickolai Reimer (NWS Billings, MT)
+                
+        Parameters
+        ----------
+        prof - Profile object
+
+        Returns
+        -------
+        param - the Haines Index height
+    '''
+    sfc_elevation = prof.hght[prof.sfc]
+    
+    # Haines low elevation below 1000 ft / 305 m
+    if sfc_elevation < 305:
+        return constants.HAINES_LOW
+    
+    # Haines mid elevation between 1000 ft / 305 m and 3000 ft / 914 m
+    elif 305 <= sfc_elevation and sfc_elevation <= 914:
+        return constants.HAINES_MID
+    
+    # Haines high elevation above 3000 ft / 914 m
+    else:
+        return constants.HAINES_HIGH
+        
+def haines_low(prof):
+    '''
+        Haines Index Low Elevation calculation
+        
+        Calculates the Haines Index(Lower Atmosphere Severity Index)
+        using the lower elevation parmeters, used below 1000ft or 305 m.
+        
+        Pressure levels 950 mb and 850 mb
+        Dewpoint depression at 850 mb
+        
+        Lapse Rate Term
+        ---------------
+        1 : < 4C
+        2 : 4C to 7C
+        3 : > 7C
+        
+        Dewpoint Depression Term
+        ---------------
+        1 : < 6C
+        2 : 6C to 9C
+        3 : > 9C
+        
+        Adapted from S-591 course 
+        Added by Nickolai Reimer (NWS Billings, MT)
+        
+        Parameters
+        ----------
+        prof - Profile object
+
+        Returns
+        -------
+        param - the Haines Index
+    '''
+    
+    tp1  = interp.temp(prof, 950)
+    tp2  = interp.temp(prof, 850)
+    tdp2 = interp.dwpt(prof, 850)
+    
+    if utils.QC(tp1) and utils.QC(tp2) and utils.QC(tdp2):
+        lapse_rate = tp1 - tp2
+        dewpoint_depression = tp2 - tdp2
+        
+        if lapse_rate < 4:
+            a = 1
+        elif 4 <= lapse_rate and lapse_rate <= 7:
+            a = 2
+        else:
+            a = 3
+        
+        if dewpoint_depression < 6:
+            b = 1
+        elif 6 <= dewpoint_depression and dewpoint_depression <= 9:
+            b = 2
+        else:
+            b = 3
+        return a + b
+    else:
+        return constants.MISSING
+
+def haines_mid(prof):
+    '''
+        Haines Index Mid Elevation calculation
+        
+        Calculates the Haines Index(Lower Atmosphere Severity Index)
+        using the middle elevation parmeters, used 
+        between 1000 ft or 305 m and 3000 ft or 914 m.
+        
+        Pressure levels 850 mb and 700 mb
+        Dewpoint depression at 850 mb
+        
+        Lapse Rate Term
+        ---------------
+        1 : < 6C
+        2 : 6C to 10C
+        3 : > 10C
+        
+        Dewpoint Depression Term
+        ---------------
+        1 : < 6C
+        2 : 6C to 12C
+        3 : > 12C
+        
+        Adapted from S-591 course
+        Added by Nickolai Reimer (NWS Billings, MT)
+        
+        Parameters
+        ----------
+        prof - Profile object
+
+        Returns
+        -------
+        param - the Haines Index
+    '''
+    
+    tp1  = interp.temp(prof, 850)
+    tp2  = interp.temp(prof, 700)
+    tdp1 = interp.dwpt(prof, 850)
+    
+    if utils.QC(tp1) and utils.QC(tp2) and utils.QC(tdp1):
+        lapse_rate = tp1 - tp2
+        dewpoint_depression = tp1 - tdp1
+        
+        if lapse_rate < 6:
+            a = 1
+        elif 6 <= lapse_rate and lapse_rate <= 10:
+            a = 2
+        else:
+            a = 3
+        
+        if dewpoint_depression < 6:
+            b = 1
+        elif 6 <= dewpoint_depression and dewpoint_depression <= 12:
+            b = 2
+        else:
+            b = 3
+        return a + b
+    else:
+        return constants.MISSING
+
+def haines_high(prof):
+    '''
+        Haines Index High Elevation calculation
+        
+        Calculates the Haines Index(Lower Atmosphere Severity Index)
+        using the higher elevation parmeters, used above 3000ft or 914 m.
+        
+        Pressure levels 700 mb and 500 mb
+        Dewpoint depression at 700 mb
+        
+        Lapse Rate Term
+        ---------------
+        1 : < 18C
+        2 : 18C to 21C
+        3 : > 21C
+        
+        Dewpoint Depression Term
+        ---------------
+        1 : < 15C
+        2 : 15C to 20C
+        3 : > 20C
+        
+        Adapted from S-591 course
+        Added by Nickolai Reimer (NWS Billings, MT)
+        
+        Parameters
+        ----------
+        prof - Profile object
+
+        Returns
+        -------
+        param - the Haines Index
+    '''
+    tp1  = interp.temp(prof, 700)
+    tp2  = interp.temp(prof, 500)
+    tdp1 = interp.dwpt(prof, 700)
+    
+    if utils.QC(tp1) and utils.QC(tp2) and utils.QC(tdp1):
+        lapse_rate = tp1 - tp2
+        dewpoint_depression = tp1 - tdp1
+        
+        if lapse_rate < 18:
+            a = 1
+        elif 18 <= lapse_rate and lapse_rate <= 21:
+            a = 2
+        else:
+            a = 3
+        
+        if dewpoint_depression < 15:
+            b = 1
+        elif 15 <= dewpoint_depression and dewpoint_depression <= 20:
+            b = 2
+        else:
+            b = 3
+        return a + b
+    else:
+        return constants.MISSING
+
+
