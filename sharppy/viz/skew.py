@@ -335,6 +335,8 @@ class plotSkewT(backgroundSkewT):
 
         self.all_observed = False
         self.plotdgz = kwargs.get('dgz', False)
+        # PBL marker plotting functionality added by Nickolai Reimer NWS Billings, MT
+        self.plotpbl = kwargs.get('pbl', False)
         self.interpWinds = kwargs.get('interpWinds', True)
 
         ## ui stuff
@@ -453,8 +455,7 @@ class plotSkewT(backgroundSkewT):
         #modify_sfc.setCheckable(True)
         #modify_sfc.setEnabled(False)
         #modify_sfc.triggered.connect(self.setReadoutCursor)
-        #self.popupmenu.addAction(modify_sfc)
-
+        #self.popupmenu.addAction(mod
         self.popupmenu.addSeparator()
 
         reset = QAction(self)
@@ -553,6 +554,14 @@ class plotSkewT(backgroundSkewT):
     def setDGZ(self, flag):
         self.plotdgz = flag
 
+        self.clearData()
+        self.plotData()
+        self.update()
+        return
+
+    def setPBLLevel(self, flag):
+        self.plotpbl = flag
+        
         self.clearData()
         self.plotData()
         self.update()
@@ -815,6 +824,10 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color=QtGui.QColor("#FF00FF"))
+        
+        if self.plotpbl:
+            self.draw_pbl_level(qp)
+        
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(self.prof, qp)
@@ -931,7 +944,20 @@ class plotSkewT(backgroundSkewT):
         qp.drawLine(x[0], y, x[1], y)
         rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
-        
+         
+    def draw_pbl_level(self, qp):
+        if self.prof is not None:
+            qp.setClipping(True)
+            xbounds = [37,41]
+            x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+            pblp = self.prof.ppbl_top
+            if tab.utils.QC(pblp):
+                y = self.originy + self.pres_to_pix(pblp) / self.scale
+                pen = QtGui.QPen(QtCore.Qt.gray, 2, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                qp.drawLine(x[0], y, x[1], y)
+                rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
+                qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "PBL")
 
     def draw_parcel_levels(self, qp):
         if self.pcl is None:

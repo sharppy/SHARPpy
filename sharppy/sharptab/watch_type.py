@@ -4,6 +4,33 @@ import numpy as np
 ## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
 ## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu
 
+def heat_index(temp, rh):
+    '''
+        Heat Index Equation
+
+        Computes the heat index using the equation obtained by performing multiple linear
+        regression on the table in Steadman 1979.
+    
+        Referenced from: http://www.srh.noaa.gov/images/ffc/pdf/ta_htindx.PDF
+
+        Parameters
+        ----------
+        temp : temperature [C]
+        rh : %
+
+        Returns
+        -------
+        heat_index : heat index value in (F)
+    '''
+
+    #temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
+    #rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
+    heat_index = -42.379 + (2.04901523 * temp) + (10.14333127 * rh) - (0.22475541 * temp * rh) - (6.83783e-3 * np.power(temp,2)) \
+                 - (5.481717e-2 * np.power(rh, 2)) + (1.22874e-3 * rh * np.power(temp,2)) + (8.5282e-4 * temp * np.power(rh, 2)) \
+                 - (1.99e-6 * np.power(rh, 2) * np.power(temp, 2))
+    
+    return heat_index
+
 def wind_chill(prof):
     '''
         Surface Wind Chill Equation
@@ -601,7 +628,10 @@ def possible_watch(prof, use_left=False):
         #colors.append("#FF9900")
     
     # Excessive Heat (use the heat index calculation (and the max temperature algorithm))
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
+    temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
+    rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
+    hi = heat_index(temp, rh)
+    if hi > 105.:
         watch_types.append("EXCESSIVE HEAT")
         colors.append("#CC33CC")
     

@@ -106,6 +106,21 @@ class backgroundFire(QtGui.QFrame):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         self.moswindsep = 7
+        label = ['', '','','','','','Derived Indices']
+        for i in label: 
+            rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, i)
+            y1 += self.label_height + self.moswindsep + self.os_mod
+        qp.drawLine( 0, y1, self.brx, y1 )
+        
+        self.fosberg_y1 = y1+self.moswindsep
+        self.fosberg_x = 0
+        self.fosberg_width = self.brx
+        
+        self.haines_y1 = self.fosberg_y1 + self.moswindsep + self.os_mod + self.label_height
+        self.haines_x = 0
+        self.haines_width = self.brx
+        """
         label = ['','','','','','Derived Indices']
         for i in label: 
             rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
@@ -116,6 +131,7 @@ class backgroundFire(QtGui.QFrame):
         self.fosberg_y1 = y1+self.moswindsep
         self.fosberg_x = 0
         self.fosberg_width = self.brx
+        """
 
     def resizeEvent(self, e):
         '''
@@ -154,9 +170,12 @@ class plotFire(backgroundFire):
 
         # Fire indices
         self.fosberg = prof.fosberg
+        self.haines_hght = prof.haines_hght
+        self.haines_index = [prof.haines_low, prof.haines_mid, prof.haines_high]
         self.sfc_rh = prof.sfc_rh
         self.rh01km = prof.rh01km
         self.pblrh = prof.pblrh
+        self.pbl_h = prof.pbl_h
         self.meanwind01km = tab.utils.comp2vec(prof.meanwind01km[0], prof.meanwind01km[1])
         self.meanwindpbl = tab.utils.comp2vec(prof.meanwindpbl[0], prof.meanwindpbl[1])
         self.sfc_wind = (prof.wdir[prof.get_sfc()], prof.wspd[prof.get_sfc()])
@@ -181,6 +200,21 @@ class plotFire(backgroundFire):
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def mousePressEvent(self, e):
+        '''
+        Handles mouse click event to switch 
+        Haines Index elevations
+        '''
+        pos = e.pos()
+        if 0 <= pos.x() and pos.x() <= self.haines_width and self.haines_y1 <= pos.y() and pos.y() <= self.haines_y1 + self.label_height - self.os_mod:
+            self.haines_hght += 1
+            self.haines_hght %= 3
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+            self.parentWidget().setFocus()
 
     def resizeEvent(self, e):
         '''
@@ -224,6 +258,7 @@ class plotFire(backgroundFire):
         ## draw the indices
         self.drawPBLchar(qp)
         self.drawFosberg(qp)
+        self.drawHainesIndex(qp)
         qp.end()
     
     def drawFosberg(self, qp):
@@ -237,6 +272,31 @@ class plotFire(backgroundFire):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fosberg FWI = M')
         else:    
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Fosberg FWI = ' + tab.utils.INT2STR(self.fosberg))
+ 
+    def drawHainesIndex(self, qp):
+        haines_height_label = ['L', 'M', 'H']
+        color = self.getHainesFormat()
+        pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        qp.setFont(self.fosberg_font)
+        
+        rect1 = QtCore.QRect(0, self.haines_y1, self.haines_width, self.label_height - self.os_mod)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Haines Index (' + haines_height_label[self.haines_hght] + ') = ' + tab.utils.INT2STR(self.haines_index[self.haines_hght]))
+    
+    def getHainesFormat(self):
+        if self.haines_index[self.haines_hght] == 2:
+            color = QtGui.QColor(DGREEN)
+        elif self.haines_index[self.haines_hght] == 3:
+            color = QtGui.QColor(GREEN)
+        elif self.haines_index[self.haines_hght] == 4:
+            color = QtGui.QColor(YELLOW)
+        elif self.haines_index[self.haines_hght] == 5:
+            color = QtGui.QColor(ORANGE)
+        elif self.haines_index[self.haines_hght] == 6:
+            color = QtGui.QColor(RED)
+        
+        return color
+
 
     def getFosbergFormat(self):
         if (not tab.utils.QC(self.fosberg)) or self.fosberg < 30:
@@ -318,6 +378,15 @@ class plotFire(backgroundFire):
             rect1 = QtCore.QRect(self.moist_x, y1, self.moist_width, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label[i])
             y1 += self.label_height + sep + self.os_mod
+ 
+        color = QtGui.QColor(self.fg_color)
+        qp.setFont(self.label_font) 
+        pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+        rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "PBL Height = " + tab.utils.FLOAT2STR(tab.utils.M2FT(self.pbl_h), 0) + 'ft / ' + tab.utils.FLOAT2STR(self.pbl_h, 0) + 'm')
+        y1 += self.label_height + sep + self.os_mod
+        
 
 
     def getPWColor(self):

@@ -384,14 +384,17 @@ class plotText(backgroundText):
         ## Now we have all the data we could ever want. Time to start drawing
         ## them on the frame.
         ## This starts with the left column.
-
+        std_dev = [ '<3', '2-3', '1-2', '', '1-2', '2-3', '>3' ]
         color = self.pwat_colors[self.prof.pwv_flag + 3] 
+        dist_string = std_dev[self.prof.pwv_flag + 3]
+        dist_string = "(%s" % dist_string + u"\u03C3" + ')'
+
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
         colors = [color, self.fg_color, self.fg_color, self.fg_color, self.fg_color, self.fg_color]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
-        indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
+        indices = [self.pwat + 'in ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index, c in zip(texts, indices, colors):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
