@@ -119,13 +119,20 @@ class PrefDialog(QDialog):
             'dewp_color': '#00ff00',
             'wetb_color': '#00ffff',
 
-            'eff_inflow_color': '#00ffff',
+            'eff_inflow_color':'#04dbd8',
 
             '0_3_color': '#ff0000',
             '3_6_color': '#00ff00',
             '6_9_color': '#ffff00',
             '9_12_color': '#00ffff',
             '12_15_color': '#00ffff',
+
+            'pwat_m3_color':'#ff7f00',
+            'pwat_m2_color':'#ee9a00',
+            'pwat_m1_color':'#ffdab9',
+            'pwat_p1_color':'#98fb98',
+            'pwat_p2_color':'#66cd00',
+            'pwat_p3_color':'#00ff00',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -142,6 +149,13 @@ class PrefDialog(QDialog):
             '6_9_color': '#cccc00',
             '9_12_color': '#00cccc',
             '12_15_color': '#00cccc',
+
+            'pwat_m3_color':'#e68a00',
+            'pwat_m2_color':'#995c00',
+            'pwat_m1_color':'#4d2e00',
+            'pwat_p1_color':'#006600',
+            'pwat_p2_color':'#00b300',
+            'pwat_p3_color':'#00ff00',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -158,6 +172,13 @@ class PrefDialog(QDialog):
             '6_9_color': '#ffff00',
             '9_12_color': '#00ffff',
             '12_15_color': '#00ffff',
+
+            'pwat_m3_color':'#ff7f00',
+            'pwat_m2_color':'#ee9a00',
+            'pwat_m1_color':'#ffdab9',
+            'pwat_p1_color':'#98fb98',
+            'pwat_p2_color':'#66cd00',
+            'pwat_p3_color':'#00ff00',
         }
     }
 

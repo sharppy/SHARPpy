@@ -208,6 +208,16 @@ class plotText(backgroundText):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 
+        self.pwat_colors = [
+            QtGui.QColor(prefs['pwat_m3_color']),
+            QtGui.QColor(prefs['pwat_m2_color']),
+            QtGui.QColor(prefs['pwat_m1_color']),
+            self.fg_color,
+            QtGui.QColor(prefs['pwat_p1_color']),
+            QtGui.QColor(prefs['pwat_p2_color']),
+            QtGui.QColor(prefs['pwat_p3_color']),
+        ]
+
         if update_gui:
             self.clearData()
             self.plotBackground()
@@ -374,22 +384,8 @@ class plotText(backgroundText):
         ## Now we have all the data we could ever want. Time to start drawing
         ## them on the frame.
         ## This starts with the left column.
-        
-        if self.prof.pwv_flag == -3:
-            color = QtGui.QColor('#FF7F00')
-        elif self.prof.pwv_flag == -2:
-            color = QtGui.QColor('#EE9A00')
-        elif self.prof.pwv_flag == -1:
-            color = QtGui.QColor('#FFDAB9')
-        elif self.prof.pwv_flag == 0:
-            color = QtGui.QColor('#FFFFFF')
-        elif self.prof.pwv_flag == 1:
-            color = QtGui.QColor('#98FB98')
-        elif self.prof.pwv_flag == 2:
-            color = QtGui.QColor('#66CD00')
-        else:
-            color = QtGui.QColor('#00FF00')
 
+        color = self.pwat_colors[self.prof.pwv_flag + 3] 
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
