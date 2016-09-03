@@ -130,7 +130,7 @@ class plotText(backgroundText):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
         self.pw_units = 'in'
-        self.temp_units = 'F'
+        self.temp_units = 'Fahrenheit'
 
         ## get the parcels to be displayed in the GUI
         super(plotText, self).__init__()
@@ -172,7 +172,7 @@ class plotText(backgroundText):
         ## K Index
         self.k_idx = tab.utils.INT2STR( prof.k_idx )
         ## precipitable water
-        self.pwat = tab.utils.FLOAT2STR( prof.pwat, 2 )
+        self.pwat = prof.pwat
         ## 0-3km agl lapse rate
         self.lapserate_3km = tab.utils.FLOAT2STR( prof.lapserate_3km, 1 )
         ## 3-6km agl lapse rate
@@ -182,9 +182,9 @@ class plotText(backgroundText):
         ## 700-500mb lapse rate
         self.lapserate_700_500 = tab.utils.FLOAT2STR( prof.lapserate_700_500, 1 )
         ## convective temperature
-        self.convT = tab.utils.INT2STR( prof.convT )
+        self.convT = prof.convT
         ## sounding forecast surface temperature
-        self.maxT = tab.utils.INT2STR( prof.maxT )
+        self.maxT = prof.maxT
         #fzl = str(int(self.sfcparcel.hght0c))
         ## 100mb mean mixing ratio
         self.mean_mixr = tab.utils.FLOAT2STR( prof.mean_mixr, 1 )
@@ -194,7 +194,7 @@ class plotText(backgroundText):
         ## calculate the totals totals index
         self.totals_totals = tab.utils.INT2STR( prof.totals_totals )
         self.dcape = tab.utils.INT2STR( prof.dcape )
-        self.drush = tab.utils.INT2STR( prof.drush )
+        self.drush = prof.drush
         self.sigsevere = tab.utils.INT2STR( prof.sig_severe )
         self.mmp = tab.utils.FLOAT2STR( prof.mmp, 2 )
         self.esp = tab.utils.FLOAT2STR( prof.esp, 1 )
@@ -207,7 +207,7 @@ class plotText(backgroundText):
         self.update()
 
     def setPreferences(self, update_gui=True, **prefs):
-        self.pw_units = prefs['wind_units']
+        self.pw_units = prefs['pw_units']
         self.temp_units = prefs['temp_units']
  
         self.bg_color = QtGui.QColor(prefs['bg_color'])
@@ -396,15 +396,30 @@ class plotText(backgroundText):
 
         if self.pw_units == 'cm':
             pw_display = tab.utils.IN2CM(self.pwat)
+            pw_display = tab.utils.FLOAT2STR( pw_display, 1 )
         else:
             pw_display = self.pwat
+            pw_display = tab.utils.FLOAT2STR( pw_display, 2 )
+
 
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
+
+        if self.temp_units == 'Fahrenheit':
+            t_units_disp = 'F'
+            drush_disp = tab.utils.INT2STR( self.drush )
+            convT_disp = tab.utils.INT2STR( self.convT )
+            maxT_disp = tab.utils.INT2STR( self.maxT )
+        elif self.temp_units == 'Celsius':
+            t_units_disp = 'C'
+            drush_disp = tab.utils.INT2STR( tab.thermo.ftoc(self.drush) )
+            convT_disp = tab.utils.INT2STR( tab.thermo.ftoc(self.convT) )
+            maxT_disp = tab.utils.INT2STR( tab.thermo.ftoc(self.maxT) )
+
         colors = [color, self.fg_color, self.fg_color, self.fg_color, self.fg_color, self.fg_color]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
-        indices = [pw_display + self.pw_units + ' ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
+        indices = [pw_display + self.pw_units + ' ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, drush_disp + t_units_disp]
         for text, index, c in zip(texts, indices, colors):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
@@ -418,7 +433,7 @@ class plotText(backgroundText):
         ## middle-left column
         y1 = self.ylast + self.tpad
         texts = ['K = ', 'TT = ', 'ConvT = ', 'maxT = ', 'ESP = ', 'MMP = ']
-        indices = [self.k_idx, self.totals_totals, self.convT + 'F', self.maxT + 'F', self.esp, self.mmp]
+        indices = [self.k_idx, self.totals_totals, convT_disp + t_units_disp, maxT_disp + t_units_disp, self.esp, self.mmp]
         for text, index in zip(texts, indices):
             rect = QtCore.QRect(x1*3.5, y1, x1*4, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, text + index)
