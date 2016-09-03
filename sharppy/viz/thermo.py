@@ -19,8 +19,6 @@ class backgroundText(QtGui.QFrame):
     '''
     def __init__(self, **kwargs):
         super(backgroundText, self).__init__()
-        self.pw_units = kwargs.get('pw_units', 'in')
-        self.temp_units = kwargs.get('temp_units', 'F')
         self.initUI()
 
     def initUI(self):
@@ -131,6 +129,8 @@ class plotText(backgroundText):
         '''
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.pw_units = 'in'
+        self.temp_units = 'F'
 
         ## get the parcels to be displayed in the GUI
         super(plotText, self).__init__()
