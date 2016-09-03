@@ -1226,7 +1226,7 @@ class plotHodo(backgroundHodo):
                     critical_angle = self.prof.left_critical_angle
                 else:
                     critical_angle = self.prof.right_critical_angle
-                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle))
+                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle) + u"\u00B0")
 
     def draw_hodo(self, qp, prof, colors, width=2):
         '''
