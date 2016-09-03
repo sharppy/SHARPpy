@@ -8,6 +8,7 @@ from sharppy.sharptab.constants import *
 
 
 __all__ = ['pres', 'hght', 'temp', 'dwpt', 'vtmp', 'components', 'vec']
+__all__ += ['thetae', 'wetbulb', 'theta', 'mixratio']
 __all__ += ['to_agl', 'to_msl']
 
 
@@ -98,7 +99,7 @@ def temp(prof, p):
 
 def thetae(prof, p):
     '''
-        Interpolates the given data to calculate a temperature at a given pressure
+        Interpolates the given data to calculate theta-e at a given pressure
         
         Parameters
         ----------
@@ -109,7 +110,7 @@ def thetae(prof, p):
         
         Returns
         -------
-        Temperature (C) at the given pressure
+        Theta-E (C) at the given pressure
         
         '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -118,6 +119,72 @@ def thetae(prof, p):
     # this requirement.
     return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.thetae[::-1])
 
+def mixratio(prof, p):
+    '''
+        Interpolates the given data to calculate water vapor mixing ratio at a given pressure
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        p : number, numpy array
+        Pressure (hPa) of the level for which mixing ratio is desired
+        
+        Returns
+        -------
+        Water vapor mixing ratio (g/kg) at the given pressure
+        
+        '''
+    # Note: numpy's interpoloation routine expects the interpoloation
+    # routine to be in ascending order. Because pressure decreases in the
+    # vertical, we must reverse the order of the two arrays to satisfy
+    # this requirement.
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.wvmr[::-1])
+
+
+def theta(prof, p):
+    '''
+        Interpolates the given data to calculate theta at a given pressure
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        p : number, numpy array
+        Pressure (hPa) of the level for which potential temperature is desired
+        
+        Returns
+        -------
+        Theta (C) at the given pressure
+        
+        '''
+    # Note: numpy's interpoloation routine expects the interpoloation
+    # routine to be in ascending order. Because pressure decreases in the
+    # vertical, we must reverse the order of the two arrays to satisfy
+    # this requirement.
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.theta[::-1])
+
+def wetbulb(prof, p):
+    '''
+        Interpolates the given data to calculate a wetbulb temperature at a given pressure
+        
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        p : number, numpy array
+        Pressure (hPa) of the level for which wetbulb temperature is desired
+        
+        Returns
+        -------
+        Wetbulb temperature (C) at the given pressure
+        
+        '''
+    # Note: numpy's interpoloation routine expects the interpoloation
+    # routine to be in ascending order. Because pressure decreases in the
+    # vertical, we must reverse the order of the two arrays to satisfy
+    # this requirement.
+    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.wetbulb[::-1])
 
 def dwpt(prof, p):
     '''

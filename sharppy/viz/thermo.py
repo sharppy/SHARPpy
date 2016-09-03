@@ -294,7 +294,9 @@ class plotText(backgroundText):
         '''
         ## initialize a pen to draw with.
         pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
+        self.label_font.setBold(True)
         qp.setFont(self.label_font)
+       
         color_list = [QtGui.QColor(CYAN), QtGui.QColor(DBROWN), QtGui.QColor(LBROWN), self.fg_color, QtGui.QColor(YELLOW), QtGui.QColor(RED), QtGui.QColor(MAGENTA)]
         ## needs to be coded.
         x1 = self.brx / 10
@@ -370,7 +372,8 @@ class plotText(backgroundText):
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
             y1 += vspace
-    
+        self.label_font.setBold(False)
+
     def drawIndices(self, qp):
         '''
         Draws the non-parcel indices.
