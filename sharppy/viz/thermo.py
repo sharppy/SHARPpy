@@ -377,25 +377,30 @@ class plotText(backgroundText):
         
         if self.prof.pwv_flag == -3:
             color = QtGui.QColor('#FF7F00')
+            dist_string = '(<3' + u"\u03C3" + ')'
         elif self.prof.pwv_flag == -2:
-            color = QtGui.QColor('#EE9A00')
+            color = QtGui.QColor('#EE9A00') 
+            dist_string = '(2-3' + u"\u03C3" + ')'
         elif self.prof.pwv_flag == -1:
             color = QtGui.QColor('#FFDAB9')
+            dist_string = '(1-2' + u"\u03C3" + ')'
         elif self.prof.pwv_flag == 0:
             color = QtGui.QColor('#FFFFFF')
         elif self.prof.pwv_flag == 1:
             color = QtGui.QColor('#98FB98')
+            dist_string = '(1-2' + u"\u03C3" + ')'
         elif self.prof.pwv_flag == 2:
             color = QtGui.QColor('#66CD00')
+            dist_string = '(2-3' + u"\u03C3" + ')'
         else:
             color = QtGui.QColor('#00FF00')
-
+            dist_string = '(>3' + u"\u03C3" + ')'
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
         colors = [color, self.fg_color, self.fg_color, self.fg_color, self.fg_color, self.fg_color]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
-        indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
+        indices = [self.pwat + 'in ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index, c in zip(texts, indices, colors):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
