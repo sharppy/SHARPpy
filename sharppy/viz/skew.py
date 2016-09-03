@@ -664,10 +664,10 @@ class plotSkewT(backgroundSkewT):
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
         try:
             omg = tab.interp.omeg(self.prof, self.readout_pres)
+            #omg = omg * 10 # converts to microbars/s (units on the default axis)
+            omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
         except:
             print "no omega profile."
-        #omg = omg * 10 # converts to microbars/s
-        omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
         thae = tab.interp.thetae(self.prof, self.readout_pres)
         tw = tab.interp.wetbulb(self.prof, self.readout_pres)
         tha = tab.interp.theta(self.prof, self.readout_pres)
