@@ -17,7 +17,7 @@ class backgroundText(QtGui.QFrame):
     Handles drawing the background frame onto a QPixmap.
     Inherits a QtGui.QFrame Object.
     '''
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(backgroundText, self).__init__()
         self.pw_units = kwargs.get('pw_units', 'in')
         self.temp_units = kwargs.get('temp_units', 'F')
@@ -394,12 +394,17 @@ class plotText(backgroundText):
         dist_string = std_dev[self.prof.pwv_flag + 3]
         dist_string = "(%s" % dist_string + u"\u03C3" + ')'
 
+        if self.pw_units == 'cm':
+            pw_display = tab.utils.IN2CM(self.pwat)
+        else:
+            pw_display = self.pwat
+
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
         colors = [color, self.fg_color, self.fg_color, self.fg_color, self.fg_color, self.fg_color]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
-        indices = [self.pwat + 'in ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
+        indices = [pw_display + self.pw_units + ' ' + dist_string, self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index, c in zip(texts, indices, colors):
             rect = QtCore.QRect(rpad, y1, x1*4, self.label_height)
             pen = QtGui.QPen(c, 1, QtCore.Qt.SolidLine)
