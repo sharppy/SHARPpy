@@ -662,16 +662,20 @@ class plotSkewT(backgroundSkewT):
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         tmp = tab.interp.temp(self.prof, self.readout_pres)
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
+        has_omega = True
         try:
             omg = tab.interp.omeg(self.prof, self.readout_pres)
-            #omg = omg * 10 # converts to microbars/s (units on the default axis)
-            omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
         except:
-            print "no omega profile."
+            has_omega = False
+
         thae = tab.interp.thetae(self.prof, self.readout_pres)
         tw = tab.interp.wetbulb(self.prof, self.readout_pres)
         tha = tab.interp.theta(self.prof, self.readout_pres)
         q = tab.interp.mixratio(self.prof, self.readout_pres)
+        if has_omega:
+            #omg = omg * 10 # converts to microbars/s (units on the default axis)
+            omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
+
         #print hgt, tmp, dwp, omg, thae, tw, tha, q
         thetae_unicode = u"\u03B8" + 'e='
         theta_unicode = u"\u03B8" + '='
@@ -684,8 +688,11 @@ class plotSkewT(backgroundSkewT):
         self.dwpcReadout.setFixedWidth(65)
         self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
         self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
-        self.tmpcReadout.setText(theta_unicode + tab.utils.FLOAT2STR(thae, 1) + ' K')
-        self.dwpcReadout.setText(omega_unicode + tab.utils.FLOAT2STR(omg, 1) + ' mb/hr')
+        self.tmpcReadout.setText(theta_unicode + tab.utils.FLOAT2STR(tha, 1) + ' K')
+        if has_omega:
+            self.dwpcReadout.setText(omega_unicode + tab.utils.FLOAT2STR(omg, 1) + ' mb/hr')
+        else:
+            self.dwpcReadout.setText(thetae_unicode + tab.utils.FLOAT2STR(thae, 1) + ' K')
 
         self.presReadout.move(self.lpad, y+2)
         self.hghtReadout.move(self.lpad, y - 15)
