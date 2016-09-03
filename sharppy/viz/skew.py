@@ -50,6 +50,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.title_font = QtGui.QFont('Helvetica', fsizet)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.title_height = self.title_metrics.xHeight() + 5
+        self.title_font.setBold(True)
         self.label_font = QtGui.QFont('Helvetica', fsize + 2)
         self.environment_trace_font = QtGui.QFont('Helvetica', 11)
         self.in_plot_font = QtGui.QFont('Helvetica', fsize)
@@ -226,6 +227,7 @@ class backgroundSkewT(QtGui.QWidget):
 
         '''
         pen = QtGui.QPen(self.fg_color)
+        self.label_font.setBold(True)
         qp.setFont(self.label_font)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
 
@@ -233,6 +235,7 @@ class backgroundSkewT(QtGui.QWidget):
             qp.setClipping(False)
             qp.drawText(x1-10, self.bry+2, 20, 20,
                         QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
+        self.label_font.setBold(False)
 
     def draw_isotherm(self, t, qp):
         '''
@@ -261,6 +264,7 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
+        self.label_font.setBold(True)
         qp.setFont(self.label_font)
         y1 = self.originy + self.pres_to_pix(p) / self.scale
         if y1 >= self.tpad and y1 <= self.hgt:
@@ -274,6 +278,7 @@ class backgroundSkewT(QtGui.QWidget):
                 qp.drawLine(self.lpad, y1, self.lpad+offset, y1)
                 qp.drawLine(self.brx+self.rpad-offset, y1,
                             self.brx+self.rpad, y1)
+        self.label_font.setBold(False)
 
     def tmpc_to_pix(self, t, p):
         '''
@@ -376,24 +381,28 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(0)
         self.dwpcReadout.setFixedWidth(0)
         ## set the style sheet for text size, color, etc
-        fg_hex = "#%02x%02x%02x" % (self.fg_color.red(), self.fg_color.green(), self.fg_color.blue())
+        ## There's something funky going on with the colors here.
+        fg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
+        bg_rgb = self.fg_color.getRgb()
+        print bg_rgb, self.fg_color.getRgb()
+        rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',50%)'
         self.presReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0, 50%);"
+            "  background-color: " + rgb_string + ";"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: " + fg_hex + ";}")
         self.hghtReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0, 50%);"
+            "  background-color: " + rgb_string + ";"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #FF0000;}")
         self.tmpcReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0, 50%);"
+            "  background-color: " + rgb_string + ";"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #FF0000;}")
         self.dwpcReadout.setStyleSheet("QLabel {"
-            "  background-color: rgb(0, 0, 0, 50%);"
+            "  background-color: " + rgb_string + ";"
             "  border-width: 0px;"
             "  font-size: 11px;"
             "  color: #00FF00;}")
@@ -653,16 +662,30 @@ class plotSkewT(backgroundSkewT):
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         tmp = tab.interp.temp(self.prof, self.readout_pres)
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
-
+        try:
+            omg = tab.interp.omeg(self.prof, self.readout_pres)
+        except:
+            print "no omega profile."
+        #omg = omg * 10 # converts to microbars/s
+        omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
+        thae = tab.interp.thetae(self.prof, self.readout_pres)
+        tw = tab.interp.wetbulb(self.prof, self.readout_pres)
+        tha = tab.interp.theta(self.prof, self.readout_pres)
+        q = tab.interp.mixratio(self.prof, self.readout_pres)
+        #print hgt, tmp, dwp, omg, thae, tw, tha, q
+        thetae_unicode = u"\u03B8" + 'e='
+        theta_unicode = u"\u03B8" + '='
+        omega_unicode = u"\u03C9" + '='
+        microbars_units = u"\u00B5" + 'b/s'
         self.rubberBand.setGeometry(QRect(QPoint(self.lpad,y), QPoint(self.brx,y)).normalized())
         self.presReadout.setFixedWidth(60)
         self.hghtReadout.setFixedWidth(65)
-        self.tmpcReadout.setFixedWidth(45)
-        self.dwpcReadout.setFixedWidth(45)
+        self.tmpcReadout.setFixedWidth(65)
+        self.dwpcReadout.setFixedWidth(65)
         self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
         self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
-        self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
-        self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
+        self.tmpcReadout.setText(theta_unicode + tab.utils.FLOAT2STR(thae, 1) + ' K')
+        self.dwpcReadout.setText(omega_unicode + tab.utils.FLOAT2STR(omg, 1) + ' mb/hr')
 
         self.presReadout.move(self.lpad, y+2)
         self.hghtReadout.move(self.lpad, y - 15)
