@@ -164,6 +164,15 @@ class plotSTP(backgroundSTP):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
 
+        self.alert_colors = [
+            QtGui.QColor('#775000'),
+            QtGui.QColor('#996600'),
+            QtGui.QColor('#ffffff'),
+            QtGui.QColor('#ffff00'),
+            QtGui.QColor('#ff0000'),
+            QtGui.QColor('#e700df'),
+        ]
+
         super(plotSTP, self).__init__()
         self.prof = None
 
@@ -201,6 +210,15 @@ class plotSTP(backgroundSTP):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 
+        self.alert_colors = [
+            QtGui.QColor(prefs['alert_l1_color']),
+            QtGui.QColor(prefs['alert_l2_color']),
+            QtGui.QColor(prefs['alert_l3_color']),
+            QtGui.QColor(prefs['alert_l4_color']),
+            QtGui.QColor(prefs['alert_l5_color']),
+            QtGui.QColor(prefs['alert_l6_color']),
+        ]
+
         if update_gui:
             self.clearData()
             self.plotBackground()
@@ -210,199 +228,199 @@ class plotSTP(backgroundSTP):
     def cape_prob(self, cape):
         if cape == 0.:
             prob = 0.00
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[0]
         elif cape  > 0. and cape < 250.:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif cape >= 250. and cape < 500.:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 500. and cape < 1000.:
             prob = .16
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 1000. and cape < 1500.:
             prob = .15
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 1500. and cape < 2000.:
             prob = .13
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 2000. and cape < 2500.:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 2500. and cape < 3000.:
             prob = .18
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif cape >= 3000. and cape < 4000.:
             prob = .20
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif cape >= 4000.:
             prob = .16
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[3]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0] 
         return prob, color
     
     def lcl_prob(self, lcl):
         if lcl < 750.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif lcl >= 750. and lcl < 1000.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif lcl >= 1000. and lcl < 1250.:
             prob = .15
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2] 
         elif lcl >= 1250. and lcl < 1500.:
             prob = .10
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif lcl >= 1500. and lcl < 1750:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 1750. and lcl < 2000.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 2000. and lcl < 2500.:
             prob = .02
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 2500:
             prob = 0.0
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
     
     def esrh_prob(self, esrh):
         if esrh < 50.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif esrh >= 50. and esrh < 100.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif esrh >= 100. and esrh < 200.:
             prob = .08
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif esrh >= 200. and esrh < 300:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif esrh >= 300. and esrh < 400.:
             prob = .20
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif esrh >= 400. and esrh < 500.:
             prob = .27
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif esrh >= 500. and esrh < 600:
             prob = .38
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif esrh >= 600. and esrh < 700.:
             prob = .37
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif esrh >= 700:
             prob = .42
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
     
     def ebwd_prob(self, ebwd):
         if ebwd == 0.:
             prob = 0.0
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= .01 and ebwd < 20.:
             prob = .03
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 20. and ebwd < 30.:
             prob = .05
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 30. and ebwd < 40.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 40. and ebwd < 50.:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif ebwd >= 50. and ebwd < 60.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif ebwd >= 60. and ebwd < 70.:
             prob = .27
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif ebwd >= 70. and ebwd < 80.:
             prob = .36
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif ebwd >= 80.:
             prob = .26
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
     def stpc_prob(self, stpc):
         if stpc < .1:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpc >= .1 and stpc < .50:
             prob = .08
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpc >= .5 and stpc < 1.0:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpc >= 1. and stpc < 2.:
             prob = .17
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif stpc >= 2. and stpc < 4.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpc >= 4. and stpc < 6.:
             prob = .32
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpc >= 6. and stpc < 8.:
             prob = .34
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpc >= 8. and stpc < 10.:
             prob = .55
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         elif stpc >= 10.:
             prob = .58
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
     def stpf_prob(self, stpf):
         if stpf < .1:
             prob = .05
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpf >= .1 and stpf < .5:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpf >= .5 and stpf < 1.:
             prob = .11
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpf >= 1. and stpf < 2.:
             prob = .17
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif stpf >= 2. and stpf < 3.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpf >= 3. and stpf < 5.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpf >= 5. and stpf < 7.:
             prob = .39
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpf >= 7. and stpf < 9.:
             prob = .55
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         elif stpf >= 9.:
             prob = .59
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
 

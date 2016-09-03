@@ -133,6 +133,14 @@ class PrefDialog(QDialog):
             'pwat_p1_color':'#98fb98',
             'pwat_p2_color':'#66cd00',
             'pwat_p3_color':'#00ff00',
+
+            'alert_l1_color':'#775000',
+            'alert_l2_color':'#996600',
+            'alert_l3_color':'#ffffff',
+            'alert_l4_color':'#ffff00',
+            'alert_l5_color':'#ff0000',
+            'alert_l6_color':'#e700df',
+            'alert_lscp_color':'#00ffff',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -156,6 +164,14 @@ class PrefDialog(QDialog):
             'pwat_p1_color':'#006600',
             'pwat_p2_color':'#00b300',
             'pwat_p3_color':'#00ff00',
+
+            'alert_l1_color':'#dfbb9f',
+            'alert_l2_color':'#cc9666',
+            'alert_l3_color':'#666666',
+            'alert_l4_color':'#999900',
+            'alert_l5_color':'#cc0000',
+            'alert_l6_color':'#e700df',
+            'alert_lscp_color':'#00cccc',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -179,6 +195,14 @@ class PrefDialog(QDialog):
             'pwat_p1_color':'#98fb98',
             'pwat_p2_color':'#66cd00',
             'pwat_p3_color':'#00ff00',
+
+            'alert_l1_color':'#775000',
+            'alert_l2_color':'#996600',
+            'alert_l3_color':'#ffffff',
+            'alert_l4_color':'#ffff00',
+            'alert_l5_color':'#ff0000',
+            'alert_l6_color':'#e700df',
+            'alert_lscp_color':'#00ffff',
         }
     }
 

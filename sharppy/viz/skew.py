@@ -384,7 +384,7 @@ class plotSkewT(backgroundSkewT):
         ## There's something funky going on with the colors here.
         fg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
         bg_rgb = self.fg_color.getRgb()
-        print bg_rgb, self.fg_color.getRgb()
+#       print bg_rgb, self.fg_color.getRgb()
         rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',50%)'
         self.presReadout.setStyleSheet("QLabel {"
             "  background-color: " + rgb_string + ";"
