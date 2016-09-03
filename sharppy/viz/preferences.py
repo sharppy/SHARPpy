@@ -341,6 +341,8 @@ class PrefDialog(QDialog):
         """
         self._applyRadio('temp_units', self.temp_units)
         self._applyRadio('wind_units', self.wind_units)
+        self._applyRadio('pw_units', self.pw_units)
+
         self._applyRadio('calc_vector', self.calc_vector)
 
         self._config['preferences', 'color_style'] = self._color_style
