@@ -18,6 +18,11 @@ import os
 import re
 from sharppy._sharppy_version import __version__, __version_name__
 
+
+def _modifySheet(sheet, name, value):
+    return re.sub("(?<= %s: )#[0-9A-Fa-f]{6}" % name, value, sheet)
+
+
 class SPCWidget(QWidget):
     """
     This will create the full SPC window, handle the organization
@@ -438,9 +443,6 @@ class SPCWidget(QWidget):
         for inset in self.insets.keys():
             self.insets[inset].setPreferences(update_gui=update_gui, **prefs)
 
-        def _modifySheet(sheet, name, value):
-            return re.sub("(?<= %s: )#[0-9A-Fa-f]{6}" % name, value, sheet)
-
         # Edit style sheets to modify the colors as we need to (surely there's a better way to do this?)
         sheet = self.styleSheet()
         sheet = _modifySheet(sheet, 'background-color', bg_hex)
@@ -703,13 +705,16 @@ class SPCWindow(QMainWindow):
         kwargs['parent'] = self
         self.spc_widget = SPCWidget(**kwargs)
         self.parent().config_changed.connect(self.spc_widget.updateProfs)
+        self.parent().config_changed.connect(self.updateConfig)
         self.setCentralWidget(self.spc_widget)
         self.createMenuBar()
 
         title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
         title += 'in Python'
         self.setWindowTitle(title)
-        self.setStyleSheet("QMainWindow { background-color: rgb(0, 0, 0); }")
+
+        bg_hex = self.spc_widget.config['preferences', 'bg_color']
+        self.setStyleSheet("QMainWindow { background-color: " + bg_hex + "; }")
         
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
@@ -877,6 +882,14 @@ class SPCWindow(QMainWindow):
     def setInterpolated(self, is_interpolated):
         self.resetinterp.setVisible(is_interpolated)
         self.interpolate.setVisible(not is_interpolated)
+
+    @Slot()
+    def updateConfig(self):
+        bg_hex = self.spc_widget.config['preferences', 'bg_color']
+        sheet = self.styleSheet()
+        sheet = _modifySheet(sheet, 'background-color', bg_hex)
+        self.setStyleSheet(sheet)
+        self.update()
 
     def focusPicker(self):
         if self.picker_window is not None:

@@ -150,9 +150,9 @@ class PrefDialog(QDialog):
             '9_12_color': '#00cccc',
             '12_15_color': '#00cccc',
 
-            'pwat_m3_color':'#e68a00',
-            'pwat_m2_color':'#995c00',
-            'pwat_m1_color':'#4d2e00',
+            'pwat_m3_color':'#ff9900',
+            'pwat_m2_color':'#cc7a00',
+            'pwat_m1_color':'#804d00',
             'pwat_p1_color':'#006600',
             'pwat_p2_color':'#00b300',
             'pwat_p3_color':'#00ff00',
@@ -230,7 +230,7 @@ class PrefDialog(QDialog):
 
     def _createColorWidget(self):
         colors_box = QWidget()
-        colors_layout = QHBoxLayout()
+        colors_layout = QVBoxLayout()
         colors_box.setLayout(colors_layout)
 
         color_styles = ['Standard', 'Inverted', 'Protanopia']
