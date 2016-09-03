@@ -19,6 +19,8 @@ class backgroundText(QtGui.QFrame):
     '''
     def __init__(self):
         super(backgroundText, self).__init__()
+        self.pw_units = kwargs.get('pw_units', 'in')
+        self.temp_units = kwargs.get('temp_units', 'F')
         self.initUI()
 
     def initUI(self):
@@ -205,6 +207,9 @@ class plotText(backgroundText):
         self.update()
 
     def setPreferences(self, update_gui=True, **prefs):
+        self.pw_units = prefs['wind_units']
+        self.temp_units = prefs['temp_units']
+ 
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 

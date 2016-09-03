@@ -242,9 +242,13 @@ class PrefDialog(QDialog):
 
         wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
         layout.addWidget(wind_units_box)
-
+        
+        pw_units_box, self.pw_units = PrefDialog._createRadioSet("Precipitable Water Vapor Units", ["in", "cm"], default=self._config['preferences', 'pw_units'])
+        layout.addWidget(pw_vector_box)
+        
         calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
         layout.addWidget(calc_vector_box)
+                
         return misc_box
 
     @staticmethod
@@ -339,7 +343,7 @@ class PrefDialog(QDialog):
         pref_config = {
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',
-
+            ('preferences', 'pw_units'):'in',
             ('preferences', 'calc_vector'):'Right Mover',
             ('preferences', 'color_style'):'standard'
         }
