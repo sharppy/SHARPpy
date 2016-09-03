@@ -320,6 +320,10 @@ class BasicProfile(Profile):
         self.wetbulb = self.get_wetbulb_profile()
         ## generate theta-e profile
         self.thetae = self.get_thetae_profile()
+        ## generate theta profile
+        self.theta = self.get_theta_profile()
+        ## generate water vapor mixing ratio profile
+        self.wvmr = self.get_wvmr_profile()
 
     def get_sfc(self):
         '''
@@ -353,6 +357,26 @@ class BasicProfile(Profile):
             Index of the surface
             '''
         return np.where(~self.tmpc.mask)[0].max()
+     
+    def get_wvmr_profile(self):
+        '''
+            Function to calculate the water vapor mixing ratio profile.
+            
+            Parameters
+            ----------
+            None
+            
+            Returns
+            -------
+            Array of water vapor mixing ratio profile
+            '''
+        
+        wvmr = ma.empty(self.pres.shape[0])
+        for i in range(len(self.v)):
+            wvmr[i] = thermo.mixratio( self.pres[i], self.dwpc[i] )
+        wvmr[wvmr == self.missing] = ma.masked
+        wvmr.set_fill_value(self.missing)
+        return wvmr
     
     def get_wetbulb_profile(self):
         '''
