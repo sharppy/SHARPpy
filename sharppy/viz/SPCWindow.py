@@ -15,6 +15,7 @@ import numpy as np
 import platform
 from os.path import expanduser
 import os
+import re
 from sharppy._sharppy_version import __version__, __version_name__
 
 class SPCWidget(QWidget):
@@ -106,7 +107,13 @@ class SPCWidget(QWidget):
 
         ## initialize the rest of the window attributes, layout managers, etc
 
-        self.setStyleSheet("QWidget {background-color: rgb(0, 0, 0);}")
+        self.bg_color = QColor(self.config['preferences', 'bg_color'])
+        self.fg_color = QColor(self.config['preferences', 'fg_color'])
+
+        bg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
+        fg_hex = "#%02x%02x%02x" % (self.fg_color.red(), self.fg_color.green(), self.fg_color.blue())
+
+        self.setStyleSheet("QWidget {background-color: " + bg_hex + ";}")
         ## set the the whole window's layout manager
         self.grid = QGridLayout()
         self.grid.setContentsMargins(1,1,1,1)
@@ -123,21 +130,21 @@ class SPCWidget(QWidget):
         self.urparent.setLayout(self.urparent_grid)
         self.ur = QFrame()
         self.ur.setStyleSheet("QFrame {"
-                         "  background-color: rgb(0, 0, 0);"
+                         "  background-color: " + bg_hex + ";"
                          "  border-width: 0px;"
                          "  border-style: solid;"
-                         "  border-color: rgb(255, 255, 255);"
+                         "  border-color: " + fg_hex + ";"
                          "  margin: 0px;}")
 
         self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
-                             "  background-color: rgb(0, 0, 0);"
+                             "  background-color: " + bg_hex + ";"
                              "  text-align: right;"
                              "  padding-top: 4px;"
                              "  padding-bottom: 4px;"
                              "  font-size: 11px;"
-                             "  color: #FFFFFF;}")
+                             "  color: " + fg_hex + ";}")
 
         ## this layout manager will handle the upper right portion of the window
         self.grid2 = QGridLayout()
@@ -153,7 +160,7 @@ class SPCWidget(QWidget):
         ## Handle the Text Areas
         self.text = QFrame()
         self.text.setStyleSheet("QWidget {"
-                            "  background-color: rgb(0, 0, 0);"
+                            "  background-color: " + bg_hex + ";"
                             "  border-width: 2px;"
                             "  border-style: solid;"
                             "  border-color: #3399CC;}")
@@ -409,9 +416,49 @@ class SPCWidget(QWidget):
         self.config = config
         prefs = dict( (field, value) for (section, field), value in config if section == 'preferences')
 
+        self.bg_color = QColor(prefs['bg_color'])
+        self.fg_color = QColor(prefs['fg_color'])
+
+        bg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
+        fg_hex = "#%02x%02x%02x" % (self.fg_color.red(), self.fg_color.green(), self.fg_color.blue())
+
         self.sound.setPreferences(update_gui=update_gui, **prefs)
         self.hodo.setPreferences(update_gui=update_gui, **prefs)
+
+        self.storm_slinky.setPreferences(update_gui=update_gui, **prefs)
+        self.inferred_temp_advection.setPreferences(update_gui=update_gui, **prefs)
+        self.speed_vs_height.setPreferences(update_gui=update_gui, **prefs)
+        self.srwinds_vs_height.setPreferences(update_gui=update_gui, **prefs)
+        self.thetae_vs_pressure.setPreferences(update_gui=update_gui, **prefs)
+        self.watch_type.setPreferences(update_gui=update_gui, **prefs)
+        self.convective.setPreferences(update_gui=update_gui, **prefs)
         self.kinematic.setPreferences(update_gui=update_gui, **prefs)
+
+        for inset in self.insets.keys():
+            self.insets[inset].setPreferences(update_gui=update_gui, **prefs)
+
+        def _modifySheet(sheet, name, value):
+            return re.sub("(?<= %s: )#[0-9A-Fa-f]{6}" % name, value, sheet)
+
+        # Edit style sheets to modify the colors as we need to (surely there's a better way to do this?)
+        sheet = self.styleSheet()
+        sheet = _modifySheet(sheet, 'background-color', bg_hex)
+        self.setStyleSheet(sheet)
+        
+        sheet = self.ur.styleSheet()
+        sheet = _modifySheet(sheet, 'background-color', bg_hex)
+        sheet = _modifySheet(sheet, 'border-color', fg_hex)
+        self.ur.setStyleSheet(sheet)
+
+        sheet = self.brand.styleSheet()
+        sheet = _modifySheet(sheet, 'background-color', bg_hex)
+        sheet = _modifySheet(sheet, 'color', fg_hex)
+        self.brand.setStyleSheet(sheet)
+
+        sheet = self.text.styleSheet()
+        sheet = _modifySheet(sheet, 'background-color', bg_hex)
+        self.text.setStyleSheet(sheet)
+
 
     @Slot(tab.params.Parcel)
     def defineUserParcel(self, parcel):
@@ -581,6 +628,8 @@ class SPCWidget(QWidget):
         ## self.inset_to_swap value is LEFT or RIGHT.
         a = self.menu_ag.checkedAction()
 
+        prefs = dict( (field, value) for (section, field), value in self.config if section == 'preferences')
+
         if self.inset_to_swap == "LEFT":
             if self.left_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
@@ -591,6 +640,7 @@ class SPCWidget(QWidget):
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
             self.insets[self.left_inset].setProf(self.default_prof)
+            self.insets[self.left_inset].setPreferences(update_gui=False, **prefs)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -607,6 +657,7 @@ class SPCWidget(QWidget):
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
             self.insets[self.right_inset].setProf(self.default_prof)
+            self.insets[self.right_inset].setPreferences(update_gui=False, **prefs)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]

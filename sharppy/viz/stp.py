@@ -60,7 +60,7 @@ class backgroundSTP(QtGui.QFrame):
         self.box_height = self.box_metrics.xHeight() + self.textpad
 		
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -87,7 +87,7 @@ class backgroundSTP(QtGui.QFrame):
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
         rect1 = QtCore.QRectF(1.5,1.5, self.brx, self.plot_height)
@@ -108,12 +108,12 @@ class backgroundSTP(QtGui.QFrame):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
-            color = QtGui.QColor('#000000')
+            color = QtGui.QColor(self.bg_color)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ypos = spacing*(i+1) - (spacing/4.)
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
@@ -140,12 +140,12 @@ class backgroundSTP(QtGui.QFrame):
             # Draw upper whisker
             qp.drawLine(center[i], ef[i,3], center[i], ef[i,4])
             # Set black transparent pen to draw a rectangle
-            color = QtGui.QColor('#000000')
+            color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             rect = QtCore.QRectF(center[i] - width/2., self.stp_to_pix(-.5), width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
@@ -161,6 +161,9 @@ class plotSTP(backgroundSTP):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotSTP, self).__init__()
         self.prof = None
 
@@ -193,7 +196,17 @@ class plotSTP(backgroundSTP):
         self.plotBackground()
         self.plotData()
         self.update()
-    
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
     def cape_prob(self, cape):
         if cape == 0.:
             prob = 0.00
@@ -413,7 +426,7 @@ class plotSTP(backgroundSTP):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def plotData(self):
         '''
@@ -458,13 +471,13 @@ class plotSTP(backgroundSTP):
             vspace += self.box_metrics.descent()
         bot_y = top_y + vspace * 8
         ## fill the box with a black background
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        pen = QtGui.QPen(QtCore.Qt.black, 0, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
+        pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setBrush(brush)
         qp.drawRect(left_x, top_y, right_x - left_x, bot_y - top_y)
         ## draw the borders of the box
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)

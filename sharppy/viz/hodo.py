@@ -63,7 +63,7 @@ class backgroundHodo(QtGui.QFrame):
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.saveBitMap = None
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
         self.backgroundBitMap = self.plotBitMap.copy()
 
@@ -90,7 +90,7 @@ class backgroundHodo(QtGui.QFrame):
             self.point = point
             diffx = centerx - point[0]; diffy = centery - point[1]
             self.centerx += diffx; self.centery += diffy
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
         self.backgroundBitMap = self.plotBitMap.copy()
 
@@ -125,7 +125,7 @@ class backgroundHodo(QtGui.QFrame):
         ## reassign the new scale
         self.scale = (self.brx - self.tlx) / self.hodomag
 
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
         self.backgroundBitMap = self.plotBitMap.copy()
         self.plotData()
@@ -171,7 +171,7 @@ class backgroundHodo(QtGui.QFrame):
 
         '''
         ## initialize a white pen to draw the frame
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 2)
+        pen = QtGui.QPen(self.fg_color, 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame borders
@@ -190,7 +190,7 @@ class backgroundHodo(QtGui.QFrame):
 
         '''
         ## initialize a white pen to draw the frame axes
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 2)
+        pen = QtGui.QPen(self.fg_color, 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the frame axes
@@ -223,7 +223,7 @@ class backgroundHodo(QtGui.QFrame):
         qp.setFont(self.label_font)
         ## reset the pen to draw with. Color is set to black and width zero
         ## because we actually don't want to draw and lines yet.
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         offset = 5; width = 15; hght = 15;
         ## crete some rectangles
@@ -241,7 +241,7 @@ class backgroundHodo(QtGui.QFrame):
         qp.drawRect(bottom_rect); qp.drawRect(left_rect)
         ## now make the pen white and draw text using
         ## the invisible rectangles
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
+        pen = QtGui.QPen(self.fg_color)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         qp.drawText(top_rect, QtCore.Qt.AlignCenter, tab.utils.INT2STR(spd))
@@ -320,6 +320,9 @@ class plotHodo(backgroundHodo):
         '''
         Initialize the data used in the class.
         '''
+        self.bg_color = QtGui.QColor("#000000")
+        self.fg_color = QtGui.QColor("#FFFFFF")
+
         super(plotHodo, self).__init__(**kwargs)
         self.prof = None
         self.pc_idx = 0
@@ -340,6 +343,8 @@ class plotHodo(backgroundHodo):
             QtGui.QColor("#888800"), 
             QtGui.QColor("#008888") 
         ]
+
+        self.eff_inflow_color = QtGui.QColor("#00FFFF")
 
         self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         ## if you want the storm motion vector, you need to
@@ -559,6 +564,17 @@ class plotHodo(backgroundHodo):
     def setPreferences(self, update_gui=True, **kwargs):
         self.wind_units = kwargs['wind_units']
 
+        self.bg_color = QtGui.QColor(kwargs['bg_color'])
+        self.fg_color = QtGui.QColor(kwargs['fg_color'])
+        self.colors = [
+            QtGui.QColor(kwargs['0_3_color']),
+            QtGui.QColor(kwargs['3_6_color']),
+            QtGui.QColor(kwargs['6_9_color']),
+            QtGui.QColor(kwargs['9_12_color']),
+        ]
+
+        self.eff_inflow_color = QtGui.QColor(kwargs['eff_inflow_color'])
+
         if self.wind_units == 'm/s':
             self.ring_increment = 5
             self.hodomag = 80.
@@ -577,7 +593,7 @@ class plotHodo(backgroundHodo):
         self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
                            self.ring_increment)
 
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
         self.backgroundBitMap = self.plotBitMap.copy()
 
@@ -749,10 +765,10 @@ class plotHodo(backgroundHodo):
                 self.modified_vector.emit('left', u, v)
 
     def setBlackPen(self, qp):
-        color = QtGui.QColor('#000000')
+        color = self.bg_color
         color.setAlphaF(.5)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
         qp.setPen(pen)
         qp.setBrush(brush)
         return qp
@@ -902,9 +918,9 @@ class plotHodo(backgroundHodo):
         if draw_readout:
             h_offset = 2; v_offset=5; width = 55; hght = 16;
             text_rect = QtCore.QRectF(xx+h_offset, yy+v_offset, width, hght)
-            qp.fillRect(text_rect, QtGui.QColor("#000000"))
+            qp.fillRect(text_rect, self.bg_color)
 
-            qp.setPen(QtGui.QPen(QtGui.QColor("#FFFFFF"), 1))
+            qp.setPen(QtGui.QPen(self.fg_color, 1))
             qp.drawEllipse(QPointF(xx, yy), 4, 4)
             ## now make the pen white and draw text using
             ## the invisible rectangles
@@ -991,7 +1007,7 @@ class plotHodo(backgroundHodo):
             return
         # This probably needs to be checked. 
 
-        color = QtGui.QColor('#000000')
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1048,7 +1064,7 @@ class plotHodo(backgroundHodo):
         qp.drawEllipse(center_up, 3, 3)
         qp.drawEllipse(center_dn, 3, 3)
 
-        color = QtGui.QColor('#000000')
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1088,7 +1104,7 @@ class plotHodo(backgroundHodo):
         '''
         ## set a pen with white color, width 1, solid line.
         penwidth = 1
-        pen = QtGui.QPen(QtGui.QColor(WHITE), penwidth)
+        pen = QtGui.QPen(self.fg_color, penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## check and make sure there is no missing data
@@ -1132,7 +1148,7 @@ class plotHodo(backgroundHodo):
             uutop, vvtop = self.uv_to_pix(utop, vtop)
             uubot, vvbot = self.uv_to_pix(ubot, vbot)
             ## set a pen
-            pen = QtGui.QPen(QtGui.QColor("#00FFFF"), penwidth)
+            pen = QtGui.QPen(self.eff_inflow_color, penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             ## draw lines showing the effective inflow layer
@@ -1143,7 +1159,7 @@ class plotHodo(backgroundHodo):
                 qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
                 qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
                 
-        color = QtGui.QColor('#000000')
+        color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -1154,7 +1170,7 @@ class plotHodo(backgroundHodo):
         qp.drawRect(lm_rect) 
         ## now make the pen white and draw text using
         ## the invisible rectangles
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
+        pen = QtGui.QPen(self.fg_color)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rm_spd = self.bunkers_right_vec[1]

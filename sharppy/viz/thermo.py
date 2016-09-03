@@ -55,7 +55,7 @@ class backgroundText(QtGui.QFrame):
         self.ylast = self.label_height
         ## initialize the QPixmap that will be drawn on.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         ## plot the background frame
         self.plotBackground()
     
@@ -64,7 +64,7 @@ class backgroundText(QtGui.QFrame):
         Draws the background frame and the text headers for indices.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## set the horizontal grid to be the width of the frame
@@ -127,6 +127,9 @@ class plotText(backgroundText):
         prof: a Profile Object
         
         '''
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         ## get the parcels to be displayed in the GUI
         super(plotText, self).__init__()
 
@@ -201,6 +204,16 @@ class plotText(backgroundText):
         self.plotData()
         self.update()
 
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -253,7 +266,7 @@ class plotText(backgroundText):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def drawSevere(self, qp):
         '''
@@ -267,7 +280,7 @@ class plotText(backgroundText):
         ## initialize a pen to draw with.
         pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
         qp.setFont(self.label_font)
-        color_list = [QtGui.QColor(CYAN), QtGui.QColor(DBROWN), QtGui.QColor(LBROWN), QtGui.QColor(WHITE), QtGui.QColor(YELLOW), QtGui.QColor(RED), QtGui.QColor(MAGENTA)]
+        color_list = [QtGui.QColor(CYAN), QtGui.QColor(DBROWN), QtGui.QColor(LBROWN), self.fg_color, QtGui.QColor(YELLOW), QtGui.QColor(RED), QtGui.QColor(MAGENTA)]
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
@@ -380,7 +393,7 @@ class plotText(backgroundText):
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.
         y1 = self.ylast + self.tpad
-        colors = [color, QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE), QtGui.QColor(WHITE)]
+        colors = [color, self.fg_color, self.fg_color, self.fg_color, self.fg_color, self.fg_color]
         texts = ['PW = ', 'MeanW = ', 'LowRH = ', 'MidRH = ', 'DCAPE = ', 'DownT = ']
         indices = [self.pwat + 'in', self.mean_mixr + 'g/kg', self.low_rh + '%', self.mid_rh + '%', self.dcape, self.drush + 'F']
         for text, index, c in zip(texts, indices, colors):
@@ -443,7 +456,7 @@ class plotText(backgroundText):
         
         '''
         ## initialize a white pen with thickness 2 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## make the initial x pixel coordinate relative to the frame
@@ -479,7 +492,7 @@ class plotText(backgroundText):
                 qp.setPen(pen)
                 pcl_index = i
             else:
-                pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
                 qp.setPen(pen)
             rect = QtCore.QRect(0, y1, x1*2, self.label_height)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
@@ -499,9 +512,9 @@ class plotText(backgroundText):
                 elif pcl_index == i and int(text) >= 2000:
                     color=QtCore.Qt.yellow
                 else:
-                    color=QtCore.Qt.white
+                    color=self.fg_color
             except:
-                color=QtCore.Qt.white
+                color=self.fg_color
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
@@ -521,9 +534,9 @@ class plotText(backgroundText):
                 elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
                     color=QtGui.QColor('#993333')
                 else:
-                    color=QtCore.Qt.white
+                    color=self.fg_color
             except:
-                color=QtCore.Qt.white
+                color=self.fg_color
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
@@ -544,9 +557,9 @@ class plotText(backgroundText):
                 elif int(text) < 2000 and pcl_index == i and texts[i] == "ML":
                     color=QtGui.QColor('#993333')
                 else:
-                    color=QtCore.Qt.white
+                    color=self.fg_color
             except:
-                color=QtCore.Qt.white
+                color=self.fg_color
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
@@ -556,7 +569,7 @@ class plotText(backgroundText):
                 vspace += self.label_metrics.descent()
             y1 += vspace
 
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## LI
         y1 = self.ylast + self.tpad

@@ -46,7 +46,7 @@ class backgroundSTPEF(QtGui.QFrame):
         self.brx = self.wid; self.bry = self.hgt
         self.probmax = 70.; self.probmin = 0.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -87,7 +87,7 @@ class backgroundSTPEF(QtGui.QFrame):
         EF3_color = "#FF0000"
         EF4_color = "#FF00FF"
 
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
         rect1 = QtCore.QRectF(1.5, 2, self.brx, self.plot_height)
@@ -145,7 +145,7 @@ class backgroundSTPEF(QtGui.QFrame):
             ypos = spacing*(i+1) - (spacing/4.)
             ypos = self.prob_to_pix(int(texts[i])) - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
@@ -162,7 +162,7 @@ class backgroundSTPEF(QtGui.QFrame):
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             rect = QtCore.QRectF(center[i], self.prob_to_pix(-2), width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
         
@@ -238,6 +238,9 @@ class plotSTPEF(backgroundSTPEF):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotSTPEF, self).__init__()
         self.prof = None
 
@@ -254,6 +257,16 @@ class plotSTPEF(backgroundSTPEF):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -275,7 +288,7 @@ class plotSTPEF(backgroundSTPEF):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def plotData(self):
         '''

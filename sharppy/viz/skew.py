@@ -58,7 +58,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.esrh_height = self.esrh_metrics.xHeight() + 9
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.saveBitMap = None
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
     
     def plotBackground(self):
@@ -186,8 +186,8 @@ class backgroundSkewT(QtGui.QWidget):
         x2 = self.originx + self.tmpc_to_pix(t, pmin) / self.scale
         y2 = self.originy + self.pres_to_pix(pmin) / self.scale
         rectF = QtCore.QRectF(x2-5, y2-10, 10, 10)
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 1, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        pen = QtGui.QPen(self.bg_color, 1, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
         qp.setPen(pen)
         qp.setBrush(brush)
         qp.drawRect(rectF)
@@ -204,15 +204,15 @@ class backgroundSkewT(QtGui.QWidget):
 
         '''
         qp.setClipping(False)
-        pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+        pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
         qp.setPen(pen)
         qp.setBrush(brush)
         qp.drawRect(0, 0, self.lpad, self.bry)
         qp.drawRect(0, self.pres_to_pix(self.pmax), self.brx, self.bry)
         qp.drawRect(self.brx, 0, self.wid+self.rpad,
                     self.pres_to_pix(self.pmax))
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(self.lpad, self.tpad, self.brx+self.rpad, self.tpad)
         qp.drawLine(self.brx+self.rpad, self.tpad, self.brx+self.rpad,
@@ -225,7 +225,7 @@ class backgroundSkewT(QtGui.QWidget):
         Add Isotherm Labels.
 
         '''
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"))
+        pen = QtGui.QPen(self.fg_color)
         qp.setFont(self.label_font)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
 
@@ -259,7 +259,7 @@ class backgroundSkewT(QtGui.QWidget):
         Draw background isobars.
 
         '''
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         y1 = self.originy + self.pres_to_pix(p) / self.scale
@@ -323,6 +323,9 @@ class plotSkewT(backgroundSkewT):
     reset = Signal(list)
 
     def __init__(self, **kwargs):
+        self.bg_color = QtGui.QColor(kwargs.get('bg_color', '#000000'))
+        self.fg_color = QtGui.QColor(kwargs.get('fg_color', '#FFFFFF'))
+
         super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
         self.prof = None
@@ -337,12 +340,13 @@ class plotSkewT(backgroundSkewT):
         ## ui stuff
         self.title = kwargs.get('title', '')
         self.dp = -25
-        self.temp_color = kwargs.get('temp_color', '#FF0000')
-        self.ens_temp_color = kwargs.get('ens_temp_color', '#880000')
-        self.dewp_color = kwargs.get('dewp_color', '#00FF00')
-        self.ens_dewp_color = kwargs.get('ens_dewp_color', '#008800')
-        self.wetbulb_color = kwargs.get('wetbulb_color', '#00FFFF')
-        self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
+        self.temp_color = QtGui.QColor(kwargs.get('temp_color', '#FF0000'))
+        self.ens_temp_color = QtGui.QColor(kwargs.get('ens_temp_color', '#880000'))
+        self.dewp_color = QtGui.QColor(kwargs.get('dewp_color', '#00FF00'))
+        self.ens_dewp_color = QtGui.QColor(kwargs.get('ens_dewp_color', '#008800'))
+        self.wetbulb_color = QtGui.QColor(kwargs.get('wetbulb_color', '#00FFFF'))
+        self.eff_layer_color = QtGui.QColor(kwargs.get('eff_layer_color', '#00FFFF'))
+        self.background_colors =[ QtGui.QColor(c) for c in kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99']) ]
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
         self.setMouseTracking(True)
@@ -370,11 +374,12 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(0)
         self.dwpcReadout.setFixedWidth(0)
         ## set the style sheet for text size, color, etc
+        fg_hex = "#%02x%02x%02x" % (self.fg_color.red(), self.fg_color.green(), self.fg_color.blue())
         self.presReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
             "  font-size: 11px;"
-            "  color: #FFFFFF;}")
+            "  color: " + fg_hex + ";}")
         self.hghtReadout.setStyleSheet("QLabel {"
             "  background-color: rgb(0, 0, 0, 50%);"
             "  border-width: 0px;"
@@ -562,12 +567,20 @@ class plotSkewT(backgroundSkewT):
             self.update()
 
     def setPreferences(self, update_gui=True, **kwargs):
-        self.temp_color = kwargs['temp_color']
-        self.dewp_color = kwargs['dewp_color']
+        self.bg_color = QtGui.QColor(kwargs['bg_color'])
+        self.fg_color = QtGui.QColor(kwargs['fg_color'])
+
+        self.temp_color = QtGui.QColor(kwargs['temp_color'])
+        self.dewp_color = QtGui.QColor(kwargs['dewp_color'])
+        self.wetbulb_color = QtGui.QColor(kwargs['wetb_color'])
+        self.eff_layer_color = QtGui.QColor(kwargs['eff_inflow_color'])
+
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
 
         if update_gui:
+            self.plotBitMap.fill(self.bg_color)
+            self.plotBackground()
             self.clearData()
             self.plotData()
             self.update()
@@ -705,7 +718,7 @@ class plotSkewT(backgroundSkewT):
         self.drag_tmpc.setCoords(trans_tmx, trans_y)
         self.drag_dwpc.setCoords(trans_dwx, trans_y)
 
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         if self.readout:
             self.updateReadout()
         self.plotBackground()
@@ -761,8 +774,8 @@ class plotSkewT(backgroundSkewT):
                     bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
                 for profile in proflist:
-                    self.drawTrace(profile.tmpc, QtGui.QColor(temp_color), qp, p=profile.pres, width=1)
-                    self.drawTrace(profile.dwpc, QtGui.QColor(dewp_color), qp, p=profile.pres, width=1)
+                    self.drawTrace(profile.tmpc, temp_color, qp, p=profile.pres, width=1)
+                    self.drawTrace(profile.dwpc, dewp_color, qp, p=profile.pres, width=1)
                     self.drawBarbs(profile, qp, color="#666666")
 
         bg_color_idx = 0
@@ -772,15 +785,15 @@ class plotSkewT(backgroundSkewT):
 
                 color = self.background_colors[bg_color_idx]
 
-                self.drawTrace(profile.tmpc, QtGui.QColor(color), qp, p=profile.pres)
-                self.drawTrace(profile.dwpc, QtGui.QColor(color), qp, p=profile.pres)
+                self.drawTrace(profile.tmpc, color, qp, p=profile.pres)
+                self.drawTrace(profile.dwpc, color, qp, p=profile.pres)
                 self.drawBarbs(profile, qp, color=color)
 
                 bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
-        self.drawTrace(self.wetbulb, QtGui.QColor(self.wetbulb_color), qp, width=1)
-        self.drawTrace(self.tmpc, QtGui.QColor(self.temp_color), qp, stdev=self.tmp_stdev)
-        self.drawTrace(self.vtmp, QtGui.QColor(self.temp_color), qp, width=1, style=QtCore.Qt.DashLine, label=False)
+        self.drawTrace(self.wetbulb, self.wetbulb_color, qp, width=1)
+        self.drawTrace(self.tmpc, self.temp_color, qp, stdev=self.tmp_stdev)
+        self.drawTrace(self.vtmp, self.temp_color, qp, width=1, style=QtCore.Qt.DashLine, label=False)
 
         if self.plotdgz is True and (self.prof.dgz_pbot != self.prof.dgz_ptop):
 #           idx = np.ma.where((self.prof.pres <= self.prof.dgz_pbot) & (self.prof.pres >= self.prof.dgz_ptop))
@@ -790,10 +803,10 @@ class plotSkewT(backgroundSkewT):
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
 
             self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
-            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color="#F5D800")
-            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color="#F5D800")
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
 
-        self.drawTrace(self.dwpc, QtGui.QColor(self.dewp_color), qp, stdev=self.dew_stdev)
+        self.drawTrace(self.dwpc, self.dewp_color, qp, stdev=self.dew_stdev)
 
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
@@ -801,7 +814,7 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ttrace = self.prof.dpcl_ttrace
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
-            self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
+            self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color=QtGui.QColor("#FF00FF"))
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(self.prof, qp)
@@ -813,7 +826,10 @@ class plotSkewT(backgroundSkewT):
 
         qp.end()
 
-    def drawBarbs(self, prof, qp, color="#FFFFFF"):
+    def drawBarbs(self, prof, qp, color=None):
+        if color is None:
+            color = self.fg_color
+
         qp.setClipping(False)
 
         rect_size = self.clip.size()
@@ -865,7 +881,7 @@ class plotSkewT(backgroundSkewT):
         qp.setClipping(False)
         qp.setFont(self.title_font)
 
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
 
         rect0 = QtCore.QRect(self.lpad, 2, box_width, self.title_height)
@@ -898,7 +914,10 @@ class plotSkewT(backgroundSkewT):
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(h/1000)+' km')
 
-    def draw_sig_levels(self, qp, plevel=1000, color="#FFFFFF"):
+    def draw_sig_levels(self, qp, plevel=1000, color=None):
+        if color is None:
+            color = self.fg_color
+
         qp.setClipping(True)
         if not tab.utils.QC(plevel):
             return
@@ -907,7 +926,7 @@ class plotSkewT(backgroundSkewT):
 
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         y = self.originy + self.pres_to_pix(plevel) / self.scale
-        pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(x[0], y, x[1], y)
         rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
@@ -1023,8 +1042,8 @@ class plotSkewT(backgroundSkewT):
             rect1 = QtCore.QRectF(x2, y1+4, 25, self.esrh_height)
             rect2 = QtCore.QRectF(x2, y2-self.esrh_height, 50, self.esrh_height)
             rect3 = QtCore.QRectF(x1-15, y2-self.esrh_height, 50, self.esrh_height)
-            pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+            pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
+            brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
             qp.setPen(pen)
             qp.setBrush(brush)
             sfc = tab.interp.hght( self.prof, self.prof.pres[self.prof.sfc] )
@@ -1038,7 +1057,7 @@ class plotSkewT(backgroundSkewT):
             qp.drawRect(rect1)
             qp.drawRect(rect2)
             qp.drawRect(rect3)
-            pen = QtGui.QPen(QtGui.QColor('#04DBD8'), 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.eff_layer_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.setFont(self.esrh_font)
             qp.drawLine(x1-len, y1, x1+len, y1)
@@ -1060,12 +1079,15 @@ class plotSkewT(backgroundSkewT):
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
     
-    def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1, color="#FFFFFF"):
+    def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1, color=None):
         '''
         Draw a parcel trace.
         '''
+        if color is None:
+            color = self.fg_color
+
         qp.setClipping(True)
-        pen = QtGui.QPen(QtGui.QColor(color), width, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(color, width, QtCore.Qt.DashLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
@@ -1125,8 +1147,8 @@ class plotSkewT(backgroundSkewT):
                 label = data[0]
             else:
                 label = tab.thermo.ctof(data[0]) #(1.8 * data[0]) + 32.
-            pen = QtGui.QPen(QtGui.QColor('#000000'), 0, QtCore.Qt.SolidLine)
-            brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
+            pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
+            brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
             qp.setPen(pen)
             qp.setBrush(brush)
             rect = QtCore.QRectF(x[0]-8, y[0]+4, 16, 12)

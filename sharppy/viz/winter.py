@@ -46,7 +46,7 @@ class backgroundWinter(QtGui.QFrame):
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def draw_frame(self, qp):
@@ -64,7 +64,7 @@ class backgroundWinter(QtGui.QFrame):
         rect1 = QtCore.QRect(0, self.tpad, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '*** DENDRITIC GROWTH ZONE (-12 TO -17 C) ***')
         self.oprh_y1 = 2*self.label_height+self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 5
         y1 = 3 * self.label_height + self.tpad + sep + self.os_mod
@@ -147,6 +147,9 @@ class plotWinter(backgroundWinter):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotWinter, self).__init__()
         self.prof = None
 
@@ -195,6 +198,16 @@ class plotWinter(backgroundWinter):
         self.plotData()
         self.update()
 
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -215,7 +228,7 @@ class plotWinter(backgroundWinter):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -247,7 +260,7 @@ class plotWinter(backgroundWinter):
         if self.oprh < -.1 and tab.utils.QC(self.oprh) and self.dgz_meanomeg != -99990.0:
             pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
         else:
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(0, self.oprh_y1, self.wid, self.label_height)
@@ -260,7 +273,7 @@ class plotWinter(backgroundWinter):
         big = QtGui.QFont('Helvetica', 15, bold=True)
         big_metrics = QtGui.QFontMetrics( big )
         height = big_metrics.xHeight() + self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(big)
         rect1 = QtCore.QRect(0, self.precip_type_y1, self.wid, height)
@@ -270,7 +283,7 @@ class plotWinter(backgroundWinter):
         small = QtGui.QFont('Helvetica', 9, bold=False)
         small_metrics = QtGui.QFontMetrics( small )
         height = small_metrics.xHeight() + self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(small)
         rect1 = QtCore.QRect(0, self.ptype_tmpf_y1, self.wid, height)
@@ -313,7 +326,7 @@ class plotWinter(backgroundWinter):
             y1 += self.label_height + sep + self.os_mod
 
     def drawDGZLayer(self, qp):
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         sep = 5
@@ -346,7 +359,7 @@ class plotWinter(backgroundWinter):
         ---------
         qp: QtGui.QPainter object
         '''
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(self.lpad, self.init_phase_y1,  self.wid/10, self.label_height)

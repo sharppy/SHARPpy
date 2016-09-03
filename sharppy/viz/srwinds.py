@@ -43,7 +43,7 @@ class backgroundWinds(QtGui.QFrame):
         self.label_font = QtGui.QFont('Helvetica', fsize)
         ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -81,7 +81,7 @@ class backgroundWinds(QtGui.QFrame):
         
         '''
         ## initialize a new pen with white color, thickness of 2, solid line.
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         qp.drawText(15, 5, 45, 35,
@@ -92,7 +92,7 @@ class backgroundWinds(QtGui.QFrame):
         qp.drawLine(self.brx, self.tly, self.brx, self.bry)
         qp.drawLine(self.brx, self.bry, self.tlx, self.bry)
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
         zero = self.speed_to_pix(15.)
         qp.drawLine( zero, self.bry, zero, self.tly)
@@ -120,7 +120,7 @@ class backgroundWinds(QtGui.QFrame):
         
         '''
         ## initialize a pen with color white, thickness 1, solid line
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert the height value to pixel coordinates
@@ -146,7 +146,7 @@ class backgroundWinds(QtGui.QFrame):
         
         '''
         ## initialize a pen with white color, thickness 1, solid line
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert wind speed values to pixel values
@@ -199,6 +199,9 @@ class plotWinds(backgroundWinds):
         prof: a Profile object
         
         '''
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
         self.prof = None
@@ -230,6 +233,16 @@ class plotWinds(backgroundWinds):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -265,7 +278,7 @@ class plotWinds(backgroundWinds):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def plotData(self):
         '''

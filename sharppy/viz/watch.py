@@ -39,7 +39,7 @@ class backgroundWatch(QtGui.QFrame):
         self.title_height = self.title_metrics.height()
         self.plot_height = self.plot_metrics.height()
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()  
 
     def resizeEvent(self, e):
@@ -54,7 +54,7 @@ class backgroundWatch(QtGui.QFrame):
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
         
@@ -68,7 +68,7 @@ class backgroundWatch(QtGui.QFrame):
         pad = self.bry / 100.
         rect0 = QtCore.QRect(0, pad*4, self.brx, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Psbl Haz. Type')
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(0, pad*4 + (self.title_height + 3), self.brx, pad*4 + (self.title_height + 3))
     
@@ -87,6 +87,9 @@ class plotWatch(backgroundWatch):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotWatch, self).__init__()
         self.prof = None 
 
@@ -104,6 +107,16 @@ class plotWatch(backgroundWatch):
         self.plotBackground()
         self.plotData()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -131,7 +144,7 @@ class plotWatch(backgroundWatch):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         if self.prof is None:
