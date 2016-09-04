@@ -30,8 +30,13 @@ class backgroundSpeed(QtGui.QFrame):
         self.pmax = 1050.; self.pmin = 100.
         self.log_pmax = np.log(self.pmax); self.log_pmin = np.log(self.pmin)
         ## set the max/min wind speed expected
-        self.smax = 140.; self.smin = 0.
-        self.label_font = QtGui.QFont('Helvetica', 7)
+        if self.wind_units == "knots":
+            self.smax = 140.; self.smin = 0. # knots
+            self.delta = 20.
+        elif self.wind_units == 'm/s':
+            self.smax = 80.; self.smin = 0. # m/s
+            self.delta = 10.
+        self.label_font = QtGui.QFont('Helvetica', 8)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtGui.QColor(self.bg_color))
         self.plotBackground()
@@ -54,9 +59,21 @@ class backgroundSpeed(QtGui.QFrame):
         ## draw the background frame
         self.draw_frame(qp)
         ## draw the vertical ticks for wind speed
-        for s in xrange(0,140,20):
-            self.draw_speed(s, qp)
-        qp.end()
+        for s in xrange(int(self.smin),int(self.smax),int(self.delta)):
+            if s % (int(self.delta)*2) == 0 and s != 0:
+                label=True
+            else:
+                label=False
+            self.draw_speed(s, qp, int(self.delta), label)
+        ## Draw the title and units
+        pen = QtGui.QPen(QtGui.QColor(self.fg_color), 1, QtCore.Qt.DashLine)
+        qp.setPen(pen)
+        self.title_font = QtGui.QFont('Helvetica', 9)
+        qp.setFont(self.title_font)
+        qp.drawText(self.tlx+2, self.tly+2, self.brx-self.tlx, 30,
+                   QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, "Wind Speed\n(" + self.wind_units + ")")
+        qp.end() 
+
 
     def draw_frame(self, qp):
         '''
@@ -71,7 +88,7 @@ class backgroundSpeed(QtGui.QFrame):
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
 
-    def draw_speed(self, s, qp):
+    def draw_speed(self, s, qp, delta=0, drawlabel=True):
         '''
         Draw background speed ticks.
         --------
@@ -85,9 +102,16 @@ class backgroundSpeed(QtGui.QFrame):
         qp.setFont(self.label_font)
         ## convert the speed value to pixel coordinates
         x1 = self.speed_to_pix(s)
+        labelx1 = self.speed_to_pix(s - delta) # e.g. 20 - 20 = 0, 0 to 40
+        label_width = self.speed_to_pix(s+delta) - self.speed_to_pix(s-delta)
         ## draw a dashed line of constant wind speed value
         qp.drawLine(x1, self.bry, x1, self.tly)
-
+        if drawlabel is True and s > 0:
+            pen = QtGui.QPen(QtGui.QColor(self.fg_color), 1, QtCore.Qt.DashLine)
+            qp.setPen(pen)
+            qp.drawText(labelx1, self.bry+5, label_width, 10,
+                   QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, str(int(s)))
+    
     def pres_to_pix(self, p):
         '''
         Function to convert a pressure value to a Y pixel.
@@ -112,6 +136,7 @@ class plotSpeed(backgroundSpeed):
     def __init__(self):
         self.bg_color = '#000000'
         self.fg_color = '#ffffff'
+        self.wind_units = 'knots'
 
         super(plotSpeed, self).__init__()
         ## initialize values to be accessable to functions
@@ -137,6 +162,15 @@ class plotSpeed(backgroundSpeed):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = prefs['bg_color']
         self.fg_color = prefs['fg_color']
+        self.wind_units = prefs['wind_units']
+        
+        if self.wind_units == "knots":
+            self.smax = 140.; self.smin = 0. # knots
+            self.delta = 20.
+        elif self.wind_units == 'm/s':
+            self.smax = 80.; self.smin = 0. # m/s
+            self.delta = 10.
+           
         self.low_level_color = QtGui.QColor(prefs['0_3_color'])
         self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
         self.upper_level_color = QtGui.QColor(prefs['6_9_color'])
