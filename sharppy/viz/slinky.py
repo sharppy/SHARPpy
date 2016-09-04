@@ -290,7 +290,7 @@ class plotSlinky(backgroundSlinky):
         
         '''
         ## initialize a pen
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
         ## draw the text
