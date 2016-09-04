@@ -826,14 +826,14 @@ class SPCWindow(QMainWindow):
             actions[names.index("Remove")].setVisible(False)
 
     def abortProfileAdd(self, menu_name, exc):
+        import traceback
         msgbox = QMessageBox()
         msgbox.setText("An error has occurred while retrieving the data.")
         msgbox.setInformativeText("Try another site or model or try again later.")
-        msgbox.setDetailedText(exc)
+        msgbox.setDetailedText(traceback.format_exc())
         msgbox.setIcon(QMessageBox.Critical)
         msgbox.exec_()
 
-        import traceback
         print traceback.format_exc()
 
         if len(self.menu_items) == 1:
