@@ -809,6 +809,7 @@ class SPCWindow(QMainWindow):
         try:
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
+            ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
             self.abortProfileAdd(menu_name, str(exc))
 
     @Slot(str)
