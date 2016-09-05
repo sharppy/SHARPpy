@@ -204,6 +204,7 @@ class plotThetae(backgroundThetae):
         '''
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.thte_color = QtGui.QColor('#ff0000')
 
         super(plotThetae, self).__init__()
         ## set the varables for pressure and thetae
@@ -226,6 +227,7 @@ class plotThetae(backgroundThetae):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.thte_color = QtGui.QColor(prefs['temp_color'])
 
         if update_gui:
             self.clear()
@@ -292,7 +294,7 @@ class plotThetae(backgroundThetae):
         qp: QtGui.QPainter object
         
         '''
-        pen = QtGui.QPen(QtGui.QColor(RED), 2)
+        pen = QtGui.QPen(self.thte_color, 2)
         pen.setStyle(QtCore.Qt.SolidLine)
         mask1 = self.thetae.mask
         mask2 = self.pres.mask

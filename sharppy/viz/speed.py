@@ -97,7 +97,7 @@ class backgroundSpeed(QtGui.QFrame):
         
         '''
         ## initialize a pen with an orange/brown color, thickness 1, dashed line
-        pen = QtGui.QPen(QtGui.QColor("#9D5736"), 1, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(self.isotach_color, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## convert the speed value to pixel coordinates
@@ -137,6 +137,7 @@ class plotSpeed(backgroundSpeed):
         self.bg_color = '#000000'
         self.fg_color = '#ffffff'
         self.wind_units = 'knots'
+        self.isotach_color = QtGui.QColor("#9D5736")
 
         super(plotSpeed, self).__init__()
         ## initialize values to be accessable to functions
@@ -175,6 +176,8 @@ class plotSpeed(backgroundSpeed):
         self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
         self.upper_level_color = QtGui.QColor(prefs['6_9_color'])
         self.trop_level_color = QtGui.QColor(prefs['9_12_color'])
+
+        self.isotach_color = QtGui.QColor(prefs['spd_itach_color'])
 
         if update_gui:
             self.clearData()
@@ -247,6 +250,10 @@ class plotSpeed(backgroundSpeed):
             u = self.u; v = self.v
             ## calculate the windspeed
             spd = np.sqrt( u**2 + v**2 )
+
+        if self.wind_units == 'm/s':
+            spd = tab.utils.KTS2MS(spd)
+
         ## loop through the profile
         for i in xrange( pres.shape[0] ):
             ## get the important values from the profile
