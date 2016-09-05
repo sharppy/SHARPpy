@@ -145,6 +145,9 @@ class PrefDialog(QDialog):
             'alert_l5_color':'#ff0000',
             'alert_l6_color':'#e700df',
             'alert_lscp_color':'#00ffff',
+
+            'stp_box_color':'#00ff00',
+            'stp_line_color':'#0080ff',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -180,6 +183,9 @@ class PrefDialog(QDialog):
             'alert_l5_color':'#cc0000',
             'alert_l6_color':'#e700df',
             'alert_lscp_color':'#00cccc',
+
+            'stp_box_color':'#00aa00',
+            'stp_line_color':'#66b3ff',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -215,6 +221,9 @@ class PrefDialog(QDialog):
             'alert_l5_color':'#ff0000',
             'alert_l6_color':'#e700df',
             'alert_lscp_color':'#00ffff',
+
+            'stp_box_color':'#00ff00',
+            'stp_line_color':'#0080ff',
         }
     }
 

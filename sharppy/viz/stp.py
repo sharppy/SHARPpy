@@ -105,7 +105,7 @@ class backgroundSTP(QtGui.QFrame):
         texts = stp_inset_data['stp_ytexts']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
         for i in xrange(len(y_ticks)):
-            pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
+            pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
             color = QtGui.QColor(self.bg_color)
@@ -126,7 +126,7 @@ class backgroundSTP(QtGui.QFrame):
         qp.setFont(QtGui.QFont('Helvetica', 8))
         for i in xrange(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
-            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.box_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             # Draw lower whisker
             qp.drawLine(center[i], ef[i,0], center[i], ef[i,1])
@@ -163,6 +163,8 @@ class plotSTP(backgroundSTP):
     def __init__(self):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.box_color = QtGui.QColor('#00ff00')
+        self.line_color = QtGui.QColor('#0080ff')
 
         self.alert_colors = [
             QtGui.QColor('#775000'),
@@ -209,6 +211,8 @@ class plotSTP(backgroundSTP):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.box_color = QtGui.QColor(prefs['stp_box_color'])
+        self.line_color = QtGui.QColor(prefs['stp_line_color'])
 
         self.alert_colors = [
             QtGui.QColor(prefs['alert_l1_color']),
@@ -220,6 +224,13 @@ class plotSTP(backgroundSTP):
         ]
 
         if update_gui:
+            self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
+            self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
+            self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
+            self.ebwd_p, self.ebwd_c = self.ebwd_prob(self.ebwd)
+            self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
+            self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
             self.clearData()
             self.plotBackground()
             self.plotData()
@@ -258,7 +269,7 @@ class plotSTP(backgroundSTP):
             color = self.alert_colors[3]
         else:
             prob = np.ma.masked
-            color = self.alert_colors[0] 
+            color = self.alert_colors[0]
         return prob, color
     
     def lcl_prob(self, lcl):
