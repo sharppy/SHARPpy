@@ -30,6 +30,8 @@ class Draggable(object):
         self._save_bitmap = None
         self._drag_buffer = 5
 
+        self._click_start = None
+
         if type(self._x_obj) != np.ma.MaskedArray:
             self._x_obj = np.ma.array([ self._x_obj ])
         if type(self._y_obj) != np.ma.MaskedArray:
@@ -46,6 +48,7 @@ class Draggable(object):
         dists = np.hypot(click_x - self._x_obj, click_y - self._y_obj)
         if np.any(dists <= self._cutoff):
             self._drag_idx = np.argmin(dists)
+            self._click_start = (click_x, click_y)
 
         return self._drag_idx is not None
 
@@ -148,20 +151,26 @@ class Draggable(object):
         if self._drag_idx is None:
             return
 
-        if self._lock_dim == 'x':
+        start_x, start_y = self._click_start
+        if rls_x == start_x and rls_y == start_y:
             rls_x = self._x_obj[self._drag_idx]
-        elif self._lock_dim == 'y':
             rls_y = self._y_obj[self._drag_idx]
+        else:
+            if self._lock_dim == 'x':
+                rls_x = self._x_obj[self._drag_idx]
+            elif self._lock_dim == 'y':
+                rls_y = self._y_obj[self._drag_idx]
 
-        if restrictions:
-            rls_x, rls_y = restrictions(rls_x, rls_y)
+            if restrictions:
+                rls_x, rls_y = restrictions(rls_x, rls_y)
 
-        self._x_obj[self._drag_idx] = rls_x
-        self._y_obj[self._drag_idx] = rls_y
+            self._x_obj[self._drag_idx] = rls_x
+            self._y_obj[self._drag_idx] = rls_y
 
         drag_idx = self._drag_idx
         self._drag_idx = None
         self._save_bitmap = None
+        self._click_start = None
         return drag_idx, rls_x, rls_y
 
     def setBackground(self, background):

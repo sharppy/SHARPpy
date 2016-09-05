@@ -276,6 +276,7 @@ class SPCWidget(QWidget):
         self.hodo.modified_vector.connect(self.modifyVector)
         self.hodo.reset.connect(self.resetProfModifications)
         self.hodo.reset_vector.connect(self.resetVector)
+        self.hodo.toggle_vector.connect(self.toggleVector)
 
         self.insets["SARS"].updatematch.connect(self.updateSARS)
 
@@ -479,6 +480,22 @@ class SPCWidget(QWidget):
     def modifyVector(self, deviant, vec_u, vec_v):
         self.prof_collections[self.pc_idx].modifyStormMotion(deviant, vec_u, vec_v)
         self.updateProfs()
+        self.setFocus()
+
+    @Slot(str)
+    def toggleVector(self, deviant):
+        self.sound.setDeviant(deviant)
+        self.hodo.setDeviant(deviant)
+
+        self.storm_slinky.setDeviant(deviant)
+        self.srwinds_vs_height.setDeviant(deviant)
+        self.watch_type.setDeviant(deviant)
+        self.convective.setDeviant(deviant)
+        self.kinematic.setDeviant(deviant)
+
+        self.insets['SARS'].setDeviant(deviant)
+        self.insets['STP STATS'].setDeviant(deviant)
+        self.insets['COND STP'].setDeviant(deviant)
         self.setFocus()
 
     def interpProf(self):

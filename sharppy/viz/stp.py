@@ -175,18 +175,19 @@ class plotSTP(backgroundSTP):
             QtGui.QColor('#e700df'),
         ]
 
+        self.use_left = False
+
         super(plotSTP, self).__init__()
         self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
-        use_left = prof.latitude < 0
 
         self.mlcape = prof.mlpcl.bplus
         self.mllcl = prof.mlpcl.lclhght
         self.ebwd = prof.ebwspd
 
-        if use_left:
+        if self.use_left:
             self.esrh = prof.left_esrh[0]
             self.stpc = prof.left_stp_cin
             self.stpf = prof.left_stp_fixed
@@ -223,7 +224,18 @@ class plotSTP(backgroundSTP):
             QtGui.QColor(prefs['alert_l6_color']),
         ]
 
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
+
         if update_gui:
+            if self.use_left:
+                self.esrh = self.prof.left_esrh[0]
+                self.stpc = self.prof.left_stp_cin
+                self.stpf = self.prof.left_stp_fixed
+            else:
+                self.esrh = self.prof.right_esrh[0]
+                self.stpc = self.prof.right_stp_cin
+                self.stpf = self.prof.right_stp_fixed
+
             self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
             self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
             self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
@@ -235,6 +247,27 @@ class plotSTP(backgroundSTP):
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.esrh = self.prof.left_esrh[0]
+            self.stpc = self.prof.left_stp_cin
+            self.stpf = self.prof.left_stp_fixed
+        else:
+            self.esrh = self.prof.right_esrh[0]
+            self.stpc = self.prof.right_stp_cin
+            self.stpf = self.prof.right_stp_fixed
+
+        self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
+        self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
+        self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def cape_prob(self, cape):
         if cape == 0.:

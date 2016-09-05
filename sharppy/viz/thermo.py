@@ -147,6 +147,8 @@ class plotText(backgroundText):
         self.pcl_cin_md_color = QtGui.QColor('#996600')
         self.pcl_cin_lo_color = QtGui.QColor('#00ff00')
 
+        self.use_left = False
+
         ## get the parcels to be displayed in the GUI
         super(plotText, self).__init__()
 
@@ -180,7 +182,6 @@ class plotText(backgroundText):
         self.ylast = self.label_height
         self.setParcels(prof)
         self.prof = prof;
-        self.use_left = prof.latitude < 0
 
         ## either get or calculate the indices, round to the nearest int, and
         ## convert them to strings.
@@ -253,11 +254,21 @@ class plotText(backgroundText):
         self.pcl_cin_md_color = QtGui.QColor(prefs['pcl_cin_md_color'])
         self.pcl_cin_lo_color = QtGui.QColor(prefs['pcl_cin_lo_color'])
 
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
+
         if update_gui:
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+        
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

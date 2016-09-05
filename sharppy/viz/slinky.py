@@ -152,6 +152,7 @@ class plotSlinky(backgroundSlinky):
         '''
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.use_left = False
 
         super(plotSlinky, self).__init__()
         self.prof = None
@@ -164,9 +165,8 @@ class plotSlinky(backgroundSlinky):
 
     def setProf(self, prof):
         self.prof = prof
-        use_left = prof.latitude < 0
 
-        if use_left:
+        if self.use_left:
             self.smu = self.prof.srwind[2]
             self.smv = self.prof.srwind[3]
         else:
@@ -194,6 +194,7 @@ class plotSlinky(backgroundSlinky):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
 
         self.low_level_color = QtGui.QColor(prefs['0_3_color'])
         self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
@@ -201,10 +202,37 @@ class plotSlinky(backgroundSlinky):
         self.trop_level_color = QtGui.QColor(prefs['9_12_color'])
 
         if update_gui:
+
+            if self.use_left:
+                self.smu = self.prof.srwind[2]
+                self.smv = self.prof.srwind[3]
+            else:
+                self.smu = self.prof.srwind[0]
+                self.smv = self.prof.srwind[1]
+
+            self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, self.pcl, self.smu, self.smv)
+
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.smu = self.prof.srwind[2]
+            self.smv = self.prof.srwind[3]
+        else:
+            self.smu = self.prof.srwind[0]
+            self.smv = self.prof.srwind[1]
+
+        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, self.pcl, self.smu, self.smv)
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

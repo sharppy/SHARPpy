@@ -207,13 +207,14 @@ class plotWinds(backgroundWinds):
         self.m4_6_color = QtGui.QColor('#6495ed')
         self.m9_11_color = QtGui.QColor('#9400d3')
 
+        self.use_left = False
+
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
         self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
-        self.use_left = prof.latitude < 0
 
         self.u = prof.u; self.v = prof.v
         ## calculate the storm relative wind from the bunkers motion function
@@ -248,11 +249,51 @@ class plotWinds(backgroundWinds):
         self.m4_6_color = QtGui.QColor(prefs['srw_4_6_color'])
         self.m9_11_color = QtGui.QColor(prefs['srw_9_11_color'])
 
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
+
         if update_gui:
+            if self.use_left:
+                self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
+                self.srw_4_6km = tab.utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
+                self.srw_9_11km = tab.utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
+                ## get only the left mover u and v components
+                self.sru = self.u - self.srwind[2]
+                self.srv = self.v - self.srwind[3]
+            else:
+                self.srw_0_2km = tab.utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
+                self.srw_4_6km = tab.utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
+                self.srw_9_11km = tab.utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
+                ## get only the right mover u and v components
+                self.sru = self.u - self.srwind[0]
+                self.srv = self.v - self.srwind[1]
+
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
+            self.srw_4_6km = tab.utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
+            self.srw_9_11km = tab.utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
+            ## get only the left mover u and v components
+            self.sru = self.u - self.srwind[2]
+            self.srv = self.v - self.srwind[3]
+        else:
+            self.srw_0_2km = tab.utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
+            self.srw_4_6km = tab.utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
+            self.srw_9_11km = tab.utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
+            ## get only the right mover u and v components
+            self.sru = self.u - self.srwind[0]
+            self.srv = self.v - self.srwind[1]
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

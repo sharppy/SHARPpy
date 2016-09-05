@@ -187,6 +187,7 @@ class plotAnalogues(backgroundAnalogues):
         ## profile itself.
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.use_left = False
 
         super(plotAnalogues, self).__init__()
         self.prof = None 
@@ -194,8 +195,7 @@ class plotAnalogues(backgroundAnalogues):
     def setProf(self, prof):
         self.prof = prof
 
-        use_left = prof.latitude < 0
-        if use_left:
+        if self.use_left:
             self.hail_matches = prof.left_matches
             self.sup_matches = prof.left_supercell_matches
         else:
@@ -215,12 +215,42 @@ class plotAnalogues(backgroundAnalogues):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
 
         if update_gui:
+            if self.use_left:
+                self.hail_matches = self.prof.left_matches
+                self.sup_matches = self.prof.left_supercell_matches
+            else:
+                self.hail_matches = self.prof.right_matches
+                self.sup_matches = self.prof.right_supercell_matches
+
+            self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+            self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
+
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.hail_matches = self.prof.left_matches
+            self.sup_matches = self.prof.left_supercell_matches
+        else:
+            self.hail_matches = self.prof.right_matches
+            self.sup_matches = self.prof.right_supercell_matches
+
+        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
 
     def resizeEvent(self, e):

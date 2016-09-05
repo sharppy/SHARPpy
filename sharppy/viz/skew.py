@@ -367,6 +367,7 @@ class plotSkewT(backgroundSkewT):
 
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
+        self.use_left = False
         self.setMouseTracking(True)
         self.was_right_click = False
         self.track_cursor = False
@@ -535,7 +536,6 @@ class plotSkewT(backgroundSkewT):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
-        self.use_left = prof.latitude < 0
         self.plot_omega = not self.prof_collections[pc_idx].getMeta('observed')
         self.prof = prof
 
@@ -615,6 +615,7 @@ class plotSkewT(backgroundSkewT):
 
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
+        self.use_left = kwargs['calc_vector'] == 'Left Mover'
 
         if update_gui:
             self.plotBitMap.fill(self.bg_color)
@@ -622,6 +623,13 @@ class plotSkewT(backgroundSkewT):
             self.clearData()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        self.clearData()
+        self.plotData()
+        self.update()
 
     def _restTmpc(self, x, y):
         xs, ys = self.drag_dwpc.getCoords()

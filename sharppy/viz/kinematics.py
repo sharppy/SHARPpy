@@ -153,6 +153,7 @@ class plotKinematics(backgroundKinematics):
 
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.use_left = False
 
         super(plotKinematics, self).__init__(**kwargs)
         self.prof = None
@@ -161,9 +162,8 @@ class plotKinematics(backgroundKinematics):
         self.ylast = self.label_height
 
         self.prof = prof
-        use_left = prof.latitude < 0
 
-        if use_left:
+        if self.use_left:
             self.srh1km = prof.left_srh1km
             self.srh3km = prof.left_srh3km
             self.esrh = prof.left_esrh
@@ -233,12 +233,89 @@ class plotKinematics(backgroundKinematics):
 
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
 
         if update_gui:
+            if self.use_left:
+                self.srh1km = self.prof.left_srh1km
+                self.srh3km = self.prof.left_srh3km
+                self.esrh = self.prof.left_esrh
+
+                self.srw_1km = self.prof.left_srw_1km
+                self.srw_3km = self.prof.left_srw_3km
+                self.srw_6km = self.prof.left_srw_6km
+                self.srw_8km = self.prof.left_srw_8km
+                self.srw_lcl_el = self.prof.left_srw_lcl_el
+                self.srw_4_5km = self.prof.left_srw_4_5km
+                srw_eff = self.prof.left_srw_eff
+                srw_ebw = self.prof.left_srw_ebw
+            else:
+                self.srh1km = self.prof.right_srh1km
+                self.srh3km = self.prof.right_srh3km
+                self.esrh = self.prof.right_esrh
+
+                self.srw_1km = self.prof.right_srw_1km
+                self.srw_3km = self.prof.right_srw_3km
+                self.srw_6km = self.prof.right_srw_6km
+                self.srw_8km = self.prof.right_srw_8km
+                self.srw_lcl_el = self.prof.right_srw_lcl_el
+                self.srw_4_5km = self.prof.right_srw_4_5km
+                srw_eff = self.prof.right_srw_eff
+                srw_ebw = self.prof.right_srw_ebw
+
+            if self.prof.etop is np.ma.masked or self.prof.ebottom is np.ma.masked:
+                self.srw_eff = [np.ma.masked, np.ma.masked]
+                self.srw_ebw = [np.ma.masked, np.ma.masked]
+            else:
+                self.srw_eff = tab.utils.comp2vec(srw_eff[0], srw_eff[1])
+                self.srw_ebw = tab.utils.comp2vec(srw_ebw[0], srw_ebw[1])
+
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.srh1km = self.prof.left_srh1km
+            self.srh3km = self.prof.left_srh3km
+            self.esrh = self.prof.left_esrh
+
+            self.srw_1km = self.prof.left_srw_1km
+            self.srw_3km = self.prof.left_srw_3km
+            self.srw_6km = self.prof.left_srw_6km
+            self.srw_8km = self.prof.left_srw_8km
+            self.srw_lcl_el = self.prof.left_srw_lcl_el
+            self.srw_4_5km = self.prof.left_srw_4_5km
+            srw_eff = self.prof.left_srw_eff
+            srw_ebw = self.prof.left_srw_ebw
+        else:
+            self.srh1km = self.prof.right_srh1km
+            self.srh3km = self.prof.right_srh3km
+            self.esrh = self.prof.right_esrh
+
+            self.srw_1km = self.prof.right_srw_1km
+            self.srw_3km = self.prof.right_srw_3km
+            self.srw_6km = self.prof.right_srw_6km
+            self.srw_8km = self.prof.right_srw_8km
+            self.srw_lcl_el = self.prof.right_srw_lcl_el
+            self.srw_4_5km = self.prof.right_srw_4_5km
+            srw_eff = self.prof.right_srw_eff
+            srw_ebw = self.prof.right_srw_ebw
+
+        if self.prof.etop is np.ma.masked or self.prof.ebottom is np.ma.masked:
+            self.srw_eff = [np.ma.masked, np.ma.masked]
+            self.srw_ebw = [np.ma.masked, np.ma.masked]
+        else:
+            self.srw_eff = tab.utils.comp2vec(srw_eff[0], srw_eff[1])
+            self.srw_ebw = tab.utils.comp2vec(srw_ebw[0], srw_ebw[1])
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

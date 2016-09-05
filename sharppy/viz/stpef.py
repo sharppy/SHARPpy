@@ -241,14 +241,15 @@ class plotSTPEF(backgroundSTPEF):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
 
+        self.use_left = False
+
         super(plotSTPEF, self).__init__()
         self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
-        use_left = prof.latitude < 0
 
-        if use_left:
+        if self.use_left:
             self.stpc = prof.left_stp_cin
         else:
             self.stpc = prof.right_stp_cin
@@ -262,11 +263,31 @@ class plotSTPEF(backgroundSTPEF):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 
+        self.use_left = prefs['calc_vector'] == 'Left Mover'
+
         if update_gui:
+            if self.use_left:
+                self.stpc = self.prof.left_stp_cin
+            else:
+                self.stpc = self.prof.right_stp_cin
+
             self.clearData()
             self.plotBackground()
             self.plotData()
             self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.stpc = self.prof.left_stp_cin
+        else:
+            self.stpc = self.prof.right_stp_cin
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
 
     def resizeEvent(self, e):
         '''

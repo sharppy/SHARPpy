@@ -315,6 +315,7 @@ class plotHodo(backgroundHodo):
     modified_vector = Signal(str, float, float)
     reset = Signal(list)
     reset_vector = Signal()
+    toggle_vector = Signal(str)
 
     def __init__(self, **kwargs):
         '''
@@ -347,6 +348,8 @@ class plotHodo(backgroundHodo):
 
         self.eff_inflow_color = QtGui.QColor("#00FFFF")
         self.crit_color = QtGui.QColor("#00FFFF")
+
+        self.use_left = False
 
         self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         ## if you want the storm motion vector, you need to
@@ -447,7 +450,6 @@ class plotHodo(backgroundHodo):
     def setActiveCollection(self, pc_idx, **kwargs):
         self.pc_idx = pc_idx
         prof = self.prof_collections[pc_idx].getHighlightedProf()
-        self.use_left = prof.latitude < 0
 
         self.prof = prof
         self.hght = prof.hght
@@ -566,6 +568,8 @@ class plotHodo(backgroundHodo):
     def setPreferences(self, update_gui=True, **kwargs):
         self.wind_units = kwargs['wind_units']
 
+        self.use_left = kwargs['calc_vector'] == 'Left Mover'
+
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
         self.isotach_color = QtGui.QColor(kwargs['hodo_itach_color'])
@@ -607,6 +611,14 @@ class plotHodo(backgroundHodo):
             self.plotData()
             self.update()
             self.parentWidget().setFocus()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        self.clearData()
+        self.plotData()
+        self.update()
+        self.parentWidget().setFocus()
 
     def wheelEvent(self, e):
         '''
@@ -754,6 +766,7 @@ class plotHodo(backgroundHodo):
                 self.update()               
                 self.track_cursor = True
         elif self.cursor_type == 'none':
+
             if self.drag_hodo.isDragging():
                 drag_idx, rls_x, rls_y = self.drag_hodo.release(e.x(), e.y())
                 u, v = self.pix_to_uv(rls_x, rls_y)
@@ -768,6 +781,16 @@ class plotHodo(backgroundHodo):
                 drag_idx, rls_x, rls_y = self.drag_lm.release(e.x(), e.y())
                 u, v = self.pix_to_uv(rls_x, rls_y)
                 self.modified_vector.emit('left', u, v)
+
+    def mouseDoubleClickEvent(self, e):
+        tol = 5
+        lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
+        rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
+
+        if np.hypot(e.x() - lm_x, e.y() - lm_y) < tol:
+            self.toggle_vector.emit('left')
+        elif np.hypot(e.x() - rm_x, e.y() - rm_y) < tol:
+            self.toggle_vector.emit('right')
 
     def setBlackPen(self, qp):
         color = self.bg_color
