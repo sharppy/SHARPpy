@@ -552,8 +552,8 @@ class plotSkewT(backgroundSkewT):
         trans_dwx = self.originx + self.tmpc_to_pix(self.dwpc, self.pres) / self.scale
         trans_y = self.originy + self.pres_to_pix(self.pres) / self.scale
 
-        self.drag_tmpc = Draggable(trans_tmx, trans_y, self.plotBitMap, lock_dim='y', line_color="#9F0101")
-        self.drag_dwpc = Draggable(trans_dwx, trans_y, self.plotBitMap, lock_dim='y', line_color="#019B06")
+        self.drag_tmpc = Draggable(trans_tmx, trans_y, self.plotBitMap, lock_dim='y', line_color=QtGui.QColor("#9F0101"))
+        self.drag_dwpc = Draggable(trans_dwx, trans_y, self.plotBitMap, lock_dim='y', line_color=QtGui.QColor("#019B06"))
 
         if kwargs.get('update_gui', True):
             self.clearData()

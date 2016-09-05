@@ -8,7 +8,7 @@ class Draggable(object):
     """
     The Draggable class implements low-level clicking and dragging on widgets.
     """
-    def __init__(self, x_obj, y_obj, background, cutoff=5, lock_dim=None, line_color='#FFFFFF'):
+    def __init__(self, x_obj, y_obj, background, cutoff=5, lock_dim=None, line_color=QColor('#FFFFFF')):
         """
         Construct a draggable object
         x_obj:  Numpy array or Python float containing the x coordinate(s) in pixels of the draggable object.
@@ -107,7 +107,7 @@ class Draggable(object):
         self._restoreBitmap(qp)
         self._saveBitmap(lb_x, lb_y, ub_x, ub_y)
 
-        pen = QPen(QColor(self._line_color), 1, Qt.SolidLine)
+        pen = QPen(self._line_color, 1, Qt.SolidLine)
         qp.setPen(pen)
         if lb_idx != -1:
             x1, y1 = self._x_obj[lb_idx], self._y_obj[lb_idx]
@@ -132,7 +132,7 @@ class Draggable(object):
         self._restoreBitmap(qp)
         self._saveBitmap(drag_x, drag_y, drag_x, drag_y)
 
-        pen = QPen(QColor(self._line_color), 1, Qt.SolidLine)
+        pen = QPen(self._line_color, 1, Qt.SolidLine)
         qp.setPen(pen)
 
         qp.drawEllipse(QPointF(drag_x, drag_y), 3, 3)

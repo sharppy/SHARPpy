@@ -471,11 +471,11 @@ class plotHodo(backgroundHodo):
         self.pbottom = self.prof.ebottom
 
         xs, ys = self.uv_to_pix(self.u[hght_agl <= 12000.], self.v[hght_agl <= 12000.])
-        self.drag_hodo = Draggable(xs, ys, self.plotBitMap)
+        self.drag_hodo = Draggable(xs, ys, self.plotBitMap, line_color=self.fg_color)
         rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
-        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap)
+        self.drag_rm = Draggable(rm_x, rm_y, self.plotBitMap, line_color=self.fg_color)
         lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
-        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap)
+        self.drag_lm = Draggable(lm_x, lm_y, self.plotBitMap, line_color=self.fg_color)
 
         mean_lcl_el = self.prof.mean_lcl_el
         if tab.utils.QC(mean_lcl_el[0]):
