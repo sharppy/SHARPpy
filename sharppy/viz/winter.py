@@ -54,7 +54,7 @@ class backgroundWinter(QtGui.QFrame):
         Draws the background frame and the text headers for indices.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.dgz_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## make the initial x value relative to the width of the frame
@@ -149,6 +149,7 @@ class plotWinter(backgroundWinter):
         ## profile itself.
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.dgz_color = QtGui.QColor('#ffff00')
 
         super(plotWinter, self).__init__()
         self.prof = None
@@ -201,6 +202,7 @@ class plotWinter(backgroundWinter):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.dgz_color = QtGui.QColor(prefs['winter_dgz_color'])
 
         if update_gui:
             self.clearData()

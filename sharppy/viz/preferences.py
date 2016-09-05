@@ -168,6 +168,8 @@ class PrefDialog(QDialog):
             'srw_0_2_color':'#8b0000',
             'srw_4_6_color':'#6495ed',
             'srw_9_11_color':'#9400d3',
+
+            'winter_dgz_color':'#ffff00',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -226,6 +228,8 @@ class PrefDialog(QDialog):
             'srw_0_2_color':'#8b0000',
             'srw_4_6_color':'#6495ed',
             'srw_9_11_color':'#9400d3',
+
+            'winter_dgz_color':'#999900',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -283,6 +287,8 @@ class PrefDialog(QDialog):
             'srw_0_2_color':'#8b0000',
             'srw_4_6_color':'#6495ed',
             'srw_9_11_color':'#9400d3',
+
+            'winter_dgz_color':'#ffff00',
         }
     }
 

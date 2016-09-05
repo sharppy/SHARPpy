@@ -91,7 +91,7 @@ class backgroundSHIP(QtGui.QFrame):
         texts = ship_inset_data['ship_ytexts']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
         for i in xrange(len(y_ticks)):
-            pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
+            pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
                 qp.drawLine(self.tlx, self.ship_to_pix(int(texts[i])), self.brx, self.ship_to_pix(int(texts[i])))
@@ -116,7 +116,7 @@ class backgroundSHIP(QtGui.QFrame):
         qp.setFont(QtGui.QFont('Helvetica', 10))
         for i in xrange(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
-            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.box_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             # Draw lower whisker
             qp.drawLine(center[i], ef[i,0], center[i], ef[i,1])
@@ -153,6 +153,17 @@ class plotSHIP(backgroundSHIP):
     def __init__(self):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.box_color = QtGui.QColor('#00ff00')
+        self.line_color = QtGui.QColor('#0080ff')
+
+        self.alert_colors = [
+            QtGui.QColor('#775000'),
+            QtGui.QColor('#996600'),
+            QtGui.QColor('#ffffff'),
+            QtGui.QColor('#ffff00'),
+            QtGui.QColor('#ff0000'),
+            QtGui.QColor('#e700df'),
+        ]
 
         super(plotSHIP, self).__init__()
         self.prof = None
@@ -169,6 +180,17 @@ class plotSHIP(backgroundSHIP):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.box_color = QtGui.QColor(prefs['stp_box_color'])
+        self.line_color = QtGui.QColor(prefs['stp_line_color'])
+
+        self.alert_colors = [
+            QtGui.QColor(prefs['alert_l1_color']),
+            QtGui.QColor(prefs['alert_l2_color']),
+            QtGui.QColor(prefs['alert_l3_color']),
+            QtGui.QColor(prefs['alert_l4_color']),
+            QtGui.QColor(prefs['alert_l5_color']),
+            QtGui.QColor(prefs['alert_l6_color']),
+        ]
 
         if update_gui:
             self.clearData()
@@ -231,17 +253,17 @@ class plotSHIP(backgroundSHIP):
         qp.end()
 
     def ship_color(self, ship):
-        color_list = [QtGui.QColor(CYAN), QtGui.QColor(DBROWN), QtGui.QColor(LBROWN), QtGui.QColor(WHITE), QtGui.QColor(YELLOW), QtGui.QColor(RED), QtGui.QColor(MAGENTA)]
+        color_list = self.alert_colors
         if float(ship) >= 5:
-            color = color_list[6]
-        elif float(ship) >= 2:
             color = color_list[5]
-        elif float(ship) >= 1:
+        elif float(ship) >= 2:
             color = color_list[4]
-        elif float(ship) >= .5:
+        elif float(ship) >= 1:
             color = color_list[3]
+        elif float(ship) >= .5:
+            color = color_list[2]
         else:
-            color = color_list[1]
+            color = color_list[0]
 
         return color
 
