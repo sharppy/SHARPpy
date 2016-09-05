@@ -29,6 +29,7 @@ def drawBarb(qp, origin_x, origin_y, wdir, wspd, color='#FFFFFF', shemis=False):
     pen = QtGui.QPen(QtGui.QColor(color), 1, QtCore.Qt.SolidLine)
     pen.setWidthF(1.)
     qp.setPen(pen)
+    qp.setBrush(QtCore.Qt.NoBrush)
 
     try:
         wspd = int(round(wspd / 5.) * 5) # Round to the nearest 5
