@@ -299,8 +299,8 @@ class plotKinematics(backgroundKinematics):
         else:
             conv = lambda s: s
 
-        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], self.prof.wind1km[1], color='#AA0000', shemis=(self.prof.latitude < 0))
-        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], self.prof.wind6km[1], color='#0A74C6', shemis=(self.prof.latitude < 0))
+        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], conv(self.prof.wind1km[1]), color='#AA0000', shemis=(self.prof.latitude < 0))
+        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], conv(self.prof.wind6km[1]), color='#0A74C6', shemis=(self.prof.latitude < 0))
     
     def drawKinematics(self, qp):
         '''
