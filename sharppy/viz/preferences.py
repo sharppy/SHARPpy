@@ -153,8 +153,8 @@ class PrefDialog(QDialog):
             'bg_color': '#ffffff',
             'fg_color': '#000000',
 
-            'temp_color': '#cc0000',
-            'dewp_color': '#00cc00',
+            'temp_color': '#dd0000',
+            'dewp_color': '#00dd00',
             'wetb_color': '#00cccc',
             'skew_itherm_color':'#bbbbbb',
             'skew_itherm_hgz_color':'#6666ff',
@@ -163,11 +163,11 @@ class PrefDialog(QDialog):
 
             'eff_inflow_color': '#00cccc',
 
-            '0_3_color': '#cc0000',
-            '3_6_color': '#00cc00',
-            '6_9_color': '#cccc00',
-            '9_12_color': '#00cccc',
-            '12_15_color': '#00cccc',
+            '0_3_color': '#dd0000',
+            '3_6_color': '#00dd00',
+            '6_9_color': '#dddd00',
+            '9_12_color': '#00dddd',
+            '12_15_color': '#00dddd',
 
             'pwat_m3_color':'#ff9900',
             'pwat_m2_color':'#cc7a00',
