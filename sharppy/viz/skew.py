@@ -357,6 +357,14 @@ class plotSkewT(backgroundSkewT):
         self.wetbulb_color = QtGui.QColor(kwargs.get('wetbulb_color', '#00FFFF'))
         self.eff_layer_color = QtGui.QColor(kwargs.get('eff_layer_color', '#00FFFF'))
         self.background_colors =[ QtGui.QColor(c) for c in kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99']) ]
+
+        self.hgt_color = QtGui.QColor(kwargs.get('hgt_color', '#FF0000'))
+        self.dgz_color = QtGui.QColor(kwargs.get('dgz_color', '#F5D800'))
+
+        self.lcl_mkr_color = QtGui.QColor(kwargs.get('lcl_mkr_color', '#00FF00'))
+        self.lfc_mkr_color = QtGui.QColor(kwargs.get('lfc_mkr_color', '#FFFF00'))
+        self.el_mkr_color = QtGui.QColor(kwargs.get('el_mkr_color', '#FF00FF'))
+
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
         self.setMouseTracking(True)
@@ -598,6 +606,12 @@ class plotSkewT(backgroundSkewT):
         self.dewp_color = QtGui.QColor(kwargs['dewp_color'])
         self.wetbulb_color = QtGui.QColor(kwargs['wetb_color'])
         self.eff_layer_color = QtGui.QColor(kwargs['eff_inflow_color'])
+        self.hgt_color = QtGui.QColor(kwargs['skew_hgt_color'])
+        self.dgz_color = QtGui.QColor(kwargs['skew_dgz_color'])
+
+        self.lcl_mkr_color = QtGui.QColor(kwargs['skew_lcl_mkr_color'])
+        self.lfc_mkr_color = QtGui.QColor(kwargs['skew_lfc_mkr_color'])
+        self.el_mkr_color = QtGui.QColor(kwargs['skew_el_mkr_color'])
 
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
@@ -847,7 +861,7 @@ class plotSkewT(backgroundSkewT):
             pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
 
-            self.drawTrace(tmpc, QtGui.QColor("#F5D800"), qp, p=pres, label=False)
+            self.drawTrace(tmpc, self.dgz_color, qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
 
@@ -949,7 +963,7 @@ class plotSkewT(backgroundSkewT):
     def draw_height(self, h, qp):
         qp.setClipping(True)
         self.hght_font = QtGui.QFont('Helvetica', 9)
-        pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.hgt_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.hght_font)
         offset = 10
@@ -1008,7 +1022,7 @@ class plotSkewT(backgroundSkewT):
         # Plot LCL
         if tab.utils.QC(lclp):
             y = self.originy + self.pres_to_pix(lclp) / self.scale
-            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.lcl_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
@@ -1016,7 +1030,7 @@ class plotSkewT(backgroundSkewT):
         # Plot LFC
         if tab.utils.QC(lfcp):
             y = self.originy + self.pres_to_pix(lfcp) / self.scale
-            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.lfc_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
@@ -1024,7 +1038,7 @@ class plotSkewT(backgroundSkewT):
         # Plot EL
         if tab.utils.QC(elp) and elp != lclp:
             y = self.originy + self.pres_to_pix(elp) / self.scale
-            pen = QtGui.QPen(QtCore.Qt.magenta, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.el_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 

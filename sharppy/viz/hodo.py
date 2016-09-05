@@ -346,6 +346,7 @@ class plotHodo(backgroundHodo):
         ]
 
         self.eff_inflow_color = QtGui.QColor("#00FFFF")
+        self.crit_color = QtGui.QColor("#00FFFF")
 
         self.background_colors = kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99'])
         ## if you want the storm motion vector, you need to
@@ -568,6 +569,8 @@ class plotHodo(backgroundHodo):
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
         self.isotach_color = QtGui.QColor(kwargs['hodo_itach_color'])
+        self.crit_color = QtGui.QColor(kwargs['hodo_crit_color'])
+
         self.colors = [
             QtGui.QColor(kwargs['0_3_color']),
             QtGui.QColor(kwargs['3_6_color']),
@@ -1219,7 +1222,7 @@ class plotHodo(backgroundHodo):
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(15, self.bry-36, 100, self.critical_height + 5)
                 qp.drawRect(rect)     
-                ca_text_color = QtGui.QColor("#00FFFF")
+                ca_text_color = self.crit_color
                 pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
                 qp.setPen(pen)
                 qp.setFont(self.critical_font)

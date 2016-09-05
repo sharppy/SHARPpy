@@ -118,10 +118,17 @@ class PrefDialog(QDialog):
             'temp_color': '#ff0000',
             'dewp_color': '#00ff00',
             'wetb_color': '#00ffff',
+            'skew_dgz_color':'#f5d800',
             'skew_itherm_color':'#555555',
             'skew_itherm_hgz_color':'#0000ff',
             'skew_mixr_color':'#006600',
+            'skew_hgt_color':'#ff0000',
+            'skew_lcl_mkr_color':'#00ff00',
+            'skew_lfc_mkr_color':'#ffff00',
+            'skew_el_mkr_color':'#ff00ff',
+
             'hodo_itach_color':'#555555',
+            'hodo_crit_color':'#00ffff',
 
             'eff_inflow_color':'#04dbd8',
 
@@ -169,10 +176,17 @@ class PrefDialog(QDialog):
             'temp_color': '#dd0000',
             'dewp_color': '#00dd00',
             'wetb_color': '#00cccc',
+            'skew_dgz_color':'#f5d800',
             'skew_itherm_color':'#bbbbbb',
             'skew_itherm_hgz_color':'#6666ff',
-            'skew_mixr_color':'#98e698',
+            'skew_mixr_color':'#adebad',
+            'skew_hgt_color':'#dd0000',
+            'skew_lcl_mkr_color':'#00bb00',
+            'skew_lfc_mkr_color':'#bbbb00',
+            'skew_el_mkr_color':'#bb00bb',
+
             'hodo_itach_color':'#bbbbbb',
+            'hodo_crit_color':'#00cccc',
 
             'eff_inflow_color': '#00cccc',
 
@@ -220,10 +234,16 @@ class PrefDialog(QDialog):
             'temp_color': '#ff0000',
             'dewp_color': '#00ff00',
             'wetb_color': '#00ffff',
+            'skew_dgz_color':'#f5d800',
             'skew_itherm_color':'#555555',
             'skew_itherm_hgz_color':'#0000ff',
             'skew_mixr_color':'#006600',
+            'skew_hgt_color':'#ff0000',
+            'skew_lcl_mkr_color':'#00ff00',
+            'skew_lfc_mkr_color':'#ffff00',
+
             'hodo_itach_color':'#555555',
+            'hodo_crit_color':'#00ffff',
 
             'eff_inflow_color': '#00ffff',
 
