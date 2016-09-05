@@ -137,7 +137,7 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the given moist adiabat.
         '''
         qp.setClipping(True)
-        pen = QtGui.QPen(QtGui.QColor("#333333"), 1)
+        pen = QtGui.QPen(self.adiab_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         dp = -10
@@ -332,6 +332,7 @@ class plotSkewT(backgroundSkewT):
         self.fg_color = QtGui.QColor(kwargs.get('fg_color', '#FFFFFF'))
         self.isotherm_color = QtGui.QColor(kwargs.get('isotherm_color', '#555555'))
         self.isotherm_hgz_color = QtGui.QColor(kwargs.get('isotherm_hgz_color', '#0000FF'))
+        self.adiab_color = QtGui.QColor(kwargs.get('adiab_color', '#333333'))
         self.mixr_color = QtGui.QColor(kwargs.get('mixr_color', '#006600'))
 
         super(plotSkewT, self).__init__(plot_omega=False)
@@ -600,6 +601,7 @@ class plotSkewT(backgroundSkewT):
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
         self.isotherm_color = QtGui.QColor(kwargs['skew_itherm_color'])
         self.isotherm_hgz_color = QtGui.QColor(kwargs['skew_itherm_hgz_color'])
+        self.adiab_color = QtGui.QColor(kwargs['skew_adiab_color'])
         self.mixr_color = QtGui.QColor(kwargs['skew_mixr_color'])
 
         self.temp_color = QtGui.QColor(kwargs['temp_color'])
