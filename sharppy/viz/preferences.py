@@ -148,6 +148,11 @@ class PrefDialog(QDialog):
 
             'stp_box_color':'#00ff00',
             'stp_line_color':'#0080ff',
+
+            'pcl_sel_color':'#00ffff',
+            'pcl_cin_hi_color':'#993333',
+            'pcl_cin_md_color':'#996600',
+            'pcl_cin_lo_color':'#00ff00',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -186,6 +191,11 @@ class PrefDialog(QDialog):
 
             'stp_box_color':'#00aa00',
             'stp_line_color':'#66b3ff',
+
+            'pcl_sel_color':'#00cccc',
+            'pcl_cin_hi_color':'#dfbb9f',
+            'pcl_cin_md_color':'#cc9666',
+            'pcl_cin_lo_color':'#00cc00',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -224,6 +234,11 @@ class PrefDialog(QDialog):
 
             'stp_box_color':'#00ff00',
             'stp_line_color':'#0080ff',
+
+            'pcl_sel_color':'#00ffff',
+            'pcl_cin_hi_color':'#993333',
+            'pcl_cin_md_color':'#996600',
+            'pcl_cin_lo_color':'#00ff00',
         }
     }
 

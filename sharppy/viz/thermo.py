@@ -140,6 +140,12 @@ class plotText(backgroundText):
             QtGui.QColor('#ff0000'),
             QtGui.QColor('#e700df'),
         ]
+        self.left_scp_color = QtGui.QColor('#00ffff')
+
+        self.pcl_sel_color = QtGui.QColor('#00ffff')
+        self.pcl_cin_hi_color = QtGui.QColor('#993333')
+        self.pcl_cin_md_color = QtGui.QColor('#996600')
+        self.pcl_cin_lo_color = QtGui.QColor('#00ff00')
 
         ## get the parcels to be displayed in the GUI
         super(plotText, self).__init__()
@@ -241,6 +247,11 @@ class plotText(backgroundText):
             QtGui.QColor(prefs['alert_l6_color']),
         ]
         self.left_scp_color = QtGui.QColor(prefs['alert_lscp_color'])
+
+        self.pcl_sel_color = QtGui.QColor(prefs['pcl_sel_color'])
+        self.pcl_cin_hi_color = QtGui.QColor(prefs['pcl_cin_hi_color'])
+        self.pcl_cin_md_color = QtGui.QColor(prefs['pcl_cin_md_color'])
+        self.pcl_cin_lo_color = QtGui.QColor(prefs['pcl_cin_lo_color'])
 
         if update_gui:
             self.clearData()
@@ -533,7 +544,7 @@ class plotText(backgroundText):
         for i, text in enumerate(texts):
             self.bounds[i,0] = y1
             if text == self.pcl_types[self.skewt_pcl]:
-                pen = QtGui.QPen(QtCore.Qt.cyan, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.pcl_sel_color, 1, QtCore.Qt.SolidLine)
                 qp.setPen(pen)
                 pcl_index = i
             else:
@@ -551,11 +562,11 @@ class plotText(backgroundText):
         for i, text in enumerate(capes):
             try:
                 if pcl_index == i and int(text) >= 4000:
-                    color = QtCore.Qt.magenta
+                    color = self.alert_colors[5]
                 elif pcl_index == i and int(text) >= 3000:
-                    color=QtCore.Qt.red
+                    color = self.alert_colors[4]
                 elif pcl_index == i and int(text) >= 2000:
-                    color=QtCore.Qt.yellow
+                    color = self.alert_colors[3]
                 else:
                     color=self.fg_color
             except:
@@ -573,15 +584,15 @@ class plotText(backgroundText):
         for i, text in enumerate(cins):
             try:
                 if int(capes[i]) > 0 and pcl_index == i and int(text) >= -50:
-                    color = QtCore.Qt.green
+                    color = self.pcl_cin_lo_color 
                 elif int(capes[i]) > 0 and pcl_index == i and int(text) >= -100:
-                    color=QtGui.QColor('#996600')
+                    color = self.pcl_cin_md_color
                 elif int(capes[i]) > 0 and pcl_index == i and int(text) < -100:
-                    color=QtGui.QColor('#993333')
+                    color = self.pcl_cin_hi_color
                 else:
-                    color=self.fg_color
+                    color = self.fg_color
             except:
-                color=self.fg_color
+                color = self.fg_color
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
@@ -596,13 +607,13 @@ class plotText(backgroundText):
         for i, text in enumerate(lcls):
             try:
                 if int(text) < 1000 and pcl_index == i and texts[i] == "ML":
-                    color = QtCore.Qt.green
+                    color = self.pcl_cin_lo_color
                 elif int(text) < 1500 and pcl_index == i and texts[i] == "ML":
-                    color=QtGui.QColor('#996600')
+                    color = self.pcl_cin_md_color
                 elif int(text) < 2000 and pcl_index == i and texts[i] == "ML":
-                    color=QtGui.QColor('#993333')
+                    color = self.pcl_cin_hi_color
                 else:
-                    color=self.fg_color
+                    color = self.fg_color
             except:
                 color=self.fg_color
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
