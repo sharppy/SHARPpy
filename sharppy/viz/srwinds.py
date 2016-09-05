@@ -100,7 +100,7 @@ class backgroundWinds(QtGui.QFrame):
         upper = self.hgt_to_pix(16.)
         classic1 = self.speed_to_pix(40.)
         classic2 = self.speed_to_pix(70.)
-        pen = QtGui.QPen(QtGui.QColor("#B1019A"), 1, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(self.clsc_color, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
         qp.drawLine( classic1, lower, classic1, upper )
         qp.drawLine( classic2, lower, classic2, upper )
@@ -201,6 +201,11 @@ class plotWinds(backgroundWinds):
         '''
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
+        self.clsc_color = QtGui.QColor('#b1019a')
+        self.trace_color = QtGui.QColor('#ff0000')
+        self.m0_2_color = QtGui.QColor('#8b0000')
+        self.m4_6_color = QtGui.QColor('#6495ed')
+        self.m9_11_color = QtGui.QColor('#9400d3')
 
         super(plotWinds, self).__init__()
         ## make the data accessable to the functions
@@ -237,6 +242,11 @@ class plotWinds(backgroundWinds):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.clsc_color = QtGui.QColor(prefs['srw_clsc_color'])
+        self.trace_color = QtGui.QColor(prefs['srw_trace_color'])
+        self.m0_2_color = QtGui.QColor(prefs['srw_0_2_color'])
+        self.m4_6_color = QtGui.QColor(prefs['srw_4_6_color'])
+        self.m9_11_color = QtGui.QColor(prefs['srw_9_11_color'])
 
         if update_gui:
             self.clearData()
@@ -307,7 +317,7 @@ class plotWinds(backgroundWinds):
         
         '''
         ## initialize a pen with a red color, thickness of 1, solid line
-        pen = QtGui.QPen(QtGui.QColor(RED), 1)
+        pen = QtGui.QPen(self.trace_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         ## if there are missing values, get the mask
         try:
@@ -347,7 +357,7 @@ class plotWinds(backgroundWinds):
 
         if tab.utils.QC(self.srw_0_2km):       
             # Plot the 0-2 km mean SRW
-            pen = QtGui.QPen(QtGui.QColor("#8B0000"), 2)
+            pen = QtGui.QPen(self.m0_2_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             x1 = self.speed_to_pix(self.srw_0_2km); x2 = self.speed_to_pix(self.srw_0_2km)
@@ -356,7 +366,7 @@ class plotWinds(backgroundWinds):
 
         if tab.utils.QC(self.srw_4_6km):
             # Plot the 4-6 km mean SRW
-            pen = QtGui.QPen(QtGui.QColor("#6495ED"), 2)
+            pen = QtGui.QPen(self.m4_6_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             x1 = self.speed_to_pix(self.srw_4_6km); x2 = self.speed_to_pix(self.srw_4_6km)
@@ -365,7 +375,7 @@ class plotWinds(backgroundWinds):
                     
         if tab.utils.QC(self.srw_9_11km):
             # Plot the 9-11 km mean SRW
-            pen = QtGui.QPen(QtGui.QColor("#9400D3"), 2)
+            pen = QtGui.QPen(self.m9_11_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
             qp.setPen(pen)
             x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
