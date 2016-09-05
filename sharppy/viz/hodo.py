@@ -209,7 +209,7 @@ class backgroundHodo(QtGui.QFrame):
         '''
         ## set the ring color and get the u and v components of a
         ## 0 direction vector with speed spd.
-        color = "#555555"
+        color = self.isotach_color 
         uu, vv = tab.utils.vec2comp(0, spd)
         vv *= self.scale
         ## create a center point
@@ -322,6 +322,7 @@ class plotHodo(backgroundHodo):
         '''
         self.bg_color = QtGui.QColor("#000000")
         self.fg_color = QtGui.QColor("#FFFFFF")
+        self.isotach_color = QtGui.QColor("#555555")
 
         super(plotHodo, self).__init__(**kwargs)
         self.prof = None
@@ -566,6 +567,7 @@ class plotHodo(backgroundHodo):
 
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
+        self.isotach_color = QtGui.QColor(kwargs['hodo_itach_color'])
         self.colors = [
             QtGui.QColor(kwargs['0_3_color']),
             QtGui.QColor(kwargs['3_6_color']),

@@ -192,7 +192,7 @@ class backgroundSkewT(QtGui.QWidget):
         qp.setPen(pen)
         qp.setBrush(brush)
         qp.drawRect(rectF)
-        pen = QtGui.QPen(QtGui.QColor('#006600'), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.mixr_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.in_plot_font)
         qp.drawLine(x1, y1, x2, y2)
@@ -249,9 +249,9 @@ class backgroundSkewT(QtGui.QWidget):
         y1 = self.originy + self.bry / self.scale
         y2 = self.originy + self.tpad / self.scale
         if int(t) in [0, -20]:
-            pen = QtGui.QPen(QtGui.QColor("#0000FF"), 1)
+            pen = QtGui.QPen(self.isotherm_hgz_color, 1)
         else:
-            pen = QtGui.QPen(QtGui.QColor("#555555"), 1)
+            pen = QtGui.QPen(self.isotherm_color, 1)
         pen.setStyle(QtCore.Qt.CustomDashLine)
         pen.setDashPattern([4, 2])
         qp.setPen(pen)
@@ -330,6 +330,9 @@ class plotSkewT(backgroundSkewT):
     def __init__(self, **kwargs):
         self.bg_color = QtGui.QColor(kwargs.get('bg_color', '#000000'))
         self.fg_color = QtGui.QColor(kwargs.get('fg_color', '#FFFFFF'))
+        self.isotherm_color = QtGui.QColor(kwargs.get('isotherm_color', '#555555'))
+        self.isotherm_hgz_color = QtGui.QColor(kwargs.get('isotherm_hgz_color', '#0000FF'))
+        self.mixr_color = QtGui.QColor(kwargs.get('mixr_color', '#006600'))
 
         super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
@@ -587,6 +590,9 @@ class plotSkewT(backgroundSkewT):
     def setPreferences(self, update_gui=True, **kwargs):
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
+        self.isotherm_color = QtGui.QColor(kwargs['skew_itherm_color'])
+        self.isotherm_hgz_color = QtGui.QColor(kwargs['skew_itherm_hgz_color'])
+        self.mixr_color = QtGui.QColor(kwargs['skew_mixr_color'])
 
         self.temp_color = QtGui.QColor(kwargs['temp_color'])
         self.dewp_color = QtGui.QColor(kwargs['dewp_color'])
