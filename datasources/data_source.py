@@ -241,7 +241,12 @@ class Outlet(object):
 
         if has_prof:
             stns = self.getAvailableAtTime(dt=cycle)
-            has_prof = point in stns
+            if point['icao'] != '':
+                has_prof = point['icao'] in [ s['icao'] for s in stns ]
+            elif point['iata'] != '':
+                has_prof = point['iata'] in [ s['iata'] for s in stns ]
+            else:
+                has_prof = point['synop'] in [ s['synop'] for s in stns ]
         return has_prof
 
     def getPoints(self):
@@ -262,9 +267,9 @@ class DataSource(object):
         self._observed = config.get('observed').lower() == "true"
         self._outlets = dict( (c.get('name'), Outlet(self._name, c)) for c in config )
 
-    def _get(self, name, outlet, flatten=True, **kwargs):
+    def _get(self, name, outlet_num=None, flatten=True, **kwargs):
         prop = None
-        if outlet is None:
+        if outlet_num is None:
             prop = []
             for o in self._outlets.itervalues():
                 func = getattr(o, name)
@@ -275,46 +280,41 @@ class DataSource(object):
                 prop = list(set(prop))
                 prop = sorted(prop)
         else:
-            func = getattr(self._outlets[outlet], name)
+            func = getattr(self._outlets.values()[outlet_num], name)
             prop = func()
         return prop
 
-    def _getOutletWithProfile(self, stn, cycle_dt, outlet):
-        if outlet is None:
-            use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
-            try:
-                outlet = use_outlets[0]
-            except IndexError:
-                print "Uh-oh. Tim's screwed something up."
-                return ""
+    def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
+        use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
+        outlet = use_outlets[outlet_num]
         return outlet
 
-    def getForecastHours(self, outlet=None, flatten=True):
-        times = self._get('getForecastHours', outlet, flatten=flatten)
+    def getForecastHours(self, outlet_num=None, flatten=True):
+        times = self._get('getForecastHours', outlet_num=outlet_num, flatten=flatten)
         return times
 
-    def getDailyCycles(self, outlet=None, flatten=True):
-        cycles = self._get('getCycles', outlet, flatten=flatten)
+    def getDailyCycles(self, outlet_num=None, flatten=True):
+        cycles = self._get('getCycles', outlet_num=outlet_num, flatten=flatten)
         return cycles
 
-    def getDelays(self, outlet=None):
+    def getDelays(self, outlet_num=None):
         delays = self._get('getDelay', outlet, flatten=False)
         return delays
 
-    def getArchiveLens(self, outlet=None):
-        lens = self._get('getArchiveLen', outlet, flatten=False)
+    def getArchiveLens(self, outlet_num=None):
+        lens = self._get('getArchiveLen', outlet_num=outlet_num, flatten=False)
         return lens
 
-    def getMostRecentCycle(self, outlet=None):
-        cycles = self._get('getMostRecentCycle', outlet, flatten=False)
+    def getMostRecentCycle(self, outlet_num=None):
+        cycles = self._get('getMostRecentCycle', outlet_num=outlet_num, flatten=False)
         return max(cycles)
 
-    def getAvailableTimes(self, filename=None, outlet=None, max_cycles=100):
-        cycles = self._get('getAvailableTimes', outlet, filename=filename, max_cycles=max_cycles)
+    def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100):
+        cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles)
         return cycles[-max_cycles:]
 
-    def getAvailableAtTime(self, dt, outlet=None):
-        points = self._get('getAvailableAtTime', outlet, flatten=False, dt=dt)
+    def getAvailableAtTime(self, dt, outlet_num=None):
+        points = self._get('getAvailableAtTime', outlet_num=outlet_num, flatten=False, dt=dt)
 
         flatten_pts = []
         flatten_coords = []
@@ -325,13 +325,13 @@ class DataSource(object):
                     flatten_pts.append(pt)
         return flatten_pts
 
-    def getDecoder(self, stn, cycle_dt, outlet=None):
-        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet)
+    def getDecoder(self, stn, cycle_dt, outlet_num=0):
+        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         decoder = self._outlets[outlet].getDecoder()
         return decoder
 
-    def getURL(self, stn, cycle_dt, outlet=None):
-        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet)
+    def getURL(self, stn, cycle_dt, outlet_num=0):
+        outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         url_base = self._outlets[outlet].getURL()
 
         fmt = {
@@ -343,8 +343,8 @@ class DataSource(object):
         url = url_base.format(**fmt)
         return url
 
-    def getURLList(self, outlet=None):
-        return self._get('getURL', outlet=None, flatten=False)
+    def getURLList(self, outlet_num=None):
+        return self._get('getURL', outlet_num=outlet_num, flatten=False)
 
     def getName(self):
         return self._name

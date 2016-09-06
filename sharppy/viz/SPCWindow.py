@@ -828,6 +828,7 @@ class SPCWindow(QMainWindow):
         except Exception as exc:
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
             self.abortProfileAdd(menu_name, str(exc))
+            raise
 
     @Slot(str)
     def rmProfileCollection(self, menu_name):
@@ -851,8 +852,6 @@ class SPCWindow(QMainWindow):
         msgbox.setDetailedText(traceback.format_exc())
         msgbox.setIcon(QMessageBox.Critical)
         msgbox.exec_()
-
-        print traceback.format_exc()
 
         if len(self.menu_items) == 1:
             self.focusPicker()

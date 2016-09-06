@@ -390,7 +390,17 @@ class Picker(QWidget):
 
             if fcst_hours != [0] and len(self.prof_idx) > 0 or fcst_hours == [0]:
                 self.prof_idx.sort()
-                self.skewApp()
+                n_tries = 0
+                while True:
+                    try:
+                        self.skewApp(ntry=n_tries)
+                    except IndexError:
+                        # We've run out of data sources
+                        raise IOError("No outlet found with the requested profile!")
+                    except:
+                        n_tries += 1
+                    else:
+                        break
 
     def get_model(self, index):
         """
@@ -441,7 +451,7 @@ class Picker(QWidget):
             self.all_profs.setText("Select All")
             self.select_flag = False
 
-    def skewApp(self, filename=None):
+    def skewApp(self, filename=None, ntry=0):
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -476,7 +486,7 @@ class Picker(QWidget):
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
-            ret = loadData(self.data_sources[model], self.loc, run, prof_idx)
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
@@ -552,7 +562,7 @@ class Picker(QWidget):
         return self.has_connection
 
 @progress(Picker.async)
-def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
+def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=None):
     """
     Loads the data from a remote source. Has hooks for progress bars.
     """
@@ -564,8 +574,8 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None):
         decoder = ARWDecoder
         dec = decoder((url, loc[0], loc[1]))
     else:
-        decoder = data_source.getDecoder(loc, run)
-        url = data_source.getURL(loc, run)
+        decoder = data_source.getDecoder(loc, run, outlet_num=ntry)
+        url = data_source.getURL(loc, run, outlet_num=ntry)
         dec = decoder(url)
 
     if __text__ is not None:
