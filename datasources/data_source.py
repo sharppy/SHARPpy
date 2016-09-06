@@ -21,6 +21,9 @@ else:
 
 # TAS: Comment this file and available.py
 
+class DataSourceError(Exception):
+    pass
+
 def loadDataSources(ds_dir=HOME_DIR):
     """
     Load the data source information from the XML files. 
@@ -286,7 +289,10 @@ class DataSource(object):
 
     def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
         use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
-        outlet = use_outlets[outlet_num]
+        try:
+            outlet = use_outlets[outlet_num]
+        except IndexError:
+            raise DataSourceError()
         return outlet
 
     def getForecastHours(self, outlet_num=None, flatten=True):

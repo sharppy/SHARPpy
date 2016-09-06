@@ -827,7 +827,7 @@ class SPCWindow(QMainWindow):
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
-            self.abortProfileAdd(menu_name, str(exc))
+            self.rmProfileCollection(menu_name)
             raise
 
     @Slot(str)
@@ -843,21 +843,6 @@ class SPCWindow(QMainWindow):
             actions = visible_mitems[0].actions()
             names = [ act.text() for act in actions ]
             actions[names.index("Remove")].setVisible(False)
-
-    def abortProfileAdd(self, menu_name, exc):
-        import traceback
-        msgbox = QMessageBox()
-        msgbox.setText("An error has occurred while retrieving the data.")
-        msgbox.setInformativeText("Try another site or model or try again later.")
-        msgbox.setDetailedText(traceback.format_exc())
-        msgbox.setIcon(QMessageBox.Critical)
-        msgbox.exec_()
-
-        if len(self.menu_items) == 1:
-            self.focusPicker()
-            self.close()
-        else:
-            self.rmProfileCollection(menu_name)
 
     def keyPressEvent(self, e):
         #TODO: Up and down keys to loop through profile collection members.
@@ -880,6 +865,11 @@ class SPCWindow(QMainWindow):
     def closeEvent(self, e):
         self.spc_widget.closeEvent(e)
         self.closed.emit()
+
+    def closeIfEmpty(self):
+        visible_mitems = [ mitem for mitem in self.menu_items if mitem.menuAction().isVisible() ]
+        if len(visible_mitems) < 1:
+            self.close()
 
     def createMenuName(self, prof_col):
         pc_loc = prof_col.getMeta('loc')

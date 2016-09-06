@@ -644,6 +644,9 @@ class plotSkewT(backgroundSkewT):
         return min(xs[idx], x),  y
 
     def mouseReleaseEvent(self, e):
+        if self.prof is None:
+            return
+
         if not self.was_right_click and self.readout:
             self.track_cursor = not self.track_cursor
             self.cursor_loc = e.pos()
@@ -678,6 +681,9 @@ class plotSkewT(backgroundSkewT):
                     drag_started = drag.click(e.x(), e.y())
 
     def mouseMoveEvent(self, e):
+        if self.prof is None:
+            return
+
         if self.track_cursor:
             self.readout_pres = self.pix_to_pres((e.y() - self.originy) * self.scale)
             self.updateReadout()

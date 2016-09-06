@@ -394,8 +394,10 @@ class Picker(QWidget):
                 while True:
                     try:
                         self.skewApp(ntry=n_tries)
-                    except IndexError:
-                        # We've run out of data sources
+                    except data_source.DataSourceError:
+                        # We've run out of data sources. Uh-oh.
+                        if self.skew is not None:
+                            self.skew.closeIfEmpty()
                         raise IOError("No outlet found with the requested profile!")
                     except:
                         n_tries += 1
