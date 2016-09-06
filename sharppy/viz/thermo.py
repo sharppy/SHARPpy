@@ -369,7 +369,7 @@ class plotText(backgroundText):
                 elif float(index) >= -.45:
                     pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
                 elif float(index) < -.45:
-                    pen = QtGui.QPen(self.alert_lscp_color, 1, QtCore.Qt.SolidLine)
+                    pen = QtGui.QPen(self.left_scp_color, 1, QtCore.Qt.SolidLine)
             elif label == labels[1]: # STP effective
                 if float(index) >= 8:
                     pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
