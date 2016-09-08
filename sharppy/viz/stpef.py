@@ -328,7 +328,7 @@ class plotSTPEF(backgroundSTPEF):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         stpc_pix = self.stpc_to_pix(self.stpc)
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1.5, QtCore.Qt.DotLine)
+        pen = QtGui.QPen(self.fg_color, 1.5, QtCore.Qt.DotLine)
         qp.setPen(pen)
         qp.drawLine(stpc_pix, self.prob_to_pix(0), stpc_pix, self.prob_to_pix(70))
         qp.end()

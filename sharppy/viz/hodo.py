@@ -653,6 +653,9 @@ class plotHodo(backgroundHodo):
             self.drag_hodo.click(e.x(), e.y())
 
     def mouseReleaseEvent(self, e):
+        if self.prof is None:
+            return
+
         if self.cursor_type == 'boundary' and not self.was_right_click:
             if self.track_cursor:
                 qp = QtGui.QPainter()
@@ -783,6 +786,9 @@ class plotHodo(backgroundHodo):
                 self.modified_vector.emit('left', u, v)
 
     def mouseDoubleClickEvent(self, e):
+        if self.prof is None:
+            return
+
         tol = 5
         lm_x, lm_y = self.uv_to_pix(self.srwind[2], self.srwind[3])
         rm_x, rm_y = self.uv_to_pix(self.srwind[0], self.srwind[1])
@@ -862,6 +868,10 @@ class plotHodo(backgroundHodo):
         e: an Event object
         
         '''
+        # TAS: Why are these necessary?
+        if self.prof is None:
+            return
+
         if self.cursor_type == 'boundary':
             u, v = self.pix_to_uv(e.x(), e.y())
 
