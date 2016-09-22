@@ -2075,6 +2075,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 
     return pbot, ptop
 
+
 def bunkers_storm_motion(prof, **kwargs):
     '''
         Compute the Bunkers Storm Motion for a right moving supercell using a
@@ -2707,7 +2708,10 @@ def dcp(prof):
     sfc = prof.pres[prof.sfc]
     p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
     dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
-    mupcl = getattr(prof, 'mupcl', parcelx(prof, flag=1))
+    mupcl = getattr(prof, 'mupcl', None)
+    if mupcl is None:
+        mupcl = parcelx(prof, flag=1)
+
     sfc_6km_shear = getattr(prof, 'sfc_6km_shear', winds.wind_shear(prof, pbot=sfc, ptop=p6km))
     mean_6km = getattr(prof, 'mean_6km', utils.comp2vec(*winds.mean_wind(prof, pbot=sfc, ptop=p6km)))
     mag_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
@@ -2746,7 +2750,10 @@ def mburst(prof):
             Microburst Composite (unitless)
     '''
 
-    sbpcl = getattr(prof, 'sfcpcl', parcelx(prof, flag=1))
+    sbpcl = getattr(prof, 'sfcpcl', None)
+    if sbpcl is None:
+        sbpcl = parcelx(prof, flag=1)
+
     lr03 = getattr(prof, 'lapserate_3km', lapse_rate( prof, 0., 3000., pres=False ))
     tt = getattr(prof, 'totals_totals', t_totals( prof ))
     dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
