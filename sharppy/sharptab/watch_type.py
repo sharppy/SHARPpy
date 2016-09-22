@@ -22,7 +22,8 @@ def heat_index(temp, rh):
         -------
         heat_index : heat index value in (F)
     '''
-
+    if temp < 80 or rh < 40:
+        return temp
     #temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
     #rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
     heat_index = -42.379 + (2.04901523 * temp) + (10.14333127 * rh) - (0.22475541 * temp * rh) - (6.83783e-3 * np.power(temp,2)) \
@@ -633,7 +634,7 @@ def possible_watch(prof, use_left=False):
     hi = heat_index(temp, rh)
     if hi > 105.:
         watch_types.append("EXCESSIVE HEAT")
-        colors.append("#CC33CC")
+        colors.append("#C85A17")
     
     # Freeze (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
     # Still in testing.  To be reinstated in future releases.
