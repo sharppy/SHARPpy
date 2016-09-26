@@ -9,8 +9,8 @@ import urllib2
 
 class Mapper(object):
     data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
-    min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
-    max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
+    min_lat = {'npstere':0., 'merc':-35., 'spstere':-90.}
+    max_lat = {'npstere':90., 'merc':35., 'spstere':0.}
 
     def __init__(self, lambda_0, phi_0, proj='npstere'):
         self.proj = proj
@@ -74,7 +74,16 @@ class Mapper(object):
                 for x, y in zip(lx, ly)[1:]:
                     path.lineTo(x, y)
 
-            for lat in xrange(int(lb_lat), int(ub_lat) + 10, 10):
+            lat_spc = 10
+            rnd_lat_lb = np.ceil(lb_lat / lat_spc) * lat_spc
+            rnd_lat_ub = np.floor(ub_lat / lat_spc) * lat_spc
+            lat_lines = range(int(rnd_lat_lb), int(rnd_lat_ub + lat_spc), lat_spc)
+            if rnd_lat_lb != lb_lat:
+                lat_lines = [int(lb_lat)] + lat_lines 
+            if rnd_lat_ub != ub_lat:
+                lat_lines = lat_lines + [int(ub_lat)]
+
+            for lat in lat_lines:
                 lons = np.linspace(-180, 180, 2)
                 lx, ly = self(lat, lons)
 
@@ -716,7 +725,11 @@ class MapWidget(QtGui.QWidget):
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
+        lb_lat, ub_lat = self.mapper.getLatBounds()
+        stn_lats, stn_lons, stn_names = zip(*[ (slt, sln, snm) for slt, sln, snm in zip(self.stn_lats, self.stn_lons, self.stn_names) if lb_lat <= slt <= ub_lat ])
+        stn_lats = np.array(stn_lats)
+        stn_lons = np.array(stn_lons)
+        stn_xs, stn_ys = self.mapper(stn_lats, stn_lons + self.map_rot)
         if len(stn_xs) == 0 or len(stn_ys) == 0:
             return
 
@@ -733,7 +746,7 @@ class MapWidget(QtGui.QWidget):
             align = 0
             if stn_x > self.width() / 2:
                 sgn_x = -1
-                label_x = stn_x - fm.width(self.stn_names[stn_idx])
+                label_x = stn_x - fm.width(stn_names[stn_idx])
                 align |= QtCore.Qt.AlignRight
             else:
                 sgn_x = 1
@@ -749,9 +762,9 @@ class MapWidget(QtGui.QWidget):
                 label_y = stn_y
                 align |= QtCore.Qt.AlignTop
 
-            self.stn_readout.setText(self.stn_names[stn_idx])
+            self.stn_readout.setText(stn_names[stn_idx])
             self.stn_readout.move(label_x + sgn_x * label_offset, label_y + sgn_y * label_offset)
-            self.stn_readout.setFixedWidth(fm.width(self.stn_names[stn_idx]))
+            self.stn_readout.setFixedWidth(fm.width(stn_names[stn_idx]))
             self.stn_readout.setAlignment(align)
             self.setCursor(QtCore.Qt.PointingHandCursor)
         else:

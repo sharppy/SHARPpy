@@ -2075,6 +2075,70 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 
     return pbot, ptop
 
+def _binary_cape(prof, ibot, itop, ecape=100, ecinh=-250):
+    if ibot == itop:
+        return prof.pres[ibot]
+    elif ibot == itop - 1:
+        pcl = cape(prof, pres=prof.pres[ibot], tmpc=prof.tmpc[ibot], dwpc=prof.dwpc[ibot])
+        if pcl.bplus < ecape or pcl.bminus <= ecinh:
+            return prof.pres[ibot]
+        else:
+            return prof.pres[itop]
+    else:
+        i = ibot + (itop - ibot) // 2
+        pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
+        print pcl.bplus, pcl.bminus
+        if pcl.bplus < ecape or pcl.bminus <= ecinh:
+            return _binary_cape(prof, ibot, i, ecape=ecape, ecinh=ecinh)
+        else:
+            return _binary_cape(prof, i, itop, ecape=ecape, ecinh=ecinh)
+
+def effective_inflow_layer_binary(prof, ecape=100, ecinh=-250, **kwargs):
+    '''
+        Calculates the top and bottom of the effective inflow layer based on
+        research by Thompson et al. (2004).
+
+        Parameters
+        ----------
+        prof : profile object
+        Profile object
+        ecape : number (optional; default=100)
+        Minimum amount of CAPE in the layer to be considered part of the
+        effective inflow layer.
+        echine : number (optional; default=250)
+        Maximum amount of CINH in the layer to be considered part of the
+        effective inflow layer
+        mupcl : parcel object
+        Most Unstable Layer parcel
+
+        Returns
+        -------
+        pbot : number
+        Pressure at the bottom of the layer (hPa)
+        ptop : number
+        Pressure at the top of the layer (hPa)
+
+    '''
+    mupcl = kwargs.get('mupcl', None)
+    if not mupcl:
+        try:
+            mupcl = prof.mupcl
+        except:
+            mulplvals = DefineParcel(prof, flag=3, pres=300)
+            mupcl = cape(prof, lplvals=mulplvals)
+    mucape = mupcl.bplus
+    mucinh = mupcl.bminus
+    pbot = ma.masked
+    ptop = ma.masked
+    if mucape >= ecape and mucinh > ecinh:
+        istart = np.argmin(np.abs(mupcl.lplvals.pres - prof.pres))
+        itop = np.argmin(np.abs(300 - prof.pres))
+        print prof.sfc, istart, itop
+
+        pbot = _binary_cape(prof, istart, prof.sfc, ecape=ecape, ecinh=ecinh)
+        ptop = _binary_cape(prof, istart, itop, ecape=ecape, ecinh=ecinh)
+
+    return pbot, ptop
 
 def bunkers_storm_motion(prof, **kwargs):
     '''
