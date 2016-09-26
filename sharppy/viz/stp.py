@@ -111,7 +111,7 @@ class backgroundSTP(QtGui.QFrame):
             color = QtGui.QColor(self.bg_color)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            ypos = spacing*(i+1) - (spacing/4.)
+            ypos = y_ticks[i] - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
