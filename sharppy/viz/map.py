@@ -628,15 +628,18 @@ class MapWidget(QtGui.QWidget):
         self.trans_x, self.trans_y = 0, 0
 
         if not self.dragging and len(self.stn_lats) > 0:
-            stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
+            lb_lat, ub_lat = self.mapper.getLatBounds()
+            idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
+
+            stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
             stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ])
             stn_xs = np.array(stn_xs)
             stn_ys = np.array(stn_ys)
             dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
             stn_idx = np.argmin(dists)
             if dists[stn_idx] <= 5:
-                self.clicked_stn = self.stn_ids[stn_idx]
-                self.clicked.emit(self.points[stn_idx])
+                self.clicked_stn = self.stn_ids[idxs[stn_idx]]
+                self.clicked.emit(self.points[idxs[stn_idx]])
 
                 self.drawMap()
                 self.update()
@@ -725,11 +728,12 @@ class MapWidget(QtGui.QWidget):
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):
+#       if len(self.stn_lats) == 0:
+#           return
+
         lb_lat, ub_lat = self.mapper.getLatBounds()
-        stn_lats, stn_lons, stn_names = zip(*[ (slt, sln, snm) for slt, sln, snm in zip(self.stn_lats, self.stn_lons, self.stn_names) if lb_lat <= slt <= ub_lat ])
-        stn_lats = np.array(stn_lats)
-        stn_lons = np.array(stn_lons)
-        stn_xs, stn_ys = self.mapper(stn_lats, stn_lons + self.map_rot)
+        idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
+        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
         if len(stn_xs) == 0 or len(stn_ys) == 0:
             return
 
@@ -746,7 +750,7 @@ class MapWidget(QtGui.QWidget):
             align = 0
             if stn_x > self.width() / 2:
                 sgn_x = -1
-                label_x = stn_x - fm.width(stn_names[stn_idx])
+                label_x = stn_x - fm.width(self.stn_names[idxs[stn_idx]])
                 align |= QtCore.Qt.AlignRight
             else:
                 sgn_x = 1
@@ -762,9 +766,9 @@ class MapWidget(QtGui.QWidget):
                 label_y = stn_y
                 align |= QtCore.Qt.AlignTop
 
-            self.stn_readout.setText(stn_names[stn_idx])
+            self.stn_readout.setText(self.stn_names[idxs[stn_idx]])
             self.stn_readout.move(label_x + sgn_x * label_offset, label_y + sgn_y * label_offset)
-            self.stn_readout.setFixedWidth(fm.width(stn_names[stn_idx]))
+            self.stn_readout.setFixedWidth(fm.width(self.stn_names[idxs[stn_idx]]))
             self.stn_readout.setAlignment(align)
             self.setCursor(QtCore.Qt.PointingHandCursor)
         else:
