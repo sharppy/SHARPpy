@@ -1345,7 +1345,6 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.dwpc = dwpc
     totp = 0.
     totn = 0.
-    tote = 0.
     cinh_old = 0.
     
     # See if default layer is specified
@@ -1417,7 +1416,6 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     te1 = interp.vtmp(prof, pe1)
     tp1 = thermo.wetlift(pe2, tp2, pe1)
     lyre = 0
-    lyrlast = 0
     for i in xrange(lptr, prof.pres.shape[0]):
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
@@ -1426,7 +1424,6 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         tp2 = thermo.wetlift(pe1, tp1, pe2)
         tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
         tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
-        lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
         
         # Add layer energy to total positive if lyre > 0
@@ -1435,8 +1432,6 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         else:
             if pe2 > 500.: totn += lyre
 
-        tote += lyre
-        pelast = pe1
         pe1 = pe2
         h1 = h2
         te1 = te2
