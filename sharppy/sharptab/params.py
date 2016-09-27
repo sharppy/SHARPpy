@@ -13,7 +13,7 @@ __all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
-__all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp']
+__all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp', 'integrate_parcel']
 
 
 class DefineParcel(object):
@@ -1281,7 +1281,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     theta = np.degrees(np.arctan2(pos_vector[-1][2],r))
     return pos_vector, theta
 
-def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
+def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=True, **kwargs):
     '''        
         Lifts the specified parcel, calculates various levels and parameters from
         the profile object. Only B+/B- are calculated based on the specified layer. 
@@ -1414,54 +1414,95 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
     te1 = interp.vtmp(prof, pe1)
-    tp1 = thermo.wetlift(pe2, tp2, pe1)
+    tp1 = tp2
     lyre = 0
-    for i in xrange(lptr, prof.pres.shape[0]):
-        if not utils.QC(prof.tmpc[i]): continue
-        pe2 = prof.pres[i]
-        h2 = prof.hght[i]
-        te2 = prof.vtmp[i]
-        tp2 = thermo.wetlift(pe1, tp1, pe2)
-        tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
-        tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
-        lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
-        
-        # Add layer energy to total positive if lyre > 0
-        if lyre > 0: totp += lyre
-        # Add layer energy to total negative if lyre < 0, only up to EL
-        else:
-            if pe2 > 500.: totn += lyre
 
-        pe1 = pe2
-        h1 = h2
-        te1 = te2
-        tp1 = tp2
-        # Is this the top of the specified layer
-        if i >= uptr and not utils.QC(pcl.bplus):
-            pe3 = pe1
-            h3 = h1
-            te3 = te1
-            tp3 = tp1
-            lyrf = lyre
-            if lyrf > 0:
-                pcl.bplus = totp - lyrf
+    if new_lifter:
+        env_temp = prof.vtmp[lptr:]
+        try:
+            keep = ~env_temp.mask * np.ones(env_temp.shape, dtype=bool) 
+        except AttributeError:
+            keep = np.ones(env_temp.shape, dtype=bool)
+
+        env_temp = np.append(te1, env_temp[keep])
+        env_pres = np.append(pe1, prof.pres[lptr:][keep])
+        env_hght = np.append(h1, prof.hght[lptr:][keep])
+        pcl_temp = integrate_parcel(env_pres, tp1)
+        tdef = (thermo.virtemp(env_pres, pcl_temp, pcl_temp) - env_temp) / thermo.ctok(env_temp)
+        lyre = G * (tdef[1:] + tdef[:-1]) / 2 * (env_hght[1:] - env_hght[:-1])
+
+        totp = lyre[lyre > 0].sum()
+        neg_layers = (lyre <= 0) & (env_pres[1:] > 500)
+        if np.any(neg_layers):
+            totn += lyre[neg_layers].sum()
+
+        if lyre[-1] > 0:
+            pcl.bplus = totp - lyre[-1]
+            pcl.bminus = totn
+        else:
+            pcl.bplus = totp
+            if env_pres[-1] > 500.:
+                pcl.bminus = totn + lyre[-1]
+            else:
                 pcl.bminus = totn
-            else:
-                pcl.bplus = totp
-                if pe2 > 500.: pcl.bminus = totn + lyrf
-                else: pcl.bminus = totn
-            pe2 = ptop
-            h2 = interp.hght(prof, pe2)
-            te2 = interp.vtmp(prof, pe2)
-            tp2 = thermo.wetlift(pe3, tp3, pe2)
-            tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / thermo.ctok(te3)
+
+        if pcl.bplus == 0: pcl.bminus = 0.
+    else:
+        for i in xrange(lptr, prof.pres.shape[0]):
+            if not utils.QC(prof.tmpc[i]): continue
+            pe2 = prof.pres[i]
+            h2 = prof.hght[i]
+            te2 = prof.vtmp[i]
+            tp2 = thermo.wetlift(pe1, tp1, pe2)
+            tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
             tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
-            lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
-            if lyrf > 0: pcl.bplus += lyrf
+            lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
+            
+            # Add layer energy to total positive if lyre > 0
+            if lyre > 0: totp += lyre
+            # Add layer energy to total negative if lyre < 0, only up to EL
             else:
-                if pe2 > 500.: pcl.bminus += lyrf
-            if pcl.bplus == 0: pcl.bminus = 0.
+                if pe2 > 500.: totn += lyre
+
+            pe1 = pe2
+            h1 = h2
+            te1 = te2
+            tp1 = tp2
+            # Is this the top of the specified layer
+            if i >= uptr and not utils.QC(pcl.bplus):
+                pe3 = pe1
+                h3 = h1
+                te3 = te1
+                tp3 = tp1
+                lyrf = lyre
+                if lyrf > 0:
+                    pcl.bplus = totp - lyrf
+                    pcl.bminus = totn
+                else:
+                    pcl.bplus = totp
+                    if pe2 > 500.: pcl.bminus = totn + lyrf
+                    else: pcl.bminus = totn
+                pe2 = ptop
+                h2 = interp.hght(prof, pe2)
+                te2 = interp.vtmp(prof, pe2)
+                tp2 = thermo.wetlift(pe3, tp3, pe2)
+                tdef3 = (thermo.virtemp(pe3, tp3, tp3) - te3) / thermo.ctok(te3)
+                tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
+                lyrf = G * (tdef3 + tdef2) / 2. * (h2 - h3)
+                if lyrf > 0: pcl.bplus += lyrf
+                else:
+                    if pe2 > 500.: pcl.bminus += lyrf
+                if pcl.bplus == 0: pcl.bminus = 0.
     return pcl
+
+
+def integrate_parcel(pres, tbot):
+    pcl_tmpc = np.empty(pres.shape, dtype=pres.dtype)
+    pcl_tmpc[0] = tbot
+    for idx in xrange(1, len(pres)):
+        pcl_tmpc[idx] = thermo.wetlift(pres[idx - 1], pcl_tmpc[idx - 1], pres[idx])
+
+    return pcl_tmpc
 
 
 def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):

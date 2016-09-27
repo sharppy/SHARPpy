@@ -258,24 +258,52 @@ def satlift(p, thetam):
     Temperature (C) of saturated parcel at new level
 
     '''
-    #if type(p) == type(np.array([p])) or type(thetam) == type(np.array([thetam])):
-    if np.fabs(p - 1000.) - 0.001 <= 0: return thetam
-    eor = 999
-    while np.fabs(eor) - 0.1 > 0:
-        if eor == 999:                  # First Pass
-            pwrp = np.power((p / 1000.),ROCP)
-            t1 = (thetam + ZEROCNK) * pwrp - ZEROCNK
-            e1 = wobf(t1) - wobf(thetam)
-            rate = 1
-        else:                           # Successive Passes
-            rate = (t2 - t1) / (e2 - e1)
-            t1 = t2
-            e1 = e2
-        t2 = t1 - (e1 * rate)
-        e2 = (t2 + ZEROCNK) / pwrp - ZEROCNK
-        e2 += wobf(t2) - wobf(e2) - thetam
-        eor = e2 * rate
-    return t2 - eor
+    try:
+        # If p and thetam are scalars
+        if np.fabs(p - 1000.) - 0.001 <= 0: 
+            return thetam
+        eor = 999
+        while np.fabs(eor) - 0.1 > 0:
+            if eor == 999:                  # First Pass
+                pwrp = np.power((p / 1000.),ROCP)
+                t1 = (thetam + ZEROCNK) * pwrp - ZEROCNK
+                e1 = wobf(t1) - wobf(thetam)
+                rate = 1
+            else:                           # Successive Passes
+                rate = (t2 - t1) / (e2 - e1)
+                t1 = t2
+                e1 = e2
+            t2 = t1 - (e1 * rate)
+            e2 = (t2 + ZEROCNK) / pwrp - ZEROCNK
+            e2 += wobf(t2) - wobf(e2) - thetam
+            eor = e2 * rate
+        return t2 - eor
+    except ValueError:
+        # If p and thetam are arrays
+        short = np.fabs(p - 1000.) - 0.001 <= 0
+        lft = np.where(short, thetam, 0)
+        if np.all(short):
+            return lft
+
+        eor = 999
+        first_pass = True
+        while np.fabs(np.min(eor)) - 0.1 > 0:
+            if first_pass:                  # First Pass
+                pwrp = np.power((p[~short] / 1000.),ROCP)
+                t1 = (thetam[~short] + ZEROCNK) * pwrp - ZEROCNK
+                e1 = wobf(t1) - wobf(thetam[~short])
+                rate = 1
+                first_pass = False
+            else:                           # Successive Passes
+                rate = (t2 - t1) / (e2 - e1)
+                t1 = t2
+                e1 = e2
+            t2 = t1 - (e1 * rate)
+            e2 = (t2 + ZEROCNK) / pwrp - ZEROCNK
+            e2 += wobf(t2) - wobf(e2) - thetam[~short]
+            eor = e2 * rate
+        lft[~short] = t2 - eor
+        return lft
 
 
 def wetlift(p, t, p2):
