@@ -1373,15 +1373,12 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
     blupper = pe2
-    h2 = interp.hght(prof, pe2)
-    te2 = interp.vtmp(prof, pe2)
     
     # Calculate lifted parcel theta for use in iterative CINH loop below
     # RECALL: lifted parcel theta is CONSTANT from LPL to LCL
     theta_parcel = thermo.theta(pe2, tp2, 1000.)
     
     # Environmental theta and mixing ratio at LPL
-    bltheta = thermo.theta(pres, interp.temp(prof, pres), 1000.)
     blmr = thermo.mixratio(pres, dwpc)
     
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
@@ -1395,9 +1392,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
     tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
 
-    tidx1 = np.arange(0, len(tdef)-1, 1)
-    tidx2 = np.arange(1, len(tdef), 1)
-    lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx2]-hh[tidx1])
+    lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
     
@@ -1472,6 +1467,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 if pe2 > 500.: pcl.bminus += lyrf
             if pcl.bplus == 0: pcl.bminus = 0.
     return pcl
+
 
 def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     '''
