@@ -1232,7 +1232,7 @@ class plotHodo(backgroundHodo):
         qp : QtGui.QPainter object
         '''
 
-        if tab.utils.QC(self.ptop) and tab.utils.QC(self.pbottom):
+        if tab.utils.QC(self.ptop) and tab.utils.QC(self.pbottom) and self.pbottom == self.prof.pres[self.prof.sfc]:
             # There is an effective inflow layer at the surface so draw the critical angle line
             ca_color = QtGui.QColor("#FF00FF")
             pres_500m = tab.interp.pres(self.prof, tab.interp.to_msl(self.prof, 500))

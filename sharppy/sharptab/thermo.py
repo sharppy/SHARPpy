@@ -217,6 +217,7 @@ def wobf(t):
     '''
     t = t - 20
     try:
+        # If t is a scalar
         if t is np.ma.masked:
             return t
         if t <= 0:
@@ -229,6 +230,7 @@ def wobf(t):
             ppol = (29.93 / np.power(ppol,4)) + (0.96 * t) - 14.8
             return ppol
     except ValueError:
+        # If t is an array
         npol = 1. + t * (-8.841660499999999e-3 + t * ( 1.4714143e-4 + t * (-9.671989000000001e-7 + t * (-3.2607217e-8 + t * (-3.8598073e-10)))))
         npol = 15.13 / (np.power(npol,4))
         ppol = t * (4.9618922e-07 + t * (-6.1059365e-09 + t * (3.9401551e-11 + t * (-1.2588129e-13 + t * (1.6688280e-16)))))
