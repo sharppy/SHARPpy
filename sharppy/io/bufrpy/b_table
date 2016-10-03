@@ -102,6 +102,7 @@
  002014 TRACKING TECHNIQUE/STATUS OF SYSTEM USED                         CODE TABLE 2014            0            0   7 CODE TABLE 2014           0         3
  002015 RADIOSONDE COMPLETENESS                                          CODE TABLE 2015            0            0   4 CODE TABLE 2015           0         2
  002016 RADIOSONDE CONFIGURATION                                         FLAG TABLE 2016            0            0   5 FLAG TABLE 2016           0         2
+ 002017 CORRECTION ALGORITHMS FOR HUMIDITY MEASUREMENTS                  CODE TABLE 2017            0            0   8 CODE TABLE 2017
  002019 SATELLITE INSTRUMENTS                                            CODE TABLE 2019            0            0  11 CODE TABLE 2019           0         4
  002020 SATELLITE CLASSIFICATION                                         CODE TABLE 2020            0            0   9 CODE TABLE 2020           0         3
  002021 SATELLITE INSTRUMENT DATA USED IN PROCESSING                     FLAG TABLE 2021            0            0   9 FLAG TABLE 2021           0         3
@@ -245,6 +246,7 @@
  002188 CAPABILITY TO DETECT OBSCURATION                                 FLAG TABLE 2188            0            0  21 FLAG TABLE 2188           0         7
  002189 CAPABILITY TO DISCRIMINATE LIGHTNING STRIKES                     FLAG TABLE 2189            0            0  12 FLAG TABLE 2189           0         4
  002190 LAGRANGIAN DRIFTER SUBMERGENCE (% TIME SUBMERGED)                %                          0            0   7 %                         0         3
+ 002191 GEOPOTENTIAL HEIGHT CALCULATION                                  CODE TABLE 2191            0            0   4 CODE TABLE 2191
  002192 SAR AZIMUTH ANGLE                                                DEGREE                     0            0   9
  002193 1D VAR SATELLITE CHANNEL(S) USED                                 FLAG TABLE 2193            0            0  28  
  002194 CONSTANT LEVEL BALLOON TYPE                                      CODE TABLE 2194            0            0   4  

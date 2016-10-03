@@ -24,7 +24,7 @@ class ArchiveDecoder(Decoder):
         dates = []
         for mem in serialized_data['profiles']:
             for prof in range(len(serialized_data['profiles'][mem])):
-                serialized_data['profiles'][mem][prof]['date'] = parser.parse(serialized_data['profiles'][mem][prof]['date'])
+                serialized_data['profiles'][mem][prof]['date'] = parser.parse(serialized_data['profiles'][mem][prof]['date'], ignoretz=True)
                 if serialized_data['profiles'][mem][prof]['date'] not in dates:
                     dates.append(serialized_data['profiles'][mem][prof]['date'])
                 serialized_data['profiles'][mem][prof]['profile'] = 'raw'

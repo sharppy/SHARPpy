@@ -5,11 +5,14 @@ from decoder import Decoder
 from bufrpy.bufrdec import decode_file
 from bufrpy.table import get_table
 from bufrpy.value import BufrValue
-from datetime import datetime
+from datetime import datetime, timedelta
+from calendar import timegm
 from io import BytesIO
 
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
+
+TIME_ADJUST = False
 
 meta_fields = {'SHIP OR MOBILE LAND STATION IDENTIFIER'                     : ['id',     lambda x: ''.join([i if ord(i) < 128 else '' for i in x.replace('\x00','').strip()])], \
                'YEAR'                                                       : ['year',   lambda x: int(x)], \
@@ -32,7 +35,12 @@ missing_data = -9999.0
 class IMETBufrDecoder(Decoder):
     def __init__(self, file_name):
         super(IMETBufrDecoder, self).__init__(file_name)
-
+    def __adjust_time__(self, sounding_time):
+        time_offset = -1 * (timegm(sounding_time.utctimetuple())%(TIME_ADJUST * 3600))
+        if abs(time_offset) >= (TIME_ADJUST * 1800):
+            time_offset += (TIME_ADJUST * 3600)
+        return sounding_time + timedelta(seconds=time_offset)
+        
     def _parse(self):
         binary_bufr = self._downloadFile()
         bufr_start = 0
@@ -72,8 +80,10 @@ class IMETBufrDecoder(Decoder):
                             for field in level_data:
                                 data[field].append(level_data[field])
             meta_data['date'] = datetime(meta_data['year'], meta_data['month'], meta_data['day'], meta_data['hour'], meta_data['minute'],meta_data['second'])
+            if TIME_ADJUST:
+                meta_data['date'] = self.__adjust_time__(meta_data['date'])
             if location is None:
-                location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'], abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
+                location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'] if meta_data['id']!='' else 'Incident', abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
             # Force latitude to be 35 N. Figure out a way to fix this later.
             
             # Force pressure to be always increasing

@@ -54,6 +54,8 @@ from json import dumps
 from bz2 import compress
 from datetime import datetime
 
+import sharppy.io.ibufr_decoder
+
 class crasher(object):
     def __init__(self, **kwargs):
         self._exit = kwargs.get('exit', False)
@@ -235,6 +237,16 @@ class LocalPicker(QWidget):
         self.file_label = QLabel("Select File (Current Folder: " + self.search_directory + " )")
         self.file_list = QListWidget()
         
+        self.adjust_time_widget = QWidget()
+        self.adjust_time_layout = QHBoxLayout()
+        self.adjust_time_layout.addStretch(1)
+        self.adjust_time_widget.setLayout(self.adjust_time_layout)
+        
+        self.adjust_time = QCheckBox('Adjust time to model times')
+        self.adjust_time_hours = QComboBox()
+        for x in [1, 3]:
+            self.adjust_time_hours.addItem(str(x))
+        
         self.change_dir_button = QPushButton('Change Directory')
         self.change_dir_button.clicked.connect(self.change_folder)
         
@@ -247,15 +259,25 @@ class LocalPicker(QWidget):
         self.update_files()
         self.control_layout.addWidget(self.file_label)
         self.control_layout.addWidget(self.file_list)
+        self.adjust_time_layout.addWidget(self.adjust_time)
+        self.adjust_time_layout.addWidget(self.adjust_time_hours)
+        self.control_layout.addWidget(self.adjust_time_widget)
         self.button_layout.addWidget(self.change_dir_button)
         self.button_layout.addWidget(self.update_button)
         self.button_layout.addWidget(self.button)
         self.control_layout.addWidget(self.button_frame)
     def open_bufr(self):
+        #sharppy.io.ibufr_decoder.TIME_ADJUST = 1
+        if self.adjust_time.isChecked():
+            sharppy.io.ibufr_decoder.TIME_ADJUST = int(self.adjust_time_hours.currentText())
+        else:
+            sharppy.io.ibufr_decoder.TIME_ADJUST = False
         self.picker.skewApp(filename=join(self.search_directory, self.file_list.selectedItems()[0].text()))
     def update_files(self):
         self.file_list.clear()
-        for item in listdir(self.search_directory):
+        bufr_file_list = listdir(self.search_directory)
+        bufr_file_list.sort()
+        for item in bufr_file_list:
             if splitext(item)[1].lower() == '.bufr' or splitext(item)[1].lower() == '.buf' or splitext(item)[1].lower() == '.txt':
                 self.file_list.addItem(item)
         self.file_list.update()
