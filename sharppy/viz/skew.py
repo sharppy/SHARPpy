@@ -15,6 +15,7 @@ __all__ = ['backgroundSkewT', 'plotSkewT']
 class backgroundSkewT(QtGui.QWidget):
     def __init__(self, plot_omega=False):
         super(backgroundSkewT, self).__init__()
+        self.readout_in_feet = False
         self.plot_omega = plot_omega
         self.initUI()
 
@@ -433,13 +434,20 @@ class plotSkewT(backgroundSkewT):
         a = ag.addAction(nocurs)
         self.popupmenu.addAction(a)
 
-        storm_motion = QAction(self)
-        storm_motion.setText("Readout Cursor")
-        storm_motion.setCheckable(True)
-        storm_motion.triggered.connect(self.setReadoutCursor)
-        a = ag.addAction(storm_motion)
+        readout_cursor_ft = QAction(self)
+        readout_cursor_ft.setText("Readout Cursor in feet")
+        readout_cursor_ft.setCheckable(True)
+        readout_cursor_ft.triggered.connect(self.setReadoutCursorFt)
+        a = ag.addAction(readout_cursor_ft)
         self.popupmenu.addAction(a)
-
+        
+        readout_cursor = QAction(self)
+        readout_cursor.setText("Readout Cursor in meters")
+        readout_cursor.setCheckable(True)
+        readout_cursor.triggered.connect(self.setReadoutCursorM)
+        a = ag.addAction(readout_cursor)
+        self.popupmenu.addAction(a)
+        
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
 
@@ -656,14 +664,25 @@ class plotSkewT(backgroundSkewT):
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         tmp = tab.interp.temp(self.prof, self.readout_pres)
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
-
+        
+        if hgt < 0 and tmp == 0 and dwp == 0:
+            self.hghtReadout.hide()
+            self.tmpcReadout.hide()
+            self.dwpcReadout.hide()  
+        else:
+            self.hghtReadout.show()
+            self.tmpcReadout.show()
+            self.dwpcReadout.show()
         self.rubberBand.setGeometry(QRect(QPoint(self.lpad,y), QPoint(self.brx,y)).normalized())
         self.presReadout.setFixedWidth(60)
         self.hghtReadout.setFixedWidth(65)
         self.tmpcReadout.setFixedWidth(45)
         self.dwpcReadout.setFixedWidth(45)
         self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
-        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
+        if self.readout_in_feet:
+            self.hghtReadout.setText(tab.utils.FLOAT2STR(tab.utils.M2FT(hgt), 1) + ' ft')
+        else:
+            self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
         self.tmpcReadout.setText(tab.utils.FLOAT2STR(tmp, 1) + ' C')
         self.dwpcReadout.setText(tab.utils.FLOAT2STR(dwp, 1) + ' C')
 
@@ -747,6 +766,14 @@ class plotSkewT(backgroundSkewT):
         qp.end()
         self.update()
 
+    def setReadoutCursorFt(self):
+        self.readout_in_feet = True
+        self.setReadoutCursor()
+    
+    def setReadoutCursorM(self):
+        self.readout_in_feet = False
+        self.setReadoutCursor()
+        
     def setReadoutCursor(self):
         self.parcelmenu.setEnabled(True)
         self.readout = True
