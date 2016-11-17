@@ -326,8 +326,8 @@ def wetlift(p, t, p2):
     Temperature (C)
 
     '''
-    if p == p2:
-        return t
+    #if p == p2:
+    #    return t
     thta = theta(p, t, 1000.)
     if thta is np.ma.masked or p2 is np.ma.masked:
         return np.ma.masked
