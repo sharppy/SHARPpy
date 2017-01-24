@@ -43,7 +43,8 @@ scientific publication, please acknowledge the SHARPpy project by citing the cod
 this ready-made citation entry or provide a link back to this website:
     
     Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017:
-    SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences. Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.
+    SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences. Bull. Amer. Meteor. Soc.
+    doi:10.1175/BAMS-D-15-00309.1, in press.
 
 http://sharppy.github.io/SHARPpy/index.html
 
