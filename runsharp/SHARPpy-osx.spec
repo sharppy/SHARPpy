@@ -48,4 +48,9 @@ exe = EXE(pyz,
 
 app = BUNDLE(exe,
              name='SHARPpy.app',
-             icon='icons/SHARPpy.icns')
+             icon='icons/SHARPpy.icns',
+             info_plist={
+                    'NSPrincipalClass': 'NSApplication',
+                    'NSHighResolutionCapable': 'True',
+                },
+            )
