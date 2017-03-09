@@ -51,6 +51,8 @@ def _pingURL(hostname, timeout=1):
         urllib2.urlopen(hostname, timeout=timeout)
     except urllib2.URLError:
         return False
+    except socket.timeout as e:
+        return False
 
     return True
 
