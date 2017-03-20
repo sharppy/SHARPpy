@@ -60,4 +60,6 @@ class SPCDecoder(Decoder):
         )
 
         prof_coll.setMeta('loc', location)
+        prof_coll.setMeta('observed', True)
+        prof_coll.setMeta('base_time', time)
         return prof_coll

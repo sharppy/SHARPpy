@@ -369,7 +369,7 @@ class SPCWidget(QWidget):
 
         match_col.setMeta('model', 'Analog')
         match_col.setMeta('run', prof_col.getCurrentDate())
-        match_col.setMeta('fhour', None)
+        match_col.setMeta('base_time', prof_col.getCurrentDate())
         match_col.setMeta('observed', True)
         match_col.setMeta('filematch', filematch)
         match_col.setAnalogToDate(prof_col.getCurrentDate())

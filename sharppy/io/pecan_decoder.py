@@ -33,6 +33,8 @@ class PECANDecoder(Decoder):
             dates.append(dt_obj)
 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
+        prof_coll.setMeta('observed', False)
+        prof_coll.setMeta('base_time', dates[0])
         return prof_coll
 
     def _parseSection(self, section):
