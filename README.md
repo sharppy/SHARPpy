@@ -41,10 +41,10 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 If SHARPpy is used to develop a weather product or contributes to research that leads to a 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
-
-    Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and 
-    J. A. Hart, 2016: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences",
-    Bull. Amer. Meteor. Soc., accepted with revisions.
+    
+    Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017:
+    SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences. Bull. Amer. Meteor. Soc.
+    doi:10.1175/BAMS-D-15-00309.1, in press.
 
 http://sharppy.github.io/SHARPpy/index.html
 
@@ -101,7 +101,8 @@ __Required Python Packages/Libraries:__
 
 Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
 
-    conda install PySide
+    conda install -c conda-forge pyside=1.2.4
+
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 

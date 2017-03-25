@@ -51,6 +51,8 @@ def _pingURL(hostname, timeout=1):
         urllib2.urlopen(hostname, timeout=timeout)
     except urllib2.URLError:
         return False
+    except socket.timeout as e:
+        return False
 
     return True
 
@@ -66,6 +68,11 @@ def pingURLs(ds_dict):
 
     for url in urls.iterkeys():
         urls[url] = _pingURL(url)
+
+        if urls[url]:
+            # A bit of a hack. Since we're only using this to check for an Internet connection, we don't need to check
+            # any more if we find one.
+            break
     return urls
 
 class Outlet(object):
