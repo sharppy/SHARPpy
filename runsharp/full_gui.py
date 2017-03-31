@@ -460,8 +460,6 @@ class Picker(QWidget):
         :return:
         """
 
-        profs = []
-        dates = []
         failure = False
 
         exc = ""
@@ -472,18 +470,14 @@ class Picker(QWidget):
             model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
             disp_name = stn_id
-            prof_idx = range(len(dates))
 
             run = prof_collection.getCurrentDate()
-            fhours = None
-            observed = True
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
-            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -496,16 +490,12 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
-
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
-            prof_collection.setMeta('fhour', fhours)
-            prof_collection.setMeta('observed', observed)
 
-            if not observed:
+            if not prof_collection.getMeta('observed'):
                 # If it's not an observed profile, then generate profile objects in background.
                 prof_collection.setAsync(Picker.async)
 
