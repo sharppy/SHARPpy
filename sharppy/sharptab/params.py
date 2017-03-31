@@ -1281,7 +1281,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     theta = np.degrees(np.arctan2(pos_vector[-1][2],r))
     return pos_vector, theta
 
-def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=True, **kwargs):
+def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     '''        
         Lifts the specified parcel, calculates various levels and parameters from
         the profile object. Only B+/B- are calculated based on the specified layer. 
