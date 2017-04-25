@@ -98,7 +98,7 @@ class backgroundHodo(QtGui.QFrame):
         
         '''
         ## get the new scaling magnitude
-        new_mag = self.hodomag + e.delta() / 5
+        new_mag = self.hodomag - e.delta() / 5
         ## make sure the user doesn't zoom out of
         ## bounds to prevent drawing issues
         if new_mag >= 40. and new_mag <= 200.:
