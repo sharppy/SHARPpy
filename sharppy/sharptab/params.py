@@ -1116,6 +1116,7 @@ def lapse_rate(prof, lower, upper, pres=True):
         lapse rate  (float [C/km])
         '''
     if pres:
+        if (prof.pres[-1] > upper): return ma.masked 
         p1 = lower
         p2 = upper
         z1 = interp.hght(prof, lower)

@@ -42,9 +42,7 @@ If SHARPpy is used to develop a weather product or contributes to research that 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
     
-    Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017:
-    SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences. Bull. Amer. Meteor. Soc.
-    doi:10.1175/BAMS-D-15-00309.1, in press.
+ [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source  Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
 
 http://sharppy.github.io/SHARPpy/index.html
 
