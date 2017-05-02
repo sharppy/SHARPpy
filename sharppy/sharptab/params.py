@@ -2396,8 +2396,6 @@ def mmp(prof, **kwargs):
             if b < t: continue
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
             possible_shears[b,t] = utils.mag(u_shear, v_shear)
-    print possible_shears
-    print possible_shears.ravel()
     max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.ravel()))
     lr38 = lapse_rate(prof, 3000., 8000., pres=False)
     plower = interp.pres(prof, interp.to_msl(prof, 3000.))
