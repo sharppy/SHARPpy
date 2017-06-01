@@ -321,6 +321,7 @@ class SPCWidget(QWidget):
             pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
             print "Hmmm, that profile doesn't exist to be removed ..."
+            return
 
         prof_col = self.prof_collections.pop(pc_idx)
         self.prof_ids.pop(pc_idx)
