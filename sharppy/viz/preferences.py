@@ -444,7 +444,7 @@ class PrefDialog(QDialog):
         config_name:    Field in the configuration file to set.
         radio:          Dictionary with names of the radio buttons as keys and QRadioButtons as values.
         """
-        for radio_name, rad in radio.iteritems():
+        for radio_name, rad in radio.items():
             if rad.isChecked():
                 self._config['preferences', config_name] = radio_name
 
@@ -459,7 +459,7 @@ class PrefDialog(QDialog):
         self._applyRadio('calc_vector', self.calc_vector)
 
         self._config['preferences', 'color_style'] = self._color_style
-        for item, color in PrefDialog._styles[self._color_style].iteritems():
+        for item, color in PrefDialog._styles[self._color_style].items():
             self._config['preferences', item] = color
 
         self.accept()
@@ -484,11 +484,11 @@ class PrefDialog(QDialog):
             ('preferences', 'color_style'):'standard'
         }
 
-        color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].iteritems())
+        color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].items())
         pref_config.update(color_config)
 
         config.initialize(pref_config)
 
         color_style = config['preferences', 'color_style']
-        for item, color in PrefDialog._styles[color_style].iteritems():
+        for item, color in PrefDialog._styles[color_style].items():
             config['preferences', item] = color

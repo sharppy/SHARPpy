@@ -101,8 +101,8 @@ class SPCWidget(QWidget):
         self.right_inset_ob = None
 
         ## these are used for insets and inset swapping
-        insets = sorted(SPCWidget.inset_names.items(), key=lambda i: i[1])
-        inset_ids, inset_names = zip(*insets)
+        insets = sorted(list(SPCWidget.inset_names.items()), key=lambda i: i[1])
+        inset_ids, inset_names = list(zip(*insets))
         self.available_insets = inset_ids
         self.left_inset = self.config['insets', 'left_inset']
         self.right_inset = self.config['insets', 'right_inset']
@@ -255,7 +255,7 @@ class SPCWidget(QWidget):
         self.kinematic = plotKinematics()
 
         # intialize swappable insets
-        for inset, inset_gen in SPCWidget.inset_generators.iteritems():
+        for inset, inset_gen in SPCWidget.inset_generators.items():
             self.insets[inset] = inset_gen()
 
         self.updateConfig(self.config, update_gui=False)
@@ -306,7 +306,7 @@ class SPCWidget(QWidget):
         try:
             self.pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
-            print "Hmmm, that profile doesn't exist to be focused ..."
+            print("Hmmm, that profile doesn't exist to be focused ...")
             return
  
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
@@ -320,7 +320,7 @@ class SPCWidget(QWidget):
         try:
             pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
-            print "Hmmm, that profile doesn't exist to be removed ..."
+            print("Hmmm, that profile doesn't exist to be removed ...")
             return
 
         prof_col = self.prof_collections.pop(pc_idx)
@@ -333,7 +333,7 @@ class SPCWidget(QWidget):
             filematch = prof_col.getMeta('filematch')
             for pc in self.prof_collections:
                 if pc.hasMeta('analogfile'):
-                    keys, vals = zip(*pc.getMeta('analogfile').items())
+                    keys, vals = list(zip(*list(pc.getMeta('analogfile').items())))
                     if filematch in vals:
                         keys = list(keys); vals = list(vals)
 
@@ -341,7 +341,7 @@ class SPCWidget(QWidget):
                         vals.pop(idx)
                         keys.pop(idx)
 
-                        pc.setMeta('analogfile', dict(zip(keys, vals)))
+                        pc.setMeta('analogfile', dict(list(zip(keys, vals))))
             self.insets['SARS'].clearSelection()
 
         if self.pc_idx == pc_idx:
@@ -373,7 +373,7 @@ class SPCWidget(QWidget):
         self.convective.setProf(self.default_prof)
         self.kinematic.setProf(self.default_prof)
 
-        for inset in self.insets.keys():
+        for inset in list(self.insets.keys()):
             self.insets[inset].setProf(self.default_prof)
 
         # Update the parcels to match the new profiles
@@ -442,7 +442,7 @@ class SPCWidget(QWidget):
         self.convective.setPreferences(update_gui=update_gui, **prefs)
         self.kinematic.setPreferences(update_gui=update_gui, **prefs)
 
-        for inset in self.insets.keys():
+        for inset in list(self.insets.keys()):
             self.insets[inset].setPreferences(update_gui=update_gui, **prefs)
 
         # Edit style sheets to modify the colors as we need to (surely there's a better way to do this?)
@@ -567,7 +567,7 @@ class SPCWidget(QWidget):
         if prof_col.getMeta('observed'):
             cur_dt = prof_col.getCurrentDate()
             cur_loc = prof_col.getMeta('loc')
-            idxs, dts = zip(*sorted(((idx, pc.getCurrentDate()) for idx, pc in enumerate(self.prof_collections) if pc.getMeta('loc') == cur_loc and pc.getMeta('observed')), key=lambda x: x[1]))
+            idxs, dts = list(zip(*sorted(((idx, pc.getCurrentDate()) for idx, pc in enumerate(self.prof_collections) if pc.getMeta('loc') == cur_loc and pc.getMeta('observed')), key=lambda x: x[1])))
 
             dt_idx = dts.index(cur_dt)
             dt_idx = (dt_idx + direction) % len(dts)
@@ -599,7 +599,7 @@ class SPCWidget(QWidget):
         # See if we have any other observed profiles loaded at this time.
         prof_col = self.prof_collections[self.pc_idx]
         dt = prof_col.getCurrentDate()
-        idxs, pcs = zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt or self.coll_observed ])
+        idxs, pcs = list(zip(*[ (idx, pc) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == dt or self.coll_observed ]))
         loc_idx = pcs.index(prof_col)
         loc_idx = (loc_idx + 1) % len(pcs)
         self.pc_idx = idxs[loc_idx]
@@ -829,7 +829,7 @@ class SPCWindow(QMainWindow):
         except Exception as exc:
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
             import traceback
-            print traceback.format_exc()
+            print(traceback.format_exc())
            
             self.rmProfileCollection(menu_name)
             raise

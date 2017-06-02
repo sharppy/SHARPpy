@@ -67,7 +67,7 @@ class backgroundWinds(QtGui.QFrame):
         ## height is in km.
         for h in [2,4,6,8,10,12,14]:
             self.draw_height(h, qp)
-        for s in xrange(0,100,10):
+        for s in range(0,100,10):
             self.draw_speed(s, qp)
         qp.end()
 
@@ -385,7 +385,7 @@ class plotWinds(backgroundWinds):
         sr_spd = np.hypot(interp_sru, interp_srv)
 
         qp.setPen(pen)
-        for i in xrange(interp_hght.shape[0] - 1):
+        for i in range(interp_hght.shape[0] - 1):
             spd1 = sr_spd[i]; spd2 = sr_spd[i+1]
             if tab.utils.QC(spd1) and tab.utils.QC(spd2):
                 hgt1 = (interp_hght[i] - interp_hght[0]) / 1000; hgt2 = (interp_hght[i+1] - interp_hght[0]) / 1000

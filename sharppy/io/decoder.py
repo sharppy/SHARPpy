@@ -3,7 +3,7 @@ import numpy as np
 
 import sharppy.sharptab.profile as profile
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from datetime import datetime
 import glob
 import os
@@ -29,7 +29,7 @@ def findDecoders():
 
     for dec in built_ins:
         # Load build-in decoders
-        print "Loading decoder '%s'." % dec
+        print("Loading decoder '%s'." % dec)
         dec_imp = getattr(io, dec)
 
         dec_name = dec_imp.__classname__
@@ -42,7 +42,7 @@ def findDecoders():
     for dec in custom:
         # Find and load custom decoders
         dec_mod_name = os.path.basename(dec)[:-3]
-        print "Found custom decoder '%s'." % dec_mod_name
+        print("Found custom decoder '%s'." % dec_mod_name)
         dec_imp = imp.load_source(dec_mod_name, dec)
         
         dec_name = dec_imp.__classname__
@@ -73,7 +73,7 @@ class Decoder(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urllib2.urlopen(self._file_name)
+            f = urllib.request.urlopen(self._file_name)
         except (ValueError, IOError):
             try:
                 f = open(self._file_name, 'rb')
@@ -104,5 +104,5 @@ class Decoder(object):
         return self._prof_collection.getMeta('loc')
 
 if __name__ == "__main__":
-    print "Creating bufkit decoder ..."
+    print("Creating bufkit decoder ...")
     bd = BufDecoder()

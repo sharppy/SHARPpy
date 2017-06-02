@@ -132,7 +132,7 @@ class backgroundSTPEF(QtGui.QFrame):
         texts = efstp_inset_data['ytexts']
         spacing = self.bry / 10.
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in xrange(len(y_ticks)):
+        for i in range(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -156,7 +156,7 @@ class backgroundSTPEF(QtGui.QFrame):
         
         # Draw the x tick marks
         qp.setFont(QtGui.QFont('Helvetica', 8))
-        for i in xrange(np.asarray(texts).shape[0]):
+        for i in range(np.asarray(texts).shape[0]):
             color = QtGui.QColor('#000000')
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
@@ -171,7 +171,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF1_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF2+ stuff
@@ -179,7 +179,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF2_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF3+ stuff
@@ -187,7 +187,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF3_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF4+ stuff
@@ -195,7 +195,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF4_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
 

@@ -86,7 +86,7 @@ class DefineParcel(object):
             self.presval = kwargs.get('pres', 100)
             self.__effective(prof, **kwargs)
         else:
-            #print 'Defaulting to Surface Parcel'
+            #print('Defaulting to Surface Parcel')
             self.presval = kwargs.get('pres', prof.gSndg[prof.sfc])
             self.__sfc(prof)
     
@@ -2120,7 +2120,7 @@ def _binary_cape(prof, ibot, itop, ecape=100, ecinh=-250):
     else:
         i = ibot + (itop - ibot) // 2
         pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-        print pcl.bplus, pcl.bminus
+        print(pcl.bplus, pcl.bminus)
         if pcl.bplus < ecape or pcl.bminus <= ecinh:
             return _binary_cape(prof, ibot, i, ecape=ecape, ecinh=ecinh)
         else:
@@ -2166,7 +2166,7 @@ def effective_inflow_layer_binary(prof, ecape=100, ecinh=-250, **kwargs):
     if mucape >= ecape and mucinh > ecinh:
         istart = np.argmin(np.abs(mupcl.lplvals.pres - prof.pres))
         itop = np.argmin(np.abs(300 - prof.pres))
-        print prof.sfc, istart, itop
+        print(prof.sfc, istart, itop)
 
         pbot = _binary_cape(prof, istart, prof.sfc, ecape=ecape, ecinh=ecinh)
         ptop = _binary_cape(prof, istart, itop, ecape=ecape, ecinh=ecinh)
@@ -2767,7 +2767,7 @@ def pbl_top(prof):
     try:
         level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
     except IndexError:
-        print "Warning: PBL top could not be found."
+        print("Warning: PBL top could not be found.")
         level = thetav.shape[0] - 1
 
     return prof.pres[level]

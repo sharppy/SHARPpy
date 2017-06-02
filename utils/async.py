@@ -1,7 +1,11 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
+
 import hashlib
 from datetime import datetime
 import traceback
@@ -118,7 +122,7 @@ class AsyncThreads(QObject):
                     ret_val = func(*args, **kwargs)
                 except Exception as e:
                     if self.debug:
-                        print traceback.format_exc()
+                        print(traceback.format_exc())
                     ret_val = e
                 if type(ret_val) != tuple:
                     ret_val = (ret_val, )

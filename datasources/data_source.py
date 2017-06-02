@@ -2,8 +2,15 @@
 import xml.etree.ElementTree as ET
 import glob, os, sys, shutil
 from datetime import datetime, timedelta
-import urllib, urllib2
-import urlparse
+try:
+    from urllib2 import urlopen, URLError
+    from urllib import quote
+    from urlparse import urlparse, urlunparse
+except ImportError:
+    from urllib.request import urlopen
+    from urllib.error import URLError
+    from urllib.parse import quote, urlparse, urlunparse
+   
 import platform, subprocess, re
 import imp
 import socket
@@ -15,7 +22,7 @@ import utils.frozenutils as frozenutils
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 
 if frozenutils.isFrozen():
-    import available
+    from . import available
 else:
     avail_loc = os.path.join(HOME_DIR, 'available.py')
     available = imp.load_source('available', avail_loc)
@@ -56,8 +63,8 @@ def loadDataSources(ds_dir=HOME_DIR):
 
 def _pingURL(hostname, timeout=1):
     try:
-        urllib2.urlopen(hostname, timeout=timeout)
-    except urllib2.URLError:
+        urlopen(hostname, timeout=timeout)
+    except URLError:
         return False
     except socket.timeout as e:
         return False
@@ -72,14 +79,14 @@ def pingURLs(ds_dict):
     """
     urls = {}
 
-    for ds in ds_dict.values():
+    for ds in list(ds_dict.values()):
         ds_urls = ds.getURLList()
         for url in ds_urls:
-            urlp = urlparse.urlparse(url)
-            base_url = urlparse.urlunsplit((urlp.scheme, urlp.netloc, '', '', ''))
+            urlp = urlparse(url)
+            base_url = urlunparse((urlp.scheme, urlp.netloc, '', '', ''))
             urls[base_url] = None
 
-    for url in urls.iterkeys():
+    for url in urls.keys():
         urls[url] = _pingURL(url)
 
         if urls[url]:
@@ -102,7 +109,7 @@ class Outlet(object):
         point_csv = config.find('points')
         self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
 
-        for idx in xrange(len(self._points)):
+        for idx in range(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
             self._points[idx]['lon'] = float(self._points[idx]['lon'])
             self._points[idx]['elev'] = int(self._points[idx]['elev'])
@@ -120,7 +127,7 @@ class Outlet(object):
         f_range = int(t.get('range'))
         f_delta = int(t.get('delta'))
         if f_delta > 0:
-            times.extend(range(0, f_range + f_delta, f_delta))
+            times.extend(list(range(0, f_range + f_delta, f_delta)))
         else:
             times.append(0)
         return times
@@ -147,7 +154,7 @@ class Outlet(object):
                 times = available.available[self._name.lower()][self._ds_name.lower()]()
                 recent = max(times)
                 self._is_available = True
-            except urllib2.URLError:
+            except URLError:
                 custom_failed = True
                 self._is_available = False
 
@@ -210,7 +217,7 @@ class Outlet(object):
 
                 self._is_available = True
 
-            except urllib2.URLError:
+            except URLError:
                 stns_avail = []
                 self._is_available = False
         return stns_avail
@@ -226,7 +233,7 @@ class Outlet(object):
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
-            except urllib2.URLError:
+            except URLError:
                 custom_failed = True
                 self._is_available = False
 
@@ -279,7 +286,7 @@ class DataSource(object):
         prop = None
         if outlet_num is None:
             prop = []
-            for o in self._outlets.itervalues():
+            for o in self._outlets.values():
                 func = getattr(o, name)
                 prop.append(func(**kwargs))
 
@@ -288,12 +295,12 @@ class DataSource(object):
                 prop = list(set(prop))
                 prop = sorted(prop)
         else:
-            func = getattr(self._outlets.values()[outlet_num], name)
+            func = getattr(list(self._outlets.values())[outlet_num], name)
             prop = func()
         return prop
 
     def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
-        use_outlets = [ out for out, cfg in self._outlets.iteritems() if cfg.hasProfile(stn, cycle_dt) ]
+        use_outlets = [ out for out, cfg in self._outlets.items() if cfg.hasProfile(stn, cycle_dt) ]
         try:
             outlet = use_outlets[outlet_num]
         except IndexError:
@@ -346,7 +353,7 @@ class DataSource(object):
         url_base = self._outlets[outlet].getURL()
 
         fmt = {
-            'srcid':urllib.quote(stn['srcid']),
+            'srcid':quote(stn['srcid']),
             'cycle':"%02d" % cycle_dt.hour,
             'date':cycle_dt.strftime("%y%m%d")
         }
@@ -370,8 +377,8 @@ if __name__ == "__main__":
     ds = loadDataSources()
     ds = dict( (n, ds[n]) for n in ['Observed', 'GFS'] )
 
-    for n, d in ds.iteritems():
+    for n, d in ds.items():
 #       print n, d.getMostRecentCycle()
         times = d.getAvailableTimes()
         for t in times:
-            print n, t, [ s['srcid'] for s in d.getAvailableAtTime(t) ]
+            print(n, t, [ s['srcid'] for s in d.getAvailableAtTime(t) ])

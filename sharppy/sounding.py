@@ -1,6 +1,14 @@
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import sharppy.sharptab.profile as profile
-import urllib
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
+
 import time as gmtime
 import datetime
 import sys
@@ -51,7 +59,7 @@ elif sys.argv[1] != "test":
     obstring2 = year + month + day + hour
 
         
-    url = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/LATEST/' + str( sys.argv[1] ).upper() + '.txt')
+    url = urlopen('http://www.spc.noaa.gov/exper/soundings/LATEST/' + str( sys.argv[1] ).upper() + '.txt')
     data = np.array(url.read().split('\n'))
     title_idx = np.where( data == '%TITLE%')[0][0]
     start_idx = np.where( data == '%RAW%' )[0] + 1

@@ -351,7 +351,7 @@ class plotGeneric(backgroundGeneric):
         ## start the path at the first data value
         path.moveTo(self.x_to_pix(x[0]), self.y_to_pix(y[0]))
         ## now we need to loop through the array
-        for i in xrange( 1, y.shape[0] ):
+        for i in range( 1, y.shape[0] ):
             ## make sure we are plotting in our minimum and maximum bounds
             if y[i] > self.ymin and y[i] < self.ymax:
                 xp = x[i]; yp = y[i]

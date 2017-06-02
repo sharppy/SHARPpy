@@ -1,7 +1,7 @@
 
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
-from decoder import Decoder
+from .decoder import Decoder
 
 from datetime import datetime
 
@@ -23,7 +23,7 @@ class UWYODecoder(Decoder):
         ttl = -1
         stl = -1
 
-        for i in xrange(len(snfile)):
+        for i in range(len(snfile)):
             if snfile[i] == "<PRE>": 
                 bgn = i+5
             if snfile[i][:10] == "</PRE><H3>": 
@@ -49,7 +49,7 @@ class UWYODecoder(Decoder):
             snd_data.append(vals)
 
         col_names = ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']
-        snd_dict = dict((v, p) for v, p in zip(col_names, zip(*snd_data)))
+        snd_dict = dict((v, p) for v, p in zip(col_names, list(zip(*snd_data))))
 
         snd_date = datetime.strptime(snfile[ttl][-20:-5], "%HZ %d %b %Y")
 

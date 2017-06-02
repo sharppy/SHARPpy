@@ -49,7 +49,7 @@ try:
     has_nc = True
 except ImportError:
     has_nc = False
-    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
+    print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -79,11 +79,11 @@ class crasher(object):
                     msgbox.setIcon(QMessageBox.Critical)
                     msgbox.exec_()
                 else:
-                    print
-                    print msg
-                    print
-                    print "Detailed Information:"
-                    print data
+                    print()
+                    print(msg)
+                    print()
+                    print("Detailed Information:")
+                    print(data)
 
                 if self._exit:
                     sys.exit(1)
@@ -182,8 +182,8 @@ class Picker(QWidget):
         try:
             self.run_dropdown.setCurrentIndex(times.index(self.run))
         except ValueError:
-            print "Run dropdown is missing its times ... ?"
-            print times
+            print("Run dropdown is missing its times ... ?")
+            print(times)
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -319,7 +319,7 @@ class Picker(QWidget):
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
-            print getTimes()
+            print(getTimes())
         else:
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
 
@@ -534,7 +534,7 @@ class Picker(QWidget):
         for that archive sounding.
         """
 
-        for decname, deccls in getDecoders().iteritems():
+        for decname, deccls in getDecoders().items():
             try:
                 dec = deccls(filename)
                 break
@@ -791,7 +791,7 @@ def main():
     def createWindow(file_names, collect=False, close=True):
         main_win = Main()
         for fname in file_names:
-            print "Creating image for '%s' ..." % fname
+            print("Creating image for '%s' ..." % fname)
             main_win.picker.skewApp(filename=fname)
             if not collect:
                 fpath, fbase = os.path.split(fname)
