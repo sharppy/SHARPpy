@@ -325,6 +325,7 @@ def comp2vec(u, v, missing=MISSING):
     u.set_fill_value(missing)
     v.set_fill_value(missing)
     wdir = np.degrees(np.arctan2(-u, -v))
+
     if wdir.shape:
         u[u == missing] = ma.masked
         v[v == missing] = ma.masked

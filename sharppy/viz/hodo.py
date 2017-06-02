@@ -695,7 +695,7 @@ class plotHodo(backgroundHodo):
                 x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0] + to_add[0], self.prof.sfc_6km_shear[1]+ to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
-                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd) + ' kts')
 
                 # Plot the 9-11 km Storm Relative Winds
                 width = 200
@@ -718,7 +718,7 @@ class plotHodo(backgroundHodo):
                     supercell_type = "Classic"
                 else:
                     supercell_type = "HP"
-                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
                 # Removing this function until @wblumberg can finish fixing this function.
                 """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
@@ -878,7 +878,7 @@ class plotHodo(backgroundHodo):
             ## get the direction and speed from u,v
             dir, spd = tab.utils.comp2vec(u,v)
             self.plotBndy(dir)
-            self.bndyReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
+            self.bndyReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd))
             self.bndyReadout.setFixedWidth(120)
             self.bndyReadout.move(self.brx-130, self.bry-30)
         elif self.cursor_type == 'none':
@@ -1062,7 +1062,7 @@ class plotHodo(backgroundHodo):
         if self.wind_units == 'm/s':
             mw_spd = tab.utils.KTS2MS(mw_spd)
 
-        mw_str = tab.utils.INT2STR(self.mean_lcl_el_vec[0]) + '/' + tab.utils.INT2STR(mw_spd)
+        mw_str = tab.utils.INT2STR(np.float64(self.mean_lcl_el_vec[0])) + '/' + tab.utils.INT2STR(mw_spd)
         qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
 
     def drawCorfidi(self, qp):
@@ -1125,8 +1125,8 @@ class plotHodo(backgroundHodo):
             up_spd = tab.utils.KTS2MS(up_spd)
             dn_spd = tab.utils.KTS2MS(dn_spd)
 
-        up_stuff = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(up_spd)
-        dn_stuff = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(dn_spd)
+        up_stuff = tab.utils.INT2STR(np.float64(self.upshear[0])) + '/' + tab.utils.INT2STR(up_spd)
+        dn_stuff = tab.utils.INT2STR(np.float64(self.downshear[0])) + '/' + tab.utils.INT2STR(dn_spd)
         qp.drawText(up_rect, QtCore.Qt.AlignCenter, "UP=" + up_stuff)
         qp.drawText(dn_rect, QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
 
@@ -1218,8 +1218,8 @@ class plotHodo(backgroundHodo):
             rm_spd = tab.utils.KTS2MS(rm_spd)
             lm_spd = tab.utils.KTS2MS(lm_spd)
 
-        rm_stuff = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(rm_spd)
-        lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(lm_spd)
+        rm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_right_vec[0])) + '/' + tab.utils.INT2STR(rm_spd)
+        lm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_left_vec[0])) + '/' + tab.utils.INT2STR(lm_spd)
         qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
         qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
 

@@ -585,7 +585,7 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*1, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
@@ -607,7 +607,7 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*2, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
@@ -630,7 +630,7 @@ class plotText(backgroundText):
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             rect = QtCore.QRect(x1*3, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
@@ -642,7 +642,7 @@ class plotText(backgroundText):
         y1 = self.ylast + self.tpad
         for text in lis:
             rect = QtCore.QRect(x1*4, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
@@ -651,7 +651,7 @@ class plotText(backgroundText):
         y1 = self.ylast + self.tpad
         for text in lfcs:
             rect = QtCore.QRect(x1*5, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
@@ -660,7 +660,7 @@ class plotText(backgroundText):
         y1 = self.ylast + self.tpad
         for text in els:
             rect = QtCore.QRect(x1*6, y1, x1*2, self.label_height)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, text)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, bytes(text).decode('utf-8'))
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()

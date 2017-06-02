@@ -409,33 +409,33 @@ class plotKinematics(backgroundKinematics):
         sfc8km = tab.utils.INT2STR(conv(tab.utils.mag(self.sfc_8km_shear[0], self.sfc_8km_shear[1])))
         lcl_el = tab.utils.INT2STR(conv(tab.utils.mag(self.lcl_el_shear[0], self.lcl_el_shear[1])))
         
-        mean_1km = tab.utils.INT2STR(self.mean_1km[0]) + '/' + tab.utils.INT2STR(conv(self.mean_1km[1]))
-        mean_3km = tab.utils.INT2STR(self.mean_3km[0]) + '/' + tab.utils.INT2STR(conv(self.mean_3km[1]))
-        mean_6km = tab.utils.INT2STR(self.mean_6km[0]) + '/' + tab.utils.INT2STR(conv(self.mean_6km[1]))
-        mean_8km = tab.utils.INT2STR(self.mean_8km[0]) + '/' + tab.utils.INT2STR(conv(self.mean_8km[1]))
-        mean_lcl_el = tab.utils.INT2STR(self.mean_lcl_el[0]) + '/' + tab.utils.INT2STR(conv(self.mean_lcl_el[1]))
+        mean_1km = tab.utils.INT2STR(np.float64(self.mean_1km[0])) + '/' + tab.utils.INT2STR(conv(self.mean_1km[1]))
+        mean_3km = tab.utils.INT2STR(np.float64(self.mean_3km[0])) + '/' + tab.utils.INT2STR(conv(self.mean_3km[1]))
+        mean_6km = tab.utils.INT2STR(np.float64(self.mean_6km[0])) + '/' + tab.utils.INT2STR(conv(self.mean_6km[1]))
+        mean_8km = tab.utils.INT2STR(np.float64(self.mean_8km[0])) + '/' + tab.utils.INT2STR(conv(self.mean_8km[1]))
+        mean_lcl_el = tab.utils.INT2STR(np.float64(self.mean_lcl_el[0])) + '/' + tab.utils.INT2STR(conv(self.mean_lcl_el[1]))
         
-        srw_1km = tab.utils.INT2STR(self.srw_1km[0]) + '/' + tab.utils.INT2STR(conv(self.srw_1km[1]))
-        srw_3km = tab.utils.INT2STR(self.srw_3km[0]) + '/' + tab.utils.INT2STR(conv(self.srw_3km[1]))
-        srw_6km = tab.utils.INT2STR(self.srw_6km[0]) + '/' + tab.utils.INT2STR(conv(self.srw_6km[1]))
-        srw_8km = tab.utils.INT2STR(self.srw_8km[0]) + '/' + tab.utils.INT2STR(conv(self.srw_8km[1]))
-        srw_lcl_el = tab.utils.INT2STR(self.srw_lcl_el[0]) + '/' + tab.utils.INT2STR(conv(self.srw_lcl_el[1]))
-        srw_4_5km = tab.utils.INT2STR(self.srw_4_5km[0]) + '/' + tab.utils.INT2STR(conv(self.srw_4_5km[1])) + disp_unit
+        srw_1km = tab.utils.INT2STR(np.float64(self.srw_1km[0])) + '/' + tab.utils.INT2STR(conv(self.srw_1km[1]))
+        srw_3km = tab.utils.INT2STR(np.float64(self.srw_3km[0])) + '/' + tab.utils.INT2STR(conv(self.srw_3km[1]))
+        srw_6km = tab.utils.INT2STR(np.float64(self.srw_6km[0])) + '/' + tab.utils.INT2STR(conv(self.srw_6km[1]))
+        srw_8km = tab.utils.INT2STR(np.float64(self.srw_8km[0])) + '/' + tab.utils.INT2STR(conv(self.srw_8km[1]))
+        srw_lcl_el = tab.utils.INT2STR(np.float64(self.srw_lcl_el[0])) + '/' + tab.utils.INT2STR(conv(self.srw_lcl_el[1]))
+        srw_4_5km = tab.utils.INT2STR(np.float64(self.srw_4_5km[0])) + '/' + tab.utils.INT2STR(conv(self.srw_4_5km[1])) + disp_unit
         
         esrh = tab.utils.INT2STR(self.esrh[0])
         eff_lr = tab.utils.INT2STR(conv(tab.utils.mag(self.eff_shear[0], self.eff_shear[1])))
         efbwd = tab.utils.INT2STR(conv(tab.utils.mag(self.ebwd[0], self.ebwd[1])))
-        mean_eff = tab.utils.INT2STR(self.mean_eff[0]) + '/' + tab.utils.INT2STR(conv(self.mean_eff[1]))
-        mean_ebw = tab.utils.INT2STR(self.mean_ebw[0]) + '/' + tab.utils.INT2STR(conv(self.mean_ebw[1]))
-        srw_eff = tab.utils.INT2STR(self.srw_eff[0]) + '/' + tab.utils.INT2STR(conv(self.srw_eff[1]))
-        srw_ebw = tab.utils.INT2STR(self.srw_ebw[0]) + '/' + tab.utils.INT2STR(conv(self.srw_ebw[1]))
+        mean_eff = tab.utils.INT2STR(np.float64(self.mean_eff[0])) + '/' + tab.utils.INT2STR(conv(self.mean_eff[1]))
+        mean_ebw = tab.utils.INT2STR(np.float64(self.mean_ebw[0])) + '/' + tab.utils.INT2STR(conv(self.mean_ebw[1]))
+        srw_eff = tab.utils.INT2STR(np.float64(self.srw_eff[0])) + '/' + tab.utils.INT2STR(conv(self.srw_eff[1]))
+        srw_ebw = tab.utils.INT2STR(np.float64(self.srw_ebw[0])) + '/' + tab.utils.INT2STR(conv(self.srw_ebw[1]))
         
         brn_shear = tab.utils.INT2STR(self.brn_shear) + ' m2/s2'
-        bunkers_left = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(conv(self.bunkers_left_vec[1])) + disp_unit
-        bunkers_right = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(conv(self.bunkers_right_vec[1])) + disp_unit
-        upshear = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(conv(self.upshear[1])) + disp_unit
-        downshear = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(conv(self.downshear[1])) + disp_unit
-        
+        bunkers_left = tab.utils.INT2STR(np.float64(self.bunkers_left_vec[0])) + '/' + tab.utils.INT2STR(conv(self.bunkers_left_vec[1])) + disp_unit
+        bunkers_right = tab.utils.INT2STR(np.float64(self.bunkers_right_vec[0])) + '/' + tab.utils.INT2STR(conv(self.bunkers_right_vec[1])) + disp_unit
+        upshear = tab.utils.INT2STR(np.float64(self.upshear[0])) + '/' + tab.utils.INT2STR(conv(self.upshear[1])) + disp_unit
+        downshear = tab.utils.INT2STR(np.float64(self.downshear[0])) + '/' + tab.utils.INT2STR(conv(self.downshear[1])) + disp_unit
+
         ## sfc-1km
         texts = [srh1km, sfc1km, mean_1km, srw_1km]
         count = 3

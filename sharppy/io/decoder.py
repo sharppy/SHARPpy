@@ -2,8 +2,13 @@
 import numpy as np
 
 import sharppy.sharptab.profile as profile
+from utils.utils import is_py3
 
-import urllib.request, urllib.error, urllib.parse
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
+
 from datetime import datetime
 import glob
 import os
@@ -24,8 +29,10 @@ _decoders = {}
 def findDecoders():
     global _decoders
 
+    level = -1 if not is_py3() else 0 
+
     built_ins = [ 'buf_decoder', 'spc_decoder', 'pecan_decoder', 'arw_decoder', 'uwyo_decoder' ]
-    io = __import__('sharppy.io', globals(), locals(), built_ins, -1)
+    io = __import__('sharppy.io', globals(), locals(), built_ins, level)
 
     for dec in built_ins:
         # Load build-in decoders
@@ -73,7 +80,7 @@ class Decoder(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urllib.request.urlopen(self._file_name)
+            f = urlopen(self._file_name)
         except (ValueError, IOError):
             try:
                 f = open(self._file_name, 'rb')
@@ -81,7 +88,7 @@ class Decoder(object):
                 raise IOError("File '%s' cannot be found" % self._file_name)
         file_data = f.read()
 #       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
-        return file_data
+        return file_data.decode('utf-8')
 
     def getProfiles(self, indexes=None):
         '''

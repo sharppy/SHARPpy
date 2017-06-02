@@ -4,11 +4,12 @@ import numpy as np
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from .decoder import Decoder
+from utils.utils import is_py3
 
 try:
     from StringIO import StringIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO
 from datetime import datetime
 
 __fmtname__ = "spc"
@@ -47,7 +48,11 @@ class SPCDecoder(Decoder):
 
         ## put it all together for StringIO
         full_data = '\n'.join(data[start_idx : finish_idx][:])
-        sound_data = StringIO( full_data )
+
+        if not is_py3():
+            sound_data = StringIO( full_data )
+        else:
+            sound_data = BytesIO( full_data.encode() )
 
         ## read the data into arrays
         p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )

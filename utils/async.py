@@ -106,7 +106,7 @@ class AsyncThreads(QObject):
 
     def _genThreadId(self):
         time_stamp = datetime.utcnow().isoformat()
-        return hashlib.md5(time_stamp).hexdigest()
+        return hashlib.md5(time_stamp.encode('utf-8')).hexdigest()
 
     def _threadFactory(self, func, thread_id, *args, **kwargs):
 
