@@ -5,7 +5,6 @@ from PySide import QtGui, QtCore
 
 import sys, os
 import re
-import urllib.request, urllib.error, urllib.parse
 
 class Mapper(object):
     data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
