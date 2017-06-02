@@ -172,10 +172,10 @@ class Picker(QWidget):
         projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
         if ('map', 'proj') in self.config:
             proj = self.config['map', 'proj']
-            proj_idx = zip(*projs)[0].index(proj)
+            proj_idx = list(zip(*projs))[0].index(proj)
         else:
             proj_idx = 0
-        self.map_dropdown = self.dropdown_menu(zip(*projs)[1])
+        self.map_dropdown = self.dropdown_menu(list(zip(*projs))[1])
         self.map_dropdown.setCurrentIndex(proj_idx)
 
         self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
@@ -229,7 +229,7 @@ class Picker(QWidget):
         view : QWebView object
         """
 
-        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500, cfg=self.config)
+        view = MapWidget(self.data_sources[self.model], self.run, self.async, cfg=self.config) #minimumWidth=800, minimumHeight=500, 
         view.clicked.connect(self.map_link)
 
         return view

@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 try:
     from urllib2 import urlopen, URLError
     from urllib import quote
-    from urlparse import urlparse, urlunparse
+    from urlparse import urlparse, urlunsplit
 except ImportError:
     from urllib.request import urlopen
     from urllib.error import URLError
-    from urllib.parse import quote, urlparse, urlunparse
+    from urllib.parse import quote, urlparse, urlunsplit
    
 import platform, subprocess, re
 import imp
@@ -83,7 +83,7 @@ def pingURLs(ds_dict):
         ds_urls = ds.getURLList()
         for url in ds_urls:
             urlp = urlparse(url)
-            base_url = urlunparse((urlp.scheme, urlp.netloc, '', '', ''))
+            base_url = urlunsplit((urlp.scheme, urlp.netloc, '', '', ''))
             urls[base_url] = None
 
     for url in urls.keys():

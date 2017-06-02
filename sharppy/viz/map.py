@@ -55,7 +55,7 @@ class Mapper(object):
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
             for lat in range(int(lb_lat), int(ub_lat), 15):
@@ -264,7 +264,7 @@ class Mapper(object):
             path_x, path_y = self(np.array(path_lats), np.array(path_lons))
 
             path.moveTo(path_x[0], path_y[0])
-            for px, py in zip(path_x, path_y)[1:]:
+            for px, py in zip(path_x[1:], path_y[1:]):
                 path.lineTo(px, py)
 
             paths.append(path)
@@ -551,7 +551,7 @@ class MapWidget(QtGui.QWidget):
                     qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
         
         color = selected_color
-        if lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+        if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
             qp.setPen(QtGui.QPen(color))
             qp.setBrush(QtGui.QBrush(color))
             qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
