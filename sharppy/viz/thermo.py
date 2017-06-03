@@ -342,73 +342,81 @@ class plotText(backgroundText):
         ## needs to be coded.
         x1 = self.brx / 10
         y1 = self.ylast + self.tpad
-        ship = tab.utils.FLOAT2STR( self.prof.ship, 1 )
+
+        ship = self.prof.ship
+        ship_str = tab.utils.FLOAT2STR( ship, 1 )
+
         if self.use_left:
-            stp_fixed = tab.utils.FLOAT2STR( self.prof.right_stp_fixed, 1 )
-            stp_cin = tab.utils.FLOAT2STR( self.prof.right_stp_cin, 1 )
-            scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
+            stp_fixed = self.prof.right_stp_fixed
+            stp_cin = self.prof.right_stp_cin
+            scp = self.prof.right_scp
         else:
-            stp_fixed = tab.utils.FLOAT2STR( self.prof.right_stp_fixed, 1 )
-            stp_cin = tab.utils.FLOAT2STR( self.prof.right_stp_cin, 1 )
-            scp = tab.utils.FLOAT2STR( self.prof.right_scp, 1 )
+            stp_fixed = self.prof.right_stp_fixed
+            stp_cin = self.prof.right_stp_cin
+            scp = self.prof.right_scp
+
+        stp_fixed_str = tab.utils.FLOAT2STR( stp_fixed, 1 )
+        stp_cin_str = tab.utils.FLOAT2STR( stp_cin, 1 )
+        scp_str = tab.utils.FLOAT2STR( scp, 1 )
 
         # Coloring provided by Rich Thompson (SPC)
         labels = ['Supercell = ', 'STP (cin) = ', 'STP (fix) = ', 'SHIP = ']
         indices = [scp, stp_cin, stp_fixed, ship]
-        for label, index in zip(labels,indices):
+        index_strs = [scp_str, stp_cin_str, stp_fixed_str, ship_str]
+        for label, index_str, index in zip(labels,index_strs,indices):
             rect = QtCore.QRect(x1*7, y1, x1*8, self.label_height)
             if label == labels[0]: # STP uses a different color scale
-                if float(index) >= 19.95:
+                if index >= 19.95:
                     pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 11.95:
+                elif index >= 11.95:
                     pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 1.95:
+                elif index >= 1.95:
                     pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= .45:
+                elif index >= .45:
                     pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= -.45:
+                elif index >= -.45:
                     pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
-                elif float(index) < -.45:
+                elif index < -.45:
                     pen = QtGui.QPen(self.left_scp_color, 1, QtCore.Qt.SolidLine)
             elif label == labels[1]: # STP effective
-                if float(index) >= 8:
+                if index >= 8:
                     pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 4:
+                elif index >= 4:
                     pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 2:
+                elif index >= 2:
                     pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 1:
+                elif index >= 1:
                     pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= .5:
+                elif index >= .5:
                     pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
-                elif float(index) < .5:
+                elif index < .5:
                     pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
             elif label == labels[2]: # STP fixed
-                if float(index) >= 7:
+                if index >= 7:
                     pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 5:
+                elif index >= 5:
                     pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 2:
+                elif index >= 2:
                     pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 1:
+                elif index >= 1:
                     pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= .5:
+                elif index >= .5:
                     pen = QtGui.QPen(color_list[1], 1, QtCore.Qt.SolidLine)
                 else:
                     pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
             elif label == labels[3]: # SHIP
-                if float(index) >= 5:
+                if index >= 5:
                     pen = QtGui.QPen(color_list[5], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 2:
+                elif index >= 2:
                     pen = QtGui.QPen(color_list[4], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= 1:
+                elif index >= 1:
                     pen = QtGui.QPen(color_list[3], 1, QtCore.Qt.SolidLine)
-                elif float(index) >= .5:
+                elif index >= .5:
                     pen = QtGui.QPen(color_list[2], 1, QtCore.Qt.SolidLine)
                 else:
                     pen = QtGui.QPen(color_list[0], 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label + index)
+            qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label + index_str)
             vspace = self.label_height
             if platform.system() == "Windows":
                 vspace += self.label_metrics.descent()
