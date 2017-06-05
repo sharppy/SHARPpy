@@ -1,4 +1,6 @@
 
+from __future__ import division
+
 import numpy as np
 
 import sharppy.sharptab.profile as profile
@@ -90,7 +92,7 @@ class BufDecoder(Decoder):
         # Parse out the profiles
         for i in range(len(data_idxs)):
             data_stuff = data[data_idxs[i][0]: data_idxs[i][1]]
-            profile_length = len(data[data_idxs[i][0]: data_idxs[i][1]])/2
+            profile_length = len(data[data_idxs[i][0]: data_idxs[i][1]])//2
 
             hght = np.zeros((profile_length,), dtype=float)
             pres = np.zeros((profile_length,), dtype=float)
@@ -102,15 +104,15 @@ class BufDecoder(Decoder):
 
             for j in np.arange(0, profile_length * 2, 2):
                 if len(data_stuff[j+1].split()) == 1:
-                    hght[j / 2] = float(data_stuff[j+1].split()[0])
+                    hght[j // 2] = float(data_stuff[j+1].split()[0])
                 else:
-                    hght[j / 2] = float(data_stuff[j+1].split()[1])
-                tmpc[j / 2] = float(data_stuff[j].split()[1])
-                dwpc[j / 2] = float(data_stuff[j].split()[3])
-                pres[j / 2] = float(data_stuff[j].split()[0])
-                wspd[j / 2] = float(data_stuff[j].split()[6])
-                wdir[j / 2] = float(data_stuff[j].split()[5])
-                omeg[j / 2] = float(data_stuff[j].split()[7])
+                    hght[j // 2] = float(data_stuff[j+1].split()[1])
+                tmpc[j // 2] = float(data_stuff[j].split()[1])
+                dwpc[j // 2] = float(data_stuff[j].split()[3])
+                pres[j // 2] = float(data_stuff[j].split()[0])
+                wspd[j // 2] = float(data_stuff[j].split()[6])
+                wdir[j // 2] = float(data_stuff[j].split()[5])
+                omeg[j // 2] = float(data_stuff[j].split()[7])
 
             prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
                 wdir=wdir, wspd=wspd, omeg=omeg, location=station, date=dates[i], latitude=slat)

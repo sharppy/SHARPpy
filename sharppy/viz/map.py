@@ -70,7 +70,7 @@ class Mapper(object):
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
             lat_spc = 10
@@ -87,7 +87,7 @@ class Mapper(object):
                 lx, ly = self(lat, lons)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
         elif self.proj == 'spstere':
@@ -96,7 +96,7 @@ class Mapper(object):
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
             for lat in range(int(ub_lat), int(lb_lat), -15):
@@ -732,10 +732,10 @@ class MapWidget(QtGui.QWidget):
 
         lb_lat, ub_lat = self.mapper.getLatBounds()
         idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
-        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
-        if len(stn_xs) == 0 or len(stn_ys) == 0:
+        if len(idxs) == 0:
             return
 
+        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
         stn_xs, stn_ys = list(zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ]))
         stn_xs = np.array(stn_xs)
         stn_ys = np.array(stn_ys)
