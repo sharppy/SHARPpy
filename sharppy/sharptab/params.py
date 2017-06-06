@@ -671,7 +671,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         pbot : number (optional; default surface)
         Pressure of the bottom level (hPa)
         ptop : number (optional; default 400 hPa)
-        Pressure of the top level (hPa)
+        Pressure of the top level (hPa).
         dp : negative integer (optional; default = -1)
         The pressure increment for the interpolated sounding
         exact : bool (optional; default = False)
@@ -684,6 +684,10 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         Precipitable Water (in)
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
+
+    if prof.pres[-1] > ptop:
+        ptop = prof.pres[-1]
+
     if exact:
         ind1 = np.where(pbot > prof.pres)[0].min()
         ind2 = np.where(ptop < prof.pres)[0].max()
