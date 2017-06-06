@@ -1,6 +1,6 @@
-#SHARPpy
+# SHARPpy
 
-######Sounding/Hodograph Analysis and Research Program in Python
+###### Sounding/Hodograph Analysis and Research Program in Python
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
@@ -34,7 +34,7 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 - [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
-#####Developer Requests:
+##### Developer Requests:
 <sup>[[Return to Top]](#sharppy)</sup>
 
 1.) Many people have put an immeasurable amount of time into developing this software package. 
@@ -42,7 +42,7 @@ If SHARPpy is used to develop a weather product or contributes to research that 
 scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
 this ready-made citation entry or provide a link back to this website:
     
- [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source  Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
+ [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
 
 http://sharppy.github.io/SHARPpy/index.html
 
