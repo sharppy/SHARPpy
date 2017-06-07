@@ -305,7 +305,7 @@ class BasicProfile(Profile):
         if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
             qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
         if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value >= 360 degrees.", ValueError)     
+            qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value > 360 degrees.", ValueError)     
 
 
         self.logp = np.log10(self.pres.copy())
