@@ -2516,7 +2516,7 @@ def dcape(prof):
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
         correction) and the energy accumulated is called the DCAPE.
 
-        Future adaptations of this function may utilize the Parcel/DefineParcel object.
+		Future adaptations of this function may utilize the Parcel/DefineParcel object.
 
         Parameters
         ----------

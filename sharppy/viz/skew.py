@@ -434,20 +434,20 @@ class plotSkewT(backgroundSkewT):
         a = ag.addAction(nocurs)
         self.popupmenu.addAction(a)
 
-        readout_cursor_ft = QAction(self)
-        readout_cursor_ft.setText("Readout Cursor in feet")
-        readout_cursor_ft.setCheckable(True)
-        readout_cursor_ft.triggered.connect(self.setReadoutCursorFt)
-        a = ag.addAction(readout_cursor_ft)
+        storm_motion_ft = QAction(self)
+        storm_motion_ft.setText("Readout Cursor in feet")
+        storm_motion_ft.setCheckable(True)
+        storm_motion_ft.triggered.connect(self.setReadoutCursorFt)
+        a = ag.addAction(storm_motion_ft)
         self.popupmenu.addAction(a)
-        
-        readout_cursor = QAction(self)
-        readout_cursor.setText("Readout Cursor in meters")
-        readout_cursor.setCheckable(True)
-        readout_cursor.triggered.connect(self.setReadoutCursorM)
-        a = ag.addAction(readout_cursor)
+
+        storm_motion = QAction(self)
+        storm_motion.setText("Readout Cursor in meters")
+        storm_motion.setCheckable(True)
+        storm_motion.triggered.connect(self.setReadoutCursorM)
+        a = ag.addAction(storm_motion)
         self.popupmenu.addAction(a)
-        
+
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
 
@@ -665,7 +665,7 @@ class plotSkewT(backgroundSkewT):
         tmp = tab.interp.temp(self.prof, self.readout_pres)
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
         
-        if hgt < 0 and tmp == 0 and dwp == 0:
+        if (hgt < 0 and tmp == 0 and dwp == 0) or (np.ma.is_masked(hgt) and np.ma.is_masked(tmp) and np.ma.is_masked(dwp)):
             self.hghtReadout.hide()
             self.tmpcReadout.hide()
             self.dwpcReadout.hide()  
@@ -904,7 +904,7 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
-            
+                
         if self.plotpbl:
             self.draw_pbl_level(qp)
         

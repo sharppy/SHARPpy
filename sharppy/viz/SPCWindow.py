@@ -14,7 +14,7 @@ import numpy as np
 import platform
 from os.path import expanduser
 import os
-from sharppy.version import __version__, __version_name__, __brand__
+from sharppy._sharppy_version import __version__, __version_name__, __brand__
 
 class SPCWidget(QWidget):
     """
@@ -74,7 +74,7 @@ class SPCWidget(QWidget):
             self.config.set('parcel_types', 'pcl2', 'ML')
             self.config.set('parcel_types', 'pcl3', 'FCST')
             self.config.set('parcel_types', 'pcl4', 'MU')
-        if not self.config.has_option('paths', 'save_img'):
+        if not self.config.has_option('paths', 'save_img') or not self.config.has_option('paths', 'save_txt'):
             self.config.set('paths', 'save_img', expanduser('~'))
             self.config.set('paths', 'save_txt', expanduser('~'))
 
@@ -444,12 +444,12 @@ class SPCWidget(QWidget):
         if self.left_inset == "WINTER" or self.right_inset == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
-        
+                    
         ## Do a check for setting the pbl
         if self.left_inset == "FIRE" or self.right_inset == "FIRE":
             self.sound.setPBLLevel(True)
             self.pbl = True
-        
+
         self.grid.addWidget(self.sound, 0, 0, 3, 1)
         self.grid.addWidget(self.text, 3, 0, 1, 2)
 
@@ -552,11 +552,11 @@ class SPCWidget(QWidget):
             if self.left_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
                 self.dgz = False
-            
+
             if self.left_inset == "FIRE" and self.pbl:
                 self.sound.setPBLLevel(False)
                 self.pbl = False
-            
+
             # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
             #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()

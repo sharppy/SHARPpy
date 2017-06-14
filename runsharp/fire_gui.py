@@ -34,7 +34,7 @@ from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders, getDecoder
-from sharppy.version import __version__, __version_name__, __upstream_version_name__, __upstream_version__
+from sharppy._sharppy_version import __version__, __version_name__, __upstream_version_name__, __upstream_version__
 
 from datasources import data_source
 from utils.async import AsyncThreads

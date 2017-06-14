@@ -2,11 +2,20 @@
 import glob
 import sharppy
 
+block_cipher = None
+
+
 a = Analysis(['SHARPpy.py'],
              pathex=[r'C:\Users\nickr\workspace\SHARPpy\runsharp'],
+             binaries=None,
+             datas=[],
              hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'dateutil', 'six'],
-             hookspath=None,
-             runtime_hooks=None)
+             hookspath=[],
+             runtime_hooks=[],
+             excludes=[],
+             win_no_prefer_redirects=False,
+             win_private_assemblies=False,
+             cipher=block_cipher)
 
 for b in a.binaries:
     if b[0] == '':
@@ -40,18 +49,22 @@ for d in a.datas:
     if 'pyconfig' in d[0]: 
         a.datas.remove(d)
         break
-        
-#print a.scripts
-#print a.binaries
-#print a.zipfiles
 
-pyz = PYZ(a.pure)
+pyz = PYZ(a.pure, a.zipped_data,
+             cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          a.binaries,
-          a.zipfiles,
-          a.datas,
+          exclude_binaries=True,
           name='SHARPpy',
           debug=False,
           strip=False,
-          console=False, icon='icons\\SHARPpy_imet.ico') #'radar.ico'
+          upx=True,
+          console=False,
+          icon='icons\\SHARPpy_imet.ico' )
+coll = COLLECT(exe,
+               a.binaries,
+               a.zipfiles,
+               a.datas,
+               strip=False,
+               upx=True,
+               name='SHARPpy')

@@ -1172,7 +1172,7 @@ KWAL,WAL,72402,Wallops Island,VA,US,37.94,-75.47,14,5,wal
 ,,,000953,,,41.9,-125.8,0,7,000953
 KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
 ,,,999250,,,-27.2,-109.4,51,7,999250
-KHMM,HMM,,Hamilton,MT,US,46.25,-114.15,1265,9,c17
+KHMM,HMM,,Hamilton,MT,US,46.25,-114.15,1265,9,hmm
 KLIT,LIT,,Little Rock/Adams,AR,US,34.73,-92.23,79,0,klit
 KLMT,LMT,,Klamath Falls,OR,US,42.16,-121.73,1246,6,klmt
 KLEB,LEB,72611,Lebanon Muni,NH,US,43.63,-72.3,171,6,kleb
@@ -1533,7 +1533,7 @@ KSYR,SYR,72519,Syracuse,NY,US,43.12,-76.12,127,3,ksyr
 ,,,000345,,,42.8,-109.81,2163,7,000345
 KAXN,AXN,,Alexandria,MN,US,45.87,-95.41,433,3,kaxn
 ,,,uhaz,,,64.73,177.5,5,7,uhaz
-,,,Fort Peck,MT,US,48.31,-105.1,634,7,fpk
+,,,Fort Peck,MT,US,48.31,-105.09,634,7,fpk
 ,,,s#6,,,25.0,-115.0,0,7,s#6
 KALI,ALI,,Alice Intl,TX,US,27.74,-98.04,53,6,kali
 KCIC,CIC,72497,Chico,CA,US,39.79,-121.85,73,7,kcic

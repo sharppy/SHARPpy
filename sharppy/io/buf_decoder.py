@@ -43,7 +43,7 @@ class BufDecoder(Decoder):
         profiles = {}
         dates = None
         mean_member = None
-        location = None
+        location = None        
 
         for n, mem_txt in enumerate(members):
             mem_name, mem_profs, mem_dates = self._parseMember(mem_txt)
@@ -54,7 +54,7 @@ class BufDecoder(Decoder):
                 mean_member = mem_name
             if location is None:
                 location = mem_profs[0].location
-        
+
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         
         if self._getBaseFile().split('_')[0].lower() in __first_guess_models__:
@@ -66,6 +66,7 @@ class BufDecoder(Decoder):
         prof_coll.setMeta('loc', location)
         prof_coll.setMeta('runs', dates[0].hour)
         prof_coll.setHighlightedMember(mean_member)
+        prof_coll.setMeta('loc', profiles[mean_member][0].location)
         return prof_coll
 
     def _parseMember(self, text):
