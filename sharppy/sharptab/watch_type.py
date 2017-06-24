@@ -152,7 +152,7 @@ def posneg_temperature(prof, start=-1):
     
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -263,7 +263,7 @@ def posneg_wetbulb(prof, start=-1):
 
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]

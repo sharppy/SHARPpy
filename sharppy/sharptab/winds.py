@@ -254,7 +254,6 @@ def non_parcel_bunkers_motion(prof):
     d = utils.MS2KTS(7.5)     # Deviation value emperically derived as 7.5 m/s
     msl6km = interp.to_msl(prof, 6000.)
     p6km = interp.pres(prof, msl6km)
-            
     # SFC-6km Mean Wind
     mnu6, mnv6 = mean_wind_npw(prof, prof.pres[prof.sfc], p6km)
     # SFC-6km Shear Vector
@@ -309,7 +308,8 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         upper = interp.to_msl(prof, upper)
         plower = interp.pres(prof, lower)
         pupper = interp.pres(prof, upper)
-        if np.isnan(plower) or np.isnan(pupper):
+        if np.isnan(plower) or np.isnan(pupper) or \
+            type(plower) == type(ma.masked) or type(pupper) == type(ma.masked):
             return np.ma.masked, np.ma.masked, np.ma.masked
         if exact:
             ind1 = np.where(plower >= prof.pres)[0].min()
