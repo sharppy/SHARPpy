@@ -781,6 +781,22 @@ class ConvectiveProfile(BasicProfile):
         self.left_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[2], stv=self.srwind[3])
         self.left_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[2], stv=self.srwind[3])
 
+        self.srw_eff = self.right_srw_eff
+        self.srw_ebw = self.right_srw_ebw
+        self.esrh = self.right_esrh
+        self.critical_angle = self.right_critical_angle
+        self.srw_1km = self.right_srw_1km
+        self.srw_3km = self.right_srw_3km
+        self.srw_6km = self.right_srw_6km
+        self.srw_8km = self.right_srw_8km
+        self.srw_4_5km = self.right_srw_4_5km
+        self.srw_lcl_el = self.right_srw_lcl_el
+        self.srw_0_2km = self.right_srw_0_2km
+        self.srw_4_6km = self.right_srw_4_6km
+        self.srw_9_11km = self.right_srw_9_11km
+        self.srh1km = self.right_srh1km
+        self.srh3km = self.right_srh3km
+
     def get_thermo(self):
         '''
         Function to generate thermodynamic indices.
@@ -875,6 +891,10 @@ class ConvectiveProfile(BasicProfile):
             self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
 
+        self.stp_fixed = self.right_stp_fixed
+        self.stp_cin = self.right_stp_cin
+        self.scp = self.right_scp
+
     def get_sars(self):
         '''
         Function to get the SARS analogues from the hail and
@@ -928,7 +948,10 @@ class ConvectiveProfile(BasicProfile):
         except Exception as e:
             self.right_supercell_matches = ([], [], 0, 0, 0)
             self.left_supercell_matches = ([], [], 0, 0, 0)
-                
+
+        self.supercell_matches = self.right_supercell_matches
+        self.matches = self.right_matches
+
     def get_watch(self):
         '''
         Function to get the possible watch type.
@@ -953,6 +976,9 @@ class ConvectiveProfile(BasicProfile):
         watch_types = watch_type.possible_watch(self, use_left=True)
         self.left_watch_type = watch_types[0][0]
         self.left_watch_type_color = watch_types[1][0]
+
+        self.watch_type = self.right_watch_type
+        self.watch_type_color = self.right_watch_type_color
 
     def get_traj(self):
         '''
