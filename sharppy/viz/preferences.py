@@ -453,8 +453,6 @@ class PrefDialog(QDialog):
         self._applyRadio('wind_units', self.wind_units)
         self._applyRadio('pw_units', self.pw_units)
 
-        self._applyRadio('calc_vector', self.calc_vector)
-
         self._config['preferences', 'color_style'] = self._color_style
         for item, color in PrefDialog._styles[self._color_style].iteritems():
             self._config['preferences', item] = color
@@ -477,7 +475,6 @@ class PrefDialog(QDialog):
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',
             ('preferences', 'pw_units'):'in',
-            ('preferences', 'calc_vector'):'Right Mover',
             ('preferences', 'color_style'):'standard'
         }
 
