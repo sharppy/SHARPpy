@@ -254,8 +254,6 @@ class plotText(backgroundText):
         self.pcl_cin_md_color = QtGui.QColor(prefs['pcl_cin_md_color'])
         self.pcl_cin_lo_color = QtGui.QColor(prefs['pcl_cin_lo_color'])
 
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
-
         if update_gui:
             self.clearData()
             self.plotBackground()

@@ -381,6 +381,9 @@ class SPCWidget(QWidget):
         self.sound.setParcel(parcel)
         self.storm_slinky.setParcel(parcel)
 
+        deviant = 'right' if self.default_prof.latitude >= 0 else 'left'
+        self.toggleVector(deviant)
+
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 

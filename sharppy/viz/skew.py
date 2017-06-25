@@ -622,7 +622,6 @@ class plotSkewT(backgroundSkewT):
 
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
-        self.use_left = kwargs['calc_vector'] == 'Left Mover'
 
         if update_gui:
             self.plotBitMap.fill(self.bg_color)

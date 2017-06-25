@@ -499,7 +499,6 @@ class ConvectiveProfile(BasicProfile):
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
         self.user_srwind = None
-        self.use_right = (self.latitude > 0)
 
         # Generate the fire weather paramters
         self.get_fire()

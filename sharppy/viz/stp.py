@@ -224,8 +224,6 @@ class plotSTP(backgroundSTP):
             QtGui.QColor(prefs['alert_l6_color']),
         ]
 
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
-
         if update_gui:
             if self.use_left:
                 self.esrh = self.prof.left_esrh[0]

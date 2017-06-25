@@ -380,9 +380,6 @@ class PrefDialog(QDialog):
         pw_units_box, self.pw_units = PrefDialog._createRadioSet("Precipitable Water Vapor Units", ["in", "cm"], default=self._config['preferences', 'pw_units'])
         layout.addWidget(pw_units_box)
         
-        calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
-        layout.addWidget(calc_vector_box)
-                
         return misc_box
 
     @staticmethod

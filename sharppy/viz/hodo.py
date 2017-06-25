@@ -568,8 +568,6 @@ class plotHodo(backgroundHodo):
     def setPreferences(self, update_gui=True, **kwargs):
         self.wind_units = kwargs['wind_units']
 
-        self.use_left = kwargs['calc_vector'] == 'Left Mover'
-
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])
         self.isotach_color = QtGui.QColor(kwargs['hodo_itach_color'])
