@@ -67,6 +67,8 @@ class BufDecoder(Decoder):
         prof_coll.setMeta('runs', dates[0].hour)
         prof_coll.setHighlightedMember(mean_member)
         prof_coll.setMeta('loc', profiles[mean_member][0].location)
+        prof_coll.setMeta('observed', False)
+        prof_coll.setMeta('base_time', dates[0])
         return prof_coll
 
     def _parseMember(self, text):

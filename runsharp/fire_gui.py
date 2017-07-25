@@ -29,7 +29,7 @@ if not os.path.exists(DATA_DIR):
 ARCHIVE_DIR = os.path.abspath(os.path.join(os.getcwd(), 'sharppy_archive'))
 if not os.path.exists(ARCHIVE_DIR):
     os.makedirs(ARCHIVE_DIR)
-
+  
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
@@ -308,7 +308,7 @@ class Picker(QWidget):
         self.loc = None
         ## the index of the item in the list that corresponds
         ## to the profile selected from the list
-        self.prof_idx = []
+        self.prof_idx = None
         ## set the default profile type to Observed
         self.model = "Observed"
         ## this is the default model initialization time
@@ -337,7 +337,7 @@ class Picker(QWidget):
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.button.setDisabled(True)
-        
+
         self.archive_sounding = QCheckBox('Archive')
         self.archive_sounding.setCheckState(Qt.CheckState.Checked)
 
@@ -629,7 +629,7 @@ class Picker(QWidget):
                 model = prof_collection.getMeta('model')
         else:
         ## otherwise, download with the data thread
-            prof_idx = None
+            prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
@@ -713,12 +713,12 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archi
     """
     Loads the data from a remote source. Has hooks for progress bars.
     """
-    
+        
     arc_file = join(ARCHIVE_DIR, '{date:s}_{model:s}_{site:s}.sharppy'.format(date=run.strftime('%Y%m%d%H'), model=data_source.getName().lower().replace(' ', '_'), site=loc['srcid'].lower()))
     
     if __text__ is not None:
         __text__.emit("Decoding File")
-    
+
     if exists(arc_file):
         url = arc_file
         decoder  = getDecoder('archive')
@@ -729,11 +729,11 @@ def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archi
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
-    
+
     if archive:
         with open(arc_file, 'wb') as out_file:
             out_file.write(compress(dumps(dec.getProfiles(indexes=None).serialize(stringify_date=True))))
-    
+
     profs = dec.getProfiles(indexes=indexes)
     return profs
 
@@ -764,7 +764,7 @@ class Main(QMainWindow):
         Puts the user inteface together
         """
         self.imet_tabs = QTabWidget(parent=self)
-        
+
         self.picker = Picker(self.config, parent=self)
         self.local_picker = LocalPicker(self.picker, parent=self)
         self.archive_picker = ArchivePicker(self.picker, parent=self)
@@ -797,6 +797,9 @@ class Main(QMainWindow):
         exit.triggered.connect(self.exitApp)        
         filemenu.addAction(exit)
 
+        pref = QAction("Preferences", self)
+        filemenu.addAction(pref)
+
         helpmenu = bar.addMenu("Help")
 
         about = QAction("About", self)
@@ -813,7 +816,7 @@ class Main(QMainWindow):
         Opens a file on the local disk.
         """
         path = self.config.get('paths', 'load_txt')
-        
+
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
         
         if len(link) == 0 or link[0] == '':
@@ -894,8 +897,6 @@ def main():
 
     # Create an application
     app = QApplication([])
-    #icon = abspath(join(dirname(__file__), 'icons/sharppy_imet.svg'))
-    #app.setWindowIcon(QIcon(icon))
     win = createWindow()
     app.setWindowIcon(win.windowIcon())
     sys.exit(app.exec_())

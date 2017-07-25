@@ -34,6 +34,8 @@ class ArchiveDecoder(Decoder):
         
         prof_coll = prof_collection.ProfCollection(serialized_data['profiles'], dates)
         prof_coll.setHighlightedMember(serialized_data['highlighted'])
+        if 'base_time' in serialized_data['meta']:
+            serialized_data['meta']['base_time'] = parser.parse(serialized_data['meta']['base_time'], ignoretz=True)
         for key in serialized_data['meta']:
             prof_coll.setMeta(key, serialized_data['meta'][key])
         return prof_coll

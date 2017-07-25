@@ -338,7 +338,7 @@ KREO,REO,,Rome,OR,US,42.58,-117.89,1235,6,reo
 KACV,ACV,,Arcata/Eureka,CA,US,40.99,-124.1,67,6,kacv
 ,,,g#4,,,30.46,-99.08,559,7,g#4
 KMOX,MOX,,Morris Muni,MN,US,45.5,-95.92,343,7,mrs
-,,,Fort Peck,MT,US,48.31,-105.09,634,7,fpk
+KFPK,FPK,,Charlotte/Fitch H Beach Muni,MI,US,42.57,-84.81,272,7,fpk
 PASW,SKW,70255,Skwentna,AK,US,61.97,-151.18,48,7,pasw
 CYPL,YPL,71845,Pickle Lake,ON,CA,51.48,-90.2,373,5,cypl
 KMHT,MHT,,Manchester,NH,US,42.94,-71.43,81,6,kmht
@@ -1095,7 +1095,7 @@ KPNE,PNE,,N Philadelphia,PA,US,40.09,-75.02,28,4,kpne
 KGZH,GZH,,Evergreen,AL,US,31.42,-87.04,78,7,kgzh
 KDHN,DHN,,Dothan,AL,US,31.32,-85.45,113,6,kdhn
 KEAU,EAU,,Eau Claire,WI,US,44.88,-91.48,276,4,keau
-KPSR,PSR,74626,Phoenix/Wfo,AZ,US,33.4333333333,-112.016666667,342,8,psr
+,,,Ferris Mountain,WY,US,42.2,-107.2,2089,8,psr
 KHFD,HFD,,Hartfrd/Brainard,CT,US,41.73,-72.65,4,4,khfd
 ,,,g#c,,,21.4,-93.13,0,7,g#c
 ,,,nw6,,,39.69,-133.25,0,7,nw6

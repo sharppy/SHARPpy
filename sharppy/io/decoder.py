@@ -83,7 +83,7 @@ class Decoder(object):
 #       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
         return file_data
 
-    def getProfiles(self, indexes=[0]):
+    def getProfiles(self, indexes=None):
         '''
             Returns a list of profile objects generated from the
             file that was read in.
@@ -92,10 +92,13 @@ class Decoder(object):
             ----------
             prof_idxs : list (optional)
                 A list of indices corresponding to the profiles to be returned.
-                Default is [0]
+                Default is to return the full list of profiles
 
         '''
-        return self._prof_collection.subset(indexes)
+        prof_col = self._prof_collection
+        if indexes is not None:
+            prof_col = prof_col.subset(indexes)
+        return prof_col
 
     def getStnId(self):
         return self._prof_collection.getMeta('loc')

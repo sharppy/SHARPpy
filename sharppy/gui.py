@@ -7,7 +7,7 @@ from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.viz import plotGeneric
 from sharppy.sharptab.constants import *
 from sharppy.sounding import prof, plot_title
-from sharppy.version import __brand__
+from sharppy._sharppy_version import __brand__
 
 # Setup Application
 app = QtGui.QApplication(sys.argv)

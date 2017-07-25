@@ -671,7 +671,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         pbot : number (optional; default surface)
         Pressure of the bottom level (hPa)
         ptop : number (optional; default 400 hPa)
-        Pressure of the top level (hPa)
+        Pressure of the top level (hPa).
         dp : negative integer (optional; default = -1)
         The pressure increment for the interpolated sounding
         exact : bool (optional; default = False)
@@ -684,6 +684,10 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         Precipitable Water (in)
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
+
+    if prof.pres[-1] > ptop:
+        ptop = prof.pres[-1]
+
     if exact:
         ind1 = np.where(pbot > prof.pres)[0].min()
         ind2 = np.where(ptop < prof.pres)[0].max()
@@ -1116,6 +1120,7 @@ def lapse_rate(prof, lower, upper, pres=True):
         lapse rate  (float [C/km])
         '''
     if pres:
+        if (prof.pres[-1] > upper): return ma.masked 
         p1 = lower
         p2 = upper
         z1 = interp.hght(prof, lower)
@@ -2384,6 +2389,8 @@ def mmp(prof, **kwargs):
     agl_hght = interp.to_agl(prof, prof.hght)
     lowest_idx = np.where(agl_hght <= 1000)[0]
     highest_idx = np.where((agl_hght >= 6000) & (agl_hght < 10000))[0]
+    if len(lowest_idx) == 0 or len(highest_idx) == 0:
+        return ma.masked
     possible_shears = np.empty((len(lowest_idx),len(highest_idx)))
     pbots = interp.pres(prof, prof.hght[lowest_idx])
     ptops = interp.pres(prof, prof.hght[highest_idx])
@@ -2393,7 +2400,6 @@ def mmp(prof, **kwargs):
             if b < t: continue
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
             possible_shears[b,t] = utils.mag(u_shear, v_shear)
-
     max_bulk_shear = utils.KTS2MS(np.nanmax(possible_shears.ravel()))
     lr38 = lapse_rate(prof, 3000., 8000., pres=False)
     plower = interp.pres(prof, interp.to_msl(prof, 3000.))

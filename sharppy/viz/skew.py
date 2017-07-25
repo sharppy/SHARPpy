@@ -7,6 +7,7 @@ from PySide import QtGui, QtCore
 from PySide.QtGui import *
 from PySide.QtCore import *
 from PySide.QtOpenGL import *
+from utils.utils import total_seconds
 
 from datetime import datetime, timedelta
 
@@ -440,7 +441,7 @@ class plotSkewT(backgroundSkewT):
         storm_motion_ft.triggered.connect(self.setReadoutCursorFt)
         a = ag.addAction(storm_motion_ft)
         self.popupmenu.addAction(a)
-
+        
         storm_motion = QAction(self)
         storm_motion.setText("Readout Cursor in meters")
         storm_motion.setCheckable(True)
@@ -477,7 +478,11 @@ class plotSkewT(backgroundSkewT):
 
         plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if model == "Archive":
-            plot_title += "  (User Selected" + modified_str + ")"
+            fhour_str = ""
+            if not prof_coll.getMeta('observed'):
+                fhour = int(total_seconds(date - prof_coll.getMeta('base_time')) / 3600)
+                fhour_str = " F%03d" % fhour
+            plot_title += "  (User Selected" + fhour_str + modified_str + ")"
         elif model == "Analog":
             date = prof_coll.getAnalogDate()
             plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
@@ -485,8 +490,8 @@ class plotSkewT(backgroundSkewT):
         elif observed:
             plot_title += "  (Observed" + modified_str + ")"
         else:
-            fhour = prof_coll.getMeta('fhour', index=True)
-            plot_title += "  (" + run + "  " + model + "  " + fhour + modified_str + ")"
+            fhour = int(total_seconds(date - prof_coll.getMeta('base_time')) / 3600)
+            plot_title += "  (" + run + "  " + model + "  " + ("F%03d" % fhour) + modified_str + ")"
         return plot_title
 
     def liftparcellevel(self, i):
@@ -664,7 +669,7 @@ class plotSkewT(backgroundSkewT):
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         tmp = tab.interp.temp(self.prof, self.readout_pres)
         dwp = tab.interp.dwpt(self.prof, self.readout_pres)
-        
+
         if (hgt < 0 and tmp == 0 and dwp == 0) or (np.ma.is_masked(hgt) and np.ma.is_masked(tmp) and np.ma.is_masked(dwp)):
             self.hghtReadout.hide()
             self.tmpcReadout.hide()
@@ -773,7 +778,7 @@ class plotSkewT(backgroundSkewT):
     def setReadoutCursorM(self):
         self.readout_in_feet = False
         self.setReadoutCursor()
-        
+
     def setReadoutCursor(self):
         self.parcelmenu.setEnabled(True)
         self.readout = True
@@ -904,10 +909,10 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color="#FF00FF")
-                
+
         if self.plotpbl:
             self.draw_pbl_level(qp)
-        
+
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
         self.drawBarbs(self.prof, qp)

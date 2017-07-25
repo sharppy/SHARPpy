@@ -24,19 +24,19 @@
             <points csv="hrrr.csv" />
         </outlet>
     </datasource>
-    <datasource name="4km NAM" ensemble="false" observed="false">
-        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM4KM/{cycle}/nam4km_{srcid}.buf" format="bufkit" >
+    <datasource name="3km NAM" ensemble="false" observed="false">
+        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAMNEST/{cycle}/namnest_{srcid}.buf" format="bufkit" >
             <time range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
-            <points csv="nam4km.csv" />
+            <points csv="nam3km.csv" />
         </outlet>
     </datasource>
     <datasource name="SREF" ensemble="true" observed="false">
-        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/{cycle}/sref_{srcid}.buz" format="bufkit" >
+        <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/{cycle}/sref_{srcid}.buf" format="bufkit" >
             <time range="84" delta="1" offset="3" delay="4" cycle="6" archive="24"/>
             <points csv="sref.csv" />
         </outlet>
     </datasource>
-        <datasource name="HiResW CONUS ARW" ensemble="false" observed="false">
+    <datasource name="HiResW CONUS ARW" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HIRESW/{cycle}/arw/arw_{srcid}.buf" format="bufkit" >
             <time range="48" delta="1" offset="0" delay="4" cycle="12" archive="24"/>
             <points csv="hires_conus.csv" />

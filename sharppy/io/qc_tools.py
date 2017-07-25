@@ -139,7 +139,7 @@ def isWDIRValid(wdir):
         True/False: True if the wind direction array is > 0 in size and
                     if the wind directions are between 0 and 360.
     '''
-    idx = np.ma.where((wdir >= 360) | (wdir < 0))[0]
+    idx = np.ma.where((wdir > 360) | (wdir < 0))[0]
     if len(idx) == 0:
         return True
     else:

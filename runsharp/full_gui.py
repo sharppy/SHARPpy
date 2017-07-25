@@ -26,7 +26,7 @@ from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
-from sharppy.version import __version__, __version_name__
+from sharppy._sharppy_version import __version__, __version_name__
 from datasources import data_source
 from utils.async import AsyncThreads
 from utils.progress import progress
@@ -410,8 +410,6 @@ class Picker(QWidget):
         :return:
         """
 
-        profs = []
-        dates = []
         failure = False
 
         exc = ""
@@ -419,33 +417,17 @@ class Picker(QWidget):
         ## if the profile is an archived file, load the file from
         ## the hard disk
         if filename is not None:
+            model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
             disp_name = stn_id
-            prof_idx = range(len(dates))
 
             run = prof_collection.getCurrentDate()
-            
-            if not prof_collection.hasMeta('fhours'):
-                fhours = ["F{0:03d}".format(x) for x in range(len(prof_collection._dates))]
-            else:
-                fhours = prof_collection.getMeta('fhours')
-            
-            if not prof_collection.hasMeta('observed'):
-                observed = True
-            else:
-                observed = prof_collection.getMeta('observed')
-                
-            if not prof_collection.hasMeta('model'):
-                model = "Archive"
-            else:
-                model = prof_collection.getMeta('model')
         else:
         ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
-            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -458,16 +440,12 @@ class Picker(QWidget):
             else:
                 prof_collection = ret[0]
 
-            fhours = [ "F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx ]
-
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
-            prof_collection.setMeta('fhour', fhours)
-            prof_collection.setMeta('observed', observed)
 
-            if not observed:
+            if not prof_collection.getMeta('observed'):
                 # If it's not an observed profile, then generate profile objects in background.
                 prof_collection.setAsync(Picker.async)
 
@@ -479,6 +457,8 @@ class Picker(QWidget):
 
             self.focusSkewApp()
             self.skew.addProfileCollection(prof_collection)
+        else:
+            raise exc
 
     def skewAppClosed(self):
         """
@@ -510,7 +490,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
-        profs = dec.getProfiles(indexes=None)
+        profs = dec.getProfiles()
         stn_id = dec.getStnId()
 
         return profs, stn_id
@@ -604,7 +584,10 @@ class Main(QMainWindow):
         """
         Opens a file on the local disk.
         """
-        path = self.config.get('paths', 'load_txt')
+        if self.config.has_option('paths', 'load_txt'):
+            path = self.config.get('paths', 'load_txt')
+        else:
+            path = expanduser('~')
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
         

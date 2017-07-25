@@ -8,11 +8,13 @@ from bufrpy.value import BufrValue
 from datetime import datetime, timedelta
 from calendar import timegm
 from io import BytesIO
+from numpy import array, floor
 
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
 
 TIME_ADJUST = False
+MAX_UNTHINNED_LEVELS = 100
 
 meta_fields = {'SHIP OR MOBILE LAND STATION IDENTIFIER'                     : ['id',     lambda x: ''.join([i if ord(i) < 128 else '' for i in x.replace('\x00','').strip()])], \
                'YEAR'                                                       : ['year',   lambda x: int(x)], \
@@ -94,9 +96,12 @@ class IMETBufrDecoder(Decoder):
             for x in mask:
                 for field in data:
                     data[field].pop(x)
-            
-            profiles.append(profile.create_profile(profile='raw', pres=data['pres'], hght=data['hght'], tmpc=data['temp'], dwpc=data['dwpt'],
-                wdir=data['wdir'], wspd=data['wspd'], location=location, date=meta_data['date'], latitude=35.))
+            if len(data['hght']) > MAX_UNTHINNED_LEVELS:
+                thinning = int(floor(len(data['hght']) / float(MAX_UNTHINNED_LEVELS)))
+            else:
+                thinning = 1
+            profiles.append(profile.create_profile(profile='raw', pres=array(data['pres'])[::thinning], hght=array(data['hght'])[::thinning], tmpc=array(data['temp'])[::thinning], dwpc=array(data['dwpt'])[::thinning],
+                wdir=array(data['wdir'])[::thinning], wspd=array(data['wspd'])[::thinning], location=location, date=meta_data['date'], latitude=35.))
             dates.append(meta_data['date'])
 
         prof_coll = prof_collection.ProfCollection(

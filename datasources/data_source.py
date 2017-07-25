@@ -39,7 +39,11 @@ def loadDataSources(ds_dir=HOME_DIR):
         root = ET.parse(ds_file).getroot()
         for src in root:
             name = src.get('name')
-            ds[name] = DataSource(src)
+            try:
+                ds[name] = DataSource(src)
+            except:
+                print('Unable to process %s file'%os.path.basename(ds_file))
+
     return ds
 
 def _pingURL(hostname, timeout=1):
@@ -47,7 +51,9 @@ def _pingURL(hostname, timeout=1):
         urllib2.urlopen(hostname, timeout=timeout)
     except urllib2.URLError:
         return False
-        
+    except socket.timeout as e:
+        return False
+
     return True
 
 def pingURLs(ds_dict):
@@ -62,6 +68,11 @@ def pingURLs(ds_dict):
 
     for url in urls.iterkeys():
         urls[url] = _pingURL(url)
+
+        if urls[url]:
+            # A bit of a hack. Since we're only using this to check for an Internet connection, we don't need to check
+            # any more if we find one.
+            break
     return urls
 
 class Outlet(object):
@@ -134,7 +145,7 @@ class Outlet(object):
 
         daily_cycles = self.getCycles()
         time_counter = daily_cycles.index(start.hour)
-        archive_len = self.getArchiveLen() 
+        archive_len = self.getArchiveLen()
 
         cycles = []
         cur_time = start
@@ -208,7 +219,7 @@ class Outlet(object):
 
     def hasProfile(self, point, cycle):
         times = self.getAvailableTimes()
-        has_prof = cycle in times 
+        has_prof = cycle in times
 
         if has_prof:
             stns = self.getAvailableAtTime(dt=cycle)
@@ -316,7 +327,7 @@ class DataSource(object):
         outlet = self._getOutletWithProfile(stn, cycle_dt, outlet)
         url_base = self._outlets[outlet].getURL()
 
-        fmt = { 
+        fmt = {
             'srcid':urllib.quote(stn['srcid']),
             'cycle':"%02d" % cycle_dt.hour,
             'date':cycle_dt.strftime("%y%m%d")
