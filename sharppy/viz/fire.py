@@ -27,10 +27,9 @@ class backgroundFire(QtGui.QFrame):
             "  border-color: #3399CC;}")
         self.lpad = 5; self.rpad = 5
         self.tpad = 3; self.bpad = 3
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
+        self.hgt = self.size().height()
+        
+        fsize = np.floor(.06 * self.hgt) - 3
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.fosberg_font = QtGui.QFont('Helvetica', fsize + 2)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
@@ -69,7 +68,7 @@ class backgroundFire(QtGui.QFrame):
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 2
-        y1 = self.labels + 4
+        y1 = self.labels - 8
 
         qp.setFont(self.label_font)
         color = QtGui.QColor('#00CC33')
@@ -95,7 +94,7 @@ class backgroundFire(QtGui.QFrame):
             rect1 = QtCore.QRect(self.brx/2, y1, self.brx/2 - self.brx/10, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, i)
             y1 += self.label_height + sep + self.os_mod
-        
+        y1 += 2
         pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine( 0, y1 + 3, self.brx, y1 + 3 )
@@ -105,7 +104,7 @@ class backgroundFire(QtGui.QFrame):
         color = QtGui.QColor('#FF6633') 
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        self.moswindsep = 7
+        self.moswindsep = 6
         label = ['', '','','','','','Derived Indices']
         for i in label: 
             rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
@@ -155,6 +154,7 @@ class plotFire(backgroundFire):
 
         # Fire indices
         self.fosberg = prof.fosberg
+        self.inital_haines_hght = prof.haines_hght
         self.haines_hght = prof.haines_hght
         self.haines_index = [prof.haines_low, prof.haines_mid, prof.haines_high]
         self.sfc_rh = prof.sfc_rh
@@ -254,9 +254,11 @@ class plotFire(backgroundFire):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.fosberg_font)
-        
+        haines_height_change = ''
+        if self.haines_hght != self.inital_haines_hght:
+            haines_height_change = '*'
         rect1 = QtCore.QRect(0, self.haines_y1, self.haines_width, self.label_height - self.os_mod)
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Haines Index (' + haines_height_label[self.haines_hght] + ') = ' + tab.utils.INT2STR(self.haines_index[self.haines_hght]))
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'Haines Index (' + haines_height_label[self.haines_hght] + haines_height_change + ') = ' + tab.utils.INT2STR(self.haines_index[self.haines_hght]))
     
     def getHainesFormat(self):
         if self.haines_index[self.haines_hght] == 2:
@@ -352,7 +354,7 @@ class plotFire(backgroundFire):
             rect1 = QtCore.QRect(self.moist_x, y1, self.moist_width, self.label_height)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, label[i])
             y1 += self.label_height + sep + self.os_mod
-        
+        y1 += 6
         color = QtGui.QColor(WHITE)
         qp.setFont(self.label_font) 
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
