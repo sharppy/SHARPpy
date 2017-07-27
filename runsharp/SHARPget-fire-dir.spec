@@ -5,7 +5,7 @@ import sharppy
 block_cipher = None
 
 
-a = Analysis(['SHARPpy.py'],
+a = Analysis(['SHARPget.py'],
              pathex=[r'C:\Users\nickr\workspace\SHARPpy\runsharp'],
              binaries=None,
              datas=[],
@@ -61,11 +61,11 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False,
-          icon='icons\\SHARPpy_imet.ico' )
+          icon='icons\\SHARPget_imet.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=False,
                upx=True,
-               name='SHARPpy')
+               name='SHARPget')
