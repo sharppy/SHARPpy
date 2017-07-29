@@ -3,11 +3,45 @@ from PySide.QtGui import *
 import os
 import os.path
 from profileList import ProfileList, createList
-from utils.async import AsyncThreads
 from sharppy.io.decoder import getDecoders
 from bz2 import compress
 from json import dumps
 
+class DownloadThread(QThread):
+    status_update = Signal(str)
+    def __init__(self, profile_list, archive_path):
+        super(DownloadThread, self).__init__()
+        self.profile_list = profile_list
+        self.archive_path = archive_path    
+    def __del__(self):
+        self.wait()
+    def run(self):
+        download_count = 0
+        for x in range(len(self.profile_list)):
+            if self.profile_list[x].enabled:
+                self.status_update.emit(self.profile_list[x].url)
+                for decname, deccls in getDecoders().iteritems():
+                    try:
+                        dec = deccls(self.profile_list[x].url)
+                        break
+                    except:
+                        dec = None
+                        continue
+                if dec is not None:
+                    self.status_update.emit(' - Downloaded')
+                    try:
+                        profs = dec.getProfiles(indexes=None)
+                        file_name = os.path.join(self.archive_path, self.profile_list[x].get_archive_file(profs.getCurrentDate()))
+                        with open(file_name, 'wb') as out_file:
+                            out_file.write(compress(dumps(profs.serialize(stringify_date=True))))
+                        self.status_update.emit(', Archived\n')
+                        download_count += 1
+                    except:
+                        self.status_update.emit(', Archive Failed\n')
+                else:
+                    self.status_update.emit(' - Download Failed\n')
+        self.status_update.emit('\nDone.\nSaved {0:d} profile{1:s} successfully'.format(download_count, '' if download_count == 1 else 's'))
+        
 class AddEditDialog(QDialog):
     def __init__(self, title, model=None, loc=None, url=None, enabled=None, parent=None):
         super(AddEditDialog, self).__init__(parent)
@@ -103,7 +137,6 @@ class LogHighlighter(QSyntaxHighlighter):
                 index = expression.indexIn(text, index + length)
 
 class SHARPGetGUI(QWidget):
-    async = AsyncThreads(2, False)
     def __init__(self, config, **kwargs):
         super(SHARPGetGUI, self).__init__(**kwargs)
         self.__lists__ = []
@@ -224,39 +257,9 @@ class SHARPGetGUI(QWidget):
     def update_log(self, text):
         self.log_view.setPlainText(self.log_view.toPlainText() + text)
     def download_clicked(self):
-        def callback(ret_val):
-            download_count = ret_val[0]
-            self.update_log('\nDone.\nSaved {0:d} profile{1:s} successfully'.format(download_count, '' if download_count == 1 else 's'))
-        SHARPGetGUI.async.post(self.download_list, callback)
-    def download_list(self):
-        download_count = 0
-        self.log_view.setPlainText('')
-        profile_list = self.__lists__[self.list_combobox.currentIndex()]
-        from time import sleep
-        for x in range(len(profile_list)):
-            if profile_list[x].enabled:
-                self.update_log(profile_list[x].url)
-                for decname, deccls in getDecoders().iteritems():
-                    try:
-                        dec = deccls(profile_list[x].url)
-                        break
-                    except:
-                        dec = None
-                        continue
-                if dec is not None:
-                    self.update_log(' - Downloaded')
-                    try:
-                        profs = dec.getProfiles(indexes=None)
-                        file_name = os.path.join(self.config.get('paths', 'archive_path'), profile_list[x].get_archive_file(profs.getCurrentDate()))
-                        with open(file_name, 'wb') as out_file:
-                            out_file.write(compress(dumps(profs.serialize(stringify_date=True))))
-                        self.update_log(', Archived\n')
-                        download_count += 1
-                    except:
-                        self.update_log(', Archive Failed\n')
-                else:
-                    self.update_log(' - Download Failed\n')
-        return download_count
+        self.download_worker = DownloadThread(self.__lists__[self.list_combobox.currentIndex()], self.config.get('paths', 'archive_path'))
+        self.download_worker.status_update.connect(self.update_log)
+        self.download_worker.start()
     def dropdown_menu(self, item_list):
         """
         Create and return a dropdown menu containing items in item_list.
