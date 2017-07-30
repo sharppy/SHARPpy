@@ -13,7 +13,7 @@ __classname__ = "FSLDecoder"
 
 MISSING = '99999'
 
-MONTHS = dict([(datetime.now().replace(month=x).strftime('%b').upper(), x) for x in range(1,13)])
+MONTHS = dict([(datetime.now().replace(month=x, day=1).strftime('%b').upper(), x) for x in range(1,13)])
 DIRECTIONS = {'N':1, 'S':-1, 'E':1, 'W':-1}
 
 def qc_float(value):

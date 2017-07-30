@@ -30,6 +30,12 @@ class backgroundFire(QtGui.QFrame):
         self.hgt = self.size().height()
         
         fsize = np.floor(.06 * self.hgt) - 3
+
+        if self.physicalDpiX() > 75:
+                fsize = min(8, fsize)
+        else:
+            fsize = min(10, fsize)
+
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.fosberg_font = QtGui.QFont('Helvetica', fsize + 2)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
