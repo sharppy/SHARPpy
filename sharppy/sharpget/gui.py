@@ -256,7 +256,9 @@ class SHARPGetGUI(QWidget):
                 self.update_list_profiles(selected_index)
     def update_log(self, text):
         self.log_view.setPlainText(self.log_view.toPlainText() + text)
+        self.log_view.verticalScrollBar().setValue(self.log_view.verticalScrollBar().maximum())
     def download_clicked(self):
+        self.log_view.setPlainText('')
         self.download_worker = DownloadThread(self.__lists__[self.list_combobox.currentIndex()], self.config.get('paths', 'archive_path'))
         self.download_worker.status_update.connect(self.update_log)
         self.download_worker.start()

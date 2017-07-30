@@ -48,7 +48,7 @@ class crasher(object):
             except:
                 ret = None
                 msg = "Well, this is embarrassing.\nSHARPGet broke. If it keeps happening, send the detailed information to the developers."
-                data = "SHARP Get v%s %s\n" % (__version__, __version_name__) + \
+                data = "SHARPGet v%s %s\n" % (__version__, __version_name__) + \
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
 

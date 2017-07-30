@@ -883,7 +883,7 @@ class Main(QMainWindow):
 
     def openSHARPGet(self):
         self.sharpget_gui = SHARPGetGUI(self.config)
-        self.sharpget_gui.setWindowTitle('SHARP Get')
+        self.sharpget_gui.setWindowTitle('SHARPGet')
         icon = abspath(join(dirname(__file__), 'icons/SHARPget_imet.png'))
         self.sharpget_gui.setWindowIcon(QIcon(icon))
         self.sharpget_gui.resize(750, 545)
