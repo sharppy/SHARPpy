@@ -768,13 +768,17 @@ class Main(QMainWindow):
         Puts the user inteface together
         """
         self.imet_tabs = QTabWidget(parent=self)
-
+        if not self.config.has_section('selector'):
+            self.config.add_section('selector')
+            self.config.set('selector', 'default_tab', 0)
         self.picker = Picker(self.config, parent=self)
         self.local_picker = LocalPicker(self.picker, parent=self)
         self.archive_picker = ArchivePicker(self.picker, parent=self)
         self.imet_tabs.addTab(self.local_picker, 'Incident Sounding')
         self.imet_tabs.addTab(self.picker, 'Model Data')
         self.imet_tabs.addTab(self.archive_picker, 'Archive')
+        self.imet_tabs.setCurrentIndex(self.config.getint('selector', 'default_tab'))
+        self.imet_tabs.currentChanged.connect(self.tab_changed)
         self.setCentralWidget(self.imet_tabs)
         self.createMenuBar()
         
@@ -819,6 +823,9 @@ class Main(QMainWindow):
 
     def exitApp(self):
         self.close()
+
+    def tab_changed(self, index):
+        self.config.set('selector', 'default_tab', index)
 
     @crasher(exit=False)
     def openFile(self):
@@ -883,6 +890,7 @@ class Main(QMainWindow):
 
     def openSHARPGet(self):
         self.sharpget_gui = SHARPGetGUI(self.config)
+        self.sharpget_gui.download_complete.connect(self.archive_picker.update_date_list)
         self.sharpget_gui.setWindowTitle('SHARPGet')
         icon = abspath(join(dirname(__file__), 'icons/SHARPget_imet.png'))
         self.sharpget_gui.setWindowIcon(QIcon(icon))

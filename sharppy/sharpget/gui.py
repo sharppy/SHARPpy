@@ -9,6 +9,8 @@ from json import dumps
 
 class DownloadThread(QThread):
     status_update = Signal(str)
+    archive_update = Signal()
+    download_complete = Signal()
     def __init__(self, profile_list, archive_path):
         super(DownloadThread, self).__init__()
         self.profile_list = profile_list
@@ -41,6 +43,7 @@ class DownloadThread(QThread):
                 else:
                     self.status_update.emit(' - Download Failed\n')
         self.status_update.emit('\nDone.\nSaved {0:d} profile{1:s} successfully'.format(download_count, '' if download_count == 1 else 's'))
+        self.download_complete.emit()
         
 class AddEditDialog(QDialog):
     def __init__(self, title, model=None, loc=None, url=None, enabled=None, parent=None):
@@ -137,6 +140,8 @@ class LogHighlighter(QSyntaxHighlighter):
                 index = expression.indexIn(text, index + length)
 
 class SHARPGetGUI(QWidget):
+    archive_update = Signal()
+    download_complete = Signal()
     def __init__(self, config, **kwargs):
         super(SHARPGetGUI, self).__init__(**kwargs)
         self.__lists__ = []
@@ -261,7 +266,15 @@ class SHARPGetGUI(QWidget):
         self.log_view.setPlainText('')
         self.download_worker = DownloadThread(self.__lists__[self.list_combobox.currentIndex()], self.config.get('paths', 'archive_path'))
         self.download_worker.status_update.connect(self.update_log)
+        self.download_worker.download_complete.connect(self.download_done)
+        self.download_worker.archive_update.connect(self.archive_updated)
+        self.download.setEnabled(False)
         self.download_worker.start()
+    def download_done(self):
+        self.download.setEnabled(True)
+        self.download_complete.emit()
+    def archive_updated(self):
+        self.archive_update.emit()
     def dropdown_menu(self, item_list):
         """
         Create and return a dropdown menu containing items in item_list.
