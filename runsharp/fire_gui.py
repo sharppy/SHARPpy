@@ -22,13 +22,19 @@ if frozenutils.isFrozen():
     sys.stdout = outfile
     sys.stderr = outfile
 
+DATA_DIR = os.path.abspath(os.path.join(os.getcwd(), 'sharppy_soundings'))
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR)
+
+ARCHIVE_DIR = os.path.abspath(os.path.join(os.getcwd(), 'sharppy_archive'))
+if not os.path.exists(ARCHIVE_DIR):
+    os.makedirs(ARCHIVE_DIR)
   
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders, getDecoder
 from sharppy._sharppy_version import __version__, __version_name__, __upstream_version_name__, __upstream_version__
-from sharppy.sharpget.gui import SHARPGetGUI
 
 from datasources import data_source
 from utils.async import AsyncThreads
@@ -116,7 +122,7 @@ class ArchivePicker(QWidget):
         self.load_button.setDisabled(True)
         self.archive_files = {}
         
-        files = listdir(self.picker.config.get('paths', 'archive_path'))
+        files = listdir(ARCHIVE_DIR)
         files.sort()
         
         for item in files:
@@ -157,7 +163,7 @@ class ArchivePicker(QWidget):
     def station_selected(self):
         self.load_button.setDisabled(False)
     def load_archive_file(self):
-        file_name = join(self.picker.config.get('paths', 'archive_path'), '_'.join([datetime.strptime(self.file_date_list.currentItem().text(), Picker.run_format).strftime('%Y%m%d%H'),
+        file_name = join(ARCHIVE_DIR, '_'.join([datetime.strptime(self.file_date_list.currentItem().text(), Picker.run_format).strftime('%Y%m%d%H'),
                                                                   self.get_model_file_name(self.file_model_list.currentItem().text()),
                                                                   self.file_site_list.currentItem().text().lower()])+'.sharppy')
         self.picker.skewApp(filename=file_name)
@@ -218,7 +224,7 @@ class LocalPicker(QWidget):
     def __init__(self, picker, **kwargs):
         super(LocalPicker, self).__init__(**kwargs)
         self.picker = picker
-        self.search_directory = self.picker.config.get('paths', 'local_path')
+        self.search_directory = DATA_DIR
         self.__initUI()
     def __initUI(self):
         self.control_layout = QVBoxLayout()
@@ -279,7 +285,6 @@ class LocalPicker(QWidget):
         new_path = QFileDialog.getExistingDirectory(self, "Change Folder", self.search_directory, QFileDialog.ShowDirsOnly)
         if new_path is not None and new_path != '':
             self.search_directory = abspath(new_path)
-            self.picker.config.set('paths', 'local_path', self.search_directory)
             self.file_label.setText("Select File (Current Folder: " + self.search_directory + " )")
             self.update_files()
 class Picker(QWidget):
@@ -633,7 +638,7 @@ class Picker(QWidget):
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
-            ret = loadData(self.data_sources[model], self.loc, run, prof_idx, archive=self.archive_sounding.isChecked(), archive_path=self.config.get('paths', 'archive_path'))
+            ret = loadData(self.data_sources[model], self.loc, run, prof_idx, archive=self.archive_sounding.isChecked())
 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
@@ -704,14 +709,12 @@ class Picker(QWidget):
         return self.has_connection
 
 @progress(Picker.async)
-def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archive=False, archive_path=None):
+def loadData(data_source, loc, run, indexes, __text__=None, __prog__=None, archive=False):
     """
     Loads the data from a remote source. Has hooks for progress bars.
     """
-    if archive_path is not None:  
-        arc_file = join(archive_path, '{date:s}_{model:s}_{site:s}.sharppy'.format(date=run.strftime('%Y%m%d%H'), model=data_source.getName().lower().replace(' ', '_'), site=loc['srcid'].lower()))
-    else:
-        archive = False
+        
+    arc_file = join(ARCHIVE_DIR, '{date:s}_{model:s}_{site:s}.sharppy'.format(date=run.strftime('%Y%m%d%H'), model=data_source.getName().lower().replace(' ', '_'), site=loc['srcid'].lower()))
     
     if __text__ is not None:
         __text__.emit("Decoding File")
@@ -751,14 +754,7 @@ class Main(QMainWindow):
         if not self.config.has_section('paths'):
             self.config.add_section('paths')
             self.config.set('paths', 'load_txt', expanduser('~'))
-        if not self.config.has_option('paths', 'archive_path'):
-            self.config.set('paths', 'archive_path', os.path.abspath(os.path.join(os.getcwd(), 'archive')))
-            if not os.path.exists(self.config.get('paths', 'archive_path')):
-                os.makedirs(self.config.get('paths', 'archive_path'))
-        if not self.config.has_option('paths', 'local_path'):
-            self.config.set('paths', 'local_path', os.path.abspath(os.path.join(os.getcwd(), 'soundings')))
-            if not os.path.exists(self.config.get('paths', 'local_path')):
-                os.makedirs(self.config.get('paths', 'local_path'))
+
         self.resize(969, 635)
 
         self.__initUI()
@@ -800,11 +796,6 @@ class Main(QMainWindow):
         opendata = QAction("Open", self, shortcut=QKeySequence("Ctrl+O"))
         opendata.triggered.connect(self.openFile)
         filemenu.addAction(opendata)
-
-        opensharpget = QAction("SHARPget", self)
-        opensharpget.triggered.connect(self.openSHARPGet)
-        filemenu.addAction(opensharpget)
-
         filemenu.addSeparator()
 
         exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
@@ -887,16 +878,6 @@ class Main(QMainWindow):
         """.format(__version__, __version_name__, __upstream_version_name__, __upstream_version__, cur_year)
         msgBox.setText(str)
         msgBox.exec_()
-
-    def openSHARPGet(self):
-        self.sharpget_gui = SHARPGetGUI(self.config)
-        self.sharpget_gui.download_complete.connect(self.archive_picker.update_date_list)
-        self.sharpget_gui.setWindowTitle('SHARPGet')
-        icon = abspath(join(dirname(__file__), 'icons/SHARPget_imet.png'))
-        self.sharpget_gui.setWindowIcon(QIcon(icon))
-        self.sharpget_gui.resize(750, 545)
-        self.sharpget_gui.show()
-
 
     def keyPressEvent(self, e):
         """
