@@ -87,10 +87,24 @@ class IMETBufrDecoder(Decoder):
             if location is None:
                 location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'] if meta_data['id']!='' else 'Incident', abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
             
-            # Force height to be increasing and pressure to be decreasing
-            mask = array([True]+list((diff(array(data['hght']), 1)>0)*(diff(array(data['pres']), 1)<0)))
+            # Convert to array
             for field in data:
-                data[field] = array(data[field])[mask]
+                data[field] = array(data[field])
+            
+            mask = (data['pres'] <= 1085.0)
+            mask *= ( ( (data['pres'] > 650) * (data['hght'] <= 5570) ) + \
+                      ( (data['pres'] <= 650) * (data['pres'] >= 350) * (data['hght'] >= 1940) * (data['hght'] <= 11760)) + \
+                      ( (data['pres'] < 350) * (data['hght'] >= 5570) ) )
+            
+            for field in data:
+                data[field] = data[field][mask]
+            
+            # Force height to be increasing and pressure to be decreasing
+            mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
+            while sum(mask) != len(mask):
+                for field in data:
+                    data[field] = data[field][mask]
+                mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
 
             if len(data['hght']) > MAX_UNTHINNED_LEVELS:
                 thinning = int(floor(len(data['hght']) / float(MAX_UNTHINNED_LEVELS)))
