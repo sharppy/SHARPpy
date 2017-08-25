@@ -8,7 +8,7 @@ from bufrpy.value import BufrValue
 from datetime import datetime, timedelta
 from calendar import timegm
 from io import BytesIO
-from numpy import array, floor
+from numpy import array, floor, diff
 
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
@@ -86,22 +86,32 @@ class IMETBufrDecoder(Decoder):
                 meta_data['date'] = self.__adjust_time__(meta_data['date'])
             if location is None:
                 location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'] if meta_data['id']!='' else 'Incident', abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
-            # Force latitude to be 35 N. Figure out a way to fix this later.
             
-            # Force pressure to be always increasing
-            mask = []
-            for x in range(1, len(data['hght'])):
-                if data['hght'][x] - data['hght'][x-1] < 1:
-                    mask.append(x-1)
-            for x in mask:
+            # Convert to array
+            for field in data:
+                data[field] = array(data[field])
+            
+            mask = (data['pres'] <= 1085.0)
+            mask *= ( ( (data['pres'] > 650) * (data['hght'] <= 5570) ) + \
+                      ( (data['pres'] <= 650) * (data['pres'] >= 350) * (data['hght'] >= 1940) * (data['hght'] <= 11760)) + \
+                      ( (data['pres'] < 350) * (data['hght'] >= 5570) ) )
+            
+            for field in data:
+                data[field] = data[field][mask]
+            
+            # Force height to be increasing and pressure to be decreasing
+            mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
+            while sum(mask) != len(mask):
                 for field in data:
-                    data[field].pop(x)
+                    data[field] = data[field][mask]
+                mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
+
             if len(data['hght']) > MAX_UNTHINNED_LEVELS:
                 thinning = int(floor(len(data['hght']) / float(MAX_UNTHINNED_LEVELS)))
             else:
                 thinning = 1
-            profiles.append(profile.create_profile(profile='raw', pres=array(data['pres'])[::thinning], hght=array(data['hght'])[::thinning], tmpc=array(data['temp'])[::thinning], dwpc=array(data['dwpt'])[::thinning],
-                wdir=array(data['wdir'])[::thinning], wspd=array(data['wspd'])[::thinning], location=location, date=meta_data['date'], latitude=35.))
+            profiles.append(profile.create_profile(profile='raw', pres=data['pres'][::thinning], hght=data['hght'][::thinning], tmpc=data['temp'][::thinning], dwpc=data['dwpt'][::thinning],
+                wdir=data['wdir'][::thinning], wspd=data['wspd'][::thinning], location=location, date=meta_data['date'], latitude=35.))
             dates.append(meta_data['date'])
 
         prof_coll = prof_collection.ProfCollection(
