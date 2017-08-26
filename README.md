@@ -163,12 +163,14 @@ The header format should be of this format, where SITEID is the three or four le
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
-%RAW%
+...
 ```
 
 The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground.  -9999 is the placeholder for missing data:
 
 ```
+...
+%RAW%
  1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
  965.00,    350.00,     27.80,     23.80,    150.00,     23.00
  962.00,    377.51,     27.40,     22.80,  -9999.00,  -9999.00
