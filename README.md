@@ -147,9 +147,40 @@ If the program is unable to detect an Internet connection, it will display a mes
 
 As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the sounding window.  This allows the user to have a large amount of flexiblity in making comparisons between different sounding data.  For example, SHARPpy can now be used to perform visual comparsions between GFS and NAM forecast soundings, D(prog)/Dt of the HRRR forecast soundings, or compare observed soundings to model data.  Once a sounding window is open, you can change focus back to the SHARPpy Sounding Picker and add additional sounding data to your open sounding window by repeating the process to generate the first sounding window.  At this point the sounding window will have one profile that is in "focus" and other(s) that are not.
 
-#### Loading in Archived Data Files
+#### Loading in Sounding Data Files
 
-SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the 14061619.OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+
+*Notes about the file format*
+
+While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used by the users.  The format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
+
+The header format should be of this format:
+
+```
+%TITLE%
+ SITEID   YYMMDD/HHMM 
+
+   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
+-------------------------------------------------------------------
+%RAW%
+```
+
+The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]):
+
+```
+ 1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
+ 965.00,    350.00,     27.80,     23.80,    150.00,     23.00
+ 962.00,    377.51,     27.40,     22.80,  -9999.00,  -9999.00
+%END%
+```
+
+Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program's routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:
+
+1.) Making sure that no temperature or dewpoint values are below 273.15 K.
+2.) Ensuring that wind speed and wind direction values are > 0.
+3.) Making sure that no repeat values of pressure or height occur.
+4.) Checking to see that pressure decreases with height within the profile.
 
 #### Adding Custom Data Sources
 <sup>[[Return to Top]](#sharppy)</sup>
