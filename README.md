@@ -245,6 +245,8 @@ This will install your new data source and allow SHARPpy to find it. If the inst
 ### Using the Sounding Window
 <sup>[[Return to Top]](#sharppy)</sup>
 
+The [Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1), BAMS article provides an overview of the various insets and information included in the SHARPpy sounding window, as well as a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI.  For more of the interactive aspects of the program, see the sections below:
+
 ##### Zooming and Changing Views
 
 Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Skew-T plots within the window.  Right clicking on the Hodograph will also allow you to change where the hodograph is centered.  Currently, the hodograph can be centered on the Right Mover Storm Motion Vector, the Cloud-Layer Mean Wind Vector, or the origin of the hodograph.
