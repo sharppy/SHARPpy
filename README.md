@@ -65,7 +65,7 @@ https://groups.google.com/forum/#!forum/sharppy
 ### Installing SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), and Mac OS X 10.6+ (Snow Leopard and later; 64 bit only).  If you do not have one of those, then you will need to download the code.
+SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code and installing it using a separate Python interpreter.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), and Mac OS X 10.6+ (Snow Leopard and later; 64 bit only).  If you do not have one of those, then you will need to download the code.
 
 #### Installing a Pre-compiled Binary
 <sup>[[Return to Top]](#sharppy)</sup>
@@ -82,7 +82,7 @@ The following pre-compiled binaries are available (click to download):
 
 Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
 
-#### Installing the Code
+#### Installing the Code from Source
 <sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
@@ -187,7 +187,7 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 
 4.) Checking to see that pressure decreases with height within the profile.
 
-Should your data not load, we recommend you attempt to manually edit the data to remove these issues and try to load the data again.
+Should your data not load, we recommend you attempt to manually edit the data to remove these issues and try to load the data again.  The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.
 
 #### Adding Custom Data Sources
 <sup>[[Return to Top]](#sharppy)</sup>
