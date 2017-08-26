@@ -181,7 +181,7 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 
 1.) Making sure that no temperature or dewpoint values are below 273.15 K.
 
-2.) Ensuring that wind speed and wind direction values are WDIR ≥ 0 and 0 ≤ WSPD < 360, respectively.
+2.) Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR < 360, respectively.
 
 3.) Making sure that no repeat values of pressure or height occur.
 
