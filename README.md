@@ -187,6 +187,8 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 
 4.) Checking to see that pressure decreases with height within the profile.
 
+Should your data not load, we recommend you attempt to manually edit the data to remove these issues and try to load the data again.
+
 #### Adding Custom Data Sources
 <sup>[[Return to Top]](#sharppy)</sup>
 
