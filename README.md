@@ -166,7 +166,7 @@ The header format should be of this format:
 %RAW%
 ```
 
-The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]):
+The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground:
 
 ```
  1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
@@ -178,8 +178,11 @@ The data within the file should be of the format (Pressure [mb], Height MSL [m],
 Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program's routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:
 
 1.) Making sure that no temperature or dewpoint values are below 273.15 K.
+
 2.) Ensuring that wind speed and wind direction values are > 0.
+
 3.) Making sure that no repeat values of pressure or height occur.
+
 4.) Checking to see that pressure decreases with height within the profile.
 
 #### Adding Custom Data Sources
