@@ -151,11 +151,11 @@ As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the 
 
 SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the 14061619.OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
 
-*Notes about the file format*
+*Notes about the file format:*
 
 While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used by the users.  The format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
 
-The header format should be of this format:
+The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding:
 
 ```
 %TITLE%
@@ -166,7 +166,7 @@ The header format should be of this format:
 %RAW%
 ```
 
-The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground:
+The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground.  -9999 is the placeholder for missing data:
 
 ```
  1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
@@ -179,7 +179,7 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 
 1.) Making sure that no temperature or dewpoint values are below 273.15 K.
 
-2.) Ensuring that wind speed and wind direction values are > 0.
+2.) Ensuring that wind speed and wind direction values are ≥0.
 
 3.) Making sure that no repeat values of pressure or height occur.
 
