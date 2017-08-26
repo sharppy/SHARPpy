@@ -149,11 +149,11 @@ As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the 
 
 #### Loading in Sounding Data Files
 
-SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the 14061619.OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the [14061619.OAX](https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX) file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
 
 *Notes about the file format:*
 
-While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used by the users.  The format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
+While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
 
 The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding:
 
