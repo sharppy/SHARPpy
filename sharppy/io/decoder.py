@@ -8,6 +8,7 @@ from datetime import datetime
 import glob
 import os
 import imp
+import os.path
 
 class abstract(object):
     def __init__(self, func):
@@ -24,7 +25,7 @@ _decoders = {}
 def findDecoders():
     global _decoders
 
-    built_ins = [ 'buf_decoder', 'spc_decoder', 'archive_decoder', 'ibufr_decoder', 'fsl_decoder' ]
+    built_ins = [ 'buf_decoder', 'spc_decoder', 'archive_decoder', 'ibufr_decoder', 'fsl_decoder', 'wmo_decoder' ]
     io = __import__('sharppy.io', globals(), locals(), built_ins, -1)
 
     for dec in built_ins:
@@ -73,7 +74,13 @@ class Decoder(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urllib2.urlopen(self._file_name)
+            r = urllib2.Request(self._file_name)
+            r.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; Win64; rv:40.0) Gecko/20100101 Firefox/40.1')
+            r.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8')
+            r.add_header('Accept-Language', 'en-US,en;q=0.8')
+            r.add_header('Referer', '{0:s}://{1:s}{2:s}'.format(r.get_type(), r.get_host(), os.path.split(r.get_selector())[0]))
+            o = urllib2.build_opener()
+            f = o.open(r)
         except (ValueError, IOError):
             try:
                 f = open(self._file_name, 'rb')

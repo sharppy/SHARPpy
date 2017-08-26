@@ -9,7 +9,8 @@ a = Analysis(['SHARPget.py'],
              pathex=[r'C:\Users\nickr\workspace\SHARPpy\runsharp'],
              binaries=None,
              datas=[],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'dateutil', 'six', 'sharppy.io.fsl_decoder'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', \
+                            'sharppy.io.buf_decoder', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -25,6 +26,7 @@ a.datas += [("sharppy\\databases\\PW-mean-inches.txt", os.path.join(os.path.dirn
 a.datas += [("sharppy\\databases\\PW-stdev-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases\\PW-stdev-inches.txt"), "DATA")]
 a.datas += [("sharppy\\databases\\sars_hail.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars_hail.txt"), "DATA")]
 a.datas += [("sharppy\\databases\\sars_supercell.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars_supercell.txt"), "DATA")]
+a.datas += [("sharppy\\io\\wmo_stations.txt", os.path.join(os.path.dirname(sharppy.__file__), "io\\wmo_stations.txt"), "DATA")]
 a.datas += [("icons\\SHARPpy_imet.png", "icons\\SHARPpy_imet.png", "DATA")]
 a.datas += [("icons\\SHARPget_imet.png", "icons\\SHARPget_imet.png", "DATA")]
 #a.datas += [("sharppy\\io\\bufrpy\\b_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\b_table"), "DATA")]
