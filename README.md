@@ -155,7 +155,7 @@ SHARPpy supports opening up multiple observed sounding data files in the soundin
 
 While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
 
-The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding:
+The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  "..." is where the sections of the file ends and continues in this example and are not included in the actual data file:
 
 ```
 %TITLE%
