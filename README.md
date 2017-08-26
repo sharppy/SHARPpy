@@ -245,7 +245,7 @@ This will install your new data source and allow SHARPpy to find it. If the inst
 ### Using the Sounding Window
 <sup>[[Return to Top]](#sharppy)</sup>
 
-The [Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1), BAMS article provides an overview of the various insets and information included in the SHARPpy sounding window, as well as a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI.  For more of the interactive aspects of the program, see the sections below:
+[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window, as well as a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI.  For information on the interactive aspects of the program, see the sections below:
 
 ##### Zooming and Changing Views
 
@@ -255,13 +255,13 @@ Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Sk
 
 The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:
 
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection.
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
+1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](http://www.spc.noaa.gov/publications/jewell/sars.pdf)).
+2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](http://www.spc.noaa.gov/publications/thompson/waf-env.pdf)).
 3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC.
+4. STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf)).
 5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
 6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value.)
+7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf))
 
 ##### Color Ranking
 
@@ -274,7 +274,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 5. LIGHT BROWN
 6. DARK BROWN
 
-The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by Matthew Bunkers; NWS).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
+The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by [Matthew Bunkers; NWS](https://www.weather.gov/unr/uac)).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
 
 #### Interacting with the Focused Sounding
 
@@ -288,7 +288,7 @@ New in version 1.3.0 is the ability to interpolate the profile to 25-mb interval
 
 ##### Storm Mode Functions
 
-Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to deteremine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale.  Clicking on the hodograph again will remove the boundary.
+Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in [Dial et al. 2010, WAF](http://www.spc.noaa.gov/publications/dial/waf-mode.pdf).  Clicking on the hodograph again will remove the boundary.
 
 ##### Lifting Parcels
 
@@ -340,6 +340,8 @@ To learn more about interacting with the SHARPpy libraries using the Python
 programming language, see the tutorial listed in tutorials/ and check out the link:
 
 http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
+
+This tutorial will provide examples for how to use the Python scripting language and SHARPpy to read in the tabular data and work with many of the relevant routines used in the SHARPpy GUI (e.g., CAPE, STP, SCP, SRH calculations).
 
 To write scripts interacting with the SHARPpy libraries, you do NOT have to have the PySide package installed.
 
