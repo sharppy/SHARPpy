@@ -245,7 +245,7 @@ This will install your new data source and allow SHARPpy to find it. If the inst
 ### Using the Sounding Window
 <sup>[[Return to Top]](#sharppy)</sup>
 
-[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window, as well as a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI.  For information on the interactive aspects of the program, see the sections below:
+[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window, as well as a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI to the scientific forecasting process.  For information on the interactive aspects of the program, see the sections below:
 
 ##### Zooming and Changing Views
 
