@@ -180,7 +180,7 @@ def posneg_temperature(prof, start=-1):
     
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -291,7 +291,7 @@ def posneg_wetbulb(prof, start=-1):
 
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -624,7 +624,7 @@ def possible_watch(prof, use_left=False):
     
     # Fire WX (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
     # TODO: Be reinstated in future releases once the logic becomes a little more solid
-    #if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.tmpc[prof.get_sfc()]) < 30. :
+    #if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.dwpc[prof.get_sfc()]) < 30. :
         #watch_types.append("FIRE WEATHER")
         #colors.append("#FF9900")
     

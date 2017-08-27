@@ -249,8 +249,6 @@ class plotWinds(backgroundWinds):
         self.m4_6_color = QtGui.QColor(prefs['srw_4_6_color'])
         self.m9_11_color = QtGui.QColor(prefs['srw_9_11_color'])
 
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
-
         if update_gui:
             if self.use_left:
                 self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]

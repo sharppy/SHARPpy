@@ -35,6 +35,8 @@ class PECANDecoder(Decoder):
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         if "MEAN" in profiles.keys():
             prof_coll.setHighlightedMember("MEAN")
+        prof_coll.setMeta('observed', False)
+        prof_coll.setMeta('base_time', dates[0])
         return prof_coll
 
     def _parseSection(self, section):

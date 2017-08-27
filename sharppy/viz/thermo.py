@@ -165,7 +165,7 @@ class plotText(backgroundText):
         if len(idx) == 0:
             self.skewt_pcl = 0
         else:
-            self.skewt_pcl = idx
+            self.skewt_pcl = idx[0]
 
     def mouseDoubleClickEvent(self, e):
         self.w.show()
@@ -253,8 +253,6 @@ class plotText(backgroundText):
         self.pcl_cin_hi_color = QtGui.QColor(prefs['pcl_cin_hi_color'])
         self.pcl_cin_md_color = QtGui.QColor(prefs['pcl_cin_md_color'])
         self.pcl_cin_lo_color = QtGui.QColor(prefs['pcl_cin_lo_color'])
-
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
 
         if update_gui:
             self.clearData()

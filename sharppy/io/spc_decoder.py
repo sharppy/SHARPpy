@@ -22,8 +22,8 @@ class SPCDecoder(Decoder):
 
         ## necessary index points
         title_idx = np.where( data == '%TITLE%')[0][0]
-        start_idx = np.where( data == '%RAW%' )[0] + 1
-        finish_idx = np.where( data == '%END%')[0]
+        start_idx = np.where( data == '%RAW%' )[0][0] + 1
+        finish_idx = np.where( data == '%END%')[0][0]
 
         ## create the plot title
         data_header = data[title_idx + 1].split()
@@ -67,5 +67,7 @@ class SPCDecoder(Decoder):
         )
 
         prof_coll.setMeta('loc', location)
+        prof_coll.setMeta('observed', True)
+        prof_coll.setMeta('base_time', time)
         return prof_coll
 

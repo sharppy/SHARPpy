@@ -104,7 +104,7 @@ class backgroundHodo(QtGui.QFrame):
         
         '''
         ## get the new scaling magnitude
-        new_mag = self.hodomag + e.delta() / 5
+        new_mag = self.hodomag - e.delta() / 5
         ## make sure the user doesn't zoom out of
         ## bounds to prevent drawing issues
         if new_mag >= self.min_zoom and new_mag <= self.max_zoom:
@@ -567,8 +567,6 @@ class plotHodo(backgroundHodo):
 
     def setPreferences(self, update_gui=True, **kwargs):
         self.wind_units = kwargs['wind_units']
-
-        self.use_left = kwargs['calc_vector'] == 'Left Mover'
 
         self.bg_color = QtGui.QColor(kwargs['bg_color'])
         self.fg_color = QtGui.QColor(kwargs['fg_color'])

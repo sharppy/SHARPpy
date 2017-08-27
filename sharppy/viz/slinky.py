@@ -194,7 +194,6 @@ class plotSlinky(backgroundSlinky):
     def setPreferences(self, update_gui=True, **prefs):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
 
         self.low_level_color = QtGui.QColor(prefs['0_3_color'])
         self.mid_level_color = QtGui.QColor(prefs['3_6_color'])

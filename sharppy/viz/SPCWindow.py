@@ -321,6 +321,7 @@ class SPCWidget(QWidget):
             pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
             print "Hmmm, that profile doesn't exist to be removed ..."
+            return
 
         prof_col = self.prof_collections.pop(pc_idx)
         self.prof_ids.pop(pc_idx)
@@ -380,6 +381,9 @@ class SPCWidget(QWidget):
         self.sound.setParcel(parcel)
         self.storm_slinky.setParcel(parcel)
 
+        deviant = 'right' if self.default_prof.latitude >= 0 else 'left'
+        self.toggleVector(deviant)
+
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
@@ -402,7 +406,7 @@ class SPCWidget(QWidget):
 
         match_col.setMeta('model', 'Analog')
         match_col.setMeta('run', prof_col.getCurrentDate())
-        match_col.setMeta('fhour', None)
+        match_col.setMeta('base_time', prof_col.getCurrentDate())
         match_col.setMeta('observed', True)
         match_col.setMeta('filematch', filematch)
         match_col.setAnalogToDate(prof_col.getCurrentDate())
