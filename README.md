@@ -247,7 +247,7 @@ This will install your new data source and allow SHARPpy to find it. If the inst
 
 [Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles that describe the relevance of each aspect of the SHARPpy GUI to past atmospheric science research and the scientific forecasting process.
 
-Additional resources for interpreting the GUI may be found on the [SPC Sounding Analysis Help](http://www.spc.noaa.gov/exper/soundings/help/) page, which describes various aspects of the SHARP GUI, which is the basis for the SHARPpy GUI.  However, not all features shown on this page are shown in the SHARPpy GUI.  The [Explanation of SPC Severe Weather Parameters](http://www.spc.noaa.gov/sfctest/help/sfcoa.html) may also be used to help interpret some of the various parameter values shown in the SHARPpy GUI.
+Additional resources for interpreting the GUI include the [SPC Sounding Analysis Help](http://www.spc.noaa.gov/exper/soundings/help/) and [Explanation of SPC Severe Weather Parameters](http://www.spc.noaa.gov/sfctest/help/sfcoa.html) webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  However, not all features shown on these pages are shown in the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.
 
 For information on the interactive aspects of the program, see the sections below:
 
