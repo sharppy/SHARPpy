@@ -297,15 +297,15 @@ class BasicProfile(Profile):
         #if not qc_tools.isPRESValid(self.pres):
         ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
         if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
-            qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", ValueError)
         if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature array. Array contains a value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", ValueError)
         if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", ValueError)
         if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
-            qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", ValueError)
         if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value >= 360 degrees.", ValueError)     
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", ValueError)     
 
 
         self.logp = np.log10(self.pres.copy())
