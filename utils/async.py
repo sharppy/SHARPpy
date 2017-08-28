@@ -73,7 +73,7 @@ class AsyncThreads(QObject):
         Clears the queue of processes waiting to be started and kills any threads currently running.
         """
         self.queue = Queue.PriorityQueue(0)
-        for thd_id, thd in self.threads.iteritems():
+        for thd_id, thd in self.threads.items():
             if thd.isRunning():
                 thd.terminate()
 
