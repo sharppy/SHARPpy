@@ -831,10 +831,11 @@ class SPCWindow(QMainWindow):
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
-            import traceback
-            print traceback.format_exc()
-           
-            self.rmProfileCollection(menu_name)
+            if len(self.menu_items) == 1:
+                self.focusPicker()
+                self.close()
+            else:
+                self.rmProfileCollection(menu_name)
             raise
 
     @Slot(str)
