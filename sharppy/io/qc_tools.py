@@ -4,6 +4,10 @@ from sharppy.sharptab import thermo
 __all__ = ['raiseError', 'numMasked', 'isPRESValid', 'isHGHTValid', 'isWSPDValid']
 __all__ += ['isDWPCValid', 'isTMPCValid']
 
+# Data quality exception error
+class DataQualityException(Exception):
+    pass
+
 def raiseError(string, errorType):
     '''
         raiseError
@@ -58,7 +62,7 @@ def areProfileArrayLengthEqual(prof):
 
     if not (len(prof.pres) == len(prof.hght) == len(prof.tmpc) == len(prof.dwpc) ==\
             len(prof.wdir) == len(prof.wspd) == len(prof.u) == len(prof.v) == len(prof.omeg)):
-        raiseError("Arrays passed to the Profile object have unequal lengths.", AssertionError)
+        raiseError("Arrays passed to the Profile object have unequal lengths.", DataQualityException)
  
 def isPRESValid(pres):
     '''

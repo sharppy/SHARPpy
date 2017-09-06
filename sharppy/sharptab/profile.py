@@ -141,7 +141,7 @@ class Profile(object):
         self.date = kwargs.get('date', None)
 
     @classmethod
-    def copy(cls, prof, **kwargs):
+    def copy(cls, prof, strictQC=True, **kwargs):
         '''
             Copies a profile object.
         '''            
@@ -151,7 +151,10 @@ class Profile(object):
             new_kwargs.update({'u':prof.u, 'v':prof.v})
         else:
             new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+        
+        new_kwargs.update({'strictQC':strictQC})
 
+        # Create a new profile object using the old profile object data cls is the Class type (e.g., ConvectiveProfile)
         new_kwargs.update(kwargs)
         new_prof = cls(**new_kwargs)
 
@@ -294,18 +297,16 @@ class BasicProfile(Profile):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
 
-        #if not qc_tools.isPRESValid(self.pres):
-        ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
         if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
-            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", ValueError)
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
         if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
         if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
         if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
-            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", ValueError)
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
         if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", ValueError)     
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)     
 
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
