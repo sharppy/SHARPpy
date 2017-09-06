@@ -337,7 +337,7 @@ class PrefDialog(QDialog):
 #       tab_widget.addTab(map_widget, "Map")
 
         misc_widget = self._createMiscWidget()
-        tab_widget.addTab(misc_widget, "Miscellaneous")
+        tab_widget.addTab(misc_widget, "Units")
 
         self.layout.addWidget(tab_widget, 0, 0, 1, 1)
 

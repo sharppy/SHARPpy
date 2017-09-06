@@ -322,7 +322,7 @@ class plotSlinky(backgroundSlinky):
         qp.setFont(self.title_font)
         ## draw the text
         rect0 = QtCore.QRect(self.brx-30, self.tly+2, 30, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, str(round(self.updraft_tilt,0)) + ' deg  ')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, tab.utils.INT2STR(self.updraft_tilt) + ' deg  ')
 
     def plotSlinky(self, qp):
         '''
