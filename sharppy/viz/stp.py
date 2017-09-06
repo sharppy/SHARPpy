@@ -104,6 +104,7 @@ class backgroundSTP(QtGui.QFrame):
         stp_inset_data = inset_data.stpData()
         texts = stp_inset_data['stp_ytexts']
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
+        # Plot the y-tick labels for the box and whisker plots
         for i in xrange(len(y_ticks)):
             pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
@@ -116,7 +117,8 @@ class backgroundSTP(QtGui.QFrame):
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
-
+        
+        # Draw the box and whisker plots and the x-tick labels
         ef = stp_inset_data['ef']
         width = self.brx / 14
         spacing = self.brx / 7
@@ -143,7 +145,7 @@ class backgroundSTP(QtGui.QFrame):
             color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i] - width/2., self.stp_to_pix(-.5), width, 4)
+            rect = QtCore.QRectF(center[i] - width/2., self.stp_to_pix(-.3), width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
