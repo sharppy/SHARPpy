@@ -1,5 +1,6 @@
 from sharppy.sharptab import thermo, utils, interp, params, constants
 import numpy as np
+import logging
 
 ## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
 ## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu
