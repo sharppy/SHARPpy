@@ -82,16 +82,22 @@ class backgroundSkewT(QtGui.QWidget):
 
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
+        logging.debug("Drawing isotherms.")
         for t in np.arange(self.bltmpc-100, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm(t, qp)
         #for tw in range(self.bltmpc, self.brtmpc, 10): self.draw_moist_adiabat(tw, qp)
+        logging.debug("Drawing dry adiabats.")
         for theta in np.arange(self.bltmpc, 80, 20): self.draw_dry_adiabat(theta, qp)
+        logging.debug("Drawing the water vapor mixing ratio lines.")
         for w in [2] + np.arange(4, 33, 4): self.draw_mixing_ratios(w, 600, qp)
         self.draw_frame(qp)
+        logging.debug("Drawing primary background isobars.")
         for p in [1000, 850, 700, 500, 300, 200, 100]:
             self.draw_isobar(p, 1, qp)
+        logging.debug("Drawing isotherm labels.")
         for t in np.arange(self.bltmpc, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm_labels(t, qp)
+        logging.debug("Drawing secondary background isobars.")
         for p in xrange(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
 
@@ -141,7 +147,6 @@ class backgroundSkewT(QtGui.QWidget):
         '''
         Draw the given moist adiabat.
         '''
-        logging.debug("Drawing dry adiabats.")
         qp.setClipping(True)
         pen = QtGui.QPen(self.adiab_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
@@ -165,7 +170,6 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the given moist adiabat.
 
         '''
-        logging.debug("Drawing moist adiabats.")
         pen = QtGui.QPen(QtGui.QColor("#663333"), 1)
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -186,7 +190,6 @@ class backgroundSkewT(QtGui.QWidget):
         Draw the mixing ratios.
 
         '''
-        logging.debug("Draw the water vapor mixing ratio lines.")
         qp.setClipping(True)
         t = tab.thermo.temp_at_mixrat(w, self.pmax)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
@@ -235,7 +238,6 @@ class backgroundSkewT(QtGui.QWidget):
         Add Isotherm Labels.
 
         '''
-        logging.debug("Drawing isotherm labels:")
         pen = QtGui.QPen(self.fg_color)
         self.label_font.setBold(True)
         qp.setFont(self.label_font)
@@ -252,8 +254,6 @@ class backgroundSkewT(QtGui.QWidget):
         Draw background isotherms.
 
         '''
-        logging.debug("Drawing background isotherms")
-
         qp.setClipping(True)
         x1 = self.originx + self.tmpc_to_pix(t, self.pmax) / self.scale
         x2 = self.originx + self.tmpc_to_pix(t, self.pmin) / self.scale
@@ -273,7 +273,6 @@ class backgroundSkewT(QtGui.QWidget):
         Draw background isobars.
 
         '''
-        logging.debug("Drawing background isotherms.")
         pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         self.label_font.setBold(True)
@@ -852,7 +851,7 @@ class plotSkewT(backgroundSkewT):
         Plot the data used in a Skew-T.
 
         '''
-        logging.debug("Plotting the data on the Skew-T")
+        logging.debug("Plotting the data on the Skew-T:")
         if self.prof is None:
             return
 
@@ -865,7 +864,7 @@ class plotSkewT(backgroundSkewT):
         self.drawTitles(qp)
 
         bg_color_idx = 0
-
+        logging.debug("Drawing ensemble members.")
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for idx, prof_col in enumerate(self.prof_collections):
             # Plot all unhighlighted members at this time
@@ -886,6 +885,7 @@ class plotSkewT(backgroundSkewT):
                     self.drawBarbs(profile, qp, color="#666666")
 
         bg_color_idx = 0
+        logging.debug("Drawing background (unfocused) profiles.")
         for idx, prof_col in enumerate(self.prof_collections):
             if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
                 profile = prof_col.getHighlightedProf()
@@ -898,6 +898,7 @@ class plotSkewT(backgroundSkewT):
 
                 bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
+        logging.debug("Drawing wetbulb temperature, temperature and virtual temperature.")
         self.drawTrace(self.wetbulb, self.wetbulb_color, qp, width=1)
         self.drawTrace(self.tmpc, self.temp_color, qp, stdev=self.tmp_stdev)
         self.drawTrace(self.vtmp, self.temp_color, qp, width=1, style=QtCore.Qt.DashLine, label=False)
@@ -909,14 +910,21 @@ class plotSkewT(backgroundSkewT):
             pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
 
+
+            logging.debug("Drawing DGZ.")
+
             self.drawTrace(tmpc, self.dgz_color, qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
 
+        logging.debug("Drawing dewpoint profile.")
         self.drawTrace(self.dwpc, self.dewp_color, qp, stdev=self.dew_stdev)
 
+        logging.debug("Drawing height markers.")
         for h in [0,1000.,3000.,6000.,9000.,12000.,15000.]:
             self.draw_height(h, qp)
+
+        logging.debug("Drawing parcel traces.")
         if self.pcl is not None:
             self.dpcl_ttrace = self.prof.dpcl_ttrace
             self.dpcl_ptrace = self.prof.dpcl_ptrace
@@ -933,6 +941,7 @@ class plotSkewT(backgroundSkewT):
 
         self.draw_effective_layer(qp)
         if self.plot_omega:
+            logging.debug("Drawing omega profile.")
             self.draw_omega_profile(qp)
 
         qp.end()
@@ -1011,7 +1020,6 @@ class plotSkewT(backgroundSkewT):
             bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
     def draw_height(self, h, qp):
-        logging.debug("Drawing the height markers.")
         qp.setClipping(True)
         self.hght_font = QtGui.QFont('Helvetica', 9)
         pen = QtGui.QPen(self.hgt_color, 1, QtCore.Qt.SolidLine)
@@ -1029,7 +1037,6 @@ class plotSkewT(backgroundSkewT):
                 tab.utils.INT2STR(h/1000)+' km')
 
     def draw_sig_levels(self, qp, plevel=1000, color=None):
-        logging.debug("Drawing singificant levels.")
         if color is None:
             color = self.fg_color
 
@@ -1112,7 +1119,6 @@ class plotSkewT(backgroundSkewT):
             return x1_0
 
     def draw_omega_profile(self, qp):
-        logging.debug("Drawing the omega profile.")
         qp.setClipping(True)
         plus10_bound = -49
         minus10_bound = -41
@@ -1215,7 +1221,6 @@ class plotSkewT(backgroundSkewT):
         '''
         Draw a parcel trace.
         '''
-        logging.debug("Drawing the virtual parcel trace.")
         if color is None:
             color = self.fg_color
 
@@ -1243,7 +1248,6 @@ class plotSkewT(backgroundSkewT):
         Draw an environmental trace.
 
         '''
-        logging.debug("Drawing an environmental profile trace.")
         qp.setClipping(True)
         pen = QtGui.QPen(QtGui.QColor(color), width, style)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)

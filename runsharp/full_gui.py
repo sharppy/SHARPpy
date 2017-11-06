@@ -19,7 +19,7 @@ if len(sys.argv) > 1 and '--debug' in sys.argv:
     console = logging.StreamHandler()
     console.setLevel(logging.DEBUG)
     # set a format which is simpler for console use
-    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
     # tell the handler to use this format
     console.setFormatter(formatter)
     # add the handler to the root logger
@@ -512,6 +512,8 @@ class Picker(QWidget):
             prof_collection, stn_id = self.loadArchive(filename)
             logging.debug("Successfully loaded the profile collection for this file...")
             disp_name = stn_id
+            observed = True
+            fhours = None
 
             run = prof_collection.getCurrentDate()
         else:
@@ -523,6 +525,7 @@ class Picker(QWidget):
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -538,7 +541,11 @@ class Picker(QWidget):
             else:
                 logging.debug("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-        
+            print prof_collection._profs
+
+            fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
+                      idx in prof_idx]
+
         # If the observed or model profile (not Archive) successfully loaded) 
         if not failure:
             prof_collection.setMeta('model', model)
@@ -559,7 +566,6 @@ class Picker(QWidget):
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
 
-            self.focusSkewApp()
             logging.debug("Focusing on the SkewApp")
             self.focusSkewApp()
             logging.debug("Adding the profile collection to SPCWindown")
