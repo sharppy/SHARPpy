@@ -7,8 +7,8 @@ from utils.frozenutils import Process, Queue
 import platform
 import numpy as np
 
-def doCopy(target_type, prof, idx, strictQC, pipe):
-    pipe.put((target_type.copy(prof, strictQC), idx))
+def doCopy(target_type, prof, idx, pipe):
+    pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
     """
