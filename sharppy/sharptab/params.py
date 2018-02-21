@@ -1366,9 +1366,10 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     if pbot > pres:
         pbot = pres
         pcl.blayer = pbot
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked): return ma.masked
-    if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
-    
+
+    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+        return pcl
+
     # Begin with the Mixing Layer
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
@@ -1582,9 +1583,10 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     if pbot > pres:
         pbot = pres
         pcl.blayer = pbot
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked): return ma.masked
-    if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
-    
+
+    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+        return pcl
+
     # Begin with the Mixing Layer
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
