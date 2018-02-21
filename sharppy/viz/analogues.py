@@ -108,11 +108,12 @@ class backgroundAnalogues(QtGui.QFrame):
         
         ## make the initial x value relative to the width of the frame
         x1 = self.brx / 6
+        self.ylast = self.tpad
 
         ## use the larger title font to plot the title, and then
         ## add to self.ylast the height of the font + padding
         qp.setFont(self.title_font)
-        rect0 = QtCore.QRect(0, self.tpad, self.brx, self.title_height)
+        rect0 = QtCore.QRect(0, self.ylast, self.brx, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'SARS - Sounding Analogue System')
         self.ylast += (self.title_height + self.tpad)
