@@ -62,13 +62,13 @@ class crasher(object):
         def doCrasher(*args, **kwargs):
             try:
                 ret = func(*args, **kwargs)
-            except Exception,e:
+            except Exception as e:
                 ret = None
                 msg = "Well, this is embarrassing.\nSHARPpy broke. This is probably due to an issue with one of the data source servers, but if it keeps happening, send the detailed information to the developers."
                 data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
-                print "Exception:", e
+                print("Exception:", e)
 
                 if frozenutils.isFrozen():
                     msg1, msg2 = msg.split("\n")
