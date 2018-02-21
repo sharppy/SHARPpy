@@ -69,7 +69,7 @@ class crasher(object):
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
                 print "Exception:", e
-
+                # HERE IS WHERE YOU CAN CATCH A DATAQUALITYEXCEPTION
                 if frozenutils.isFrozen():
                     msg1, msg2 = msg.split("\n")
 
@@ -485,13 +485,17 @@ class Picker(QWidget):
                 prof_idx = [ 0 ]
 
             ret = loadData(self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
-
+           
+            # failure variable makes sure the data actually exists online. 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
                 failure = True
+                print "Failure"
             else:
+                print "Pass"
                 prof_collection = ret[0]
-
+        
+        # If the observed or model profile (not Archive) successfully loaded) 
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
@@ -511,6 +515,7 @@ class Picker(QWidget):
             self.focusSkewApp()
             self.skew.addProfileCollection(prof_collection)
         else:
+            print "There was an exception:", exc
             raise exc
 
     def skewAppClosed(self):
@@ -533,7 +538,7 @@ class Picker(QWidget):
         """
         Get the archive sounding based on the user's selections.
         Also reads it using the Decoders and gets both the stationID and the profile objects
-        for that archive sounding.
+        for that archive sounding.  Tries a variety of decoders available to the program.
         """
 
         for decname, deccls in getDecoders().iteritems():
@@ -547,6 +552,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
+        # Returns the set of profiles from the file that are from the "Profile" class.
         profs = dec.getProfiles()
         stn_id = dec.getStnId()
 
@@ -574,8 +580,9 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
-
+    
     profs = dec.getProfiles(indexes=indexes)
+    print profs    
     return profs
 
 class Main(QMainWindow):
