@@ -356,8 +356,9 @@ def generic_interp_hght(h, hght, field, log=False):
     # Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!
     field_intrp = ma.where(np.isnan(field_intrp), ma.masked, field_intrp)
 
+    # ma.where() returns a 0-d array when the arguments are floats, which confuses subsequent code.
     if hasattr(field_intrp, 'shape') and field_intrp.shape == tuple():
-        field_intrp = field_intrp.item()
+        field_intrp = field_intrp[()]
 
     if log:
         return 10 ** field_intrp
@@ -409,6 +410,6 @@ def generic_interp_pres(p, pres, field):
 
     # ma.where() returns a 0-d array when the arguments are floats, which confuses subsequent code.
     if hasattr(field_intrp, 'shape') and field_intrp.shape == tuple():
-        field_intrp = field_intrp.item()
+        field_intrp = field_intrp[()]
 
     return field_intrp

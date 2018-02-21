@@ -294,7 +294,8 @@ class plotFire(backgroundFire):
             color = QtGui.QColor(ORANGE)
         elif self.haines_index[self.haines_hght] == 6:
             color = QtGui.QColor(RED)
-        
+        else:
+            color = QtGui.QColor(DGREEN)
         return color
 
 

@@ -381,6 +381,9 @@ class SPCWidget(QWidget):
         self.sound.setParcel(parcel)
         self.storm_slinky.setParcel(parcel)
 
+        deviant = 'right' if self.default_prof.latitude >= 0 else 'left'
+        self.toggleVector(deviant)
+
     @Slot(tab.params.Parcel)
     def updateParcel(self, pcl):
 
@@ -828,11 +831,10 @@ class SPCWindow(QMainWindow):
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
-
             if len(self.menu_items) == 1:
                 self.focusPicker()
                 self.close()
-            else:          
+            else:
                 self.rmProfileCollection(menu_name)
             raise
 

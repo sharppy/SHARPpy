@@ -67,4 +67,5 @@ class UWYODecoder(Decoder):
         )
 
         prof_coll.setMeta('loc', loc)
+        prof_coll.setMeta('observed', True)
         return prof_coll

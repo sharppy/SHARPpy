@@ -141,7 +141,7 @@ class Profile(object):
         self.date = kwargs.get('date', None)
 
     @classmethod
-    def copy(cls, prof, **kwargs):
+    def copy(cls, prof, strictQC=True, **kwargs):
         '''
             Copies a profile object.
         '''            
@@ -151,7 +151,10 @@ class Profile(object):
             new_kwargs.update({'u':prof.u, 'v':prof.v})
         else:
             new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+        
+        new_kwargs.update({'strictQC':strictQC})
 
+        # Create a new profile object using the old profile object data cls is the Class type (e.g., ConvectiveProfile)
         new_kwargs.update(kwargs)
         new_prof = cls(**new_kwargs)
 
@@ -294,19 +297,16 @@ class BasicProfile(Profile):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
 
-        #if not qc_tools.isPRESValid(self.pres):
-        ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
         if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
-            qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
         if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature array. Array contains a value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
         if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < -273.15 Celsius.", ValueError)
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
         if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
-            qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
         if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value >= 360 degrees.", ValueError)     
-
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)     
 
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
@@ -499,7 +499,6 @@ class ConvectiveProfile(BasicProfile):
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
         self.user_srwind = None
-        self.use_right = (self.latitude > 0)
 
         # Generate the fire weather paramters
         self.get_fire()
@@ -782,6 +781,22 @@ class ConvectiveProfile(BasicProfile):
         self.left_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[2], stv=self.srwind[3])
         self.left_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[2], stv=self.srwind[3])
 
+        self.srw_eff = self.right_srw_eff
+        self.srw_ebw = self.right_srw_ebw
+        self.esrh = self.right_esrh
+        self.critical_angle = self.right_critical_angle
+        self.srw_1km = self.right_srw_1km
+        self.srw_3km = self.right_srw_3km
+        self.srw_6km = self.right_srw_6km
+        self.srw_8km = self.right_srw_8km
+        self.srw_4_5km = self.right_srw_4_5km
+        self.srw_lcl_el = self.right_srw_lcl_el
+        self.srw_0_2km = self.right_srw_0_2km
+        self.srw_4_6km = self.right_srw_4_6km
+        self.srw_9_11km = self.right_srw_9_11km
+        self.srh1km = self.right_srh1km
+        self.srh3km = self.right_srh3km
+
     def get_thermo(self):
         '''
         Function to generate thermodynamic indices.
@@ -876,6 +891,10 @@ class ConvectiveProfile(BasicProfile):
             self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
 
+        self.stp_fixed = self.right_stp_fixed
+        self.stp_cin = self.right_stp_cin
+        self.scp = self.right_scp
+
     def get_sars(self):
         '''
         Function to get the SARS analogues from the hail and
@@ -929,7 +948,10 @@ class ConvectiveProfile(BasicProfile):
         except Exception as e:
             self.right_supercell_matches = ([], [], 0, 0, 0)
             self.left_supercell_matches = ([], [], 0, 0, 0)
-                
+
+        self.supercell_matches = self.right_supercell_matches
+        self.matches = self.right_matches
+
     def get_watch(self):
         '''
         Function to get the possible watch type.
@@ -954,6 +976,9 @@ class ConvectiveProfile(BasicProfile):
         watch_types = watch_type.possible_watch(self, use_left=True)
         self.left_watch_type = watch_types[0][0]
         self.left_watch_type_color = watch_types[1][0]
+
+        self.watch_type = self.right_watch_type
+        self.watch_type_color = self.right_watch_type_color
 
     def get_traj(self):
         '''

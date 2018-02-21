@@ -263,8 +263,6 @@ class plotSTPEF(backgroundSTPEF):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 
-        self.use_left = prefs['calc_vector'] == 'Left Mover'
-
         if update_gui:
             if self.use_left:
                 self.stpc = self.prof.left_stp_cin

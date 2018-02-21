@@ -334,10 +334,10 @@ class PrefDialog(QDialog):
         tab_widget.addTab(color_widget, "Colors")
 
         map_widget = self._createMapWidget()
-        tab_widget.addTab(map_widget, "Map")
+#       tab_widget.addTab(map_widget, "Map")
 
         misc_widget = self._createMiscWidget()
-        tab_widget.addTab(misc_widget, "Miscellaneous")
+        tab_widget.addTab(misc_widget, "Units")
 
         self.layout.addWidget(tab_widget, 0, 0, 1, 1)
 
@@ -380,9 +380,6 @@ class PrefDialog(QDialog):
         pw_units_box, self.pw_units = PrefDialog._createRadioSet("Precipitable Water Vapor Units", ["in", "cm"], default=self._config['preferences', 'pw_units'])
         layout.addWidget(pw_units_box)
         
-        calc_vector_box, self.calc_vector = PrefDialog._createRadioSet("Storm Motion Vector Used in Calculations", ["Left Mover", "Right Mover"], default=self._config['preferences', 'calc_vector'])
-        layout.addWidget(calc_vector_box)
-                
         return misc_box
 
     @staticmethod
@@ -456,8 +453,6 @@ class PrefDialog(QDialog):
         self._applyRadio('wind_units', self.wind_units)
         self._applyRadio('pw_units', self.pw_units)
 
-        self._applyRadio('calc_vector', self.calc_vector)
-
         self._config['preferences', 'color_style'] = self._color_style
         for item, color in PrefDialog._styles[self._color_style].items():
             self._config['preferences', item] = color
@@ -480,7 +475,6 @@ class PrefDialog(QDialog):
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',
             ('preferences', 'pw_units'):'in',
-            ('preferences', 'calc_vector'):'Right Mover',
             ('preferences', 'color_style'):'standard'
         }
 

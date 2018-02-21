@@ -25,6 +25,8 @@ def INT2STR(val):
     Val rounded to the nearest int and converted to a string.
     
     '''
+    if np.isnan(val):
+        return '--'
     try:
         return str( int( round( val, 0 ) ) )
     except:
@@ -49,9 +51,14 @@ def FLOAT2STR(val, precision):
     to a string.
     '''
     try:
-        return str( round( val, precision ) )
+        new_val = str( round( val, precision ) )
     except:
-        return str( val )
+        new_val = str( val )
+
+    if new_val.strip() == 'nan':
+        return '--'
+    else:
+        return new_val
 
 def MS2KTS(val):
     '''

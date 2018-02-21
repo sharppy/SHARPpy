@@ -4,6 +4,10 @@ from sharppy.sharptab import thermo
 __all__ = ['raiseError', 'numMasked', 'isPRESValid', 'isHGHTValid', 'isWSPDValid']
 __all__ += ['isDWPCValid', 'isTMPCValid']
 
+# Data quality exception error
+class DataQualityException(Exception):
+    pass
+
 def raiseError(string, errorType):
     '''
         raiseError
@@ -58,7 +62,7 @@ def areProfileArrayLengthEqual(prof):
 
     if not (len(prof.pres) == len(prof.hght) == len(prof.tmpc) == len(prof.dwpc) ==\
             len(prof.wdir) == len(prof.wspd) == len(prof.u) == len(prof.v) == len(prof.omeg)):
-        raiseError("Arrays passed to the Profile object have unequal lengths.", AssertionError)
+        raiseError("Arrays passed to the Profile object have unequal lengths.", DataQualityException)
  
 def isPRESValid(pres):
     '''
@@ -139,7 +143,7 @@ def isWDIRValid(wdir):
         True/False: True if the wind direction array is > 0 in size and
                     if the wind directions are between 0 and 360.
     '''
-    idx = np.ma.where((wdir >= 360) | (wdir < 0))[0]
+    idx = np.ma.where((wdir > 360) | (wdir < 0))[0]
     if len(idx) == 0:
         return True
     else:

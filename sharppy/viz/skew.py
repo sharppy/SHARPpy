@@ -25,7 +25,7 @@ class backgroundSkewT(QtGui.QWidget):
         Initialize the User Interface.
 
         '''
-        self.lpad = 30; self.rpad = 50
+        self.lpad = 30; self.rpad = 65
         self.tpad = 20; self.bpad = 20
         self.tlx = self.rpad; self.tly = self.tpad
         self.wid = self.size().width() - self.rpad
@@ -622,7 +622,6 @@ class plotSkewT(backgroundSkewT):
 
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
-        self.use_left = kwargs['calc_vector'] == 'Left Mover'
 
         if update_gui:
             self.plotBitMap.fill(self.bg_color)

@@ -52,6 +52,14 @@ class ProfCollection(object):
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
 
     def _backgroundCopy(self, member, max_procs=2):
+        """
+        Copies the profile objects in the background while the user can continue to do things.
+        This upgrades the project object types from Profile to ConvectiveProfile via the
+        _target_type variable.
+        
+        member:     the key indicating a specific member
+        max_procs:  max number of processors to perform this action
+        """
         pipe = Queue(max_procs)
 
         for idx, prof in enumerate(self._profs[member]):
@@ -76,6 +84,8 @@ class ProfCollection(object):
     def setAsync(self, async):
         """
         Start an asynchronous process to load objects of type 'target_type' in the background.
+        Used to upgrade the Profile objects to ConvectiveProfile objects in the background
+
         async:  An AsyncThreads instance.
         """
         self._async = async
@@ -119,6 +129,8 @@ class ProfCollection(object):
             return
 
         cur_prof = self._profs[self._highlight][self._prof_idx]
+        # If the currently selected profile is not of the target_type (e.g., ConvectiveProfile), then
+        # then upgrade it via the copy function.
         if type(cur_prof) != self._target_type:
             self._profs[self._highlight][self._prof_idx] = self._target_type.copy(cur_prof)
         return self._profs[self._highlight][self._prof_idx]
