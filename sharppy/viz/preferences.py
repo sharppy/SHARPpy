@@ -238,8 +238,8 @@ class PrefDialog(QDialog):
             'fg_color': '#ffffff',
 
             'temp_color': '#ff0000',
-            'dewp_color': '#00ff00',
-            'wetb_color': '#00ffff',
+            'dewp_color': '#00ffff',
+            'wetb_color': '#6666ff',
             'skew_dgz_color':'#f5d800',
             'skew_itherm_color':'#555555',
             'skew_itherm_hgz_color':'#0000ff',
@@ -255,8 +255,8 @@ class PrefDialog(QDialog):
             'eff_inflow_color': '#00ffff',
 
             '0_3_color': '#ff0000',
-            '3_6_color': '#00ff00',
-            '6_9_color': '#ffff00',
+            '3_6_color': '#0000ff',
+            '6_9_color': '#ff9900',
             '9_12_color': '#00ffff',
             '12_15_color': '#00ffff',
 
@@ -269,11 +269,11 @@ class PrefDialog(QDialog):
 
             'alert_l1_color':'#775000',
             'alert_l2_color':'#996600',
-            'alert_l3_color':'#ffffff',
-            'alert_l4_color':'#ffff00',
-            'alert_l5_color':'#ff0000',
-            'alert_l6_color':'#e700df',
-            'alert_lscp_color':'#00ffff',
+            'alert_l3_color':'#00ff99',
+            'alert_l4_color':'#ffffff',
+            'alert_l5_color':'#00ffff',
+            'alert_l6_color':'#ff00ff',
+            'alert_lscp_color':'#ffff00',
 
             'stp_box_color':'#00ff00',
             'stp_line_color':'#0080ff',
