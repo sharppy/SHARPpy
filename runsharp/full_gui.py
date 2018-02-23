@@ -68,7 +68,7 @@ class crasher(object):
                 data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
-                print "Exception:", e
+                print("Exception:", e)
                 # HERE IS WHERE YOU CAN CATCH A DATAQUALITYEXCEPTION
                 if frozenutils.isFrozen():
                     msg1, msg2 = msg.split("\n")
@@ -490,9 +490,7 @@ class Picker(QWidget):
             if isinstance(ret[0], Exception):
                 exc = ret[0]
                 failure = True
-                print "Failure"
             else:
-                print "Pass"
                 prof_collection = ret[0]
         
         # If the observed or model profile (not Archive) successfully loaded) 
@@ -515,7 +513,7 @@ class Picker(QWidget):
             self.focusSkewApp()
             self.skew.addProfileCollection(prof_collection)
         else:
-            print "There was an exception:", exc
+            print("There was an exception:", exc)
             raise exc
 
     def skewAppClosed(self):
@@ -582,7 +580,6 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
         __text__.emit("Creating Profiles")
     
     profs = dec.getProfiles(indexes=indexes)
-    print profs    
     return profs
 
 class Main(QMainWindow):
