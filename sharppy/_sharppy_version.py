@@ -100,7 +100,7 @@ def get_version():
     version = __version__
     if not release:
         try:
-            import __git_version__
+            from . import __git_version__
             version += __git_version__.rev
         except ImportError:
             version += get_git_revision()

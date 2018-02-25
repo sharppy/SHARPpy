@@ -68,7 +68,7 @@ try:
     has_nc = True
 except ImportError:
     has_nc = False
-    print "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk."
+    print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -81,7 +81,7 @@ class crasher(object):
         def doCrasher(*args, **kwargs):
             try:
                 ret = func(*args, **kwargs)
-            except Exception,e:
+            except Exception as e:
                 ret = None
                 msg = "Well, this is embarrassing.\nSHARPpy broke. This is probably due to an issue with one of the data source servers, but if it keeps happening, send the detailed information to the developers."
                 data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
@@ -99,11 +99,11 @@ class crasher(object):
                     msgbox.setIcon(QMessageBox.Critical)
                     msgbox.exec_()
                 else:
-                    print
-                    print msg
-                    print
-                    print "Detailed Information:"
-                    print data
+                    print()
+                    print(msg)
+                    print()
+                    print("Detailed Information:")
+                    print(data)
 
                 # Check the flag that indicates if the program should exit when it crashes
                 if self._exit:
@@ -193,18 +193,18 @@ class Picker(QWidget):
         projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
         if ('map', 'proj') in self.config:
             proj = self.config['map', 'proj']
-            proj_idx = zip(*projs)[0].index(proj)
+            proj_idx = list(zip(*projs))[0].index(proj)
         else:
             proj_idx = 0
-        self.map_dropdown = self.dropdown_menu(zip(*projs)[1])
+        self.map_dropdown = self.dropdown_menu(list(zip(*projs))[1])
         self.map_dropdown.setCurrentIndex(proj_idx)
 
         self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
         try:
             self.run_dropdown.setCurrentIndex(times.index(self.run))
         except ValueError:
-            print "Run dropdown is missing its times ... ?"
-            print times
+            print("Run dropdown is missing its times ... ?")
+            print(times)
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -250,7 +250,7 @@ class Picker(QWidget):
         view : QWebView object
         """
 
-        view = MapWidget(self.data_sources[self.model], self.run, self.async, width=800, height=500, cfg=self.config)
+        view = MapWidget(self.data_sources[self.model], self.run, self.async, cfg=self.config) #minimumWidth=800, minimumHeight=500, 
         view.clicked.connect(self.map_link)
 
         return view
@@ -344,7 +344,7 @@ class Picker(QWidget):
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
-            print getTimes()
+            print(getTimes())
         else:
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
 
@@ -860,7 +860,7 @@ def main():
     def createWindow(file_names, collect=False, close=True):
         main_win = Main()
         for fname in file_names:
-            print "Creating image for '%s' ..." % fname
+            print("Creating image for '%s' ..." % fname)
             main_win.picker.skewApp(filename=fname)
             if not collect:
                 fpath, fbase = os.path.split(fname)

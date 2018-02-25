@@ -180,7 +180,7 @@ class Profile(object):
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")
-        for idx in xrange(self.pres.shape[0]):
+        for idx in range(self.pres.shape[0]):
             str = ""
             for col in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']:
                 str += "%8.2f,  " % qc(self.__dict__[col][idx])
@@ -970,17 +970,27 @@ class ConvectiveProfile(BasicProfile):
         try:
             self.right_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
                 sfc_9km_shear, sfc_3km_shear, right_srh3km)
+        except:
+            self.right_matches = ([], [], 0, 0, 0)
+
+        try:
             self.left_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
                 sfc_9km_shear, sfc_3km_shear, left_srh3km)
         except:
-            self.right_matches = ([], [], 0, 0, 0)
             self.left_matches = ([], [], 0, 0, 0)
 
         try:
-            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), right_srh3km)
-            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), left_srh3km)
-        except Exception as e:
+            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
+                utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+                right_srh3km)
+        except:
             self.right_supercell_matches = ([], [], 0, 0, 0)
+
+        try:
+            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
+                utils.MS2KTS(sfc_6km_shear), left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+                left_srh3km)
+        except Exception as e:
             self.left_supercell_matches = ([], [], 0, 0, 0)
 
         self.supercell_matches = self.right_supercell_matches

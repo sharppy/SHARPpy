@@ -7,8 +7,8 @@ from utils.frozenutils import Process, Queue
 import platform
 import numpy as np
 
-def doCopy(target_type, prof, idx, strictQC, pipe):
-    pipe.put((target_type.copy(prof, strictQC), idx))
+def doCopy(target_type, prof, idx, pipe):
+    pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
     """
@@ -28,7 +28,7 @@ class ProfCollection(object):
         self._dates = dates
         self._meta = kwargs
         self._target_type = target_type
-        self._highlight = profiles.keys()[0]
+        self._highlight = list(profiles.keys())[0]
         self._prof_idx = 0
         self._analog_date = None
 
@@ -47,7 +47,7 @@ class ProfCollection(object):
         Subset the profile collection over time.
         idxs:   The time indices to include in the subsetted collection.
         """
-        profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.iteritems() )
+        profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.items() )
         dates = [ self._dates[idx] for idx in idxs ]
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
 
@@ -142,7 +142,7 @@ class ProfCollection(object):
         if not self.hasCurrentProf():
             return {}
 
-        for mem, profs in self._profs.iteritems():
+        for mem, profs in self._profs.items():
             # Copy the profiles on the fly
             cur_prof = profs[self._prof_idx]
 
@@ -151,7 +151,7 @@ class ProfCollection(object):
             elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
                 self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
 
-        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.iteritems() ) 
+        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.items() ) 
         return profs
 
     def getAnalogDate(self):
@@ -180,7 +180,7 @@ class ProfCollection(object):
         """
         Returns True if this collection has multiple ensemble members. Otherwise, returns False.
         """
-        return len(self._profs.keys()) > 1
+        return len(list(self._profs.keys())) > 1
 
     def hasCurrentProf(self):
         """
@@ -283,10 +283,10 @@ class ProfCollection(object):
 
         cls = type(prof)
         # Copy the variables to be modified
-        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.iterkeys() )
+        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.keys() )
 
         # Do the modification
-        for var, val in kwargs.iteritems():
+        for var, val in kwargs.items():
             prof_vars[var][idx] = val
         
         # Make a copy of the profile object with the newly modified variables inserted.

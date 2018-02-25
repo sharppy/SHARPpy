@@ -3,7 +3,11 @@ import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from datetime import datetime
 from sharppy.io.decoder import Decoder
-from StringIO import StringIO
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 __fmtname__ = "pecan"
 __classname__ = "PECANDecoder"
@@ -28,12 +32,12 @@ class PECANDecoder(Decoder):
             # Try to add the profile object to the list of profiles for this member
             try:
                 profiles[member] = profiles[member] + [prof]
-            except Exception,e:
+            except Exception as e:
                 profiles[member] = [prof]
             if not dt_obj in dates:
                 dates.append(dt_obj)
         prof_coll = prof_collection.ProfCollection(profiles, dates)
-        if "MEAN" in profiles.keys():
+        if "MEAN" in list(profiles.keys()):
             prof_coll.setHighlightedMember("MEAN")
         prof_coll.setMeta('observed', False)
         prof_coll.setMeta('base_time', dates[0])
@@ -54,4 +58,4 @@ class PECANDecoder(Decoder):
 
 if __name__ == '__main__':
 	file = PECANDecoder("http://arctic.som.ou.edu/OUN.txt")
-	print file.getProfileTimes()
+	print(file.getProfileTimes())

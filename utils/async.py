@@ -1,7 +1,11 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
+
 import hashlib
 from datetime import datetime
 import traceback
@@ -71,7 +75,7 @@ class AsyncThreads(QObject):
         Clears the queue of processes waiting to be started and kills any threads currently running.
         """
         self.queue = Queue.PriorityQueue(0)
-        for thd_id, thd in self.threads.iteritems():
+        for thd_id, thd in self.threads.items():
             if thd.isRunning():
                 thd.terminate()
 
@@ -104,7 +108,7 @@ class AsyncThreads(QObject):
 
     def _genThreadId(self):
         time_stamp = datetime.utcnow().isoformat()
-        return hashlib.md5(time_stamp).hexdigest()
+        return hashlib.md5(time_stamp.encode('utf-8')).hexdigest()
 
     def _threadFactory(self, func, thread_id, *args, **kwargs):
 
@@ -120,7 +124,7 @@ class AsyncThreads(QObject):
                     ret_val = func(*args, **kwargs)
                 except Exception as e:
                     if self.debug:
-                        print traceback.format_exc()
+                        print(traceback.format_exc())
                     ret_val = e
                 if type(ret_val) != tuple:
                     ret_val = (ret_val, )

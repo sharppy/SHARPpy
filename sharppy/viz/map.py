@@ -5,7 +5,6 @@ from PySide import QtGui, QtCore
 
 import sys, os
 import re
-import urllib2
 
 class Mapper(object):
     data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
@@ -50,15 +49,15 @@ class Mapper(object):
         lb_lat, ub_lat = Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
 
         if self.proj == 'npstere':
-            for lon in xrange(0, 360, 20):
+            for lon in range(0, 360, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
-            for lat in xrange(int(lb_lat), int(ub_lat), 15):
+            for lat in range(int(lb_lat), int(ub_lat), 15):
                 lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
                 rx, ry = self(lat, lons)
                 x_min, x_max = rx.min(), rx.max()
@@ -66,18 +65,18 @@ class Mapper(object):
                 path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
 
         elif self.proj == 'merc':
-            for lon in xrange(-180, 180 + 20, 20):
+            for lon in range(-180, 180 + 20, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
             lat_spc = 10
             rnd_lat_lb = np.ceil(lb_lat / lat_spc) * lat_spc
             rnd_lat_ub = np.floor(ub_lat / lat_spc) * lat_spc
-            lat_lines = range(int(rnd_lat_lb), int(rnd_lat_ub + lat_spc), lat_spc)
+            lat_lines = list(range(int(rnd_lat_lb), int(rnd_lat_ub + lat_spc), lat_spc))
             if rnd_lat_lb != lb_lat:
                 lat_lines = [int(lb_lat)] + lat_lines 
             if rnd_lat_ub != ub_lat:
@@ -88,19 +87,19 @@ class Mapper(object):
                 lx, ly = self(lat, lons)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
         elif self.proj == 'spstere':
-            for lon in xrange(0, 360, 20):
+            for lon in range(0, 360, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
-            for lat in xrange(int(ub_lat), int(lb_lat), -15):
+            for lat in range(int(ub_lat), int(lb_lat), -15):
                 lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
                 rx, ry = self(lat, lons)
                 x_min, x_max = rx.min(), rx.max()
@@ -191,7 +190,7 @@ class Mapper(object):
                 breaks = []
             breaks = [ 0 ] + list(breaks) + [ -1 ]
  
-            for idx in xrange(len(breaks) - 1):
+            for idx in range(len(breaks) - 1):
                 if breaks[idx + 1] == -1:
                     seg_idxs = idxs[breaks[idx]:]
                 else:
@@ -260,11 +259,11 @@ class Mapper(object):
         for bnd in self._bnds[name][self.proj]:
             path = QtGui.QPainterPath()
 
-            path_lats, path_lons = zip(*bnd)
+            path_lats, path_lons = list(zip(*bnd))
             path_x, path_y = self(np.array(path_lats), np.array(path_lons))
 
             path.moveTo(path_x[0], path_y[0])
-            for px, py in zip(path_x, path_y)[1:]:
+            for px, py in zip(path_x[1:], path_y[1:]):
                 path.lineTo(px, py)
 
             paths.append(path)
@@ -551,7 +550,7 @@ class MapWidget(QtGui.QWidget):
                     qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
         
         color = selected_color
-        if lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+        if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
             qp.setPen(QtGui.QPen(color))
             qp.setBrush(QtGui.QBrush(color))
             qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
@@ -632,7 +631,7 @@ class MapWidget(QtGui.QWidget):
             idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
 
             stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
-            stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ])
+            stn_xs, stn_ys = list(zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ]))
             stn_xs = np.array(stn_xs)
             stn_ys = np.array(stn_ys)
             dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
@@ -733,11 +732,11 @@ class MapWidget(QtGui.QWidget):
 
         lb_lat, ub_lat = self.mapper.getLatBounds()
         idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
-        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
-        if len(stn_xs) == 0 or len(stn_ys) == 0:
+        if len(idxs) == 0:
             return
 
-        stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ])
+        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
+        stn_xs, stn_ys = list(zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ]))
         stn_xs = np.array(stn_xs)
         stn_ys = np.array(stn_ys)
         dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())

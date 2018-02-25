@@ -47,7 +47,7 @@ class backgroundHodo(QtGui.QFrame):
         self.point = (0,0)
         self.centerx = self.wid / 2; self.centery = self.hgt / 2
         self.scale = (self.brx - self.tlx) / self.hodomag
-        self.rings = xrange(self.ring_increment, 100+self.ring_increment,
+        self.rings = range(self.ring_increment, 100+self.ring_increment,
             self.ring_increment)
         if self.physicalDpiX() > 75:
             fsize = 7
@@ -120,7 +120,7 @@ class backgroundHodo(QtGui.QFrame):
         ## get the maximum speed value in the frame for the ring increment.
         ## this is to help reduce drawing resources
         max_uv = int(conv(np.hypot(*self.pix_to_uv(self.brx, self.bry))))
-        self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
+        self.rings = range(self.ring_increment, max_uv+self.ring_increment,
                            self.ring_increment)
         ## reassign the new scale
         self.scale = (self.brx - self.tlx) / self.hodomag
@@ -597,7 +597,7 @@ class plotHodo(backgroundHodo):
 
         self.scale = (self.brx - self.tlx) / self.hodomag
         max_uv = int(conv(np.hypot(*self.pix_to_uv(self.brx, self.bry))))
-        self.rings = xrange(self.ring_increment, max_uv+self.ring_increment,
+        self.rings = range(self.ring_increment, max_uv+self.ring_increment,
                            self.ring_increment)
 
         self.plotBitMap.fill(self.bg_color)
@@ -693,7 +693,7 @@ class plotHodo(backgroundHodo):
                 x2, y2 = self.uv_to_pix(self.prof.sfc_6km_shear[0] + to_add[0], self.prof.sfc_6km_shear[1]+ to_add[1])
                 qp.drawLine(e.x(), e.y(), x2, y2)
                 dir, spd = tab.utils.comp2vec(self.prof.sfc_6km_shear[0], self.prof.sfc_6km_shear[1])
-                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts')
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "0 - 6 km Shear: " + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd) + ' kts')
 
                 # Plot the 9-11 km Storm Relative Winds
                 width = 200
@@ -716,7 +716,7 @@ class plotHodo(backgroundHodo):
                     supercell_type = "Classic"
                 else:
                     supercell_type = "HP"
-                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "9 - 11 km SR-Wind: " + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd) + ' kts - (' + supercell_type + ')')
                 # Removing this function until @wblumberg can finish fixing this function.
                 """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
@@ -876,7 +876,7 @@ class plotHodo(backgroundHodo):
             ## get the direction and speed from u,v
             dir, spd = tab.utils.comp2vec(u,v)
             self.plotBndy(dir)
-            self.bndyReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(dir) + '/' + tab.utils.INT2STR(spd))
+            self.bndyReadout.setText('Bndy Motion: ' + tab.utils.INT2STR(np.float64(dir)) + '/' + tab.utils.INT2STR(spd))
             self.bndyReadout.setFixedWidth(120)
             self.bndyReadout.move(self.brx-130, self.bry-30)
         elif self.cursor_type == 'none':
@@ -992,7 +992,7 @@ class plotHodo(backgroundHodo):
         for idx, prof_coll in enumerate(self.prof_collections):
             # Draw all unhighlighed members
             if prof_coll.getCurrentDate() == cur_dt:
-                proflist = prof_coll.getCurrentProfs().values()
+                proflist = list(prof_coll.getCurrentProfs().values())
 
                 if idx == self.pc_idx:
                     for prof in proflist:
@@ -1060,7 +1060,7 @@ class plotHodo(backgroundHodo):
         if self.wind_units == 'm/s':
             mw_spd = tab.utils.KTS2MS(mw_spd)
 
-        mw_str = tab.utils.INT2STR(self.mean_lcl_el_vec[0]) + '/' + tab.utils.INT2STR(mw_spd)
+        mw_str = tab.utils.INT2STR(np.float64(self.mean_lcl_el_vec[0])) + '/' + tab.utils.INT2STR(mw_spd)
         qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
 
     def drawCorfidi(self, qp):
@@ -1123,8 +1123,8 @@ class plotHodo(backgroundHodo):
             up_spd = tab.utils.KTS2MS(up_spd)
             dn_spd = tab.utils.KTS2MS(dn_spd)
 
-        up_stuff = tab.utils.INT2STR(self.upshear[0]) + '/' + tab.utils.INT2STR(up_spd)
-        dn_stuff = tab.utils.INT2STR(self.downshear[0]) + '/' + tab.utils.INT2STR(dn_spd)
+        up_stuff = tab.utils.INT2STR(np.float64(self.upshear[0])) + '/' + tab.utils.INT2STR(up_spd)
+        dn_stuff = tab.utils.INT2STR(np.float64(self.downshear[0])) + '/' + tab.utils.INT2STR(dn_spd)
         qp.drawText(up_rect, QtCore.Qt.AlignCenter, "UP=" + up_stuff)
         qp.drawText(dn_rect, QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
 
@@ -1216,8 +1216,8 @@ class plotHodo(backgroundHodo):
             rm_spd = tab.utils.KTS2MS(rm_spd)
             lm_spd = tab.utils.KTS2MS(lm_spd)
 
-        rm_stuff = tab.utils.INT2STR(self.bunkers_right_vec[0]) + '/' + tab.utils.INT2STR(rm_spd)
-        lm_stuff = tab.utils.INT2STR(self.bunkers_left_vec[0]) + '/' + tab.utils.INT2STR(lm_spd)
+        rm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_right_vec[0])) + '/' + tab.utils.INT2STR(rm_spd)
+        lm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_left_vec[0])) + '/' + tab.utils.INT2STR(lm_spd)
         qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
         qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
 
@@ -1294,7 +1294,7 @@ class plotHodo(backgroundHodo):
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_x) - 1):
+        for idx in range(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(colors[idx], penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -1302,7 +1302,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx], seg_idxs[idx + 1]):
+            for z_idx in range(seg_idxs[idx], seg_idxs[idx + 1]):
                 path.lineTo(xx[z_idx], yy[z_idx])
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
@@ -1316,7 +1316,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx], len(xx)):
+            for z_idx in range(seg_idxs[idx], len(xx)):
                 path.lineTo(xx[z_idx], yy[z_idx])
 
             qp.drawPath(path)
@@ -1356,7 +1356,7 @@ class plotHodo(backgroundHodo):
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
         seg_idxs = np.searchsorted(z, seg_bnds)
-        for idx in xrange(len(seg_x) - 1):
+        for idx in range(len(seg_x) - 1):
             ## define a pen to draw with
             pen = QtGui.QPen(QtGui.QColor(color), penwidth)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -1364,7 +1364,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx], seg_idxs[idx + 1]):
+            for z_idx in range(seg_idxs[idx], seg_idxs[idx + 1]):
                 path.lineTo(xx[z_idx], yy[z_idx])
             path.lineTo(seg_x[idx + 1], seg_y[idx + 1])
 
@@ -1378,7 +1378,7 @@ class plotHodo(backgroundHodo):
 
             path = QPainterPath()
             path.moveTo(seg_x[idx], seg_y[idx])
-            for z_idx in xrange(seg_idxs[idx], len(xx)):
+            for z_idx in range(seg_idxs[idx], len(xx)):
                 path.lineTo(xx[z_idx], yy[z_idx])
 
             qp.drawPath(path)
