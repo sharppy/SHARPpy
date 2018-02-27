@@ -8,7 +8,11 @@ import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from datetime import datetime
 from sharppy.io.decoder import Decoder
-from StringIO import StringIO
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 __fmtname__ = "wrf-arw"
 __classname__ = "ARWDecoder"
@@ -31,10 +35,10 @@ class ARWDecoder(Decoder):
             data = Dataset(self._file_name[0])
             return data
         except (ImportError):
-            print "No netCDF install found. Cannot read netCDF file."
+            print("No netCDF install found. Cannot read netCDF file.")
             pass
         except (RuntimeError): 
-            print "No such file found"
+            print("No such file found")
 
     def _find_nearest_point(self, ncfile, lon, lat):
         """

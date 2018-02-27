@@ -2,7 +2,10 @@
 from PySide.QtGui import *
 from PySide.QtCore import *
 
-import ConfigParser
+try:
+    import ConfigParser
+except ImportError:
+    import configparser as ConfigParser
 import os
 
 class Config(QObject):
@@ -64,7 +67,7 @@ class Config(QObject):
         cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuples, and the values
                     are the configuration values.
         """
-        for item, value in cfg_dict.iteritems():
+        for item, value in cfg_dict.items():
             if item not in self:
                 self[item] = value
 

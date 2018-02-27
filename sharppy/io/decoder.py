@@ -2,8 +2,13 @@
 import numpy as np
 
 import sharppy.sharptab.profile as profile
+from utils.utils import is_py3
 
-import urllib2
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
+
 from datetime import datetime
 import glob
 import os
@@ -24,12 +29,14 @@ _decoders = {}
 def findDecoders():
     global _decoders
 
+    level = -1 if not is_py3() else 0 
+
     built_ins = [ 'buf_decoder', 'spc_decoder', 'pecan_decoder', 'arw_decoder', 'uwyo_decoder' ]
-    io = __import__('sharppy.io', globals(), locals(), built_ins, -1)
+    io = __import__('sharppy.io', globals(), locals(), built_ins, level)
 
     for dec in built_ins:
         # Load build-in decoders
-        print "Loading decoder '%s'." % dec
+        print("Loading decoder '%s'." % dec)
         dec_imp = getattr(io, dec)
 
         dec_name = dec_imp.__classname__
@@ -42,7 +49,7 @@ def findDecoders():
     for dec in custom:
         # Find and load custom decoders
         dec_mod_name = os.path.basename(dec)[:-3]
-        print "Found custom decoder '%s'." % dec_mod_name
+        print("Found custom decoder '%s'." % dec_mod_name)
         dec_imp = imp.load_source(dec_mod_name, dec)
         
         dec_name = dec_imp.__classname__
@@ -73,7 +80,7 @@ class Decoder(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urllib2.urlopen(self._file_name)
+            f = urlopen(self._file_name)
         except (ValueError, IOError):
             try:
                 f = open(self._file_name, 'rb')
@@ -81,7 +88,7 @@ class Decoder(object):
                 raise IOError("File '%s' cannot be found" % self._file_name)
         file_data = f.read()
 #       f.close() # Apparently, this multiplies the time this function takes by anywhere from 2 to 6 ... ???
-        return file_data
+        return file_data.decode('utf-8')
 
     def getProfiles(self, indexes=None):
         '''
@@ -104,5 +111,5 @@ class Decoder(object):
         return self._prof_collection.getMeta('loc')
 
 if __name__ == "__main__":
-    print "Creating bufkit decoder ..."
+    print("Creating bufkit decoder ...")
     bd = BufDecoder()

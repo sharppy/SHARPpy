@@ -24,7 +24,7 @@ def test_ctof():
     input_c = ma.masked
     correct_f = ma.masked
     returned_f = thermo.ctof(input_c)
-    npt.assert_(type(returned_f), type(correct_f))
+    npt.assertTrue(type(returned_f), type(correct_f))
 
     # array_like pass
     inds = [0, 5, 7]
@@ -57,7 +57,7 @@ def test_ftoc():
     input_f = ma.masked
     correct_c = ma.masked
     returned_c = thermo.ftoc(input_f)
-    npt.assert_(type(returned_c), type(correct_c))
+    npt.assertTrue(type(returned_c), type(correct_c))
 
     # array_like pass
     inds = [0, 5, 7]
@@ -90,7 +90,7 @@ def test_ktoc():
     input_k = ma.masked
     correct_c = ma.masked
     returned_c = thermo.ktoc(input_k)
-    npt.assert_(type(returned_c), type(correct_c))
+    npt.assertTrue(type(returned_c), type(correct_c))
 
     # array_like pass
     inds = [0, 2, 3]
@@ -123,7 +123,7 @@ def test_ctok():
     input_c = ma.masked
     correct_k = ma.masked
     returned_k = thermo.ctok(input_c)
-    npt.assert_(type(returned_k), type(correct_k))
+    npt.assertTrue(type(returned_k), type(correct_k))
 
     # array_like pass
     inds = [0, 2, 3]
@@ -156,7 +156,7 @@ def test_ktof():
     input_k = ma.masked
     correct_f = ma.masked
     returned_f = thermo.ktof(input_k)
-    npt.assert_(type(returned_f), type(correct_f))
+    npt.assertTrue(type(returned_f), type(correct_f))
 
     # array_like pass
     inds = [0, 2, 3]
@@ -189,7 +189,7 @@ def test_ftok():
     input_f = ma.masked
     correct_k = ma.masked
     returned_k = thermo.ftok(input_f)
-    npt.assert_(type(returned_k), type(correct_k))
+    npt.assertTrue(type(returned_k), type(correct_k))
 
     # array_like pass
     inds = [0, 2, 3]

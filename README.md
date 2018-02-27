@@ -65,7 +65,7 @@ https://groups.google.com/forum/#!forum/sharppy
 ### Installing SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), and Mac OS X 10.6+ (Snow Leopard and later; 64 bit only).  If you do not have one of those, then you will need to download the code.
+SHARPpy can be installed in one of two forms: either a pre-compiled binary executable or by downloading the code and installing it using a separate Python interpreter.  Binary executables are available for Windows 7 (32 and 64 bit), Windows 8.1 (64 bit only), and Mac OS X 10.6+ (Snow Leopard and later; 64 bit only).  If you do not have one of those, then you will need to download the code.
 
 #### Installing a Pre-compiled Binary
 <sup>[[Return to Top]](#sharppy)</sup>
@@ -82,10 +82,10 @@ The following pre-compiled binaries are available (click to download):
 
 Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
 
-#### Installing the Code
+#### Installing the Code from Source
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
+SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  SHARPpy also works under the _Python 3.6_ Anaconda Python Distribution on an experimental basis.
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
 
@@ -147,14 +147,60 @@ If the program is unable to detect an Internet connection, it will display a mes
 
 As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the sounding window.  This allows the user to have a large amount of flexiblity in making comparisons between different sounding data.  For example, SHARPpy can now be used to perform visual comparsions between GFS and NAM forecast soundings, D(prog)/Dt of the HRRR forecast soundings, or compare observed soundings to model data.  Once a sounding window is open, you can change focus back to the SHARPpy Sounding Picker and add additional sounding data to your open sounding window by repeating the process to generate the first sounding window.  At this point the sounding window will have one profile that is in "focus" and other(s) that are not.
 
-#### Loading in Archived Data Files
+#### Loading in Sounding Data Files
 
-SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the OAX file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the [14061619.OAX](https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX) file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+
+*Notes about the file format:*
+
+While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
+
+The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  "..." is where the sections of the file ends and continues in this example and are not included in the actual data file:
+
+```
+%TITLE%
+ SITEID   YYMMDD/HHMM 
+
+   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
+-------------------------------------------------------------------
+...
+```
+
+The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground.  -9999 is the placeholder for missing data:
+
+```
+...
+%RAW%
+ 1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
+ 965.00,    350.00,     27.80,     23.80,    150.00,     23.00
+ 962.00,    377.51,     27.40,     22.80,  -9999.00,  -9999.00
+%END%
+```
+
+Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program's routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:
+
+1.) Making sure that no temperature or dewpoint values are below 273.15 K.
+
+2.) Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR < 360, respectively.
+
+3.) Making sure that no repeat values of pressure or height occur.
+
+4.) Checking to see that pressure decreases with height within the profile.
+
+Should your data not load, we recommend you attempt to manually edit the data to remove these issues and try to load the data again.  The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.
 
 #### Adding Custom Data Sources
 <sup>[[Return to Top]](#sharppy)</sup>
 
-To add a custom data source, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
+SHARPpy maintains a variety of different sounding data sources in the distributed program.  These sounding data sources are provided by a variety of hosts online, and we thank them for making their data accessible for the program to be used.  Accessiblity to these various data sources are dependent upon the hosts.
+
+Observed soundings distributed by the program are provided by the [Storm Prediction Center soundings page](http://www.spc.noaa.gov/exper/soundings/).
+
+SHARPpy also uses the BUFKIT files facilitated by the NOAA/National Weather Service to distribute NOAA NWP point forecast soundings.  Currently, SHARPpy links into the [Penn State Bufkit Distribution System](http://www.meteo.psu.edu/bufkit/) to provide point forecast soundings for the GFS, NAM, NAM 3-km, SREF, RAP, HIRESW, and HRRR models run at NCEP.  The vertical grid for BUFKIT files are derived straight from the model native grid, as opposed to the isobaric levels that have been generated by post-processing software.
+
+In the past, the developers have incorporated datastreams from other experimental NWP runs including the [MPAS](https://mpas-dev.github.io) and the [NCAR Realtime Ensemble](https://ensemble.ucar.edu) into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.
+
+To add a custom data source, such as your own NWP point forecast soundings, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
 
 ##### 1. Make a new XML file
 The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
@@ -207,6 +253,12 @@ This will install your new data source and allow SHARPpy to find it. If the inst
 ### Using the Sounding Window
 <sup>[[Return to Top]](#sharppy)</sup>
 
+[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.
+
+Additional resources for interpreting the GUI include the [SPC Sounding Analysis Help](http://www.spc.noaa.gov/exper/soundings/help/) and [Explanation of SPC Severe Weather Parameters](http://www.spc.noaa.gov/sfctest/help/sfcoa.html) webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.  
+
+For information on the interactive aspects of the program, see the sections below:
+
 ##### Zooming and Changing Views
 
 Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Skew-T plots within the window.  Right clicking on the Hodograph will also allow you to change where the hodograph is centered.  Currently, the hodograph can be centered on the Right Mover Storm Motion Vector, the Cloud-Layer Mean Wind Vector, or the origin of the hodograph.
@@ -215,13 +267,13 @@ Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Sk
 
 The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:
 
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection.
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding.
+1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](http://www.spc.noaa.gov/publications/jewell/sars.pdf)).
+2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](http://www.spc.noaa.gov/publications/thompson/waf-env.pdf)).
 3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC.
+4. STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf)).
 5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
 6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value.)
+7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf))
 
 ##### Color Ranking
 
@@ -234,7 +286,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 5. LIGHT BROWN
 6. DARK BROWN
 
-The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by Matthew Bunkers; NWS).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
+The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by [Matthew Bunkers; NWS](https://www.weather.gov/unr/uac)).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
 
 #### Interacting with the Focused Sounding
 
@@ -248,7 +300,7 @@ New in version 1.3.0 is the ability to interpolate the profile to 25-mb interval
 
 ##### Storm Mode Functions
 
-Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to deteremine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale.  Clicking on the hodograph again will remove the boundary.
+Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in [Dial et al. 2010, WAF](http://www.spc.noaa.gov/publications/dial/waf-mode.pdf).  Clicking on the hodograph again will remove the boundary.
 
 ##### Lifting Parcels
 
@@ -300,6 +352,8 @@ To learn more about interacting with the SHARPpy libraries using the Python
 programming language, see the tutorial listed in tutorials/ and check out the link:
 
 http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
+
+This tutorial will provide examples for how to use the Python scripting language and SHARPpy to read in the tabular data and work with many of the relevant routines used in the SHARPpy GUI (e.g., CAPE, STP, SCP, SRH calculations).
 
 To write scripts interacting with the SHARPpy libraries, you do NOT have to have the PySide package installed.
 

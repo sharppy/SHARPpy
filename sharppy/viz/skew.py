@@ -98,7 +98,7 @@ class backgroundSkewT(QtGui.QWidget):
         for t in np.arange(self.bltmpc, self.brtmpc+self.dt, self.dt):
             self.draw_isotherm_labels(t, qp)
         logging.debug("Drawing secondary background isobars.")
-        for p in xrange(int(self.pmax), int(self.pmin-50), -50):
+        for p in range(int(self.pmax), int(self.pmin-50), -50):
             self.draw_isobar(p, 0, qp)
 
         qp.end()
@@ -158,7 +158,7 @@ class backgroundSkewT(QtGui.QWidget):
         yvals = self.originy + self.pres_to_pix(presvals) / self.scale
         path = QPainterPath()
         path.moveTo(xvals[0], yvals[0])
-        for i in xrange(1, len(presvals) ):
+        for i in range(1, len(presvals) ):
             p = presvals[i]
             x = xvals[i]
             y = yvals[i]
@@ -174,7 +174,7 @@ class backgroundSkewT(QtGui.QWidget):
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
         dp = -10
-        for p in xrange(int(self.pmax), int(self.pmin)+dp, dp):
+        for p in range(int(self.pmax), int(self.pmin)+dp, dp):
             t = tab.thermo.wetlift(1000., tw, p)
             x = self.tmpc_to_pix(t, p)
             y = self.pres_to_pix(p)
@@ -869,7 +869,7 @@ class plotSkewT(backgroundSkewT):
         for idx, prof_col in enumerate(self.prof_collections):
             # Plot all unhighlighted members at this time
             if prof_col.getCurrentDate() == cur_dt:
-                proflist = prof_col.getCurrentProfs().values()
+                proflist = list(prof_col.getCurrentProfs().values())
                 if idx == self.pc_idx:
                     temp_color = self.ens_temp_color
                     dewp_color = self.ens_dewp_color
@@ -996,7 +996,7 @@ class plotSkewT(backgroundSkewT):
         box_width = 150
 
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
-        idxs, titles = zip(*[ (idx, self.getPlotTitle(pc)) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == cur_dt or self.all_observed ])
+        idxs, titles = list(zip(*[ (idx, self.getPlotTitle(pc)) for idx, pc in enumerate(self.prof_collections) if pc.getCurrentDate() == cur_dt or self.all_observed ]))
         titles = list(titles)
         main_title = titles.pop(idxs.index(self.pc_idx))
 
@@ -1235,7 +1235,7 @@ class plotSkewT(backgroundSkewT):
         yvals = self.originy + self.pres_to_pix(ptrace) / self.scale
         xvals = self.originx + self.tmpc_to_pix(ttrace, ptrace) / self.scale
         path.moveTo(xvals[0], yvals[0])
-        for i in xrange(1, len(yvals)):
+        for i in range(1, len(yvals)):
             x = xvals[i]; y = yvals[i]
 #           if y < self.tpad:
 #               break
@@ -1272,7 +1272,7 @@ class plotSkewT(backgroundSkewT):
         y = self.originy + self.pres_to_pix(pres) / self.scale
 
         path.moveTo(x[0], y[0])
-        for i in xrange(1, x.shape[0]):
+        for i in range(1, x.shape[0]):
             path.lineTo(x[i], y[i])
             if stdev is not None:
                 self.drawSTDEV(pres[i], data[i], stdev[i], color, qp)

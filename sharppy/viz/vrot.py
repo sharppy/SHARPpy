@@ -127,7 +127,7 @@ class backgroundVROT(QtGui.QFrame):
         texts = self.vrot_inset_data['ytexts']
         spacing = self.bry / 10.
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in xrange(len(y_ticks)):
+        for i in range(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -150,7 +150,7 @@ class backgroundVROT(QtGui.QFrame):
         # Draw the x tick marks
         
         qp.setFont(QtGui.QFont('Helvetica', 8))
-        for i in xrange(texts.shape[0]):
+        for i in range(texts.shape[0]):
             color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
@@ -168,7 +168,7 @@ class backgroundVROT(QtGui.QFrame):
         lastprob = ef01[0]
         if lastprob > 70:
             lastprob = 70
-        for i in xrange(1, np.asarray(xpts).shape[0], 1):
+        for i in range(1, np.asarray(xpts).shape[0], 1):
             if ef01[i] > 70:
                 prob = 70
                 pen = QtGui.QPen(color, 2.5, QtCore.Qt.DotLine)
@@ -187,7 +187,7 @@ class backgroundVROT(QtGui.QFrame):
         lastprob = ef23[0]
         if lastprob > 70:
             lastprob = 70
-        for i in xrange(1, np.asarray(xpts).shape[0], 1):
+        for i in range(1, np.asarray(xpts).shape[0], 1):
             if ef23[i] > 70:
                 prob = 70
                 pen = QtGui.QPen(color, 2.5, QtCore.Qt.DotLine)
@@ -204,7 +204,7 @@ class backgroundVROT(QtGui.QFrame):
         ef45 = self.vrot_inset_data['EF4-EF5']
         color = QtGui.QColor(self.EF45_color)
         lastprob = ef45[0]
-        for i in xrange(1, np.asarray(xpts).shape[0], 1):
+        for i in range(1, np.asarray(xpts).shape[0], 1):
             pen = QtGui.QPen(color, 2.5, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             prob = ef45[i]

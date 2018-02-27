@@ -174,7 +174,7 @@ class plotAdvection(backgroundAdvection):
         if self.prof is None:
             return
 
-        for i in xrange(len(self.inf_temp_adv)):
+        for i in range(len(self.inf_temp_adv)):
             ptop = self.pressure_bounds[i][0]
             pbot = self.pressure_bounds[i][1]
             inf_temp_adv = self.inf_temp_adv[i]

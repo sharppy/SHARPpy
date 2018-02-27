@@ -1,6 +1,14 @@
 import sys, os
-import multiprocessing.forking
 import platform
+
+import multiprocessing
+try:
+    import multiprocessing.forking as forking
+except ImportError:
+    if platform.system() == "Windows":
+        import multiprocessing.popen_spawn_win32 as forking
+    else:
+        import multiprocessing.popen_fork as forking
 
 _env_frozen = 'frozen'
 _env_frozen_path = '_MEIPASS'
@@ -16,7 +24,7 @@ def freezeSupport():
     if platform.system() == "Windows" and isFrozen():
         multiprocessing.freeze_support()
 
-class _Popen(multiprocessing.forking.Popen):
+class _Popen(forking.Popen):
     def __init__(self, *args, **kw):
         if isFrozen():
             # We have to set original _MEIPASS2 value from sys._MEIPASS

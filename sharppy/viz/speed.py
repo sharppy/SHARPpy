@@ -59,7 +59,7 @@ class backgroundSpeed(QtGui.QFrame):
         ## draw the background frame
         self.draw_frame(qp)
         ## draw the vertical ticks for wind speed
-        for s in xrange(int(self.smin),int(self.smax),int(self.delta)):
+        for s in range(int(self.smin),int(self.smax),int(self.delta)):
             if s % (int(self.delta)*2) == 0 and s != 0:
                 label=True
             else:
@@ -255,7 +255,7 @@ class plotSpeed(backgroundSpeed):
             spd = tab.utils.KTS2MS(spd)
 
         ## loop through the profile
-        for i in xrange( pres.shape[0] ):
+        for i in range( pres.shape[0] ):
             ## get the important values from the profile
             hgt1 = hgt[i]
             p1 = pres[i]

@@ -186,7 +186,7 @@ class PWDatabase(object):
         stn_fields, stns = loadCSV(os.path.join(os.path.dirname(__file__), '..', '..', 'datasources', 'spc_ua.csv'))
 
         stn_ids = [ stn['icao'] for stn in stns ]
-        for idx in xrange(len(self._pwv_mn)):
+        for idx in range(len(self._pwv_mn)):
             try:
                 stn_idx = stn_ids.index(self._pwv_mn['SITE'])
 

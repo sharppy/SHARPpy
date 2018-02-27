@@ -86,7 +86,7 @@ class DefineParcel(object):
             self.presval = kwargs.get('pres', 100)
             self.__effective(prof, **kwargs)
         else:
-            #print 'Defaulting to Surface Parcel'
+            #print('Defaulting to Surface Parcel')
             self.presval = kwargs.get('pres', prof.gSndg[prof.sfc])
             self.__sfc(prof)
     
@@ -751,7 +751,7 @@ def inferred_temp_adv(prof, lat=35):
 
     multiplier = (f / 9.81) * (np.pi / 180.) # Units: (s**-1 / (m/s**2)) * (radians/degrees)
 
-    for i in xrange(1, len(pressures)):
+    for i in range(1, len(pressures)):
         bottom_pres = pressures[i-1]
         top_pres = pressures[i]
         # Get the temperatures from both levels (in Kelvin)
@@ -1366,9 +1366,10 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     if pbot > pres:
         pbot = pres
         pcl.blayer = pbot
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked): return ma.masked
-    if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
-    
+
+    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+        return pcl
+
     # Begin with the Mixing Layer
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
@@ -1453,7 +1454,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
 
         if pcl.bplus == 0: pcl.bminus = 0.
     else:
-        for i in xrange(lptr, prof.pres.shape[0]):
+        for i in range(lptr, prof.pres.shape[0]):
             if not utils.QC(prof.tmpc[i]): continue
             pe2 = prof.pres[i]
             h2 = prof.hght[i]
@@ -1504,7 +1505,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
 def integrate_parcel(pres, tbot):
     pcl_tmpc = np.empty(pres.shape, dtype=pres.dtype)
     pcl_tmpc[0] = tbot
-    for idx in xrange(1, len(pres)):
+    for idx in range(1, len(pres)):
         pcl_tmpc[idx] = thermo.wetlift(pres[idx - 1], pcl_tmpc[idx - 1], pres[idx])
 
     return pcl_tmpc
@@ -1582,9 +1583,10 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     if pbot > pres:
         pbot = pres
         pcl.blayer = pbot
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked): return ma.masked
-    if type(interp.vtmp(prof, ptop)) == type(ma.masked): return ma.masked
-    
+
+    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+        return pcl
+
     # Begin with the Mixing Layer
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
@@ -2087,7 +2089,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
     if mucape != 0:
         if mucape >= ecape and mucinh > ecinh:
             # Begin at surface and search upward for effective surface
-            for i in xrange(prof.sfc, prof.top):
+            for i in range(prof.sfc, prof.top):
                 pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
                 if pcl.bplus >= ecape and pcl.bminus > ecinh:
                     pbot = prof.pres[i]
@@ -2098,7 +2100,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
 
             bptr = i
             # Keep searching upward for the effective top
-            for i in xrange(bptr+1, prof.top):
+            for i in range(bptr+1, prof.top):
                 if not prof.dwpc[i] or not prof.tmpc[i]:
                     continue
                 pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
@@ -2124,7 +2126,7 @@ def _binary_cape(prof, ibot, itop, ecape=100, ecinh=-250):
     else:
         i = ibot + (itop - ibot) // 2
         pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-        print pcl.bplus, pcl.bminus
+        print(pcl.bplus, pcl.bminus)
         if pcl.bplus < ecape or pcl.bminus <= ecinh:
             return _binary_cape(prof, ibot, i, ecape=ecape, ecinh=ecinh)
         else:
@@ -2170,7 +2172,7 @@ def effective_inflow_layer_binary(prof, ecape=100, ecinh=-250, **kwargs):
     if mucape >= ecape and mucinh > ecinh:
         istart = np.argmin(np.abs(mupcl.lplvals.pres - prof.pres))
         itop = np.argmin(np.abs(300 - prof.pres))
-        print prof.sfc, istart, itop
+        print(prof.sfc, istart, itop)
 
         pbot = _binary_cape(prof, istart, prof.sfc, ecape=ecape, ecinh=ecinh)
         ptop = _binary_cape(prof, istart, itop, ecape=ecape, ecinh=ecinh)
@@ -2495,8 +2497,8 @@ def mmp(prof, **kwargs):
     if len(lowest_idx) == 0 or len(highest_idx) == 0:
         return np.ma.masked
 
-    for b in xrange(len(pbots)):
-        for t in xrange(len(ptops)):
+    for b in range(len(pbots)):
+        for t in range(len(ptops)):
             if b < t: continue
             u_shear, v_shear = winds.wind_shear(prof, pbot=pbots[b], ptop=ptops[t])
             possible_shears[b,t] = utils.mag(u_shear, v_shear)
@@ -2676,7 +2678,7 @@ def dcape(prof):
 
     # Lower the parcel to the surface moist adiabatically and compute
     # total energy (DCAPE)
-    iter_ranges = xrange(uptr, -1, -1)
+    iter_ranges = range(uptr, -1, -1)
     ttraces = ma.zeros(len(iter_ranges))
     ptraces = ma.zeros(len(iter_ranges))
     ttraces[:] = ptraces[:] = ma.masked
@@ -2772,7 +2774,7 @@ def pbl_top(prof):
     try:
         level = np.where(thetav[prof.sfc]+.5 < thetav)[0][0]
     except IndexError:
-        print "Warning: PBL top could not be found."
+        print("Warning: PBL top could not be found.")
         level = thetav.shape[0] - 1
 
     return prof.pres[level]
