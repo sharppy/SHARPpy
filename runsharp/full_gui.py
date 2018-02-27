@@ -401,7 +401,9 @@ class Picker(QWidget):
                         if self.skew is not None:
                             self.skew.closeIfEmpty()
                         raise IOError("No outlet found with the requested profile!")
-                    except:
+                    except Exception as e:
+                        if debug:
+                            print(traceback.format_exc())
                         n_tries += 1
                     else:
                         break
