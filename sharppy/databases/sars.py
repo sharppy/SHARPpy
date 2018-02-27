@@ -89,7 +89,7 @@ def supercell(database_fn, mlcape, mllcl, h5temp, lr, shr, srh, shr3k, shr9k, sr
     range_mlcape_t1 = mlcape * 0.25 # J/kg
 
     # MLLCL ranges
-    range_mllcl = 50 # m
+    range_mllcl = 500 # m
     range_mllcl_t1 = 200 # m
 
     # 0-6 km shear ranges (kts)

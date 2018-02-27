@@ -347,6 +347,9 @@ def generic_interp_hght(h, hght, field, log=False):
 
     field_intrp = np.interp(h, hght[not_masked], field[not_masked],
                          left=ma.masked, right=ma.masked)
+ 
+    if hasattr(h, 'shape') and h.shape == tuple():
+        h = h[()]
 
     if type(h) != type(ma.masked) and np.all(~np.isnan(h)):
         # Bug fix for Numpy v1.10: returns nan on the boundary.
@@ -399,6 +402,9 @@ def generic_interp_pres(p, pres, field):
 
     field_intrp = np.interp(p, pres[not_masked], field[not_masked], left=ma.masked,
                  right=ma.masked)
+
+    if hasattr(p, 'shape') and p.shape == tuple():
+        p = p[()]
 
     if type(p) != type(ma.masked) and np.all(~np.isnan(p)):
         # Bug fix for Numpy v1.10: returns nan on the boundary.
