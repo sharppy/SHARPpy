@@ -63,7 +63,7 @@ class ProfCollection(object):
         pipe = Queue(max_procs)
 
         for idx, prof in enumerate(self._profs[member]):
-            proc = Process(target=doCopy, args=(self._target_type, prof, idx, strictQC, pipe))
+            proc = Process(target=doCopy, args=(self._target_type, prof, idx, pipe))
             proc.start()
 
             self._procs.append(proc)

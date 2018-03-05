@@ -2,7 +2,7 @@
 <sourcelist>
     <datasource name="GFS" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/{cycle}/gfs3_{srcid}.buf" format="bufkit" >
-            <time range="180" delta="3" offset="0" delay="4" cycle="6" archive="24"/>
+            <time range="120" delta="1" offset="0" delay="4" cycle="6" archive="24"/>
             <points csv="gfs.csv" />
         </outlet>
     </datasource>
