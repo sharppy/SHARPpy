@@ -198,6 +198,12 @@ class plotSTP(backgroundSTP):
             self.esrh = prof.right_esrh[0]
             self.stpc = prof.right_stp_cin
             self.stpf = prof.right_stp_fixed
+
+        if self.prof.latitude < 0:
+            self.esrh = -self.esrh
+            self.stpc = -self.stpc
+            self.stpf = -self.stpf
+
         ## get the probabilities
         self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
         self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
@@ -237,6 +243,11 @@ class plotSTP(backgroundSTP):
                 self.stpc = self.prof.right_stp_cin
                 self.stpf = self.prof.right_stp_fixed
 
+            if self.prof is not None and  self.prof.latitude < 0:
+                self.esrh = -self.esrh
+                self.stpc = -self.stpc
+                self.stpf = -self.stpf
+
             self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
             self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
             self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
@@ -260,6 +271,11 @@ class plotSTP(backgroundSTP):
             self.esrh = self.prof.right_esrh[0]
             self.stpc = self.prof.right_stp_cin
             self.stpf = self.prof.right_stp_fixed
+
+        if self.prof.latitude < 0:
+            self.esrh = -self.esrh
+            self.stpc = -self.stpc
+            self.stpf = -self.stpf
 
         self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
         self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
