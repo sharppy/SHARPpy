@@ -28,7 +28,7 @@ class ProfCollection(object):
         self._dates = dates
         self._meta = kwargs
         self._target_type = target_type
-        self._highlight = list(profiles.keys())[0]
+        self._highlight = kwargs.get('highlight', list(profiles.keys())[0])
         self._prof_idx = 0
         self._analog_date = None
 
@@ -206,6 +206,12 @@ class ProfCollection(object):
         """
         self._highlight = member_name
 
+    def getHighlightedMemberName(self):
+        """
+        Gets the name of the member that is currently highlighted.
+        """
+        return self._highlight
+
     def setCurrentDate(self, cur_dt):
         """
         Sets the current date to be 'cur_dt'.
@@ -251,7 +257,7 @@ class ProfCollection(object):
         length = len(mem_names)
         if direction > 0 and high_idx == length - 1:
             adv_idx = 0
-        if direction < 0 and high_idx == 0:
+        elif direction < 0 and high_idx == 0:
             adv_idx = length - 1
         else:
             adv_idx = high_idx + direction

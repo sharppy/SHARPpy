@@ -598,6 +598,10 @@ class SPCWidget(QWidget):
         else:
             self.insets['SARS'].clearSelection()
 
+    def advanceHighlight(self, direction):
+        self.prof_collections[self.pc_idx].advanceHighlight(direction)
+        self.updateProfs()
+
     def swapProfCollections(self):
         # See if we have any other observed profiles loaded at this time.
         prof_col = self.prof_collections[self.pc_idx]
@@ -860,6 +864,10 @@ class SPCWindow(QMainWindow):
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
             self.setInterpolated(self.spc_widget.isInterpolated())
+        elif e.key() == Qt.Key_Up:
+            self.spc_widget.advanceHighlight(1)
+        elif e.key() == Qt.Key_Down:
+            self.spc_widget.advanceHighlight(-1)
         elif e.key() == Qt.Key_Space:
             # Swap the profile collections
             self.spc_widget.swapProfCollections()

@@ -12,6 +12,14 @@ from datetime import datetime
 __fmtname__ = "bufkit"
 __classname__ = "BufDecoder"
 
+def _prettify_member_name(mem_name):
+    abbrvs = ['BMJ', 'ARW', 'NMB', 'KF']
+    mem_name = mem_name.title()
+    for abbrv in abbrvs:
+        mem_name = mem_name.replace(abbrv.title(), abbrv)    
+    return mem_name
+
+
 class BufDecoder(Decoder):
     def __init__(self, file_name):
         super(BufDecoder, self).__init__(file_name)
@@ -29,11 +37,17 @@ class BufDecoder(Decoder):
 
         for n, mem_txt in enumerate(members):
             mem_name, mem_profs, mem_dates = self._parseMember(mem_txt)
+            if "mean" in mem_name.lower():
+                mem_name = "Mean"
+                mean_member = mem_name
+
+            mem_name = _prettify_member_name(mem_name)
+
             profiles[mem_name] = mem_profs
             dates = mem_dates
 
-            if mean_member is None:
-                mean_member = mem_name
+        if mean_member is None:
+            mean_member = list(profiles.keys())[0]
 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         prof_coll.setHighlightedMember(mean_member)

@@ -23,12 +23,14 @@ class PECANDecoder(Decoder):
 
         profiles = {}
         dates = []
+        loc = None
         for m in file_profiles:
             try:
                 prof, dt_obj, member = self._parseSection(m)
             except:
                 continue
 
+            loc = prof.location
             # Try to add the profile object to the list of profiles for this member
             try:
                 profiles[member] = profiles[member] + [prof]
@@ -41,6 +43,7 @@ class PECANDecoder(Decoder):
             prof_coll.setHighlightedMember("MEAN")
         prof_coll.setMeta('observed', False)
         prof_coll.setMeta('base_time', dates[0])
+        prof_coll.setMeta('loc', loc)
         return prof_coll
 
     def _parseSection(self, section):
@@ -48,12 +51,23 @@ class PECANDecoder(Decoder):
         dt_obj = datetime.strptime(parts[1], 'TIME = %y%m%d/%H%M')
         member = parts[0].split('=')[-1].strip()
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
+        headers = [ h.lower() for h in parts[4].split(", ") ]
         data = '\n'.join(parts[5:])
         sound_data = StringIO( data )
-        p, h, t, td, u, v, omeg = np.genfromtxt( sound_data, delimiter=',', unpack=True)
 
-        prof = profile.create_profile(profile='raw', pres=p[1:], hght=h[1:], tmpc=t[1:], dwpc=td[1:], u=u[1:],\
-                                      v=v[1:], omeg=omeg[1:], location=location, date=dt_obj, missing=-999.0)
+        prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
+        prof_var_dict = dict(zip(headers, prof_vars))
+
+        def maybe_replace(old_var, new_var):
+            if old_var in prof_var_dict:
+                prof_var_dict[new_var] = prof_var_dict[old_var]
+                del prof_var_dict[old_var]
+
+        maybe_replace('omga', 'omeg')
+        maybe_replace('temp', 'tmpc')
+        maybe_replace('dewp', 'dewp')
+
+        prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
         return prof, dt_obj, member
 
 if __name__ == '__main__':
