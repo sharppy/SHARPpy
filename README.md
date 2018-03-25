@@ -13,6 +13,7 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 - [Developer Requests](#developer-requests)
 - [Installing SHARPpy](#installing-sharppy)
     - [Installing a Pre-compiled Binary](#installing-a-pre-compiled-binary)
+    - [Installing Using Docker](#installing-using-docker)
     - [Installing the Code](#installing-the-code)
 - [Using the SHARPpy Application](#using-the-sharppy-application)
     - [Using the SHARPpy Sounding Picker](#using-the-sharppy-sounding-picker)
@@ -81,6 +82,18 @@ The following pre-compiled binaries are available (click to download):
 [Windows 8.1 and Windows 10 (64 Bit)](https://github.com/sharppy/SHARPpy/releases/download/v1.3.0-Xenia-beta/sharppy-win8.1-64.zip)
 
 Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
+
+#### Installing Using Docker
+<sup>[[Return to Top]](#sharppy)</sup>
+
+The code can be built using the provided Dockerfile. 
+
+    docker build -t sharppy .
+
+You can then run the container providing that the host is running an X Windows server. _Windows_ and _Mac OS X_ may need additional software such as Xming or XQuartz. On _Linux_ this would look like:
+
+    xhost +
+    docker run --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=unix$DISPLAY -ti sharppy
 
 #### Installing the Code from Source
 <sup>[[Return to Top]](#sharppy)</sup>
