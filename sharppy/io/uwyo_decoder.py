@@ -59,7 +59,7 @@ class UWYODecoder(Decoder):
         else:
             lat = float(snfile[stl].split(':')[-1].strip())
 
-        prof = profile.create_profile(profile='raw', location=loc, latitude=lat, missing=UWYODecoder.MISSING, **snd_dict)
+        prof = profile.create_profile(profile='raw', location=loc, date=snd_date, latitude=lat, missing=UWYODecoder.MISSING, **snd_dict)
 
         prof_coll = prof_collection.ProfCollection(
             {'':[ prof ]},
