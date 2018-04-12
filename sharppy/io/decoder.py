@@ -83,7 +83,8 @@ class Decoder(object):
             f = urlopen(self._file_name)
         except (ValueError, IOError):
             try:
-                f = open(self._file_name, 'rb')
+                fname = self._file_name[7:] if self._file_name.startswith('file://') else self._file_name
+                f = open(fname, 'rb')
             except IOError:
                 raise IOError("File '%s' cannot be found" % self._file_name)
         file_data = f.read()

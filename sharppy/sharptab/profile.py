@@ -889,14 +889,31 @@ class ConvectiveProfile(BasicProfile):
         else:
             self.right_scp = params.scp( self.mupcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd))
             self.left_scp = params.scp( self.mupcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd))
-            self.right_stp_cin = params.stp_cin(self.mlpcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd),
+
+            right_esrh = self.right_esrh[0]
+            left_esrh = self.left_esrh[0]
+
+            if self.latitude < 0:
+                right_esrh = -right_esrh
+                left_esrh = -left_esrh
+
+            self.right_stp_cin = params.stp_cin(self.mlpcl.bplus, right_esrh, utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
-            self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd),
+            self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, left_esrh, utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
 
-        self.stp_fixed = self.right_stp_fixed
-        self.stp_cin = self.right_stp_cin
-        self.scp = self.right_scp
+            if self.latitude < 0:
+                self.right_stp_cin = -self.right_stp_cin
+                self.left_stp_cin = -self.left_stp_cin
+
+        if self.latitude < 0:
+            self.stp_fixed = self.left_stp_fixed
+            self.stp_cin = self.left_stp_cin
+            self.scp = self.left_scp
+        else:
+            self.stp_fixed = self.right_stp_fixed
+            self.stp_cin = self.right_stp_cin
+            self.scp = self.right_scp
 
     def get_sars(self):
         '''
@@ -944,7 +961,7 @@ class ConvectiveProfile(BasicProfile):
 
         try:
             self.left_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
-                sfc_9km_shear, sfc_3km_shear, left_srh3km)
+                sfc_9km_shear, sfc_3km_shear, -left_srh3km)
         except:
             self.left_matches = ([], [], 0, 0, 0)
 
@@ -957,13 +974,17 @@ class ConvectiveProfile(BasicProfile):
 
         try:
             self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
-                utils.MS2KTS(sfc_6km_shear), left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
-                left_srh3km)
+                utils.MS2KTS(sfc_6km_shear), -left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+                -left_srh3km)
         except Exception as e:
             self.left_supercell_matches = ([], [], 0, 0, 0)
 
-        self.supercell_matches = self.right_supercell_matches
-        self.matches = self.right_matches
+        if self.latitude < 0:
+            self.supercell_matches = self.left_supercell_matches
+            self.matches = self.left_matches
+        else:
+            self.supercell_matches = self.right_supercell_matches
+            self.matches = self.right_matches
 
     def get_watch(self):
         '''
@@ -990,8 +1011,12 @@ class ConvectiveProfile(BasicProfile):
         self.left_watch_type = watch_types[0][0]
         self.left_watch_type_color = watch_types[1][0]
 
-        self.watch_type = self.right_watch_type
-        self.watch_type_color = self.right_watch_type_color
+        if self.latitude < 0:
+            self.watch_type = self.left_watch_type
+            self.watch_type_color = self.left_watch_type_color
+        else:
+            self.watch_type = self.right_watch_type
+            self.watch_type_color = self.right_watch_type_color
 
     def get_traj(self):
         '''

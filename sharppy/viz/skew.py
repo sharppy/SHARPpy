@@ -496,6 +496,7 @@ class plotSkewT(backgroundSkewT):
         run = prof_coll.getMeta('run').strftime("%HZ")
         model = prof_coll.getMeta('model')
         observed = prof_coll.getMeta('observed')
+        ensemble = prof_coll.isEnsemble()
 
         plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
         if model == "Archive":
@@ -511,8 +512,12 @@ class plotSkewT(backgroundSkewT):
         elif observed:
             plot_title += "  (Observed" + modified_str + ")"
         else:
+            mem_string = ""
+            if ensemble:
+                mem_string = " " + prof_coll.getHighlightedMemberName()
+
             fhour = int(total_seconds(date - prof_coll.getMeta('base_time')) / 3600)
-            plot_title += "  (" + run + "  " + model + "  " + ("F%03d" % fhour) + modified_str + ")"
+            plot_title += "  (" + run + "  " + model + mem_string + "  " + ("F%03d" % fhour) + modified_str + ")"
         return plot_title
 
     def liftparcellevel(self, i):

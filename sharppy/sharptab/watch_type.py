@@ -550,6 +550,12 @@ def possible_watch(prof, use_left=False):
         esrh = prof.right_esrh[0]
         srh1km = prof.right_srh1km[0]
 
+    if prof.latitude < 0:
+        stp_eff = -stp_eff
+        stp_fixed = -stp_fixed
+        esrh = -esrh
+        srh1km = -srh1km
+
     sfc_8km_shear = utils.mag(prof.sfc_8km_shear[0],prof.sfc_8km_shear[1])
 
     if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and esrh >= 200 and srw_4_6km >= 15.0 and \

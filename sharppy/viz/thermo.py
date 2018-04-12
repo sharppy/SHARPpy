@@ -345,9 +345,9 @@ class plotText(backgroundText):
         ship_str = tab.utils.FLOAT2STR( ship, 1 )
 
         if self.use_left:
-            stp_fixed = self.prof.right_stp_fixed
-            stp_cin = self.prof.right_stp_cin
-            scp = self.prof.right_scp
+            stp_fixed = self.prof.left_stp_fixed
+            stp_cin = self.prof.left_stp_cin
+            scp = self.prof.left_scp
         else:
             stp_fixed = self.prof.right_stp_fixed
             stp_cin = self.prof.right_stp_cin
@@ -356,6 +356,11 @@ class plotText(backgroundText):
         stp_fixed_str = tab.utils.FLOAT2STR( stp_fixed, 1 )
         stp_cin_str = tab.utils.FLOAT2STR( stp_cin, 1 )
         scp_str = tab.utils.FLOAT2STR( scp, 1 )
+
+        if self.prof.latitude < 0:
+            stp_fixed = -stp_fixed
+            stp_cin = -stp_cin
+            scp = -scp
 
         # Coloring thresholds provided by Rich Thompson (SPC)
         labels = ['Supercell = ', 'STP (cin) = ', 'STP (fix) = ', 'SHIP = ']
