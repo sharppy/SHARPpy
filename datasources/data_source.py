@@ -124,10 +124,11 @@ class Outlet(object):
         """
         times = []
         t = self._time
+        f_start = int(t.get('first'))
         f_range = int(t.get('range'))
         f_delta = int(t.get('delta'))
         if f_delta > 0:
-            times.extend(list(range(0, f_range + f_delta, f_delta)))
+            times.extend(list(range(f_start, f_range + f_delta, f_delta)))
         else:
             times.append(0)
         return times
