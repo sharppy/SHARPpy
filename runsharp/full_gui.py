@@ -2,12 +2,31 @@ import sys, os
 import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
+import logging
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
 if len(sys.argv) > 1 and '--debug' in sys.argv:
     debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
+
+    # Start the logging
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
+                        filename='sharppy.log',
+                        filemode='w')
+    # define a Handler which writes INFO messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG)
+    # set a format which is simpler for console use
+    formatter = logging.Formatter('%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
+    # tell the handler to use this format
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
+
+    logging.info('Started logging output for SHARPpy')
+
 else:
     debug = False
     np.seterr(all='ignore')
@@ -248,6 +267,7 @@ class Picker(QWidget):
         -------
         dropdown : a QtGui.QComboBox object
         """
+        logging.debug("Calling full_gui.dropdown_menu")
         ## create the dropdown menu
         dropdown = QComboBox()
         ## set the text as editable so that it can have centered text
@@ -268,7 +288,7 @@ class Picker(QWidget):
         :param list:
         :return:
         """
-
+        logging.debug("Calling full_gui.update_list")
         if self.select_flag:
             self.select_all()
         self.profile_list.clear()
@@ -301,6 +321,7 @@ class Picker(QWidget):
         data sources
         :return:
         """
+        logging.debug("Calling full_gui.update_datasource_dropdown")
         for i in range(self.model_dropdown.count()):
             self.model_dropdown.removeItem(0)
 
@@ -318,6 +339,8 @@ class Picker(QWidget):
         information.
         :return:
         """
+        logging.debug("Calling full_gui.update_run_dropdown")
+
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
@@ -343,6 +366,7 @@ class Picker(QWidget):
         self.async_id = self.async.post(getTimes, update)
 
     def map_link(self, point):
+        logging.debug("Calling full_gui.map_link")
         """
         Change the text of the button based on the user click.
         """
@@ -373,6 +397,8 @@ class Picker(QWidget):
 
     @crasher(exit=False)
     def complete_name(self):
+        logging.debug("Calling full_gui.complete_name")
+
         """
         Handles what happens when the user clicks a point on the map
         """
@@ -409,6 +435,8 @@ class Picker(QWidget):
                         break
 
     def get_model(self, index):
+        logging.debug("Calling full_gui.get_model")
+
         """
         Get the user's model selection
         """
@@ -424,6 +452,7 @@ class Picker(QWidget):
         """
         Get the user's run hour selection for the model
         """
+        logging.debug("Calling full_gui.get_run")
         self.run = date.datetime.strptime(self.run_dropdown.currentText(), Picker.run_format)
         self.view.setCurrentTime(self.run)
         self.update_list()
@@ -432,6 +461,8 @@ class Picker(QWidget):
         """
         Get the user's map selection
         """
+        logging.debug("Calling full_gui.get_map")
+
         proj = {'Northern Hemisphere':'npstere', 'Tropics':'merc', 'Southern Hemisphere':'spstere'}[self.map_dropdown.currentText()]
         self.view.setProjection(proj)
 
@@ -442,6 +473,8 @@ class Picker(QWidget):
         self.view.saveProjection(self.config)
 
     def select_all(self):
+        logging.debug("Calling full_gui.select_all")
+
         items = self.profile_list.count()
         if not self.select_flag:
             for i in range(items):
@@ -458,6 +491,8 @@ class Picker(QWidget):
             self.select_flag = False
 
     def skewApp(self, filename=None, ntry=0):
+        logging.debug("Calling full_gui.skewApp")
+
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -473,33 +508,53 @@ class Picker(QWidget):
         if filename is not None:
             model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
+            logging.debug("Trying to load file from local disk...")
+
+            model = "Archive"
+            prof_collection, stn_id = self.loadArchive(filename)
+            logging.debug("Successfully loaded the profile collection for this file...")
             disp_name = stn_id
+            observed = True
+            fhours = None
 
             run = prof_collection.getCurrentDate()
         else:
         ## otherwise, download with the data thread
+            logging.debug("Loading a real-time data stream...")
+
+            ## otherwise, download with the data thread
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
+            logging.debug("Program is going to load the data...")
             ret = loadData(self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
            
             # failure variable makes sure the data actually exists online. 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
                 failure = True
+                logging.debug("There was a problem with loadData() in obtaining the data from the Internet.")
             else:
+                logging.debug("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-        
+            print(prof_collection._profs)
+
+            fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
+                      idx in prof_idx]
+
         # If the observed or model profile (not Archive) successfully loaded) 
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
+            prof_collection.setMeta('fhour', fhours)
+            prof_collection.setMeta('observed', observed)
 
             if not prof_collection.getMeta('observed'):
                 # If it's not an observed profile, then generate profile objects in background.
@@ -507,12 +562,15 @@ class Picker(QWidget):
 
             if self.skew is None:
                 # If the SPCWindow isn't shown, set it up.
+                logging.debug("Constructing SPCWindown")
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
                 self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
                 self.skew.closed.connect(self.skewAppClosed)
                 self.skew.show()
 
+            logging.debug("Focusing on the SkewApp")
             self.focusSkewApp()
+            logging.debug("Adding the profile collection to SPCWindown")
             self.skew.addProfileCollection(prof_collection)
         else:
             print("There was an exception:", exc)
@@ -540,8 +598,8 @@ class Picker(QWidget):
         Also reads it using the Decoders and gets both the stationID and the profile objects
         for that archive sounding.  Tries a variety of decoders available to the program.
         """
-
-        for decname, deccls in getDecoders().items():
+        logging.debug("Looping over all decoders to find which one to use to decode User Selected file.")
+        for decname, deccls in getDecoders().iteritems():
             try:
                 dec = deccls(filename)
                 break
@@ -552,6 +610,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
+        logging.debug('Get the profiles from the decoded file.')
         # Returns the set of profiles from the file that are from the "Profile" class.
         profs = dec.getProfiles()
         stn_id = dec.getStnId()
@@ -576,6 +635,10 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
     else:
         decoder = data_source.getDecoder(loc, run, outlet_num=ntry)
         url = data_source.getURL(loc, run, outlet_num=ntry)
+        logging.debug("Using decoder: " + str(decoder))
+
+        url = data_source.getURL(loc, run, outlet_num=ntry)
+        logging.debug("Data URL: " + url)
         dec = decoder(url)
 
     if __text__ is not None:

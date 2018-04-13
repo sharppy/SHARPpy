@@ -173,9 +173,10 @@ class Profile(object):
         snd_loc = (" " * (4 - len(self.location))) + self.location
 
         now = datetime.utcnow()
+        print now, self.date
         user = getpass.getuser()
         snd_file.write("%TITLE%\n")
-        snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
+        #snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")
@@ -839,6 +840,8 @@ class ConvectiveProfile(BasicProfile):
         self.lapserate_850_500 = params.lapse_rate( self, 850., 500., pres=True )
         ## 700-500mb lapse rate
         self.lapserate_700_500 = params.lapse_rate( self, 700., 500., pres=True )
+        ## 2-6 km max lapse rate
+        self.max_lapse_rate_2_6 = params.max_lapse_rate( self )
         ## convective temperature
         self.convT = thermo.ctof( params.convective_temp( self ) )
         ## sounding forecast surface temperature

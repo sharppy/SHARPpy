@@ -358,6 +358,7 @@ class plotSkewT(backgroundSkewT):
         self.ens_dewp_color = QtGui.QColor(kwargs.get('ens_dewp_color', '#008800'))
         self.wetbulb_color = QtGui.QColor(kwargs.get('wetbulb_color', '#00FFFF'))
         self.eff_layer_color = QtGui.QColor(kwargs.get('eff_layer_color', '#00FFFF'))
+        self.max_lapse_rate_color = QtGui.QColor('#FF6D6D')
         self.background_colors =[ QtGui.QColor(c) for c in kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99']) ]
 
         self.hgt_color = QtGui.QColor(kwargs.get('hgt_color', '#FF0000'))
@@ -909,6 +910,7 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing)
 
         self.draw_effective_layer(qp)
+        self.draw_max_lapse_rate_layer(qp)
         if self.plot_omega:
             self.draw_omega_profile(qp)
 
@@ -1126,6 +1128,36 @@ class plotSkewT(backgroundSkewT):
             x2 = self.omeg_to_pix(self.prof.omeg[i]*10.)
             qp.drawLine(x1, pres_y, x2, pres_y)
 
+    def draw_max_lapse_rate_layer(self, qp, bound=7.5):
+        '''
+        Draw the bounds of the maximum lapse rate layer.
+        '''
+        qp.setClipping(True)
+        ptop = self.prof.max_lapse_rate_2_6[2]; pbot = self.prof.max_lapse_rate_2_6[1]
+        line_length = 10
+        text_offset = 10
+        if tab.utils.QC(ptop) and tab.utils.QC(pbot) and self.prof.max_lapse_rate_2_6[0] > bound:
+            x1 = self.tmpc_to_pix(28, 1000)
+            #x2 = self.tmpc_to_pix(32, 1000)
+            y1 = self.originy + self.pres_to_pix(pbot) / self.scale
+            y2 = self.originy + self.pres_to_pix(ptop) / self.scale
+            rect3 = QtCore.QRectF(x1-15, y2-self.esrh_height, 50, self.esrh_height)
+            pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
+            brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
+            qp.setPen(pen)
+            qp.setBrush(brush)
+            qp.drawRect(rect3)
+            pen = QtGui.QPen(self.max_lapse_rate_color, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.setFont(self.esrh_font)
+            qp.drawLine(x1-line_length, y1, x1+line_length, y1)
+            qp.drawLine(x1-line_length, y2, x1+line_length, y2)
+            qp.drawLine(x1, y1, x1, y2)
+            qp.setClipping(False)
+
+            qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft,
+                tab.utils.FLOAT2STR(self.prof.max_lapse_rate_2_6[0],1 ) + ' C/km')
+
 
     def draw_effective_layer(self, qp):
         '''
@@ -1179,7 +1211,9 @@ class plotSkewT(backgroundSkewT):
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
-    
+   
+
+ 
     def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1, color=None):
         '''
         Draw a parcel trace.
