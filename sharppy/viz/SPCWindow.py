@@ -358,7 +358,13 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         prof_col = self.prof_collections[self.pc_idx]
-        self.default_prof = prof_col.getHighlightedProf()
+        if prof_col.hasCurrentProf():
+            self.default_prof = prof_col.getHighlightedProf()
+        else:
+            cur_dt = prof_col.resetCurrentDate()
+            self.default_prof = prof_col.getHighlightedProf()
+            for prof_col in self.prof_collections:
+                prof_col.setCurrentDate(cur_dt)
 
         # update the profiles
         self.sound.setActiveCollection(self.pc_idx, update_gui=False)

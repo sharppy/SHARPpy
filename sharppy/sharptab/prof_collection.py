@@ -235,6 +235,14 @@ class ProfCollection(object):
         except ValueError:
             self._prof_idx = -1
 
+    def resetCurrentDate(self):
+        """
+        Resets the current date to be the first in the profile collection.
+        Returns this date
+        """
+        self._prof_idx = 0
+        return self._dates[self._prof_idx]
+
     def setAnalogToDate(self, analog_to_date):
         """
         Specify that this collection represents an analog; the date is set to 'analog_to_date', and the 
