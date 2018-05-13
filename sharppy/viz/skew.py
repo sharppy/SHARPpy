@@ -969,12 +969,6 @@ class plotSkewT(backgroundSkewT):
         qp.setClipping(False)
         qp.setFont(self.title_font)
 
-        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
-        qp.setPen(pen)
-
-        rect0 = QtCore.QRect(self.lpad, 2, box_width, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, main_title)
-
         bg_color_idx = 0
         for idx, title in enumerate(titles):
             pen = QtGui.QPen(QtGui.QColor(self.background_colors[bg_color_idx]), 1, QtCore.Qt.SolidLine)
@@ -984,6 +978,13 @@ class plotSkewT(backgroundSkewT):
             qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, title)
 
             bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
+
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
+        qp.setPen(pen)
+
+        rect0 = QtCore.QRect(self.lpad, 2, box_width, self.title_height)
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, main_title)
+
 
     def draw_height(self, h, qp):
         qp.setClipping(True)
