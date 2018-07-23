@@ -25,13 +25,13 @@ def supercell(database_fn, mlcape, mllcl, h5temp, lr, shr, srh, shr3k, shr9k, sr
     and there is a tighter criteria for quality matches that are supposed to
     be similar to the given sounding.
     
-    The loose matches are based on the mixed layer cape (mlcape), mixex layer
+    The loose matches are based on the mixed layer cape (mlcape), mixed layer
     lcl (mllcl), 0-1km shear (shr), 0-1km storm relative helicity (srh), 500mb
     temperature (h5temp), and the 700-500mb lapse rate (lr).
     
     The ranges for the loose matches are set as such:
         mlcape: +/- 1300 J/kg
-        mllcl: +/- 50 m
+        mllcl: +/- 500 m
         shr: +/- 14 kts
         srh < 50 m^2/s^2: +/- 100 m^2/s^2
         srh >= 50 m^2/s^2: +/- 100% m^2/s^2
