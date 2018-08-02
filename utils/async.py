@@ -5,6 +5,7 @@ import Queue
 import hashlib
 from datetime import datetime
 import traceback
+import sys
 
 class AsyncThreads(QObject):
     """
@@ -99,6 +100,9 @@ class AsyncThreads(QObject):
         if self.running < self.max_threads:
             # Might not be the case if we just started a high-priority thread
             self.startNext()
+
+        sys.stdout.write(" \x1b[D") # This fixes a weird bug on Debian. I think the threads die
+        sys.stdout.flush()          # prematurely unless you print something here ... ???????
 
     def _genThreadId(self):
         time_stamp = datetime.utcnow().isoformat()
