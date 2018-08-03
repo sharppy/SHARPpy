@@ -1987,7 +1987,12 @@ def bulk_rich(prof, pcl):
         pcl.brn = ma.masked
         pcl.brnu = ma.masked
         pcl.brnv = ma.masked
-    #return pcl
+        pcl.brnshear = ma.masked
+        pcl.brnu = ma.masked
+        pcl.brnv = ma.masked
+        pcl.brn = ma.masked
+
+        return pcl
     
     # Calculate the lowest 500m mean wind
     p = interp.pres(prof, interp.hght(prof, pbot)+500.)
