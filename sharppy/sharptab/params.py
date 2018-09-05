@@ -2905,6 +2905,10 @@ def sweat(prof):
         4.) 500 mb wind speed
         5.) Direction of wind at 500
         6.) Direction of wind at 850
+	
+	Formulation taken from 
+	Notes on Analysis and Severe-Storm Forecasting Procedures of the Air Force Global Weather Central, 1972
+	by RC Miller.
 
         Parameters
         ----------
@@ -2933,7 +2937,7 @@ def sweat(prof):
 
     term3 = 2 * vec850[1]
     term4 = vec500[1]
-    if vec500[0] - vec850[0] > 0:
+    if 130 <= vec850[0] and 250 >= vec850[0] and 210 <= vec500[0] and 310 >= vec500[0] and vec500[0] - vec850[0] > 0 and vec850[1] >= 15 and vec500[1] >= 15:
         term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])  + 0.2))
     else:
         term5 = 0
