@@ -2851,7 +2851,7 @@ def mburst(prof):
         else:
             ted = 0
 
-    mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + tt_term + ted
+    mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + vt_term + ted
 
     if mburst < 0:
         mburst = 0
