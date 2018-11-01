@@ -5,6 +5,21 @@ import numpy.ma as ma
 from sharppy.sharptab import interp, utils, thermo, winds
 from sharppy.sharptab.constants import *
 
+'''
+    This file contains various functions to perform the calculation of various convection indices.
+    Because of this, parcel lifting routines are also found in this file.
+
+    Functions denoted with a (*) in the docstring refer to functions that were added to the SHARPpy package that 
+    were not ported from the Storm Prediction Center.  They have been included as they have been used by the 
+    community in an effort to expand SHARPpy to support the many parameters used in atmospheric science. 
+    
+    While the logic for these functions are based in the scientific literature, validation
+    of the output from these functions is occasionally difficult to perform.  Although we have made an effort
+    to resolve code issues when they arise, values from these functions may be erronious and may require additional 
+    inspection by the user.  We appreciate any contributions by the meteorological community that can
+    help better validate these SHARPpy functions!
+    
+'''
 
 __all__ = ['DefineParcel', 'Parcel', 'inferred_temp_advection']
 __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
@@ -313,7 +328,7 @@ def dgz(prof):
 
 def lhp(prof):
     '''
-        Large Hail Parameter
+        Large Hail Parameter (*)
 
         From Johnson and Sugden (2014), EJSSM
 
@@ -2264,7 +2279,7 @@ def esp(prof, **kwargs):
 
 def sherb(prof, **kwargs):
     '''
-        Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter
+        Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter (*)
 
         A composite parameter designed to assist forecasters in the High-Shear
         Low CAPE (HSLC) environment.  This allows better discrimination 
@@ -2611,7 +2626,7 @@ def dcape(prof):
 
 def precip_eff(prof, **kwargs):
     '''
-        Precipitation Efficiency
+        Precipitation Efficiency (*)
 
         This calculation comes from Noel and Dobur 2002, published
         in NWA Digest Vol 26, No 34.
@@ -2684,7 +2699,7 @@ def pbl_top(prof):
 
 def dcp(prof):
     '''
-        Derecho Composite Parameter
+        Derecho Composite Parameter (*)
 
         This parameter is based on a data set of 113 derecho events compiled by Evans and Doswell (2001).
         The DCP was developed to identify environments considered favorable for cold pool "driven" wind
@@ -2897,7 +2912,7 @@ def ehi(prof, pcl, hbot, htop, stu=0, stv=0):
 
 def sweat(prof):
     '''
-        SWEAT Index
+        SWEAT Index (*)
 
         Computes the SWEAT (Severe Weather Threat Index) using the following numbers:
 
