@@ -2320,7 +2320,7 @@ def sherb(prof, **kwargs):
     if effective == False:
         p3km = interp.pres(prof, interp.to_msl(prof, 3000))
         sfc_pres = prof.pres[prof.get_sfc()]
-        shear = utils.KTS2MS(winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km))
+        shear = utils.KTS2MS(utils.mag(*winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km)))
         sherb = ( shear / 26. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
     else:
         if hasattr(prof, 'ebwd'):
@@ -2359,7 +2359,6 @@ def sherb(prof, **kwargs):
             # because there's no information about how to get the
             # inflow layer, return missing.
             return prof.missing
-        
         shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
         sherb = ( shear / 27. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
 
