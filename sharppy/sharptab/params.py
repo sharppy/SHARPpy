@@ -2955,7 +2955,7 @@ def sweat(prof):
     term3 = 2 * vec850[1]
     term4 = vec500[1]
     if 130 <= vec850[0] and 250 >= vec850[0] and 210 <= vec500[0] and 310 >= vec500[0] and vec500[0] - vec850[0] > 0 and vec850[1] >= 15 and vec500[1] >= 15:
-        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])  + 0.2))
+        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])) + 0.2)
     else:
         term5 = 0
 
