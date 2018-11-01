@@ -85,9 +85,9 @@ Installing a pre-compiled binary *should* be as simple as downloading the .zip f
 #### Installing the Code from Source
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  
+SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy (1.3.0 Xenia) is primarily tested using this distribution.  If you wish to use _Python 3_  we recommend downloading the [Andover branch](https://github.com/sharppy/SHARPpy/tree/andover) that is in development.  
 
-The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
+The Anaconda Python Distribution can be downloaded here: https://www.anaconda.com/download/
 
 Additional ways to meet these requirements may include the Enthought Python Distribution, MacPorts, or Brew, but as of this moment we cannot provide support for these methods.
 
