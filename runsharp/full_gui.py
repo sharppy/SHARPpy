@@ -543,7 +543,7 @@ class Picker(QWidget):
             else:
                 logging.debug("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-            print(prof_collection._profs)
+                print(prof_collection._profs)
 
             fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
                       idx in prof_idx]
@@ -563,7 +563,6 @@ class Picker(QWidget):
             if self.skew is None:
                 logging.debug("Constructing SPCWindown")
                 # If the SPCWindow isn't shown, set it up.
-                logging.debug("Constructing SPCWindown")
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
                 self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
                 self.skew.closed.connect(self.skewAppClosed)

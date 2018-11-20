@@ -260,7 +260,7 @@ class SPCWidget(QWidget):
         self.convective = plotText(self.parcel_types)
         self.kinematic = plotKinematics()
 
-        # intialize swappable insets
+        # initialize swappable insets
         for inset, inset_gen in SPCWidget.inset_generators.items():
             self.insets[inset] = inset_gen()
 
@@ -288,7 +288,7 @@ class SPCWidget(QWidget):
 
     def addProfileCollection(self, prof_col, prof_id, focus=True):
         logging.debug("Adding a Profile Collection to SPCWindow.")
-        
+
         self.prof_collections.append(prof_col)
         self.prof_ids.append(prof_id)
         self.sound.addProfileCollection(prof_col)
@@ -302,6 +302,7 @@ class SPCWidget(QWidget):
             self.sound.setAllObserved(self.coll_observed, update_gui=False)
             self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
+
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
             if not prof_col.getMeta('observed'):
@@ -312,12 +313,14 @@ class SPCWidget(QWidget):
     @Slot(str)
     def setProfileCollection(self, prof_id):
         logging.debug("Setting the Profile Collection to SPCWindow.")
+
         try:
             self.pc_idx = self.prof_ids.index(prof_id)
         except ValueError:
             print("Hmmm, that profile doesn't exist to be focused ...")
             return
- 
+
+
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
             if not prof_col.getMeta('observed'):
@@ -837,6 +840,16 @@ class SPCWindow(QMainWindow):
 
     def addProfileCollection(self, prof_col, focus=True):
         logging.debug("Calling SPCWindow.addProfileCollection")
+
+        logging.debug("Testing data integrity")
+        exit_code = self.testDataIntegrity(prof_col.getHighlightedProf())
+        if exit_code == 0:
+            if len(self.menu_items) == 0:
+                self.focusPicker()
+                self.close()
+            else:
+                return
+
         menu_name = self.createMenuName(prof_col)
         if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):
             self.spc_widget.setProfileCollection(menu_name)
@@ -857,6 +870,7 @@ class SPCWindow(QMainWindow):
         try:
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
+            print("OOPS:", exc)
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
             if len(self.menu_items) == 1:
                 self.focusPicker()
@@ -864,6 +878,24 @@ class SPCWindow(QMainWindow):
             else:
                 self.rmProfileCollection(menu_name)
             raise
+
+    def testDataIntegrity(self, prof):
+        try:
+            prof.checkDataIntegrity()
+        except Exception as e:
+            msgBox = QMessageBox()
+            msgBox.setText("SHARPpy has detected that the data you are attempting to load may have errors.")
+            msgBox.setInformativeText("Do you want to still try and load the data?")
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            msgBox.setDefaultButton(QMessageBox.No)
+            msgBox.setDetailedText(str(e).split(',')[1].replace(')', ''))
+            ret = msgBox.exec_()
+            if ret == QMessageBox.Yes:
+                return 1
+            else:
+                return 0
+        return 1
+
 
     @Slot(str)
     def rmProfileCollection(self, menu_name):

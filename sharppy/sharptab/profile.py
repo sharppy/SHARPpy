@@ -99,7 +99,7 @@ class Profile(object):
         self.missing = kwargs.get('missing', MISSING)
         self.profile = kwargs.get('profile')
         self.latitude = kwargs.get('latitude', ma.masked)
-        self.strictQC = kwargs.get('strictQC', True)
+        self.strictQC = kwargs.get('strictQC', False)
 
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
@@ -107,9 +107,13 @@ class Profile(object):
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
 
+        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
+                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
+
         if 'wdir' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
+            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
@@ -118,6 +122,7 @@ class Profile(object):
         elif 'u' in kwargs:
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
+            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
 
             #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
@@ -134,6 +139,7 @@ class Profile(object):
         if kwargs.get('omeg', None) is not None:
             ## get the omega data and turn into arrays
             self.omeg = ma.asanyarray(kwargs.get('omeg'))
+            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
         else:
             self.omeg = None
 
@@ -141,8 +147,11 @@ class Profile(object):
         self.location = kwargs.get('location', None)
         self.date = kwargs.get('date', None)
 
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
     @classmethod
-    def copy(cls, prof, strictQC=True, **kwargs):
+    def copy(cls, prof, strictQC=False, **kwargs):
         '''
             Copies a profile object.
         '''            
@@ -189,6 +198,20 @@ class Profile(object):
             snd_file.write(str[:-3] + "\n")
         snd_file.write("%END%\n")
         snd_file.close()
+
+    def checkDataIntegrity(self):
+
+        if not qc_tools.isHGHTValid(self.hght):
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
+        if not qc_tools.isTMPCValid(self.tmpc):
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isDWPCValid(self.dwpc):
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isWSPDValid(self.wspd):
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
+        if not qc_tools.isWDIRValid(self.wdir):
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)
+
 
 class BasicProfile(Profile):
     '''
@@ -255,12 +278,8 @@ class BasicProfile(Profile):
 
         self.strictQC = kwargs.get('strictQC', True)
 
-        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
-                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
-
         ## did the user provide the wind in vector form?
         if self.wdir is not None:
-            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             self.wdir[self.wdir == self.missing] = ma.masked
             self.wspd[self.wspd == self.missing] = ma.masked
             self.wdir[self.wspd.mask] = ma.masked
@@ -269,7 +288,6 @@ class BasicProfile(Profile):
 
         ## did the user provide the wind in u,v form?
         elif self.u is not None:
-            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
             self.u[self.u == self.missing] = ma.masked
             self.v[self.v == self.missing] = ma.masked
             self.u[self.v.mask] = ma.masked
@@ -285,7 +303,6 @@ class BasicProfile(Profile):
 
         if self.omeg is not None:
             ## get the omega data and turn into arrays
-            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
             self.omeg[self.omeg == self.missing] = ma.masked
         else:
             self.omeg = ma.masked_all(len(self.hght))
@@ -299,17 +316,6 @@ class BasicProfile(Profile):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
 
-        if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
-            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
-        if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
-        if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
-        if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
-            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
-        if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)     
-
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
         idx = np.ma.where(self.pres > 0)[0]
@@ -318,6 +324,10 @@ class BasicProfile(Profile):
         ## get the index of the top and bottom of the profile
         self.sfc = self.get_sfc()
         self.top = self.get_top()
+
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
         ## generate the wetbulb profile
         self.wetbulb = self.get_wetbulb_profile()
         ## generate theta-e profile
