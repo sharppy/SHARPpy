@@ -42,8 +42,8 @@ def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
 
     '''
     if dp > 0: dp = -dp
-    if type(pbot) is not np.float64:
-        return ma.masked
+    if utils.QC(pbot) or utils.QC(ptop):
+        return ma.masked, ma.masked
 
     ps = np.arange(pbot, ptop+dp, dp)
     u, v = interp.components(prof, ps)

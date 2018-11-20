@@ -202,7 +202,7 @@ class Profile(object):
     def checkDataIntegrity(self):
 
         if not qc_tools.isHGHTValid(self.hght):
-            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQualityException)
         if not qc_tools.isTMPCValid(self.tmpc):
             qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
         if not qc_tools.isDWPCValid(self.dwpc):
@@ -747,6 +747,7 @@ class ConvectiveProfile(BasicProfile):
         self.mean_3km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p3km))
         self.mean_6km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km))
         self.mean_8km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p8km))
+        print(self.mupcl.lclpres, self.mupcl.elpres, self.mupcl.dwpc, self.pres, self.tmpc, self.dwpc)
         self.mean_lcl_el = utils.comp2vec(*winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres))
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
