@@ -2000,6 +2000,7 @@ def bulk_rich(prof, pcl):
         Bulk Richardson Number
         
         '''
+
     # Make sure parcel is initialized
     if not utils.QC(pcl.lplvals):
         pbot = ma.masked
@@ -2021,10 +2022,11 @@ def bulk_rich(prof, pcl):
         pcl.brn = ma.masked
         pcl.brnu = ma.masked
         pcl.brnv = ma.masked
-    #return pcl
+        return pcl
     
     # Calculate the lowest 500m mean wind
     p = interp.pres(prof, interp.hght(prof, pbot)+500.)
+    #print(p, pbot)
     mnlu, mnlv = winds.mean_wind(prof, pbot, p)
     
     # Calculate the 6000m mean wind

@@ -272,7 +272,7 @@ class Mapper(object):
 class MapWidget(QtGui.QWidget):
     clicked = QtCore.Signal(dict)
 
-    def __init__(self, data_source, init_time, async, **kwargs):
+    def __init__(self, data_source, init_time, async_object, **kwargs):
         config = kwargs.get('cfg', None)
         del kwargs['cfg']
 
@@ -338,10 +338,11 @@ class MapWidget(QtGui.QWidget):
         self.no_internet.setText("No Internet Connection")
         self.no_internet.show()
         txt_width = self.no_internet.fontMetrics().width(self.no_internet.text())
+
+        self._async = async_object
         self.no_internet.setFixedWidth(txt_width)
         self.no_internet.move(self.width(), self.height())
 
-        self.async = async
         self.setDataSource(data_source, init_time, init=True)
         self.setWindowTitle('SHARPpy')
 
@@ -417,7 +418,7 @@ class MapWidget(QtGui.QWidget):
             points = getPoints()
             update([ points ])
         else:
-            self.async.post(getPoints, update)
+            self._async.post(getPoints, update)
 
     def setProjection(self, proj):
         old_proj = self.mapper.getProjection()
@@ -432,7 +433,7 @@ class MapWidget(QtGui.QWidget):
             self.update()
             return
 
-        self.async.post(self.initMap, update)
+        self._async.post(self.initMap, update)
 
     def resetViewport(self, ctr_lat=None, ctr_lon=None):
         self.map_center_x = self.width() / 2
@@ -677,7 +678,7 @@ class MapWidget(QtGui.QWidget):
             return
 
         update(None)
-#       self.async.post(self.initMap, update)
+#       self._async.post(self.initMap, update)
 
     def wheelEvent(self, e):
         max_speed = 75

@@ -9,6 +9,7 @@ import sharppy.io.qc_tools as qc_tools
 from sharppy.databases.sars import hail, supercell
 from sharppy.databases.pwv import pwv_climo
 from sharppy.sharptab.constants import MISSING
+import logging
 
 def create_profile(**kwargs):
     '''
@@ -501,37 +502,70 @@ class ConvectiveProfile(BasicProfile):
         self.user_srwind = None
 
         # Generate the fire weather paramters
+        logging.debug("Calling get_fire().")
+        dt = datetime.now()
         self.get_fire()
+        logging.debug("get_fire() took: " + str((datetime.now() - dt)))
 
         # Generate the winter inset/precipitation types
+        logging.debug("Calling get_precip().")
+        dt = datetime.now()
         self.get_precip()
-        
+        logging.debug("get_precip() took: " + str((datetime.now() - dt)))
+
         ## generate various parcels
+        logging.debug("Calling get_parcels().")
+        dt = datetime.now()
         self.get_parcels()
+        logging.debug("get_parcels() took: " + str((datetime.now() - dt)))
 
         ## calculate thermodynamic window indices
+        logging.debug("Calling get_thermo().")
+        dt = datetime.now()
         self.get_thermo()
+        logging.debug("get_thermo() took: " + str((datetime.now() - dt)))
 
         ## generate wind indices
+        logging.debug("Calling get_kinematics().")
+        dt = datetime.now()
         self.get_kinematics()
+        logging.debug("get_kinematics() took: " + str((datetime.now() - dt)))
 
         ## get SCP, STP(cin), STP(fixed), SHIP
+        logging.debug("Calling get_severe().")
+        dt = datetime.now()
         self.get_severe()
+        logging.debug("get_severe() took: " + str((datetime.now() - dt)))
 
         ## calculate the SARS database matches
+        logging.debug("Calling get_sars().")
+        dt = datetime.now()
         self.get_sars()
+        logging.debug("get_sars() took: " + str((datetime.now() - dt)))
 
         ## get the precipitable water climatology
+        logging.debug("Calling get_PWV_loc().")
+        dt = datetime.now()
         self.get_PWV_loc()
+        logging.debug("get_PWV_loc() took: " + str((datetime.now() - dt)))
 
         ## get the parcel trajectory
+        logging.debug("Calling get_traj().")
+        dt = datetime.now()
         self.get_traj()
+        logging.debug("get_traj() took: " + str((datetime.now() - dt)))
 
         ## miscellaneous indices I didn't know where to put
+        logging.debug("Calling get_indices().")
+        dt = datetime.now()
         self.get_indices()
+        logging.debug("get_indices() took: " + str((datetime.now() - dt)))
 
         ## get the possible watch type
+        logging.debug("Calling get_watch().")
+        dt = datetime.now()
         self.get_watch()
+        logging.debug("get_watch() took: " + str((datetime.now() - dt)))
 
     def get_fire(self):
         '''
