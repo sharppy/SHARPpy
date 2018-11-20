@@ -9,7 +9,7 @@ from sharppy.sharptab.constants import *
 __all__ = ['DefineParcel', 'Parcel', 'inferred_temp_advection']
 __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
 __all__ += ['temp_lvl', 'max_temp', 'mean_mixratio', 'mean_theta', 'mean_thetae', 'mean_relh']
-__all__ += ['lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
+__all__ += ['lapse_rate', 'max_lapse_rate', 'most_unstable_level', 'parcelx', 'bulk_rich']
 __all__ += ['bunkers_storm_motion', 'effective_inflow_layer']
 __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_severe']
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
@@ -1134,6 +1134,37 @@ def lapse_rate(prof, lower, upper, pres=True):
     tv2 = interp.vtmp(prof, p2)
     return (tv2 - tv1) / (z2 - z1) * -1000.
 
+def max_lapse_rate(prof, lower=2000, upper=6000, interval=250, depth=2000):
+    '''
+        Calculates the maximum lapse rate (C/km) between a layer at a specified interval
+
+        Parameters
+        ----------
+        prof: profile object
+        Profile object
+        lower : number
+        Lower bound in height (m)
+        upper : number
+        Upper bound in height (m)
+        interval : number
+        Interval to assess the lapse rate at.
+        depth : number
+        Depth of the layer to assess the lapse rate over
+ 
+        Returns
+        -------
+        max lapse rate (float [C/km])
+        lower pressure of max lapse rate (mb)
+        upper pressure of max lapse rate (mb)
+    '''
+
+    bottom_levels = np.arange(lower, upper+interval, interval)
+    top_levels = np.arange(lower+depth, upper+interval+depth, interval)
+    bottom_pres = interp.pres(prof, bottom_levels)
+    top_pres = interp.pres(prof, top_levels)
+    all_lapse_rates = (interp.vtmp(prof, top_pres) - interp.vtmp(prof, bottom_pres)) * -1000.
+    max_lapse_rate_idx = np.ma.argmax(all_lapse_rates)
+    return all_lapse_rates[max_lapse_rate_idx]/depth, bottom_pres[max_lapse_rate_idx], top_pres[max_lapse_rate_idx] 
 
 def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''

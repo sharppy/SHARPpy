@@ -3,6 +3,7 @@ import numpy as np
 import warnings
 import logging
 import utils.frozenutils as frozenutils
+import logging
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
@@ -288,7 +289,6 @@ class Picker(QWidget):
         :return:
         """
         logging.debug("Calling full_gui.update_list")
-
         if self.select_flag:
             self.select_all()
         self.profile_list.clear()
@@ -341,6 +341,7 @@ class Picker(QWidget):
         :return:
         """
         logging.debug("Calling full_gui.update_run_dropdown")
+
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
@@ -366,6 +367,7 @@ class Picker(QWidget):
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
+        logging.debug("Calling full_gui.map_link")
         """
         Change the text of the button based on the user click.
         """
@@ -397,6 +399,8 @@ class Picker(QWidget):
 
     @crasher(exit=False)
     def complete_name(self):
+        logging.debug("Calling full_gui.complete_name")
+
         """
         Handles what happens when the user clicks a point on the map
         """
@@ -434,6 +438,8 @@ class Picker(QWidget):
                         break
 
     def get_model(self, index):
+        logging.debug("Calling full_gui.get_model")
+
         """
         Get the user's model selection
         """
@@ -487,6 +493,8 @@ class Picker(QWidget):
             self.select_flag = False
 
     def skewApp(self, filename=None, ntry=0):
+        logging.debug("Calling full_gui.skewApp")
+
         """
         Create the SPC style SkewT window, complete with insets
         and magical funtimes.
@@ -508,6 +516,8 @@ class Picker(QWidget):
             prof_collection, stn_id = self.loadArchive(filename)
             logging.debug("Successfully loaded the profile collection for this file...")
             disp_name = stn_id
+            observed = True
+            fhours = None
 
             run = prof_collection.getCurrentDate()
         else:
@@ -517,6 +527,7 @@ class Picker(QWidget):
             disp_name = self.disp_name
             run = self.run
             model = self.model
+            observed = self.data_sources[model].isObserved()
 
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
@@ -532,12 +543,18 @@ class Picker(QWidget):
             else:
                 logging.debug("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-        
+            print(prof_collection._profs)
+
+            fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
+                      idx in prof_idx]
+
         # If the observed or model profile (not Archive) successfully loaded) 
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
             prof_collection.setMeta('loc', disp_name)
+            prof_collection.setMeta('fhour', fhours)
+            prof_collection.setMeta('observed', observed)
 
             if not prof_collection.getMeta('observed'):
                 # If it's not an observed profile, then generate profile objects in background.
@@ -546,6 +563,7 @@ class Picker(QWidget):
             if self.skew is None:
                 logging.debug("Constructing SPCWindown")
                 # If the SPCWindow isn't shown, set it up.
+                logging.debug("Constructing SPCWindown")
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
                 self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
                 self.skew.closed.connect(self.skewAppClosed)
@@ -593,6 +611,7 @@ class Picker(QWidget):
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
 
+        logging.debug('Get the profiles from the decoded file.')
         # Returns the set of profiles from the file that are from the "Profile" class.
         logging.debug('Get the profiles from the decoded file.')
         profs = dec.getProfiles()

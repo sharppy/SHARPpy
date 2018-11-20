@@ -1,5 +1,6 @@
 __author__ = 'keltonhalbert, wblumberg'
 
+import logging
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics #, plotGeneric
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP, plotWinter
@@ -287,7 +288,7 @@ class SPCWidget(QWidget):
 
     def addProfileCollection(self, prof_col, prof_id, focus=True):
         logging.debug("Adding a Profile Collection to SPCWindow.")
-
+        
         self.prof_collections.append(prof_col)
         self.prof_ids.append(prof_id)
         self.sound.addProfileCollection(prof_col)
@@ -367,6 +368,7 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         logging.debug("Calling SPCWidget.updateProfs")
+        
         prof_col = self.prof_collections[self.pc_idx]
         self.default_prof = prof_col.getHighlightedProf()
 
@@ -618,7 +620,6 @@ class SPCWidget(QWidget):
 
     def swapProfCollections(self):
         logging.debug("Calling SPCWidget.swapProfCollections")
-
         # See if we have any other observed profiles loaded at this time.
         prof_col = self.prof_collections[self.pc_idx]
         dt = prof_col.getCurrentDate()
@@ -770,6 +771,7 @@ class SPCWindow(QMainWindow):
         self.raise_()
 
     def createMenuBar(self):
+        logging.debug("Creating the SPCWindow Menu Bar.")
         bar = self.menuBar()
         filemenu = bar.addMenu("File")
 
@@ -902,6 +904,7 @@ class SPCWindow(QMainWindow):
 
     def closeEvent(self, e):
         logging.debug("Calling SPCWindow.closeEvent")
+
         self.spc_widget.closeEvent(e)
         self.closed.emit()
 

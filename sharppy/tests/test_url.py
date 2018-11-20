@@ -25,13 +25,10 @@ def decode(filename):
 profs, stn_id = decode(sys.argv[1])
 print((profs._profs))
 
-for k in list(profs._profs.keys()):
+for k in profs._profs.keys():
     all_prof = profs._profs[k]
     for i in range(len(all_prof)):
         prof = all_prof[i]
         new_prof = profile.create_profile(pres=prof.pres, hght=prof.hght, tmpc=prof.tmpc, dwpc=prof.dwpc, wspd=prof.wspd, wdir=prof.wdir, profile='convective')
         for key in dir(new_prof):
             print((key, getattr(new_prof,key)))
-
-
-
