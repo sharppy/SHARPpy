@@ -2280,7 +2280,7 @@ def convective_temp(prof, **kwargs):
     if excess > 0: tmpc = tmpc + excess + 4.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
     if pcl.bplus == 0.: pcl.bminus = ma.masked
-    while pcl.bminus < mincinh:
+    while not utils.QC(pcl.bminus) or pcl.bminus < mincinh:
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
         pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
