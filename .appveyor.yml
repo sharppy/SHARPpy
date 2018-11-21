@@ -27,4 +27,5 @@ install:
 
   # Install SHARPpy
   - "python setup.py install"
-
+test_script:
+  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt" 
