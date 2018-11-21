@@ -21,8 +21,9 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy pyside
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy
   - source activate test-environment
+  - conda install -c conda-forge pyside
   - python setup.py install
 script:
   - python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt 
