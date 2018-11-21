@@ -7,6 +7,7 @@ python:
   - "2.7"
   - "3.6"
 before_install:
+  - sudo apt-get update
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       if [[ "$PYTHON_VERSION" == "2.7" ]]; then
         curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
@@ -20,29 +21,35 @@ before_install:
         wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
       fi
     fi
-
-install:
-  - sudo apt-get update
-  # We do this conditionally because it saves us some downloading if the
-  # version is the same.
-  #if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-    #  wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-    #else
-    #  wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    #fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  
   # Useful for debugging any issues with conda
   - conda info -a
 
-  # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION dep1 dep2 ...
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy
   - source activate test-environment
-  - conda install pyside
-  - conda install numpy
+  - conda install -c conda-forge pyside
+  - conda install -c conda-forge pyinstaller
+install:
+  # Install SHARPpy 
   - python setup.py install
+  # Run pyinstaller to generate the Python program
+  - if ["$TRAVIS_OS_NAME" == "osx"]; then 
+      pyinstaller runsharp/SHARPpy-osx.spec --onefile --noconsole;
+    elif ["$TRAVIS_OS_NAME" == "linux2"]; then
+      pyinstaller runsharp/SHARPpy-linux-redhat5.spec;      
+    fi
 script:
-  - python sharppy/test/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt 
+  # Here is where we run some test scripts
+  - python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt 
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key: "GITHUB OAUTH TOKEN"
+  file: dist/SHARPpy.app
+  on:
+    tags: true
