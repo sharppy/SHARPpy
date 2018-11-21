@@ -38,7 +38,7 @@ build: off
 #  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
 
 artifacts:
-  - path: "dist\*"
+  path: "dist\\*"
 
 deploy:
   provider: GitHub
