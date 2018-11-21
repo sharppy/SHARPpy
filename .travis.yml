@@ -13,6 +13,7 @@ matrix:
     language: generic
     env: PYTHON_VERSION="3.7"
 before_install:
+  - echo $PYTHON_VERSION
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       if [[ "$PYTHON_VERSION" == "2.7" ]]; then
         curl https://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -o miniconda.sh;
@@ -20,7 +21,6 @@ before_install:
         curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
       fi
     else
-      sudo apt-get update;
       if [[ "$PYTHON_VERSION" == "2.7" ]]; then
         wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
       else
@@ -36,7 +36,7 @@ before_install:
   # Useful for debugging any issues with conda
   - conda info -a
 
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy
+  - conda create -q -n test-environment python=$PYTHON_VERSION numpy
   - source activate test-environment
   - conda install -c conda-forge pyside
   - conda install -c conda-forge pyinstaller
