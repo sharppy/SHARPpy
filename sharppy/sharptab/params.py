@@ -204,7 +204,97 @@ class Parcel(object):
             Temperature of the parcel to lift (C)
         dwpc : number
             Dew Point of the parcel to lift (C)
-        
+
+        Attributes
+        ----------
+        pres : number
+            parcel beginning pressure (mb)
+        tmpc : number
+            parcel beginning temperature (C)
+        dwpc : number
+            parcel beginning dewpoint (C)
+        ptrace : array
+            parcel trace pressure (mb)
+        ttrace : array
+            parcel trace temperature (C)
+        blayer : number
+            Pressure of the bottom of the layer the parcel is lifted (mb)
+        tlayer : number
+            Pressure of the top of the layer the parcel is lifted (mb)
+        entrain : number
+            Parcel entrainment fraction (not yet implemented)
+        lclpres : number
+            Parcel LCL (lifted condensation level) pressure (mb)
+        lclhght : number
+            Parcel LCL height (m AGL)
+        lfcpres : number
+            Parcel LFC (level of free convection) pressure (mb)
+        lfchght: number
+            Parcel LCL height (m AGL)
+        elpres : number
+            Parcel EL (equilibrium level) pressure (mb)
+        elhght : number
+            Parcel EL height (m AGL)
+        mplpres : number
+            Maximum Parcel Level (mb)
+        mplhght : number
+            Maximum Parcel Level (m AGL)
+        bplus : number
+            Parcel CAPE (J/kg)
+        bminus : number
+            Parcel CIN below 500 mb (J/kg)
+        bfzl : number
+            Parcel CAPE up to freezing level (J/kg)
+        b3km : number
+            Parcel CAPE up to 3 km (J/kg)
+        b6km : number
+            Parcel CAPE up to 6 km (J/kg)
+        p0c: number
+            Pressure value at 0 C  (mb)
+        pm10c : number
+            Pressure value at -10 C (mb)
+        pm20c : number
+            Pressure value at -20 C (mb)
+        pm30c : number
+            Pressure value at -30 C (mb)
+        hght0c : number
+            Height value at 0 C (m AGL)
+        hghtm10c : number
+            Height value at -10 C (m AGL)
+        hghtm20c : number
+            Height value at -20 C (m AGL)
+        hghtm30c : number
+            Height value at -30 C (m AGL)
+        wm10c : number
+            Wetbulb at -10 C (C)
+        wm20c : number
+            Wetbulb at -20 C (C)
+        wm30c : number
+            Wetbulb at -30 C (C)
+        li5 : number
+            500-mb lifted index (C)
+        li3 : number
+            300-mb lifted index (C)
+        brnshear : number
+            Bulk Richardson Number Shear (kts)
+        brnu : number
+             U-component Bulk Richardson Number Shear (kts)
+        brnv : number
+             V-component Bulk Richardson Number Shear (kts)
+        brn : number
+            Bulk Richardson Number (unitless)
+        limax : number
+            Maximum lifted index value (C)
+        limaxpres : number
+            Pressure at Maximum lifted index (mb)
+        cap : number
+            Cap strength (C)
+        cappres : number
+            Cap strength pressure (mb)
+        bmin : number
+            Buoyancy minimum (C)
+        bminpres : number
+            Pressure at the buoyancy minimum (mb)
         '''
     def __init__(self, **kwargs):
         self.pres = ma.masked # Parcel beginning pressure (mb)

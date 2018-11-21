@@ -7,5 +7,4 @@ SHARPpy
    datasources
    setup
    sharppy
-   test_profile
    utils
