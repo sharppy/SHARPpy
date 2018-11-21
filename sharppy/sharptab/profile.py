@@ -24,56 +24,56 @@ def create_profile(**kwargs):
 
     Parameters
     ----------
-    Optional Keywords
-
-    missing : number (default: sharppy.sharptab.constants.MISSING)
-    The value of the missing flag used in the Profile objects
-
-    profile : string (default: 'default')
-    The text identifier for the Profile to be generated. Valid options
-    include ('default' | 'convective'). Default will construct a basic
-    Profile, and convective will construct a ConvectiveProfile used for
-    the SPC style GUI.
-
     Mandatory Keywords
 
     pres : array_like
-    The pressure values (Hectopascals)
+        The pressure values (Hectopascals)
     hght : array_like
-    The corresponding height values (Meters)
+        The corresponding height values (Meters)
     tmpc : array_like
-    The corresponding temperature values (Celsius)
+        The corresponding temperature values (Celsius)
     dwpc : array_like
-    The corresponding dewpoint temperature values (Celsius)
+        The corresponding dewpoint temperature values (Celsius)
 
     Optional Keyword Pairs (must use one or the other)
 
     wdir : array_like
-    The direction from which the wind is blowing in
-    meteorological degrees
+        The direction from which the wind is blowing in meteorological degrees
     wspd : array_like
-    The speed of the wind
+        The speed of the wind (kts)
 
     OR
 
     u : array_like
-    The U-component of the direction from which the wind
-    is blowing
+        The U-component of the direction from which the wind is blowing. (kts)
 
     v : array_like
-    The V-component of the direction from which the wind
-    is blowing.
+        The V-component of the direction from which the wind is blowing. (kts)
+
+    Optional Keywords
+
+    missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+        The value of the missing flag used in the Profile objects
+
+    profile : string, optional (default: 'default')
+        The text identifier for the Profile to be generated. Valid options
+        include ('default' | 'convective'). Default will construct a basic
+        Profile, and convective will construct a ConvectiveProfile used for
+        the SPC style GUI.
+
+    omeg: array_like
+        The corresponding vertical velocity values (Pa/s)
 
     Returns
     -------
 
     Profile : a basic Profile object
-    This is the most basic and default object.
+        This is the most basic and default object.
 
     OR
 
     ConvectiveProfile : a child of Profile
-    This is the class used for the SPC GUI.
+        This is the class used for the SPC GUI.
 
 
     '''
@@ -231,43 +231,43 @@ class BasicProfile(Profile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
         The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
             
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing (kts)
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing. (kts)
             
         Optional Keywords
         missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+            The value of the missing flag
 
         location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
         
         strictQC : boolean
-        A flag that indicates whether or not the strict quality control
-        routines should be run on the profile upon construction.
+            A flag that indicates whether or not the strict quality control
+            routines should be run on the profile upon construction.
 
         Returns
         -------
@@ -467,42 +467,41 @@ class ConvectiveProfile(BasicProfile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
-        The corresponding dewpoint temperature values (Celsius)
+            The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
         
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing.
             
-        Optional Keywords
-        missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+        missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+            The value of the missing flag
 
-        location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+        location : string, optional (default: None)
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
 
-        omeg : array_like
-        List of the vertical velocity in pressure coordinates with height (Pascals/second)
+        omeg : array_like, optional
+            List of the vertical velocity in pressure coordinates with height (Pascals/second)
             
         Returns
         -------
@@ -664,14 +663,10 @@ class ConvectiveProfile(BasicProfile):
         self.sfcpcl : Surface Based Parcel
         self.mlpcl : Mixed Layer Parcel
         self.fcstpcl : Forecast Surface Parcel
-        self.ebottom : The bottom pressure level of
-            the effective inflow layer
-        self.etop : the top pressure level of
-            the effective inflow layer
-        self.ebotm : The bottom, meters (agl), of the
-            effective inflow layer
-        self.etopm : The top, meters (agl), of the
-            effective inflow layer
+        self.ebottom : The bottom pressure level of the effective inflow layer
+        self.etop : the top pressure level of the effective inflow layer
+        self.ebotm : The bottom, meters (agl), of the effective inflow layer
+        self.etopm : The top, meters (agl), of the effective inflow layer
     
         Parameters
         ----------

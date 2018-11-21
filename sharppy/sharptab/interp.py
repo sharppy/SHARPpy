@@ -25,7 +25,7 @@ def pres(prof, h):
 
     Returns
     -------
-    Pressure (hPa) at the given height
+    Pressure (hPa) at the given height : number, numpy array
 
     '''
     return generic_interp_hght(h, prof.hght, prof.logp, log=True)
@@ -44,7 +44,7 @@ def hght(prof, p):
 
     Returns
     -------
-    Height (m) at the given pressure
+    Height (m) at the given pressure : number, numpy array
 
     '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -66,7 +66,7 @@ def omeg(prof, p):
 
     Returns
     -------
-    Omega (microbars/second) at the given pressure
+    Omega (microbars/second) at the given pressure : number, numpy array
 
     '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -88,7 +88,7 @@ def temp(prof, p):
 
     Returns
     -------
-    Temperature (C) at the given pressure
+    Temperature (C) at the given pressure : number, numpy array
 
     '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -110,7 +110,7 @@ def thetae(prof, p):
         
         Returns
         -------
-        Theta-E (C) at the given pressure
+        Theta-E (C) at the given pressure : number, numpy array
         
         '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -132,7 +132,7 @@ def mixratio(prof, p):
         
         Returns
         -------
-        Water vapor mixing ratio (g/kg) at the given pressure
+        Water vapor mixing ratio (g/kg) at the given pressure : number, numpy array
         
         '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -155,7 +155,7 @@ def theta(prof, p):
         
         Returns
         -------
-        Theta (C) at the given pressure
+        Theta (C) at the given pressure : number, numpy array
         
         '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -177,7 +177,7 @@ def wetbulb(prof, p):
         
         Returns
         -------
-        Wetbulb temperature (C) at the given pressure
+        Wetbulb temperature (C) at the given pressure : number, numpy array
         
         '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -200,7 +200,7 @@ def dwpt(prof, p):
 
     Returns
     -------
-    Dew point tmperature (C) at the given pressure
+    Dew point tmperature (C) at the given pressure : number, numpy array
 
     '''
     # Note: numpy's interpoloation routine expects the interpoloation
@@ -224,7 +224,7 @@ def vtmp(prof, p):
 
     Returns
     -------
-    Virtual tmperature (C) at the given pressure
+    Virtual tmperature (C) at the given pressure : number, numpy array
 
     '''
     return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.vtmp[::-1])
@@ -244,7 +244,7 @@ def components(prof, p):
 
     Returns
     -------
-    U and V components at the given pressure
+    U and V components at the given pressure (kts) : number, numpy array
     '''
     # Note: numpy's interpoloation routine expects the interpoloation
     # routine to be in ascending order. Because pressure decreases in the
@@ -269,7 +269,7 @@ def vec(prof, p):
 
     Returns
     -------
-    Wind direction and magnitude at the given pressure
+    Wind direction (degrees) and magnitude (kts) at the given pressure : number, numpy array
     '''
     U, V = components(prof, p)
     return utils.comp2vec(U, V)
@@ -288,7 +288,7 @@ def to_agl(prof, h):
 
     Returns
     -------
-    Converted height
+    Converted height (m AGL) : number, numpy array
 
     '''
     return h - prof.hght[prof.sfc]
@@ -307,7 +307,7 @@ def to_msl(prof, h):
 
     Returns
     -------
-    Converted height
+    Converted height (m MSL) : number, numpy array
 
     '''
     return h + prof.hght[prof.sfc]
@@ -330,7 +330,7 @@ def generic_interp_hght(h, hght, field, log=False):
 
     Returns
     -------
-    Value of the 'field' variable at the given height
+    Value of the 'field' variable at the given height : number, numpy array
 
     '''
     if ma.isMaskedArray(hght):
@@ -385,7 +385,7 @@ def generic_interp_pres(p, pres, field):
 
     Returns
     -------
-    Value of the 'field' variable at the given pressure
+    Value of the 'field' variable at the given pressure : number, numpy array
 
     '''
     if ma.isMaskedArray(pres):
