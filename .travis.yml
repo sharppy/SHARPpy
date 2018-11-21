@@ -30,22 +30,31 @@ before_install:
 - source activate test-environment
 - conda install -c conda-forge pyside
 - conda install -c conda-forge pyinstaller
-- conda install python.app
+# If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
+- if [[ "TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app fi
 install:
 - python setup.py install
 script:
 - python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt
+# If the test script passes, build the binaries.
 after_success:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyinstaller runsharp/SHARPpy-osx.spec
   --onefile --noconsole; else pyinstaller runsharp/SHARPpy-linux-redhat5.spec; fi
 - ls -lht dist/
+# Zip the binaries, as we can't transfer .app
+before_deploy:
+- cd runsharp
+- zip SHARPpy-$TRAVIS_OS_NAME.zip *
+- cd ..
+# Ship the binaries to Github
 deploy:
   provider: releases
   api_key:
     secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
   file_glob: true
-  file: dist/SHARPpy*
+  file: dist/SHARPpy*.zip
   skip_cleanup: true
+  overwrite: true
   on:
     repo: sharppy/SHARPpy
     branch: andover
