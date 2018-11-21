@@ -44,8 +44,7 @@ after_success:
 # Zip the binaries, as we can't transfer .app
 before_deploy:
 - cd dist
-- zip -r SHARPpy-osx.zip SHARPpy.app
-- zip -r SHARPpy-linux.zip SHARPpy
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; else zip -r SHARPpy-linux.zip * ; if
 - cd ..
 # Ship the binaries to Github
 deploy:
@@ -55,7 +54,8 @@ deploy:
   file_glob: true
   file: dist/SHARPpy*.zip
   skip_cleanup: true
+  draft: true
   overwrite: true
   on:
     repo: sharppy/SHARPpy
-    branch: andover
+    tag: true
