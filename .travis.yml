@@ -31,7 +31,7 @@ before_install:
 - conda install -c conda-forge pyside
 - conda install -c conda-forge pyinstaller
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
-- if [[ "TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app fi
+- if [[ "TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app; fi
 install:
 - python setup.py install
 script:
