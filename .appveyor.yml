@@ -47,6 +47,6 @@ deploy:
     secure: DB6sQwYCM7Dhhy+mjPkMd6kclvw0Sc2wglTJxcTBQue63dtIQRNa1dz/aqJG7Ygc
   artifact: "dist\\SHARPpy64.exe"
   draft: true
-  #on:
-  #   appveyor_repo_tag: true
+  on:
+    appveyor_repo_tag: true
  

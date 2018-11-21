@@ -30,6 +30,7 @@ before_install:
 - source activate test-environment
 - conda install -c conda-forge pyside
 - conda install -c conda-forge pyinstaller
+- conda install python.app
 install:
 - python setup.py install
 script:
