@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ''' Thermodynamic Parameter Routines '''
 from __future__ import division
 import numpy as np

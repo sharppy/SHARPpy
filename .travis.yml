@@ -13,49 +13,36 @@ matrix:
     language: generic
     env: PYTHON_VERSION="3.7"
 before_install:
-  - echo $PYTHON_VERSION
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      else
-        curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
-      fi
-    else
-      if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
-    fi
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  
-  # Useful for debugging any issues with conda
-  - conda info -a
-
-  - conda create -q -n test-environment python=$PYTHON_VERSION numpy
-  - source activate test-environment
-  - conda install -c conda-forge pyside
-  - conda install -c conda-forge pyinstaller
+- echo $PYTHON_VERSION
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then if [[ "$PYTHON_VERSION" == "2.7" ]]; then
+  curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
+  else curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+  -o miniconda.sh; fi else if [[ "$PYTHON_VERSION" == "2.7" ]]; then wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+  -O miniconda.sh; else wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  -O miniconda.sh; fi fi
+- bash miniconda.sh -b -p $HOME/miniconda
+- export PATH="$HOME/miniconda/bin:$PATH"
+- hash -r
+- conda config --set always_yes yes --set changeps1 no
+- conda update -q conda
+- conda info -a
+- conda create -q -n test-environment python=$PYTHON_VERSION numpy
+- source activate test-environment
+- conda install -c conda-forge pyside
+- conda install -c conda-forge pyinstaller
 install:
-  # Install SHARPpy 
-  - python setup.py install
-  # Run pyinstaller to generate the Python program
-  - if [["$TRAVIS_OS_NAME" == "osx"]]; then 
-      pyinstaller runsharp/SHARPpy-osx.spec --onefile --noconsole;
-    else
-      pyinstaller runsharp/SHARPpy-linux-redhat5.spec;      
-    fi
+- python setup.py install
 script:
-  # Here is where we run some test scripts
-  - python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt 
+- python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt
+after_success:
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyinstaller runsharp/SHARPpy-osx.spec
+  --onefile --noconsole; else pyinstaller runsharp/SHARPpy-linux-redhat5.spec; fi
 deploy:
   provider: releases
-  skip_cleanup: true
-  api_key: "GITHUB OAUTH TOKEN"
+  api_key:
+    secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
   file: dist/SHARPpy.app
+  skip_cleanup: true
   on:
-    tags: true
+    repo: sharppy/SHARPpy
+    branch: andover
