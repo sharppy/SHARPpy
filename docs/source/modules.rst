@@ -4,7 +4,6 @@ SHARPpy
 .. toctree::
    :maxdepth: 4
 
-   conf
    datasources
    setup
    sharppy
