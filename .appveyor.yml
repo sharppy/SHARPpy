@@ -44,7 +44,7 @@ deploy:
   provider: GitHub
   description: ''
   auth_token:
-    secure: b375d0a95715bb43870b1906c4498b414b094aa9
+    secure: DB6sQwYCM7Dhhy+mjPkMd6kclvw0Sc2wglTJxcTBQue63dtIQRNa1dz/aqJG7Ygc
   artifact: "dist\\SHARPpy64.exe"
   draft: true
   #on:
