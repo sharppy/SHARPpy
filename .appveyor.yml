@@ -42,8 +42,9 @@ artifacts:
 
 deploy:
   provider: GitHub
+  description: ''
   auth_token:
-    secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
+    secure: b375d0a95715bb43870b1906c4498b414b094aa9
   artifact: "dist\\SHARPpy64.exe"
   draft: true
   #on:
