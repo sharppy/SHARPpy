@@ -43,8 +43,9 @@ after_success:
 - ls -lht dist/
 # Zip the binaries, as we can't transfer .app
 before_deploy:
-- cd runsharp
-- zip SHARPpy-$TRAVIS_OS_NAME.zip *
+- cd dist
+- zip -r SHARPpy-osx.zip SHARPpy.app
+- zip -r SHARPpy-linux.zip SHARPpy
 - cd ..
 # Ship the binaries to Github
 deploy:
