@@ -2,8 +2,10 @@ environment:
   matrix:
     - PYTHON_VERSION: 2.7
       MINICONDA: C:\Miniconda
+      ARCH: "64"
     - PYTHON_VERSION: 3.6
       MINICONDA: C:\Miniconda3
+      ARCH: "64"
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
@@ -23,9 +25,24 @@ install:
   - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
-  - "%PYTHON%\\python setup.py install"
+  - "python setup.py install"
+  
+  # Make binaries using PyInstaller
+  - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
+  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 build: off
 
 test_script:
-  - "build.cmd %PYTHON%\\python.exe sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt" 
+  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
+
+artifacts:
+  - path: "dist\\SHARPpy64.exe"
+
+deploy:
+  provider: GitHub
+  draft: true
+  #artifact: 
+  on:
+     appveyor_repo_tag: true
+ 
