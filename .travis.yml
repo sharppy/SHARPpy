@@ -1,6 +1,6 @@
 language: python
 os: 
-  - osx
+  #- osx
   - linux
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
