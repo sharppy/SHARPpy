@@ -42,6 +42,8 @@ extensions = ['sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc']
 
+autodoc_mock_imports = ["numpy"]
+
 napoleon_google_docstring = False
 napolean_numpy_docstring = True
 
