@@ -188,9 +188,7 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 todo_include_todos = True
 
 def run_apidoc(_):
-    ignore_paths = [
-        ...
-    ]
+    ignore_paths = []
 
     argv = [
         "-f",
