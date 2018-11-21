@@ -195,8 +195,8 @@ def run_apidoc(_):
         "-T",
         "-e",
         "-M",
-        "-o", ".",
-        ".."
+        "-o", "../../",
+        "."
     ] + ignore_paths
 
     try:
