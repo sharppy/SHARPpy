@@ -19,13 +19,13 @@ install:
   - conda install -c conda-forge pyside
   - conda install -c conda-forge pyinstaller
  
-  # Check to see that I have the correct version of Python
-  - "python --version"
-  
   # Add to path the current folder
   - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
-  - "python setup.py install"
+  - "%PYTHON%\\python setup.py install"
+
+build: off
+
 test_script:
-  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt" 
+  - "build.cmd %PYTHON%\\python.exe sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt" 
