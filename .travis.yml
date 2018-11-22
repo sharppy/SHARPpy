@@ -58,4 +58,4 @@ deploy:
   overwrite: true
   on:
     repo: sharppy/SHARPpy
-    tag: true
+    tags: true
