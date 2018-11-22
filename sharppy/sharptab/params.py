@@ -1865,6 +1865,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         lyrlast = lyre
         lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
 
+        #print(pe1, pe2, te1, te2, tp1, tp2, lyre, totp, totn, pcl.lfcpres)
+
         # Add layer energy to total positive if lyre > 0
         if lyre > 0: totp += lyre
         # Add layer energy to total negative if lyre < 0, only up to EL

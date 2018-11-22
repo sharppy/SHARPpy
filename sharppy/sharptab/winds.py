@@ -42,7 +42,7 @@ def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
 
     '''
     if dp > 0: dp = -dp
-    if utils.QC(pbot) or utils.QC(ptop):
+    if not utils.QC(pbot) or not utils.QC(ptop):
         return ma.masked, ma.masked
 
     ps = np.arange(pbot, ptop+dp, dp)
