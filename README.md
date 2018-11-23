@@ -2,6 +2,9 @@
 
 ###### Sounding/Hodograph Analysis and Research Program in Python
 
+[![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=andover)](https://travis-ci.org/sharppy)
+[![Build status](https://ci.appveyor.com/api/projects/status/f7ahm2l5cdyibswc/branch/andover?svg=true)](https://ci.appveyor.com/project/sharppy/sharppy/branch/andover)
+
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
 **REMINDER: You must re-run the "python setup.py install" script for updates to take hold**
@@ -85,7 +88,7 @@ Installing a pre-compiled binary *should* be as simple as downloading the .zip f
 #### Installing the Code from Source
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 2.7_ Anaconda Python Distribution from Continuum Analytics.  SHARPpy is primarily tested using this distribution.  SHARPpy also works under the _Python 3.6_ Anaconda Python Distribution on an experimental basis.
+SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  Running the SHARPpy code requires a.) the Python interpreter and b.) additional Python libraries.  Although there are multiple ways to meet these requirements, we recommend you install the _Python 3.6_ version of the Anaconda Python distribution.  SHARPpy is primarily tested using this distribution.  
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
 

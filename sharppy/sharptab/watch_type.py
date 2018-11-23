@@ -1,5 +1,6 @@
 from sharppy.sharptab import thermo, utils, interp, params, constants
 import numpy as np
+import logging
 
 ## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
 ## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu
@@ -15,12 +16,15 @@ def heat_index(temp, rh):
 
         Parameters
         ----------
-        temp : temperature [C]
-        rh : %
+        temp : number
+            temperature (C)
+        rh : number
+            relative humidity (%)
 
         Returns
         -------
-        heat_index : heat index value in (F)
+        heat_index : number
+            heat index value in (F)
     '''
     if temp < 80 or rh < 40:
         return temp
@@ -43,11 +47,13 @@ def wind_chill(prof):
 
         Parameters
         ----------
-        prof : Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        wind_chill : wind chill value in (F)
+        wind_chill : number
+            wind chill value in (F)
     '''
     # Needs to be tested
 
@@ -76,17 +82,19 @@ def init_phase(prof):
 
         Parameters
         ----------
-        prof : Profile object (omega profile optional)
+        prof : profile object
+            Profile object (omega profile optional)
 
         Returns
         -------
-        plevel : the pressure level of the precipitation source (mb)
-        phase : the phase type of the precipitation (int)
-                phase == 0 for "Rain"
-                phase == 1 for "Freezing Rain" or "ZR/S Mix"
-                phase == 3 for "Snow"
-        tmp : the temperature at the level that is the precipitation source
-        st : a string naming the precipitation type
+        plevel : number
+            the pressure level of the precipitation source (mb)
+        phase : int
+            the phase type of the precipitation (int), phase = 0 for "Rain", phase = 1 for "Freezing Rain" or "ZR/S Mix", phase = 3 for "Snow"
+        tmp : number
+            the temperature at the level that is the precipitation source (C)
+        st : str
+            a string naming the precipitation type
 
     '''
     # Needs to be tested
@@ -165,15 +173,21 @@ def posneg_temperature(prof, start=-1):
 
         Parameters
         ----------
-        prof : Profile object
-        start : the pressure level the precpitation originates from (found by calling init_phase())
+        prof : profile object
+            Profile object
+        start : number
+            the pressure level the precipitation originates from (found by calling init_phase()) (mb)
 
         Returns
         -------
-        pos : the positive area (> 0 C) of the temperature profile in J/kg
-        neg : the negative area (< 0 C) of the temperature profile in J/kg
-        top : the top of the precipitation layer pressure in mb
-        bot : the bottom of the precipitation layer pressure in mb
+        pos : float
+            the positive area (> 0 C) of the wet-bulb profile (J/kg)
+        neg : float
+            the negative area (< 0 C) of the wet-bulb profile (J/kg)
+        top : float
+            the top of the precipitation layer pressure (mb)
+        bot : float
+            the bottom of the precipitation layer pressure (mb)
 
     '''
     # Needs to be tested
@@ -265,7 +279,6 @@ def posneg_wetbulb(prof, start=-1):
         Positive/Negative Wetbulb profile
         Adapted from SHARP code donated by Rich Thompson (SPC)
 
-        Description:
         This routine calculates the positive (above 0 C) and negative (below 0 C)
         areas of the wet bulb profile starting from a specified pressure (start).
         If the specified pressure is not given, this routine calls init_phase()
@@ -276,15 +289,21 @@ def posneg_wetbulb(prof, start=-1):
 
         Parameters
         ----------
-        prof : Profile object
-        start : the pressure level the precpitation originates from (found by calling init_phase())
+        prof : profile object
+            Profile object
+        start : number
+            the pressure level the precipitation originates from (found by calling init_phase()) (mb)
 
         Returns
         -------
-        pos : the positive area (> 0 C) of the wet-bulb profile in J/kg
-        neg : the negative area (< 0 C) of the wet-bulb profile in J/kg
-        top : the top of the precipitation layer pressure in mb
-        bot : the bottom of the precipitation layer pressure in mb
+        pos : float
+            the positive area (> 0 C) of the wet-bulb profile (J/kg)
+        neg : float
+            the negative area (< 0 C) of the wet-bulb profile (J/kg)
+        top : float
+            the top of the precipitation layer pressure (mb)
+        bot : float
+            the bottom of the precipitation layer pressure (mb)
 
     '''
     # Needs to be tested
@@ -375,31 +394,36 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
         Best Guess Precipitation type
         Adapted from SHARP code donated by Rich Thompson (SPC)
 
-        Description:
         This algorithm utilizes the output from the init_phase() and posneg_temperature()
         functions to make a best guess at the preciptation type one would observe
         at the surface given a thermodynamic profile.
 
         Precipitation Types Supported:
-        - None
-        - Rain
-        - Snow
-        - Sleet and Snow
-        - Sleet
-        - Freezing Rain/Drizzle
-        - Unknown
+        * None
+        * Rain
+        * Snow
+        * Sleet and Snow
+        * Sleet
+        * Freezing Rain/Drizzle
+        * Unknown
 
         Parameters
         ----------
-        prof : Profile object
-        init_phase : the initial phase of the precipitation (int) (see 2nd value returned from init_phase())
-        init_lvl : the inital level of the precipitation source (mb) (see 1st value returned from init_phase())
-        init_temp : the inital level of the precipitation source (C) (see 3rd value returned from init_phase())
-        tpos : the positive area (> 0 C) in the temperature profile (J/kg)
+        prof : profile object
+            Profile object
+        init_phase : int
+            the initial phase of the precipitation (see 2nd value returned from init_phase())
+        init_lvl : float
+            the initial level of the precipitation source (mb) (see 1st value returned from init_phase())
+        init_temp : float
+            the initial level of the precipitation source (C) (see 3rd value returned from init_phase())
+        tpos : float
+            the positive area (> 0 C) in the temperature profile (J/kg)
 
         Returns
         -------
-        precip_type : a string containing the best guess precipitation type
+        precip_type : str
+            the best guess precipitation type
     '''
     # Needs to be tested
 
@@ -456,40 +480,6 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
 
     return precip_type
 
-def precip_type(prof):
-    '''
-        OLD PROPOSED FUNCTION
-    '''
-    #
-    # This function looks at the current SHARPPY profile (prof)
-    # and makes a single guess of the precipitation type associated with
-    # that profile.
-    #
-    # it would be nice to produce probabilites of the preciptation type using
-    # different methods, but it's 12 AM now.
-    #
-    # it would also be nice to have BUFKIT's precpitation intensity and type algorithm
-
-    # Step 1: Check for ice in a cloud (is there a cloud with temps of -10 to -18 C?)
-
-    # if no ice in cloud, check surface temp
-    # if surface temp > 0 C, it's rain
-    # if surface temp < 0 C, it's freezing rain
-
-    # if there is ice in the cloud, what are the temperatures below it?
-    # if the temperature below is less than 0.5 C, it's snow, but ony if T_w <= 0 C
-    # otherwise if T_w > 0 C in the lowest 100 meters, and sfc T_w > 33 F, it's rain
-
-    # if the temperatures below the ice cloud are between 0.5 to 3 C, there will be melting
-    # if T_w or T are <= 0C, it's a mix (if warm layer is near 1 C) or sleet ( if warm layer is near 3 C)
-    # if T_w >= 0 C in lowest 100 m and T_w > 33F, it's rain or drizzle
-
-    # if the temperatures below the ice cloud are > 3 C, there's total melting
-    # if minimum cold layer temp is > -12 C and sfc_T <= 0 C, it's freezing rain
-    # if minimum cold layer temp is > -12 C and sfc_T > 0 C, it's rain.
-    # if minimum cold layer temp is < -12 C and sfc_T_w < 33 F, it's snow and sleet
-    return
-
 def possible_watch(prof, use_left=False):
     '''
         Possible Weather/Hazard/Watch Type
@@ -506,30 +496,33 @@ def possible_watch(prof, use_left=False):
         a source of strict guidance for weather forecasters.  As always, the raw data is to be 
         consulted.
 
-        This code base is currently under development.
-
         Wx Categories (ranked in terms of severity):
-        - PDS TOR
-        - TOR
-        - MRGL TOR
-        - SVR
-        - MRGL SVR
-        - FLASH FLOOD
-        - BLIZZARD
-        - EXCESSIVE HEAT
+        * PDS TOR
+        * TOR
+        * MRGL TOR
+        * SVR
+        * MRGL SVR
+        * FLASH FLOOD
+        * BLIZZARD
+        * EXCESSIVE HEAT
     
         Suggestions for severe/tornado thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
 
         Parameters
         ----------
-        prof : ConvectiveProfile object
-        use_left : If True, uses the parameters computed from the left-mover bunkers vector to decide the watch type. If False,
+        prof : profile object
+            ConvectiveProfile object
+        use_left : bool
+            If True, uses the parameters computed from the left-mover bunkers vector to decide the watch type. If False,
             uses parameters from the right-mover vector. The default is False.
 
         Returns
         -------
-        watch_types :  a list of strings containing the weather types in code
-        colors : a list of the HEX colors corresponding to each weather type
+        watch_types : numpy array
+            strings containing the weather types in code
+        colors : numpy array
+            HEX colors corresponding to each weather type
+
     '''
         
     watch_types = []

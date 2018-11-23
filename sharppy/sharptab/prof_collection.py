@@ -8,6 +8,7 @@ import platform
 import numpy as np
 
 def doCopy(target_type, prof, idx, pipe):
+    print('\n\n\n\n\n',target_type, prof, idx, pipe)
     pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
@@ -91,14 +92,14 @@ class ProfCollection(object):
                 self._procs = []
         return
 
-    def setAsync(self, async):
+    def setAsync(self, async_obj):
         """
         Start an asynchronous process to load objects of type 'target_type' in the background.
         Used to upgrade the Profile objects to ConvectiveProfile objects in the background
 
         async:  An AsyncThreads instance.
         """
-        self._async = async
+        self._async = async_obj
         self._async.post(self._backgroundCopy, None, self._highlight)
 
     def cancelCopy(self):

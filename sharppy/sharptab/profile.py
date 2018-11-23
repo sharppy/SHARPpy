@@ -9,6 +9,7 @@ import sharppy.io.qc_tools as qc_tools
 from sharppy.databases.sars import hail, supercell
 from sharppy.databases.pwv import pwv_climo
 from sharppy.sharptab.constants import MISSING
+import logging
 
 def create_profile(**kwargs):
     '''
@@ -23,56 +24,56 @@ def create_profile(**kwargs):
 
     Parameters
     ----------
-    Optional Keywords
-
-    missing : number (default: sharppy.sharptab.constants.MISSING)
-    The value of the missing flag used in the Profile objects
-
-    profile : string (default: 'default')
-    The text identifier for the Profile to be generated. Valid options
-    include ('default' | 'convective'). Default will construct a basic
-    Profile, and convective will construct a ConvectiveProfile used for
-    the SPC style GUI.
-
     Mandatory Keywords
 
     pres : array_like
-    The pressure values (Hectopascals)
+        The pressure values (Hectopascals)
     hght : array_like
-    The corresponding height values (Meters)
+        The corresponding height values (Meters)
     tmpc : array_like
-    The corresponding temperature values (Celsius)
+        The corresponding temperature values (Celsius)
     dwpc : array_like
-    The corresponding dewpoint temperature values (Celsius)
+        The corresponding dewpoint temperature values (Celsius)
 
     Optional Keyword Pairs (must use one or the other)
 
     wdir : array_like
-    The direction from which the wind is blowing in
-    meteorological degrees
+        The direction from which the wind is blowing in meteorological degrees
     wspd : array_like
-    The speed of the wind
+        The speed of the wind (kts)
 
     OR
 
     u : array_like
-    The U-component of the direction from which the wind
-    is blowing
+        The U-component of the direction from which the wind is blowing. (kts)
 
     v : array_like
-    The V-component of the direction from which the wind
-    is blowing.
+        The V-component of the direction from which the wind is blowing. (kts)
+
+    Optional Keywords
+
+    missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+        The value of the missing flag used in the Profile objects
+
+    profile : string, optional (default: 'default')
+        The text identifier for the Profile to be generated. Valid options
+        include ('default' | 'convective'). Default will construct a basic
+        Profile, and convective will construct a ConvectiveProfile used for
+        the SPC style GUI.
+
+    omeg: array_like
+        The corresponding vertical velocity values (Pa/s)
 
     Returns
     -------
 
     Profile : a basic Profile object
-    This is the most basic and default object.
+        This is the most basic and default object.
 
     OR
 
     ConvectiveProfile : a child of Profile
-    This is the class used for the SPC GUI.
+        This is the class used for the SPC GUI.
 
 
     '''
@@ -98,7 +99,7 @@ class Profile(object):
         self.missing = kwargs.get('missing', MISSING)
         self.profile = kwargs.get('profile')
         self.latitude = kwargs.get('latitude', ma.masked)
-        self.strictQC = kwargs.get('strictQC', True)
+        self.strictQC = kwargs.get('strictQC', False)
 
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
@@ -106,9 +107,13 @@ class Profile(object):
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
 
+        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
+                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
+
         if 'wdir' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
+            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
@@ -117,6 +122,7 @@ class Profile(object):
         elif 'u' in kwargs:
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
+            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
 
             #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
@@ -133,6 +139,7 @@ class Profile(object):
         if kwargs.get('omeg', None) is not None:
             ## get the omega data and turn into arrays
             self.omeg = ma.asanyarray(kwargs.get('omeg'))
+            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
         else:
             self.omeg = None
 
@@ -140,8 +147,11 @@ class Profile(object):
         self.location = kwargs.get('location', None)
         self.date = kwargs.get('date', None)
 
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
     @classmethod
-    def copy(cls, prof, strictQC=True, **kwargs):
+    def copy(cls, prof, strictQC=False, **kwargs):
         '''
             Copies a profile object.
         '''            
@@ -173,9 +183,10 @@ class Profile(object):
         snd_loc = (" " * (4 - len(self.location))) + self.location
 
         now = datetime.utcnow()
+        print(now, self.date)
         user = getpass.getuser()
         snd_file.write("%TITLE%\n")
-        snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
+        #snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")
@@ -187,6 +198,20 @@ class Profile(object):
             snd_file.write(str[:-3] + "\n")
         snd_file.write("%END%\n")
         snd_file.close()
+
+    def checkDataIntegrity(self):
+
+        if not qc_tools.isHGHTValid(self.hght):
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQualityException)
+        if not qc_tools.isTMPCValid(self.tmpc):
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isDWPCValid(self.dwpc):
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isWSPDValid(self.wspd):
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
+        if not qc_tools.isWDIRValid(self.wdir):
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)
+
 
 class BasicProfile(Profile):
     '''
@@ -206,43 +231,43 @@ class BasicProfile(Profile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
         The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
             
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing (kts)
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing. (kts)
             
         Optional Keywords
         missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+            The value of the missing flag
 
         location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
         
         strictQC : boolean
-        A flag that indicates whether or not the strict quality control
-        routines should be run on the profile upon construction.
+            A flag that indicates whether or not the strict quality control
+            routines should be run on the profile upon construction.
 
         Returns
         -------
@@ -253,12 +278,8 @@ class BasicProfile(Profile):
 
         self.strictQC = kwargs.get('strictQC', True)
 
-        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
-                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
-
         ## did the user provide the wind in vector form?
         if self.wdir is not None:
-            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             self.wdir[self.wdir == self.missing] = ma.masked
             self.wspd[self.wspd == self.missing] = ma.masked
             self.wdir[self.wspd.mask] = ma.masked
@@ -267,7 +288,6 @@ class BasicProfile(Profile):
 
         ## did the user provide the wind in u,v form?
         elif self.u is not None:
-            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
             self.u[self.u == self.missing] = ma.masked
             self.v[self.v == self.missing] = ma.masked
             self.u[self.v.mask] = ma.masked
@@ -283,7 +303,6 @@ class BasicProfile(Profile):
 
         if self.omeg is not None:
             ## get the omega data and turn into arrays
-            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
             self.omeg[self.omeg == self.missing] = ma.masked
         else:
             self.omeg = ma.masked_all(len(self.hght))
@@ -297,17 +316,6 @@ class BasicProfile(Profile):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
 
-        if not qc_tools.isHGHTValid(self.hght) and self.strictQC:
-            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQuailtyException)
-        if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
-        if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
-        if not qc_tools.isWSPDValid(self.wspd) and self.strictQC:
-            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
-        if not qc_tools.isWDIRValid(self.wdir) and self.strictQC:
-            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)     
-
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
         idx = np.ma.where(self.pres > 0)[0]
@@ -316,6 +324,10 @@ class BasicProfile(Profile):
         ## get the index of the top and bottom of the profile
         self.sfc = self.get_sfc()
         self.top = self.get_top()
+
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
         ## generate the wetbulb profile
         self.wetbulb = self.get_wetbulb_profile()
         ## generate theta-e profile
@@ -455,42 +467,41 @@ class ConvectiveProfile(BasicProfile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
-        The corresponding dewpoint temperature values (Celsius)
+            The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
         
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing.
             
-        Optional Keywords
-        missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+        missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+            The value of the missing flag
 
-        location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+        location : string, optional (default: None)
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
 
-        omeg : array_like
-        List of the vertical velocity in pressure coordinates with height (Pascals/second)
+        omeg : array_like, optional
+            List of the vertical velocity in pressure coordinates with height (Pascals/second)
             
         Returns
         -------
@@ -501,37 +512,70 @@ class ConvectiveProfile(BasicProfile):
         self.user_srwind = None
 
         # Generate the fire weather paramters
+        logging.debug("Calling get_fire().")
+        dt = datetime.now()
         self.get_fire()
+        logging.debug("get_fire() took: " + str((datetime.now() - dt)))
 
         # Generate the winter inset/precipitation types
+        logging.debug("Calling get_precip().")
+        dt = datetime.now()
         self.get_precip()
-        
+        logging.debug("get_precip() took: " + str((datetime.now() - dt)))
+
         ## generate various parcels
+        logging.debug("Calling get_parcels().")
+        dt = datetime.now()
         self.get_parcels()
+        logging.debug("get_parcels() took: " + str((datetime.now() - dt)))
 
         ## calculate thermodynamic window indices
+        logging.debug("Calling get_thermo().")
+        dt = datetime.now()
         self.get_thermo()
+        logging.debug("get_thermo() took: " + str((datetime.now() - dt)))
 
         ## generate wind indices
+        logging.debug("Calling get_kinematics().")
+        dt = datetime.now()
         self.get_kinematics()
+        logging.debug("get_kinematics() took: " + str((datetime.now() - dt)))
 
         ## get SCP, STP(cin), STP(fixed), SHIP
+        logging.debug("Calling get_severe().")
+        dt = datetime.now()
         self.get_severe()
+        logging.debug("get_severe() took: " + str((datetime.now() - dt)))
 
         ## calculate the SARS database matches
+        logging.debug("Calling get_sars().")
+        dt = datetime.now()
         self.get_sars()
+        logging.debug("get_sars() took: " + str((datetime.now() - dt)))
 
         ## get the precipitable water climatology
+        logging.debug("Calling get_PWV_loc().")
+        dt = datetime.now()
         self.get_PWV_loc()
+        logging.debug("get_PWV_loc() took: " + str((datetime.now() - dt)))
 
         ## get the parcel trajectory
+        logging.debug("Calling get_traj().")
+        dt = datetime.now()
         self.get_traj()
+        logging.debug("get_traj() took: " + str((datetime.now() - dt)))
 
         ## miscellaneous indices I didn't know where to put
+        logging.debug("Calling get_indices().")
+        dt = datetime.now()
         self.get_indices()
+        logging.debug("get_indices() took: " + str((datetime.now() - dt)))
 
         ## get the possible watch type
+        logging.debug("Calling get_watch().")
+        dt = datetime.now()
         self.get_watch()
+        logging.debug("get_watch() took: " + str((datetime.now() - dt)))
 
     def get_fire(self):
         '''
@@ -619,14 +663,10 @@ class ConvectiveProfile(BasicProfile):
         self.sfcpcl : Surface Based Parcel
         self.mlpcl : Mixed Layer Parcel
         self.fcstpcl : Forecast Surface Parcel
-        self.ebottom : The bottom pressure level of
-            the effective inflow layer
-        self.etop : the top pressure level of
-            the effective inflow layer
-        self.ebotm : The bottom, meters (agl), of the
-            effective inflow layer
-        self.etopm : The top, meters (agl), of the
-            effective inflow layer
+        self.ebottom : The bottom pressure level of the effective inflow layer
+        self.etop : the top pressure level of the effective inflow layer
+        self.ebotm : The bottom, meters (agl), of the effective inflow layer
+        self.etopm : The top, meters (agl), of the effective inflow layer
     
         Parameters
         ----------
@@ -702,6 +742,7 @@ class ConvectiveProfile(BasicProfile):
         self.mean_3km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p3km))
         self.mean_6km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km))
         self.mean_8km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p8km))
+        print(self.mupcl.lclpres, self.mupcl.elpres, self.mupcl.dwpc, self.pres, self.tmpc, self.dwpc)
         self.mean_lcl_el = utils.comp2vec(*winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres))
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
@@ -839,6 +880,8 @@ class ConvectiveProfile(BasicProfile):
         self.lapserate_850_500 = params.lapse_rate( self, 850., 500., pres=True )
         ## 700-500mb lapse rate
         self.lapserate_700_500 = params.lapse_rate( self, 700., 500., pres=True )
+        ## 2-6 km max lapse rate
+        self.max_lapse_rate_2_6 = params.max_lapse_rate( self )
         ## convective temperature
         self.convT = thermo.ctof( params.convective_temp( self ) )
         ## sounding forecast surface temperature

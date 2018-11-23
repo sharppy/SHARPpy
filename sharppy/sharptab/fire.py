@@ -30,11 +30,13 @@ def fosberg(prof):
 
         Parameters
         ----------
-        prof - Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        param - the Fosberg Fire Weather Index
+        param : number
+            Fosberg Fire Weather Index
 
     '''
     tmpf = thermo.ctof(prof.tmpc[prof.get_sfc()])
@@ -68,11 +70,14 @@ def haines_height(prof):
                 
         Parameters
         ----------
-        prof - Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        param - the Haines Index height
+        param : number
+            the Haines Index Height
+
     '''
     sfc_elevation = prof.hght[prof.sfc]
     
@@ -105,7 +110,7 @@ def haines_low(prof):
         3 : > 7C
         
         Dewpoint Depression Term
-        ---------------
+        ------------------------
         1 : < 6C
         2 : 6C to 9C
         3 : > 9C
@@ -115,11 +120,14 @@ def haines_low(prof):
         
         Parameters
         ----------
-        prof - Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        param - the Haines Index
+        param : number
+            the Haines Index low
+
     '''
     
     tp1  = interp.temp(prof, 950)
@@ -165,7 +173,7 @@ def haines_mid(prof):
         3 : > 10C
         
         Dewpoint Depression Term
-        ---------------
+        ------------------------
         1 : < 6C
         2 : 6C to 12C
         3 : > 12C
@@ -175,11 +183,14 @@ def haines_mid(prof):
         
         Parameters
         ----------
-        prof - Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        param - the Haines Index
+        param : number
+            the Haines Index mid
+
     '''
     
     tp1  = interp.temp(prof, 850)
@@ -224,7 +235,7 @@ def haines_high(prof):
         3 : > 21C
         
         Dewpoint Depression Term
-        ---------------
+        ------------------------
         1 : < 15C
         2 : 15C to 20C
         3 : > 20C
@@ -234,11 +245,14 @@ def haines_high(prof):
         
         Parameters
         ----------
-        prof - Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        param - the Haines Index
+        param : number
+            the Haines Index high
+
     '''
     tp1  = interp.temp(prof, 700)
     tp2  = interp.temp(prof, 500)

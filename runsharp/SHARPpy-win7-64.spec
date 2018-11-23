@@ -48,4 +48,4 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False, icon='icons\\SHARPpy.ico')
+          console=False, icon='runsharp\\icons\\SHARPpy.ico')
