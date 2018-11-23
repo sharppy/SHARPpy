@@ -6,6 +6,21 @@ import numpy.ma as ma
 from sharppy.sharptab import interp, utils, thermo, winds
 from sharppy.sharptab.constants import *
 
+'''
+    This file contains various functions to perform the calculation of various convection indices.
+    Because of this, parcel lifting routines are also found in this file.
+
+    Functions denoted with a (*) in the docstring refer to functions that were added to the SHARPpy package that 
+    were not ported from the Storm Prediction Center.  They have been included as they have been used by the 
+    community in an effort to expand SHARPpy to support the many parameters used in atmospheric science. 
+    
+    While the logic for these functions are based in the scientific literature, validation
+    of the output from these functions is occasionally difficult to perform.  Although we have made an effort
+    to resolve code issues when they arise, values from these functions may be erronious and may require additional 
+    inspection by the user.  We appreciate any contributions by the meteorological community that can
+    help better validate these SHARPpy functions!
+    
+'''
 
 __all__ = ['DefineParcel', 'Parcel', 'inferred_temp_advection']
 __all__ += ['k_index', 't_totals', 'c_totals', 'v_totals', 'precip_water']
@@ -409,7 +424,7 @@ def dgz(prof):
 
 def lhp(prof):
     '''
-        Large Hail Parameter
+        Large Hail Parameter (*)
 
         From Johnson and Sugden (2014), EJSSM
 
@@ -2537,7 +2552,7 @@ def esp(prof, **kwargs):
 
 def sherb(prof, **kwargs):
     '''
-        Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter
+        Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter (*)
 
         A composite parameter designed to assist forecasters in the High-Shear
         Low CAPE (HSLC) environment.  This allows better discrimination 
@@ -2581,7 +2596,7 @@ def sherb(prof, **kwargs):
     if effective == False:
         p3km = interp.pres(prof, interp.to_msl(prof, 3000))
         sfc_pres = prof.pres[prof.get_sfc()]
-        shear = utils.KTS2MS(winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km))
+        shear = utils.KTS2MS(utils.mag(*winds.wind_shear(prof, pbot=sfc_pres, ptop=p3km)))
         sherb = ( shear / 26. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
     else:
         if hasattr(prof, 'ebwd'):
@@ -2620,7 +2635,6 @@ def sherb(prof, **kwargs):
             # because there's no information about how to get the
             # inflow layer, return missing.
             return prof.missing
-        
         shear = utils.KTS2MS(utils.mag( prof.ebwd[0], prof.ebwd[1] ))
         sherb = ( shear / 27. ) * ( lr03 / 5.2 ) * ( lr75 / 5.6 )
 
@@ -2899,7 +2913,7 @@ def dcape(prof):
 
 def precip_eff(prof, **kwargs):
     '''
-        Precipitation Efficiency
+        Precipitation Efficiency (*)
 
         This calculation comes from Noel and Dobur 2002, published
         in NWA Digest Vol 26, No 34.
@@ -2975,7 +2989,7 @@ def pbl_top(prof):
 
 def dcp(prof):
     '''
-        Derecho Composite Parameter
+        Derecho Composite Parameter (*)
 
         This parameter is based on a data set of 113 derecho events compiled by Evans and Doswell (2001).
         The DCP was developed to identify environments considered favorable for cold pool "driven" wind
@@ -3030,13 +3044,15 @@ def mburst(prof):
         Below is taken from the SPC Mesoanalysis:
         The Microburst Composite is a weighted sum of the following individual parameters: SBCAPE, SBLI,
         lapse rates, vertical totals (850-500 mb temperature difference), DCAPE, and precipitable water.
-        The specific terms and weights are listed below:
-
 
         All of the terms are summed to arrive at the final microburst composite value.
         The values can be interpreted in the following manner: 3-4 infers a "slight chance" of a microburst;
         5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
         These values can also be viewed as conditional upon the existence of a storm.
+	
+	This code was updated on 9/11/2018 - TT was being used in the function instead of VT.
+	The original SPC code was checked to confirm this was the problem.
+	This error was not identified during the testing phase for some reason.
 
         Parameters
         ----------
@@ -3054,7 +3070,7 @@ def mburst(prof):
         sbpcl = parcelx(prof, flag=1)
 
     lr03 = getattr(prof, 'lapserate_3km', lapse_rate( prof, 0., 3000., pres=False ))
-    tt = getattr(prof, 'totals_totals', t_totals( prof ))
+    vt = getattr(prof, 'vertical_totals', v_totals(prof))
     dcape_val = getattr(prof, 'dcape', dcape( prof )[0])
     pwat = getattr(prof, 'pwat', precip_water( prof ))
     tei_val = thetae_diff(prof)
@@ -3125,18 +3141,18 @@ def mburst(prof):
         else:
             lr03_term = 1
 
-    # Vertical Total Totals term
-    if not utils.QC(tt):
-        tt_term = np.nan
+    # Vertical Totals term
+    if not utils.QC(vt):
+        vt_term = np.nan
     else:
-        if tt < 27:
-            tt_term = 0
-        elif tt >= 27 and tt < 28:
-            tt_term = 1
-        elif tt >= 28 and tt < 29:
-            tt_term = 2
+        if vt < 27:
+            vt_term = 0
+        elif vt >= 27 and vt < 28:
+            vt_term = 1
+        elif vt >= 28 and vt < 29:
+            vt_term = 2
         else:
-            tt_term = 3
+            vt_term = 3
 
     # TEI term?
     if not utils.QC(tei_val):
@@ -3147,7 +3163,7 @@ def mburst(prof):
         else:
             ted = 0
 
-    mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + tt_term + ted
+    mburst = te + sbcape_term + sbli_term + pwat_term + dcape_term + lr03_term + vt_term + ted
 
     if mburst < 0:
         mburst = 0
@@ -3195,7 +3211,7 @@ def ehi(prof, pcl, hbot, htop, stu=0, stv=0):
 
 def sweat(prof):
     '''
-        SWEAT Index
+        SWEAT Index (*)
 
         Computes the SWEAT (Severe Weather Threat Index) using the following numbers:
 
@@ -3205,6 +3221,10 @@ def sweat(prof):
         4.) 500 mb wind speed
         5.) Direction of wind at 500
         6.) Direction of wind at 850
+	
+	Formulation taken from 
+	Notes on Analysis and Severe-Storm Forecasting Procedures of the Air Force Global Weather Central, 1972
+	by RC Miller.
 
         Parameters
         ----------
@@ -3234,8 +3254,8 @@ def sweat(prof):
 
     term3 = 2 * vec850[1]
     term4 = vec500[1]
-    if vec500[0] - vec850[0] > 0:
-        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])  + 0.2))
+    if 130 <= vec850[0] and 250 >= vec850[0] and 210 <= vec500[0] and 310 >= vec500[0] and vec500[0] - vec850[0] > 0 and vec850[1] >= 15 and vec500[1] >= 15:
+        term5 = 125 * (np.sin( np.radians(vec500[0] - vec850[0])) + 0.2)
     else:
         term5 = 0
 
