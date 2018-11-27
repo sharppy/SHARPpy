@@ -3,9 +3,9 @@
 Interpreting the GUI
 ========================
 
-[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.
+`Blumberg et al. 2017 <http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1>`_ provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.
 
-Additional resources for interpreting the GUI include the [SPC Sounding Analysis Help](http://www.spc.noaa.gov/exper/soundings/help/) and [Explanation of SPC Severe Weather Parameters](http://www.spc.noaa.gov/sfctest/help/sfcoa.html) webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.
+Additional resources for interpreting the GUI include the `SPC Sounding Analysis Help <http://www.spc.noaa.gov/exper/soundings/help/>`_ and `Explanation of SPC Severe Weather Parameters <http://www.spc.noaa.gov/sfctest/help/sfcoa.html>`_ webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.
 
 Skew-T
 ------
@@ -26,6 +26,8 @@ Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and 
 .. image:: tutorial_imgs/effective_inflow.png
     :scale: 30%
     :align: center
+
+Information about the effective inflow layer may be found in `Thompson et al. 2007 <https://www.spc.noaa.gov/publications/thompson/effective.pdf>`_.
 
 Wind Speed Profile
 ------------------
@@ -55,7 +57,8 @@ Bunkers Storm Motion Vectors
     :scale: 30%
     :align: center
 
-    The storm motion vectors here are computed using the updated Bunkers et al. 2014 algorithm, which takes into account the effective inflow layer.
+The storm motion vectors here are computed using the updated `Bunkers et al. 2014 <http://www.weather.gov/media/unr/soo/scm/2014-JOM11.pdf>`_ algorithm, which takes into account the effective inflow layer.
+
 
 Corfidi Vectors
 ^^^^^^^^^^^^^^^
@@ -64,7 +67,7 @@ Corfidi Vectors
     :scale: 30%
     :align: center
 
-    The Corfidi vectors may be used to estimate mesoscale convective system (MCS) motion.
+The Corfidi vectors may be used to estimate mesoscale convective system (MCS) motion.  See `Corfidi 2003 <https://www.spc.noaa.gov/publications/corfidi/mcs2003.pdf>`_ for more information about how these are calculated.
 
 LCL-EL Mean Wind
 ^^^^^^^^^^^^^^^^
@@ -79,6 +82,8 @@ Critical Angle
 .. figure:: tutorial_imgs/hodograph_critical.png
     :scale: 30%
     :align: center
+
+See `Esterheld and Guiliano 2008 <http://www.ejssm.org/ojs/index.php/ejssm/article/view/33>`_ for more information on the use of critical angle in forecasting.
 
 Storm Slinky
 ------------
@@ -109,12 +114,16 @@ Theta-E w/ Pressure
     :scale: 30%
     :align: center
 
+See `Atkins and Wakimoto 1991 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0434%281991%29006%3C0470%3AWMAOTS%3E2.0.CO%3B2>`_ for more information on what to look for in this inset when forecasting wet microbursts. 
+
 Storm-Relative Winds w/ Height
 ------------------------------
 
 .. image:: tutorial_imgs/srw.png
     :scale: 30%
     :align: center
+
+See `Rasmussen and Straka 1998 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0493%281998%29126%3C2406%3AVISMPI%3E2.0.CO%3B2>`_ for more information on how the anvil-level storm relative winds may be used to predict supercell morphology.  See `Thompson et al. 2003 <https://www.spc.noaa.gov/publications/thompson/ruc_waf.pdf>`_ for information on using the 4-6 km storm-relative winds to predict tornado environments. 
 
 Possible Hazard Type
 --------------------
