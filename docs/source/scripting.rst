@@ -645,7 +645,7 @@ Now that Matplotlib knows about the Skew-T style plot, let's plot the
 OAX sounding data on the Skew-T along with the Most-Unstable parcel
 trace. Let's also include dry adiabats and moist adiabats for the user.
 
-.. code-block:: ipython2
+.. code:: ipython2
 
     # Select the Most-Unstable parcel (this can be changed)
     pcl = mupcl
