@@ -6,7 +6,7 @@ import sharppy.sharptab.prof_collection as prof_collection
 from decoder import Decoder
 
 from StringIO import StringIO
-from datetime import datetime
+from datetime import datetime, timedelta
 
 __fmtname__ = "spc"
 __classname__ = "SPCDecoder"
@@ -30,7 +30,7 @@ class SPCDecoder(Decoder):
         location = data_header[0]
         time = datetime.strptime(data_header[1][:11], '%y%m%d/%H%M')
         
-        if time > datetime.utcnow(): #If the strptime accidently makes the sounding the future:
+        if time > datetime.utcnow() + timedelta(hours=1): 
             # If the strptime accidently makes the sounding in the future (like with SARS archive)
             # i.e. a 1957 sounding becomes 2057 sounding...ensure that it's a part of the 20th century
             time = datetime.strptime('19' + data_header[1][:11], '%Y%m%d/%H%M')
