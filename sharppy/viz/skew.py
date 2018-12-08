@@ -347,6 +347,14 @@ class plotSkewT(backgroundSkewT):
         self.adiab_color = QtGui.QColor(kwargs.get('adiab_color', '#333333'))
         self.mixr_color = QtGui.QColor(kwargs.get('mixr_color', '#006600'))
 
+        self.alert_colors = [
+            QtGui.QColor('#775000'),
+            QtGui.QColor('#996600'),
+            QtGui.QColor('#ffffff'),
+            QtGui.QColor('#ffff00'),
+            QtGui.QColor('#ff0000'),
+            QtGui.QColor('#e700df'),
+        ]
         super(plotSkewT, self).__init__(plot_omega=False)
         ## get the profile data
         self.prof = None
@@ -369,7 +377,7 @@ class plotSkewT(backgroundSkewT):
         self.ens_dewp_color = QtGui.QColor(kwargs.get('ens_dewp_color', '#008800'))
         self.wetbulb_color = QtGui.QColor(kwargs.get('wetbulb_color', '#00FFFF'))
         self.eff_layer_color = QtGui.QColor(kwargs.get('eff_layer_color', '#00FFFF'))
-        self.max_lapse_rate_color = QtGui.QColor('#FF6D6D')
+        #self.max_lapse_rate_color = QtGui.QColor('#FF6D6D')
         self.background_colors =[ QtGui.QColor(c) for c in kwargs.get('background_colors', ['#6666CC', '#CC9966', '#66CC99']) ]
 
         self.hgt_color = QtGui.QColor(kwargs.get('hgt_color', '#FF0000'))
@@ -1169,6 +1177,7 @@ class plotSkewT(backgroundSkewT):
         ptop = self.prof.max_lapse_rate_2_6[2]; pbot = self.prof.max_lapse_rate_2_6[1]
         line_length = 10
         text_offset = 10
+        bound = 6.5
         if tab.utils.QC(ptop) and tab.utils.QC(pbot) and self.prof.max_lapse_rate_2_6[0] > bound:
             x1 = self.tmpc_to_pix(28, 1000)
             #x2 = self.tmpc_to_pix(32, 1000)
@@ -1180,7 +1189,18 @@ class plotSkewT(backgroundSkewT):
             qp.setPen(pen)
             qp.setBrush(brush)
             qp.drawRect(rect3)
-            pen = QtGui.QPen(self.max_lapse_rate_color, 2, QtCore.Qt.SolidLine)
+            if self.prof.max_lapse_rate_2_6[0] >= 8:
+                # PURPLE
+                color =  self.alert_colors[5]
+            elif self.prof.max_lapse_rate_2_6[0] >= 7:
+                # RED
+                color = self.alert_colors[4]
+            elif self.prof.max_lapse_rate_2_6[0] >= 6.5:
+                # BROWN
+                color = self.alert_colors[1] 
+
+            pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
+
             qp.setPen(pen)
             qp.setFont(self.esrh_font)
             qp.drawLine(x1-line_length, y1, x1+line_length, y1)
