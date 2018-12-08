@@ -1169,7 +1169,7 @@ class plotSkewT(backgroundSkewT):
             x2 = self.omeg_to_pix(self.prof.omeg[i]*10.)
             qp.drawLine(x1, pres_y, x2, pres_y)
 
-    def draw_max_lapse_rate_layer(self, qp, bound=7.5):
+    def draw_max_lapse_rate_layer(self, qp, bound=4.5):
         '''
         Draw the bounds of the maximum lapse rate layer.
         '''
@@ -1177,9 +1177,8 @@ class plotSkewT(backgroundSkewT):
         ptop = self.prof.max_lapse_rate_2_6[2]; pbot = self.prof.max_lapse_rate_2_6[1]
         line_length = 10
         text_offset = 10
-        bound = 6.5
-        if tab.utils.QC(ptop) and tab.utils.QC(pbot) and self.prof.max_lapse_rate_2_6[0] > bound:
-            x1 = self.tmpc_to_pix(28, 1000)
+        if tab.utils.QC(ptop) and tab.utils.QC(pbot) and self.prof.max_lapse_rate_2_6[0] >= bound:
+            x1 = self.tmpc_to_pix(tab.interp.vtmp(self.prof, pbot) + 10, pbot)
             #x2 = self.tmpc_to_pix(32, 1000)
             y1 = self.originy + self.pres_to_pix(pbot) / self.scale
             y2 = self.originy + self.pres_to_pix(ptop) / self.scale
@@ -1195,11 +1194,13 @@ class plotSkewT(backgroundSkewT):
             elif self.prof.max_lapse_rate_2_6[0] >= 7:
                 # RED
                 color = self.alert_colors[4]
-            elif self.prof.max_lapse_rate_2_6[0] >= 6.5:
+            elif self.prof.max_lapse_rate_2_6[0] >= 6:
                 # BROWN
                 color = self.alert_colors[1] 
+            else:
+                color = self.alert_colors[0]
 
-            pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(color, 1.5, QtCore.Qt.SolidLine)
 
             qp.setPen(pen)
             qp.setFont(self.esrh_font)

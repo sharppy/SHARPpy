@@ -182,8 +182,24 @@ class Picker(QWidget):
         self.right_layout = QGridLayout() #QVBoxLayout()
         self.left_data_frame.setLayout(self.left_layout)
         self.right_map_frame.setLayout(self.right_layout)
+        self.cal = QCalendarWidget(self)
+        self.cal.setGridVisible(True)
+        self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
+        self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
+        #cal.setWeekdayTextFormat(Qt.Sunday, "S")
+        #cal.setWeekdayTextFormat(Qt.Monday, "M")
+        self.cal.setMaximumDate(QDate(2019,1,1))
+        self.cal.setMinimumDate(QDate(1946,1,1))
+        self.cal_date = self.cal.selectedDate()
+        self.cal.clicked.connect(self.update_run_dropdown)
 
         times = self.data_sources[self.model].getAvailableTimes()
+        filt_times = []
+        for t in times:
+             cur_date = self.cal.selectedDate()
+             if t.day == cur_date.day() and t.year == cur_date.year() and t.month == cur_date.month():
+                filt_times.append(t)
+        times = filt_times
 
         ## create dropdown menus
         models = sorted(self.data_sources.keys())
@@ -222,12 +238,13 @@ class Picker(QWidget):
         self.left_layout.addWidget(self.type_label)
         self.left_layout.addWidget(self.model_dropdown)
         self.left_layout.addWidget(self.run_label)
+        self.left_layout.addWidget(self.cal)
         self.left_layout.addWidget(self.run_dropdown)
         self.left_layout.addWidget(self.date_label)
         self.left_layout.addWidget(self.profile_list)
         self.left_layout.addWidget(self.all_profs)
         self.left_layout.addWidget(self.button)
-
+        
         ## add the elements to the right side of the GUI
         self.right_layout.setColumnMinimumWidth(0, 500)
         self.right_layout.addWidget(self.map_label, 0, 0, 1, 1)
@@ -359,7 +376,9 @@ class Picker(QWidget):
                 self.run = times[-1]
 
             for data_time in times:
-                self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
+                cur_date = self.cal.selectedDate()
+                if data_time.day == cur_date.day() and data_time.year == cur_date.year() and data_time.month == cur_date.month():
+                    self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
 
             self.run_dropdown.update()
             self.run_dropdown.setCurrentIndex(times.index(self.run))
