@@ -139,7 +139,7 @@ class Picker(QWidget):
         #print(data_source.__file__)
         #print(type(self.data_sources[self.model]))
         ##print(type(self.data_sources[self.model].getAvailableTimes(dt="TEST")))
-
+        print(self.data_sources)
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
 
         urls = data_source.pingURLs(self.data_sources)
