@@ -367,7 +367,6 @@ class Picker(QWidget):
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
-        logging.debug("Calling full_gui.map_link")
         """
         Change the text of the button based on the user click.
         """
@@ -399,8 +398,6 @@ class Picker(QWidget):
 
     @crasher(exit=False)
     def complete_name(self):
-        logging.debug("Calling full_gui.complete_name")
-
         """
         Handles what happens when the user clicks a point on the map
         """
@@ -438,8 +435,6 @@ class Picker(QWidget):
                         break
 
     def get_model(self, index):
-        logging.debug("Calling full_gui.get_model")
-
         """
         Get the user's model selection
         """
