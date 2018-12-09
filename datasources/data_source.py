@@ -224,13 +224,18 @@ class Outlet(object):
         return stns_avail
 
     def getAvailableTimes(self, max_cycles=100, **kwargs):
+        # THIS IS WHERE I COULD POTENTIALLY PASS AN ARGUMENT TO FILTER OUT WHAT RAOBS OR MODELS ARE AVAILABLE
         custom_failed = False
+        dt = kwargs.get('dt', None) #Used to help search for times
+        print(available.__file__)
         if self._custom_avail:
             try:
                 if self._name.lower() == "local":
                     times = available.available[self._name.lower()][self._ds_name.lower()](kwargs.get("filename"))
                 else:
-                    times = available.available[self._name.lower()][self._ds_name.lower()]()
+                    print(self._name.lower(), self._ds_name.lower())
+                    print(available.available[self._name.lower()][self._ds_name.lower()], dt)
+                    times = available.available[self._name.lower()][self._ds_name.lower()](dt)
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
@@ -252,7 +257,8 @@ class Outlet(object):
         return decoder.getDecoder(self._format)
 
     def hasProfile(self, point, cycle):
-        times = self.getAvailableTimes()
+        print("hasProfile cycle:", cycle, point)
+        times = self.getAvailableTimes(dt=cycle)
         has_prof = cycle in times
 
         if has_prof:
@@ -301,7 +307,13 @@ class DataSource(object):
         return prop
 
     def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
+        print("CALLED _getOutletWithProfile()")
+        print(stn, cycle_dt, outlet_num)
+        for out, cfg in self._outlets.items():
+            print(out, cfg)
+            print("Does this outlet have a profile?:", cfg.hasProfile(stn, cycle_dt))
         use_outlets = [ out for out, cfg in self._outlets.items() if cfg.hasProfile(stn, cycle_dt) ]
+        print(use_outlets)
         try:
             outlet = use_outlets[outlet_num]
         except IndexError:
@@ -328,8 +340,9 @@ class DataSource(object):
         cycles = self._get('getMostRecentCycle', outlet_num=outlet_num, flatten=False)
         return max(cycles)
 
-    def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100):
-        cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles)
+    def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100, dt=None):
+        print(outlet_num, filename, max_cycles, dt)
+        cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles, dt=dt)
         return cycles[-max_cycles:]
 
     def getAvailableAtTime(self, dt, outlet_num=None):
@@ -352,12 +365,16 @@ class DataSource(object):
     def getURL(self, stn, cycle_dt, outlet_num=0):
         outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         url_base = self._outlets[outlet].getURL()
-
+        print(url_base)
         fmt = {
             'srcid':quote(stn['srcid']),
             'cycle':"%02d" % cycle_dt.hour,
-            'date':cycle_dt.strftime("%y%m%d")
+            'date':cycle_dt.strftime("%y%m%d"),
+            'year':cycle_dt.strftime("%Y"),
+            'month':cycle_dt.strftime("%m"),
+            'day':cycle_dt.strftime("%d")
         }
+        
 
         url = url_base.format(**fmt)
         return url
