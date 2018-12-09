@@ -136,6 +136,10 @@ class Picker(QWidget):
         ## set the default profile type to Observed
         self.model = "Observed"
         ## this is the default model initialization time
+        #print(data_source.__file__)
+        #print(type(self.data_sources[self.model]))
+        ##print(type(self.data_sources[self.model].getAvailableTimes(dt="TEST")))
+
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
 
         urls = data_source.pingURLs(self.data_sources)
@@ -182,8 +186,23 @@ class Picker(QWidget):
         self.right_layout = QGridLayout() #QVBoxLayout()
         self.left_data_frame.setLayout(self.left_layout)
         self.right_map_frame.setLayout(self.right_layout)
+        self.cal = QCalendarWidget(self)
+        self.cal.setGridVisible(True)
+        self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
+        self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
+        utcnow = date.datetime.utcnow()
+        self.cal.setMaximumDate(QDate(utcnow.year,utcnow.month,utcnow.day))
+        self.cal.setMinimumDate(QDate(1946,1,1))
+        self.cal_date = self.cal.selectedDate()
+        self.cal.clicked.connect(self.update_run_dropdown)
 
-        times = self.data_sources[self.model].getAvailableTimes()
+        times = self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
+        filt_times = []
+        for t in times:
+             cur_date = self.cal.selectedDate()
+             if t.day == cur_date.day() and t.year == cur_date.year() and t.month == cur_date.month():
+                filt_times.append(t)
+        times = filt_times
 
         ## create dropdown menus
         models = sorted(self.data_sources.keys())
@@ -222,12 +241,13 @@ class Picker(QWidget):
         self.left_layout.addWidget(self.type_label)
         self.left_layout.addWidget(self.model_dropdown)
         self.left_layout.addWidget(self.run_label)
+        self.left_layout.addWidget(self.cal)
         self.left_layout.addWidget(self.run_dropdown)
         self.left_layout.addWidget(self.date_label)
         self.left_layout.addWidget(self.profile_list)
         self.left_layout.addWidget(self.all_profs)
         self.left_layout.addWidget(self.button)
-
+        
         ## add the elements to the right side of the GUI
         self.right_layout.setColumnMinimumWidth(0, 500)
         self.right_layout.addWidget(self.map_label, 0, 0, 1, 1)
@@ -283,7 +303,7 @@ class Picker(QWidget):
 
     def update_list(self):
         """
-        Update the list with new dates.
+        Update the list with new forecast times.
 
         :param list:
         :return:
@@ -342,28 +362,46 @@ class Picker(QWidget):
         """
         logging.debug("Calling full_gui.update_run_dropdown")
 
+        cur_date = self.cal.selectedDate()
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
             print(getTimes())
         else:
-            getTimes = lambda: self.data_sources[self.model].getAvailableTimes()
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=cur_date)
 
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
- 
-            if self.model == "Observed":
-                self.run = [ t for t in times if t.hour in [ 0, 12 ] ][-1]
+
+            # Filter out only times for the specified date.
+            filtered_times = []
+            for i, data_time in enumerate(times):
+                if data_time.day == cur_date.day() and data_time.year == cur_date.year() and data_time.month == cur_date.month():
+                    self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
+                    filtered_times.append(i)
+            print(filtered_times)
+            if len(filtered_times) > 0:
+                filtered_times = np.asarray(filtered_times)            
+                times = times[filtered_times.min(): filtered_times.max()+1]
+                print(times)    
+                # Pick the index for which to highlight
+                if self.model == "Observed":
+                    try:
+                        self.run = [ t for t in times if t.hour in [ 0, 12 ] and t.day == cur_date.day() and t.month == cur_date.month() and t.year == cur_date.year()][-1]
+                    except:
+                        self.run = times[-1]
+                else:
+                    self.run = times[-1]
             else:
-                self.run = times[-1]
-
-            for data_time in times:
-                self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
-
+                self.run = date.datetime(1700,1,1,0,0,0)
+            print(self.run) 
+            self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
-            self.run_dropdown.setCurrentIndex(times.index(self.run))
-
+            if len(filtered_times) > 0 and self.model == "Observed":
+                self.run_dropdown.setCurrentIndex(times.index(self.run))
+        
+        print(self.run, self.model) 
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
@@ -629,9 +667,10 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
         decoder = ARWDecoder
         dec = decoder((url, loc[0], loc[1]))
     else:
-
+        print("HSHSDFHSDHFSDFSDFSDF")
         decoder = data_source.getDecoder(loc, run, outlet_num=ntry)
         logging.debug("Using decoder: " + str(decoder))
+        print('Getting the data URL:')
         url = data_source.getURL(loc, run, outlet_num=ntry)
         logging.debug("Data URL: " + url)
         dec = decoder(url)

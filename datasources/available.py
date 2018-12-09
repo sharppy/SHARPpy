@@ -26,7 +26,7 @@ def _download_goes():
 
     return goes_text
 
-def _available_goes():
+def _available_goes(dt):
     '''
         _available_sharp()
 
@@ -67,6 +67,8 @@ def _availableat_goes(dt):
 sharp_base_url = "http://sharp.weather.ou.edu/soundings/obs/"
 sharp_text = ""
 sharp_time = None
+sharp_archive_text = ""
+sharp_archive_time = None
 
 # SHARP OBSERVED AVAILBILITY
 def _download_sharp():
@@ -79,7 +81,18 @@ def _download_sharp():
 
     return sharp_text
 
-def _available_sharp():
+def _download_sharp_archive(dt):
+    global sharp_time, sharp_text
+    now = datetime.utcnow()
+    base_url = 'http://sharp.weather.ou.edu/soundings/archive/%Y/%m/%d/'
+    dt = datetime(dt.year(), dt.month(), dt.day(), 0,0,0)
+    if sharp_archive_time is None or sharp_archive_time < now - cache_len:
+        url_obj = urlopen(dt.strftime(base_url))
+        sharp_archive_text = url_obj.read().decode('utf-8')
+        sharp_time = now
+    return sharp_archive_text, dt
+
+def _available_sharp(dt):
     '''
         _available_sharp()
 
@@ -91,10 +104,14 @@ def _available_sharp():
             Array of datetime objects that represents all the available times
             of sounding data on the SHARP site.
     '''
-    text = _download_sharp()
-
-    matches = sorted(list(set(re.findall("([\d]{10})/", text))))
-    return [ datetime.strptime(m, '%Y%m%d%H') for m in matches ]
+    if dt is None:
+        text = _download_sharp()
+        matches = sorted(list(set(re.findall("([\d]{10})/", text))))
+        return [ datetime.strptime(m, '%Y%m%d%H') for m in matches ]
+    else:
+        text, dt = _download_sharp_archive(dt)
+        matches = sorted(list(set(re.findall(">([\d]{2})/<", text))))
+        return [ datetime.strptime(dt.strftime('%Y%m%d') + m, '%Y%m%d%H')  for m in matches ]
 
 def _availableat_sharp(dt):
     '''
@@ -111,8 +128,11 @@ def _availableat_sharp(dt):
         matches : array of strings
             An array that contains all of the three letter station identfiers.
     '''
-    recent_url = "%s%s/" % (sharp_base_url, dt.strftime('%Y%m%d%H/'))
-    text = urlopen(recent_url).read().decode('utf-8')
+    #recent_url = "%s%s/" % (sharp_base_url, dt.strftime('%Y%m%d%H/'))
+    #text = urlopen(recent_url).read().decode('utf-8')
+    #matches = re.findall("a href=\"(.+).txt\"", text)
+    recent_url = 'http://sharp.weather.ou.edu/soundings/archive/%Y/%m/%d/%H/'
+    text = urlopen(dt.strftime(recent_url)).read().decode('utf-8')
     matches = re.findall("a href=\"(.+).txt\"", text)
     return matches
 
@@ -132,7 +152,7 @@ def _download_spc():
 
     return spc_text
 
-def _available_spc():
+def _available_spc(dt):
     '''
         _available_spc()
 
@@ -145,7 +165,6 @@ def _available_spc():
             of sounding data on the SPC site.
     '''
     text = _download_spc()
-
     matches = sorted(list(set(re.findall("([\d]{8})_OBS", text))))
     return [ datetime.strptime(m, '%y%m%d%H') for m in matches ]
 
@@ -168,6 +187,13 @@ def _availableat_spc(dt):
     text = urlopen(recent_url).read().decode('utf-8')
     matches = re.findall("show_soundings\(\"([\w]{3}|[\d]{5})\"\)", text)
     return matches
+
+### IEM BUFKIT ARCHIVE CODE
+iem_base_url = "http://mtarchive.geol.iastate.edu/%Y/%m/%d/bufkit/%H/"
+iem_text = ""
+iem_time = None
+
+### PSU CODE
 
 psu_base_url = "ftp://ftp.meteo.psu.edu/pub/bufkit/"
 psu_text = ""
@@ -220,7 +246,7 @@ def _availableat_psu(model, dt):
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
     return stns
 
-def _available_psu(model, nam=False, off=False):
+def _available_psu(model, nam=False, off=False, dt=None):
     '''
         _available_psu
 
@@ -244,11 +270,12 @@ def _available_psu(model, nam=False, off=False):
 
     return [ dt ]
 
+
 ## PECAN MAPS ENSEMBLE CODE
 pecan_base_url = 'http://weather.ou.edu/~map/real_time_data/PECAN/'
 #http://weather.ou.edu/~map/real_time_data/PECAN/2015061112/soundings/TOP_2015061113.txt
 
-def _available_oupecan():
+def _available_oupecan(**kwargs):
     text = urlopen(pecan_base_url).read().decode('utf-8')
     matches = sorted(list(set(re.findall("([\d]{10})", text))))
     return [ datetime.strptime(m, "%Y%m%d%H") for m in matches ]
@@ -265,7 +292,7 @@ def _availableat_oupecan(dt):
 ## NCAR ENSEMBLE CODE
 ncarens_base_url = 'http://sharp.weather.ou.edu/soundings/ncarens/'
 
-def _available_ncarens():
+def _available_ncarens(dt):
     text = urlopen(ncarens_base_url).read().decode('utf-8')
 
     matches = sorted(list(set(re.findall("([\d]{8}_[\d]{2})", text))))
@@ -288,10 +315,10 @@ def _available_nssl(ens=False):
 # A dictionary of the available times for profiles from observations, forecast models, etc.
 available = {
     'psu':{}, 
-    'spc':{'observed':_available_spc},
-    'ou_pecan': {'pecan ensemble': _available_oupecan },
-    'ncar_ens': {'ncar ensemble': _available_ncarens },
-    'sharp': {'ncar ensemble': _available_ncarens, 'observed':_available_sharp, 'goes':_available_goes },
+    'spc':{'observed': lambda dt: _available_spc(dt)},
+    'ou_pecan': {'pecan ensemble': lambda dt: _available_oupecan(dt) },
+    'ncar_ens': {'ncar ensemble': lambda dt: _available_ncarens(dt) },
+    'sharp': {'ncar ensemble': lambda dt: _available_ncarens(dt), 'observed': lambda dt: _available_sharp(dt), 'goes': lambda dt: _available_goes(dt) },
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
 
@@ -310,7 +337,7 @@ for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 if __name__ == "__main__":
-    dt = available['sharp']['observed']()
+    dt = available['sharp']['observed']('test')
     print(dt)
     print(availableat['sharp']['observed'](dt[-1]))
     stop

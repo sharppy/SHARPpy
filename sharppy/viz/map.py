@@ -2,7 +2,7 @@
 import numpy as np
 import sharppy
 from PySide import QtGui, QtCore
-
+from datetime import datetime
 import sys, os
 import re
 
@@ -375,13 +375,11 @@ class MapWidget(QtGui.QWidget):
         self.setCurrentTime(data_time, init=init)
 
     def setCurrentTime(self, data_time, init=False):
-        self.current_time = data_time
+                
         self.clicked_stn = None
         self.clicked.emit(None)
 
         self._showLoading()
-
-        getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
 
         def update(points):
             self.points = points[0]
@@ -413,7 +411,11 @@ class MapWidget(QtGui.QWidget):
             if not init:
                 self.drawMap()
                 self.update()
-
+       
+        self.current_time = data_time
+        getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
+        points = getPoints()
+ 
         if init:
             points = getPoints()
             update([ points ])

@@ -65,7 +65,7 @@
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168"/>
             <points csv="spc_ua.csv" />
         </outlet>
-        <outlet name="SHARP" url="http://sharp.weather.ou.edu/soundings/obs/20{date}{cycle}/{srcid}.txt" format="spc" >
+        <outlet name="SHARP" url="http://sharp.weather.ou.edu/soundings/archive/{year}/{month}/{day}/{cycle}/{srcid}.txt" format="spc" >
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168"/>
             <points csv="sharp.csv" />
         </outlet>
