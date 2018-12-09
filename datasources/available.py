@@ -85,7 +85,10 @@ def _download_sharp_archive(dt):
     global sharp_time, sharp_text
     now = datetime.utcnow()
     base_url = 'http://sharp.weather.ou.edu/soundings/archive/%Y/%m/%d/'
-    dt = datetime(dt.year(), dt.month(), dt.day(), 0,0,0)
+    try:
+        dt = datetime(dt.year(), dt.month(), dt.day(), 0,0,0)
+    except:
+        dt = dt
     if sharp_archive_time is None or sharp_archive_time < now - cache_len:
         url_obj = urlopen(dt.strftime(base_url))
         sharp_archive_text = url_obj.read().decode('utf-8')
