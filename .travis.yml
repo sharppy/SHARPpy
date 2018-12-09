@@ -35,7 +35,7 @@ before_install:
 install:
 - python setup.py install
 script:
-- python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt
+- python sharppy/tests/test_url.py http://sharp.weather.ou.edu/soundings/archive/1973/09/19/00/DDC.txt
 # If the test script passes, build the binaries.
 after_success:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyinstaller runsharp/SHARPpy-osx.spec

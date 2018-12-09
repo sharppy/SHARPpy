@@ -21,14 +21,20 @@ def decode(filename):
 
     return profs, stn_id
 
-# Sys.argv[1] should be the URL to the file that is being tested.
-profs, stn_id = decode(sys.argv[1])
-print((profs._profs))
+def test_url(path):
+    # Sys.argv[1] should be the URL to the file that is being tested.
+    profs, stn_id = decode(path)
+    print((profs._profs))
 
-for k in profs._profs.keys():
-    all_prof = profs._profs[k]
-    for i in range(len(all_prof)):
-        prof = all_prof[i]
-        new_prof = profile.create_profile(pres=prof.pres, hght=prof.hght, tmpc=prof.tmpc, dwpc=prof.dwpc, wspd=prof.wspd, wdir=prof.wdir, profile='convective')
-        for key in dir(new_prof):
-            print((key, getattr(new_prof,key)))
+    for k in profs._profs.keys():
+        all_prof = profs._profs[k]
+        for i in range(len(all_prof)):
+            prof = all_prof[i]
+            new_prof = profile.create_profile(pres=prof.pres, hght=prof.hght, tmpc=prof.tmpc, dwpc=prof.dwpc, wspd=prof.wspd, \
+                                              wdir=prof.wdir, strictQC=False, profile='convective')
+            for key in dir(new_prof):
+                print((key, getattr(new_prof,key)))
+
+    print(new_prof.mupcl.bplus)
+
+test_url(sys.argv[1])
