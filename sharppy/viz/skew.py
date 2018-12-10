@@ -1204,7 +1204,7 @@ class plotSkewT(backgroundSkewT):
         line_length = 10
         text_offset = 10
         if tab.utils.QC(ptop) and tab.utils.QC(pbot) and self.prof.max_lapse_rate_2_6[0] >= bound:
-            x1 = self.tmpc_to_pix(tab.interp.vtmp(self.prof, pbot) + 10, pbot)
+            x1 = self.tmpc_to_pix(tab.interp.vtmp(self.prof, pbot) + 8, pbot)
             #x2 = self.tmpc_to_pix(32, 1000)
             y1 = self.originy + self.pres_to_pix(pbot) / self.scale
             y2 = self.originy + self.pres_to_pix(ptop) / self.scale
