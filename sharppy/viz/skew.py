@@ -346,7 +346,8 @@ class plotSkewT(backgroundSkewT):
         self.isotherm_hgz_color = QtGui.QColor(kwargs.get('isotherm_hgz_color', '#0000FF'))
         self.adiab_color = QtGui.QColor(kwargs.get('adiab_color', '#333333'))
         self.mixr_color = QtGui.QColor(kwargs.get('mixr_color', '#006600'))
-
+        self.readout_vars = [kwargs.get('readout_br', 'dwpc'), kwargs.get('readout_tr', 'temp')]
+        
         self.alert_colors = [
             QtGui.QColor('#775000'),
             QtGui.QColor('#996600'),
@@ -386,6 +387,7 @@ class plotSkewT(backgroundSkewT):
         self.lcl_mkr_color = QtGui.QColor(kwargs.get('lcl_mkr_color', '#00FF00'))
         self.lfc_mkr_color = QtGui.QColor(kwargs.get('lfc_mkr_color', '#FFFF00'))
         self.el_mkr_color = QtGui.QColor(kwargs.get('el_mkr_color', '#FF00FF'))
+
 
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
@@ -654,6 +656,10 @@ class plotSkewT(backgroundSkewT):
         self.sfc_units = kwargs['temp_units']
         self.wind_units = kwargs['wind_units']
 
+        # READOUT VARIABLES NOT SURE WHY THIS WAS THROWING AN EXCEPTION
+        #self.readout_vars = [kwargs['readout_br'],kwargs['readout_tr']]
+        self.readout_vars = ['tmpc', 'dwpc']
+
         if update_gui:
             self.plotBitMap.fill(self.bg_color)
             self.plotBackground()
@@ -732,41 +738,61 @@ class plotSkewT(backgroundSkewT):
 
     def updateReadout(self):
         y = self.originy + self.pres_to_pix(self.readout_pres) / self.scale
-        hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
-        tmp = tab.interp.temp(self.prof, self.readout_pres)
-        dwp = tab.interp.dwpt(self.prof, self.readout_pres)
-        has_omega = True
-        try:
-            omg = tab.interp.omeg(self.prof, self.readout_pres)
-        except:
-            has_omega = False
-
-        thae = tab.interp.thetae(self.prof, self.readout_pres)
-        tw = tab.interp.wetbulb(self.prof, self.readout_pres)
-        tha = tab.interp.theta(self.prof, self.readout_pres)
-        q = tab.interp.mixratio(self.prof, self.readout_pres)
-        if has_omega:
-            #omg = omg * 10 # converts to microbars/s (units on the default axis)
-            omg = omg * 36 # converts to mb/hr (units used in Eric Thaler's QG solver)
-
-        #print hgt, tmp, dwp, omg, thae, tw, tha, q
-        thetae_unicode = u"\u03B8" + 'e='
-        theta_unicode = u"\u03B8" + '='
-        omega_unicode = u"\u03C9" + '='
-        microbars_units = u"\u00B5" + 'b/s'
         self.rubberBand.setGeometry(QRect(QPoint(self.lpad,y), QPoint(self.brx,y)).normalized())
         self.presReadout.setFixedWidth(60)
         self.hghtReadout.setFixedWidth(65)
         self.tmpcReadout.setFixedWidth(65)
         self.dwpcReadout.setFixedWidth(65)
-        self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
-        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
-        self.tmpcReadout.setText(theta_unicode + tab.utils.FLOAT2STR(tha, 1) + ' K')
-        if has_omega:
-            self.dwpcReadout.setText(omega_unicode + tab.utils.FLOAT2STR(omg, 1) + ' mb/hr')
-        else:
-            self.dwpcReadout.setText(thetae_unicode + tab.utils.FLOAT2STR(thae, 1) + ' K')
+      
+        microbars_units = u"\u00B5" + 'b/s'
 
+        for var, ReadOut in zip(self.readout_vars, [self.tmpcReadout, self.dwpcReadout]):
+            if var == 'tmpc':  
+                val = tab.interp.temp(self.prof, self.readout_pres)
+                var_id = 'T='
+                unit = 'C'
+                round_val = 1
+            elif var == 'dwpc':
+                val = tab.interp.dwpt(self.prof, self.readout_pres)
+                var_id = 'Td='
+                unit = "C"
+                round_val = 1
+            elif var == 'thetae':
+                val = tab.interp.thetae(self.prof, self.readout_pres)
+                var_id = u"\u03B8" + 'e='
+                unit = "K"
+                round_val = 0
+            elif var == 'wetbulb':
+                tw = tab.interp.wetbulb(self.prof, self.readout_pres)
+                var_id = 'Tw='
+                unit = "K"
+                round_val = 1
+            elif var == 'theta':
+                tha = tab.interp.theta(self.prof, self.readout_pres)
+                var_id = u"\u03B8" + '='
+                unit = "K"
+                round_val = 0
+            elif var == 'wvmr':
+                q = tab.interp.mixratio(self.prof, self.readout_pres)
+                var_id = 'q='
+                unit = "g/kg"
+                round_val = 1
+            else:
+                try:
+                    omg = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
+                except:
+                    omg = '--' 
+                omega_unicode = u"\u03C9" + '='
+                unit = "mb/hr"
+                round_val = 1
+            ReadOut.setText(var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit)
+ 
+        hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
+        self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
+        # TODO: Also allow for an output in ft AGL vs m AGL
+        self.hghtReadout.setText(tab.utils.FLOAT2STR(hgt, 1) + ' m')
+
+        # Move the Readout
         self.presReadout.move(self.lpad, y+2)
         self.hghtReadout.move(self.lpad, y - 15)
         self.tmpcReadout.move(self.brx-self.rpad, y - 15)
