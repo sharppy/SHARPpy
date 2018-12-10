@@ -11,3 +11,7 @@ def loadCSV(csv_file_name):
     csv_file.close()
     return csv_fields, csv
 
+if __name__ == '__main__':
+    import sys
+    fields, csv = loadCSV(sys.argv[1])
+    print(fields)

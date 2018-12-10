@@ -14,6 +14,7 @@ except ImportError:
 import platform, subprocess, re
 import imp
 import socket
+import traceback
 
 import sharppy.io.decoder as decoder
 from sharppy.io.csv import loadCSV
@@ -56,9 +57,11 @@ def loadDataSources(ds_dir=HOME_DIR):
             name = src.get('name')
             try:
                 ds[name] = DataSource(src)
-            except:
+            except Exception as e:
+                traceback.print_exc()
+                print("Exception: ", e)
                 print('Unable to process %s file'%os.path.basename(ds_file))
-
+                print("This data source may not be loaded then.")
     return ds
 
 def _pingURL(hostname, timeout=1):
