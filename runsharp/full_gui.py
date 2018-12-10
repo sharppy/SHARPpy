@@ -194,7 +194,7 @@ class Picker(QWidget):
         self.cal.setMaximumDate(QDate(utcnow.year,utcnow.month,utcnow.day))
         self.cal.setMinimumDate(QDate(1946,1,1))
         self.cal_date = self.cal.selectedDate()
-        self.cal.clicked.connect(self.update_run_dropdown)
+        self.cal.clicked.connect(self.update_from_cal)
 
         times = self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
         filt_times = []
@@ -301,6 +301,20 @@ class Picker(QWidget):
 
         return dropdown
 
+    def update_from_cal(self):
+        """
+        Update the dropdown list and the forecast times list if a new date
+        is selected in the calendar app.
+        """
+
+        models = sorted(self.data_sources.keys())
+        self.get_model(models.index(self.model))
+
+        #self.update_run_dropdown()
+        #self.update_list() 
+        #print(self.run, self.model)
+        #self.view.setDataSource(self.data_sources[self.model], self.run)
+
     def update_list(self):
         """
         Update the list with new forecast times.
@@ -315,22 +329,29 @@ class Picker(QWidget):
         self.prof_idx = []
         timelist = []
 
-        fcst_hours = self.data_sources[self.model].getForecastHours()
-        if fcst_hours != [ 0 ]:
-            self.profile_list.setEnabled(True)
-            self.all_profs.setEnabled(True)
-            self.date_label.setEnabled(True)
-            for fh in fcst_hours:
-                fcst_str = (self.run + date.timedelta(hours=fh)).strftime(Picker.date_format) + "   (F%03d)" % fh
-                timelist.append(fcst_str)
-        else:
+        # If the run is outside the available times.
+        if self.run == date.datetime(1700,1,1,0,0,0):
             self.profile_list.setDisabled(True)
             self.all_profs.setDisabled(True)
             self.date_label.setDisabled(True)
-
+        else:
+            fcst_hours = self.data_sources[self.model].getForecastHours()
+            if fcst_hours != [ 0 ]:
+                self.profile_list.setEnabled(True)
+                self.all_profs.setEnabled(True)
+                self.date_label.setEnabled(True)
+                for fh in fcst_hours:
+                    fcst_str = (self.run + date.timedelta(hours=fh)).strftime(Picker.date_format) + "   (F%03d)" % fh
+                    timelist.append(fcst_str)
+            else:
+                self.profile_list.setDisabled(True)
+                self.all_profs.setDisabled(True)
+                self.date_label.setDisabled(True)
+        
+        #Loop throught the timelist and each string to the list
         for item in timelist:
             self.profile_list.addItem(item)
- 
+     
         self.profile_list.update()
         self.all_profs.setText("Select All")
         self.select_flag = False
@@ -362,14 +383,15 @@ class Picker(QWidget):
         """
         logging.debug("Calling full_gui.update_run_dropdown")
 
-        cur_date = self.cal.selectedDate()
+        self.cal_date = self.cal.selectedDate()
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
             print(getTimes())
         else:
-            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=cur_date)
+            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
+        # Function to update the times.
         def update(times):
             times = times[0]
             self.run_dropdown.clear()
@@ -377,10 +399,10 @@ class Picker(QWidget):
             # Filter out only times for the specified date.
             filtered_times = []
             for i, data_time in enumerate(times):
-                if data_time.day == cur_date.day() and data_time.year == cur_date.year() and data_time.month == cur_date.month():
+                if data_time.day == self.cal_date.day() and data_time.year == self.cal_date.year() and data_time.month == self.cal_date.month():
                     self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
                     filtered_times.append(i)
-            print(filtered_times)
+            
             if len(filtered_times) > 0:
                 filtered_times = np.asarray(filtered_times)            
                 times = times[filtered_times.min(): filtered_times.max()+1]
@@ -388,7 +410,7 @@ class Picker(QWidget):
                 # Pick the index for which to highlight
                 if self.model == "Observed":
                     try:
-                        self.run = [ t for t in times if t.hour in [ 0, 12 ] and t.day == cur_date.day() and t.month == cur_date.month() and t.year == cur_date.year()][-1]
+                        self.run = [ t for t in times if t.hour in [ 0, 12 ] and t.day == self.cal_date.day() and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
                     except:
                         self.run = times[-1]
                 else:
@@ -398,10 +420,12 @@ class Picker(QWidget):
             print(self.run) 
             self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
-            if len(filtered_times) > 0 and self.model == "Observed":
+            if len(filtered_times) > 0:
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
         
-        print(self.run, self.model) 
+        # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
+        # match the date selected in the calendar.
+        print("DONE:", self.run, self.model) 
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
