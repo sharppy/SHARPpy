@@ -1096,7 +1096,7 @@ class ConvectiveProfile(BasicProfile):
         -------
         None
         '''
-        self.pwv_flag = pwv_climo(self, self.location, month=None)
+        self.pwv_flag = pwv_climo(self, self.location, month=int(self.date.strftime('%m')))
 
     def get_indices(self):
         '''

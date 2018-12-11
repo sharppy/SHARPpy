@@ -449,14 +449,12 @@ class plotText(backgroundText):
         std_dev = [ u'(<3\u03C3)', u'(2-3\u03C3)', u'(1-2\u03C3)', '', u'(1-2\u03C3)', u'(2-3\u03C3)', u'(>3\u03C3)' ]
         color = self.pwat_colors[self.prof.pwv_flag + 3] 
         dist_string = std_dev[self.prof.pwv_flag + 3]
-
         if self.pw_units == 'cm':
             pw_display = tab.utils.IN2CM(self.pwat)
             pw_display = tab.utils.FLOAT2STR( pw_display, 1 )
         else:
             pw_display = self.pwat
             pw_display = tab.utils.FLOAT2STR( pw_display, 2 )
-
 
         ## draw the first column of text using a loop, keeping the horizontal
         ## placement constant.

@@ -1735,6 +1735,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     flag = kwargs.get('flag', 5)
     pcl = Parcel(pbot=pbot, ptop=ptop)
     pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
+    print("LIFTING")
     if prof.pres.compressed().shape[0] < 1: return pcl
     
     # Variables
@@ -1767,8 +1768,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         pbot = pres
         pcl.blayer = pbot
 
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
-        return pcl
+    #if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+    #    return pcl
 
     # Begin with the Mixing Layer
     pe1 = pbot
@@ -1806,7 +1807,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tv_env = thermo.virtemp(pp, tmp_env_theta, tmp_env_dwpt)
     tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
     tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
-
 
     tidx1 = np.arange(0, len(tdef)-1, 1)
     tidx2 = np.arange(1, len(tdef), 1)
@@ -1859,7 +1859,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     ttraces = ma.zeros(len(iter_ranges))
     ptraces = ma.zeros(len(iter_ranges))
     ttraces[:] = ptraces[:] = ma.masked
-
+    print("entering lifting")
     for i in iter_ranges:
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]

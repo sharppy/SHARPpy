@@ -139,7 +139,6 @@ def pwv_climo(prof, station, month=None):
     # Calculate the PWV up to 300 mb so it's consistent with the PWV Climo
     pwv_300 = params.precip_water(prof, pbot=None, ptop=300)
     # pwv_300 needs to be in inches (if it isn't already)
-
     # Load in the PWV mean and standard deviations
     pwv_means = get_mean_pwv(station)
     pwv_stds = get_stdev_pwv(station)
