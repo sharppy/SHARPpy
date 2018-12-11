@@ -720,15 +720,11 @@ compute storm motion vectors based off of the work by Stephen Corfidi
 and Matthew Bunkers. Below is some example code to compute the
 following:
 
-1.) 0-3 km Pressure-Weighted Mean Wind
-
-2.) 0-6 km Shear (kts)
-
-3.) Bunker's Storm Motion (right-mover) (Bunkers et al. 2014 version)
-
-4.) Bunker's Storm Motion (left-mover) (Bunkers et al. 2014 version)
-
-5.) 0-3 Storm Relative Helicity
+1. 0-3 km Pressure-Weighted Mean Wind
+2. 0-6 km Shear (kts)
+3. Bunker's Storm Motion (right-mover) (Bunkers et al. 2014 version)
+4. Bunker's Storm Motion (left-mover) (Bunkers et al. 2014 version)
+5. 0-3 km Storm Relative Helicity
 
 .. code:: python
 
@@ -828,156 +824,5 @@ This code then will output this text:
 List of functions in each module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This tutorial cannot cover all of the functions in SHARPpy. Below is a
-list of all of the functions accessible through SHARPTAB. In order to
-learn more about the function in this IPython Notebook, open up a new
-"In[]:" field within the notebook and type in the path to the function
-(for example):
-
-::
-
-    params.dcape()
-
-Moving your cursor into the () and hitting "Shift-Tab" on your keyboard
-will make documentation appear below the cursor. Clicking on the "+"
-will open up a panel describing the function, the function's arguments,
-its output values, and any references to meteorological literature the
-function was based on.
-
-Running the code below will print out all of the functions and objects
-included within each SHARPpy module.
-
-.. code:: python
-
-    print "Functions within params.py:"
-    for key in params.__all__:
-        print "\tparams." + key + "()"
-    print "\nFunctions within winds.py:"
-    for key in winds.__all__:
-        print "\twinds." + key + "()"
-    print "\nFunctions within thermo.py:"
-    for key in thermo.__all__:
-        print "\tthermo." + key + "()"
-    print "\nFunctions within interp.py:"
-    for key in interp.__all__:
-        print "\tinterp." + key + "()"
-    print "\nFunctions within utils.py:"
-    for key in utils.__all__:
-        print "\tutils." + key + "()"
-
-
-.. parsed-literal::
-
-    Functions within params.py:
-    	params.DefineParcel()
-    	params.Parcel()
-    	params.inferred_temp_advection()
-    	params.k_index()
-    	params.t_totals()
-    	params.c_totals()
-    	params.v_totals()
-    	params.precip_water()
-    	params.temp_lvl()
-    	params.max_temp()
-    	params.mean_mixratio()
-    	params.mean_theta()
-    	params.mean_thetae()
-    	params.mean_relh()
-    	params.lapse_rate()
-    	params.most_unstable_level()
-    	params.parcelx()
-    	params.bulk_rich()
-    	params.bunkers_storm_motion()
-    	params.effective_inflow_layer()
-    	params.convective_temp()
-    	params.esp()
-    	params.pbl_top()
-    	params.precip_eff()
-    	params.dcape()
-    	params.sig_severe()
-    	params.dgz()
-    	params.ship()
-    	params.stp_cin()
-    	params.stp_fixed()
-    	params.scp()
-    	params.mmp()
-    	params.wndg()
-    	params.sherb()
-    	params.tei()
-    	params.cape()
-    	params.mburst()
-    	params.dcp()
-    	params.ehi()
-    	params.sweat()
-    	params.hgz()
-    	params.lhp()
-    
-    Functions within winds.py:
-    	winds.mean_wind()
-    	winds.mean_wind_npw()
-    	winds.mean_wind_old()
-    	winds.mean_wind_npw_old()
-    	winds.sr_wind()
-    	winds.sr_wind_npw()
-    	winds.wind_shear()
-    	winds.helicity()
-    	winds.max_wind()
-    	winds.non_parcel_bunkers_motion()
-    	winds.corfidi_mcs_motion()
-    	winds.mbe_vectors()
-    	winds.non_parcel_bunkers_motion_experimental()
-    	winds.critical_angle()
-    
-    Functions within thermo.py:
-    	thermo.drylift()
-    	thermo.thalvl()
-    	thermo.lcltemp()
-    	thermo.theta()
-    	thermo.wobf()
-    	thermo.satlift()
-    	thermo.wetlift()
-    	thermo.lifted()
-    	thermo.vappres()
-    	thermo.mixratio()
-    	thermo.temp_at_mixrat()
-    	thermo.wetbulb()
-    	thermo.thetaw()
-    	thermo.thetae()
-    	thermo.virtemp()
-    	thermo.relh()
-    	thermo.ftoc()
-    	thermo.ctof()
-    	thermo.ctok()
-    	thermo.ktoc()
-    	thermo.ftok()
-    	thermo.ktof()
-    
-    Functions within interp.py:
-    	interp.pres()
-    	interp.hght()
-    	interp.temp()
-    	interp.dwpt()
-    	interp.vtmp()
-    	interp.components()
-    	interp.vec()
-    	interp.to_agl()
-    	interp.to_msl()
-    
-    Functions within utils.py:
-    	utils.INT2STR()
-    	utils.FLOAT2STR()
-    	utils.MS2KTS()
-    	utils.KTS2MS()
-    	utils.MS2MPH()
-    	utils.MPH2MS()
-    	utils.MPH2KTS()
-    	utils.KTS2MPH()
-    	utils.M2FT()
-    	utils.FT2M()
-    	utils.vec2comp()
-    	utils.comp2vec()
-    	utils.mag()
-    	utils.QC()
-
-
+This tutorial cannot cover all of the functions in SHARPpy.  To learn more about the functions available in SHARPTAB, access the API here: :ref:`modindex`
 
