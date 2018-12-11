@@ -970,22 +970,28 @@ def temp_lvl(prof, temp, wetbulb=False):
 
     difft = profile - temp
 
-    ind1 = ma.where(difft >= 0)[0]
-    ind2 = ma.where(difft <= 0)[0]
-    if len(ind1) == 0 or len(ind2) == 0:
+    if not np.any(difft <= 0) or not np.any(difft >= 0):
+        # Temp doesn't occur anywhere; return masked
         return ma.masked
-    inds = np.intersect1d(ind1, ind2)
-    if len(inds) > 0:
-        return prof.pres[inds][0]
-    diff1 = ind1[1:] - ind1[:-1]
-    ind = np.where(diff1 > 1)[0] + 1
+    elif np.any(difft == 0):
+        # Temp is one of the data points; don't bother interpolating
+        return prof.pres[difft == 0][0]
+
+    mask = difft.mask | prof.logp.mask
+
+    difft = difft[~mask]
+    profile = profile[~mask]
+    logp = prof.logp[~mask]
+
+    # Find where subsequent values of difft are of opposite sign (i.e. when multiplied together, the result is negative)
+    ind = np.where((difft[:-1] * difft[1:]) < 0)[0] + 1
     try:
         ind = ind.min()
     except:
         ind = ind1[-1]
 
     return np.power(10, np.interp(temp, [profile[ind+1], profile[ind]],
-                            [prof.logp[ind+1], prof.logp[ind]]))
+                            [logp[ind+1], logp[ind]]))
 
 
 def max_temp(prof, mixlayer=100):
