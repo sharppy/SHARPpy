@@ -742,7 +742,6 @@ class ConvectiveProfile(BasicProfile):
         self.mean_3km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p3km))
         self.mean_6km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p6km))
         self.mean_8km = utils.comp2vec(*winds.mean_wind(self, pbot=sfc, ptop=p8km))
-        print(self.mupcl.lclpres, self.mupcl.elpres, self.mupcl.dwpc, self.pres, self.tmpc, self.dwpc)
         self.mean_lcl_el = utils.comp2vec(*winds.mean_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres))
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
