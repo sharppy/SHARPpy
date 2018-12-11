@@ -7,7 +7,7 @@ Welcome to SHARPpy's documentation!
 ===================================
 
 
-.. image:: 14061619.OAX.sharppy.png
+.. image:: gui.sharppy.png
     :scale: 50%
     :alt: SHARPpy GUI Example
     :align: center
