@@ -1166,14 +1166,16 @@ class plotSkewT(backgroundSkewT):
 
         qp.setClipping(True)
         for p, h, t in lvls:
-            if tab.utils.QC(p):
-                y = self.originy + self.pres_to_pix(p) / self.scale
-                pen = QtGui.QPen(self.sig_temp_level_color, 2, QtCore.Qt.SolidLine)
-                qp.setPen(pen)
-                qp.drawLine(x[0], y, x[1], y)
-                rect3 = QtCore.QRectF(x[0], y-12, x[1] - x[0], 4) 
-                qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, t + '=' + tab.utils.INT2STR(tab.utils.M2FT(h)) + '\'')
-
+            try:
+                if tab.utils.QC(p):
+                    y = self.originy + self.pres_to_pix(p) / self.scale
+                    pen = QtGui.QPen(self.sig_temp_level_color, 2, QtCore.Qt.SolidLine)
+                    qp.setPen(pen)
+                    qp.drawLine(x[0], y, x[1], y)
+                    rect3 = QtCore.QRectF(x[0], y-12, x[1] - x[0], 4) 
+                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, t + '=' + tab.utils.INT2STR(tab.utils.M2FT(h)) + '\'')
+            except:
+                continue
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49

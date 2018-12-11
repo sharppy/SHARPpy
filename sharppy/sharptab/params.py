@@ -1756,6 +1756,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     flag = kwargs.get('flag', 5)
     pcl = Parcel(pbot=pbot, ptop=ptop)
     pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
+    print("LIFTING")
     if prof.pres.compressed().shape[0] < 1: return pcl
     
     # Variables
@@ -1788,8 +1789,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         pbot = pres
         pcl.blayer = pbot
 
-    if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
-        return pcl
+    #if type(interp.vtmp(prof, pbot)) == type(ma.masked) or type(interp.vtmp(prof, ptop)) == type(ma.masked):
+    #    return pcl
 
     # Begin with the Mixing Layer
     pe1 = pbot
@@ -1827,7 +1828,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tv_env = thermo.virtemp(pp, tmp_env_theta, tmp_env_dwpt)
     tmp1 = thermo.virtemp(pp, theta_parcel, thermo.temp_at_mixrat(blmr, pp))
     tdef = (tmp1 - tv_env) / thermo.ctok(tv_env)
-
 
     tidx1 = np.arange(0, len(tdef)-1, 1)
     tidx2 = np.arange(1, len(tdef), 1)
@@ -1880,7 +1880,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     ttraces = ma.zeros(len(iter_ranges))
     ptraces = ma.zeros(len(iter_ranges))
     ttraces[:] = ptraces[:] = ma.masked
-
+    print("entering lifting")
     for i in iter_ranges:
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
@@ -2334,7 +2334,6 @@ def _binary_cape(prof, ibot, itop, ecape=100, ecinh=-250):
     else:
         i = ibot + (itop - ibot) // 2
         pcl = cape(prof, pres=prof.pres[i], tmpc=prof.tmpc[i], dwpc=prof.dwpc[i])
-        print(pcl.bplus, pcl.bminus)
         if pcl.bplus < ecape or pcl.bminus <= ecinh:
             return _binary_cape(prof, ibot, i, ecape=ecape, ecinh=ecinh)
         else:
@@ -2380,7 +2379,6 @@ def effective_inflow_layer_binary(prof, ecape=100, ecinh=-250, **kwargs):
     if mucape >= ecape and mucinh > ecinh:
         istart = np.argmin(np.abs(mupcl.lplvals.pres - prof.pres))
         itop = np.argmin(np.abs(300 - prof.pres))
-        print(prof.sfc, istart, itop)
 
         pbot = _binary_cape(prof, istart, prof.sfc, ecape=ecape, ecinh=ecinh)
         ptop = _binary_cape(prof, istart, itop, ecape=ecape, ecinh=ecinh)

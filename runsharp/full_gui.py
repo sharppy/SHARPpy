@@ -136,10 +136,6 @@ class Picker(QWidget):
         ## set the default profile type to Observed
         self.model = "Observed"
         ## this is the default model initialization time
-        #print(data_source.__file__)
-        #print(type(self.data_sources[self.model]))
-        ##print(type(self.data_sources[self.model].getAvailableTimes(dt="TEST")))
-        print(self.data_sources)
         self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
 
         urls = data_source.pingURLs(self.data_sources)
@@ -185,22 +181,22 @@ class Picker(QWidget):
         self.left_layout = QVBoxLayout()
         self.right_layout = QGridLayout() #QVBoxLayout()
         self.left_data_frame.setLayout(self.left_layout)
+ 
         self.right_map_frame.setLayout(self.right_layout)
+        times = self.data_sources[self.model].getAvailableTimes(dt=None)
+        utcnow = date.datetime.utcnow().replace(minute=0, second=0)
+        #if utcnow in 
         self.cal = QCalendarWidget(self)
         self.cal.setGridVisible(True)
         self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        utcnow = date.datetime.utcnow()
         self.cal.setMaximumDate(QDate(utcnow.year,utcnow.month,utcnow.day))
         self.cal.setMinimumDate(QDate(1946,1,1))
-        self.cal_date = self.cal.selectedDate()
         self.cal.clicked.connect(self.update_from_cal)
-
-        times = self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
+        self.cal_date = self.cal.selectedDate()
         filt_times = []
         for t in times:
-             cur_date = self.cal.selectedDate()
-             if t.day == cur_date.day() and t.year == cur_date.year() and t.month == cur_date.month():
+             if t.day == self.cal_date.day() and t.year == self.cal_date.year() and t.month == self.cal_date.month():
                 filt_times.append(t)
         times = filt_times
 
@@ -406,7 +402,6 @@ class Picker(QWidget):
             if len(filtered_times) > 0:
                 filtered_times = np.asarray(filtered_times)            
                 times = times[filtered_times.min(): filtered_times.max()+1]
-                print(times)    
                 # Pick the index for which to highlight
                 if self.model == "Observed":
                     try:
@@ -417,7 +412,6 @@ class Picker(QWidget):
                     self.run = times[-1]
             else:
                 self.run = date.datetime(1700,1,1,0,0,0)
-            print(self.run) 
             self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
             if len(filtered_times) > 0:
@@ -425,7 +419,6 @@ class Picker(QWidget):
         
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
-        print("DONE:", self.run, self.model) 
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
@@ -600,7 +593,6 @@ class Picker(QWidget):
             else:
                 logging.debug("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-                print(prof_collection._profs)
 
             fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
                       idx in prof_idx]
@@ -631,6 +623,7 @@ class Picker(QWidget):
             self.skew.addProfileCollection(prof_collection)
         else:
             print("There was an exception:", exc)
+            
             raise exc
 
     def skewAppClosed(self):
@@ -691,11 +684,8 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
         decoder = ARWDecoder
         dec = decoder((url, loc[0], loc[1]))
     else:
-        print("HSHSDFHSDHFSDFSDFSDF")
-        decoder = data_source.getDecoder(loc, run, outlet_num=ntry)
+        decoder, url = data_source.getDecoderAndURL(loc, run, outlet_num=ntry)
         logging.debug("Using decoder: " + str(decoder))
-        print('Getting the data URL:')
-        url = data_source.getURL(loc, run, outlet_num=ntry)
         logging.debug("Data URL: " + url)
         dec = decoder(url)
 
