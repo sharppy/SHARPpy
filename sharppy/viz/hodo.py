@@ -935,23 +935,26 @@ class plotHodo(backgroundHodo):
             hght_agl = tab.interp.to_agl(self.prof, self.hght)
             u_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.u)
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
+            if tab.utils.QC(u_interp):
 
-            wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
-            if self.wind_units == 'm/s':
-                ws_interp = tab.utils.KTS2MS(ws_interp)
-                units = 'm/s'
+                wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+                if self.wind_units == 'm/s':
+                    ws_interp = tab.utils.KTS2MS(ws_interp)
+                    units = 'm/s'
+                else:
+                    units = 'kts'
+
+                xx, yy = self.uv_to_pix(u_interp, v_interp)
+                readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
             else:
-                units = 'kts'
-
-            xx, yy = self.uv_to_pix(u_interp, v_interp)
-            readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
-
+                readout = "--/-- %s" % (self.wind_units)
+ 
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
 
-        if draw_readout:
+        if draw_readout and tab.utils.QC(u_interp):
             h_offset = 2; v_offset=5; width = 55; hght = 16;
             text_rect = QtCore.QRectF(xx+h_offset, yy+v_offset, width, hght)
             qp.fillRect(text_rect, self.bg_color)
