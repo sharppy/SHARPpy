@@ -28,7 +28,7 @@ def test_url(path):
 
     for k in profs._profs.keys():
         all_prof = profs._profs[k]
-        dates = profs._dates[k]
+        dates = profs._dates
         for i in range(len(all_prof)):
             prof = all_prof[i]
             new_prof = profile.create_profile(pres=prof.pres, hght=prof.hght, tmpc=prof.tmpc, dwpc=prof.dwpc, wspd=prof.wspd, \
