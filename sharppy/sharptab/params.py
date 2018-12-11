@@ -927,7 +927,7 @@ def inferred_temp_adv(prof, lat=35):
     return temp_adv, pressure_bounds
 
 
-def temp_lvl(prof, temp):
+def temp_lvl(prof, temp, wetbulb=False):
     '''
         Calculates the level (hPa) of the first occurrence of the specified
         temperature.
@@ -938,13 +938,21 @@ def temp_lvl(prof, temp):
             Profile Object
         temp : number
             Temperature being searched (C)
-        
+        wetbulb : boolean
+            Flag to indicate whether or not the wetbulb profile should be used instead
+
         Returns
         -------
         First Level of the temperature (hPa) : number
         
         '''
-    difft = prof.tmpc - temp
+    if wetbulb is False:
+        profile = prof.tmpc
+    else:
+        profile = prof.wetbulb
+
+    difft = profile - temp
+
     ind1 = ma.where(difft >= 0)[0]
     ind2 = ma.where(difft <= 0)[0]
     if len(ind1) == 0 or len(ind2) == 0:
@@ -959,7 +967,7 @@ def temp_lvl(prof, temp):
     except:
         ind = ind1[-1]
 
-    return np.power(10, np.interp(temp, [prof.tmpc[ind+1], prof.tmpc[ind]],
+    return np.power(10, np.interp(temp, [profile[ind+1], profile[ind]],
                             [prof.logp[ind+1], prof.logp[ind]]))
 
 
