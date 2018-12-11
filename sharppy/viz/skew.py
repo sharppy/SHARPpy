@@ -387,7 +387,7 @@ class plotSkewT(backgroundSkewT):
         self.lcl_mkr_color = QtGui.QColor(kwargs.get('lcl_mkr_color', '#00FF00'))
         self.lfc_mkr_color = QtGui.QColor(kwargs.get('lfc_mkr_color', '#FFFF00'))
         self.el_mkr_color = QtGui.QColor(kwargs.get('el_mkr_color', '#FF00FF'))
-
+        self.sig_temp_level_color = QtGui.QColor('#0A63FF')
 
         self.sfc_units = kwargs.get('sfc_units', 'Fahrenheit')
         self.wind_units = kwargs.get('wind_units', 'knots')
@@ -950,6 +950,20 @@ class plotSkewT(backgroundSkewT):
             self.drawTrace(tmpc, self.dgz_color, qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
+            
+            # DRAW WBZ and FRZ but only if they exist
+            wbz_plevel = tab.params.temp_lvl(self.prof, 0, wetbulb=True)
+            frz_plevel = tab.params.temp_lvl(self.prof, 0)
+            
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
+            self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
+            self.draw_sig_levels(qp, plevel=wbz_plevel, color=QtGui.QColor(self.dewp_color), var_id="WBZ=")
+            self.draw_sig_levels(qp, plevel=frz_plevel, color=QtGui.QColor('#FFA500'), var_id="FRZ=")
+
+        else:
+            # DRAW THE MAX LAPSE RATE 
+            self.draw_max_lapse_rate_layer(qp)
+            self.draw_temp_levels(qp)
 
         self.drawTrace(self.dwpc, self.dewp_color, qp, stdev=self.dew_stdev)
 
@@ -970,7 +984,6 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing)
 
         self.draw_effective_layer(qp)
-        self.draw_max_lapse_rate_layer(qp)
         if self.plot_omega:
             self.draw_omega_profile(qp)
 
@@ -1067,7 +1080,7 @@ class plotSkewT(backgroundSkewT):
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
                 tab.utils.INT2STR(h/1000)+' km')
 
-    def draw_sig_levels(self, qp, plevel=1000, color=None):
+    def draw_sig_levels(self, qp, plevel=1000, color=None, var_id=""):
         logging.debug("Drawing significant levels.")
         if color is None:
             color = self.fg_color
@@ -1083,8 +1096,9 @@ class plotSkewT(backgroundSkewT):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.drawLine(x[0], y, x[1], y)
-        rect1 = QtCore.QRectF(self.tmpc_to_pix(29, 1000.), y-3, x[1] - x[0], 4) 
-        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(z) + '\'')
+        left_bnd = self.tmpc_to_pix([20,36],[1000,1000])
+        rect1 = QtCore.QRectF(left_bnd[0], y-3, left_bnd[1] - left_bnd[0], 4) 
+        qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, var_id + tab.utils.INT2STR(z) + '\'')
          
     def draw_pbl_level(self, qp):
         logging.debug("Drawing the PBL top marker.")
@@ -1103,14 +1117,13 @@ class plotSkewT(backgroundSkewT):
 
     def draw_parcel_levels(self, qp):
         logging.debug("Drawing the parcel levels (LCL, LFC, EL).")
-        if self.pcl is None:
-            return
         qp.setClipping(True)
         xbounds = [37,41]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         lclp = self.pcl.lclpres
         lfcp = self.pcl.lfcpres
         elp = self.pcl.elpres
+        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']] 
 
         # Plot LCL
         if tab.utils.QC(lclp):
@@ -1136,6 +1149,24 @@ class plotSkewT(backgroundSkewT):
             qp.drawLine(x[0], y, x[1], y)
             rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
+
+    def draw_temp_levels(self, qp):
+        if self.pcl is None:
+            return
+        xbounds = [37,41]
+        x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']] 
+
+        qp.setClipping(True)
+        for p, h, t in lvls:
+            if tab.utils.QC(p):
+                y = self.originy + self.pres_to_pix(p) / self.scale
+                pen = QtGui.QPen(self.sig_temp_level_color, 2, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                qp.drawLine(x[0], y, x[1], y)
+                rect3 = QtCore.QRectF(x[0], y-12, x[1] - x[0], 4) 
+                qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, t + '=' + tab.utils.INT2STR(tab.utils.M2FT(h)) + '\'')
+
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49
