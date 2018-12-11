@@ -13,15 +13,7 @@ Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Sk
 Swapping Insets
 ---------------
 
-The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:
-
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see `Jewell et al. <http://www.spc.noaa.gov/publications/jewell/sars.pdf>`_.
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see `Thompson et al. 2012, WAF <http://www.spc.noaa.gov/publications/thompson/waf-env.pdf>`_.
-3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC (see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_.
-5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
-6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_
+The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  
 
 Color Ranking
 -------------
