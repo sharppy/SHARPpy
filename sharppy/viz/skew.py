@@ -921,8 +921,10 @@ class plotSkewT(backgroundSkewT):
                 for profile in proflist:
                     self.drawTrace(profile.tmpc, temp_color, qp, p=profile.pres, width=1)
                     self.drawTrace(profile.dwpc, dewp_color, qp, p=profile.pres, width=1)
-                    self.drawBarbs(profile, qp, color="#666666")
-
+                    try:
+                        self.drawBarbs(profile, qp, color="#666666")
+                    except:
+                        logging.debug("Couldn't draw wind barbs in skew.py")
         bg_color_idx = 0
         for idx, prof_col in enumerate(self.prof_collections):
             if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
@@ -932,8 +934,10 @@ class plotSkewT(backgroundSkewT):
 
                 self.drawTrace(profile.tmpc, color, qp, p=profile.pres)
                 self.drawTrace(profile.dwpc, color, qp, p=profile.pres)
-                self.drawBarbs(profile, qp, color=color)
-
+                try:
+                    self.drawBarbs(profile, qp, color=color)
+                except:
+                    logging.debug("Couldn't draw wind barbs in skew.py")
                 bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
         self.drawTrace(self.wetbulb, self.wetbulb_color, qp, width=1)
@@ -980,7 +984,10 @@ class plotSkewT(backgroundSkewT):
         
         self.draw_parcel_levels(qp)
         qp.setRenderHint(qp.Antialiasing, False)
-        self.drawBarbs(self.prof, qp)
+        try:
+            self.drawBarbs(self.prof, qp)
+        except:
+            logging.debug("Couldn't draw wind barbs in skew.py")
         qp.setRenderHint(qp.Antialiasing)
 
         self.draw_effective_layer(qp)

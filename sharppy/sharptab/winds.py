@@ -44,6 +44,8 @@ def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
     if dp > 0: dp = -dp
     if not utils.QC(pbot) or not utils.QC(ptop):
         return ma.masked, ma.masked
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked
 
     ps = np.arange(pbot, ptop+dp, dp)
     u, v = interp.components(prof, ps)
@@ -79,6 +81,9 @@ def mean_wind_npw(prof, pbot=850., ptop=250., dp=-1, stu=0, stv=0):
         V-component (kts)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked
+
     if dp > 0: dp = -dp
     ps = np.arange(pbot, ptop+dp, dp)
     u, v = interp.components(prof, ps)
@@ -171,6 +176,9 @@ def wind_shear(prof, pbot=850, ptop=250):
         V-component (kts)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked
+
     ubot, vbot = interp.components(prof, pbot)
     utop, vtop = interp.components(prof, ptop)
     shu = utop - ubot
@@ -198,6 +206,9 @@ def non_parcel_bunkers_motion_experimental(prof):
             Left Storm Motion V-component (kts)
         
         '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked, ma.masked, ma.masked
+
     d = utils.MS2KTS(7.5)     # Deviation value emperically derived as 7.5 m/s
     ## get the msl height of 500m, 5.5km, and 6.0km above the surface
     msl500m = interp.to_msl(prof, 500.)
@@ -254,6 +265,9 @@ def non_parcel_bunkers_motion(prof):
         Left Storm Motion V-component (kts)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked, ma.masked, ma.masked
+
     d = utils.MS2KTS(7.5)     # Deviation value emperically derived as 7.5 m/s
     msl6km = interp.to_msl(prof, 6000.)
     p6km = interp.pres(prof, msl6km)
@@ -306,6 +320,9 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         Negative Helicity (m2/s2)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked, ma.masked
+
     if lower != upper:
         lower = interp.to_msl(prof, lower)
         upper = interp.to_msl(prof, upper)
@@ -362,6 +379,9 @@ def max_wind(prof, lower, upper, all=False):
         Maximum Wind Speed V-component (kts)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked, ma.masked
+
     lower = interp.to_msl(prof, lower)
     upper = interp.to_msl(prof, upper)
     plower = interp.pres(prof, lower)
@@ -405,6 +425,8 @@ def corfidi_mcs_motion(prof):
         V-component of the downshear vector (kts)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked, ma.masked, ma.masked
     # Compute the tropospheric (850hPa-300hPa) mean wind
     if prof.pres[ prof.sfc ] < 850:
          mnu1, mnv1 = mean_wind_npw(prof, pbot=prof.pres[prof.sfc], ptop=300.)
@@ -470,6 +492,9 @@ def critical_angle(prof, stu=0, stv=0):
         Critical Angle (degrees)
 
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked
+
     if not utils.QC(stu) or not utils.QC(stv):
         return ma.masked
 

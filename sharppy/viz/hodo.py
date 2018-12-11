@@ -999,7 +999,8 @@ class plotHodo(backgroundHodo):
 
                 if idx == self.pc_idx:
                     for prof in proflist:
-                        self.draw_hodo(qp, prof, self.ens_colors, width=1)
+                        if prof.wdir.count() > 1:
+                            self.draw_hodo(qp, prof, self.ens_colors, width=1)
                 else:
                     for prof in proflist:
                         self.draw_profile(qp, prof, color=self.background_colors[bc_idx], width=1)
@@ -1013,14 +1014,16 @@ class plotHodo(backgroundHodo):
                 self.draw_profile(qp, prof, color=self.background_colors[bc_idx])
                 bc_idx = (bc_idx + 1) % len(self.background_colors)
 
-        ## draw the hodograph
-        self.draw_hodo(qp, self.prof, self.colors)
-        ## draw the storm motion vector
-        self.drawSMV(qp)
-        self.drawCorfidi(qp)
-        self.drawLCLtoEL_MW(qp)
-        if self.cursor_type in [ 'none', 'stormmotion' ]:
-            self.drawCriticalAngle(qp)
+        # ONLY DRAW A HODOGRAPH IF THERE'S WIND DATA
+        if self.prof.wdir.count() > 1:
+            ## draw the hodograph
+            self.draw_hodo(qp, self.prof, self.colors)
+            ## draw the storm motion vector
+            self.drawSMV(qp)
+            self.drawCorfidi(qp)
+            self.drawLCLtoEL_MW(qp)
+            if self.cursor_type in [ 'none', 'stormmotion' ]:
+                self.drawCriticalAngle(qp)
 
         qp.end()
     

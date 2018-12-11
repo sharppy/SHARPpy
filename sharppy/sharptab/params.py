@@ -865,6 +865,8 @@ def inferred_temp_adv(prof, lat=35):
         pressure_bounds: array
             a 2D array indicating the top and bottom bounds of the temperature advection layers (mb)
     '''
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked
 
     omega = (2. * np.pi) / (86164.)
        
