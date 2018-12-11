@@ -19,7 +19,7 @@ If you want to read in your own data using this function, write a script
 to mimic the data format shown in the 14061619.OAX file found in this
 directory. Missing values must be -9999.
 
-.. code:: ipython2
+.. code:: python
 
     import matplotlib as pyplot.plt
     spc_file = open('14061619.OAX', 'r').read()
@@ -47,7 +47,7 @@ Each module has different functions:
 
 Below is the code to load in these modules:
 
-.. code:: ipython2
+.. code:: python
 
     import sharppy
     import sharppy.sharptab.profile as profile
@@ -88,7 +88,7 @@ profile object will generate a Profile object with all of the indices
 computed in the SHARPpy GUI. If you are only wanting to compute a few
 indices, you probably don't want to do that.
 
-.. code:: ipython2
+.. code:: python
 
     import numpy as np
     from StringIO import StringIO
@@ -157,7 +157,7 @@ the Profile object and print the data out for each line. Missing values
 will be denoted by "--" instead of -9999. This is a consquence of the
 data being read in by the Profile object framework.
 
-.. code:: ipython2
+.. code:: python
 
     for i in range(len(prof.hght)):
         print prof.pres[i], prof.hght[i], prof.tmpc[i], prof.dwpc[i], prof.wdir[i], prof.wdir[i]
@@ -324,7 +324,7 @@ how to do this.
 Plotting the data
 ~~~~~~~~~~~~~~~~~~
 
-.. code:: ipython2
+.. code:: python
 
     import matplotlib.pyplot as plt
     plt.plot(prof.tmpc, prof.hght, 'r-')
@@ -347,7 +347,7 @@ meters above mean sea level.
 In the example data provided, the profile can be converted to and from
 AGL from MSL:
 
-.. code:: ipython2
+.. code:: python
 
     msl_hght = prof.hght[prof.sfc] # Grab the surface height value
     print "SURFACE HEIGHT (m MSL):",msl_hght
@@ -371,7 +371,7 @@ By default, Profile objects also create derived profiles such as Theta-E
 and Wet-Bulb when they are constructed. These profiles are accessible to
 the user too.
 
-.. code:: ipython2
+.. code:: python
 
     plt.plot(thermo.ktoc(prof.thetae), prof.hght, 'r-', label='Theta-E')
     plt.plot(prof.wetbulb, prof.hght, 'c-', label='Wetbulb')
@@ -401,7 +401,7 @@ correction to compute variables such as CAPE and CIN. If the dewpoint
 profile contains missing data, parcelx() will disregard using the
 virtual temperature correction.
 
-.. code:: ipython2
+.. code:: python
 
     sfcpcl = params.parcelx( prof, flag=1 ) # Surface Parcel
     fcstpcl = params.parcelx( prof, flag=2 ) # Forecast Parcel
@@ -412,7 +412,7 @@ Once your parcel attributes are computed by params.parcelx(), you can
 extract information about the parcel such as CAPE, CIN, LFC height, LCL
 height, EL height, etc.  We will do this for the Most Unstable parcel ``mupcl``.
 
-.. code:: ipython2
+.. code:: python
 
     print "Most-Unstable CAPE:", mupcl.bplus # J/kg
     print "Most-Unstable CIN:", mupcl.bminus # J/kg
@@ -499,7 +499,7 @@ we'd like a Skew-T style plot. The code in the following cell allow us
 to do this. This code was lifted from:
 http://matplotlib.org/examples/api/skewt.html
 
-.. code:: ipython2
+.. code:: python
 
     # This serves as an intensive exercise of matplotlib's transforms
     # and custom projection API. This example produces a so-called
@@ -645,7 +645,7 @@ Now that Matplotlib knows about the Skew-T style plot, let's plot the
 OAX sounding data on the Skew-T along with the Most-Unstable parcel
 trace. Let's also include dry adiabats and moist adiabats for the user.
 
-.. code:: ipython2
+.. code:: python
 
     # Select the Most-Unstable parcel (this can be changed)
     pcl = mupcl
@@ -730,7 +730,7 @@ following:
 
 5.) 0-3 Storm Relative Helicity
 
-.. code:: ipython2
+.. code:: python
 
     # Find the pressure values that correspond to the surface, 1 km, 3 km and 6 km levels.
     sfc = prof.pres[prof.sfc]
@@ -784,7 +784,7 @@ buoyant parcels that feed a storm's inflow. Here are a few examples of
 how to compute variables that require the effective inflow layer in
 order to calculate them:
 
-.. code:: ipython2
+.. code:: python
 
     # Let's calculate the effective inflow layer and print out the heights of the top
     # and bottom of the layer.  We'll have to convert it from m MSL to m AGL.
@@ -847,7 +847,7 @@ function was based on.
 Running the code below will print out all of the functions and objects
 included within each SHARPpy module.
 
-.. code:: ipython2
+.. code:: python
 
     print "Functions within params.py:"
     for key in params.__all__:
