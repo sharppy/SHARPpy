@@ -181,6 +181,8 @@ class Outlet(object):
         daily_cycles = self.getCycles()
         time_counter = daily_cycles.index(start.hour)
         archive_len = self.getArchiveLen()
+        # TODO: Potentially include the option to specify the beginning date of the archive, if the data source
+        # is static? 
 
         cycles = []
         cur_time = start
@@ -195,13 +197,16 @@ class Outlet(object):
             cur_time = cur_time.replace(hour=cycle)
             if cycle == daily_cycles[-1]:
                 cur_time -= timedelta(days=1)
-
+        print("Archived Cycles:", cycles)
         return cycles
 
     def getAvailableAtTime(self, **kwargs):
         dt = kwargs.get('dt', None)
+
         if dt is None:
             dt = self.getMostRecentCycle()
+        elif dt == datetime(1700,1,1,0,0,0):
+            return []
 
         stns_avail = self.getPoints()
 
@@ -238,7 +243,10 @@ class Outlet(object):
                 else:
                     print(self._name.lower(), self._ds_name.lower())
                     print(available.available[self._name.lower()][self._ds_name.lower()], dt)
-                    times = available.available[self._name.lower()][self._ds_name.lower()](dt)
+                    try:
+                        times = available.available[self._name.lower()][self._ds_name.lower()](dt)
+                    except:
+                        times = available.available[self._name.lower()][self._ds_name.lower()]()
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True

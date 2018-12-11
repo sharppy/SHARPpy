@@ -337,9 +337,15 @@ class PrefDialog(QDialog):
 #       tab_widget.addTab(map_widget, "Map")
 
         misc_widget = self._createMiscWidget()
+        readout_widget = self._createReadoutWidget()
         tab_widget.addTab(misc_widget, "Units")
+        tab_widget.addTab(readout_widget, "Readout")
 
         self.layout.addWidget(tab_widget, 0, 0, 1, 1)
+
+    def _createReadoutWidget(self):
+        box = QWidget()
+        return box
 
     def _createColorWidget(self):
         colors_box = QWidget()

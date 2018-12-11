@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
@@ -374,10 +375,12 @@ class plotKinematics(backgroundKinematics):
             conv = tab.utils.KTS2MS
         else:
             conv = lambda s: s
-
-        drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], conv(self.prof.wind1km[1]), color='#AA0000', shemis=(self.prof.latitude < 0))
-        drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], conv(self.prof.wind6km[1]), color='#0A74C6', shemis=(self.prof.latitude < 0))
-    
+        try:
+            drawBarb(qp, origin_x, self.barby, self.prof.wind1km[0], conv(self.prof.wind1km[1]), color='#AA0000', shemis=(self.prof.latitude < 0))
+            drawBarb(qp, origin_x, self.barby, self.prof.wind6km[0], conv(self.prof.wind6km[1]), color='#0A74C6', shemis=(self.prof.latitude < 0))
+        except:
+            logging.debug("Couldn't draw the 1 or 6 km wind barbs on kinematics.py")
+ 
     def drawKinematics(self, qp):
         '''
         This handles the severe indices, such as STP, sig hail, etc.

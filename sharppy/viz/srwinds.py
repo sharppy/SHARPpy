@@ -356,8 +356,11 @@ class plotWinds(backgroundWinds):
         
         '''
         ## initialize a pen with a red color, thickness of 1, solid line
+        if self.prof.wdir.count() == 0:
+            return
         pen = QtGui.QPen(self.trace_color, 1)
         pen.setStyle(QtCore.Qt.SolidLine)
+  
         ## if there are missing values, get the mask
         try:
             mask = np.maximum(self.sru.mask, self.srv.mask)

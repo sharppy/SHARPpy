@@ -935,23 +935,26 @@ class plotHodo(backgroundHodo):
             hght_agl = tab.interp.to_agl(self.prof, self.hght)
             u_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.u)
             v_interp = tab.interp.generic_interp_hght(self.readout_hght, hght_agl, self.v)
+            if tab.utils.QC(u_interp):
 
-            wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
-            if self.wind_units == 'm/s':
-                ws_interp = tab.utils.KTS2MS(ws_interp)
-                units = 'm/s'
+                wd_interp, ws_interp = tab.utils.comp2vec(u_interp, v_interp)
+                if self.wind_units == 'm/s':
+                    ws_interp = tab.utils.KTS2MS(ws_interp)
+                    units = 'm/s'
+                else:
+                    units = 'kts'
+
+                xx, yy = self.uv_to_pix(u_interp, v_interp)
+                readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
             else:
-                units = 'kts'
-
-            xx, yy = self.uv_to_pix(u_interp, v_interp)
-            readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
-
+                readout = "--/-- %s" % (self.wind_units)
+ 
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
 
-        if draw_readout:
+        if draw_readout and tab.utils.QC(u_interp):
             h_offset = 2; v_offset=5; width = 55; hght = 16;
             text_rect = QtCore.QRectF(xx+h_offset, yy+v_offset, width, hght)
             qp.fillRect(text_rect, self.bg_color)
@@ -996,7 +999,8 @@ class plotHodo(backgroundHodo):
 
                 if idx == self.pc_idx:
                     for prof in proflist:
-                        self.draw_hodo(qp, prof, self.ens_colors, width=1)
+                        if prof.wdir.count() > 1:
+                            self.draw_hodo(qp, prof, self.ens_colors, width=1)
                 else:
                     for prof in proflist:
                         self.draw_profile(qp, prof, color=self.background_colors[bc_idx], width=1)
@@ -1010,14 +1014,16 @@ class plotHodo(backgroundHodo):
                 self.draw_profile(qp, prof, color=self.background_colors[bc_idx])
                 bc_idx = (bc_idx + 1) % len(self.background_colors)
 
-        ## draw the hodograph
-        self.draw_hodo(qp, self.prof, self.colors)
-        ## draw the storm motion vector
-        self.drawSMV(qp)
-        self.drawCorfidi(qp)
-        self.drawLCLtoEL_MW(qp)
-        if self.cursor_type in [ 'none', 'stormmotion' ]:
-            self.drawCriticalAngle(qp)
+        # ONLY DRAW A HODOGRAPH IF THERE'S WIND DATA
+        if self.prof.wdir.count() > 1:
+            ## draw the hodograph
+            self.draw_hodo(qp, self.prof, self.colors)
+            ## draw the storm motion vector
+            self.drawSMV(qp)
+            self.drawCorfidi(qp)
+            self.drawLCLtoEL_MW(qp)
+            if self.cursor_type in [ 'none', 'stormmotion' ]:
+                self.drawCriticalAngle(qp)
 
         qp.end()
     

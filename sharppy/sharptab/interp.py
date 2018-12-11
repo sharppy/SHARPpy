@@ -250,6 +250,8 @@ def components(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
+    if prof.wdir.count() == 0:
+        return ma.masked, ma.masked
     U = generic_interp_pres(np.log10(p), prof.logp[::-1], prof.u[::-1])
     V = generic_interp_pres(np.log10(p), prof.logp[::-1], prof.v[::-1])
     return U, V
@@ -333,6 +335,8 @@ def generic_interp_hght(h, hght, field, log=False):
     Value of the 'field' variable at the given height : number, numpy array
 
     '''
+    if field.count() == 0 or hght.count() == 0:
+        return ma.masked
     if ma.isMaskedArray(hght):
         # Multiplying by ones ensures that the result is an array, not a single value ... which 
         # happens sometimes ... >.<
@@ -388,6 +392,8 @@ def generic_interp_pres(p, pres, field):
     Value of the 'field' variable at the given pressure : number, numpy array
 
     '''
+    if field.count() == 0 or pres.count() == 0:
+        return ma.masked
     if ma.isMaskedArray(pres):
         not_masked1 = ~pres.mask * np.ones(pres.shape, dtype=bool)
     else:

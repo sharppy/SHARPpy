@@ -224,7 +224,7 @@ def _download_psu():
 
     return psu_text 
 
-def _availableat_psu(model, dt):
+def _availableat_psu(model, dt=None):
     '''
         _availableat_psu
 
@@ -340,15 +340,16 @@ for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 if __name__ == "__main__":
-    dt = available['sharp']['observed']('test')
-    print(dt)
-    print(availableat['sharp']['observed'](dt[-1]))
-    stop
+    #dt = available['sharp']['observed']('test')
+    #print(dt)
+    #print(availableat['sharp']['observed'](dt[-1]))
+    ##stop
     dt = available['psu']['gfs']()
     stns = availableat['psu']['gfs'](dt[0])
+    print(dt, stns)
     #dt = available['spc']['observed']()
     #stns = availableat['spc']['observed'](dt[-1])
     dt = available['ou_pecan']['pecan ensemble']()
-    print(dt)
-    stns = availableat['ou_pecan']['pecan ensemble'](dt[-2])
-    print(stns)
+    #print(dt)
+    #stns = availableat['ou_pecan']['pecan ensemble'](dt[-2])
+    #print(stns)
