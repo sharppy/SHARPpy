@@ -184,13 +184,12 @@ class Picker(QWidget):
  
         self.right_map_frame.setLayout(self.right_layout)
         times = self.data_sources[self.model].getAvailableTimes(dt=None)
-        utcnow = date.datetime.utcnow().replace(minute=0, second=0)
-        #if utcnow in 
+        
         self.cal = QCalendarWidget(self)
         self.cal.setGridVisible(True)
         self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.cal.setMaximumDate(QDate(utcnow.year,utcnow.month,utcnow.day))
+        self.cal.setMaximumDate(QDate(times[-1].year,times[-1].month,times[-1].day))
         self.cal.setMinimumDate(QDate(1946,1,1))
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
@@ -574,7 +573,18 @@ class Picker(QWidget):
             observed = True
             fhours = None
 
+            # Determine if the dataset passed was from a model or is observed
+            if len(prof_collection._dates) > 1:
+                prof_idx = self.prof_idx
+                fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx]
+                observed = False
+            else:
+                fhours = None
+                observed = True
+
             run = prof_collection.getCurrentDate()
+
+
         else:
         ## otherwise, download with the data thread
             logging.debug("Loading a real-time data stream...")
@@ -664,7 +674,7 @@ class Picker(QWidget):
 
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
-
+        print("DECODER:", dec)
         logging.debug('Get the profiles from the decoded file.')
         # Returns the set of profiles from the file that are from the "Profile" class.
         logging.debug('Get the profiles from the decoded file.')

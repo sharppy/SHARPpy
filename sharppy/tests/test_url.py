@@ -28,10 +28,11 @@ def test_url(path):
 
     for k in profs._profs.keys():
         all_prof = profs._profs[k]
+        dates = profs._dates[k]
         for i in range(len(all_prof)):
             prof = all_prof[i]
             new_prof = profile.create_profile(pres=prof.pres, hght=prof.hght, tmpc=prof.tmpc, dwpc=prof.dwpc, wspd=prof.wspd, \
-                                              wdir=prof.wdir, strictQC=False, profile='convective')
+                                              wdir=prof.wdir, strictQC=False, profile='convective', date=dates[i])
             for key in dir(new_prof):
                 print((key, getattr(new_prof,key)))
 
