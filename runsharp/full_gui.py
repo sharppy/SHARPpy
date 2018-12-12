@@ -114,20 +114,20 @@ class crasher(object):
 
 class Calendar(QCalendarWidget):
     def __init__(self, *args, **kwargs):
+        dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(minute=0, second=0, microsecond=0))
+
         super(Calendar, self).__init__(*args, **kwargs)
 
-        utcnow = date.datetime.utcnow().replace(minute=0, second=0, microsecond=0)
-
         min_date = QDate(1946, 1, 1)
-        max_date = QDate(utcnow.year, utcnow.month, utcnow.day)
+        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
+
 
         self.setGridVisible(True)
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.setMaximumDate(max_date)
         self.setMinimumDate(min_date)
-
-        self.setSelectedDate(max_date)
+        self.setMaximumDate(qdate_avail)
+        self.setSelectedDate(qdate_avail)
 
         for day in [Qt.Sunday, Qt.Saturday]:
             txt_fmt = self.weekdayTextFormat(day)
@@ -207,8 +207,10 @@ class Picker(QWidget):
         self.left_data_frame.setLayout(self.left_layout)
  
         self.right_map_frame.setLayout(self.right_layout)
+
         times = self.data_sources[self.model].getAvailableTimes(dt=None)
-        self.cal = Calendar(self)
+
+        self.cal = Calendar(self, dt_avail=max(times))
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = []
