@@ -111,6 +111,30 @@ class crasher(object):
             return ret
         return doCrasher
 
+
+class Calendar(QCalendarWidget):
+    def __init__(self, *args, **kwargs):
+        super(Calendar, self).__init__(*args, **kwargs)
+
+        utcnow = date.datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+
+        min_date = QDate(1946, 1, 1)
+        max_date = QDate(utcnow.year, utcnow.month, utcnow.day)
+
+        self.setGridVisible(True)
+        self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
+        self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
+        self.setMaximumDate(max_date)
+        self.setMinimumDate(min_date)
+
+        self.setSelectedDate(max_date)
+
+        for day in [Qt.Sunday, Qt.Saturday]:
+            txt_fmt = self.weekdayTextFormat(day)
+            txt_fmt.setForeground(QBrush(Qt.black))
+            self.setWeekdayTextFormat(day, txt_fmt)
+
+
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
@@ -184,14 +208,7 @@ class Picker(QWidget):
  
         self.right_map_frame.setLayout(self.right_layout)
         times = self.data_sources[self.model].getAvailableTimes(dt=None)
-        utcnow = date.datetime.utcnow().replace(minute=0, second=0)
-        #if utcnow in 
-        self.cal = QCalendarWidget(self)
-        self.cal.setGridVisible(True)
-        self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
-        self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.cal.setMaximumDate(QDate(utcnow.year,utcnow.month,utcnow.day))
-        self.cal.setMinimumDate(QDate(1946,1,1))
+        self.cal = Calendar(self)
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = []
