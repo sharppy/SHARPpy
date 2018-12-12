@@ -15,7 +15,7 @@ BibTeX entry
 ************
 
 Example BibTeX entry::
-  
+      
     @article{sharppy,
     author = {Blumberg, William Gregory and Halbert, Kelton T. and Supinie, T. A., and Marsh, P. T. and Thompson, Rich and Hart, John },
     organization = {SHARPpy},
@@ -25,7 +25,7 @@ Example BibTeX entry::
     journal = {Bull. Amer. Meteor. Soc.},
     doi = {10.1175/BAMS-D-15-00309.1},
     url = {https://github.com/sharppy/SHARPpy},
-  }
+    }
 
 
 AMS Journal Style
@@ -33,8 +33,7 @@ AMS Journal Style
 
 Example Citation::
 
-
-  Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson,
+   Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson,
    and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for
    the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1.
 

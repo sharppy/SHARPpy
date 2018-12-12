@@ -13,15 +13,7 @@ Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Sk
 Swapping Insets
 ---------------
 
-The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:
-
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](http://www.spc.noaa.gov/publications/jewell/sars.pdf)).
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](http://www.spc.noaa.gov/publications/thompson/waf-env.pdf)).
-3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf)).
-5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
-6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf))
+The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  
 
 Color Ranking
 -------------
@@ -35,7 +27,7 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 5. LIGHT BROWN
 6. DARK BROWN
 
-The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by [Matthew Bunkers; NWS](https://www.weather.gov/unr/uac)).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
+The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by `Matthew Bunkers; NWS <https://www.weather.gov/unr/uac>`_.  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
 
 Interacting with the Focused Sounding
 -------------------------------------
@@ -60,7 +52,7 @@ New in version 1.3.0 is the ability to interpolate the profile to 25-mb interval
 Storm Mode Functions
 --------------------
 
-Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in [Dial et al. 2010, WAF](http://www.spc.noaa.gov/publications/dial/waf-mode.pdf).  Clicking on the hodograph again will remove the boundary.
+Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in `Dial et al. 2010, WAF <http://www.spc.noaa.gov/publications/dial/waf-mode.pdf>`_.  Clicking on the hodograph again will remove the boundary.
 
 Lifting Parcels
 ---------------
@@ -76,6 +68,10 @@ Double clicking on this inset will allow you to swap out these parcels for two o
 
 1. Effective Inflow Layer Mean Parcel
 2. User Defined Parcel
+
+.. figure:: tutorial_imgs/selecting_parcels.png
+    :scale: 30%
+    :align: center
 
 The current parcel shown in the Skew-T is highlighted by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the "User Parcel".  Then, right click on the Skew-T and select the "Readout Cursor".  Once you find the location in your profile you wish to lift, right click again and look under the "Lift Parcel" menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.
 

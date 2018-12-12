@@ -14,6 +14,7 @@ except ImportError:
 import platform, subprocess, re
 import imp
 import socket
+import logging
 import traceback
 
 import sharppy.io.decoder as decoder
@@ -150,12 +151,15 @@ class Outlet(object):
     def getDelay(self):
         return int(self._time.get('delay'))
 
-    def getMostRecentCycle(self):
+    def getMostRecentCycle(self, dt=None):
         custom_failed = False
 
         if self._custom_avail:
             try:
-                times = available.available[self._name.lower()][self._ds_name.lower()]()
+                try:
+                    times = available.available[self._name.lower()][self._ds_name.lower()](dt)
+                except TypeError:
+                    times = available.available[self._name.lower()][self._ds_name.lower()]()
                 recent = max(times)
                 self._is_available = True
             except URLError:
@@ -203,7 +207,7 @@ class Outlet(object):
         dt = kwargs.get('dt', None)
 
         if dt is None:
-            dt = self.getMostRecentCycle()
+            dt = self.getMostRecentCycle(dt)
         elif dt == datetime(1700,1,1,0,0,0):
             return []
 
@@ -234,6 +238,7 @@ class Outlet(object):
         # THIS IS WHERE I COULD POTENTIALLY PASS AN ARGUMENT TO FILTER OUT WHAT RAOBS OR MODELS ARE AVAILABLE
         custom_failed = False
         dt = kwargs.get('dt', None) #Used to help search for times
+        #logging.debug("Called outlet.getAvailableTimes():" + " dt=" + str(dt) + " self._name=" + str(self._name) + " self._ds_name=" + str(self._ds_name))
         if self._custom_avail:
             try:
                 if self._name.lower() == "local":
@@ -241,7 +246,7 @@ class Outlet(object):
                 else:
                     try:
                         times = available.available[self._name.lower()][self._ds_name.lower()](dt)
-                    except:
+                    except TypeError:
                         times = available.available[self._name.lower()][self._ds_name.lower()]()
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
@@ -249,9 +254,10 @@ class Outlet(object):
             except URLError:
                 custom_failed = True
                 self._is_available = False
-
+     
         if not self._custom_avail or custom_failed:
             times = self.getArchivedCycles(max_cycles=max_cycles)
+        #logging.debug("outlet.getAvailableTimes() times Found:" + str(times[~max_cycles:]))
         return times[-max_cycles:]
 
     def getArchiveLen(self):
@@ -341,6 +347,7 @@ class DataSource(object):
         return max(cycles)
 
     def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100, dt=None):
+        #logging.debug("data_source.getAvailableTimes() filename="+str(filename)+' outlent_num=' +str(outlet_num) + ' dt=' + str(dt))
         cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles, dt=dt)
         return cycles[-max_cycles:]
 

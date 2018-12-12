@@ -148,7 +148,9 @@ class Picker(QWidget):
         """
         
         super(Picker, self).__init__(**kwargs)
+        #print("data_source.loadDataSource()")
         self.data_sources = data_source.loadDataSources()
+        #print("Done loading Data Sources\n")
         self.config = config
         self.skew = None
 
@@ -160,7 +162,9 @@ class Picker(QWidget):
         ## set the default profile type to Observed
         self.model = "Observed"
         ## this is the default model initialization time
-        self.run = [ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ][-1]
+        #print("Looping over AvailableTimes")    
+        self.run = sorted([ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ])[-1]
+        #print("Done")
 
         urls = data_source.pingURLs(self.data_sources)
         self.has_connection = any( urls.values() )
@@ -208,22 +212,19 @@ class Picker(QWidget):
  
         self.right_map_frame.setLayout(self.right_layout)
 
-        times = self.data_sources[self.model].getAvailableTimes(dt=None)
+        self.all_times = sorted(self.data_sources[self.model].getAvailableTimes(dt=None))
 
-        self.cal = Calendar(self, dt_avail=max(times))
+        self.cal = Calendar(self, dt_avail=self.all_times[-1])
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
-        filt_times = []
-        for t in times:
-             if t.day == self.cal_date.day() and t.year == self.cal_date.year() and t.month == self.cal_date.month():
-                filt_times.append(t)
-        times = filt_times
-
+        filt_times = [ t for t in self.all_times  if t.day == self.cal_date.day() and t.year == self.cal_date.year() and t.month == self.cal_date.month()]
+        
         ## create dropdown menus
         models = sorted(self.data_sources.keys())
         self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
 
+        ## Setup the map
         projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
         if ('map', 'proj') in self.config:
             proj = self.config['map', 'proj']
@@ -233,12 +234,13 @@ class Picker(QWidget):
         self.map_dropdown = self.dropdown_menu(list(zip(*projs))[1])
         self.map_dropdown.setCurrentIndex(proj_idx)
 
-        self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in times ])
+        # Set up the run dropdown box and select the correct index
+        self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in filt_times ])
         try:
-            self.run_dropdown.setCurrentIndex(times.index(self.run))
+            self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
             print("Run dropdown is missing its times ... ?")
-            print(times)
+            print(filt_times)
 
         ## connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -402,14 +404,14 @@ class Picker(QWidget):
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
-            print(getTimes())
         else:
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
-
+        #print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
+        #print(getTimes())
         # Function to update the times.
         def update(times):
             times = times[0]
-            self.run_dropdown.clear()
+            self.run_dropdown.clear() # Clear all of the items from the dropdown
 
             # Filter out only times for the specified date.
             filtered_times = []
@@ -419,7 +421,7 @@ class Picker(QWidget):
                     filtered_times.append(i)
             
             if len(filtered_times) > 0:
-                filtered_times = np.asarray(filtered_times)            
+                filtered_times = np.sort(np.asarray(filtered_times))            
                 times = times[filtered_times.min(): filtered_times.max()+1]
                 # Pick the index for which to highlight
                 if self.model == "Observed":
@@ -588,7 +590,18 @@ class Picker(QWidget):
             observed = True
             fhours = None
 
+            # Determine if the dataset passed was from a model or is observed
+            if len(prof_collection._dates) > 1:
+                prof_idx = self.prof_idx
+                fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx]
+                observed = False
+            else:
+                fhours = None
+                observed = True
+
             run = prof_collection.getCurrentDate()
+
+
         else:
         ## otherwise, download with the data thread
             logging.debug("Loading a real-time data stream...")
@@ -678,7 +691,7 @@ class Picker(QWidget):
 
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
-
+        print("DECODER:", dec)
         logging.debug('Get the profiles from the decoded file.')
         # Returns the set of profiles from the file that are from the "Profile" class.
         logging.debug('Get the profiles from the decoded file.')

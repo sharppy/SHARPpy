@@ -1756,7 +1756,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     flag = kwargs.get('flag', 5)
     pcl = Parcel(pbot=pbot, ptop=ptop)
     pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
-    print("LIFTING")
     if prof.pres.compressed().shape[0] < 1: return pcl
     
     # Variables
@@ -1880,7 +1879,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     ttraces = ma.zeros(len(iter_ranges))
     ptraces = ma.zeros(len(iter_ranges))
     ttraces[:] = ptraces[:] = ma.masked
-    print("entering lifting")
     for i in iter_ranges:
         if not utils.QC(prof.tmpc[i]): continue
         pe2 = prof.pres[i]
