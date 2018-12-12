@@ -984,7 +984,7 @@ def temp_lvl(prof, temp, wetbulb=False):
     logp = prof.logp[~mask]
 
     # Find where subsequent values of difft are of opposite sign (i.e. when multiplied together, the result is negative)
-    ind = np.where((difft[:-1] * difft[1:]) < 0)[0] + 1
+    ind = np.where((difft[:-1] * difft[1:]) < 0)[0]
     try:
         ind = ind.min()
     except:
