@@ -1302,8 +1302,8 @@ def max_lapse_rate(prof, lower=2000, upper=6000, interval=250, depth=2000):
         upper pressure of max lapse rate (mb) : number
     '''
 
-    bottom_levels = np.arange(lower, upper-depth+interval, interval)
-    top_levels = np.arange(lower+depth, upper+interval, interval)
+    bottom_levels = interp.to_msl(prof, np.arange(lower, upper-depth+interval, interval))
+    top_levels = interp.to_msl(prof, np.arange(lower+depth, upper+interval, interval))
     bottom_pres = interp.pres(prof, bottom_levels)
     top_pres = interp.pres(prof, top_levels)
     all_lapse_rates = (interp.vtmp(prof, top_pres) - interp.vtmp(prof, bottom_pres)) * -1000.
@@ -1728,7 +1728,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         
         Returns
         -------
-        pcl : parcel object
             Parcel Object
         
         '''
