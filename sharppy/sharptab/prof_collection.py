@@ -48,7 +48,17 @@ class ProfCollection(object):
         Subset the profile collection over time.
         idxs:   The time indices to include in the subsetted collection.
         """
-        profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.items() )
+        def extract_profile_indexes(prof):
+            prof_indexed = []
+            for idx in idxs:
+                try:
+                    prof_indexed.append(prof[idx])
+                except IndexError:
+                    pass
+
+            return prof_indexed
+
+        profiles = dict( (mem, extract_profile_indexes(prof)) for mem, prof in self._profs.items() )
         dates = [ self._dates[idx] for idx in idxs ]
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
 
@@ -145,14 +155,17 @@ class ProfCollection(object):
 
         for mem, profs in self._profs.items():
             # Copy the profiles on the fly
-            cur_prof = profs[self._prof_idx]
+            try:
+                cur_prof = profs[self._prof_idx]
+            except IndexError:
+                continue
+            else:
+                if mem == self._highlight and type(cur_prof) != self._target_type:
+                    self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
+                elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
+                    self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
 
-            if mem == self._highlight and type(cur_prof) != self._target_type:
-                self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
-            elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
-                self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
-
-        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.items() ) 
+        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.items() if len(profs) > self._prof_idx ) 
         return profs
 
     def getAnalogDate(self):
@@ -256,14 +269,22 @@ class ProfCollection(object):
         mem_names = sorted(self._profs.keys())
         high_idx = mem_names.index(self._highlight)
         length = len(mem_names)
-        if direction > 0 and high_idx == length - 1:
-            adv_idx = 0
-        elif direction < 0 and high_idx == 0:
-            adv_idx = length - 1
-        else:
-            adv_idx = high_idx + direction
+        
+        def doAdvance(adv_idx):
+            if direction > 0 and adv_idx == length - 1:
+                adv_idx = 0
+            elif direction < 0 and adv_idx == 0:
+                adv_idx = length - 1
+            else:
+                adv_idx = adv_idx + direction
+            return adv_idx
 
-        self._highlight = mem_names[adv_idx]
+        adv_idx = doAdvance(high_idx)
+        highlight = mem_names[adv_idx]
+        while len(self._profs[highlight]) <= self._prof_idx:
+            adv_idx = doAdvance(adv_idx)
+            highlight = mem_names[adv_idx]
+        self._highlight = highlight
 
     def defineUserParcel(self, parcel):
         """

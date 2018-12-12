@@ -10,7 +10,7 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import BytesIO
-from datetime import datetime
+from datetime import datetime, timedelta
 
 __fmtname__ = "spc"
 __classname__ = "SPCDecoder"
@@ -41,7 +41,7 @@ class SPCDecoder(Decoder):
             lat = 35.
             lon = -97.
 
-        if time > datetime.utcnow(): #If the strptime accidently makes the sounding the future:
+        if time > datetime.utcnow() + timedelta(hours=1): 
             # If the strptime accidently makes the sounding in the future (like with SARS archive)
             # i.e. a 1957 sounding becomes 2057 sounding...ensure that it's a part of the 20th century
             time = datetime.strptime('19' + data_header[1][:11], '%Y%m%d/%H%M')

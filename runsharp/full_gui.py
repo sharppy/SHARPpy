@@ -111,6 +111,30 @@ class crasher(object):
             return ret
         return doCrasher
 
+
+class Calendar(QCalendarWidget):
+    def __init__(self, *args, **kwargs):
+        dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(minute=0, second=0, microsecond=0))
+
+        super(Calendar, self).__init__(*args, **kwargs)
+
+        min_date = QDate(1946, 1, 1)
+        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
+
+
+        self.setGridVisible(True)
+        self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
+        self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
+        self.setMinimumDate(min_date)
+        self.setMaximumDate(qdate_avail)
+        self.setSelectedDate(qdate_avail)
+
+        for day in [Qt.Sunday, Qt.Saturday]:
+            txt_fmt = self.weekdayTextFormat(day)
+            txt_fmt.setForeground(QBrush(Qt.black))
+            self.setWeekdayTextFormat(day, txt_fmt)
+
+
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
     run_format = "%d %B %Y / %H%M UTC"
@@ -187,14 +211,10 @@ class Picker(QWidget):
         self.left_data_frame.setLayout(self.left_layout)
  
         self.right_map_frame.setLayout(self.right_layout)
+
         self.all_times = sorted(self.data_sources[self.model].getAvailableTimes(dt=None))
-        self.cal = QCalendarWidget(self)
-        self.cal.setGridVisible(True)
-        self.cal.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
-        self.cal.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.cal.setMaximumDate(QDate(self.all_times[-1].year,self.all_times[-1].month,self.all_times[-1].day))
-        self.cal.setSelectedDate(QDate(self.all_times[-1].year,self.all_times[-1].month,self.all_times[-1].day))
-        self.cal.setMinimumDate(QDate(1946,1,1))
+
+        self.cal = Calendar(self, dt_avail=self.all_times[-1])
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = [ t for t in self.all_times  if t.day == self.cal_date.day() and t.year == self.cal_date.year() and t.month == self.cal_date.month()]
@@ -423,7 +443,6 @@ class Picker(QWidget):
         self.async_id = self.async_obj.post(getTimes, update)
 
     def map_link(self, point):
-        logging.debug("Calling full_gui.map_link")
         """
         Change the text of the button based on the user click.
         """
@@ -455,8 +474,6 @@ class Picker(QWidget):
 
     @crasher(exit=False)
     def complete_name(self):
-        logging.debug("Calling full_gui.complete_name")
-
         """
         Handles what happens when the user clicks a point on the map
         """
@@ -494,8 +511,6 @@ class Picker(QWidget):
                         break
 
     def get_model(self, index):
-        logging.debug("Calling full_gui.get_model")
-
         """
         Get the user's model selection
         """
