@@ -3,31 +3,36 @@
 Interpreting the GUI
 ========================
 
-`Blumberg et al. 2017 <http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1>`_ provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.
+Our `BAMS article <http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1>`_ on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation provides an overview of the SHARPpy GUI features.
 
 Additional resources for interpreting the GUI include the `SPC Sounding Analysis Help <http://www.spc.noaa.gov/exper/soundings/help/>`_ and `Explanation of SPC Severe Weather Parameters <http://www.spc.noaa.gov/sfctest/help/sfcoa.html>`_ webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.
 
 Skew-T
 ------
 
-Various profiles are displayed in the Skew-T:
+Various sounding variables are displayed in the Skew-T, which is a central panel of the GUI:
 
     * Solid red – temperature profile
     * Solid green – dewpoint profile
     * Dashed red – virtual temperature profile.
     * Cyan – wetbulb temperature profile
-    * Dashed white – parcel trace (e.g., MU, SFC, ML) (the parcel trace of the parcel highlighted in yellow in the Thermodynamic Inset (I).
+    * Dashed white – parcel trace (e.g., MU, SFC, ML) (the parcel trace of the parcel highlighted in yellow in the Thermodynamic Inset.)
     * Dashed purple – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).
-    * Winds are in knots (unless switched i the preferences) and are interpolated to 50-mb intervals for visibility purposes.
-    * If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. Blue bars indicate sinking motion, red bars rising motion. Dashed purple lines indicate the bounds of synopic scale vertical motion.
+    * Winds barbs are plotted in knots (unless switched to m/s in the preferences) and are interpolated to 50-mb intervals for visibility purposes.
+    * If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. Blue bars indicate sinking motion, red bars rising motion. Dashed purple lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.
 
-Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and purple, respectively.
+.. note::
+    When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are "convectively contaminiated".  This means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.
 
-.. image:: tutorial_imgs/effective_inflow.png
-    :scale: 30%
+Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and purple, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The cyan and purple I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in `Thompson et al. 2007 <https://www.spc.noaa.gov/publications/thompson/effective.pdf>`_.
+
+
+.. figure:: tutorial_imgs/effective_inflow.png
+    :scale: 50%
     :align: center
 
-Information about the effective inflow layer may be found in `Thompson et al. 2007 <https://www.spc.noaa.gov/publications/thompson/effective.pdf>`_.
+    An example of the Skew-T inset showing a model forecast sounding for May 31, 2013 at 18 UTC.  The 2-6 km max lapse rate layer clearly denotes the elevated mixed layer, while the omega profile indicates that rising motion is occuring within the lowest 6 km of the sounding in the forecast.
+
 
 Wind Speed Profile
 ------------------

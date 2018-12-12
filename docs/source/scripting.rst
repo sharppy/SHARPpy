@@ -5,19 +5,20 @@ Scripting
 
 This tutorial is meant to teach the user how to directly interact with the SHARPpy libraries using the Python interpreter. This tutorial will cover reading in files into the the Profile object, plotting the data using Matplotlib, and computing various indices from the data. It is also a reference to the different functions and variables SHARPpy has available to the user.
 
-In order to work with SHARPpy, you need to perform 3 steps before you
-can begin running routines such as CAPE/CIN on the data.
+3 Steps to Scripting
+^^^^^^^^^^^^^^^^^^^^
+
+For those wishing to run SHARPpy routines using Python scripts, you often will need to perform 3 steps before you can begin running routines.  These three steps read in the data, load in the SHARPpy modules, and convert the data into SHARPpy Profile objects.
 
 1.) Read in the data.
-~~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
-1.) The Pilger, NE tornado proximity sounding from 19 UTC within the
-tutorial/ directory is an example of the SPC sounding file format that
-can be read in by the GUI. Here we'll read it in manually.
+For this example, the Pilger, NE tornado proximity sounding from 19 UTC within the tutorial/ directory is an example of the SPC sounding file format that can be read in by the GUI. Here we'll read it in manually.
 
 If you want to read in your own data using this function, write a script
 to mimic the data format shown in the 14061619.OAX file found in this
-directory. Missing values must be -9999.
+directory. Missing values must be -9999.  We'll have to also load in Matplotlib for this example (which comes default with Anaconda)
+to plot some of the data.
 
 .. code:: python
 
@@ -25,7 +26,7 @@ directory. Missing values must be -9999.
     spc_file = open('14061619.OAX', 'r').read()
 
 2.) Load in the SHARPpy modules.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 All of the SHARPpy routines (parcel lifting, composite indices, etc.)
 reside within the SHARPTAB module.
@@ -57,9 +58,10 @@ Below is the code to load in these modules:
     import sharppy.sharptab.params as params
     import sharppy.sharptab.thermo as thermo
 
+To learn more about the functions available in SHARPTAB, access the API here: :ref:`modindex`
 
-3.) Making a Profile object.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3.) Make a Profile object.
+--------------------------
 
 Before running any analysis routines on the data, we have to create a
 Profile object first. A Profile object describes the vertical
@@ -160,7 +162,7 @@ data being read in by the Profile object framework.
 .. code:: python
 
     for i in range(len(prof.hght)):
-        print prof.pres[i], prof.hght[i], prof.tmpc[i], prof.dwpc[i], prof.wdir[i], prof.wdir[i]
+        print(prof.pres[i], prof.hght[i], prof.tmpc[i], prof.dwpc[i], prof.wdir[i], prof.wdir[i])
 
 
 .. parsed-literal::
@@ -317,12 +319,11 @@ data being read in by the Profile object framework.
     7.81 33223.0 -31.9 -71.9 90.0 90.0
     7.8 33234.86 -31.9 -71.9 -- --
 
-Once you have a Profile object, you can begin running analysis routines
-and plotting the data. The following sections show different examples of
-how to do this.
-
 Plotting the data
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
+
+Data can be plotted by accessing the attributes of the Profile object.  Below is an example of
+Python code plotting the temperature and dewpoint profiles with height:
 
 .. code:: python
 
@@ -350,11 +351,11 @@ AGL from MSL:
 .. code:: python
 
     msl_hght = prof.hght[prof.sfc] # Grab the surface height value
-    print "SURFACE HEIGHT (m MSL):",msl_hght
+    print("SURFACE HEIGHT (m MSL):",msl_hght)
     agl_hght = interp.to_agl(prof, msl_hght) # Converts to AGL
-    print "SURFACE HEIGHT (m AGL):", agl_hght
+    print("SURFACE HEIGHT (m AGL):", agl_hght)
     msl_hght = interp.to_msl(prof, agl_hght) # Converts to MSL
-    print "SURFACE HEIGHT (m MSL):",msl_hght
+    print("SURFACE HEIGHT (m MSL):",msl_hght)
 
 
 .. parsed-literal::
@@ -365,7 +366,7 @@ AGL from MSL:
 
 
 Showing derived profiles
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, Profile objects also create derived profiles such as Theta-E
 and Wet-Bulb when they are constructed. These profiles are accessible to
@@ -385,9 +386,8 @@ the user too.
 
 .. image:: SHARPpy_basics_files/SHARPpy_basics_26_0.png
 
-
-Lifting Parcels
-~~~~~~~~~~~~~~~~
+Lifting parcels
+^^^^^^^^^^^^^^^
 
 In SHARPpy, parcels are lifted via the params.parcelx() routine. The
 parcelx() routine takes in the arguments of a Profile object and a flag
@@ -414,12 +414,12 @@ height, EL height, etc.  We will do this for the Most Unstable parcel ``mupcl``.
 
 .. code:: python
 
-    print "Most-Unstable CAPE:", mupcl.bplus # J/kg
-    print "Most-Unstable CIN:", mupcl.bminus # J/kg
-    print "Most-Unstable LCL:", mupcl.lclhght # meters AGL
-    print "Most-Unstable LFC:", mupcl.lfchght # meters AGL
-    print "Most-Unstable EL:", mupcl.elhght # meters AGL
-    print "Most-Unstable LI:", mupcl.li5 # C
+    print("Most-Unstable CAPE:", mupcl.bplus) # J/kg
+    print("Most-Unstable CIN:", mupcl.bminus) # J/kg
+    print("Most-Unstable LCL:", mupcl.lclhght) # meters AGL
+    print("Most-Unstable LFC:", mupcl.lfchght) # meters AGL
+    print("Most-Unstable EL:", mupcl.elhght) # meters AGL
+    print("Most-Unstable LI:", mupcl.li5) # C
 
 This code outputs the following text:
 
@@ -434,7 +434,7 @@ This code outputs the following text:
 
 
 Other Parcel Object Attributes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The six indices listed above are not the only ones calculated by
 parcelx(). Other indices can be calculated and accessed too:
@@ -488,172 +488,141 @@ parcel object (pcl):
     pcl.bmin - Buoyancy minimum in profile (C)
     pcl.bminpres - Buoyancy minimum pressure (mb)
 
-Adding a Parcel Trace and plotting Moist and Dry Adiabats
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calculating kinematic indicies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+SHARPpy also allows the user to compute kinematic variables such as
+shear, mean-winds, and storm relative helicity. SHARPpy will also
+compute storm motion vectors based off of the work by Stephen Corfidi
+and Matthew Bunkers. Below is some example code to compute the
+following:
+
+1. 0-3 km Pressure-Weighted Mean Wind
+2. 0-6 km Shear (kts)
+3. Bunker's Storm Motion (right-mover) (Bunkers et al. 2014 version)
+4. Bunker's Storm Motion (left-mover) (Bunkers et al. 2014 version)
+5. 0-3 km Storm Relative Helicity
+
+.. code:: python
+
+    # Find the pressure values that correspond to the surface, 1 km, 3 km and 6 km levels.
+    sfc = prof.pres[prof.sfc]
+    p3km = interp.pres(prof, interp.to_msl(prof, 3000.))
+    p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
+    p1km = interp.pres(prof, interp.to_msl(prof, 1000.))
+    
+    # Calculate the 0-3 km pressure-weighted mean wind
+    mean_3km = winds.mean_wind(prof, pbot=sfc, ptop=p3km)
+    print("0-3 km Pressure-Weighted Mean Wind (kt):", utils.comp2vec(mean_3km[0], mean_3km[1])[1])
+    
+    # Calculate the 0-1, 0-3, and 0-6 km wind shear
+    sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p6km)
+    sfc_3km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p3km)
+    sfc_1km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p1km)
+    print("0-6 km Shear (kt):", utils.comp2vec(sfc_6km_shear[0], sfc_6km_shear[1])[1])
+    
+    # Calculate the Bunkers Storm Motion Left and Right mover vectors (these are returned in u,v space
+    # so let's transform them into wind speed and direction space.)
+    srwind = params.bunkers_storm_motion(prof)
+    print("Bunker's Storm Motion (right-mover) [deg,kts]:", utils.comp2vec(srwind[0], srwind[1]))
+    print("Bunker's Storm Motion (left-mover) [deg,kts]:", utils.comp2vec(srwind[2], srwind[3]))
+    
+    # Calculate the storm-relative helicity using the right-movers 
+    srh3km = winds.helicity(prof, 0, 3000., stu = srwind[0], stv = srwind[1])
+    srh1km = winds.helicity(prof, 0, 1000., stu = srwind[0], stv = srwind[1])
+    print("0-3 km Storm Relative Helicity [m2/s2]:",srh3km[0])
+
+This code outputs the following text:
+
+.. parsed-literal::
+
+    0-3 km Pressure-Weighted Mean Wind (kt): 41.1397595603
+    0-6 km Shear (kt): 55.9608928026
+    Bunker's Storm Motion (right-mover) [deg,kts]: (masked_array(data = 225.652934838,
+                 mask = False,
+           fill_value = -9999.0)
+    , 27.240749559186799)
+    Bunker's Storm Motion (left-mover) [deg,kts]: (masked_array(data = 204.774711769,
+                 mask = False,
+           fill_value = -9999.0)
+    , 52.946150880598658)
+    0-3 km Storm Relative Helicity [m2/s2]: 584.016767705
+
+
+Calculating other indices
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The effective inflow layer is occasionally used to derive other variables that 
+may be used to explain a storm's behavior.  Here are a few examples of
+how to compute variables that require the effective inflow layer in
+order to calculate them:
+
+.. code:: python
+
+    # Let's calculate the effective inflow layer and print out the heights of the top
+    # and bottom of the layer.  We'll have to convert it from m MSL to m AGL.
+    eff_inflow = params.effective_inflow_layer(prof)
+    ebot_hght = interp.to_agl(prof, interp.hght(prof, eff_inflow[0]))
+    etop_hght = interp.to_agl(prof, interp.hght(prof, eff_inflow[1]))
+    print("Effective Inflow Layer Bottom Height (m AGL):", ebot_hght)
+    print("Effective Inflow Layer Top Height (m AGL):", etop_hght)
+    
+    # Like before, we can calculate the storm-relative helicity, but let's do it for the effective inflow layer.
+    effective_srh = winds.helicity(prof, ebot_hght, etop_hght, stu = srwind[0], stv = srwind[1])
+    print("Effective Inflow Layer SRH (m2/s2):", effective_srh[0])
+    
+    # We can also calculate the Effective Bulk Wind Difference using the wind shear calculation and the inflow layer.
+    ebwd = winds.wind_shear(prof, pbot=eff_inflow[0], ptop=eff_inflow[1])
+    ebwspd = utils.mag( ebwd[0], ebwd[1] )
+    print("Effective Bulk Wind Difference:", ebwspd)
+    
+    # Composite indices (e.g. STP, SCP, SHIP) can be calculated after determining the effective inflow layer.
+    scp = params.scp(mupcl.bplus, effective_srh[0], ebwspd)
+    stp_cin = params.stp_cin(mlpcl.bplus, effective_srh[0], ebwspd, mlpcl.lclhght, mlpcl.bminus)
+    stp_fixed = params.stp_fixed(sfcpcl.bplus, sfcpcl.lclhght, srh1km[0], utils.comp2vec(sfc_6km_shear[0], sfc_6km_shear[1])[1])
+    ship = params.ship(prof)
+    print("Supercell Composite Parameter:", scp)
+    print("Significant Tornado Parameter (w/CIN):", stp_cin)
+    print("Significant Tornado Parameter (fixed):", stp_fixed)
+    print("Significant Hail Parameter:", ship)
+
+This code then will output this text:
+
+.. parsed-literal::
+
+    Effective Inflow Layer Bottom Height (m AGL): 0.0
+    Effective Inflow Layer Top Height (m AGL): 2117.98
+    Effective Inflow Layer SRH (m2/s2): 527.913472562
+    Effective Bulk Wind Difference: 43.3474336034
+    Supercell Composite Parameter: 60.9130368589
+    Significant Tornado Parameter (w/CIN): 13.8733427141
+    Significant Tornado Parameter (fixed): 13.6576402964
+
+
+
+Plotting a Skew-T using Matplotlib
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now, let's try to plot the data on a Skew-T. You may want to do this if
 you're looking to create a plot for use in a publication.
 
 First, we need to tell Matplotlib (the Python plotting package) that
-we'd like a Skew-T style plot. The code in the following cell allow us
-to do this. This code was lifted from:
+we'd like a Skew-T style plot. This can be done by using the code found at:
 http://matplotlib.org/examples/api/skewt.html
 
-.. code:: python
-
-    # This serves as an intensive exercise of matplotlib's transforms
-    # and custom projection API. This example produces a so-called
-    # SkewT-logP diagram, which is a common plot in meteorology for
-    # displaying vertical profiles of temperature. As far as matplotlib is
-    # concerned, the complexity comes from having X and Y axes that are
-    # not orthogonal. This is handled by including a skew component to the
-    # basic Axes transforms. Additional complexity comes in handling the
-    # fact that the upper and lower X-axes have different data ranges, which
-    # necessitates a bunch of custom classes for ticks,spines, and the axis
-    # to handle this.
-    
-    from matplotlib.axes import Axes
-    import matplotlib.transforms as transforms
-    import matplotlib.axis as maxis
-    import matplotlib.spines as mspines
-    import matplotlib.path as mpath
-    from matplotlib.projections import register_projection
-    
-    # The sole purpose of this class is to look at the upper, lower, or total
-    # interval as appropriate and see what parts of the tick to draw, if any.
-    class SkewXTick(maxis.XTick):
-        def draw(self, renderer):
-            if not self.get_visible(): return
-            renderer.open_group(self.__name__)
-    
-            lower_interval = self.axes.xaxis.lower_interval
-            upper_interval = self.axes.xaxis.upper_interval
-    
-            if self.gridOn and transforms.interval_contains(
-                    self.axes.xaxis.get_view_interval(), self.get_loc()):
-                self.gridline.draw(renderer)
-    
-            if transforms.interval_contains(lower_interval, self.get_loc()):
-                if self.tick1On:
-                    self.tick1line.draw(renderer)
-                if self.label1On:
-                    self.label1.draw(renderer)
-    
-            if transforms.interval_contains(upper_interval, self.get_loc()):
-                if self.tick2On:
-                    self.tick2line.draw(renderer)
-                if self.label2On:
-                    self.label2.draw(renderer)
-    
-            renderer.close_group(self.__name__)
-    
-    
-    # This class exists to provide two separate sets of intervals to the tick,
-    # as well as create instances of the custom tick
-    class SkewXAxis(maxis.XAxis):
-        def __init__(self, *args, **kwargs):
-            maxis.XAxis.__init__(self, *args, **kwargs)
-            self.upper_interval = 0.0, 1.0
-    
-        def _get_tick(self, major):
-            return SkewXTick(self.axes, 0, '', major=major)
-    
-        @property
-        def lower_interval(self):
-            return self.axes.viewLim.intervalx
-    
-        def get_view_interval(self):
-            return self.upper_interval[0], self.axes.viewLim.intervalx[1]
-    
-    
-    # This class exists to calculate the separate data range of the
-    # upper X-axis and draw the spine there. It also provides this range
-    # to the X-axis artist for ticking and gridlines
-    class SkewSpine(mspines.Spine):
-        def _adjust_location(self):
-            trans = self.axes.transDataToAxes.inverted()
-            if self.spine_type == 'top':
-                yloc = 1.0
-            else:
-                yloc = 0.0
-            left = trans.transform_point((0.0, yloc))[0]
-            right = trans.transform_point((1.0, yloc))[0]
-    
-            pts  = self._path.vertices
-            pts[0, 0] = left
-            pts[1, 0] = right
-            self.axis.upper_interval = (left, right)
-    
-    
-    # This class handles registration of the skew-xaxes as a projection as well
-    # as setting up the appropriate transformations. It also overrides standard
-    # spines and axes instances as appropriate.
-    class SkewXAxes(Axes):
-        # The projection must specify a name.  This will be used be the
-        # user to select the projection, i.e. ``subplot(111,
-        # projection='skewx')``.
-        name = 'skewx'
-    
-        def _init_axis(self):
-            #Taken from Axes and modified to use our modified X-axis
-            self.xaxis = SkewXAxis(self)
-            self.spines['top'].register_axis(self.xaxis)
-            self.spines['bottom'].register_axis(self.xaxis)
-            self.yaxis = maxis.YAxis(self)
-            self.spines['left'].register_axis(self.yaxis)
-            self.spines['right'].register_axis(self.yaxis)
-    
-        def _gen_axes_spines(self):
-            spines = {'top':SkewSpine.linear_spine(self, 'top'),
-                      'bottom':mspines.Spine.linear_spine(self, 'bottom'),
-                      'left':mspines.Spine.linear_spine(self, 'left'),
-                      'right':mspines.Spine.linear_spine(self, 'right')}
-            return spines
-    
-        def _set_lim_and_transforms(self):
-            """
-            This is called once when the plot is created to set up all the
-            transforms for the data, text and grids.
-            """
-            rot = 30
-    
-            #Get the standard transform setup from the Axes base class
-            Axes._set_lim_and_transforms(self)
-    
-            # Need to put the skew in the middle, after the scale and limits,
-            # but before the transAxes. This way, the skew is done in Axes
-            # coordinates thus performing the transform around the proper origin
-            # We keep the pre-transAxes transform around for other users, like the
-            # spines for finding bounds
-            self.transDataToAxes = self.transScale + (self.transLimits +
-                    transforms.Affine2D().skew_deg(rot, 0))
-    
-            # Create the full transform from Data to Pixels
-            self.transData = self.transDataToAxes + self.transAxes
-    
-            # Blended transforms like this need to have the skewing applied using
-            # both axes, in axes coords like before.
-            self._xaxis_transform = (transforms.blended_transform_factory(
-                        self.transScale + self.transLimits,
-                        transforms.IdentityTransform()) +
-                    transforms.Affine2D().skew_deg(rot, 0)) + self.transAxes
-            
-    # Now register the projection with matplotlib so the user can select it.
-    register_projection(SkewXAxes)
-
 Now that Matplotlib knows about the Skew-T style plot, let's plot the
-OAX sounding data on the Skew-T along with the Most-Unstable parcel
+OAX sounding data on a Skew-T and show the Most-Unstable parcel
 trace. Let's also include dry adiabats and moist adiabats for the user.
 
 .. code:: python
-
-    # Select the Most-Unstable parcel (this can be changed)
-    pcl = mupcl
-    
+ 
     # Create a new figure. The dimensions here give a good aspect ratio
     fig = plt.figure(figsize=(6.5875, 6.2125))
     ax = fig.add_subplot(111, projection='skewx')
     ax.grid(True)
+ 
+    # Select the Most-Unstable parcel (this can be changed)
+    pcl = mupcl
     
     # Let's set the y-axis bounds of the plot.
     pmax = 1000
@@ -704,125 +673,14 @@ trace. Let's also include dry adiabats and moist adiabats for the user.
     # Show the plot to the user.
     # plt.savefig('skewt.png', bbox_inches='tight') # saves the plot to the disk.
     plt.show()
-        
-
-
 
 .. image:: SHARPpy_basics_files/SHARPpy_basics_39_0.png
 
+This is a very simple plot.  Within the `tutorials/` directory is a more complex script that can be used to 
+plot the sounding data, a hodograph inset, and various indices on the plot. This script is called `plot_sounding.py`
+and may be called from the command line by saying: ``python plot_sounding.py <filename>``.  It will plot using
+sounding files similar to the one used in this example.  The figure created by this script is shown below:
 
-Calculating Kinematic Variables
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: tutorial_imgs/script_out.png
 
-SHARPpy also allows the user to compute kinematic variables such as
-shear, mean-winds, and storm relative helicity. SHARPpy will also
-compute storm motion vectors based off of the work by Stephen Corfidi
-and Matthew Bunkers. Below is some example code to compute the
-following:
-
-1. 0-3 km Pressure-Weighted Mean Wind
-2. 0-6 km Shear (kts)
-3. Bunker's Storm Motion (right-mover) (Bunkers et al. 2014 version)
-4. Bunker's Storm Motion (left-mover) (Bunkers et al. 2014 version)
-5. 0-3 km Storm Relative Helicity
-
-.. code:: python
-
-    # Find the pressure values that correspond to the surface, 1 km, 3 km and 6 km levels.
-    sfc = prof.pres[prof.sfc]
-    p3km = interp.pres(prof, interp.to_msl(prof, 3000.))
-    p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
-    p1km = interp.pres(prof, interp.to_msl(prof, 1000.))
-    
-    # Calculate the 0-3 km pressure-weighted mean wind
-    mean_3km = winds.mean_wind(prof, pbot=sfc, ptop=p3km)
-    print "0-3 km Pressure-Weighted Mean Wind (kt):", utils.comp2vec(mean_3km[0], mean_3km[1])[1]
-    
-    # Calculate the 0-1, 0-3, and 0-6 km wind shear
-    sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p6km)
-    sfc_3km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p3km)
-    sfc_1km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p1km)
-    print "0-6 km Shear (kt):", utils.comp2vec(sfc_6km_shear[0], sfc_6km_shear[1])[1]
-    
-    # Calculate the Bunkers Storm Motion Left and Right mover vectors (these are returned in u,v space
-    # so let's transform them into wind speed and direction space.)
-    srwind = params.bunkers_storm_motion(prof)
-    print "Bunker's Storm Motion (right-mover) [deg,kts]:", utils.comp2vec(srwind[0], srwind[1])
-    print "Bunker's Storm Motion (left-mover) [deg,kts]:", utils.comp2vec(srwind[2], srwind[3])
-    
-    # Calculate the storm-relative helicity using the right-movers 
-    srh3km = winds.helicity(prof, 0, 3000., stu = srwind[0], stv = srwind[1])
-    srh1km = winds.helicity(prof, 0, 1000., stu = srwind[0], stv = srwind[1])
-    print "0-3 km Storm Relative Helicity [m2/s2]:",srh3km[0]
-
-This code outputs the following text:
-
-.. parsed-literal::
-
-    0-3 km Pressure-Weighted Mean Wind (kt): 41.1397595603
-    0-6 km Shear (kt): 55.9608928026
-    Bunker's Storm Motion (right-mover) [deg,kts]: (masked_array(data = 225.652934838,
-                 mask = False,
-           fill_value = -9999.0)
-    , 27.240749559186799)
-    Bunker's Storm Motion (left-mover) [deg,kts]: (masked_array(data = 204.774711769,
-                 mask = False,
-           fill_value = -9999.0)
-    , 52.946150880598658)
-    0-3 km Storm Relative Helicity [m2/s2]: 584.016767705
-
-
-Calculating variables based off of the effective inflow layer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The effective inflow layer concept is used to obtain the layer of
-buoyant parcels that feed a storm's inflow. Here are a few examples of
-how to compute variables that require the effective inflow layer in
-order to calculate them:
-
-.. code:: python
-
-    # Let's calculate the effective inflow layer and print out the heights of the top
-    # and bottom of the layer.  We'll have to convert it from m MSL to m AGL.
-    eff_inflow = params.effective_inflow_layer(prof)
-    ebot_hght = interp.to_agl(prof, interp.hght(prof, eff_inflow[0]))
-    etop_hght = interp.to_agl(prof, interp.hght(prof, eff_inflow[1]))
-    print "Effective Inflow Layer Bottom Height (m AGL):", ebot_hght
-    print "Effective Inflow Layer Top Height (m AGL):", etop_hght
-    
-    # Like before, we can calculate the storm-relative helicity, but let's do it for the effective inflow layer.
-    effective_srh = winds.helicity(prof, ebot_hght, etop_hght, stu = srwind[0], stv = srwind[1])
-    print "Effective Inflow Layer SRH (m2/s2):", effective_srh[0]
-    
-    # We can also calculate the Effective Bulk Wind Difference using the wind shear calculation and the inflow layer.
-    ebwd = winds.wind_shear(prof, pbot=eff_inflow[0], ptop=eff_inflow[1])
-    ebwspd = utils.mag( ebwd[0], ebwd[1] )
-    print "Effective Bulk Wind Difference:", ebwspd
-    
-    # Composite indices (e.g. STP, SCP, SHIP) can be calculated after determining the effective inflow layer.
-    scp = params.scp(mupcl.bplus, effective_srh[0], ebwspd)
-    stp_cin = params.stp_cin(mlpcl.bplus, effective_srh[0], ebwspd, mlpcl.lclhght, mlpcl.bminus)
-    stp_fixed = params.stp_fixed(sfcpcl.bplus, sfcpcl.lclhght, srh1km[0], utils.comp2vec(sfc_6km_shear[0], sfc_6km_shear[1])[1])
-    ship = params.ship(prof)
-    print "Supercell Composite Parameter:", scp
-    print "Significant Tornado Parameter (w/CIN):", stp_cin
-    print "Significant Tornado Parameter (fixed):", stp_fixed
-    print "Significant Hail Parameter:", ship
-
-This code then will output this text:
-
-.. parsed-literal::
-
-    Effective Inflow Layer Bottom Height (m AGL): 0.0
-    Effective Inflow Layer Top Height (m AGL): 2117.98
-    Effective Inflow Layer SRH (m2/s2): 527.913472562
-    Effective Bulk Wind Difference: 43.3474336034
-    Supercell Composite Parameter: 60.9130368589
-    Significant Tornado Parameter (w/CIN): 13.8733427141
-    Significant Tornado Parameter (fixed): 13.6576402964
-
-List of functions in each module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This tutorial cannot cover all of the functions in SHARPpy.  To learn more about the functions available in SHARPTAB, access the API here: :ref:`modindex`
 

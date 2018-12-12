@@ -69,6 +69,10 @@ Double clicking on this inset will allow you to swap out these parcels for two o
 1. Effective Inflow Layer Mean Parcel
 2. User Defined Parcel
 
+.. figure:: tutorial_imgs/selecting_parcels.png
+    :scale: 30%
+    :align: center
+
 The current parcel shown in the Skew-T is highlighted by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the "User Parcel".  Then, right click on the Skew-T and select the "Readout Cursor".  Once you find the location in your profile you wish to lift, right click again and look under the "Lift Parcel" menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.
 
 Saving the Data

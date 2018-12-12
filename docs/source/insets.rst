@@ -40,11 +40,10 @@ Sounding Analog Retrieval System (SARS)
 
     Sounding Analogue Retrieval System to compare soundings with previous severe weather environments.
 
-Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see `Jewell et al. <http://www.spc.noaa.gov/publications/jewell/sars.pdf>`_.  Atempts to match the current sounding to past proximity soundings from tornado and hail events using sounding parameters. “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2. The algorithm is calibrated to maximize probability of detection.
+Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see `Jewell et al. <http://www.spc.noaa.gov/publications/jewell/sars.pdf>`_).  Atempts to match the current sounding to past proximity soundings from tornado and hail events using sounding parameters. “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2. The algorithm is calibrated to maximize probability of detection.
 
 Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude
 
-* SSS is the 3-lejer site idenSfier.
 * Supercells may have no tornado (NON), a weak tornado (WEAK) or a significant tornado (EF2+) (SIG).
 * Hail size is indicated in the strict matches.
 
@@ -59,7 +58,7 @@ Sig-Tor Stats
 
     STP Ingredients and EF Probabilties for diagnosing tornadic environment ingredients.
 
-Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see `Thompson et al. 2012, WAF <http://www.spc.noaa.gov/publications/thompson/waf-env.pdf>`_.  Distributon of STP (effectve-layer) with tornado intensity for right-moving supercells. Whiskers indicate 10th-90th percentile values, while the box indicates the interquartile range and the median. Colored horizontal line indicates the value of STPE.
+Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see `Thompson et al. 2012, WAF <http://www.spc.noaa.gov/publications/thompson/waf-env.pdf>`_).  Distributon of STP (effectve-layer) with tornado intensity for right-moving supercells. Whiskers indicate 10th-90th percentile values, while the box indicates the interquartile range and the median. Colored horizontal line indicates the value of STPE.
 
 The smaller inset embedded within this one indicates the relative frequency of EF2+ tornado damage with right moving supercells for STPE and its individual components (e.g., MLLCL, MLCAPE, EBWD, ESRH). Frequency values change color (similar to the Thermodynamic inset) as the probability increases.
 
@@ -112,7 +111,7 @@ EF Scale Probablities (STP)
 
     Conditional probability of meetingng or exceeding a given EF scale rating for max STP (effective-layer w/ CIN) within 80 km of a tornado (all convective mode events).
 
-Conditional probablities for different tornado strengths based on STPC (see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_.) Applies only if a tornado is present.
+Conditional probablities for different tornado strengths based on STPC (see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_). Applies only if a tornado is present.
 
 EF Scale Probablities (VROT)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -124,5 +123,5 @@ EF Scale Probablities (VROT)
 
     Conditional WSR-88D 0.5 Deg. Azimuthal Shear Tornado Intensity Probabilities
 
-Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_.)  The inset assesses the conditional probability of maximum tornado EF scale by combining information on the near-storm environment, the convective mode, and the 0.5 ̊ peak VROT (from WSR-88D).
+Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see `Smith et al. 2015, WAF <http://www.spc.noaa.gov/publications/smith/vrot-env.pdf>`_).  The inset assesses the conditional probability of maximum tornado EF scale by combining information on the near-storm environment, the convective mode, and the 0.5 ̊ peak VROT (from WSR-88D).
 
