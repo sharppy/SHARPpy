@@ -154,6 +154,9 @@ the one found here:
 
 https://github.com/tsupinie/SoundingFilter
 
+Viewing the data
+^^^^^^^^^^^^^^^^^
+
 To view the data inside the profile object, we'll make a for loop to loop over all of the data within
 the Profile object and print the data out for each line. Missing values
 will be denoted by "--" instead of -9999. This is a consquence of the
@@ -319,10 +322,8 @@ data being read in by the Profile object framework.
     7.81 33223.0 -31.9 -71.9 90.0 90.0
     7.8 33234.86 -31.9 -71.9 -- --
 
-Plotting the data
-^^^^^^^^^^^^^^^^^
 
-Data can be plotted by accessing the attributes of the Profile object.  Below is an example of
+Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
 Python code plotting the temperature and dewpoint profiles with height:
 
 .. code:: python
