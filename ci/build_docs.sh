@@ -5,6 +5,12 @@ set -e
 
 cd "$TRAVIS_BUILD_DIR"
 
+if [[ "$BUILD_DOCS" == "YES" ]]; then 
+    conda install -q sphinx sphinx-gallery;
+else
+    exit 0
+fi
+
 echo "Building Docs"
 cd docs
 make html

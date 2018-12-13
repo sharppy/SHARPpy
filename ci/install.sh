@@ -21,13 +21,8 @@ hash -r
 conda config --set always_yes yes --set changeps1 no
 conda update -q conda
 conda info -a
-conda create -q -n test-environment python=$PYTHON_VERSION numpy nose
+conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pyside pyinstaller
 source activate test-environment
-conda install -c conda-forge pyside
-conda install -c conda-forge pyinstaller
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app; fi
-
-# For deployment of documentation
-if [[ "$BUILD_DOCS" == "YES" ]]; then conda install sphinx; fi
