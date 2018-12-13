@@ -15,16 +15,17 @@ BibTeX entry
 ************
 
 Example BibTeX entry::
-      
+
     @article{sharppy,
-    author = {Blumberg, William Gregory and Halbert, Kelton T. and Supinie, T. A., and Marsh, P. T. and Thompson, Rich and Hart, John },
-    organization = {SHARPpy},
-    title = {SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences},
-    year = {2017},
-    pages = {},
-    journal = {Bull. Amer. Meteor. Soc.},
-    doi = {10.1175/BAMS-D-15-00309.1},
-    url = {https://github.com/sharppy/SHARPpy},
+      title={SHARPpy: An open-source sounding analysis toolkit for the atmospheric sciences},
+      author={Blumberg, William G and Halbert, Kelton T and Supinie, Timothy A and Marsh, Patrick T and Thompson, Richard L and Hart, John A},
+      journal={Bulletin of the American Meteorological Society},
+      volume={98},
+      number={8},
+      pages={1625--1636},
+      year={2017}
+      doi={10.1175/BAMS-D-15-00309.1},
+      url={https://github.com/sharppy/SHARPpy},
     }
 
 
