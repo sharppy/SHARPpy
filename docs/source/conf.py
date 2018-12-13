@@ -40,9 +40,17 @@ release = '1.4'
 # ones.
 extensions = ['sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
-              'sphinx.ext.autodoc']
+              'sphinx.ext.autodoc',
+              'sphinx_gallery.gen_gallery']
 
-autodoc_mock_imports = ["numpy", "PySide"]
+sphinx_gallery_conf = {
+     # path to your examples scripts
+     'examples_dirs': '../../examples',
+     # path where to save gallery generated examples
+     'gallery_dirs': 'auto_examples',
+}
+
+#autodoc_mock_imports = ["numpy", "PySide"]
 
 napoleon_google_docstring = False
 napolean_numpy_docstring = True

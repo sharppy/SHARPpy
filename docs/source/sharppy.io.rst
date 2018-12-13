@@ -4,6 +4,8 @@ sharppy.io package
 Submodules
 ----------
 
+Input/Output routines to read and write various datasets.
+
 sharppy.io.arw\_decoder module
 ------------------------------
 

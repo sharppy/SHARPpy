@@ -326,6 +326,8 @@ data being read in by the Profile object framework.
 Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
 Python code plotting the temperature and dewpoint profiles with height:
 
+.. literalinclude:: auto_examples/plot_test.py
+
 .. code:: python
 
     import matplotlib.pyplot as plt
@@ -676,12 +678,4 @@ trace. Let's also include dry adiabats and moist adiabats for the user.
     plt.show()
 
 .. image:: SHARPpy_basics_files/SHARPpy_basics_39_0.png
-
-This is a very simple plot.  Within the `tutorials/` directory is a more complex script that can be used to 
-plot the sounding data, a hodograph inset, and various indices on the plot. This script is called `plot_sounding.py`
-and may be called from the command line by saying: ``python plot_sounding.py <filename>``.  It will plot using
-sounding files similar to the one used in this example.  The figure created by this script is shown below:
-
-.. image:: tutorial_imgs/script_out.png
-
 
