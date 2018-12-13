@@ -6,7 +6,7 @@ set -e
 cd "$TRAVIS_BUILD_DIR"
 
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
-    conda install -q sphinx sphinx-gallery;
+    conda install -q -c conda-forge sphinx sphinx-gallery;
 else
     exit 0
 fi
