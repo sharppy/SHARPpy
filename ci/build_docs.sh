@@ -7,6 +7,7 @@ cd "$TRAVIS_BUILD_DIR"
 
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
     conda install -q -c conda-forge sphinx sphinx-gallery;
+    conda install -q -c anaconda sphinx_rtd_theme 
 else
     exit 0
 fi
