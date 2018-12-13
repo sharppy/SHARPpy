@@ -18,7 +18,8 @@ make html
 
 # upload to pyart-docs-travis repo is this is not a pull request and
 # secure token is available (aka in the ARM-DOE repository.
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then
+#if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then
+if [[ $TRAVIS_SECURE_ENV_VARS == 'true' ]]; then
     cd build/html
     git config --global user.email "sharppy-docs-bot@example.com"
     git config --global user.name "sharppy-docs-bot"
