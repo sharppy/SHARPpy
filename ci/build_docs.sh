@@ -6,16 +6,13 @@ set -e
 cd "$TRAVIS_BUILD_DIR"
 
 echo "Building Docs"
-
-mv "$TRAVIS_BUILD_DIR"/docs /tmp
-cd /tmp/doc
-mv -f source/index.ci source/index.rst
+cd docs
 make html
 
 # upload to pyart-docs-travis repo is this is not a pull request and
 # secure token is available (aka in the ARM-DOE repository.
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then
-    cd /tmp/doc/build/html
+    cd build/html
     git config --global user.email "sharppy-docs-bot@example.com"
     git config --global user.name "sharppy-docs-bot"
 
