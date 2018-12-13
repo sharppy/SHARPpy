@@ -33,8 +33,10 @@ git checkout gh-pages
 touch .nojekyll
 git add --all .
 git commit -m "Version" --allow-empty -q
-git remote add origin https://$GH_TOKEN@github.com/sharppy/SHARPpy.git &> /dev/null
-git push origin gh-pages -fq &> /dev/null
+git remote add origin https://$GH_TOKEN@github.com/sharppy/SHARPpy.git
+# &> /dev/null
+git push origin gh-pages -fq 
+#&> /dev/null
 #   fi
 
 exit 0
