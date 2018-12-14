@@ -81,7 +81,7 @@ def mean_wind_npw(prof, pbot=850., ptop=250., dp=-1, stu=0, stv=0):
         V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or np.ma.is_masked(ptop) or np.ma.is_masked(pbot):
         return ma.masked, ma.masked
 
     if dp > 0: dp = -dp
@@ -176,7 +176,7 @@ def wind_shear(prof, pbot=850, ptop=250):
         V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or np.ma.is_masked(ptop) or np.ma.is_masked(pbot):
         return ma.masked, ma.masked
 
     ubot, vbot = interp.components(prof, pbot)
@@ -320,7 +320,7 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         Negative Helicity (m2/s2)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or np.ma.is_masked(lower) or np.ma.is_masked(upper) or np.ma.is_masked(stu) or np.ma.is_masked(stv):
         return ma.masked, ma.masked, ma.masked
 
     if lower != upper:
@@ -379,7 +379,7 @@ def max_wind(prof, lower, upper, all=False):
         Maximum Wind Speed V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or np.ma.is_masked(lower) or np.ma.is_masked(upper):
         return ma.masked, ma.masked, ma.masked
 
     lower = interp.to_msl(prof, lower)

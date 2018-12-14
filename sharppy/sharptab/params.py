@@ -1579,6 +1579,8 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
+    if np.ma.is_masked(pe2) or utils.QC(pe2) or np.isnan(pe2):
+        return pcl
     blupper = pe2
     
     # Calculate lifted parcel theta for use in iterative CINH loop below
@@ -1591,6 +1593,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
+    print(pbot, blupper, dp, type(pe2) == type(ma.masked))
     pp = np.arange(pbot, blupper+dp, dp, dtype=type(pbot))
     hh = interp.hght(prof, pp)
     tmp_env_theta = thermo.theta(pp, interp.temp(prof, pp), 1000.)
@@ -1799,6 +1802,8 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
+    if type(pe2) == type(ma.masked) or np.isnan(pe2):
+        return pcl
     blupper = pe2
     h2 = interp.hght(prof, pe2)
     te2 = interp.vtmp(prof, pe2)
@@ -2478,15 +2483,18 @@ def convective_temp(prof, **kwargs):
     # Do a quick search to fine whether to continue. If you need to heat
     # up more than 25C, don't compute.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
-    if pcl.bplus == 0. or pcl.bminus < mincinh: return ma.masked
+    if pcl.bplus == 0. or utils.QC(pcl.bminus) or pcl.bminus < mincinh or np.ma.is_masked(pcl.bminus): return ma.masked
+    #print(type(pcl.bminus), pcl.bminus, utils.QC(pcl.bminus), np.isnan(pcl.bminus), pcl.bplus == 0, np.ma.is_masked(pcl.bminus))
+    #stop
     excess = dwpc - tmpc
     if excess > 0: tmpc = tmpc + excess + 4.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
-    if pcl.bplus == 0.: pcl.bminus = ma.masked
-    while not utils.QC(pcl.bminus) or pcl.bminus < mincinh:
+    if pcl.bplus == 0. or np.ma.is_masked(pcl.bminus): pcl.bminus = ma.masked
+    while not utils.QC(pcl.bminus) or pcl.bminus < mincinh or np.ma.is_masked(pcl.bminus):
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
         pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
+        print(type(pcl.bminus), pcl.bminus)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
 
