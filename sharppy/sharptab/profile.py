@@ -10,6 +10,7 @@ from sharppy.databases.sars import hail, supercell
 from sharppy.databases.pwv import pwv_climo
 from sharppy.sharptab.constants import MISSING
 import logging
+import warnings
 
 def create_profile(**kwargs):
     '''
@@ -107,26 +108,34 @@ class Profile(object):
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
 
-        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
-                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
+        assert len(self.pres) > 1 and len(self.hght) > 1 and len(self.tmpc) > 1 and len(self.dwpc) > 1,\
+               "The length of the data arrays passed to Profile object constructor must all have a length greater than 1."
 
-        if 'wdir' in kwargs:
+        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
+                "The pres, hght, tmpc, or dwpc arrays passed to the Profile object constructor must all have the same length."
+
+        if np.ma.min(self.pres) <= 100:
+            warnings.warn("The pressure values passed to the profile object are below 100 mb.  This may cause some the SHARPpy routines not to behave as expected.") 
+
+        if 'wdir' in kwargs and 'wspd' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
-            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
+            assert len(self.wdir) == len(self.wspd) == len(self.pres), "The wdir and wspd arrays passed to the Profile constructor must have the same length as the pres array."
             #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
 
         ## did the user provide the wind in u,v form?
-        elif 'u' in kwargs:
+        elif 'u' in kwargs and 'v' in kwargs:
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
-            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
+            assert len(self.u) == len(self.v) == len(self.pres), "The u and v arrays passed to the Profile constructor must have the same length as the pres array."
 
             #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
             self.wspd = None
+        else:
+            warnings.warn("No wind data (wdir/wspd or u/v) passed to the Profile object constructor.  This may cause some of the SHARPpy routines to not behave as expected.")
 
         ## check if any standard deviation data was supplied
         if 'tmp_stdev' in kwargs:
@@ -509,6 +518,8 @@ class ConvectiveProfile(BasicProfile):
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
+        assert np.ma.min(self.pres) >= 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
+
         self.user_srwind = None
 
         # Generate the fire weather paramters
@@ -1121,16 +1132,55 @@ class ConvectiveProfile(BasicProfile):
         self.mburst = params.mburst(self)
 
     def set_srleft(self, lm_u, lm_v):
+        '''
+        Sets the u and v values of the left mover supercell storm motion vector.       
+ 
+        Parameters
+        ----------
+        lm_u : number
+            Left mover u-component of the storm motion vector
+        lm_v : number
+            Left mover v-component of the storm motion vector
+
+        Returns
+        -------
+        None
+        '''
         self.user_srwind = self.user_srwind[:2] + (lm_u, lm_v)
         self.get_kinematics()
         self.get_severe()
 
     def set_srright(self, rm_u, rm_v):
+        '''
+        Sets the u and v values of the right mover supercell storm motion vector.       
+ 
+        Parameters
+        ----------
+        rm_u : number
+            Right mover u-component of the storm motion vector
+        rm_v : number
+            Right mover v-component of the storm motion vector
+
+        Returns
+        -------
+        None
+        '''      
         self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
         self.get_kinematics()
         self.get_severe()
 
     def reset_srm(self):
+        '''
+        Resets the storm motion vector to those found by the Bunkers algorithm
+ 
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        '''
         self.user_srwind = self.bunkers
         self.get_kinematics()
         self.get_severe()

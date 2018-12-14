@@ -11,7 +11,7 @@ __all__ += ['sr_wind', 'sr_wind_npw', 'wind_shear', 'helicity', 'max_wind']
 __all__ += ['non_parcel_bunkers_motion', 'corfidi_mcs_motion', 'mbe_vectors']
 __all__ += ['non_parcel_bunkers_motion_experimental', 'critical_angle']
 
-warnings.warn("Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)")
+#warnings.warn("Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)")
 
 def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
     '''
@@ -386,7 +386,10 @@ def max_wind(prof, lower, upper, all=False):
     upper = interp.to_msl(prof, upper)
     plower = interp.pres(prof, lower)
     pupper = interp.pres(prof, upper)
-
+    if np.ma.is_masked(plower) or np.ma.is_masked(pupper):
+        warnings.warn("winds.max_wind() was unable to interpolate between height and pressure correctly.  This may be due to a data integrity issue.")
+        return ma.masked, ma.masked, ma.masked
+    #print(lower, upper, plower, pupper, prof.pres)
     ind1 = np.where((plower > prof.pres) | (np.isclose(plower, prof.pres)))[0][0]
     ind2 = np.where((pupper < prof.pres) | (np.isclose(pupper, prof.pres)))[0][-1]
 
