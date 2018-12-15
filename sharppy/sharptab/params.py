@@ -1496,7 +1496,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
     theta = np.degrees(np.arctan2(pos_vector[-1][2],r))
     return pos_vector, theta
 
-def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
+def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwargs):
     '''        
         Lifts the specified parcel, calculates various levels and parameters from
         the profile object. Only B+/B- are calculated based on the specified layer. 
@@ -1711,6 +1711,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
                 else:
                     if pe2 > 500.: pcl.bminus += lyrf
                 if pcl.bplus == 0: pcl.bminus = 0.
+                break
     return pcl
 
 
@@ -2489,16 +2490,17 @@ def convective_temp(prof, **kwargs):
     
     # Do a quick search to fine whether to continue. If you need to heat
     # up more than 25C, don't compute.
-    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
-    if pcl.bplus == 0. or utils.QC(pcl.bminus) or pcl.bminus < mincinh: return ma.masked
+    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc, trunc=True)
+    if pcl.bplus == 0. or not utils.QC(pcl.bminus) or pcl.bminus < mincinh: return ma.masked
     excess = dwpc - tmpc
     if excess > 0: tmpc = tmpc + excess + 4.
-    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
-    if pcl.bplus == 0.: pcl.bminus = ma.masked
+    pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc, trunc=True)
+    if pcl.bplus == 0. or not utils.QC(pcl.bminus): pcl.bminus = ma.masked
     while not utils.QC(pcl.bminus) or pcl.bminus < mincinh:
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
-        pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
+        pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc, trunc=True)
+        print("CONVT3:", pcl.bplus, pcl.bminus)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
 
