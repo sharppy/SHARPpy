@@ -10,22 +10,7 @@ This tutorial is meant to teach the user how to directly interact with the SHARP
 
 For those wishing to run SHARPpy routines using Python scripts, you often will need to perform 3 steps before you can begin running routines.  These three steps read in the data, load in the SHARPpy modules, and convert the data into SHARPpy Profile objects.
 
-1.) Read in the data.
----------------------
-
-For this example, the Pilger, NE tornado proximity sounding from 19 UTC within the tutorial/ directory is an example of the SPC sounding file format that can be read in by the GUI. Here we'll read it in manually.
-
-If you want to read in your own data using this function, write a script
-to mimic the data format shown in the 14061619.OAX file found in this
-directory. Missing values must be -9999.  We'll have to also load in Matplotlib for this example (which comes default with Anaconda)
-to plot some of the data.
-
-.. code:: python
-
-    import matplotlib as pyplot.plt
-    spc_file = open('14061619.OAX', 'r').read()
-
-2.) Load in the SHARPpy modules.
+Step 1: Load in the modules.
 --------------------------------
 
 All of the SHARPpy routines (parcel lifting, composite indices, etc.)
@@ -60,8 +45,24 @@ Below is the code to load in these modules:
 
 To learn more about the functions available in SHARPTAB, access the API here: :ref:`modindex`
 
-3.) Make a Profile object.
---------------------------
+
+Step 2: Read in the data.
+-------------------------
+
+For this example, the Pilger, NE tornado proximity sounding from 19 UTC within the tutorial/ directory is an example of the SPC sounding file format that can be read in by the GUI. Here we'll read it in manually.
+
+If you want to read in your own data using this function, write a script
+to mimic the data format shown in the 14061619.OAX file found in this
+directory. Missing values must be -9999.  We'll have to also load in Matplotlib for this example (which comes default with Anaconda)
+to plot some of the data.
+
+.. code:: python
+
+    import matplotlib as pyplot.plt
+    spc_file = open('14061619.OAX', 'r').read()
+
+Step 3: Make a Profile object.
+------------------------------
 
 Before running any analysis routines on the data, we have to create a
 Profile object first. A Profile object describes the vertical
@@ -130,198 +131,31 @@ indices, you probably don't want to do that.
     prof = profile.create_profile(profile='default', pres=pres, hght=hght, tmpc=tmpc, \
                                         dwpc=dwpc, wspd=wspd, wdir=wdir, missing=-9999, strictQC=True)
 
-In SHARPpy, Profile objects have quality control checks built into them
-to alert the user to bad data and in order to prevent the program from
-crashing on computational routines. For example, upon construction of
-the Profile object, the SHARPpy will check for unrealistic values (i.e.
-dewpoint or temperature below absolute zero, negative wind speeds) and
-incorrect ordering of the height and pressure arrays. Height arrays must
-be increasing with array index, and pressure arrays must be decreasing
-with array index. Repeat values are not allowed.
+.. important::
 
-If you encounter this issue, you can either manually edit the data to
-remove the offending data values or you can avoid these checks by
-setting the "strictQC" flag to False when constructing an object.
+    In SHARPpy, Profile objects have quality control checks built into them
+    to alert the user to bad data and in order to prevent the program from
+    crashing on computational routines. For example, upon construction of
+    the Profile object, the SHARPpy will check for unrealistic values (i.e.
+    dewpoint or temperature below absolute zero, negative wind speeds) and
+    incorrect ordering of the height and pressure arrays. Height arrays must
+    be increasing with array index, and pressure arrays must be decreasing
+    with array index. Repeat values are not allowed.  If you encounter this issue, 
+    you can either manually edit the data to
+    remove the offending data values or you can avoid these checks by
+    setting the "strictQC" flag to False when constructing an object.
 
-Because Python is an interpreted language, it can be quite slow for
-certain processes. When working with soundings in SHARPpy, we recommend
-the profiles contain a maximum of 200-500 points. High resolution
-radiosonde profiles (i.e. 1 second profiles) contain thousands of points
-and some of the SHARPpy functions that involve lifting parcels (i.e.
-parcelx) may take a long time to run. To filter your data to make it
-easier for SHARPpy to work with, you can use a sounding filter such as
-the one found here:
+.. tip::
+    Because Python is an interpreted language, it can be quite slow for
+    certain processes. When working with soundings in SHARPpy, we recommend
+    the profiles contain a maximum of 200-500 points. High resolution
+    radiosonde profiles (i.e. 1 second profiles) contain thousands of points
+    and some of the SHARPpy functions that involve lifting parcels (i.e.
+    parcelx) may take a long time to run. To filter your data to make it
+    easier for SHARPpy to work with, you can use a sounding filter such as
+    the one found here:
 
-https://github.com/tsupinie/SoundingFilter
-
-Viewing the data
-^^^^^^^^^^^^^^^^^
-
-To view the data inside the profile object, we'll make a for loop to loop over all of the data within
-the Profile object and print the data out for each line. Missing values
-will be denoted by "--" instead of -9999. This is a consquence of the
-data being read in by the Profile object framework.
-
-.. code:: python
-
-    for i in range(len(prof.hght)):
-        print(prof.pres[i], prof.hght[i], prof.tmpc[i], prof.dwpc[i], prof.wdir[i], prof.wdir[i])
-
-
-.. parsed-literal::
-
-    1000.0 34.0 -- -- -- --
-    965.0 350.0 27.8 23.8 150.0 150.0
-    962.0 377.51 27.4 22.8 -- --
-    936.87 610.0 25.51 21.72 145.0 145.0
-    925.0 722.0 24.6 21.2 150.0 150.0
-    904.95 914.0 23.05 20.43 160.0 160.0
-    889.0 1069.78 21.8 19.8 -- --
-    877.0 1188.26 22.2 17.3 -- --
-    873.9 1219.0 22.02 16.98 175.0 175.0
-    853.0 1429.46 20.8 14.8 -- --
-    850.0 1460.0 21.0 14.0 180.0 180.0
-    844.0 1521.47 21.4 11.4 -- --
-    814.51 1829.0 19.63 8.65 195.0 195.0
-    814.0 1834.46 19.6 8.6 -- --
-    805.0 1930.24 18.8 13.8 -- --
-    794.0 2048.59 18.0 13.5 -- --
-    786.13 2134.0 17.57 12.72 200.0 200.0
-    783.0 2168.27 17.4 12.4 -- --
-    761.0 2411.82 16.4 7.4 -- --
-    758.66 2438.0 16.49 5.16 210.0 210.0
-    756.0 2467.98 16.6 2.6 -- --
-    743.0 2615.49 16.0 -1.0 -- --
-    737.0 2684.28 15.4 -0.6 -- --
-    731.9 2743.0 14.64 2.45 210.0 210.0
-    729.0 2776.65 14.2 4.2 -- --
-    710.0 2999.06 12.2 4.2 -- --
-    705.87 3048.0 11.99 3.99 210.0 210.0
-    702.0 3094.1 11.8 3.8 -- --
-    700.0 3118.0 11.6 2.6 215.0 215.0
-    697.0 3153.92 11.6 0.6 -- --
-    682.0 3335.5 10.4 2.4 -- --
-    675.0 3421.38 10.0 1.0 -- --
-    655.96 3658.0 7.97 -2.38 225.0 225.0
-    647.0 3771.67 7.0 -4.0 -- --
-    635.0 3925.19 6.0 -12.0 -- --
-    632.14 3962.0 5.72 -12.99 230.0 230.0
-    623.0 4080.9 4.8 -16.2 -- --
-    608.51 4267.0 3.1 -17.37 230.0 230.0
-    563.33 4877.0 -2.48 -21.19 230.0 230.0
-    500.0 5820.0 -11.1 -27.1 245.0 245.0
-    496.0 5881.65 -11.5 -26.5 -- --
-    482.28 6096.0 -13.14 -28.14 245.0 245.0
-    481.0 6116.34 -13.3 -28.3 -- --
-    472.0 6259.91 -14.3 -33.3 -- --
-    464.0 6389.52 -14.5 -39.5 -- --
-    460.0 6455.17 -14.3 -30.3 -- --
-    457.0 6504.79 -14.5 -29.5 -- --
-    443.0 6739.75 -16.5 -27.5 -- --
-    431.0 6945.77 -17.9 -28.9 -- --
-    423.0 7085.7 -18.7 -37.7 -- --
-    410.0 7317.63 -20.5 -33.5 -- --
-    400.0 7500.0 -21.7 -41.7 250.0 250.0
-    396.0 7573.79 -22.1 -45.1 -- --
-    393.5 7620.0 -22.52 -44.19 250.0 250.0
-    383.0 7817.58 -24.3 -40.3 -- --
-    365.0 8165.5 -27.3 -52.3 -- --
-    353.0 8404.47 -29.7 -41.7 -- --
-    346.0 8546.6 -30.9 -41.9 -- --
-    327.0 8943.91 -33.9 -52.9 -- --
-    317.73 9144.0 -35.59 -53.82 255.0 255.0
-    315.0 9204.06 -36.1 -54.1 -- --
-    300.0 9540.0 -38.9 -49.9 250.0 250.0
-    290.0 9772.78 -40.9 -50.9 -- --
-    278.01 10058.0 -43.14 -54.39 255.0 255.0
-    262.0 10458.87 -46.3 -59.3 -- --
-    250.0 10770.0 -49.1 -62.1 260.0 260.0
-    238.0 11090.28 -51.9 -63.9 -- --
-    231.1 11278.0 -52.95 -65.12 260.0 260.0
-    210.06 11887.0 -56.35 -69.07 265.0 265.0
-    200.0 12200.0 -58.1 -71.1 265.0 265.0
-    190.76 12497.0 -59.78 -73.55 280.0 280.0
-    188.0 12588.32 -60.3 -74.3 -- --
-    175.0 13035.7 -60.3 -74.3 -- --
-    173.03 13106.0 -60.66 -74.88 265.0 265.0
-    164.72 13411.0 -62.2 -77.38 255.0 255.0
-    158.0 13668.93 -63.5 -79.5 245.0 245.0
-    157.0 13707.98 -63.5 -79.5 -- --
-    154.0 13827.08 -61.9 -77.9 -- --
-    150.0 13990.0 -62.3 -77.3 250.0 250.0
-    149.25 14021.0 -62.25 -77.25 250.0 250.0
-    147.0 14114.55 -62.1 -77.1 -- --
-    142.11 14326.0 -56.43 -73.39 270.0 270.0
-    142.0 14330.93 -56.3 -73.3 -- --
-    141.0 14375.74 -56.1 -74.1 -- --
-    137.0 14557.96 -56.9 -73.9 -- --
-    132.0 14791.84 -58.9 -75.9 -- --
-    129.02 14935.0 -58.4 -77.07 260.0 260.0
-    125.0 15133.97 -57.7 -78.7 -- --
-    122.9 15240.0 -58.7 -79.7 225.0 225.0
-    118.0 15493.97 -61.1 -82.1 -- --
-    117.03 15545.0 -61.23 -81.59 215.0 215.0
-    115.0 15653.42 -61.5 -80.5 -- --
-    110.0 15928.24 -61.7 -80.7 -- --
-    109.0 15984.92 -59.9 -78.9 -- --
-    108.0 16042.38 -59.7 -79.7 -- --
-    100.0 16520.0 -61.9 -81.9 240.0 240.0
-    92.8 16982.3 -62.7 -84.7 -- --
-    87.2 17369.21 -59.9 -83.9 -- --
-    87.13 17374.0 -59.92 -83.92 175.0 175.0
-    83.2 17662.07 -61.3 -85.3 -- --
-    82.99 17678.0 -61.03 -85.21 220.0 220.0
-    80.9 17837.57 -58.3 -84.3 -- --
-    75.32 18288.0 -58.43 -85.08 240.0 240.0
-    72.5 18528.36 -58.5 -85.5 -- --
-    71.76 18593.0 -58.15 -85.73 220.0 220.0
-    70.0 18750.0 -57.3 -86.3 205.0 205.0
-    66.2 19102.5 -56.5 -86.5 -- --
-    62.08 19507.0 -57.97 -88.58 0.0 0.0
-    59.6 19763.34 -58.9 -89.9 -- --
-    51.16 20726.0 -56.29 -88.16 140.0 140.0
-    50.0 20870.0 -55.9 -87.9 100.0 100.0
-    47.3 21223.2 -55.3 -87.3 -- --
-    46.47 21336.0 -55.71 -87.71 130.0 130.0
-    45.3 21497.82 -56.3 -88.3 -- --
-    44.29 21641.0 -56.1 -88.21 130.0 130.0
-    42.22 21946.0 -55.67 -88.02 140.0 140.0
-    40.25 22250.0 -55.24 -87.83 115.0 115.0
-    38.37 22555.0 -54.8 -87.63 100.0 100.0
-    37.1 22769.5 -54.5 -87.5 -- --
-    34.9 23165.0 -52.26 -85.69 115.0 115.0
-    33.29 23470.0 -50.53 -84.29 105.0 105.0
-    32.2 23686.07 -49.3 -83.3 -- --
-    30.0 24150.0 -48.7 -82.7 125.0 125.0
-    29.3 24305.84 -48.1 -82.1 -- --
-    28.95 24384.0 -48.34 -82.34 135.0 135.0
-    27.9 24628.73 -49.1 -83.1 -- --
-    26.7 24918.79 -47.9 -82.9 -- --
-    26.4 24994.0 -47.91 -82.86 80.0 80.0
-    21.95 26213.0 -48.06 -82.26 105.0 105.0
-    20.9 26538.29 -48.1 -82.1 -- --
-    20.02 26822.0 -46.93 -81.91 115.0 115.0
-    20.0 26830.0 -46.9 -81.9 115.0 115.0
-    19.2 27100.93 -45.7 -80.7 -- --
-    19.12 27127.0 -45.73 -80.73 100.0 100.0
-    18.27 27432.0 -46.02 -81.02 105.0 105.0
-    17.5 27717.04 -46.3 -81.3 -- --
-    17.45 27737.0 -46.23 -81.24 115.0 115.0
-    16.67 28042.0 -45.08 -80.37 95.0 95.0
-    14.8 28839.52 -42.1 -78.1 -- --
-    13.91 29261.0 -41.98 -77.98 105.0 105.0
-    12.71 29870.0 -41.8 -77.8 100.0 100.0
-    12.1 30202.29 -41.7 -77.7 -- --
-    11.62 30480.0 -39.91 -76.69 80.0 80.0
-    11.11 30785.0 -37.95 -75.58 70.0 70.0
-    10.9 30916.58 -37.1 -75.1 -- --
-    10.0 31510.0 -38.5 -75.5 80.0 80.0
-    9.0 32234.97 -37.7 -75.7 -- --
-    8.4 32713.14 -35.1 -73.1 -- --
-    8.1 32968.3 -31.9 -71.9 -- --
-    7.81 33223.0 -31.9 -71.9 90.0 90.0
-    7.8 33234.86 -31.9 -71.9 -- --
-
+    https://github.com/tsupinie/SoundingFilter
 
 Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
 Python code plotting the temperature and dewpoint profiles with height:
@@ -620,6 +454,7 @@ trace. Let's also include dry adiabats and moist adiabats for the user.
 .. code:: python
  
     # Create a new figure. The dimensions here give a good aspect ratio
+    import sharppy.plot.skew as skew
     fig = plt.figure(figsize=(6.5875, 6.2125))
     ax = fig.add_subplot(111, projection='skewx')
     ax.grid(True)
