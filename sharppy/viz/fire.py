@@ -337,7 +337,6 @@ class plotFire(backgroundFire):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)        
-        
         label = ['SFC = ' + tab.utils.INT2STR(self.sfc_wind[0]) + '/' + tab.utils.INT2STR(self.sfc_wind[1]), \
                 '0-1 km mean = ' + tab.utils.INT2STR(self.meanwind01km[0]) + '/' + tab.utils.INT2STR(self.meanwind01km[1]), \
                 'BL mean = ' + tab.utils.INT2STR(self.meanwindpbl[0]) + '/' + tab.utils.INT2STR(self.meanwindpbl[1]), \
