@@ -198,12 +198,37 @@ def relh(p, t, td):
     Relative humidity (%) of a parcel
 
     '''
-    return 100. * mixratio(p, td) / mixratio(p, t)
+    return 100. * vappres(td)/vappres(t) #$mixratio(p, td) / mixratio(p, t)
 
+def temp_at_vappres(e):
+    '''
+    Returns the temperature (C) given a vapor pressure value (hPa).
+    
+    Parameters
+    ----------
+    e : number
+        The vapor pressure of a parcel (hPa)
+
+    Returns
+    -------
+    Temperature (C) of a parcel.
+    '''
+    L = (2.5*10.**6)
+    R_v = 461.5
+    T_o = 273.15
+    e_so = 6.11
+    a = (L/R_v)
+    b = (1./T_o)
+    return ktoc(np.power( (-1.) * ((1./a)*np.log(e/e_so) - b), -1))
 
 def wobf(t):
     '''
     Implementation of the Wobus Function for computing the moist adiabats.
+
+    .. caution::
+        The Wobus function has been found to have a slight
+        pressure dependency (Davies-Jones 2008).  This dependency
+        is not included in this implementation.  
 
     Parameters
     ----------
@@ -243,10 +268,18 @@ def wobf(t):
 
 
 
-def satlift(p, thetam):
+def satlift(p, thetam, conv=0.1):
     '''
     Returns the temperature (C) of a saturated parcel (thm) when lifted to a
     new pressure level (hPa)
+
+    .. caution::
+        Testing of the SHARPpy parcel lifting routines has revealed that the
+        convergence criteria used the SHARP version (and implemented here) may cause 
+        drifting the pseudoadiabat to occasionally "drift" when high-resolution 
+        radiosonde data is used.  While a stricter convergence criteria (e.g. 0.01) has shown
+        to resolve this problem, it creates a noticable departure from the SPC CAPE values and therefore
+        may decalibrate the other SHARPpy functions (e.g. SARS).
 
     Parameters
     ----------
@@ -254,6 +287,8 @@ def satlift(p, thetam):
         Pressure to which parcel is raised (hPa)
     thetam : number
         Saturated Potential Temperature of parcel (C)
+    conv : number
+        Convergence criteria for satlift() (C)
 
     Returns
     -------
@@ -265,7 +300,7 @@ def satlift(p, thetam):
         if np.fabs(p - 1000.) - 0.001 <= 0: 
             return thetam
         eor = 999
-        while np.fabs(eor) - 0.01 > 0:
+        while np.fabs(eor) - conv > 0:
             if eor == 999:                  # First Pass
                 pwrp = np.power((p / 1000.),ROCP)
                 t1 = (thetam + ZEROCNK) * pwrp - ZEROCNK
@@ -289,7 +324,7 @@ def satlift(p, thetam):
 
         eor = 999
         first_pass = True
-        while np.fabs(np.min(eor)) - 0.1 > 0:
+        while np.fabs(np.min(eor)) - conv > 0:
             if first_pass:                  # First Pass
                 pwrp = np.power((p[~short] / 1000.),ROCP)
                 t1 = (thetam[~short] + ZEROCNK) * pwrp - ZEROCNK
