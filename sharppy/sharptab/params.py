@@ -107,7 +107,6 @@ class DefineParcel(object):
             self.presval = kwargs.get('pres', 100)
             self.__effective(prof, **kwargs)
         else:
-            #print('Defaulting to Surface Parcel')
             self.presval = kwargs.get('pres', prof.gSndg[prof.sfc])
             self.__sfc(prof)
     
@@ -424,9 +423,12 @@ def dgz(prof):
 
 def lhp(prof):
     '''
-        Large Hail Parameter (*)
+        Large Hail Parameter
 
         From Johnson and Sugden (2014), EJSSM
+
+        .. warning::
+            This code has not been compared directly against an SPC version.
 
         Parameters
         ----------
@@ -849,7 +851,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
     return (((w[:-1]+w[1:])/2 * (p[:-1]-p[1:])) * 0.00040173).sum()
 
 
-def inferred_temp_adv(prof, lat=35):
+def inferred_temp_adv(prof, dp=-100, lat=35):
     '''
         Inferred Temperature Advection
 
@@ -859,17 +861,19 @@ def inferred_temp_adv(prof, lat=35):
         and up every 100 mb assuming all winds are geostrophic.  The units returned are
         in C/hr.  If no latitude is specified the function defaults to 35 degrees North.
 
-        This function doesn't compare well to SPC in terms of magnitude of the results.  The direction
-        and relative magnitude I think I've got right. My calculations seem to be consistently less
-        than those seen on the SPC website.  Although, this function may be right as the SPC values seem
-        a little high for typical synoptic scale geostrophic temperature advection (10 Kelvin/day is typical).
-
         This code uses Equation 4.1.139 from Bluestein's "Synoptic-Dynamic Meteorology in Midlatitudes (Volume I)"
+
+        .. important::
+            While this code compares well qualitatively to the version at SPC, the SPC output is much larger.  Scale
+            analysis suggests that the values provided by this function are much more reasonable (10 K/day is typical
+            for synoptic scale values).
 
         Parameters
         ----------
         prof : profile object
             Profile object
+        dp : number, optional
+            layer size to compute temperature advection over
         lat : number, optional
             latitude in decimal degrees
 
@@ -882,10 +886,11 @@ def inferred_temp_adv(prof, lat=35):
     '''
     if prof.wdir.count() == 0:
         return ma.masked, ma.masked
+    if np.ma.max(prof.pres) <= 100:
+        return ma.masked, ma.masked
 
     omega = (2. * np.pi) / (86164.)
        
-    dp = -100
     pres_idx = np.where(prof.pres >= 100.)[0]
     pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp, dtype=type(prof.pres[prof.get_sfc()])) # Units: mb
     temps = thermo.ctok(interp.temp(prof, pressures))
@@ -1400,6 +1405,9 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         
         This simulates the path a parcel in a storm updraft would take using pure parcel theory.
         
+        .. important:: 
+            The code for this function was not directly ported from SPC.
+ 
         Parameters
         ----------
         prof : profile object
@@ -1579,7 +1587,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
-    if np.ma.is_masked(pe2) or utils.QC(pe2) or np.isnan(pe2):
+    if np.ma.is_masked(pe2) or not utils.QC(pe2) or np.isnan(pe2):
         return pcl
     blupper = pe2
     
@@ -1593,7 +1601,6 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, **kwargs):
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
-    print(pbot, blupper, dp, type(pe2) == type(ma.masked))
     pp = np.arange(pbot, blupper+dp, dp, dtype=type(pbot))
     hh = interp.hght(prof, pp)
     tmp_env_theta = thermo.theta(pp, interp.temp(prof, pp), 1000.)
@@ -2483,18 +2490,15 @@ def convective_temp(prof, **kwargs):
     # Do a quick search to fine whether to continue. If you need to heat
     # up more than 25C, don't compute.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc)
-    if pcl.bplus == 0. or utils.QC(pcl.bminus) or pcl.bminus < mincinh or np.ma.is_masked(pcl.bminus): return ma.masked
-    #print(type(pcl.bminus), pcl.bminus, utils.QC(pcl.bminus), np.isnan(pcl.bminus), pcl.bplus == 0, np.ma.is_masked(pcl.bminus))
-    #stop
+    if pcl.bplus == 0. or utils.QC(pcl.bminus) or pcl.bminus < mincinh: return ma.masked
     excess = dwpc - tmpc
     if excess > 0: tmpc = tmpc + excess + 4.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
-    if pcl.bplus == 0. or np.ma.is_masked(pcl.bminus): pcl.bminus = ma.masked
-    while not utils.QC(pcl.bminus) or pcl.bminus < mincinh or np.ma.is_masked(pcl.bminus):
+    if pcl.bplus == 0.: pcl.bminus = ma.masked
+    while not utils.QC(pcl.bminus) or pcl.bminus < mincinh:
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
         pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc)
-        print(type(pcl.bminus), pcl.bminus)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
 
@@ -2583,6 +2587,9 @@ def sherb(prof, **kwargs):
         See Sherburn et. al. 2014 WAF for more information
 
         REQUIRES (if effective==True): The effective inflow layer be defined
+
+        .. warning::
+            This function has not been evaluated or tested against the version used at SPC.
 
         Parameters
         ----------
@@ -2944,6 +2951,9 @@ def precip_eff(prof, **kwargs):
 
         Larger values means that the precipitation is more efficient.
 
+        .. warning::
+            This function has not been directly compared with a version at SPC.
+
         Parameters
         ----------
         prof : profile object
@@ -3069,9 +3079,9 @@ def mburst(prof):
         5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
         These values can also be viewed as conditional upon the existence of a storm.
 	
-	This code was updated on 9/11/2018 - TT was being used in the function instead of VT.
-	The original SPC code was checked to confirm this was the problem.
-	This error was not identified during the testing phase for some reason.
+	    This code was updated on 9/11/2018 - TT was being used in the function instead of VT.
+	    The original SPC code was checked to confirm this was the problem.
+	    This error was not identified during the testing phase for some reason.
 
         Parameters
         ----------
@@ -3230,20 +3240,21 @@ def ehi(prof, pcl, hbot, htop, stu=0, stv=0):
 
 def sweat(prof):
     '''
-        SWEAT Index (*)
+        SWEAT Index
 
         Computes the SWEAT (Severe Weather Threat Index) using the following numbers:
 
-        1.) 850 Dewpoint
-        2.) Total Totals Index
-        3.) 850 mb wind speed
-        4.) 500 mb wind speed
-        5.) Direction of wind at 500
-        6.) Direction of wind at 850
+        1. 850 Dewpoint
+        2. Total Totals Index
+        3. 850 mb wind speed
+        4. 500 mb wind speed
+        5. Direction of wind at 500
+        6. Direction of wind at 850
 	
-	Formulation taken from 
-	Notes on Analysis and Severe-Storm Forecasting Procedures of the Air Force Global Weather Central, 1972
-	by RC Miller.
+	    Formulation taken from Notes on Analysis and Severe-Storm Forecasting Procedures of the Air Force Global Weather Central, 1972 by RC Miller.
+
+        .. warning::
+            This function has not been tested against the SPC version of SHARP.
 
         Parameters
         ----------
