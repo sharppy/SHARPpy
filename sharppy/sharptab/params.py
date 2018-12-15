@@ -1612,7 +1612,14 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
     lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
-    
+   
+    # TODO: Because this function is used often to search for parcels that meet a certain
+    #       CAPE/CIN threshold, we can add a few statments here and there in the code
+    #       that checks to see if these thresholds are met and if they are, return a flag.
+    #       We don't need to call wetlift() anymore than we need to.  This is one location
+    #       where we can do this.  If the CIN is too large, return here...don't have to worry
+    #       about ever entering the loop!
+ 
     # Move the bottom layer to the top of the boundary layer
     if pbot > pe2:
         pbot = pe2
@@ -2502,7 +2509,6 @@ def convective_temp(prof, **kwargs):
         if pcl.bminus < -100: tmpc += 2.
         else: tmpc += 0.5
         pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc, dwpc=dwpc, trunc=True)
-        print("CONVT3:", pcl.bplus, pcl.bminus)
         if pcl.bplus == 0.: pcl.bminus = ma.masked
     return tmpc
 

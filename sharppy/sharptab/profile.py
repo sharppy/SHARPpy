@@ -537,7 +537,6 @@ class ConvectiveProfile(BasicProfile):
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
-        print(self.pres, np.ma.max(self.pres), np.ma.min(self.pres))
         assert np.ma.max(self.pres) > 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
 
         self.user_srwind = None
