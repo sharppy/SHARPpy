@@ -1687,7 +1687,9 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
             te1 = te2
             tp1 = tp2
             # Is this the top of the specified layer
-            if i >= uptr and not utils.QC(pcl.bplus):
+            # Because CIN is only computed below 500 mb, we can cut off additional lifting when
+            # computing convective temperature!
+            if (trunc is True and pe2 <= 500) or (i >= uptr and not utils.QC(pcl.bplus)):
                 pe3 = pe1
                 h3 = h1
                 te3 = te1
