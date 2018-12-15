@@ -379,7 +379,7 @@ def max_wind(prof, lower, upper, all=False):
         Maximum Wind Speed V-component (kts)
 
     '''
-    if prof.wdir.count() == 0 or not utils.QC(lower) or utils.QC(upper):
+    if prof.wdir.count() == 0 or not utils.QC(lower) or not utils.QC(upper):
         return ma.masked, ma.masked, ma.masked
 
     lower = interp.to_msl(prof, lower)
