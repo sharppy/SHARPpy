@@ -8,7 +8,6 @@ import sharppy.sharptab as tab
 import sharppy.databases.sars as sars
 import numpy as np
 import os
-from sharppy.io.spc_decoder import SPCDecoder
 import matplotlib.pyplot as plt
 
 database_fn = os.path.join( os.path.dirname( sars.__file__ ), 'sars_supercell.txt')
