@@ -58,9 +58,9 @@ def create_profile(**kwargs):
 
     profile : string, optional (default: 'default')
         The text identifier for the Profile to be generated. Valid options
-        include ('default' | 'convective'). Default will construct a basic
+        include ('default' | 'basic' | 'convective'). Default will construct a basic
         Profile, and convective will construct a ConvectiveProfile used for
-        the SPC style GUI.
+        the SPC style GUI. 
 
     omeg: array_like
         The corresponding vertical velocity values (Pa/s)
@@ -114,7 +114,7 @@ class Profile(object):
         assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "The pres, hght, tmpc, or dwpc arrays passed to the Profile object constructor must all have the same length."
 
-        if np.ma.min(self.pres) <= 100:
+        if np.ma.max(self.pres) <= 100:
             warnings.warn("The pressure values passed to the profile object are below 100 mb.  This may cause some the SHARPpy routines not to behave as expected.") 
 
         if 'wdir' in kwargs and 'wspd' in kwargs:
@@ -345,6 +345,8 @@ class BasicProfile(Profile):
         self.theta = self.get_theta_profile()
         ## generate water vapor mixing ratio profile
         self.wvmr = self.get_wvmr_profile()
+        ## generate rh profile
+        self.relh = self.get_rh_profile()
 
     def get_sfc(self):
         '''
@@ -392,9 +394,9 @@ class BasicProfile(Profile):
             Array of water vapor mixing ratio profile
             '''
         
-        wvmr = ma.empty(self.pres.shape[0])
-        for i in range(len(self.v)):
-            wvmr[i] = thermo.mixratio( self.pres[i], self.dwpc[i] )
+        #wvmr = ma.empty(self.pres.shape[0])
+        #for i in range(len(self.v)):
+        wvmr = thermo.mixratio( self.pres, self.dwpc )
         wvmr[wvmr == self.missing] = ma.masked
         wvmr.set_fill_value(self.missing)
         return wvmr
@@ -458,6 +460,23 @@ class BasicProfile(Profile):
         thetae.set_fill_value(self.missing)
         return thetae
 
+    def get_rh_profile(self):
+        '''
+        Function to calculate the relative humidity profile
+        
+        Parameters
+        ----------
+        None
+    
+        Returns
+        -------
+        Array of the relative humidity profile
+        '''
+
+        rh = thermo.relh(self.pres, self.tmpc, self.dwpc)
+        rh[rh == self.missing] = ma.masked
+        rh.set_fill_value(self.missing)
+        return rh
 
 
 class ConvectiveProfile(BasicProfile):
@@ -518,7 +537,8 @@ class ConvectiveProfile(BasicProfile):
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
-        assert np.ma.min(self.pres) >= 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
+        print(self.pres, np.ma.max(self.pres), np.ma.min(self.pres))
+        assert np.ma.max(self.pres) > 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
 
         self.user_srwind = None
 
