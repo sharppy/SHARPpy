@@ -342,7 +342,6 @@ def draw_hodo_inset(ax, prof):
 
     return inset_axes
 
-
 # Routine to plot the hodograph in segments (0-3 km, 3-6 km, etc.)
 def plotHodo(axes, h, u, v, color='k'):
     for color, min_hght in zip(['r', 'g', 'b', 'k'], [3000,6000,9000,12000]):
