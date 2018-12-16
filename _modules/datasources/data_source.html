@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datasources.data_source &mdash; SHARPpy 1.4.0-Andover-Alpha1+5.ge289ca4 documentation</title>
+  <title>datasources.data_source &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+5.ge289ca4
+                1.4.0-Andover-Alpha1+6.gf1f7036
               </div>
             
           
@@ -365,6 +365,7 @@
 <div class="viewcode-block" id="Outlet.getAvailableAtTime"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getAvailableAtTime">[docs]</a>    <span class="k">def</span> <span class="nf">getAvailableAtTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
+        <span class="c1">#logging.debug(&quot;Calling getAvailableAtTime()&quot; + str(dt))</span>
         <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMostRecentCycle</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dt</span> <span class="o">==</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1700</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
@@ -407,6 +408,7 @@
                         <span class="n">times</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()](</span><span class="n">dt</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                         <span class="n">times</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]()</span>
+                        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Hit a typeerror&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getArchivedCycles</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_cycles</span><span class="o">=</span><span class="n">max_cycles</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_available</span> <span class="o">=</span> <span class="kc">True</span>
@@ -478,6 +480,7 @@
         <span class="k">return</span> <span class="n">prop</span>
 
     <span class="k">def</span> <span class="nf">_getOutletWithProfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="c1">#logging.debug(&quot;_getOutletWithProfile: &quot; + str(stn) + &#39; &#39; + str(cycle_dt))</span>
         <span class="n">use_outlets</span> <span class="o">=</span> <span class="p">[</span> <span class="n">out</span> <span class="k">for</span> <span class="n">out</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">hasProfile</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">)</span> <span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">outlet</span> <span class="o">=</span> <span class="n">use_outlets</span><span class="p">[</span><span class="n">outlet_num</span><span class="p">]</span>
@@ -531,7 +534,7 @@
         <span class="k">if</span> <span class="n">outlet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">outlet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getOutletWithProfile</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="n">outlet_num</span><span class="p">)</span>
         <span class="n">url_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="p">[</span><span class="n">outlet</span><span class="p">]</span><span class="o">.</span><span class="n">getURL</span><span class="p">()</span>
-        
+        <span class="c1">#logging.debug(&quot;URL: &quot; + url_base)</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;srcid&#39;</span><span class="p">:</span><span class="n">quote</span><span class="p">(</span><span class="n">stn</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]),</span>
             <span class="s1">&#39;cycle&#39;</span><span class="p">:</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cycle_dt</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
@@ -540,9 +543,9 @@
             <span class="s1">&#39;month&#39;</span><span class="p">:</span><span class="n">cycle_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%m&quot;</span><span class="p">),</span>
             <span class="s1">&#39;day&#39;</span><span class="p">:</span><span class="n">cycle_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="p">}</span>
-        
 
         <span class="n">url</span> <span class="o">=</span> <span class="n">url_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmt</span><span class="p">)</span>
+        <span class="c1">#logging.debug(&quot;URL: &quot; + url)</span>
         <span class="k">return</span> <span class="n">url</span></div>
 
 <div class="viewcode-block" id="DataSource.getDecoderAndURL"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getDecoderAndURL">[docs]</a>    <span class="k">def</span> <span class="nf">getDecoderAndURL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
