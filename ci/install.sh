@@ -20,10 +20,11 @@ export PATH="$HOME/miniconda/bin:$PATH"
 hash -r
 conda config --set always_yes yes --set changeps1 no
 conda update -q conda
+conda install -n -q root _license
 conda info -a
 conda create -q -n test-environment python=$PYTHON_VERSION numpy nose 
 source activate test-environment
-conda install -q pyside pyinstaller
+conda install -q conda-forge pyside pyinstaller
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
