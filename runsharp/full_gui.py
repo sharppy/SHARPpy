@@ -3,6 +3,7 @@ import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
 import logging
+import PySide
 from sharppy._version import get_versions
 __version__ = get_versions()['version']
 ver = get_versions()
@@ -30,7 +31,9 @@ if len(sys.argv) > 1 and '--debug' in sys.argv:
     logging.getLogger('').addHandler(console)
 
     logging.info('Started logging output for SHARPpy')
-    logging.info('Information about SHARPpy version: ' + str(__version__)) 
+    logging.info('SHARPpy version: ' + str(__version__)) 
+    logging.info('numpy version: ' + str(np.__version__)) 
+    logging.info('PySide version: ' + str(PySide.__version__)) 
 else:
     debug = False
     np.seterr(all='ignore')
