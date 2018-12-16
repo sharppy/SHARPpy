@@ -18,6 +18,9 @@ matrix:
     env: PYTHON_VERSION="3.7"
     env: BUILD_DOCS="YES"
 before_install:
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start # Start the daemon to imitate a display
+- sleep 3
 - source ci/install.sh
 install:
 - python setup.py install
@@ -25,7 +28,6 @@ script:
 - python sharppy/tests/test_url.py examples/data/14061619.OAX 
 # If the test script passes, build the binaries.
 after_success:
-# Zip the binaries, as we can't transfer 
 - if [[ "$BUILD_DOCS" == "YES" ]]; then source ci/build_docs.sh; fi
 - source ci/make_binary.sh
 before_deploy:

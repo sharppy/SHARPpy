@@ -1,5 +1,6 @@
 #!/bin/bash
 # Build the binaries
+cd "$TRAVIS_BUILD_DIR"
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     if [[ "$PYTHON_VERSION" == "3.7" ]]; then 
