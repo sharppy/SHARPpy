@@ -35,7 +35,8 @@ def test_url(path):
                                               wdir=prof.wdir, strictQC=False, profile='convective', date=dates[i])
             #for key in dir(new_prof):
             #    print((key, getattr(new_prof,key)))
-        
+    
+    
     print(new_prof.mupcl.bplus)
 
 test_url(sys.argv[1])
