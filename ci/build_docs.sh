@@ -4,7 +4,7 @@
 set -e
 
 cd "$TRAVIS_BUILD_DIR"
-
+cd ci/
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
     conda install -q -c conda-forge sphinx sphinx-gallery;
     conda install -q -c anaconda sphinx_rtd_theme 
@@ -17,6 +17,7 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
+cd ..
 echo "Building Docs"
 cd docs
 make html
