@@ -11,6 +11,11 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 **NOTICE: If you have any custom data sources, you must add an "observed" flag to each data source your XML file, or SHARPpy will fail to load (see the [Adding Custom Data Sources](#adding-custom-data-sources) section).**
 
+##Important links:
+* HTML Documentation: http://sharppy.github.io/SHARPpy/index.html
+* Source code reponsitory: https://github.com/sharppy/SHARPpy
+* Issue tracker: https://github.com/sharppy/SHARPpy/issues
+
 **Table of Contents**
 
 - [Developer Requests](#developer-requests)
@@ -47,11 +52,7 @@ this ready-made citation entry or provide a link back to this website:
     
  [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
 
-http://sharppy.github.io/SHARPpy/index.html
-
-https://github.com/sharppy/SHARPpy
-
-Additionally, Jeff Whitaker created the Basemap package, from which we have borrowed data and code to develop the SHARPpy data selector GUI.
+We wish to acknowledge Jeff Whitaker, who created the Basemap package, and from which we have borrowed data and code to develop the SHARPpy data selector GUI.
 
 2.) Also, please send an email letting us know where SHARPpy is being used or 
 has helped your work at this address so we may track the success of the project: sharppy.project@gmail.com.
@@ -133,208 +134,6 @@ To run SHARPpy from the code, navigate to the `runsharp/` folder contained withi
 
 Either of these will load the SHARPpy Sounding Picker GUI.
 
-=======================================================================
-
-### Using the SHARPpy Sounding Picker
-<sup>[[Return to Top]](#sharppy)</sup>
-
-Upon running SHARPpy, the "SHARPpy Sounding Picker" window should pop up displaying a list of available default and custom data sources.  This window also shows where the soundings are located for each source.  To open a sounding, select a sounding source (observed, GFS, HRRR, etc.), a cycle time, and then select profile time(s) to view in the GUI.  Next, click on your desired location on the point and click map.  Once all of these are selected, click "Generate Profiles" to view the sounding data.  After the program downloads the data, it will appear in a sounding window for use.
-
-The map views can be altered using your mouse.  Scrolling with your mouse wheel or trackpad will zoom in and out of the map.  Clicking and dragging will change the view of the map.  Double clicking will re-center the map on your cursor (i.e. for changing from US to Europe views.)  Clicking the "Save Map View as Default" button will save this map view so each time you load the Sounding Picker, it will be centered where you want it.
-
-If the program is unable to detect an Internet connection, it will display a message on the map for the user.  However, you can still pull up sounding data if it resides on your local hard disk.  If you are able to reconnect to the Internet, you'll need to restart the SHARPpy program in order to remove this message and access the data online.
-
-#### Loading in Multiple Soundings
-
-As of the 1.3.0 release, SHARPpy now supports adding additional profiles to the sounding window.  This allows the user to have a large amount of flexiblity in making comparisons between different sounding data.  For example, SHARPpy can now be used to perform visual comparsions between GFS and NAM forecast soundings, D(prog)/Dt of the HRRR forecast soundings, or compare observed soundings to model data.  Once a sounding window is open, you can change focus back to the SHARPpy Sounding Picker and add additional sounding data to your open sounding window by repeating the process to generate the first sounding window.  At this point the sounding window will have one profile that is in "focus" and other(s) that are not.
-
-#### Loading in Sounding Data Files
-
-SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the [14061619.OAX](https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX) file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
-
-*Notes about the file format:*
-
-While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
-
-The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  "..." is where the sections of the file ends and continues in this example and are not included in the actual data file:
-
-```
-%TITLE%
- SITEID   YYMMDD/HHMM 
-
-   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
--------------------------------------------------------------------
-...
-```
-
-The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground.  -9999 is the placeholder for missing data:
-
-```
-...
-%RAW%
- 1000.00,    34.00,  -9999.00,  -9999.00,  -9999.00,  -9999.00
- 965.00,    350.00,     27.80,     23.80,    150.00,     23.00
- 962.00,    377.51,     27.40,     22.80,  -9999.00,  -9999.00
-%END%
-```
-
-Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program's routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:
-
-1.) Making sure that no temperature or dewpoint values are below 273.15 K.
-
-2.) Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR < 360, respectively.
-
-3.) Making sure that no repeat values of pressure or height occur.
-
-4.) Checking to see that pressure decreases with height within the profile.
-
-Should your data not load, we recommend you attempt to manually edit the data to remove these issues and try to load the data again.  The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.
-
-#### Adding Custom Data Sources
-<sup>[[Return to Top]](#sharppy)</sup>
-
-SHARPpy maintains a variety of different sounding data sources in the distributed program.  These sounding data sources are provided by a variety of hosts online, and we thank them for making their data accessible for the program to be used.  Accessiblity to these various data sources are dependent upon the hosts.
-
-Observed soundings distributed by the program are provided by the [Storm Prediction Center soundings page](http://www.spc.noaa.gov/exper/soundings/).
-
-SHARPpy also uses the BUFKIT files facilitated by the NOAA/National Weather Service to distribute NOAA NWP point forecast soundings.  Currently, SHARPpy links into the [Penn State Bufkit Distribution System](http://www.meteo.psu.edu/bufkit/) to provide point forecast soundings for the GFS, NAM, NAM 3-km, SREF, RAP, HIRESW, and HRRR models run at NCEP.  The vertical grid for BUFKIT files are derived straight from the model native grid, as opposed to the isobaric levels that have been generated by post-processing software.
-
-In the past, the developers have incorporated datastreams from other experimental NWP runs including the [MPAS](https://mpas-dev.github.io) and the [NCAR Realtime Ensemble](https://ensemble.ucar.edu) into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.
-
-To add a custom data source, such as your own NWP point forecast soundings, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.
-
-##### 1. Make a new XML file
-The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
-
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<sourcelist>
-    <datasource name="My Data Source" observed="false" ensemble="false">
-        <outlet name="My Server" url="http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf" format="bufkit" >
-            <time range="24" delta="1" cycle="6" offset="0" delay="2" archive="24"/>
-            <points csv="mydatasource.csv" />
-        </outlet>
-    </datasource>
-</sourcelist>
-```
-
-For the `outlet` tag:
-* `name`: A name for the data source outlet
-* `url`: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:
-  * `date`: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).
-  * `cycle`: The current cycle hour in HHZ format (e.g. 00Z).
-  * `srcid`: The source's profile ID (will be filled in with the same column from the CSV file; see below).
-* `format`: The format of the data source.  Currently, the only supported formats are `bufkit` for model profiles and `spc` for observed profiles. Others will be available in the future.
-
-For the `time` tag:
-* `range`: The forecast range in hours for the data source. Observed data sources should set this to 0.
-* `delta`: The time step in hours between profiles. Observed data sources should set this to 0.
-* `cycle`: The amount of time in hours between cycles for the data source.
-* `offset`: The time offset in hours of the cycles from 00 UTC.
-* `delay`: The time delay in hours between the cycle and the data becoming available.
-* `archive`: The length of time in hours that data are kept on the server.
-
-These should all be integer numbers of hours; support for sub-hourly data is forthcoming.
-
-##### 2. Make a new CSV file
-The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:
-```
-icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
-KTOP,TOP,72456,Topeka/Billard Muni,KS,US,39.08,-95.62,268,3,ktop
-KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
-...
-```
-The only columns that are strictly required are the `lat`, `lon`, and `srcid` columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.
-
-##### 3. Run `python setup.py install`
-This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.
-
-
-=======================================================================
-### Using the Sounding Window
-<sup>[[Return to Top]](#sharppy)</sup>
-
-[Blumberg et al. 2017](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1) provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.
-
-Additional resources for interpreting the GUI include the [SPC Sounding Analysis Help](http://www.spc.noaa.gov/exper/soundings/help/) and [Explanation of SPC Severe Weather Parameters](http://www.spc.noaa.gov/sfctest/help/sfcoa.html) webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.  
-
-For information on the interactive aspects of the program, see the sections below:
-
-##### Zooming and Changing Views
-
-Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Skew-T plots within the window.  Right clicking on the Hodograph will also allow you to change where the hodograph is centered.  Currently, the hodograph can be centered on the Right Mover Storm Motion Vector, the Cloud-Layer Mean Wind Vector, or the origin of the hodograph.
-
-##### Swapping Insets
-
-The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:
-
-1. SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](http://www.spc.noaa.gov/publications/jewell/sars.pdf)).
-2. STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](http://www.spc.noaa.gov/publications/thompson/waf-env.pdf)).
-3. SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).
-4. STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf)).
-5. WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.
-6. FIRE - Fire weather information such as wind speed and humidity in the boundary layer.
-7. VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value...see [Smith et al. 2015, WAF](http://www.spc.noaa.gov/publications/smith/vrot-env.pdf))
-
-##### Color Ranking
-
-The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
-
-1. MAGENTA
-2. RED
-3. YELLOW
-4. WHITE
-5. LIGHT BROWN
-6. DARK BROWN
-
-The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by [Matthew Bunkers; NWS](https://www.weather.gov/unr/uac)).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
-
-#### Interacting with the Focused Sounding
-
-The current sounding that is in "focus" in the program has the traditional "red/green" temperature and dewpoint profiles, while all other soundings in the background will be colored purple.  Below are some functions of the sounding window that are specific to the sounding that is in focus.
-
-##### Modifying the Sounding
-
-The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.
-
-New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the 'I' key on the keyboard or by selecting Profiles->Interpolate on the menu bar. Interpolating the profile will take into account any modifications you've done to the original profile.  Pressing the 'I' key again or selecting Profiles->Reset Interpolation will reset the profile, undoing all modifications, so be sure you want to reset the profile before doing so.
-
-##### Storm Mode Functions
-
-Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in [Dial et al. 2010, WAF](http://www.spc.noaa.gov/publications/dial/waf-mode.pdf).  Clicking on the hodograph again will remove the boundary.
-
-##### Lifting Parcels
-
-By default, soundings opened up in the GUI show these 4 parcels in the lower left inset window:
-
-1.) Surface-based Parcel
-
-2.) 100 mb Mixed-layer Parcel
-
-3.) Forecasted Surface Parcel
-
-4.) Most-Unstable Parcel
-
-Double clicking on this inset will allow you to swap out these parcels for two others:
-
-1.) Effective Inflow Layer Mean Parcel
-
-2.) User Defined Parcel
-
-The current parcel shown in the Skew-T is highlighed by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the "User Parcel".  Then, right click on the Skew-T and select the "Readout Cursor".  Once you find the location in your profile you wish to lift, right click again and look under the "Lift Parcel" menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.
-
-##### Saving the Data
-
-When the sounding window is up, you can select to either save the sounding as an image or save the current focused sounding as a text file that can be loaded back into SHARPpy.  These functions are found underneath the File->Save Text or File->Save Image functions.
-
-#### Interacting with Multiple Soundings
-
-After adding other soundings into the sounding window, the user can change which sounding is the "focus" by accessing the list of available profiles.  This list is kept underneath the "Profiles" menu on the menu bar.   SHARPpy keeps track of the time aspect of all data loaded into the sounding window and attempts to show all profiles valid at a given time.  For the given sounding source that is in focus, the right and left buttons on your keyboard will step through the data in time and will attempt to show any other data sources available.  When observed or user selected data is loaded into the sounding window, SHARPpy will not overlay soundings from different times unless the "Collect Observed" function is checked.  This can be accessed through underneath the "Profiles" menu item or by pressing "C" on your keyboard.
-
-The space bar on your keyboard is used to swap the focus between the profiles shown in the sounding window.  Additionally, to swap between the SHARPpy Sounding Picker and sounding window, hit "W" on your keyboard.  With this change, the right and left arrow keys now will step through the profiles available from the sounding data source that is active.  SHARPpy will match up other.  
-
-=======================================================================
-
 ### Known GUI Issues
 <sup>[[Return to Top]](#sharppy)</sup>
 
@@ -344,21 +143,6 @@ Known Issues:
 - Text can sometimes overlap. (Windows and Linux)
 - The program’s menu bar does not display on Windows (Fixed as of 1.3.0 release)
 - Some observed soundings will be unable to be loaded into the program due to data quality issues.  This is a preventative measure taken by the program that checks the sounding data for a.) incorrect ordering of the data such as in the height or pressure arrays or b.) unrealistic data values. (All OSes)
-
-=======================================================================
-### Scripting with SHARPpy
-<sup>[[Return to Top]](#sharppy)</sup>
-
-To learn more about interacting with the SHARPpy libraries using the Python
-programming language, see the tutorial listed in tutorials/ and check out the link:
-
-http://nbviewer.ipython.org/github/sharppy/SHARPpy/blob/master/tutorials/SHARPpy_basics.ipynb
-
-This tutorial will provide examples for how to use the Python scripting language and SHARPpy to read in the tabular data and work with many of the relevant routines used in the SHARPpy GUI (e.g., CAPE, STP, SCP, SRH calculations).
-
-To write scripts interacting with the SHARPpy libraries, you do NOT have to have the PySide package installed.
-
-=======================================================================
 
 ### SHARPpy Development Team
 <sup>[[Return to Top]](#sharppy)</sup>
