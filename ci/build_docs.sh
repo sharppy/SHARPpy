@@ -27,6 +27,7 @@ make html
 #if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then
 #if [[ $TRAVIS_SECURE_ENV_VARS == 'true' ]]; then
 cd build/html
+pwd
 touch .nojekyll
 git config --global user.email "sharppy-docs-bot@example.com"
 git config --global user.name "sharppy-docs-bot"
@@ -36,16 +37,24 @@ REPO=https://github.com/sharppy/SHARPpy.git
 SSH_REPO=git@github.com:sharppy/SHARPpy.git
 SHA=`git rev-parse --verify HEAD`
 
+cd ../..
+pwd
 # Clone the existing gh-pages for this repo into out/
 # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deply)
 git clone $REPO out
 cd out
+ls -l
+pwd
 git checkout gh-pages || git checkout --orphan gh-pages
 cd ..
+pwd
 rm -rf out/**/*
+cp -r build/html/* out/
 cd out
-cp -r ../* .
+pwd
+ls -l
 git add --all .
+echo "ADDING FILES"
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 git push $SSH_REPO gh-pages
 
