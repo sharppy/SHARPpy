@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.viz.ensemble &mdash; SHARPpy 1.4.0-Andover-Alpha1+1.g43308ba documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.0-Andover-Alpha1+1.g43308ba
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.viz.ensemble</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.viz.ensemble</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.params</span> <span class="k">as</span> <span class="nn">params</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.winds</span> <span class="k">as</span> <span class="nn">winds</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.interp</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">sharppy.databases.inset_data</span> <span class="k">as</span> <span class="nn">inset_data</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="c1">## routine written by Kelton Halbert and Greg Blumberg</span>
+<span class="c1">## keltonhalbert@ou.edu and wblumberg@ou.edu</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundENS&#39;</span><span class="p">,</span> <span class="s1">&#39;plotENS&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="backgroundENS"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS">[docs]</a><span class="k">class</span> <span class="nc">backgroundENS</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draw the background frame and lines for the Theta-E plot frame</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">backgroundENS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="backgroundENS.initUI"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.initUI">[docs]</a>    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">## window configuration settings,</span>
+        <span class="c1">## sich as padding, width, height, and</span>
+        <span class="c1">## min/max plot axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QFrame {&quot;</span>
+            <span class="s2">&quot;  background-color: rgb(0, 0, 0);&quot;</span>
+            <span class="s2">&quot;  border-width: 1px;&quot;</span>
+            <span class="s2">&quot;  border-style: solid;&quot;</span>
+            <span class="s2">&quot;  border-color: #3399CC;}&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physicalDpiX</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">11</span>
+        <span class="n">fsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="o">.</span><span class="mi">055</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fsize</span> <span class="o">=</span> <span class="n">fsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_font</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">box_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">box_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span> <span class="o">=</span> <span class="mi">40</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span> <span class="o">=</span> <span class="mf">40.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="n">fsize</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span> <span class="o">=</span> <span class="n">fsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wid</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="mf">3000.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="mf">3000.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundENS.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the event the window is resized</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="backgroundENS.plotBackground"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.plotBackground">[docs]</a>    <span class="k">def</span> <span class="nf">plotBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles painting the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a painter object and draw the frame</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundENS.setBlackPen"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.setBlackPen">[docs]</a>    <span class="k">def</span> <span class="nf">setBlackPen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+        <span class="n">color</span><span class="o">.</span><span class="n">setAlphaF</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidPattern</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">brush</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">qp</span></div>
+
+<div class="viewcode-block" id="backgroundENS.draw_frame"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.draw_frame">[docs]</a>    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw the background frame.</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## set a new pen to draw with</span>
+        <span class="n">EF1_color</span> <span class="o">=</span> <span class="s2">&quot;#006600&quot;</span>
+        <span class="n">EF2_color</span> <span class="o">=</span> <span class="s2">&quot;#FFCC33&quot;</span>
+        <span class="n">EF3_color</span> <span class="o">=</span> <span class="s2">&quot;#FF0000&quot;</span>
+        <span class="n">EF4_color</span> <span class="o">=</span> <span class="s2">&quot;#FF00FF&quot;</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_font</span><span class="p">)</span>
+        <span class="n">rect1</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRectF</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_height</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span>
+            <span class="s1">&#39;Ensemble Indices&#39;</span><span class="p">)</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">blue</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">ytick_fontsize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fsize</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">y_ticks_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">ytick_fontsize</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">y_ticks_font</span><span class="p">)</span>
+        <span class="n">efstp_inset_data</span> <span class="o">=</span> <span class="n">inset_data</span><span class="o">.</span><span class="n">condSTPData</span><span class="p">()</span>
+        <span class="c1">#texts = efstp_inset_data[&#39;ytexts&#39;]</span>
+        <span class="n">spacing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">/</span> <span class="mf">10.</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span><span class="s1">&#39;1000&#39;</span><span class="p">,</span><span class="s1">&#39;2000&#39;</span><span class="p">,</span><span class="s1">&#39;3000&#39;</span><span class="p">]</span>
+        <span class="n">y_ticks</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">3000</span><span class="p">]</span><span class="c1">#np.arange(self.tpad, self.bry+spacing, spacing)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_ticks</span><span class="p">)):</span>
+            <span class="c1">#print y_ticks[i]</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#0080FF&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_to_ypix</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_to_ypix</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">ypos</span> <span class="o">=</span> <span class="n">spacing</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">spacing</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span>
+            <span class="n">ypos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_to_ypix</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">-</span> <span class="n">ytick_fontsize</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">xpos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">-</span> <span class="mi">50</span><span class="o">/</span><span class="mf">2.</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">ytick_fontsize</span><span class="p">)</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">12</span>
+        <span class="n">spacing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">12</span>
+
+        <span class="c1"># Draw the x tick marks</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fsize</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#0080FF&quot;</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_to_xpix</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">x_to_xpix</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])),</span><span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+            <span class="n">color</span><span class="o">.</span><span class="n">setAlpha</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">ypos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_to_ypix</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">xpos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_to_xpix</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">-</span> <span class="mi">50</span> <span class="o">/</span> <span class="mf">2.</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">ytick_fontsize</span><span class="p">)</span>
+            <span class="c1"># Change to a white pen to draw the text below the box and whisker plot</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="backgroundENS.y_to_ypix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.y_to_ypix">[docs]</a>    <span class="k">def</span> <span class="nf">y_to_ypix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">+</span> <span class="n">y</span>
+        <span class="c1">#print scl1, scl2, self.bry, self.tpad, self.tly</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backgroundENS.x_to_xpix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.backgroundENS.x_to_xpix">[docs]</a>    <span class="k">def</span> <span class="nf">x_to_xpix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="plotENS"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS">[docs]</a><span class="k">class</span> <span class="nc">plotENS</span><span class="p">(</span><span class="n">backgroundENS</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Plot the data on the frame. Inherits the background class that</span>
+<span class="sd">    plots the frame.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotENS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="plotENS.addProfileCollection"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.addProfileCollection">[docs]</a>    <span class="k">def</span> <span class="nf">addProfileCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof_coll</span><span class="p">):</span>
+        <span class="c1"># Add a profile collection to the scatter plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prof_coll</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plotENS.rmProfileCollection"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.rmProfileCollection">[docs]</a>    <span class="k">def</span> <span class="nf">rmProfileCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof_coll</span><span class="p">):</span>
+        <span class="c1"># Remove a profile collection from the scatter plot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">prof_coll</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plotENS.setActiveCollection"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.setActiveCollection">[docs]</a>    <span class="k">def</span> <span class="nf">setActiveCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pc_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Set the active profile collection that is being shown in SPCWindow.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span> <span class="o">=</span> <span class="n">pc_idx</span>
+        <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="p">[</span><span class="n">pc_idx</span><span class="p">]</span><span class="o">.</span><span class="n">getHighlightedProf</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="n">prof</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hght</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotENS.setProf"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.setProf">[docs]</a>    <span class="k">def</span> <span class="nf">setProf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="c1"># Set the current profile being viewed in the SPC window.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="n">prof</span>
+
+        <span class="c1"># Some code to show whether or not the left or right mover is being used.</span>
+        <span class="c1">#if self.use_left:</span>
+        <span class="c1">#    self.stpc = prof.left_stp_cin</span>
+        <span class="c1">#else:</span>
+        <span class="c1">#    self.stpc = prof.right_stp_cin</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotENS.setPreferences"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.setPreferences">[docs]</a>    <span class="k">def</span> <span class="nf">setPreferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_gui</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">prefs</span><span class="p">):</span>
+        <span class="c1"># Set the preferences for the inset.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;bg_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;fg_color&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">update_gui</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_stp_cin</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_stp_cin</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotENS.setDeviant"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.setDeviant">[docs]</a>    <span class="k">def</span> <span class="nf">setDeviant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviant</span><span class="p">):</span>
+        <span class="c1"># Set the variable to indicate whether or not the right or left mover is being used.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span> <span class="o">=</span> <span class="n">deviant</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_stp_cin</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stpc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_stp_cin</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotENS.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window is resized</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotENS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="plotENS.paintEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotENS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">paintEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotENS.clearData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.clearData">[docs]</a>    <span class="k">def</span> <span class="nf">clearData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the clearing of the pixmap</span>
+<span class="sd">        in the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="plotENS.plotData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles drawing of data on the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1">## this function handles painting the plot</span>
+        <span class="c1">## create a new painter obkect</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+
+        <span class="n">cur_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span><span class="p">]</span><span class="o">.</span><span class="n">getCurrentDate</span><span class="p">()</span>
+        <span class="n">bc_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prof_coll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="p">):</span>
+            <span class="c1"># Draw all unhighlighed ensemble members</span>
+            <span class="k">if</span> <span class="n">prof_coll</span><span class="o">.</span><span class="n">getCurrentDate</span><span class="p">()</span> <span class="o">==</span> <span class="n">cur_dt</span><span class="p">:</span>
+                <span class="n">proflist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">prof_coll</span><span class="o">.</span><span class="n">getCurrentProfs</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+                <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">proflist</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">draw_ensemble_point</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">prof</span> <span class="ow">in</span> <span class="n">proflist</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">draw_ensemble_point</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+                    <span class="c1">#%bc_idx = (bc_idx + 1) % len(self.background_colors)</span>
+
+        <span class="n">bc_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prof_coll</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="p">):</span>
+            <span class="c1"># Draw all highlighted members that aren&#39;t the active one.</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span> <span class="ow">and</span> <span class="p">(</span><span class="n">prof_coll</span><span class="o">.</span><span class="n">getCurrentDate</span><span class="p">()</span> <span class="o">==</span> <span class="n">cur_dt</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_observed</span><span class="p">):</span>
+                <span class="n">prof</span> <span class="o">=</span> <span class="n">prof_coll</span><span class="o">.</span><span class="n">getHighlightedProf</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">draw_ensemble_point</span><span class="p">(</span><span class="n">qp</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span></div>
+                <span class="c1">#bc_idx = (bc_idx + 1) % len(self.background_colors)</span>
+
+<div class="viewcode-block" id="plotENS.draw_ensemble_point"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.ensemble.plotENS.draw_ensemble_point">[docs]</a>    <span class="k">def</span> <span class="nf">draw_ensemble_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="c1"># Plot the profile index on the scatter plot</span>
+        <span class="k">if</span> <span class="s1">&#39;pbl_h&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span> <span class="c1"># Make sure a PBL top has been found in the profile object</span>
+            <span class="n">ppbl_top</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pbl_top</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="s1">&#39;pbl_h&#39;</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ppbl_top</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="s1">&#39;sfcpcl&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span> <span class="c1"># Make sure a surface parcel has been lifted in the profile object</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="s1">&#39;sfcpcl&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">1</span> <span class="p">))</span>
+        <span class="c1">#x = self.x_to_xpix()</span>
+        <span class="c1">#y = self.y_to_ypix()</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">red</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_to_xpix</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pbl_h</span><span class="p">)</span> <span class="o">-</span> <span class="mi">50</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_to_ypix</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fsize</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawEllipse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">return</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">DrawTest</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DrawTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="c1"># x = np.asarray([1,2,3,4])</span>
+        <span class="c1"># y = np.asarray([2,2,3,4])</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">length</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">plotENS</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">addProfileCollection</span><span class="p">(</span><span class="n">prof_coll</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">setActiveCollection</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="kn">import</span> <span class="nn">sharppy.io.buf_decoder</span> <span class="k">as</span> <span class="nn">buf_decoder</span>
+
+    <span class="n">dec</span>  <span class="o">=</span> <span class="n">buf_decoder</span><span class="o">.</span><span class="n">BufDecoder</span><span class="p">(</span><span class="s1">&#39;/Users/blumberg/Downloads/sref_klzk.buf&#39;</span><span class="p">)</span>
+    <span class="n">prof_coll</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mySW</span> <span class="o">=</span> <span class="n">DrawTest</span><span class="p">()</span>
+    <span class="n">mySW</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

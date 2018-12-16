@@ -1,0 +1,1018 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.viz.thermo &mdash; SHARPpy 1.4.0-Andover-Alpha1+1.g43308ba documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.0-Andover-Alpha1+1.g43308ba
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.viz.thermo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.viz.thermo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+
+<span class="c1">## routine written by Kelton Halbert</span>
+<span class="c1">## keltonhalbert@ou.edu</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundText&#39;</span><span class="p">,</span> <span class="s1">&#39;plotText&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="backgroundText"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.backgroundText">[docs]</a><span class="k">class</span> <span class="nc">backgroundText</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Handles drawing the background frame onto a QPixmap.</span>
+<span class="sd">    Inherits a QtGui.QFrame Object.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">backgroundText</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
+
+<div class="viewcode-block" id="backgroundText.initUI"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.backgroundText.initUI">[docs]</a>    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes frame variables such as padding,</span>
+<span class="sd">        width, height, etc, as well as the QPixmap</span>
+<span class="sd">        that contains the frame drawing.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## set the frame stylesheet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;QFrame {&quot;</span>
+            <span class="s2">&quot;  background-color: rgb(0, 0, 0);&quot;</span>
+            <span class="s2">&quot;  border-width: 1px;&quot;</span>
+            <span class="s2">&quot;  border-style: solid;&quot;</span>
+            <span class="s2">&quot;  border-color: #3399CC;}&quot;</span><span class="p">)</span>
+        <span class="c1">## set the frame padding</span>
+        <span class="c1">## set the height/width variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wid</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        <span class="c1">## do a DPI check to make sure</span>
+        <span class="c1">## the text is sized properly!</span>
+        <span class="n">fsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="o">.</span><span class="mi">06</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="o">.</span><span class="mi">03</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span><span class="p">)</span>
+        <span class="c1">## set the font, get the metrics and height of the font</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="o">.</span><span class="n">setPixelSize</span><span class="p">(</span><span class="n">fsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="c1">## the self.ylast variable is used as a running sum for</span>
+        <span class="c1">## text placement.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+        <span class="c1">## initialize the QPixmap that will be drawn on.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span>
+        <span class="c1">## plot the background frame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="backgroundText.draw_frame"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.backgroundText.draw_frame">[docs]</a>    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draws the background frame and the text headers for indices.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a white pen with thickness 1 and a solid line</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## set the horizontal grid to be the width of the frame</span>
+        <span class="c1">## divided into 8 spaces</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">8</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1">## draw the header and the indices using a loop.</span>
+        <span class="c1">## This loop is a &#39;horizontal&#39; loop that will plot</span>
+        <span class="c1">## the text for a row, keeping the vertical placement constant.</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PCL&#39;</span><span class="p">,</span> <span class="s1">&#39;CAPE&#39;</span><span class="p">,</span> <span class="s1">&#39;CINH&#39;</span><span class="p">,</span> <span class="s1">&#39;LCL&#39;</span><span class="p">,</span> <span class="s1">&#39;LI&#39;</span><span class="p">,</span> <span class="s1">&#39;LFC&#39;</span><span class="p">,</span> <span class="s1">&#39;EL&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">titles</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="n">count</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+        <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+            <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">vspace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="n">vspace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="n">vspace</span></div>
+    
+<div class="viewcode-block" id="backgroundText.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.backgroundText.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window gets resized.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundText.plotBackground"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.backgroundText.plotBackground">[docs]</a>    <span class="k">def</span> <span class="nf">plotBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles drawing the text background onto</span>
+<span class="sd">        the QPixmap.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a QPainter objext</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="c1">## draw the frame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="plotText"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText">[docs]</a><span class="k">class</span> <span class="nc">plotText</span><span class="p">(</span><span class="n">backgroundText</span><span class="p">):</span>
+    <span class="n">updatepcl</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">Parcel</span><span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Handles plotting the indices in the frame.</span>
+<span class="sd">    Inherits a backgroundText Object that contains</span>
+<span class="sd">    a QPixmap with the frame drawn on it. All drawing</span>
+<span class="sd">    gets done on this QPixmap, and then the QPixmap</span>
+<span class="sd">    gets rendered by the paintEvent function.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcl_types</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize the data from a Profile object passed to </span>
+<span class="sd">        this class. It then takes the data it needs from the</span>
+<span class="sd">        Profile object and converts them into strings that</span>
+<span class="sd">        can be used to draw the text in the frame.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof: a Profile Object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pw_units</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_units</span> <span class="o">=</span> <span class="s1">&#39;Fahrenheit&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#775000&#39;</span><span class="p">),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#996600&#39;</span><span class="p">),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffff00&#39;</span><span class="p">),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ff0000&#39;</span><span class="p">),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#e700df&#39;</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_scp_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#00ffff&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_sel_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#00ffff&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_hi_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#993333&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_md_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#996600&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_lo_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#00ff00&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1">## get the parcels to be displayed in the GUI</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotText</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span> <span class="o">=</span> <span class="n">pcl_types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setDefaultParcel</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">SelectParcels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="plotText.setDefaultParcel"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.setDefaultParcel">[docs]</a>    <span class="k">def</span> <span class="nf">setDefaultParcel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;MU&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="plotText.mouseDoubleClickEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.mouseDoubleClickEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseDoubleClickEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.setParcels"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.setParcels">[docs]</a>    <span class="k">def</span> <span class="nf">setParcels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;SFC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span> <span class="c1"># Set the surface parcel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;ML&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;FCST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">fcstpcl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;MU&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;EFF&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">effpcl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="s2">&quot;USER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">usrpcl</span></div>
+
+<div class="viewcode-block" id="plotText.setProf"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.setProf">[docs]</a>    <span class="k">def</span> <span class="nf">setProf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setParcels</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="n">prof</span><span class="p">;</span>
+
+        <span class="c1">## either get or calculate the indices, round to the nearest int, and</span>
+        <span class="c1">## convert them to strings.</span>
+        <span class="c1">## K Index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_idx</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">k_idx</span> <span class="p">)</span>
+        <span class="c1">## precipitable water</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwat</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pwat</span>
+        <span class="c1">## 0-3km agl lapse rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_3km</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">lapserate_3km</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="c1">## 3-6km agl lapse rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_3_6km</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">lapserate_3_6km</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="c1">## 850-500mb lapse rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_850_500</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">lapserate_850_500</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="c1">## 700-500mb lapse rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_700_500</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">lapserate_700_500</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="c1">## convective temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convT</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">convT</span>
+        <span class="c1">## sounding forecast surface temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxT</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">maxT</span>
+        <span class="c1">#fzl = str(int(self.sfcparcel.hght0c))</span>
+        <span class="c1">## 100mb mean mixing ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean_mixr</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">mean_mixr</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="c1">## 150mb mean rh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low_rh</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">low_rh</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mid_rh</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">mid_rh</span> <span class="p">)</span>
+        <span class="c1">## calculate the totals totals index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">totals_totals</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">totals_totals</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dcape</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">dcape</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drush</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">drush</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigsevere</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">sig_severe</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">mmp</span><span class="p">,</span> <span class="mi">2</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">esp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">esp</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wndg</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">wndg</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tei</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">prof</span><span class="o">.</span><span class="n">tei</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.setPreferences"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.setPreferences">[docs]</a>    <span class="k">def</span> <span class="nf">setPreferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_gui</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">prefs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pw_units</span> <span class="o">=</span> <span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pw_units&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_units</span> <span class="o">=</span> <span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;temp_units&#39;</span><span class="p">]</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;bg_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;fg_color&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwat_colors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_m3_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_m2_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_m1_color&#39;</span><span class="p">]),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_p1_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_p2_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pwat_p3_color&#39;</span><span class="p">]),</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l1_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l2_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l3_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l4_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l5_color&#39;</span><span class="p">]),</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_l6_color&#39;</span><span class="p">]),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_scp_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;alert_lscp_color&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_sel_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pcl_sel_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_hi_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pcl_cin_hi_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_md_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pcl_cin_md_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_lo_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;pcl_cin_lo_color&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">update_gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.setDeviant"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.setDeviant">[docs]</a>    <span class="k">def</span> <span class="nf">setDeviant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviant</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span> <span class="o">=</span> <span class="n">deviant</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window is resized.</span>
+<span class="sd">        </span>
+<span class="sd">        Parametes</span>
+<span class="sd">        ---------</span>
+<span class="sd">        e: an Event Object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotText</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="plotText.paintEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window gets painted.</span>
+<span class="sd">        This renders the QPixmap that the backgroundText</span>
+<span class="sd">        Object contians. For the actual drawing of the data,</span>
+<span class="sd">        see the plotData function.</span>
+<span class="sd">        </span>
+<span class="sd">        Parametes</span>
+<span class="sd">        ---------</span>
+<span class="sd">        e: an Event Object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotText</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">paintEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.plotData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the drawing of the text onto the QPixmap.</span>
+<span class="sd">        This is where the actual data gets plotted/drawn.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1">## initialize a QPainter object</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="c1">## draw the indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drawConvectiveIndices</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drawIndices</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drawSevere</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotText.clearData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.clearData">[docs]</a>    <span class="k">def</span> <span class="nf">clearData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the clearing of the pixmap</span>
+<span class="sd">        in the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="plotText.drawSevere"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.drawSevere">[docs]</a>    <span class="k">def</span> <span class="nf">drawSevere</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This handles the severe indices, such as STP, sig hail, etc.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a pen to draw with.</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">yellow</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+       
+        <span class="n">color_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span>
+        <span class="c1">## needs to be coded.</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+
+        <span class="n">ship</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">ship</span>
+        <span class="n">ship_str</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">ship</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_left</span><span class="p">:</span>
+            <span class="n">stp_fixed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_stp_fixed</span>
+            <span class="n">stp_cin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_stp_cin</span>
+            <span class="n">scp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_scp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stp_fixed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_stp_fixed</span>
+            <span class="n">stp_cin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_stp_cin</span>
+            <span class="n">scp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_scp</span>
+
+        <span class="n">stp_fixed_str</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">stp_fixed</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="n">stp_cin_str</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">stp_cin</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="n">scp_str</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">scp</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">latitude</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">stp_fixed</span> <span class="o">=</span> <span class="o">-</span><span class="n">stp_fixed</span>
+            <span class="n">stp_cin</span> <span class="o">=</span> <span class="o">-</span><span class="n">stp_cin</span>
+            <span class="n">scp</span> <span class="o">=</span> <span class="o">-</span><span class="n">scp</span>
+
+        <span class="c1"># Coloring thresholds provided by Rich Thompson (SPC)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Supercell = &#39;</span><span class="p">,</span> <span class="s1">&#39;STP (cin) = &#39;</span><span class="p">,</span> <span class="s1">&#39;STP (fix) = &#39;</span><span class="p">,</span> <span class="s1">&#39;SHIP = &#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">scp</span><span class="p">,</span> <span class="n">stp_cin</span><span class="p">,</span> <span class="n">stp_fixed</span><span class="p">,</span> <span class="n">ship</span><span class="p">]</span>
+        <span class="n">index_strs</span> <span class="o">=</span> <span class="p">[</span><span class="n">scp_str</span><span class="p">,</span> <span class="n">stp_cin_str</span><span class="p">,</span> <span class="n">stp_fixed_str</span><span class="p">,</span> <span class="n">ship_str</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">index_str</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">index_strs</span><span class="p">,</span><span class="n">indices</span><span class="p">):</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">7</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="s1">&#39;--&#39;</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="c1"># STP uses a different color scale</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mf">19.95</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mf">11.95</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mf">1.95</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="mi">45</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="o">-.</span><span class="mi">45</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="o">-.</span><span class="mi">45</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left_scp_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="c1"># STP effective</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="o">.</span><span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="c1"># STP fixed</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="n">labels</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="c1"># SHIP</span>
+                <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="o">.</span><span class="mi">5</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">label</span> <span class="o">+</span> <span class="n">index_str</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plotText.drawIndices"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.drawIndices">[docs]</a>    <span class="k">def</span> <span class="nf">drawIndices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draws the non-parcel indices.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## make the initial x point relatice to the width of the frame.</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">rpad</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">tpad</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="c1">## Now we have all the data we could ever want. Time to start drawing</span>
+        <span class="c1">## them on the frame.</span>
+        <span class="c1">## This starts with the left column.</span>
+        <span class="n">std_dev</span> <span class="o">=</span> <span class="p">[</span> <span class="sa">u</span><span class="s1">&#39;(&lt;3</span><span class="se">\u03C3</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;(2-3</span><span class="se">\u03C3</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;(1-2</span><span class="se">\u03C3</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;(1-2</span><span class="se">\u03C3</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;(2-3</span><span class="se">\u03C3</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;(&gt;3</span><span class="se">\u03C3</span><span class="s1">)&#39;</span> <span class="p">]</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwat_colors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">pwv_flag</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> 
+        <span class="n">dist_string</span> <span class="o">=</span> <span class="n">std_dev</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">pwv_flag</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pw_units</span> <span class="o">==</span> <span class="s1">&#39;cm&#39;</span><span class="p">:</span>
+            <span class="n">pw_display</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">IN2CM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwat</span><span class="p">)</span>
+            <span class="n">pw_display</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">pw_display</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pw_display</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwat</span>
+            <span class="n">pw_display</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span> <span class="n">pw_display</span><span class="p">,</span> <span class="mi">2</span> <span class="p">)</span>
+
+        <span class="c1">## draw the first column of text using a loop, keeping the horizontal</span>
+        <span class="c1">## placement constant.</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_units</span> <span class="o">==</span> <span class="s1">&#39;Fahrenheit&#39;</span><span class="p">:</span>
+            <span class="n">t_units_disp</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span>
+            <span class="n">drush_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">drush</span> <span class="p">)</span>
+            <span class="n">convT_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">convT</span> <span class="p">)</span>
+            <span class="n">maxT_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxT</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_units</span> <span class="o">==</span> <span class="s1">&#39;Celsius&#39;</span><span class="p">:</span>
+            <span class="n">t_units_disp</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span>
+            <span class="n">drush_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">ftoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drush</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">convT_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">ftoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">convT</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">maxT_disp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">ftoc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxT</span><span class="p">)</span> <span class="p">)</span>
+
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">]</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PW = &#39;</span><span class="p">,</span> <span class="s1">&#39;MeanW = &#39;</span><span class="p">,</span> <span class="s1">&#39;LowRH = &#39;</span><span class="p">,</span> <span class="s1">&#39;MidRH = &#39;</span><span class="p">,</span> <span class="s1">&#39;DCAPE = &#39;</span><span class="p">,</span> <span class="s1">&#39;DownT = &#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">pw_display</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pw_units</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">dist_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_mixr</span> <span class="o">+</span> <span class="s1">&#39;g/kg&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low_rh</span> <span class="o">+</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mid_rh</span> <span class="o">+</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dcape</span><span class="p">,</span> <span class="n">drush_disp</span> <span class="o">+</span> <span class="n">t_units_disp</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rpad</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">text</span> <span class="o">+</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+
+        <span class="c1">## middle-left column</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;K = &#39;</span><span class="p">,</span> <span class="s1">&#39;TT = &#39;</span><span class="p">,</span> <span class="s1">&#39;ConvT = &#39;</span><span class="p">,</span> <span class="s1">&#39;maxT = &#39;</span><span class="p">,</span> <span class="s1">&#39;ESP = &#39;</span><span class="p">,</span> <span class="s1">&#39;MMP = &#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">totals_totals</span><span class="p">,</span> <span class="n">convT_disp</span> <span class="o">+</span> <span class="n">t_units_disp</span><span class="p">,</span> <span class="n">maxT_disp</span> <span class="o">+</span> <span class="n">t_units_disp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mmp</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">text</span> <span class="o">+</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+
+        <span class="c1">## middle-right column</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;WNDG = &#39;</span><span class="p">,</span> <span class="s1">&#39;TEI = &#39;</span><span class="p">,</span> <span class="s1">&#39;3CAPE = &#39;</span><span class="p">,</span> <span class="s1">&#39;MBURST = &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;SigSvr = &#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wndg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tei</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">b3km</span><span class="p">),</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">mburst</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigsevere</span> <span class="o">+</span> <span class="s1">&#39; m3/s3&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">6</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">text</span> <span class="o">+</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="n">y1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">7</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">y1</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">7</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="p">)</span>
+        
+        <span class="c1">## lapserate window</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Sfc-3km AGL LR = &#39;</span><span class="p">,</span> <span class="s1">&#39;3-6km AGL LR = &#39;</span><span class="p">,</span> <span class="s1">&#39;850-500mb LR = &#39;</span><span class="p">,</span> <span class="s1">&#39;700-500mb LR = &#39;</span><span class="p">]</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lapserate_3km</span> <span class="o">+</span> <span class="s1">&#39; C/km&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_3_6km</span> <span class="o">+</span> <span class="s1">&#39; C/km&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_850_500</span> <span class="o">+</span> <span class="s1">&#39; C/km&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lapserate_700_500</span> <span class="o">+</span> <span class="s1">&#39; C/km&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">text</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">texts</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rpad</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">text</span> <span class="o">+</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span></div>
+
+
+<div class="viewcode-block" id="plotText.drawConvectiveIndices"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.drawConvectiveIndices">[docs]</a>    <span class="k">def</span> <span class="nf">drawConvectiveIndices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This handles the drawing of the parcel indices.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a white pen with thickness 2 and a solid line</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## make the initial x pixel coordinate relative to the frame</span>
+        <span class="c1">## width.</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">/</span> <span class="mi">8</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="c1">## get the indices rounded to the nearest int, conver to strings</span>
+        <span class="c1">## Start with the surface based parcel.</span>
+        <span class="n">capes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span> <span class="c1"># Only allow 4 parcels to be displayed</span>
+        <span class="n">cins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span>
+        <span class="n">lcls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span>
+        <span class="n">lis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span>
+        <span class="n">lfcs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span>
+        <span class="n">els</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;S10&quot;</span><span class="p">)</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+            <span class="n">parcel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">capes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">bplus</span><span class="p">)</span> <span class="c1"># Append the CAPE value</span>
+            <span class="n">cins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">bminus</span><span class="p">)</span>
+            <span class="n">lcls</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">lclhght</span><span class="p">)</span>
+            <span class="n">lis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">li5</span><span class="p">)</span>
+            <span class="n">lfcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">lfchght</span><span class="p">)</span>
+            <span class="n">els</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">parcel</span><span class="o">.</span><span class="n">elhght</span><span class="p">)</span>
+        <span class="c1">## Now that we have all the data, time to plot the text in their</span>
+        <span class="c1">## respective columns.</span>
+        
+        <span class="c1">## PCL type</span>
+        <span class="n">pcl_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">y1</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">]:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pcl_sel_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+                <span class="n">pcl_index</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="c1">## CAPE</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">capes</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4000</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3000</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2000</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alert_colors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+        <span class="c1">## CINH</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cins</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">capes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">50</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_lo_color</span> 
+                <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">capes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">100</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_md_color</span>
+                <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">capes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">100</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_hi_color</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+
+        <span class="c1">## LCL</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lcls</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1000</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ML&quot;</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_lo_color</span>
+                <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1500</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ML&quot;</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_md_color</span>
+                <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2000</span> <span class="ow">and</span> <span class="n">pcl_index</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">texts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;ML&quot;</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_cin_hi_color</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="c1">## LI</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">lis</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+        <span class="c1">## LFC</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">lfcs</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+        <span class="c1">## EL</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">els</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">6</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="n">vspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                <span class="n">vspace</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
+            <span class="n">y1</span> <span class="o">+=</span> <span class="n">vspace</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="n">y1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#996633&#39;</span><span class="p">)</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">6</span> <span class="o">+</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">x1</span><span class="o">*</span><span class="mi">6</span> <span class="o">+</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="o">*</span><span class="mi">6</span> <span class="o">+</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">*</span><span class="mi">6</span> <span class="o">+</span> <span class="n">x1</span><span class="o">*</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="plotText.mousePressEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thermo.plotText.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bound</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">bound</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="ow">and</span> <span class="n">bound</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
+                <span class="n">pcl_to_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pcl_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">]]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">updatepcl</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">pcl_to_pass</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+                <span class="k">break</span></div></div>
+
+<span class="k">class</span> <span class="nc">SelectParcels</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parcel_types</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">QWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span> <span class="o">=</span> <span class="n">parcel_types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_pcls</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sb</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;Surface-Based Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sb</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;SFC&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sb</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sb</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;100 mb Mixed Layer Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;ML&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ml</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fcst</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;Forecast Surface Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fcst</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;FCST&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fcst</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fcst</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;Most Unstable Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;MU&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eff</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;Effective Inflow Layer Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eff</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;EFF&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eff</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eff</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">usr</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s1">&#39;User Defined Parcel&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usr</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;USER&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">usr</span><span class="o">.</span><span class="n">toggle</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usr</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">changeParcel</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Show Parcels&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s1">&#39;Ok&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">150</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">okPushed</span><span class="p">)</span>
+
+        <span class="c1">#cb.stateChanged.connect(self.changeTitle)</span>
+    <span class="c1">#cb.stateChanged.connect(</span>
+
+    <span class="k">def</span> <span class="nf">changeParcel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">okPushed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pcls</span><span class="p">:</span>
+            <span class="n">msgBox</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msgBox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;You can only show 4 parcels at a time.</span><span class="se">\n</span><span class="s2">Unselect some parcels.&quot;</span><span class="p">)</span>
+            <span class="n">msgBox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pcl_count</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pcls</span><span class="p">:</span>
+            <span class="n">msgBox</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
+            <span class="n">msgBox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;You need to select 4 parcels to show.  Select some more.&quot;</span><span class="p">)</span>
+            <span class="n">msgBox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sb</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SFC&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ml</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ML&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fcst</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;FCST&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;MU&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eff</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;EFF&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">usr</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;USER&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">pcl_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parcel_types</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">skewt_pcl</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">label_height</span>
+            <span class="n">pcl_to_pass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">parcels</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">pcl_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">skewt_pcl</span><span class="p">]]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">updatepcl</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">pcl_to_pass</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

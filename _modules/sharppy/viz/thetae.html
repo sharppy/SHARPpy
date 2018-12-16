@@ -1,0 +1,529 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.viz.thetae &mdash; SHARPpy 1.4.0-Andover-Alpha1+1.g43308ba documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.0-Andover-Alpha1+1.g43308ba
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.viz.thetae</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.viz.thetae</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PySide.QtOpenGL</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="c1">## routine written by Kelton Halbert - OU School of Meteorology</span>
+<span class="c1">## keltonhalbert@ou.edu</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundThetae&#39;</span><span class="p">,</span> <span class="s1">&#39;plotThetae&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="backgroundThetae"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae">[docs]</a><span class="k">class</span> <span class="nc">backgroundThetae</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draw the background frame and lines for the Theta-E plot.</span>
+<span class="sd">    Draws the background on a QPixmap.</span>
+<span class="sd">    </span>
+<span class="sd">    Inherits a QtGui.QFrame Object</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">backgroundThetae</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="backgroundThetae.initUI"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.initUI">[docs]</a>    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes window variables and the QPixmap</span>
+<span class="sd">        that gets drawn on.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## window configuration settings,</span>
+        <span class="c1">## sich as padding, width, height, and</span>
+        <span class="c1">## min/max plot axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wid</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        <span class="c1">## what are the minimum/maximum values expected</span>
+        <span class="c1">## for the data? This is used when converting</span>
+        <span class="c1">## to pixel coordinates.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pmax</span> <span class="o">=</span> <span class="mf">1025.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmin</span> <span class="o">=</span> <span class="mf">400.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">360.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmin</span> <span class="o">=</span> <span class="mf">300.</span>
+        <span class="c1">## do a DPI check for the font size</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physicalDpiX</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span><span class="p">)</span>
+        <span class="c1">## initialize the QPixmap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="c1">## and draw the background</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the event the window is resized.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        e: an Event object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="backgroundThetae.plotBackground"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.plotBackground">[docs]</a>    <span class="k">def</span> <span class="nf">plotBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the drawing of the background onto</span>
+<span class="sd">        the QPixmap.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a painter object and draw the frame</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="c1">## draw the isobar ticks and the theta-e ticks</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">500</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_isobar</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">qp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_thetae</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">qp</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.clear"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clear the widget</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.draw_frame"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.draw_frame">[docs]</a>    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw the background frame.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## set a new pen to draw with</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="c1">## draw the borders in white</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## draw the plot name on the background</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignHCenter</span><span class="p">,</span>
+                    <span class="s1">&#39;Theta-E</span><span class="se">\n</span><span class="s1">v.</span><span class="se">\n</span><span class="s1">Pres&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.draw_isobar"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.draw_isobar">[docs]</a>    <span class="k">def</span> <span class="nf">draw_isobar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw background isobar ticks.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p: pressure in hPa or mb</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## set a new pen with a white color and solid line of thickness 1</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## convert the pressure to pixel coordinates</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres_to_pix</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="c1">## length of line to draw</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="c1">## draw the isobar line and text</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lpad</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="o">-</span><span class="n">offset</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">,</span>
+                <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">p</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.draw_thetae"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.draw_thetae">[docs]</a>    <span class="k">def</span> <span class="nf">draw_thetae</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw background Theta-E ticks.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t: Theta-E in degrees Kelvin</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## set a new pen with a white color, thickness one, solid line</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## convert theta-E to pixel values</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_to_pix</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="c1">## length of tick to draw</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="c1">## draw the tick and label it with a value</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mi">0</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">tpad</span><span class="o">-</span><span class="n">offset</span><span class="p">,</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">t</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.pres_to_pix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.pres_to_pix">[docs]</a>    <span class="k">def</span> <span class="nf">pres_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to convert a pressure value (hPa) to a Y pixel.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p: pressure in hPa or mb</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmax</span> <span class="o">-</span> <span class="n">p</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backgroundThetae.theta_to_pix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.backgroundThetae.theta_to_pix">[docs]</a>    <span class="k">def</span> <span class="nf">theta_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to convert a Theta-E value (K) to a X pixel.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t: temperature in Kelvin</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">-</span> <span class="n">t</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="plotThetae"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae">[docs]</a><span class="k">class</span> <span class="nc">plotThetae</span><span class="p">(</span><span class="n">backgroundThetae</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Draws the theta-E window. Inherits from the backgroundThetae</span>
+<span class="sd">    class that handles plotting of the frame. Draws the contours</span>
+<span class="sd">    to the QPixmap inherited by the backgroundThetae class.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initializes the data needed from the Profile object.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof: a Profile object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thte_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ff0000&#39;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotThetae</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1">## set the varables for pressure and thetae</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="plotThetae.setProf"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.setProf">[docs]</a>    <span class="k">def</span> <span class="nf">setProf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="n">prof</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">thetae</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pres</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span> <span class="o">&gt;</span> <span class="mf">400.</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">10.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">10.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotThetae.setPreferences"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.setPreferences">[docs]</a>    <span class="k">def</span> <span class="nf">setPreferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_gui</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">prefs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;bg_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;fg_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thte_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;temp_color&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">update_gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotThetae.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window is resized.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        e: an Event object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotThetae</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span> <span class="o">&gt;</span> <span class="mf">400.</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">10.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">10.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="plotThetae.paintEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draws the QPixmap onto the QWidget.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        e: an Event object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotThetae</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">paintEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="plotThetae.plotData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Plots the data onto the QPixmap.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1">## this function handles painting the plot</span>
+        <span class="c1">## create a new painter obkect</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+        <span class="c1">## draw the theta-e profile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_profile</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="c1">## end the painter</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotThetae.draw_profile"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.thetae.plotThetae.draw_profile">[docs]</a>    <span class="k">def</span> <span class="nf">draw_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw the Theta-E v. Pres profile.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thte_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">pen</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">mask1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="o">.</span><span class="n">mask</span>
+        <span class="n">mask2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span><span class="o">.</span><span class="n">mask</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mask1</span><span class="p">,</span> <span class="n">mask2</span><span class="p">)</span>
+        <span class="n">pres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">thetae</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thetae</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">pres</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">):</span>
+            <span class="c1">## we really only want to plot the data in the lowest 500mb</span>
+            <span class="k">if</span> <span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">400</span><span class="p">:</span>
+                <span class="c1">## get two pressure, temperature, and dewpoint values</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1">## get two theta-e values from the above sounding profile data</span>
+                <span class="n">thte1</span> <span class="o">=</span> <span class="n">thetae</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">thte2</span> <span class="o">=</span> <span class="n">thetae</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1">## convert the theta-e values to x pixel coordinates</span>
+                <span class="c1">## and the pressure values to y pixel coordinates</span>
+                <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_to_pix</span><span class="p">(</span><span class="n">thte1</span><span class="p">);</span> <span class="n">x2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_to_pix</span><span class="p">(</span><span class="n">thte2</span><span class="p">)</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres_to_pix</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span> <span class="n">y2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres_to_pix</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+                <span class="c1">## set the pen and draw a line between the two points</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

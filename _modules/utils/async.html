@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>utils.async &mdash; SHARPpy 1.4.0-Andover-Alpha1+1.g43308ba documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.0-Andover-Alpha1+1.g43308ba
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>utils.async</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for utils.async</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">Queue</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">queue</span> <span class="k">as</span> <span class="nn">Queue</span>
+
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<div class="viewcode-block" id="AsyncThreads"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads">[docs]</a><span class="k">class</span> <span class="nc">AsyncThreads</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AsyncThreads: A class to generate threads for whenever something can&#39;t run in the main process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_threads</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AsyncThreads</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threads</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_threads</span> <span class="o">=</span> <span class="n">max_threads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">PriorityQueue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="AsyncThreads.post"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post a thread to be run.</span>
+<span class="sd">        func:   The function to run in a separate thread</span>
+<span class="sd">        callback:   The function to run once func() is done. It will be passed the output from func() as a single tuple.</span>
+<span class="sd">        background [optional]: Boolean specifying whether to run in the background. Background processes are started only</span>
+<span class="sd">            if there are no higher-priority processes to run. The default value is False.</span>
+<span class="sd">        *args, **kwargs: Arguments to func()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">thd_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_genThreadId</span><span class="p">()</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Function being posted by Async: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+        <span class="n">background</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;background&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;background&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;background&#39;</span><span class="p">]</span>
+
+        <span class="n">thd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threadFactory</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">thd_id</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">thd</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">)</span>
+
+        <span class="n">priority</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">background</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">priority</span><span class="p">,</span> <span class="n">thd_id</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">[</span><span class="n">thd_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">thd</span>
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="n">thd_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">background</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_threads</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startNext</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">thd_id</span></div>
+
+<div class="viewcode-block" id="AsyncThreads.isFinished"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.isFinished">[docs]</a>    <span class="k">def</span> <span class="nf">isFinished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a boolean specifying whether the thread corresponding to thread_id is finished.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">thread_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AsyncThreads.join"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Waits until the thread corresponding to thread_id is finished.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isFinished</span><span class="p">(</span><span class="n">thread_id</span><span class="p">):</span>
+            <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AsyncThreads.clearQueue"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.clearQueue">[docs]</a>    <span class="k">def</span> <span class="nf">clearQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clears the queue of processes waiting to be started and kills any threads currently running.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="o">.</span><span class="n">PriorityQueue</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">thd_id</span><span class="p">,</span> <span class="n">thd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">thd</span><span class="o">.</span><span class="n">isRunning</span><span class="p">():</span>
+                <span class="n">thd</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">threads</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="AsyncThreads.startNext"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.startNext">[docs]</a>    <span class="k">def</span> <span class="nf">startNext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prio</span><span class="p">,</span> <span class="n">thd_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">Queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">[</span><span class="n">thd_id</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="AsyncThreads.finish"><a class="viewcode-back" href="../../utils.html#utils.async.AsyncThreads.finish">[docs]</a>    <span class="nd">@Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">,</span> <span class="n">ret_val</span><span class="p">):</span>
+        <span class="n">thd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">[</span><span class="n">thread_id</span><span class="p">]</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="n">thread_id</span><span class="p">]</span>
+
+        <span class="n">callback</span><span class="p">(</span><span class="n">ret_val</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">threads</span><span class="p">[</span><span class="n">thread_id</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="n">thread_id</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_threads</span><span class="p">:</span>
+            <span class="c1"># Might not be the case if we just started a high-priority thread</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">startNext</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_genThreadId</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">time_stamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">time_stamp</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_threadFactory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">class</span> <span class="nc">AsyncThread</span><span class="p">(</span><span class="n">QThread</span><span class="p">):</span>
+            <span class="n">finished</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">AsyncThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>            
+
+            <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">ret_val</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                    <span class="n">ret_val</span> <span class="o">=</span> <span class="n">e</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ret_val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">tuple</span><span class="p">:</span>
+                    <span class="n">ret_val</span> <span class="o">=</span> <span class="p">(</span><span class="n">ret_val</span><span class="p">,</span> <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">thread_id</span><span class="p">,</span> <span class="n">ret_val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AsyncThread</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

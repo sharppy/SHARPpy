@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.viz.speed &mdash; SHARPpy 1.4.0-Andover-Alpha1+1.g43308ba documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.0-Andover-Alpha1+1.g43308ba
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.viz.speed</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.viz.speed</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="c1">## routine written by Kelton Halbert</span>
+<span class="c1">## keltonhalbert@ou.edu</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundSpeed&#39;</span><span class="p">,</span> <span class="s1">&#39;plotSpeed&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="backgroundSpeed"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed">[docs]</a><span class="k">class</span> <span class="nc">backgroundSpeed</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Handles drawing the plot background.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">backgroundSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="backgroundSpeed.initUI"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.initUI">[docs]</a>    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">## initialize frame variables, such as length, width, and</span>
+        <span class="c1">## expected max/min values of data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wid</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        <span class="c1">## set the max and min pressure expected, and convert it to log space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pmax</span> <span class="o">=</span> <span class="mf">1050.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pmin</span> <span class="o">=</span> <span class="mf">100.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_pmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmax</span><span class="p">);</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pmin</span><span class="p">)</span>
+        <span class="c1">## set the max/min wind speed expected</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">==</span> <span class="s2">&quot;knots&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">=</span> <span class="mf">140.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">smin</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># knots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="mf">20.</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">==</span> <span class="s1">&#39;m/s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">=</span> <span class="mf">80.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">smin</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># m/s</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="mf">10.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="backgroundSpeed.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window is resized.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="backgroundSpeed.plotBackground"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.plotBackground">[docs]</a>    <span class="k">def</span> <span class="nf">plotBackground</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles painting the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a QPainter object</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+        <span class="c1">## draw the background frame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_frame</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="c1">## draw the vertical ticks for wind speed</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smin</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smax</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">=</span><span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span><span class="o">=</span><span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw_speed</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">),</span> <span class="n">label</span><span class="p">)</span>
+        <span class="c1">## Draw the title and units</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title_font</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span>
+                   <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="s2">&quot;Wind Speed</span><span class="se">\n</span><span class="s2">(&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> </div>
+
+
+<div class="viewcode-block" id="backgroundSpeed.draw_frame"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.draw_frame">[docs]</a>    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draws the frame boarders.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a pen with white color, thickness 2, solid line</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="backgroundSpeed.draw_speed"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.draw_speed">[docs]</a>    <span class="k">def</span> <span class="nf">draw_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drawlabel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw background speed ticks.</span>
+<span class="sd">        --------</span>
+<span class="sd">        s: wind speed</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a pen with an orange/brown color, thickness 1, dashed line</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isotach_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
+        <span class="c1">## convert the speed value to pixel coordinates</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed_to_pix</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">labelx1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed_to_pix</span><span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="c1"># e.g. 20 - 20 = 0, 0 to 40</span>
+        <span class="n">label_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed_to_pix</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="n">delta</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed_to_pix</span><span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="n">delta</span><span class="p">)</span>
+        <span class="c1">## draw a dashed line of constant wind speed value</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">drawlabel</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">labelx1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span> <span class="n">label_width</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>
+                   <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span></div>
+    
+<div class="viewcode-block" id="backgroundSpeed.pres_to_pix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.pres_to_pix">[docs]</a>    <span class="k">def</span> <span class="nf">pres_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to convert a pressure value to a Y pixel.</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pmin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_pmax</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="backgroundSpeed.speed_to_pix"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.backgroundSpeed.speed_to_pix">[docs]</a>    <span class="k">def</span> <span class="nf">speed_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to convert a wind speed value to a X pixel.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">scl1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">smin</span>
+        <span class="n">scl2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">-</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="p">(</span><span class="n">scl2</span> <span class="o">/</span> <span class="n">scl1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="plotSpeed"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed">[docs]</a><span class="k">class</span> <span class="nc">plotSpeed</span><span class="p">(</span><span class="n">backgroundSpeed</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Handles plotting the data in the frame.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="s1">&#39;#000000&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="s1">&#39;#ffffff&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">=</span> <span class="s1">&#39;knots&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isotach_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#9D5736&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1">## initialize values to be accessable to functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">## give different colors for different height values.</span>
+        <span class="c1">## these are consistent with the hodograph colors.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mid_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#00FF00&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#FFFF00&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trop_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s2">&quot;#00FFFF&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="plotSpeed.setProf"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.setProf">[docs]</a>    <span class="k">def</span> <span class="nf">setProf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prof</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="o">=</span> <span class="n">prof</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hght</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotSpeed.setPreferences"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.setPreferences">[docs]</a>    <span class="k">def</span> <span class="nf">setPreferences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_gui</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">prefs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;bg_color&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;fg_color&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">=</span> <span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;wind_units&#39;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">==</span> <span class="s2">&quot;knots&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">=</span> <span class="mf">140.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">smin</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># knots</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="mf">20.</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">==</span> <span class="s1">&#39;m/s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smax</span> <span class="o">=</span> <span class="mf">80.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">smin</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1"># m/s</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta</span> <span class="o">=</span> <span class="mf">10.</span>
+           
+        <span class="bp">self</span><span class="o">.</span><span class="n">low_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;0_3_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mid_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;3_6_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upper_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;6_9_color&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trop_level_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;9_12_color&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">isotach_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">prefs</span><span class="p">[</span><span class="s1">&#39;spd_itach_color&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">update_gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clearData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotSpeed.resizeEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.resizeEvent">[docs]</a>    <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles when the window is resized.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotData</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="plotSpeed.paintEvent"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">plotSpeed</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">paintEvent</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotSpeed.clearData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.clearData">[docs]</a>    <span class="k">def</span> <span class="nf">clearData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles the clearing of the pixmap</span>
+<span class="sd">        in the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="plotSpeed.plotData"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.plotData">[docs]</a>    <span class="k">def</span> <span class="nf">plotData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Handles drawing the data on the frame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a QPainter object</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">)</span>
+        <span class="c1">## draw the wind speed profile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_profile</span><span class="p">(</span><span class="n">qp</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="plotSpeed.draw_profile"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.speed.plotSpeed.draw_profile">[docs]</a>    <span class="k">def</span> <span class="nf">draw_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Draw the Speed vs. Height profile.</span>
+<span class="sd">        --------</span>
+<span class="sd">        qp: QtGui.QPainter object</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">## initialize a pen starting with the low level color,</span>
+        <span class="c1">## thickness of 2, solid line.</span>
+        <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low_level_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pen</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
+        <span class="c1">## if there are missing values, get the data mask</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">mask</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hght</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+            <span class="n">hgt</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">])</span>
+            <span class="n">pres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="o">~</span><span class="n">mask</span><span class="p">]</span>
+            <span class="c1">## calculate teh wind speed</span>
+            <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+        <span class="c1">## otherwise, the data is fine.</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">hgt</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hght</span><span class="p">)</span>
+            <span class="n">pres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">;</span> <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span>
+            <span class="c1">## calculate the windspeed</span>
+            <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wind_units</span> <span class="o">==</span> <span class="s1">&#39;m/s&#39;</span><span class="p">:</span>
+            <span class="n">spd</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">KTS2MS</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
+
+        <span class="c1">## loop through the profile</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">pres</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">):</span>
+            <span class="c1">## get the important values from the profile</span>
+            <span class="n">hgt1</span> <span class="o">=</span> <span class="n">hgt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">spd1</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1">## convert the speed to x pixel coordinates</span>
+            <span class="c1">## and convert the pressure in log space to a</span>
+            <span class="c1">## y pixel coordinate</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">speed_to_pix</span><span class="p">(</span><span class="n">spd1</span><span class="p">)</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pres_to_pix</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+            <span class="c1">## now color code the different heights</span>
+            <span class="k">if</span> <span class="n">hgt1</span> <span class="o">&lt;</span> <span class="mi">3000</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low_level_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">hgt1</span> <span class="o">&lt;</span> <span class="mi">6000</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mid_level_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">hgt1</span> <span class="o">&lt;</span> <span class="mi">9000</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_level_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trop_level_color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="c1">## Draw a horizontal line with the length of the wind speed</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
+            <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span></div></div>
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
