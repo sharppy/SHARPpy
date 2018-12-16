@@ -53,13 +53,13 @@ class backgroundHodo(QtGui.QFrame):
             fsize = 7
         else:
             fsize = 9
-        self.label_font = QtGui.QFont('Helvetica', fsize)
-        self.critical_font = QtGui.QFont('Helvetica', fsize + 2)
-        self.readout_font = QtGui.QFont('Helvetica', 11)
+        self.label_font = QtGui.QFont('Helvetica', fsize + (self.hgt * 0.0045))
+        self.critical_font = QtGui.QFont('Helvetica', fsize + 2 +  (self.hgt * 0.0045))
+        self.readout_font = QtGui.QFont('Helvetica', 11 +  (self.hgt * 0.0045))
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.critical_metrics = QtGui.QFontMetrics( self.critical_font )
-        self.label_height = self.label_metrics.xHeight() + 5
-        self.critical_height = self.critical_metrics.xHeight() + 5
+        self.label_height = self.label_metrics.xHeight() + 5 +  (self.hgt * 0.0045)
+        self.critical_height = self.critical_metrics.xHeight() + 5 +  (self.hgt * 0.0045)
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.saveBitMap = None
