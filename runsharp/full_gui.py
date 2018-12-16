@@ -15,7 +15,7 @@ HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 # Start the logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
-                    filename='~/.sharppy/sharppy.log',
+                    filename=HOME_DIR + '/sharppy.log',
                     filemode='w')
 console = logging.StreamHandler()
 # set a format which is simpler for console use
@@ -71,7 +71,7 @@ from utils.config import Config
 import traceback
 from functools import wraps, partial
 import argparse
-__version_name__ = 'Andover-dev'
+__version_name__ = ''
 try:
     from netCDF4 import Dataset
     has_nc = True
