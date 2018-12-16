@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.databases.pwv &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.databases.pwv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.databases.pwv</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">params</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.csv</span> <span class="k">import</span> <span class="n">loadCSV</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1">## written by Greg Blumberg - CIMMS</span>
+<span class="c1">## and</span>
+<span class="c1">## Kelton Halbert - University of Oklahoma</span>
+<span class="c1">## wblumberg@ou.edu</span>
+<span class="c1">## keltonhalbert@ou.edu</span>
+
+<div class="viewcode-block" id="get_mean_pwv"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.get_mean_pwv">[docs]</a><span class="k">def</span> <span class="nf">get_mean_pwv</span><span class="p">(</span><span class="n">station</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to get the mean precipitable water vapor (inches) values</span>
+<span class="sd">    for every month of the year, based on the station passed through.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Staion: Can be the 4 letter station ID (i.e. KOUN), 3 letter station </span>
+<span class="sd">    ID (i.e. OUN), or the 5 digit WMO ID (i.e. 72357).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mean_pwv: 1D Array of float values corresponding to the mean PWV</span>
+<span class="sd">    Jan - December.</span>
+<span class="sd">    </span>
+<span class="sd">    Written by Greg Blumberg</span>
+<span class="sd">    and Kelton Halbert.</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">## a rudimentary check to see what type of station identifier</span>
+    <span class="c1">## was passed through</span>
+
+    <span class="k">if</span> <span class="n">station</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">station</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">station</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#print &quot;Invalid station ID&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="c1">## open the file, release the kraken!</span>
+    <span class="c1">## get the arrays of station IDs</span>
+    <span class="n">pwv_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span> <span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/PW-mean-inches.txt&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">sites</span> <span class="o">=</span> <span class="n">pwv_means</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">id_index</span><span class="p">]</span>
+    <span class="c1">## get the index of the user supplied station - add 1 to account for the header</span>
+    
+    <span class="n">station_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">sites</span> <span class="o">==</span> <span class="n">station</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">station_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mean_pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">station_idx</span> <span class="o">=</span> <span class="n">station_idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1">## get the PWV</span>
+        <span class="n">mean_pwv</span> <span class="o">=</span> <span class="n">pwv_means</span><span class="p">[</span><span class="n">station_idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mean_pwv</span></div>
+
+<div class="viewcode-block" id="get_stdev_pwv"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.get_stdev_pwv">[docs]</a><span class="k">def</span> <span class="nf">get_stdev_pwv</span><span class="p">(</span><span class="n">station</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to get the standard deviation from the mean precipitable water </span>
+<span class="sd">        vapor (inches) values for every month of the year, based on the station </span>
+<span class="sd">        passed through.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Staion: Can be the 4 letter station ID (i.e. KOUN), 3 letter station</span>
+<span class="sd">        ID (i.e. OUN), or the 5 digit WMO ID (i.e. 72357).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stdev_pwv: 1D Array of float values corresponding to the standard deviation</span>
+<span class="sd">        from the mean PWV</span>
+<span class="sd">        Jan - December.</span>
+<span class="sd">        </span>
+<span class="sd">        Written by Greg Blumberg</span>
+<span class="sd">        and Kelton Halbert.</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="c1">## a rudimentary check to see what type of station identifier</span>
+    <span class="c1">## was passed through</span>
+    <span class="k">if</span> <span class="n">station</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">station</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">station</span> <span class="o">=</span> <span class="n">station</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">station</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">id_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#print &quot;Invalid station ID&quot;</span>
+        <span class="k">return</span>
+    <span class="c1">## open the file, release the kraken!</span>
+    <span class="c1">## get the arrays of station IDs</span>
+    <span class="n">pwv_stdevs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span> <span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/PW-stdev-inches.txt&#39;</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">sites</span> <span class="o">=</span> <span class="n">pwv_stdevs</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="n">id_index</span><span class="p">]</span>
+    <span class="c1">## get the index of the user supplied station - add 1 to account for the header</span>
+    <span class="n">station_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">sites</span> <span class="o">==</span> <span class="n">station</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">station_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">stdev_pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">station_idx</span> <span class="o">=</span> <span class="n">station_idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1">## get the PWV</span>
+        <span class="n">stdev_pwv</span> <span class="o">=</span> <span class="n">pwv_stdevs</span><span class="p">[</span><span class="n">station_idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stdev_pwv</span></div>
+
+<div class="viewcode-block" id="pwv_climo"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.pwv_climo">[docs]</a><span class="k">def</span> <span class="nf">pwv_climo</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">station</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    month is an integer from 1-12</span>
+<span class="sd">    station_id_3 is the station ID (lower case)</span>
+<span class="sd">    prof is the profile object</span>
+
+<span class="sd">    This function uses the PWV climatology databases provided by Matt Bunkers (NWS/UNR)</span>
+<span class="sd">    and accepts a SHARPPY profile object, the station name, and the month</span>
+<span class="sd">    and returns to the user a number indicating where in the distribution the profile&#39;s PWV</span>
+<span class="sd">    value lies.  This function is used in SHARPPY to help provide the user climatological</span>
+<span class="sd">    context of the PWV index they are viewing.</span>
+<span class="sd">    </span>
+<span class="sd">    x can equal 0, 1, 2, or 3</span>
+<span class="sd">    If the returned value is x, the PWV lies outside +x standard deviations of the mean</span>
+<span class="sd">    If the returned value is -x, the PWV lies outside -x standard deviations of the mean</span>
+<span class="sd">    If the returned value is 0, the PWV lies within 1 standard deviation of the mean</span>
+<span class="sd">    </span>
+<span class="sd">    Written by Greg Blumberg</span>
+<span class="sd">    and Kelton Halbert.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">month</span><span class="p">:</span>
+        <span class="n">month</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">month</span>
+
+    <span class="c1"># Calculate the PWV up to 300 mb so it&#39;s consistent with the PWV Climo</span>
+    <span class="n">pwv_300</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">precip_water</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="c1"># pwv_300 needs to be in inches (if it isn&#39;t already)</span>
+    <span class="c1"># Load in the PWV mean and standard deviations</span>
+    <span class="n">pwv_means</span> <span class="o">=</span> <span class="n">get_mean_pwv</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
+    <span class="n">pwv_stds</span> <span class="o">=</span> <span class="n">get_stdev_pwv</span><span class="p">(</span><span class="n">station</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pwv_means</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">pwv_means</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="n">month_mean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pwv_means</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">month_std</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pwv_stds</span><span class="p">[</span><span class="n">month</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">sigma_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">month_mean</span> <span class="o">-</span> <span class="n">month_std</span><span class="p">,</span> <span class="n">month_mean</span> <span class="o">+</span> <span class="n">month_std</span><span class="p">)</span>
+    <span class="n">sigma_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">month_mean</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">month_std</span><span class="p">),</span> <span class="n">month_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">month_std</span><span class="p">))</span>
+    <span class="n">sigma_3</span> <span class="o">=</span> <span class="p">(</span><span class="n">month_mean</span> <span class="o">-</span> <span class="p">(</span><span class="mf">3.</span><span class="o">*</span><span class="n">month_std</span><span class="p">),</span> <span class="n">month_mean</span> <span class="o">+</span> <span class="p">(</span><span class="mf">3.</span><span class="o">*</span><span class="n">month_std</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&gt;</span> <span class="n">sigma_3</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside +3 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&lt;</span> <span class="n">sigma_3</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside -3 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&gt;</span> <span class="n">sigma_2</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside +2 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&lt;</span> <span class="n">sigma_2</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside -2 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&gt;</span> <span class="n">sigma_1</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside +1 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pwv_300</span> <span class="o">&lt;</span> <span class="n">sigma_1</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Means the PWV value is outside -1 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Means that the PWV value is within 1 sigma of the distribution</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">flag</span></div>
+
+<div class="viewcode-block" id="PWDatabase"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.PWDatabase">[docs]</a><span class="k">class</span> <span class="nc">PWDatabase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn_fields</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span> <span class="o">=</span> <span class="n">loadCSV</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;PW-mean-inches.txt&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st_fields</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st</span> <span class="o">=</span> <span class="n">loadCSV</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s1">&#39;PW-stdev-inches.txt&#39;</span><span class="p">))</span>
+        <span class="n">stn_fields</span><span class="p">,</span> <span class="n">stns</span> <span class="o">=</span> <span class="n">loadCSV</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="s1">&#39;datasources&#39;</span><span class="p">,</span> <span class="s1">&#39;spc_ua.csv&#39;</span><span class="p">))</span>
+
+        <span class="n">stn_ids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">stn</span><span class="p">[</span><span class="s1">&#39;icao&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">stns</span> <span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span><span class="p">)):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">stn_idx</span> <span class="o">=</span> <span class="n">stn_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span><span class="p">[</span><span class="s1">&#39;SITE&#39;</span><span class="p">])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+<div class="viewcode-block" id="PWDatabase.getStddev"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.PWDatabase.getStddev">[docs]</a>    <span class="k">def</span> <span class="nf">getStddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stddev</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PWDatabase.getClimo"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.PWDatabase.getClimo">[docs]</a>    <span class="k">def</span> <span class="nf">getClimo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">_triangleInterp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">pt_lats</span><span class="p">,</span> <span class="n">pt_lons</span><span class="p">,</span> <span class="n">pt_vals</span><span class="p">,</span> <span class="n">tris</span><span class="p">):</span>
+        <span class="n">tri_lats</span> <span class="o">=</span> <span class="n">pt_lats</span><span class="p">[</span><span class="n">tris</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">tri_lons</span> <span class="o">=</span> <span class="n">pt_lons</span><span class="p">[</span><span class="n">tris</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">tri_areas</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">tri_lats</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">tri_lons</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">tri_lats</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">tri_areas</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tri_lats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">tri_lats</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">lon</span> <span class="o">+</span> <span class="p">(</span><span class="n">tri_lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">lat</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">tri_areas</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tri_lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">tri_lats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lats</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">lon</span> <span class="o">+</span> <span class="p">(</span><span class="n">tri_lons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tri_lons</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">lat</span><span class="p">)</span>
+
+        <span class="n">tris_select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">s</span> <span class="o">-</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tris_select</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tri</span> <span class="o">=</span> <span class="n">tris_select</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">tri_vals</span> <span class="o">=</span> <span class="n">pt_vals</span><span class="p">[</span><span class="n">tris</span><span class="p">[</span><span class="n">tri</span><span class="p">]]</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">tri</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="n">tri</span><span class="p">]</span> <span class="o">*</span> <span class="n">tri_vals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="n">tri</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="n">tri</span><span class="p">])</span> <span class="o">*</span> <span class="n">tri_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">val</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

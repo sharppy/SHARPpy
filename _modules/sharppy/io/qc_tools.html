@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.io.qc_tools &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.io.qc_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.io.qc_tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">thermo</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;raiseError&#39;</span><span class="p">,</span> <span class="s1">&#39;numMasked&#39;</span><span class="p">,</span> <span class="s1">&#39;isPRESValid&#39;</span><span class="p">,</span> <span class="s1">&#39;isHGHTValid&#39;</span><span class="p">,</span> <span class="s1">&#39;isWSPDValid&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;isDWPCValid&#39;</span><span class="p">,</span> <span class="s1">&#39;isTMPCValid&#39;</span><span class="p">]</span>
+
+<span class="c1"># Data quality exception error</span>
+<span class="k">class</span> <span class="nc">DataQualityException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="raiseError"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.raiseError">[docs]</a><span class="k">def</span> <span class="nf">raiseError</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">errorType</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        raiseError</span>
+
+<span class="sd">        This function will raise an exception specified by the errorType variable.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        string : str</span>
+<span class="sd">            the string to be printed out to the user when the exception is thrown</span>
+
+<span class="sd">        errorType : Exception</span>
+<span class="sd">            the type of exception.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">errorType</span><span class="p">,</span> <span class="n">string</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="numMasked"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.numMasked">[docs]</a><span class="k">def</span> <span class="nf">numMasked</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        numMasked</span>
+
+<span class="sd">        This function returns the number of unmasked array elements as well as the</span>
+<span class="sd">        length of the array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arr : masked numpy array</span>
+<span class="sd">            The maksed numpy array</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        count : number</span>
+<span class="sd">            the number of unmasked array elements</span>
+<span class="sd">        length : number</span>
+<span class="sd">            the length of the unmasked array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<span class="k">def</span> <span class="nf">areProfileArrayLengthEqual</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        areProfileArrayLengthEqual</span>
+
+<span class="sd">        This function checks to see if all of the arrays passed to a Profile object</span>
+<span class="sd">        have the same length.  If they don&#39;t have the same length, then this function</span>
+<span class="sd">        raises an AssertionError exception.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">)</span> <span class="o">==</span>\
+            <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">omeg</span><span class="p">)):</span>
+        <span class="n">raiseError</span><span class="p">(</span><span class="s2">&quot;Arrays passed to the Profile object have unequal lengths.&quot;</span><span class="p">,</span> <span class="n">DataQualityException</span><span class="p">)</span>
+ 
+<div class="viewcode-block" id="isPRESValid"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.isPRESValid">[docs]</a><span class="k">def</span> <span class="nf">isPRESValid</span><span class="p">(</span><span class="n">pres</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isPRESValid</span>
+
+<span class="sd">        This function checks to see if valid pressure (mb)</span>
+<span class="sd">        values are within the pres array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        True If:</span>
+<span class="sd">            1.) pressure array length is &gt; 1</span>
+<span class="sd">            2.) pressure array is not filled with masked values</span>
+<span class="sd">            3.) if the pressure array is decreasing with the index</span>
+<span class="sd">                and there are no repeat values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pres : array</span>
+<span class="sd">            pressure array (mb)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value : bool</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">idx_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">pres</span><span class="p">)</span>
+    <span class="n">neg_pres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pres</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">num_ok</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">numMasked</span><span class="p">(</span><span class="n">pres</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">idx_diff</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">neg_pres</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">num_ok</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="isHGHTValid"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.isHGHTValid">[docs]</a><span class="k">def</span> <span class="nf">isHGHTValid</span><span class="p">(</span><span class="n">hght</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isHGHTValid</span>
+
+<span class="sd">        This function checks to see if valid height (m)</span>
+<span class="sd">        values are within the hght array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        True/False: True If:</span>
+<span class="sd">             1.) height array length is &gt; 0</span>
+<span class="sd">             2.) height array is not filled with masked values</span>
+<span class="sd">             3.) if the height array is increasing with the index</span>
+<span class="sd">                 and there are no repeat values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hght : array</span>
+<span class="sd">            height array (m)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value : bool</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">num_ok</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="n">numMasked</span><span class="p">(</span><span class="n">hght</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hght</span> <span class="o">=</span> <span class="n">hght</span><span class="p">[</span><span class="o">~</span><span class="n">hght</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">idx_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">hght</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">idx_diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_ok</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<span class="k">def</span> <span class="nf">isWDIRValid</span><span class="p">(</span><span class="n">wdir</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isWDIRValid</span>
+
+<span class="sd">        This function checks to see if valid wind direction (deg)</span>
+<span class="sd">        values are within the wdir array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        True if the wind direction array is &gt; 0 in size and</span>
+<span class="sd">        if the wind directions are between 0 and 360.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wdir : array</span>
+<span class="sd">            wind direction array (degrees)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        value : bool</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wdir</span> <span class="o">&gt;</span> <span class="mi">360</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">wdir</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="isWSPDValid"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.isWSPDValid">[docs]</a><span class="k">def</span> <span class="nf">isWSPDValid</span><span class="p">(</span><span class="n">wspd</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isWSPDValid</span>
+
+<span class="sd">        This function checks to see if valid wind speed (knots)</span>
+<span class="sd">        values are within the wspd array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        wspd: the wind speed array (knots)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True/False: True if the wind speeds in the wspd array are all &gt;= 0.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wspd</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="isTMPCValid"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.isTMPCValid">[docs]</a><span class="k">def</span> <span class="nf">isTMPCValid</span><span class="p">(</span><span class="n">tmpc</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isTMPCValid</span>
+
+<span class="sd">        This function checks to see if valid temperature (Celsius)</span>
+<span class="sd">        values are within the tmpc array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tmpc: the temperature array (Celsius)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True/False: True if the values in the temperature array are all above absolute zero.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">tmpc</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="isDWPCValid"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.qc_tools.isDWPCValid">[docs]</a><span class="k">def</span> <span class="nf">isDWPCValid</span><span class="p">(</span><span class="n">dwpc</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        isDWPCValid</span>
+
+<span class="sd">        This function checks to see if valid dewpoint (Celsius)</span>
+<span class="sd">        values are within the dwpc array that is passed to the </span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dwpc: the dewpoint array (Celsius)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True/False: True if the values in the dewpoint array are all above absolute zero.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">dwpc</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

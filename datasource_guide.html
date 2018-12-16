@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Custom Data Sources &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Scripting" href="scripting.html" />
+    <link rel="prev" title="Interacting with the GUI" href="interacting_gui.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#loading-in-sounding-data-files">Loading in Sounding Data Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-custom-data-sources">Adding Custom Data Sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Custom Data Sources</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/datasource_guide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="custom-data-sources">
+<span id="id1"></span><h1>Custom Data Sources<a class="headerlink" href="#custom-data-sources" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-in-sounding-data-files">
+<h2>Loading in Sounding Data Files<a class="headerlink" href="#loading-in-sounding-data-files" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File-&gt;Open menu to open up your text file in the sounding window.  See the <a class="reference external" href="https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX">4061619.OAX</a> file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.</p>
+<p><em>Notes about the file format:</em></p>
+<p>While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.</p>
+<p>The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  “…” is where the sections of the file ends and continues in this example and are not included in the actual data file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">TITLE</span><span class="o">%</span>
+ <span class="n">SITEID</span>   <span class="n">YYMMDD</span><span class="o">/</span><span class="n">HHMM</span>
+
+   <span class="n">LEVEL</span>       <span class="n">HGHT</span>       <span class="n">TEMP</span>       <span class="n">DWPT</span>       <span class="n">WDIR</span>       <span class="n">WSPD</span>
+<span class="o">-------------------------------------------------------------------</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The data within the file should be of the format (Pressure [mb], Height MSL [m], Temperature [C], Dewpoint [C], Wind Direction [deg], Wind Speed [kts]).  If the temperature, dewpoint, wind direction, or wind direction values are all set to -9999 (such as in the example below), SHARPpy will treat that isobaric level as being below the ground.  -9999 is the placeholder for missing data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="o">%</span><span class="n">RAW</span><span class="o">%</span>
+ <span class="mf">1000.00</span><span class="p">,</span>    <span class="mf">34.00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span>
+ <span class="mf">965.00</span><span class="p">,</span>    <span class="mf">350.00</span><span class="p">,</span>     <span class="mf">27.80</span><span class="p">,</span>     <span class="mf">23.80</span><span class="p">,</span>    <span class="mf">150.00</span><span class="p">,</span>     <span class="mf">23.00</span>
+ <span class="mf">962.00</span><span class="p">,</span>    <span class="mf">377.51</span><span class="p">,</span>     <span class="mf">27.40</span><span class="p">,</span>     <span class="mf">22.80</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span><span class="p">,</span>  <span class="o">-</span><span class="mf">9999.00</span>
+<span class="o">%</span><span class="n">END</span><span class="o">%</span>
+</pre></div>
+</div>
+<p>Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program’s routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:</p>
+<ol class="arabic simple">
+<li>Making sure that no temperature or dewpoint values are below 273.15 K.</li>
+<li>Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR &lt; 360, respectively.</li>
+<li>Making sure that no repeat values of pressure or height occur.</li>
+<li>Checking to see that pressure decreases with height within the profile.</li>
+</ol>
+<p>The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.  As of version 1.4, the GUI will try to plot the data should the user desire.</p>
+</div>
+<div class="section" id="adding-custom-data-sources">
+<h2>Adding Custom Data Sources<a class="headerlink" href="#adding-custom-data-sources" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy maintains a variety of different sounding data sources in the distributed program.  These sounding data sources are provided by a variety of hosts online, and we thank them for making their data accessible for the program to be used.  Accessiblity to these various data sources are dependent upon the hosts.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the <a class="reference external" href="https://mpas-dev.github.io">MPAS</a> and the <a class="reference external" href="https://ensemble.ucar.edu">NCAR Realtime Ensemble</a> into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.</p>
+<p>Some users may wish to add their own custom data source (for example, your own NWP point forecast soundings).  To do this, add to the <cite>datasources/</cite> directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the <cite>standard.xml</cite> file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!</p>
+<p>1. Make a new XML file
+The XML file contains the information for how the data source behaves. Questions like “Is this data source an ensemble?” or “How far out does this data source forecast?” are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is <cite>.xml</cite>. The format should look like the <cite>standard.xml</cite> file in the <cite>datasources/</cite> directory, but an example follows:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot; ?&gt;</span>
+<span class="nt">&lt;sourcelist&gt;</span>
+    <span class="nt">&lt;datasource</span> <span class="na">name=</span><span class="s">&quot;My Data Source&quot;</span> <span class="na">observed=</span><span class="s">&quot;false&quot;</span> <span class="na">ensemble=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;outlet</span> <span class="na">name=</span><span class="s">&quot;My Server&quot;</span> <span class="na">url=</span><span class="s">&quot;http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf&quot;</span> <span class="na">format=</span><span class="s">&quot;bufkit&quot;</span> <span class="nt">&gt;</span>
+            <span class="nt">&lt;time</span> <span class="na">range=</span><span class="s">&quot;24&quot;</span> <span class="na">delta=</span><span class="s">&quot;1&quot;</span> <span class="na">cycle=</span><span class="s">&quot;6&quot;</span> <span class="na">offset=</span><span class="s">&quot;0&quot;</span> <span class="na">delay=</span><span class="s">&quot;2&quot;</span> <span class="na">archive=</span><span class="s">&quot;24&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;points</span> <span class="na">csv=</span><span class="s">&quot;mydatasource.csv&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/outlet&gt;</span>
+    <span class="nt">&lt;/datasource&gt;</span>
+<span class="nt">&lt;/sourcelist&gt;</span>
+</pre></div>
+</div>
+<p>For the <code class="docutils literal notranslate"><span class="pre">outlet</span></code> tag:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code>: A name for the data source outlet</li>
+<li><code class="docutils literal notranslate"><span class="pre">url</span></code>: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:</li>
+<li><code class="docutils literal notranslate"><span class="pre">date</span></code>: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).</li>
+<li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The current cycle hour in HHZ format (e.g. 00Z).</li>
+<li><code class="docutils literal notranslate"><span class="pre">srcid</span></code>: The source’s profile ID (will be filled in with the same column from the CSV file; see below).</li>
+<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> for model profiles and <cite>spc</cite> for observed profiles. Others will be available in the future.</li>
+</ul>
+<p>For the <code class="docutils literal notranslate"><span class="pre">time</span></code> tag:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">range</span></code>: The forecast range in hours for the data source. Observed data sources should set this to 0.</li>
+<li><code class="docutils literal notranslate"><span class="pre">delta</span></code>: The time step in hours between profiles. Observed data sources should set this to 0.</li>
+<li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The amount of time in hours between cycles for the data source.</li>
+<li><code class="docutils literal notranslate"><span class="pre">offset</span></code>: The time offset in hours of the cycles from 00 UTC.</li>
+<li><code class="docutils literal notranslate"><span class="pre">delay</span></code>: The time delay in hours between the cycle and the data becoming available.</li>
+<li><code class="docutils literal notranslate"><span class="pre">archive</span></code>: The length of time in hours that data are kept on the server.</li>
+</ul>
+<p>These should all be integer numbers of hours; support for sub-hourly data is forthcoming.</p>
+<p>2. Make a new CSV file
+The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">icao</span><span class="p">,</span><span class="n">iata</span><span class="p">,</span><span class="n">synop</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">country</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">elev</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">srcid</span>
+<span class="n">KTOP</span><span class="p">,</span><span class="n">TOP</span><span class="p">,</span><span class="mi">72456</span><span class="p">,</span><span class="n">Topeka</span><span class="o">/</span><span class="n">Billard</span> <span class="n">Muni</span><span class="p">,</span><span class="n">KS</span><span class="p">,</span><span class="n">US</span><span class="p">,</span><span class="mf">39.08</span><span class="p">,</span><span class="o">-</span><span class="mf">95.62</span><span class="p">,</span><span class="mi">268</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">ktop</span>
+<span class="n">KFOE</span><span class="p">,</span><span class="n">FOE</span><span class="p">,,</span><span class="n">Topeka</span><span class="o">/</span><span class="n">Forbes</span><span class="p">,</span><span class="n">KS</span><span class="p">,</span><span class="n">US</span><span class="p">,</span><span class="mf">38.96</span><span class="p">,</span><span class="o">-</span><span class="mf">95.67</span><span class="p">,</span><span class="mi">320</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">kfoe</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>The only columns that are strictly required are the <code class="docutils literal notranslate"><span class="pre">lat</span></code>, <code class="docutils literal notranslate"><span class="pre">lon</span></code>, and <code class="docutils literal notranslate"><span class="pre">srcid</span></code> columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.</p>
+<p>3. Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the “Data Sources” drop-down menu.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="scripting.html" class="btn btn-neutral float-right" title="Scripting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="interacting_gui.html" class="btn btn-neutral" title="Interacting with the GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

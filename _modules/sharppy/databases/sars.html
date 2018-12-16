@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.databases.sars &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.databases.sars</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.databases.sars</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="c1">#import sharppy.io.spc_decoder as spc_decoder</span>
+
+<span class="c1">## original database and code provided by</span>
+<span class="c1">## Ryan Jewell - NOAA Storm Prediction Center (hail)</span>
+<span class="c1">## Rich Thompson - NOAA Storm Prediction Center (supercell)</span>
+
+<span class="c1">## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)</span>
+<span class="c1">## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu</span>
+
+<div class="viewcode-block" id="supercell"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.sars.supercell">[docs]</a><span class="k">def</span> <span class="nf">supercell</span><span class="p">(</span><span class="n">database_fn</span><span class="p">,</span> <span class="n">mlcape</span><span class="p">,</span> <span class="n">mllcl</span><span class="p">,</span> <span class="n">h5temp</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">shr</span><span class="p">,</span> <span class="n">srh</span><span class="p">,</span> <span class="n">shr3k</span><span class="p">,</span> <span class="n">shr9k</span><span class="p">,</span> <span class="n">srh3</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The SARS Supercell database was provided by Rich Thompson of the </span>
+<span class="sd">    NOAA Storm Prediction Center in Norman, Oklahoma. This is a database</span>
+<span class="sd">    of observed and model proximity soundings to both tornadic and </span>
+<span class="sd">    nontornadic supercell thunderstorms.</span>
+<span class="sd">    </span>
+<span class="sd">    This function works by searching for matches to particular variables</span>
+<span class="sd">    in the database that have been found to be useful in forecasting </span>
+<span class="sd">    supercell thunderstorms. It searches through the database to find </span>
+<span class="sd">    matches to a given sounding within a range of uncertainty that</span>
+<span class="sd">    has been tested internally in SPC to provide the best analogues</span>
+<span class="sd">    possible. There is a loose criteria that is used to get probabilities,</span>
+<span class="sd">    and there is a tighter criteria for quality matches that are supposed to</span>
+<span class="sd">    be similar to the given sounding.</span>
+<span class="sd">    </span>
+<span class="sd">    The loose matches are based on the mixed layer cape (mlcape), mixed layer</span>
+<span class="sd">    lcl (mllcl), 0-1km shear (shr), 0-1km storm relative helicity (srh), 500mb</span>
+<span class="sd">    temperature (h5temp), and the 700-500mb lapse rate (lr).</span>
+<span class="sd">    </span>
+<span class="sd">    The ranges for the loose matches are set as such:</span>
+<span class="sd">        mlcape: +/- 1300 J/kg</span>
+<span class="sd">        mllcl: +/- 500 m</span>
+<span class="sd">        shr: +/- 14 kts</span>
+<span class="sd">        srh &lt; 50 m^2/s^2: +/- 100 m^2/s^2</span>
+<span class="sd">        srh &gt;= 50 m^2/s^2: +/- 100% m^2/s^2</span>
+<span class="sd">        h5temp: +/- 7.0 C</span>
+<span class="sd">        lr: +/-1.0 C/km</span>
+<span class="sd">    </span>
+<span class="sd">    The quality matches are based on the same variables as the loose matches,</span>
+<span class="sd">    with the addition of the 0-3km shear (shr3k), 0-9km shear (shr9k), and the</span>
+<span class="sd">    0-3km Storm Relative Helicity (srh3).</span>
+<span class="sd">    </span>
+<span class="sd">    The ranges for the quality matches are set as such:</span>
+<span class="sd">        mlcape: +/- 25% J/kg</span>
+<span class="sd">        mllcl: +/- 200 m</span>
+<span class="sd">        shr: +/- 10 kts</span>
+<span class="sd">        srh &lt; 100 m^2/s^2: +/- 50 m^2/s^2</span>
+<span class="sd">        srh &gt;= 100 m^2/s^2: +/- 30% m^2/s^2</span>
+<span class="sd">        srh3 &lt; 100 m^2/s^2: +/- 50 m^2/s^2</span>
+<span class="sd">        srh3 &gt;= 100 m^2/s^2: +/- 50% m^s/s^2</span>
+<span class="sd">        h5temp: +/- 5 C</span>
+<span class="sd">        lr: +/- 0.8 C/km</span>
+<span class="sd">        shr3k: +/- 15 kts</span>
+<span class="sd">        shr9k: +/- 25 kts</span>
+<span class="sd">        </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    database_fn - filename of the database</span>
+<span class="sd">    mlcape - the mixed layer cape (J/kg)</span>
+<span class="sd">    mllcl - the mixed layer LCL (m)</span>
+<span class="sd">    h5temp - the 500mb temp (C)</span>
+<span class="sd">    lr - the 700-500mb lapse rate (C/km)</span>
+<span class="sd">    shr - the 0-1km shear (kts)</span>
+<span class="sd">    srh - the 0-1km storm relative helicity (m^2/s^2)</span>
+<span class="sd">    shr3k - the 0-3km shear (kts)</span>
+<span class="sd">    shr9k - the 0-9km shear (kts)</span>
+<span class="sd">    srh3 - the 0-3km storm relative helicity (m^2/s^2)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    quality_match_soundings: The dates/locations of the quality matches</span>
+<span class="sd">    quality_match_tortype: The type of quality match (SIGTOR/WEAKTOR/NONTOR)</span>
+<span class="sd">    len(loose_match_idx):  The number of loose matches</span>
+<span class="sd">    num_matches: The number of weak and sig matches in the loose matches</span>
+<span class="sd">    tor_prob: SARS sig. tornado probability</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Open and read the file</span>
+    <span class="n">database_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span> <span class="vm">__file__</span> <span class="p">),</span> <span class="n">database_fn</span><span class="p">)</span>
+    <span class="n">supercell_database</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">database_fn</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%%%%</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set range citeria for matching soundings</span>
+    <span class="c1"># MLCAPE ranges</span>
+    <span class="k">if</span> <span class="n">mlcape</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">range_mlcape</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_mlcape</span> <span class="o">=</span> <span class="mi">1300</span> <span class="c1"># J/kg</span>
+    <span class="n">range_mlcape_t1</span> <span class="o">=</span> <span class="n">mlcape</span> <span class="o">*</span> <span class="mf">0.25</span> <span class="c1"># J/kg</span>
+
+    <span class="c1"># MLLCL ranges</span>
+    <span class="n">range_mllcl</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1"># m</span>
+    <span class="n">range_mllcl_t1</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># m</span>
+
+    <span class="c1"># 0-6 km shear ranges (kts)</span>
+    <span class="n">range_shr</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">range_shr_t1</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># 0-1 km SRH Ranges (m2/s2)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">srh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="n">range_srh</span> <span class="o">=</span> <span class="mf">100.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_srh</span> <span class="o">=</span> <span class="n">srh</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">srh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">range_srh_t1</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_srh_t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">srh</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.30</span>
+
+    <span class="c1"># 0-3 SRH tier 1 ranges (m2/s2)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">srh3</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="n">range_srh3_t1</span> <span class="o">=</span> <span class="mf">50.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_srh3_t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">srh3</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.50</span>
+
+    <span class="c1"># 500 mb temperature ranges</span>
+    <span class="n">range_temp</span> <span class="o">=</span> <span class="mi">7</span> <span class="c1"># C</span>
+    <span class="n">range_temp_t1</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># C</span>
+
+    <span class="c1"># 700-500 mb lapse rate ranges (C/km)</span>
+    <span class="n">range_lr</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">range_lr_t1</span> <span class="o">=</span> <span class="mf">0.8</span>
+
+    <span class="c1"># 3 km and 9 km shear matching</span>
+    <span class="n">range_shr3k_t1</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">range_shr9k_t1</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="c1">## Read in the columns for each variable</span>
+    <span class="n">mat_category</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># category of match (0=non, 1=weak, 2=sig)</span>
+    <span class="n">mat_mlcape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mat_mllcl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">mat_shr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-6 KM SHEAR</span>
+    <span class="n">mat_srh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-1 KM SRH</span>
+    <span class="n">mat_srh3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">14</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-3 KM SRH</span>
+    <span class="n">mat_h5temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 500 MB TEMP C</span>
+    <span class="n">mat_lr75</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">11</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 700-500 MB LAPSE RATE</span>
+    <span class="n">mat_shr3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">12</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-3 KM SHEAR</span>
+    <span class="n">mat_shr9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">13</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-9 KM SHEAR</span>
+    <span class="c1">## Get the loose matches</span>
+    <span class="n">loose_match_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mlcape</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_mlcape</span> <span class="o">-</span> <span class="n">range_mlcape</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mlcape</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_mlcape</span> <span class="o">+</span> <span class="n">range_mlcape</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">mllcl</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_mllcl</span> <span class="o">-</span> <span class="n">range_mllcl</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mllcl</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_mllcl</span> <span class="o">+</span> <span class="n">range_mllcl</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_shr</span> <span class="o">-</span> <span class="n">range_shr</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_shr</span> <span class="o">+</span> <span class="n">range_shr</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">srh</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_srh</span> <span class="o">-</span> <span class="n">range_srh</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">srh</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_srh</span> <span class="o">+</span> <span class="n">range_srh</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">h5temp</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_h5temp</span> <span class="o">-</span> <span class="n">range_temp</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">h5temp</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_h5temp</span> <span class="o">+</span> <span class="n">range_temp</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">lr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_lr75</span> <span class="o">-</span> <span class="n">range_lr</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_lr75</span> <span class="o">+</span> <span class="n">range_lr</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">num_matches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mat_category</span><span class="p">[</span><span class="n">loose_match_idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#number of weak and sig matches in the loose matches</span>
+
+    <span class="c1">## Probability for tornado - needs to check to avoid zero division</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loose_match_idx</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.</span> <span class="ow">and</span> <span class="n">mlcape</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tor_prob</span> <span class="o">=</span> <span class="n">num_matches</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loose_match_idx</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tor_prob</span> <span class="o">=</span> <span class="mf">0.</span>
+
+    <span class="c1"># Tier 1 matches (also known as the quality matches)</span>
+    <span class="n">quality_match_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mlcape</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_mlcape</span> <span class="o">-</span> <span class="n">range_mlcape_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mlcape</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_mlcape</span> <span class="o">+</span> <span class="n">range_mlcape_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">mllcl</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_mllcl</span> <span class="o">-</span> <span class="n">range_mllcl_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mllcl</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_mllcl</span> <span class="o">+</span> <span class="n">range_mllcl_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_shr</span> <span class="o">-</span> <span class="n">range_shr_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_shr</span> <span class="o">+</span> <span class="n">range_shr_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">srh</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_srh</span> <span class="o">-</span> <span class="n">range_srh_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">srh</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_srh</span> <span class="o">+</span> <span class="n">range_srh_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">h5temp</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_h5temp</span> <span class="o">-</span> <span class="n">range_temp_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">h5temp</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_h5temp</span> <span class="o">+</span> <span class="n">range_temp_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">lr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_lr75</span> <span class="o">-</span> <span class="n">range_lr_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_lr75</span> <span class="o">+</span> <span class="n">range_lr_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr3k</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_shr3</span> <span class="o">-</span> <span class="n">range_shr3k_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr3k</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_shr3</span> <span class="o">+</span> <span class="n">range_shr3k_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr9k</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_shr9</span> <span class="o">-</span> <span class="n">range_shr9k_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr9k</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_shr9</span> <span class="o">+</span> <span class="n">range_shr9k_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">srh3</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mat_srh3</span> <span class="o">-</span> <span class="n">range_srh3_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">srh3</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mat_srh3</span> <span class="o">+</span> <span class="n">range_srh3_t1</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">quality_match_soundings</span> <span class="o">=</span> <span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">0</span><span class="p">][</span><span class="n">quality_match_idx</span><span class="p">]</span>
+    <span class="n">quality_match_tortype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">supercell_database</span><span class="p">[:,</span><span class="mi">1</span><span class="p">][</span><span class="n">quality_match_idx</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;|S7&#39;</span><span class="p">)</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">quality_match_tortype</span><span class="p">,</span> <span class="n">quality_match_tortype</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;SIGTOR&#39;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">quality_match_tortype</span><span class="p">,</span> <span class="n">quality_match_tortype</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;WEAKTOR&#39;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">quality_match_tortype</span><span class="p">,</span> <span class="n">quality_match_tortype</span><span class="o">==</span><span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;NONTOR&#39;</span><span class="p">)</span>
+
+    <span class="n">quality_match_soundings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">qms</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">qms</span> <span class="ow">in</span> <span class="n">quality_match_soundings</span> <span class="p">])</span>
+    <span class="n">quality_match_tortype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">qmt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">qmt</span> <span class="ow">in</span> <span class="n">quality_match_tortype</span> <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">quality_match_soundings</span><span class="p">,</span> <span class="n">quality_match_tortype</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">loose_match_idx</span><span class="p">),</span> <span class="n">num_matches</span><span class="p">,</span> <span class="n">tor_prob</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="hail"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.sars.hail">[docs]</a><span class="k">def</span> <span class="nf">hail</span><span class="p">(</span><span class="n">database_fn</span><span class="p">,</span> <span class="n">mumr</span><span class="p">,</span> <span class="n">mucape</span><span class="p">,</span> <span class="n">h5_temp</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">shr6</span><span class="p">,</span> <span class="n">shr9</span><span class="p">,</span> <span class="n">shr3</span><span class="p">,</span> <span class="n">srh</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The SARS Hail database was provided by Ryan Jewell of the NOAA Storm</span>
+<span class="sd">    Prediction Center in Norman, Oklahoma. This is a database of observed</span>
+<span class="sd">    and model proximity analogue soundings to hail events.</span>
+<span class="sd">    </span>
+<span class="sd">    This function works by searching for matches to particular variables in </span>
+<span class="sd">    the database that have been attributed to hail events given a certain </span>
+<span class="sd">    range of uncertainty. The loose matches are used for statistics such as</span>
+<span class="sd">    % significant hail matches, and are based on a looser criteria for</span>
+<span class="sd">    matches. The analogues that get displayed are based on a tighter criteria</span>
+<span class="sd">    for matches to insure that only quality matches are received. Ranges for</span>
+<span class="sd">    loose and quality matches are semi-arbitrary, and were tuned by testing</span>
+<span class="sd">    internally by SPC.</span>
+<span class="sd">    </span>
+<span class="sd">    The loose matches are based on the most unstable parcel mixing ratio (mumr),</span>
+<span class="sd">    most unstable cape (mucape), 700-500mb labse rate (lr), 500mb temperature</span>
+<span class="sd">    (h5_temp), 0-3km shear (shr3), 0-6km shear (shr6), and the 0-9km shear (shr9).</span>
+<span class="sd">    </span>
+<span class="sd">    The ranges for the loose matches are set as such:</span>
+<span class="sd">        mumr: +/- 2.0 g/kg</span>
+<span class="sd">        mucape: +/- 30% J/kg</span>
+<span class="sd">        lr: +/- 2.0 C/km</span>
+<span class="sd">        h5_temp: +/- 9.0 C</span>
+<span class="sd">        shr6: +/- 12 m^2/s^2</span>
+<span class="sd">        shr9: +/- 22 m^2/s^2</span>
+<span class="sd">        shr3: +/- 10 m^2/s^2</span>
+<span class="sd">    </span>
+<span class="sd">    The quality matches use the fields described in the loose matches, plus the</span>
+<span class="sd">    0-3km Storm Relative Helicity (srh). The bounds for the search for quality </span>
+<span class="sd">    matches is much more strict that the loose matches.</span>
+<span class="sd">    </span>
+<span class="sd">    The ranges for the quality matches are set as such:</span>
+<span class="sd">        mumr: +/- 2.0 g/kg</span>
+<span class="sd">        mucape &lt; 500 J/kg: +/- 50% J/kg</span>
+<span class="sd">        mucape &lt; 2000 J/kg: +/- 25% J/kg</span>
+<span class="sd">        mucape &gt;= 2000 J/kg: +/- 20% J/kg</span>
+<span class="sd">        lr: +/- 0.4 C/km</span>
+<span class="sd">        h5_temp: +/- 1.5 C/km</span>
+<span class="sd">        shr6: +/- 6 m^2/s^2</span>
+<span class="sd">        shr9: +/- 15 m^2/s^2</span>
+<span class="sd">        shr3: +/- 8 m^2/s^2</span>
+<span class="sd">        srh &lt; 50 m^2/s^2: +/- 25 m^2/s^2</span>
+<span class="sd">        srh &gt;= 50 m^2/s^2: +/- 50% m^2/s^2</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mumr - most unstable parcel mixing ratio (g/kg)</span>
+<span class="sd">    mucape - most unstable CAPE (J/kg)</span>
+<span class="sd">    h5_temp - 500 mb temperature (C)</span>
+<span class="sd">    lr - 700-500 mb lapse rate (C/km)</span>
+<span class="sd">    shr6 - 0-6 km shear (m/s)</span>
+<span class="sd">    shr9 - 0-9 km shear (m/s)</span>
+<span class="sd">    shr3 - 0-3 km shear (m/s)</span>
+<span class="sd">    srh - 0-3 Storm Relative Helicity (m2/s2)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    quality_match_dates (str) - dates of the quality matches</span>
+<span class="sd">    quality_match_sizes (float) - hail sizes of the quality matches</span>
+<span class="sd">    num_loose_matches (int) - number of loose matches</span>
+<span class="sd">    num_sig_reports (int) - number of significant hail reports (&gt;= 2 inches)</span>
+<span class="sd">    prob_sig_hail (float) - SARS sig. hail probability</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">## open the file in the current directory with the name database_fn</span>
+    <span class="n">database_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span> <span class="vm">__file__</span> <span class="p">),</span> <span class="n">database_fn</span> <span class="p">)</span>
+    <span class="n">hail_database</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">database_fn</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bytes</span><span class="p">)</span>
+
+    <span class="c1">#Set range criteria for matching sounding</span>
+    <span class="c1"># MU Mixing Ratio Ranges</span>
+    <span class="n">range_mumr</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="c1"># g/kg</span>
+    <span class="n">range_mumr_t1</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="c1"># g/kg</span>
+
+    <span class="c1"># MUCAPE Ranges (J/kg)</span>
+    <span class="n">range_mucape</span> <span class="o">=</span> <span class="n">mucape</span><span class="o">*.</span><span class="mi">30</span>
+    <span class="k">if</span> <span class="n">mucape</span> <span class="o">&lt;</span> <span class="mf">500.</span><span class="p">:</span>
+        <span class="n">range_mucape_t1</span> <span class="o">=</span> <span class="n">mucape</span> <span class="o">*</span> <span class="o">.</span><span class="mi">50</span>
+    <span class="k">elif</span> <span class="n">mucape</span> <span class="o">&gt;=</span> <span class="mf">500.</span> <span class="ow">and</span> <span class="n">mucape</span> <span class="o">&lt;</span> <span class="mf">2000.</span><span class="p">:</span>
+        <span class="n">range_mucape_t1</span> <span class="o">=</span> <span class="n">mucape</span> <span class="o">*</span> <span class="o">.</span><span class="mi">25</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_mucape_t1</span> <span class="o">=</span> <span class="n">mucape</span> <span class="o">*</span> <span class="o">.</span><span class="mi">20</span>
+
+    <span class="c1"># 700-500 mb Lapse Rate Ranges</span>
+    <span class="n">range_lr</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="c1"># C/km</span>
+    <span class="n">range_lr_t1</span> <span class="o">=</span> <span class="mf">0.4</span> <span class="c1"># C/km</span>
+
+    <span class="c1"># 500 mb temperature ranges</span>
+    <span class="n">range_temp</span> <span class="o">=</span> <span class="mi">9</span> <span class="c1"># C</span>
+    <span class="n">range_temp_t1</span> <span class="o">=</span> <span class="mf">1.5</span> <span class="c1"># C</span>
+
+    <span class="c1"># 0-6 km shear ranges</span>
+    <span class="n">range_shr6</span> <span class="o">=</span> <span class="mi">12</span> <span class="c1"># m/s</span>
+    <span class="n">range_shr6_t1</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># m/s</span>
+
+    <span class="c1"># 0-9 km shear ranges</span>
+
+    <span class="n">range_shr9</span> <span class="o">=</span> <span class="mi">22</span> <span class="c1"># m/s</span>
+    <span class="n">range_shr9_t1</span> <span class="o">=</span> <span class="mi">15</span> <span class="c1"># m/s</span>
+
+    <span class="c1"># 0-3 km shear ranges</span>
+    <span class="n">range_shr3</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">range_shr3_t1</span> <span class="o">=</span> <span class="mi">8</span>
+
+    <span class="c1"># 0-3 SRH Ranges</span>
+    <span class="n">range_srh</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">srh</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="n">range_srh_t1</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">range_srh_t1</span> <span class="o">=</span> <span class="n">srh</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+    <span class="c1">#Get database variables from the columns in the file and make them floats</span>
+    <span class="n">matmr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># MU Mixing Ratio</span>
+    <span class="n">matcape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># MUCAPE</span>
+    <span class="n">matlr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">7</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 700-500 mb lapse rate</span>
+    <span class="n">mattemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 500 mb temp</span>
+    <span class="n">matshr6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">10</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-6 shear</span>
+    <span class="n">matshr9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">11</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-9 shear</span>
+    <span class="n">matshr3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-3 shear</span>
+    <span class="n">matsrh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">12</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># 0-3 SRH</span>
+
+    <span class="c1"># Find the loose matches using the ranges set above</span>
+    <span class="n">loose_match_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mumr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matmr</span> <span class="o">-</span> <span class="n">range_mumr</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mumr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matmr</span> <span class="o">+</span> <span class="n">range_mumr</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">mucape</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matcape</span> <span class="o">-</span> <span class="n">range_mucape</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mucape</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matcape</span> <span class="o">+</span> <span class="n">range_mucape</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">lr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matlr</span> <span class="o">-</span> <span class="n">range_lr</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matlr</span> <span class="o">+</span> <span class="n">range_lr</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">h5_temp</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mattemp</span> <span class="o">-</span> <span class="n">range_temp</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">h5_temp</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mattemp</span> <span class="o">+</span> <span class="n">range_temp</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr6</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr6</span> <span class="o">-</span> <span class="n">range_shr6</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr6</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr6</span> <span class="o">+</span> <span class="n">range_shr6</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr9</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr9</span> <span class="o">-</span> <span class="n">range_shr9</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr9</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr9</span> <span class="o">+</span> <span class="n">range_shr9</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr3</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr3</span> <span class="o">-</span> <span class="n">range_shr3</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr3</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr3</span> <span class="o">+</span> <span class="n">range_shr3</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1">## How many loose matches are there?</span>
+    <span class="n">num_loose_matches</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loose_match_idx</span><span class="p">))</span>
+    <span class="c1">## What were the sizes of those matches?</span>
+    <span class="n">hail_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="c1">## How many of them were significant (&gt;2.0 in)?</span>
+    <span class="n">num_sig_reports</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hail_sizes</span><span class="p">[</span><span class="n">loose_match_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">2.</span><span class="p">)[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="c1">## Calculate the Probability of significant hail - must make sure</span>
+    <span class="c1">## loose matches are &gt; 0 to prevent division by 0.</span>
+    <span class="k">if</span> <span class="n">num_loose_matches</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">mucape</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">prob_sig_hail</span> <span class="o">=</span> <span class="n">num_sig_reports</span> <span class="o">/</span> <span class="n">num_loose_matches</span>
+        <span class="c1"># Calculate the average hail size from the loose matches</span>
+        <span class="n">avg_hail_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hail_sizes</span><span class="p">[</span><span class="n">loose_match_idx</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prob_sig_hail</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Find the quality matches</span>
+    <span class="n">quality_match_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">mumr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matmr</span> <span class="o">-</span> <span class="n">range_mumr_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mumr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matmr</span> <span class="o">+</span> <span class="n">range_mumr_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">mucape</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matcape</span> <span class="o">-</span> <span class="n">range_mucape_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mucape</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matcape</span> <span class="o">+</span> <span class="n">range_mucape_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">lr</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matlr</span> <span class="o">-</span> <span class="n">range_lr_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matlr</span> <span class="o">+</span> <span class="n">range_lr_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">h5_temp</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mattemp</span> <span class="o">-</span> <span class="n">range_temp_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">h5_temp</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">mattemp</span> <span class="o">+</span> <span class="n">range_temp_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr6</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr6</span> <span class="o">-</span> <span class="n">range_shr6_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr6</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr6</span> <span class="o">+</span> <span class="n">range_shr6_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr9</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr9</span> <span class="o">-</span> <span class="n">range_shr9_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr9</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr9</span> <span class="o">+</span> <span class="n">range_shr9_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">shr3</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matshr3</span> <span class="o">-</span> <span class="n">range_shr3_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">shr3</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matshr3</span> <span class="o">+</span> <span class="n">range_shr3_t1</span><span class="p">))</span> <span class="o">&amp;</span> \
+                               <span class="p">(</span><span class="n">srh</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">matsrh</span> <span class="o">-</span> <span class="n">range_srh_t1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">srh</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">matsrh</span> <span class="o">+</span> <span class="n">range_srh_t1</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">quality_match_dates</span> <span class="o">=</span> <span class="n">hail_database</span><span class="p">[</span><span class="n">quality_match_idx</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">quality_match_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hail_database</span><span class="p">[</span><span class="n">quality_match_idx</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># This filtering was in the sars.f file so the graphical output wasn&#39;t overrun by historical quality matches</span>
+    <span class="n">max_quality_matches</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">quality_match_dates</span> <span class="o">=</span> <span class="n">quality_match_dates</span><span class="p">[:</span><span class="n">max_quality_matches</span><span class="p">]</span>
+    <span class="n">quality_match_sizes</span> <span class="o">=</span> <span class="n">quality_match_sizes</span><span class="p">[:</span><span class="n">max_quality_matches</span><span class="p">]</span>
+
+    <span class="n">quality_match_dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">qmd</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">qmd</span> <span class="ow">in</span> <span class="n">quality_match_dates</span> <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">quality_match_dates</span><span class="p">,</span> <span class="n">quality_match_sizes</span><span class="p">,</span> <span class="n">num_loose_matches</span><span class="p">,</span> <span class="n">num_sig_reports</span><span class="p">,</span> <span class="n">prob_sig_hail</span></div>
+
+
+<span class="c1">## written by Kelton Halbert</span>
+<div class="viewcode-block" id="getSounding"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.sars.getSounding">[docs]</a><span class="k">def</span> <span class="nf">getSounding</span><span class="p">(</span><span class="n">match_string</span><span class="p">,</span> <span class="n">match_type</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a match string and type (supercell:hail) from one of the</span>
+<span class="sd">    SARS routines, decode the raw sounding data into a Profile</span>
+<span class="sd">    object and return said object. It will default to a &quot;default&quot;</span>
+<span class="sd">    profile object that does not compute any indices, but can be</span>
+<span class="sd">    set to profile=&quot;convective&quot; if indices are desired.</span>
+
+<span class="sd">    :param match_string:</span>
+<span class="sd">    :param match_type:</span>
+<span class="sd">    :return: a Profile object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">## make sure the requested match type is valid</span>
+    <span class="c1">#if (match_type.lower() != &quot;supercell&quot;) or (match_type.lower() != &quot;hail&quot;):</span>
+    <span class="c1">#    raise Exception(&quot;InvalidSARSType&quot;, match_type.lower() + &quot; is an invalid SARS type.&quot;)</span>
+    <span class="c1">## get the directory with the data</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;sars/&quot;</span> <span class="o">+</span> <span class="n">match_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+    <span class="n">match_date</span><span class="p">,</span> <span class="n">match_loc</span> <span class="o">=</span> <span class="n">match_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">match_date</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">match_loc</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+            <span class="n">datafile</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">match_date</span><span class="p">)</span> <span class="ow">and</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">match_loc</span><span class="o">.</span><span class="n">upper</span><span class="p">()):</span>
+            <span class="n">datafile</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">datafile</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.utils &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Frequently used functions &#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">TOL</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;INT2STR&#39;</span><span class="p">,</span><span class="s1">&#39;FLOAT2STR&#39;</span><span class="p">,</span><span class="s1">&#39;MS2KTS&#39;</span><span class="p">,</span> <span class="s1">&#39;KTS2MS&#39;</span><span class="p">,</span> <span class="s1">&#39;MS2MPH&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;MPH2MS&#39;</span><span class="p">,</span> <span class="s1">&#39;MPH2KTS&#39;</span><span class="p">,</span> <span class="s1">&#39;KTS2MPH&#39;</span><span class="p">,</span> <span class="s1">&#39;M2FT&#39;</span><span class="p">,</span> <span class="s1">&#39;FT2M&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;IN2CM&#39;</span><span class="p">,</span> <span class="s1">&#39;CM2IN&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;vec2comp&#39;</span><span class="p">,</span> <span class="s1">&#39;comp2vec&#39;</span><span class="p">,</span> <span class="s1">&#39;mag&#39;</span><span class="p">,</span> <span class="s1">&#39;QC&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="INT2STR"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.INT2STR">[docs]</a><span class="k">def</span> <span class="nf">INT2STR</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert a value (float or int) into an integer string</span>
+<span class="sd">    by rounding to the nearest integer and returning the </span>
+<span class="sd">    string. Used to handle case where value is nan or </span>
+<span class="sd">    masked.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val: float or int</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val rounded to the nearest int and converted to a string.</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;--&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span> <span class="n">val</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FLOAT2STR"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.FLOAT2STR">[docs]</a><span class="k">def</span> <span class="nf">FLOAT2STR</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert a value (float or int) into a float string to the </span>
+<span class="sd">    decimal place of a specified precision. Used to handle the</span>
+<span class="sd">    case where the value is nan or masked.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val: float or int</span>
+<span class="sd">    precision: int</span>
+<span class="sd">        used to specify the precision of the resulting rounded value</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    val rounded to the nearest specified decimal place and converted</span>
+<span class="sd">    to a string.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span> <span class="n">val</span><span class="p">,</span> <span class="n">precision</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">new_val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">val</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">new_val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;nan&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;--&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">new_val</span></div>
+
+<div class="viewcode-block" id="MS2KTS"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.MS2KTS">[docs]</a><span class="k">def</span> <span class="nf">MS2KTS</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert meters per second to knots</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (m/s)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val converted to knots (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">1.94384449</span></div>
+
+
+<div class="viewcode-block" id="KTS2MS"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.KTS2MS">[docs]</a><span class="k">def</span> <span class="nf">KTS2MS</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert knots to meters per second</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (kts)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Val converted to meters per second (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">0.514444</span></div>
+
+
+<div class="viewcode-block" id="MS2MPH"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.MS2MPH">[docs]</a><span class="k">def</span> <span class="nf">MS2MPH</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert meters per second to miles per hour</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (m/s)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val converted to miles per hour (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">2.23694</span></div>
+
+
+<div class="viewcode-block" id="MPH2MS"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.MPH2MS">[docs]</a><span class="k">def</span> <span class="nf">MPH2MS</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert miles per hour to meters per second</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (mph)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val converted to meters per second (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">0.44704</span></div>
+
+
+<div class="viewcode-block" id="MPH2KTS"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.MPH2KTS">[docs]</a><span class="k">def</span> <span class="nf">MPH2KTS</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert miles per hour to knots</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (mph)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val converted to knots (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">0.868976</span></div>
+
+
+<div class="viewcode-block" id="KTS2MPH"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.KTS2MPH">[docs]</a><span class="k">def</span> <span class="nf">KTS2MPH</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert knots to miles per hour</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Speed (kts)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Val converted to miles per hour (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">1.15078</span></div>
+
+
+<div class="viewcode-block" id="M2FT"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.M2FT">[docs]</a><span class="k">def</span> <span class="nf">M2FT</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert meters to feet</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Distance (m)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Val converted to feet (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">3.2808399</span></div>
+
+
+<div class="viewcode-block" id="FT2M"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.FT2M">[docs]</a><span class="k">def</span> <span class="nf">FT2M</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert feet to meters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">        Distance (ft)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Val converted to meters (float)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">0.3048</span></div>
+
+<div class="viewcode-block" id="IN2CM"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.IN2CM">[docs]</a><span class="k">def</span> <span class="nf">IN2CM</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert inches to centimeters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">          Distance (inches)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Val converted to centimeters (float)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">*</span> <span class="mf">2.54</span></div>
+
+<div class="viewcode-block" id="CM2IN"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.CM2IN">[docs]</a><span class="k">def</span> <span class="nf">CM2IN</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert centimeters to inches</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val : float, numpy_array</span>
+<span class="sd">          Distance (centimeters)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        Val converted to inches (float)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">val</span> <span class="o">/</span> <span class="mf">2.54</span></div>
+
+<span class="k">def</span> <span class="nf">_vec2comp</span><span class="p">(</span><span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Underlying function that converts a vector to its components</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wdir : number, masked_array</span>
+<span class="sd">        Angle in meteorological degrees</span>
+<span class="sd">    wspd : number, masked_array</span>
+<span class="sd">        Magnitudes of wind vector</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    u : number, masked_array (same as input)</span>
+<span class="sd">        U-component of the wind</span>
+<span class="sd">    v : number, masked_array (same as input)</span>
+<span class="sd">        V-component of the wind</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">wspd</span> <span class="o">*</span> <span class="n">ma</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">wdir</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">wspd</span> <span class="o">*</span> <span class="n">ma</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">wdir</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span>
+
+
+<div class="viewcode-block" id="vec2comp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.vec2comp">[docs]</a><span class="k">def</span> <span class="nf">vec2comp</span><span class="p">(</span><span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">MISSING</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert direction and magnitude into U, V components</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wdir : number, array_like</span>
+<span class="sd">        Angle in meteorological degrees</span>
+<span class="sd">    wspd : number, array_like</span>
+<span class="sd">        Magnitudes of wind vector (input units == output units)</span>
+<span class="sd">    missing : number (optional)</span>
+<span class="sd">        Optional missing parameter. If not given, assume default missing</span>
+<span class="sd">        value from sharppy.sharptab.constants.MISSING</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    u : number, array_like (same as input)</span>
+<span class="sd">        U-component of the wind (units are the same as those of input speed)</span>
+<span class="sd">    v : number, array_like (same as input)</span>
+<span class="sd">        V-component of the wind (units are the same as those of input speed)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">wdir</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">wspd</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">wdir</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">wdir</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">wspd</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">wspd</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">wdir</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="n">wspd</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">wdir</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">wspd</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;wdir and wspd have different shapes&#39;</span>
+    <span class="k">if</span> <span class="n">wdir</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">wdir</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wspd</span><span class="p">[</span><span class="n">wspd</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">wspd</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wspd</span><span class="p">[</span><span class="n">wdir</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">_vec2comp</span><span class="p">(</span><span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span><span class="p">)</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wdir</span> <span class="o">==</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="n">wdir</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+            <span class="n">wspd</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="k">elif</span> <span class="n">wspd</span> <span class="o">==</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="n">wdir</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+            <span class="n">wspd</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">_vec2comp</span><span class="p">(</span><span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">return</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="comp2vec"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.comp2vec">[docs]</a><span class="k">def</span> <span class="nf">comp2vec</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">MISSING</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert U, V components into direction and magnitude</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u : number, array_like</span>
+<span class="sd">        U-component of the wind</span>
+<span class="sd">    v : number, array_like</span>
+<span class="sd">        V-component of the wind</span>
+<span class="sd">    missing : number (optional)</span>
+<span class="sd">        Optional missing parameter. If not given, assume default missing</span>
+<span class="sd">        value from sharppy.sharptab.constants.MISSING</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wdir : number, array_like (same as input)</span>
+<span class="sd">        Angle in meteorological degrees</span>
+<span class="sd">    wspd : number, array_like (same as input)</span>
+<span class="sd">        Magnitudes of wind vector (input units == output units)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">u</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="n">wdir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="n">u</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">wdir</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">u</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">wdir</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">360</span>
+        <span class="n">wdir</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">wdir</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">missing</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="k">if</span> <span class="n">wdir</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">wdir</span> <span class="o">+=</span> <span class="mi">360</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">wdir</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">TOL</span><span class="p">:</span>
+            <span class="n">wdir</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">return</span> <span class="n">wdir</span><span class="p">,</span> <span class="n">mag</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mag"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.mag">[docs]</a><span class="k">def</span> <span class="nf">mag</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">MISSING</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute the magnitude of a vector from its components</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u : number, array_like</span>
+<span class="sd">        U-component of the wind</span>
+<span class="sd">    v : number, array_like</span>
+<span class="sd">        V-component of the wind</span>
+<span class="sd">    missing : number (optional)</span>
+<span class="sd">        Optional missing parameter. If not given, assume default missing</span>
+<span class="sd">        value from sharppy.sharptab.constants.MISSING</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mag : number, array_like</span>
+<span class="sd">        The magnitude of the vector (units are the same as input)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">set_fill_value</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">u</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">v</span> <span class="o">==</span> <span class="n">missing</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">missing</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="QC"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.utils.QC">[docs]</a><span class="k">def</span> <span class="nf">QC</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Tests if a value is masked.</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

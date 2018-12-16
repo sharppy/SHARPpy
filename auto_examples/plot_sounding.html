@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Plotting a sounding with indices and a hodograph &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributing.html" />
+    <link rel="prev" title="Estimating the uncertainty of convection indices" href="plot_ci_uncertainty.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripting.html">Scripting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_sars.html">Plotting data from the SARS database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_ci_uncertainty.html">Estimating the uncertainty of convection indices</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting a sounding with indices and a hodograph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Example scripts</a> &raquo;</li>
+        
+      <li>Plotting a sounding with indices and a hodograph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/auto_examples/plot_sounding.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-sounding-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="plotting-a-sounding-with-indices-and-a-hodograph">
+<span id="sphx-glr-auto-examples-plot-sounding-py"></span><h1>Plotting a sounding with indices and a hodograph<a class="headerlink" href="#plotting-a-sounding-with-indices-and-a-hodograph" title="Permalink to this headline">¶</a></h1>
+<img alt="../_images/sphx_glr_plot_sounding_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_plot_sounding_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>##############
+   INDICES
+##############
+0-1 km SRH: 355 m2/s2
+0-1 km Shear: 31 kts
+0-3 km SRH: 584 m2/s2
+0-6 km Shear: 55 kts
+EBWD: 59 kts
+Eff. SRH: 527 m2/s2
+K-index: 37
+MLCAPE: 4205 J/kg
+MLCIN: -59 J/kg
+MLEL: 13558 m AGL
+MLLCL: 1002 m AGL
+MLLFC: 2393 m AGL
+MLLI: -11 C
+MUCAPE: 5769 J/kg
+MUCIN: 0 J/kg
+MUEL: 13882 m AGL
+MULCL: 512 m AGL
+MULFC: 612 m AGL
+MULI: -13 C
+PWV: 1.53 inch
+SBCAPE: 5769 J/kg
+SBCIN: 0 J/kg
+SBEL: 13882 m AGL
+SBLCL: 512 m AGL
+SBLFC: 612 m AGL
+SBLI: -13 C
+SCP: 60.9
+SHIP: 4.9
+STP(cin): 13.9
+STP(fix): 13.7
+
+#############
+ SARS OUTPUT
+#############
+Supercell
+-----------
+NO QUALITY MATCHES
+Total Loose Matches: 31
+# of Loose Matches that met Criteria: 24
+SVR Probability: 0.7741935483870968
+
+Hail
+-----------
+NO QUALITY MATCHES
+Total Loose Matches: 22.0
+# of Loose Matches that met Criteria: 20.0
+SVR Probability: 0.9090909090909091
+
+(&#39;SHARPpy Skew-T image output at:&#39;, &#39;20140616.1900_OAX.png&#39;)
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="c1"># Silence the warnings from SHARPpy</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="kn">as</span> <span class="nn">skew</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">LineCollection</span>
+<span class="kn">import</span> <span class="nn">matplotlib.transforms</span> <span class="kn">as</span> <span class="nn">transforms</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">gridspec</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="kn">import</span> <span class="n">winds</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">profile</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="kn">import</span> <span class="n">SPCDecoder</span>
+
+<span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+
+    <span class="n">dec</span> <span class="o">=</span> <span class="n">SPCDecoder</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dec</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not figure out the format of &#39;</span><span class="si">%s</span><span class="s2">&#39;!&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="c1"># Returns the set of profiles from the file that are from the &quot;Profile&quot; class.</span>
+    <span class="n">profs</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">getProfiles</span><span class="p">()</span>
+    <span class="n">stn_id</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">getStnId</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">profs</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">all_prof</span> <span class="o">=</span> <span class="n">profs</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="n">profs</span><span class="o">.</span><span class="n">_dates</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_prof</span><span class="p">)):</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">all_prof</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">new_prof</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">pres</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">hght</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">dwpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">wspd</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">,</span> \
+                                              <span class="n">wdir</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s1">&#39;convective&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">new_prof</span><span class="p">,</span> <span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">stn_id</span>
+
+<span class="n">FILENAME</span> <span class="o">=</span> <span class="s1">&#39;data/14061619.OAX&#39;</span>
+
+<span class="n">prof</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">location</span> <span class="o">=</span> <span class="n">decode</span><span class="p">(</span><span class="n">FILENAME</span><span class="p">)</span>
+<span class="c1"># Bounds of the pressure axis</span>
+<span class="n">pb_plot</span><span class="o">=</span><span class="mi">1050</span>
+<span class="n">pt_plot</span><span class="o">=</span><span class="mi">100</span>
+<span class="n">dp_plot</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">plevs_plot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pb_plot</span><span class="p">,</span><span class="n">pt_plot</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="n">dp_plot</span><span class="p">)</span>
+<span class="c1"># Open up the text file with the data in columns (e.g. the sample OAX file distributed with SHARPpy)</span>
+<span class="n">title</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">/%H%M&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">location</span> <span class="o">+</span> <span class="s1">&#39;   (Observed)&#39;</span>
+
+<span class="c1"># Set up the figure in matplotlib.</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;skewx&#39;</span><span class="p">)</span>
+<span class="n">skew</span><span class="o">.</span><span class="n">draw_title</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># Plot the background variables</span>
+<span class="n">presvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">vtmp</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;r--&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wetbulb</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;c-&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot the parcel trace, but this may fail.  If it does so, inform the user.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">ttrace</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">ptrace</span><span class="p">,</span> <span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t plot parcel traces...&quot;</span><span class="p">)</span>
+
+<span class="c1"># Highlight the 0 C and -20 C isotherms.</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Disables the log-formatting that comes with semilogy</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">ScalarFormatter</span><span class="p">())</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">1050</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Plot the hodograph data.</span>
+<span class="n">inset_axes</span> <span class="o">=</span> <span class="n">skew</span><span class="o">.</span><span class="n">draw_hodo_inset</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+<span class="n">skew</span><span class="o">.</span><span class="n">plotHodo</span><span class="p">(</span><span class="n">inset_axes</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="c1">#inset_axes.text(srwind[0], srwind[1], &#39;RM&#39;, color=&#39;r&#39;, fontsize=8)</span>
+<span class="c1">#inset_axes.text(srwind[2], srwind[3], &#39;LM&#39;, color=&#39;b&#39;, fontsize=8)</span>
+
+<span class="c1"># Draw the wind barbs axis and everything that comes with it.</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">skew</span><span class="o">.</span><span class="n">plot_wind_axes</span><span class="p">(</span><span class="n">ax2</span><span class="p">)</span>
+<span class="n">skew</span><span class="o">.</span><span class="n">plot_wind_barbs</span><span class="p">(</span><span class="n">ax2</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+<span class="n">srwind</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">bunkers_storm_motion</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">gs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.025</span><span class="p">)</span>
+
+<span class="c1"># Calculate indices to be shown.  More indices can be calculated here using the tutorial and reading the params module.</span>
+<span class="n">p1km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">))</span>
+<span class="n">p6km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">))</span>
+<span class="n">sfc</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span>
+<span class="n">sfc_1km_shear</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p1km</span><span class="p">)</span>
+<span class="n">sfc_6km_shear</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p6km</span><span class="p">)</span>
+<span class="n">srh3km</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3000.</span><span class="p">,</span> <span class="n">stu</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stv</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">srh1km</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">,</span> <span class="n">stu</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stv</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">scp</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">scp</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_esrh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebwspd</span><span class="p">)</span>
+<span class="n">stp_cin</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_cin</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_esrh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebwspd</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">)</span>
+<span class="n">stp_fixed</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_fixed</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="n">srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ship</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">ship</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+
+<span class="c1"># A routine to perform the correct formatting when writing the indices out to the figure.</span>
+<span class="k">def</span> <span class="nf">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;M&quot;</span>
+    <span class="k">return</span> <span class="n">val</span>
+
+<span class="c1"># Setting a dictionary that is a collection of all of the indices we&#39;ll be showing on the figure.</span>
+<span class="c1"># the dictionary includes the index name, the actual value, and the units.</span>
+<span class="n">indices</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SBCAPE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SBCIN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SBLCL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SBLFC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lfchght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SBEL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">elhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SBLI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">li5</span><span class="p">),</span> <span class="s1">&#39;C&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLCAPE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLCIN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLLCL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLLFC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">lfchght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLEL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">elhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MLLI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">li5</span><span class="p">),</span> <span class="s1">&#39;C&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MUCAPE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MUCIN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">),</span> <span class="s1">&#39;J/kg&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MULCL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MULFC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">lfchght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MUEL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">elhght</span><span class="p">),</span> <span class="s1">&#39;m AGL&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;MULI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">li5</span><span class="p">),</span> <span class="s1">&#39;C&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;0-1 km SRH&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;m2/s2&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;0-1 km Shear&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">sfc_1km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sfc_1km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;kts&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;0-3 km SRH&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">srh3km</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;m2/s2&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;0-6 km Shear&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;kts&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;Eff. SRH&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">right_esrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;m2/s2&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;EBWD&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">ebwspd</span><span class="p">),</span> <span class="s1">&#39;kts&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;PWV&#39;</span><span class="p">:</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pwat</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;inch&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;K-index&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">k_index</span><span class="p">(</span><span class="n">prof</span><span class="p">)),</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;STP(fix)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">stp_fixed</span><span class="p">,</span> <span class="s1">&#39;flt&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SHIP&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">ship</span><span class="p">,</span> <span class="s1">&#39;flt&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;SCP&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">scp</span><span class="p">,</span> <span class="s1">&#39;flt&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>\
+           <span class="s1">&#39;STP(cin)&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fmt</span><span class="p">(</span><span class="n">stp_cin</span><span class="p">,</span> <span class="s1">&#39;flt&#39;</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">]}</span>
+
+<span class="c1"># List the indices within the indices dictionary on the side of the plot.</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">blended_transform_factory</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span><span class="n">ax</span><span class="o">.</span><span class="n">transData</span><span class="p">)</span>
+
+<span class="c1"># Write out all of the indices to the figure.</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;   INDICES    &quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
+<span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="n">string</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">print</span><span class="p">((</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">continue</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">ax3</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax3</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">x</span> <span class="o">+=</span> <span class="mf">0.3</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax3</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="c1"># Show SARS matches (edited for Keith Sherburn)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">supercell_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">supercell_matches</span>
+    <span class="n">hail_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">matches</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">supercell_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_supercell_matches</span>
+    <span class="n">hail_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_matches</span>
+
+<span class="k">print</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot; SARS OUTPUT &quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mtype</span><span class="p">,</span> <span class="n">matches</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;Supercell&#39;</span><span class="p">,</span> <span class="s1">&#39;Hail&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">supercell_matches</span><span class="p">,</span> <span class="n">hail_matches</span><span class="p">]):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">mtype</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-----------&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;NO QUALITY MATCHES&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Total Loose Matches:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;# of Loose Matches that met Criteria:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;SVR Probability:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">()</span>
+
+<span class="c1"># Finalize the image formatting and alignments, and save the image to the file.</span>
+<span class="n">gs</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">.%H%M&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">location</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">((</span><span class="s2">&quot;SHARPpy Skew-T image output at:&quot;</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  3.331 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-sounding-py">
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" download="" href="../_downloads/618f00d5caa2380f11a15a4b87fd8a25/plot_sounding.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_sounding.py</span></code></a></div>
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" download="" href="../_downloads/0f65aaafce2fe5d2f2ba3a483a3c4878/plot_sounding.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_sounding.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.readthedocs.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plot_ci_uncertainty.html" class="btn btn-neutral" title="Estimating the uncertainty of convection indices" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

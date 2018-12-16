@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Estimating the uncertainty of convection indices &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plotting a sounding with indices and a hodograph" href="plot_sounding.html" />
+    <link rel="prev" title="Plotting data from the SARS database" href="plot_sars.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripting.html">Scripting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Example scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_sars.html">Plotting data from the SARS database</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Estimating the uncertainty of convection indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sounding.html">Plotting a sounding with indices and a hodograph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Example scripts</a> &raquo;</li>
+        
+      <li>Estimating the uncertainty of convection indices</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/auto_examples/plot_ci_uncertainty.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Click <a class="reference internal" href="#sphx-glr-download-auto-examples-plot-ci-uncertainty-py"><span class="std std-ref">here</span></a> to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="estimating-the-uncertainty-of-convection-indices">
+<span id="sphx-glr-auto-examples-plot-ci-uncertainty-py"></span><h1>Estimating the uncertainty of convection indices<a class="headerlink" href="#estimating-the-uncertainty-of-convection-indices" title="Permalink to this headline">¶</a></h1>
+<p>This example uses the SHARPpy functions to estimate the uncertainty inherent within
+convection indices.  It uses Monte Carlo sampling and estimates of the systematic and
+random errors contained within Vaisala RS-90/92 radiosonde measurements.</p>
+<p>This methodology and code is was used in <a class="reference external" href="https://journals.ametsoc.org/doi/10.1175/JAMC-D-17-0036.1">Blumberg et al. 2017, JAMC</a> to demonstrate
+the uncertainty of convection indices within radiosonde measurements and AERI retrievals.</p>
+<img alt="../_images/sphx_glr_plot_ci_uncertainty_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_plot_ci_uncertainty_001.png" />
+<p class="sphx-glr-script-out">Out:</p>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Deterministic SBCAPE: 5769.225453113803
+Probablisitic SBCAPE (25,50,75th percentiles): [5439.75317916 5767.89686073 6114.83594903]
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="kn">as</span> <span class="nn">tab</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="kn">import</span> <span class="n">SPCDecoder</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
+<span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="kn">as</span> <span class="nn">skew</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">FILENAME</span> <span class="o">=</span> <span class="s1">&#39;data/14061619.OAX&#39;</span>
+
+<span class="c1"># Read in the sounding data and generate a Profile object</span>
+<span class="n">dec</span> <span class="o">=</span> <span class="n">SPCDecoder</span><span class="p">(</span><span class="n">FILENAME</span><span class="p">)</span>
+<span class="n">profs</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">getProfiles</span><span class="p">()</span>
+<span class="n">stn_id</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">getStnId</span><span class="p">()</span>
+<span class="n">prof</span> <span class="o">=</span> <span class="n">profs</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">profs</span><span class="o">.</span><span class="n">_dates</span>
+
+<span class="c1"># Get rid of all of the missing data</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">9999</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">prof</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">pres</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">hght</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">dwpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">wspd</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> \
+                                  <span class="n">wdir</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">strictQC</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">missing</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+
+<span class="n">deterministic_cape</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">bplus</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Deterministic SBCAPE:&quot;</span><span class="p">,</span> <span class="n">deterministic_cape</span><span class="p">)</span>
+
+<span class="c1"># RS-90 and RS-92 accuracy values (see ARM SONDE handbook)</span>
+<span class="n">rand_sigma_rh</span> <span class="o">=</span> <span class="mi">2</span><span class="o">/</span><span class="mf">2.</span> <span class="c1"># % RH (converts to 1-sigma)</span>
+<span class="n">syst_sigma_rh</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># % RH</span>
+<span class="n">rand_sigma_t</span> <span class="o">=</span> <span class="mf">0.15</span><span class="o">/</span><span class="mf">2.</span> <span class="c1">#C (converts to 1-sigma)</span>
+<span class="n">syst_sigma_t</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># C</span>
+
+<span class="k">def</span> <span class="nf">perturb_radiosonde</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">num_perts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Pertrub the radiosonde profiles to generate data to create a covariance matrix</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile, object</span>
+<span class="sd">            Profile object</span>
+<span class="sd">        num_perts : number</span>
+<span class="sd">            Number of perturbations to perform</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_t : array_like</span>
+<span class="sd">            2D array showing the pertrubed temperature profiles (C)</span>
+<span class="sd">        new_q : array_like</span>
+<span class="sd">            2D array showing the pertrubed water vapor mixing ratio profiles (g/kg)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">new_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_perts</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)))</span>
+    <span class="n">new_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">num_perts</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_perts</span><span class="p">):</span>
+        <span class="n">new_t</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span> <span class="o">+</span> <span class="p">(</span><span class="n">syst_sigma_t</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">rand_sigma_t</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)))</span>
+        <span class="n">rh_sample</span> <span class="o">=</span>  <span class="n">prof</span><span class="o">.</span><span class="n">relh</span> <span class="o">+</span> <span class="p">(</span><span class="n">syst_sigma_rh</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="n">rand_sigma_rh</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rh_sample</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rh_sample</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000001</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rh_sample</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rh_sample</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">e_s</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">vappres</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)</span>
+
+        <span class="n">new_q</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">mixratio</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">temp_at_vappres</span><span class="p">((</span><span class="n">rh_sample</span><span class="o">/</span><span class="mf">100.</span><span class="p">)</span> <span class="o">*</span> <span class="n">e_s</span><span class="p">))</span>
+        <span class="c1">#plt.plot(new_q[i,:], prof.hght)</span>
+        <span class="c1">#plt.show()</span>
+    <span class="k">return</span> <span class="n">new_t</span><span class="p">,</span> <span class="n">new_q</span>
+
+<span class="k">def</span> <span class="nf">hypsometric</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">sfc_pres</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calculate the pressure profile using the hypometric equation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        temp : array_like</span>
+<span class="sd">            Temperature profile in C</span>
+<span class="sd">        alt : array_like</span>
+<span class="sd">            Height array in m</span>
+<span class="sd">        sfc_pres : number</span>
+<span class="sd">            Surface pressure value in hPa</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pres : array_like</span>
+<span class="sd">            The pressure array in hPa</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mf">287.</span> <span class="c1"># J/kg*K</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="c1">#m/s^2</span>
+
+    <span class="n">pres_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">temp</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">pres_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sfc_pres</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">pres_arr</span><span class="o">.</span><span class="n">T</span><span class="p">),</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">avg_temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">+</span> <span class="n">temp</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mf">2.</span>
+        <span class="n">delta_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">alt</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">alt</span><span class="p">[</span><span class="n">l</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">/</span><span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">avg_temp</span><span class="p">))</span>
+        <span class="n">p_2</span> <span class="o">=</span> <span class="n">pres_arr</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pres_arr</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">delta_z</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pres_arr</span>
+
+<span class="c1"># Generate the error covariance matrix for the sounding</span>
+<span class="n">t_dist</span><span class="p">,</span> <span class="n">q_dist</span> <span class="o">=</span> <span class="n">perturb_radiosonde</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+<span class="n">Sop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">t_dist</span><span class="p">,</span> <span class="n">q_dist</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<span class="n">Xop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">wvmr</span><span class="p">))</span>
+<span class="n">u</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">Sop</span><span class="p">)</span>
+<span class="n">Ssqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">l</span><span class="p">))),</span> <span class="n">v</span><span class="p">)</span>
+
+<span class="n">num_samples</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">cape_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+
+<span class="c1"># Make a figure to show the soundings from the Monte Carlo sampling and the distribution of CAPE</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;skewx&#39;</span><span class="p">)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># Plot the &quot;deterministic&quot; sounding</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+    <span class="c1"># Monte Carlo sample the data</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Xop</span><span class="p">))</span>
+    <span class="n">Z_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">Ssqrt</span><span class="p">)</span> <span class="o">+</span> <span class="n">Xop</span>
+
+    <span class="c1"># Get the perturbed temperature and water vapor profiles</span>
+    <span class="n">pert_tmpc</span> <span class="o">=</span> <span class="n">Z_hat</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">)]</span>
+    <span class="n">pert_wvmr</span> <span class="o">=</span> <span class="n">Z_hat</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">):]</span>
+
+    <span class="c1"># Calculate the new pressure profile using the hypsometric equation and calculate the dewpoint.</span>
+    <span class="n">pert_pres</span> <span class="o">=</span> <span class="n">hypsometric</span><span class="p">(</span><span class="n">pert_tmpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">])</span>
+    <span class="n">pert_dwpc</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">temp_at_mixrat</span><span class="p">(</span><span class="n">pert_wvmr</span><span class="p">,</span> <span class="n">pert_pres</span><span class="p">)</span>
+
+    <span class="c1"># Create a BasicProfile object using the perturbed sounding data</span>
+    <span class="n">pert_prof</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">pres</span><span class="o">=</span><span class="n">pert_pres</span><span class="p">,</span> <span class="n">hght</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">pert_tmpc</span><span class="p">,</span> <span class="n">dwpc</span><span class="o">=</span><span class="n">pert_dwpc</span><span class="p">,</span> <span class="n">wspd</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">,</span> \
+                                      <span class="n">wdir</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">missing</span><span class="o">=-</span><span class="mi">9999</span><span class="p">)</span>
+    <span class="c1"># Lift a parcel</span>
+    <span class="n">pcl</span> <span class="o">=</span> <span class="n">tab</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span><span class="n">pert_prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cape_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcl</span><span class="o">.</span><span class="n">bplus</span>
+
+    <span class="c1">#TODO: Plot the parcel trace and the pertrubed profile on a skew-T.</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="o">~</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">pert_prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[</span><span class="o">~</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="n">pert_prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="o">~</span><span class="n">pert_prof</span><span class="o">.</span><span class="n">tmpc</span><span class="o">.</span><span class="n">mask</span><span class="p">],</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Probablisitic SBCAPE (25,50,75th percentiles):&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">cape_values</span><span class="p">,</span> <span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">75</span><span class="p">)))</span>
+<span class="c1"># Label and format the axes</span>
+<span class="n">presvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">ScalarFormatter</span><span class="p">())</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">1050</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Pressure [mb]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature [C]&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Count&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;SBCAPE [J/kg]&quot;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">cape_values</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+
+<span class="c1"># Plot the data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plot_ci.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  59.089 seconds)</p>
+<div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-ci-uncertainty-py">
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" download="" href="../_downloads/f7a1734d93fba43ac9aa40ca990b2d72/plot_ci_uncertainty.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_ci_uncertainty.py</span></code></a></div>
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" download="" href="../_downloads/1760a63e1aa3d61314bcddbb22e8aa61/plot_ci_uncertainty.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_ci_uncertainty.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.readthedocs.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plot_sounding.html" class="btn btn-neutral float-right" title="Plotting a sounding with indices and a hodograph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="plot_sars.html" class="btn btn-neutral" title="Plotting data from the SARS database" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

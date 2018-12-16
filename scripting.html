@@ -1,0 +1,682 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Scripting &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example scripts" href="auto_examples/index.html" />
+    <link rel="prev" title="Custom Data Sources" href="datasource_guide.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scripting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#steps-to-scripting">3 Steps to Scripting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-load-in-the-modules">Step 1: Load in the modules.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-read-in-the-data">Step 2: Read in the data.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-make-a-profile-object">Step 3: Make a Profile object.</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#showing-derived-profiles">Showing derived profiles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#lifting-parcels">Lifting parcels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculating-kinematic-indicies">Calculating kinematic indicies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculating-other-indices">Calculating other indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-a-skew-t-using-matplotlib">Plotting a Skew-T using Matplotlib</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Scripting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/scripting.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="scripting">
+<span id="id1"></span><h1>Scripting<a class="headerlink" href="#scripting" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial is meant to teach the user how to directly interact with the SHARPpy libraries using the Python interpreter. This tutorial will cover reading in files into the the Profile object, plotting the data using Matplotlib, and computing various indices from the data. It is also a reference to the different functions and variables SHARPpy has available to the user.</p>
+<div class="section" id="steps-to-scripting">
+<h2>3 Steps to Scripting<a class="headerlink" href="#steps-to-scripting" title="Permalink to this headline">¶</a></h2>
+<p>For those wishing to run SHARPpy routines using Python scripts, you often will need to perform 3 steps before you can begin running routines.  These three steps read in the data, load in the SHARPpy modules, and convert the data into SHARPpy Profile objects.</p>
+<div class="section" id="step-1-load-in-the-modules">
+<h3>Step 1: Load in the modules.<a class="headerlink" href="#step-1-load-in-the-modules" title="Permalink to this headline">¶</a></h3>
+<p>All of the SHARPpy routines (parcel lifting, composite indices, etc.)
+reside within the SHARPTAB module.</p>
+<p>SHARPTAB contains 6 modules: params, winds, thermo, utils, interp, fire,
+constants, watch_type</p>
+<p>Each module has different functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">interp</span> <span class="o">-</span> <span class="n">interpolates</span> <span class="n">different</span> <span class="n">variables</span> <span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">dewpoint</span><span class="p">,</span> <span class="n">wind</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span><span class="p">)</span> <span class="n">to</span> <span class="n">a</span> <span class="n">specified</span> <span class="n">pressure</span>
+<span class="n">winds</span> <span class="o">-</span> <span class="n">functions</span> <span class="n">used</span> <span class="n">to</span> <span class="n">compute</span> <span class="n">different</span> <span class="n">wind</span><span class="o">-</span><span class="n">related</span> <span class="n">variables</span> <span class="p">(</span><span class="n">shear</span><span class="p">,</span> <span class="n">helicity</span><span class="p">,</span> <span class="n">mean</span> <span class="n">winds</span><span class="p">,</span> <span class="n">storm</span> <span class="n">relative</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="n">thermo</span> <span class="o">-</span> <span class="n">temperature</span> <span class="n">unit</span> <span class="n">conversions</span><span class="p">,</span> <span class="n">theta</span><span class="o">-</span><span class="n">e</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">wetbulb</span><span class="p">,</span> <span class="n">lifting</span> <span class="n">functions</span>
+<span class="n">utils</span> <span class="o">-</span> <span class="n">wind</span> <span class="n">speed</span> <span class="n">unit</span> <span class="n">conversions</span><span class="p">,</span> <span class="n">wind</span> <span class="n">speed</span> <span class="ow">and</span> <span class="n">direction</span> <span class="n">to</span> <span class="n">u</span> <span class="ow">and</span> <span class="n">v</span> <span class="n">conversions</span><span class="p">,</span> <span class="n">QC</span>
+<span class="n">params</span> <span class="o">-</span> <span class="n">computation</span> <span class="n">of</span> <span class="n">different</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">etc</span><span class="o">.</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">Profile</span> <span class="nb">object</span>
+<span class="n">fire</span> <span class="o">-</span> <span class="n">fire</span> <span class="n">weather</span> <span class="n">indices</span>
+</pre></div>
+</div>
+<p>Below is the code to load in these modules:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sharppy</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.interp</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.winds</span> <span class="k">as</span> <span class="nn">winds</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.utils</span> <span class="k">as</span> <span class="nn">utils</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.params</span> <span class="k">as</span> <span class="nn">params</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.thermo</span> <span class="k">as</span> <span class="nn">thermo</span>
+</pre></div>
+</div>
+<p>To learn more about the functions available in SHARPTAB, access the API here: <a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p>
+</div>
+<div class="section" id="step-2-read-in-the-data">
+<h3>Step 2: Read in the data.<a class="headerlink" href="#step-2-read-in-the-data" title="Permalink to this headline">¶</a></h3>
+<p>For this example, the Pilger, NE tornado proximity sounding from 19 UTC within the tutorial/ directory is an example of the SPC sounding file format that can be read in by the GUI. Here we’ll read it in manually.</p>
+<p>If you want to read in your own data using this function, write a script
+to mimic the data format shown in the 14061619.OAX file found in this
+directory. Missing values must be -9999.  We’ll have to also load in Matplotlib for this example (which comes default with Anaconda)
+to plot some of the data.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">pyplot.plt</span>
+<span class="n">spc_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;14061619.OAX&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-make-a-profile-object">
+<h3>Step 3: Make a Profile object.<a class="headerlink" href="#step-3-make-a-profile-object" title="Permalink to this headline">¶</a></h3>
+<p>Before running any analysis routines on the data, we have to create a
+Profile object first. A Profile object describes the vertical
+thermodynamic and kinematic profiles and is the key object that all
+SHARPpy routines need to run. Any data source can be passed into a
+Profile object (i.e. radiosonde, RASS, satellite sounding retrievals,
+etc.) as long as it has these profiles:</p>
+<ul class="simple">
+<li>temperature (C)</li>
+<li>dewpoint (C)</li>
+<li>height (meters above mean sea level)</li>
+<li>pressure (millibars)</li>
+<li>wind speed (kts)</li>
+<li>wind direction (degrees)</li>
+</ul>
+<p>or (optional) - zonal wind component U (kts) - meridional wind component
+V (kts)</p>
+<p>For example, after reading in the data in the example above, a Profile
+object can be created. Since this file uses the value -9999 to indicate
+missing values, we need to tell SHARPpy to ignore these values in its
+calculations by including the missing field to be -9999. In addition, we
+tell SHARPpy we want to create a default BasicProfile object. Telling
+SHARPpy to create a “convective” profile object instead of a “default”
+profile object will generate a Profile object with all of the indices
+computed in the SHARPpy GUI. If you are only wanting to compute a few
+indices, you probably don’t want to do that.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+
+<span class="k">def</span> <span class="nf">parseSPC</span><span class="p">(</span><span class="n">spc_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function will read a SPC-style formatted observed sounding file,</span>
+<span class="sd">        similar to that of the 14061619.OAX file included in the SHARPpy distribution.</span>
+
+<span class="sd">        It will return the pressure, height, temperature, dewpoint, wind direction and wind speed data</span>
+<span class="sd">        from that file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">## read in the file</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">spc_file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)])</span>
+
+    <span class="c1">## necessary index points</span>
+    <span class="n">title_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;%TITLE%&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">start_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;%RAW%&#39;</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">finish_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="si">%E</span><span class="s1">ND%&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1">## create the plot title</span>
+    <span class="n">data_header</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">title_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">data_header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">data_header</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="mi">11</span><span class="p">]</span>
+
+    <span class="c1">## put it all together for StringIO</span>
+    <span class="n">full_data</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">start_idx</span> <span class="p">:</span> <span class="n">finish_idx</span><span class="p">][:])</span>
+    <span class="n">sound_data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span> <span class="n">full_data</span> <span class="p">)</span>
+
+    <span class="c1">## read the data into arrays</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Td</span><span class="p">,</span> <span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span> <span class="n">sound_data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Td</span><span class="p">,</span> <span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span>
+
+<span class="n">pres</span><span class="p">,</span> <span class="n">hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="p">,</span> <span class="n">dwpc</span><span class="p">,</span> <span class="n">wdir</span><span class="p">,</span> <span class="n">wspd</span> <span class="o">=</span> <span class="n">parseSPC</span><span class="p">(</span><span class="n">spc_file</span><span class="p">)</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">pres</span><span class="o">=</span><span class="n">pres</span><span class="p">,</span> <span class="n">hght</span><span class="o">=</span><span class="n">hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">tmpc</span><span class="p">,</span> \
+                                    <span class="n">dwpc</span><span class="o">=</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">wspd</span><span class="o">=</span><span class="n">wspd</span><span class="p">,</span> <span class="n">wdir</span><span class="o">=</span><span class="n">wdir</span><span class="p">,</span> <span class="n">missing</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">In SHARPpy, Profile objects have quality control checks built into them
+to alert the user to bad data and in order to prevent the program from
+crashing on computational routines. For example, upon construction of
+the Profile object, the SHARPpy will check for unrealistic values (i.e.
+dewpoint or temperature below absolute zero, negative wind speeds) and
+incorrect ordering of the height and pressure arrays. Height arrays must
+be increasing with array index, and pressure arrays must be decreasing
+with array index. Repeat values are not allowed.  If you encounter this issue,
+you can either manually edit the data to
+remove the offending data values or you can avoid these checks by
+setting the “strictQC” flag to False when constructing an object.</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>Because Python is an interpreted language, it can be quite slow for
+certain processes. When working with soundings in SHARPpy, we recommend
+the profiles contain a maximum of 200-500 points. High resolution
+radiosonde profiles (i.e. 1 second profiles) contain thousands of points
+and some of the SHARPpy functions that involve lifting parcels (i.e.
+parcelx) may take a long time to run. To filter your data to make it
+easier for SHARPpy to work with, you can use a sounding filter such as
+the one found here:</p>
+<p class="last"><a class="reference external" href="https://github.com/tsupinie/SoundingFilter">https://github.com/tsupinie/SoundingFilter</a></p>
+</div>
+<p>Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
+Python code plotting the temperature and dewpoint profiles with height:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">)</span>
+<span class="c1">#plt.barbs(40*np.ones(len(prof.hght)), prof.hght, prof.u, prof.v)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature [C]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height [m above MSL]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/SHARPpy_basics_21_0.png" src="_images/SHARPpy_basics_21_0.png" />
+<p>SHARPpy Profile objects keep track of the height grid the profile lies
+on. Within the profile object, the height grid is assumed to be in
+meters above mean sea level.</p>
+<p>In the example data provided, the profile can be converted to and from
+AGL from MSL:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msl_hght</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span> <span class="c1"># Grab the surface height value</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SURFACE HEIGHT (m MSL):&quot;</span><span class="p">,</span><span class="n">msl_hght</span><span class="p">)</span>
+<span class="n">agl_hght</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">msl_hght</span><span class="p">)</span> <span class="c1"># Converts to AGL</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SURFACE HEIGHT (m AGL):&quot;</span><span class="p">,</span> <span class="n">agl_hght</span><span class="p">)</span>
+<span class="n">msl_hght</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">agl_hght</span><span class="p">)</span> <span class="c1"># Converts to MSL</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SURFACE HEIGHT (m MSL):&quot;</span><span class="p">,</span><span class="n">msl_hght</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SURFACE</span> <span class="n">HEIGHT</span> <span class="p">(</span><span class="n">m</span> <span class="n">MSL</span><span class="p">):</span> <span class="mf">350.0</span>
+<span class="n">SURFACE</span> <span class="n">HEIGHT</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">):</span> <span class="mf">0.0</span>
+<span class="n">SURFACE</span> <span class="n">HEIGHT</span> <span class="p">(</span><span class="n">m</span> <span class="n">MSL</span><span class="p">):</span> <span class="mf">350.0</span>
+</pre></div>
+</div>
+<div class="section" id="showing-derived-profiles">
+<h4>Showing derived profiles<a class="headerlink" href="#showing-derived-profiles" title="Permalink to this headline">¶</a></h4>
+<p>By default, Profile objects also create derived profiles such as Theta-E
+and Wet-Bulb when they are constructed. These profiles are accessible to
+the user too.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thermo</span><span class="o">.</span><span class="n">ktoc</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">thetae</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Theta-E&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wetbulb</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="s1">&#39;c-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Wetbulb&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature [C]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Height [m above MSL]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/SHARPpy_basics_26_0.png" src="_images/SHARPpy_basics_26_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="lifting-parcels">
+<h2>Lifting parcels<a class="headerlink" href="#lifting-parcels" title="Permalink to this headline">¶</a></h2>
+<p>In SHARPpy, parcels are lifted via the params.parcelx() routine. The
+parcelx() routine takes in the arguments of a Profile object and a flag
+to indicate what type of parcel you would like to be lifted. Additional
+arguments can allow for custom/user defined parcels to be passed to the
+parcelx() routine, however most users will likely be using only the
+Most-Unstable, Surface, 100 mb Mean Layer, and Forecast parcels.</p>
+<p>The parcelx() routine by default utilizes the virtual temperature
+correction to compute variables such as CAPE and CIN. If the dewpoint
+profile contains missing data, parcelx() will disregard using the
+virtual temperature correction.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sfcpcl</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span> <span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span> <span class="c1"># Surface Parcel</span>
+<span class="n">fcstpcl</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span> <span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">2</span> <span class="p">)</span> <span class="c1"># Forecast Parcel</span>
+<span class="n">mupcl</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span> <span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span> <span class="c1"># Most-Unstable Parcel</span>
+<span class="n">mlpcl</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">parcelx</span><span class="p">(</span> <span class="n">prof</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="mi">4</span> <span class="p">)</span> <span class="c1"># 100 mb Mean Layer Parcel</span>
+</pre></div>
+</div>
+<p>Once your parcel attributes are computed by params.parcelx(), you can
+extract information about the parcel such as CAPE, CIN, LFC height, LCL
+height, EL height, etc.  We will do this for the Most Unstable parcel <code class="docutils literal notranslate"><span class="pre">mupcl</span></code>.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable CAPE:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">)</span> <span class="c1"># J/kg</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable CIN:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">)</span> <span class="c1"># J/kg</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable LCL:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">)</span> <span class="c1"># meters AGL</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable LFC:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">lfchght</span><span class="p">)</span> <span class="c1"># meters AGL</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable EL:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">elhght</span><span class="p">)</span> <span class="c1"># meters AGL</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most-Unstable LI:&quot;</span><span class="p">,</span> <span class="n">mupcl</span><span class="o">.</span><span class="n">li5</span><span class="p">)</span> <span class="c1"># C</span>
+</pre></div>
+</div>
+<p>This code outputs the following text:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">CAPE</span><span class="p">:</span> <span class="mf">5769.22545311</span>
+<span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">CIN</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.644692447001</span>
+<span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">LCL</span><span class="p">:</span> <span class="mf">512.718558828</span>
+<span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">LFC</span><span class="p">:</span> <span class="mf">612.53643485</span>
+<span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">EL</span><span class="p">:</span> <span class="mf">13882.5821154</span>
+<span class="n">Most</span><span class="o">-</span><span class="n">Unstable</span> <span class="n">LI</span><span class="p">:</span> <span class="o">-</span><span class="mf">13.8145334959</span>
+</pre></div>
+</div>
+<p>The six indices listed above are not the only ones calculated by
+parcelx(). Other indices can be calculated and accessed too:</p>
+<p>Here is a list of the attributes and their units contained in each
+parcel object (pcl):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pcl</span><span class="o">.</span><span class="n">pres</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">beginning</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">tmpc</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">beginning</span> <span class="n">temperature</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">dwpc</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">beginning</span> <span class="n">dewpoint</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">ptrace</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">trace</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">ttrace</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">trace</span> <span class="n">temperature</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">blayer</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">bottom</span> <span class="n">of</span> <span class="n">the</span> <span class="n">layer</span> <span class="n">the</span> <span class="n">parcel</span> <span class="ow">is</span> <span class="n">lifted</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">tlayer</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">top</span> <span class="n">of</span> <span class="n">the</span> <span class="n">layer</span> <span class="n">the</span> <span class="n">parcel</span> <span class="ow">is</span> <span class="n">lifted</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">lclpres</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">LCL</span> <span class="p">(</span><span class="n">lifted</span> <span class="n">condensation</span> <span class="n">level</span><span class="p">)</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">lclhght</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">LCL</span> <span class="n">height</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">lfcpres</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">LFC</span> <span class="p">(</span><span class="n">level</span> <span class="n">of</span> <span class="n">free</span> <span class="n">convection</span><span class="p">)</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">lfchght</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">LFC</span> <span class="n">height</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">elpres</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">EL</span> <span class="p">(</span><span class="n">equilibrium</span> <span class="n">level</span><span class="p">)</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">elhght</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">EL</span> <span class="n">height</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">mplpres</span> <span class="o">-</span> <span class="n">Maximum</span> <span class="n">Parcel</span> <span class="n">Level</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">mplhght</span> <span class="o">-</span> <span class="n">Maximum</span> <span class="n">Parcel</span> <span class="n">Level</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">bplus</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">CAPE</span> <span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="n">kg</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">CIN</span> <span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="n">kg</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">bfzl</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">CAPE</span> <span class="n">up</span> <span class="n">to</span> <span class="n">freezing</span> <span class="n">level</span> <span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="n">kg</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">b3km</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">CAPE</span> <span class="n">up</span> <span class="n">to</span> <span class="mi">3</span> <span class="n">km</span> <span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="n">kg</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">b6km</span> <span class="o">-</span> <span class="n">Parcel</span> <span class="n">CAPE</span> <span class="n">up</span> <span class="n">to</span> <span class="mi">6</span> <span class="n">km</span> <span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="n">kg</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">p0c</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">value</span> <span class="n">at</span> <span class="mi">0</span> <span class="n">C</span>  <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">pm10c</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">10</span> <span class="n">C</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">pm20c</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">20</span> <span class="n">C</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">pm30c</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">30</span> <span class="n">C</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">hght0c</span> <span class="o">-</span> <span class="n">Height</span> <span class="n">value</span> <span class="n">at</span> <span class="mi">0</span> <span class="n">C</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">hghtm10c</span> <span class="o">-</span> <span class="n">Height</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">10</span> <span class="n">C</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">hghtm20c</span> <span class="o">-</span> <span class="n">Height</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">20</span> <span class="n">C</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">hghtm30c</span> <span class="o">-</span> <span class="n">Height</span> <span class="n">value</span> <span class="n">at</span> <span class="o">-</span><span class="mi">30</span> <span class="n">C</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">wm10c</span> <span class="o">-</span> <span class="n">Wet</span> <span class="n">bulb</span> <span class="n">velocity</span> <span class="n">at</span> <span class="o">-</span><span class="mi">10</span> <span class="n">C</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">wm20c</span> <span class="o">-</span> <span class="n">Wet</span> <span class="n">bulb</span> <span class="n">velocity</span> <span class="n">at</span> <span class="o">-</span><span class="mi">20</span> <span class="n">C</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">wm30c</span> <span class="o">-</span> <span class="n">Wet</span> <span class="n">bulb</span> <span class="n">at</span> <span class="o">-</span><span class="mi">30</span> <span class="n">C</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">li5</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Lifted</span> <span class="n">Index</span> <span class="n">at</span> <span class="mi">500</span> <span class="n">mb</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">li3</span> <span class="o">=</span> <span class="o">-</span> <span class="n">Lifted</span> <span class="n">Index</span> <span class="n">at</span> <span class="mi">300</span> <span class="n">mb</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">brnshear</span> <span class="o">-</span> <span class="n">Bulk</span> <span class="n">Richardson</span> <span class="n">Number</span> <span class="n">Shear</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">brnu</span> <span class="o">-</span> <span class="n">Bulk</span> <span class="n">Richardson</span> <span class="n">Number</span> <span class="n">U</span> <span class="p">(</span><span class="n">kts</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">brnv</span> <span class="o">-</span> <span class="n">Bulk</span> <span class="n">Richardson</span> <span class="n">Number</span> <span class="n">V</span> <span class="p">(</span><span class="n">kts</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">brn</span> <span class="o">-</span> <span class="n">Bulk</span> <span class="n">Richardson</span> <span class="n">Number</span> <span class="p">(</span><span class="n">unitless</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">limax</span> <span class="o">-</span> <span class="n">Maximum</span> <span class="n">Lifted</span> <span class="n">Index</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">limaxpres</span> <span class="o">-</span> <span class="n">Pressure</span> <span class="n">at</span> <span class="n">Maximum</span> <span class="n">Lifted</span> <span class="n">Index</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">cap</span> <span class="o">-</span> <span class="n">Cap</span> <span class="n">Strength</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">cappres</span> <span class="o">-</span> <span class="n">Cap</span> <span class="n">strength</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">bmin</span> <span class="o">-</span> <span class="n">Buoyancy</span> <span class="n">minimum</span> <span class="ow">in</span> <span class="n">profile</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span>
+<span class="n">pcl</span><span class="o">.</span><span class="n">bminpres</span> <span class="o">-</span> <span class="n">Buoyancy</span> <span class="n">minimum</span> <span class="n">pressure</span> <span class="p">(</span><span class="n">mb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calculating-kinematic-indicies">
+<h2>Calculating kinematic indicies<a class="headerlink" href="#calculating-kinematic-indicies" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy also allows the user to compute kinematic variables such as
+shear, mean-winds, and storm relative helicity. SHARPpy will also
+compute storm motion vectors based off of the work by Stephen Corfidi
+and Matthew Bunkers. Below is some example code to compute the
+following:</p>
+<ol class="arabic simple">
+<li>0-3 km Pressure-Weighted Mean Wind</li>
+<li>0-6 km Shear (kts)</li>
+<li>Bunker’s Storm Motion (right-mover) (Bunkers et al. 2014 version)</li>
+<li>Bunker’s Storm Motion (left-mover) (Bunkers et al. 2014 version)</li>
+<li>0-3 km Storm Relative Helicity</li>
+</ol>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the pressure values that correspond to the surface, 1 km, 3 km and 6 km levels.</span>
+<span class="n">sfc</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span>
+<span class="n">p3km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">3000.</span><span class="p">))</span>
+<span class="n">p6km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">))</span>
+<span class="n">p1km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">))</span>
+
+<span class="c1"># Calculate the 0-3 km pressure-weighted mean wind</span>
+<span class="n">mean_3km</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p3km</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;0-3 km Pressure-Weighted Mean Wind (kt):&quot;</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">mean_3km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mean_3km</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Calculate the 0-1, 0-3, and 0-6 km wind shear</span>
+<span class="n">sfc_6km_shear</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p6km</span><span class="p">)</span>
+<span class="n">sfc_3km_shear</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p3km</span><span class="p">)</span>
+<span class="n">sfc_1km_shear</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">sfc</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">p1km</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;0-6 km Shear (kt):&quot;</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c1"># Calculate the Bunkers Storm Motion Left and Right mover vectors (these are returned in u,v space</span>
+<span class="c1"># so let&#39;s transform them into wind speed and direction space.)</span>
+<span class="n">srwind</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">bunkers_storm_motion</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bunker&#39;s Storm Motion (right-mover) [deg,kts]:&quot;</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bunker&#39;s Storm Motion (left-mover) [deg,kts]:&quot;</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">srwind</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+<span class="c1"># Calculate the storm-relative helicity using the right-movers</span>
+<span class="n">srh3km</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3000.</span><span class="p">,</span> <span class="n">stu</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stv</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">srh1km</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">,</span> <span class="n">stu</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stv</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;0-3 km Storm Relative Helicity [m2/s2]:&quot;</span><span class="p">,</span><span class="n">srh3km</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This code outputs the following text:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span> <span class="n">km</span> <span class="n">Pressure</span><span class="o">-</span><span class="n">Weighted</span> <span class="n">Mean</span> <span class="n">Wind</span> <span class="p">(</span><span class="n">kt</span><span class="p">):</span> <span class="mf">41.1397595603</span>
+<span class="mi">0</span><span class="o">-</span><span class="mi">6</span> <span class="n">km</span> <span class="n">Shear</span> <span class="p">(</span><span class="n">kt</span><span class="p">):</span> <span class="mf">55.9608928026</span>
+<span class="n">Bunker</span><span class="s1">&#39;s Storm Motion (right-mover) [deg,kts]: (masked_array(data = 225.652934838,</span>
+             <span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+       <span class="n">fill_value</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">)</span>
+<span class="p">,</span> <span class="mf">27.240749559186799</span><span class="p">)</span>
+<span class="n">Bunker</span><span class="s1">&#39;s Storm Motion (left-mover) [deg,kts]: (masked_array(data = 204.774711769,</span>
+             <span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+       <span class="n">fill_value</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">)</span>
+<span class="p">,</span> <span class="mf">52.946150880598658</span><span class="p">)</span>
+<span class="mi">0</span><span class="o">-</span><span class="mi">3</span> <span class="n">km</span> <span class="n">Storm</span> <span class="n">Relative</span> <span class="n">Helicity</span> <span class="p">[</span><span class="n">m2</span><span class="o">/</span><span class="n">s2</span><span class="p">]:</span> <span class="mf">584.016767705</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calculating-other-indices">
+<h2>Calculating other indices<a class="headerlink" href="#calculating-other-indices" title="Permalink to this headline">¶</a></h2>
+<p>The effective inflow layer is occasionally used to derive other variables that
+may be used to explain a storm’s behavior.  Here are a few examples of
+how to compute variables that require the effective inflow layer in
+order to calculate them:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s calculate the effective inflow layer and print out the heights of the top</span>
+<span class="c1"># and bottom of the layer.  We&#39;ll have to convert it from m MSL to m AGL.</span>
+<span class="n">eff_inflow</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">effective_inflow_layer</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="n">ebot_hght</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">eff_inflow</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">etop_hght</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">eff_inflow</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Effective Inflow Layer Bottom Height (m AGL):&quot;</span><span class="p">,</span> <span class="n">ebot_hght</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Effective Inflow Layer Top Height (m AGL):&quot;</span><span class="p">,</span> <span class="n">etop_hght</span><span class="p">)</span>
+
+<span class="c1"># Like before, we can calculate the storm-relative helicity, but let&#39;s do it for the effective inflow layer.</span>
+<span class="n">effective_srh</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ebot_hght</span><span class="p">,</span> <span class="n">etop_hght</span><span class="p">,</span> <span class="n">stu</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stv</span> <span class="o">=</span> <span class="n">srwind</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Effective Inflow Layer SRH (m2/s2):&quot;</span><span class="p">,</span> <span class="n">effective_srh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># We can also calculate the Effective Bulk Wind Difference using the wind shear calculation and the inflow layer.</span>
+<span class="n">ebwd</span> <span class="o">=</span> <span class="n">winds</span><span class="o">.</span><span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">eff_inflow</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ptop</span><span class="o">=</span><span class="n">eff_inflow</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ebwspd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span> <span class="n">ebwd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ebwd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Effective Bulk Wind Difference:&quot;</span><span class="p">,</span> <span class="n">ebwspd</span><span class="p">)</span>
+
+<span class="c1"># Composite indices (e.g. STP, SCP, SHIP) can be calculated after determining the effective inflow layer.</span>
+<span class="n">scp</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">scp</span><span class="p">(</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">effective_srh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ebwspd</span><span class="p">)</span>
+<span class="n">stp_cin</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_cin</span><span class="p">(</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">effective_srh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ebwspd</span><span class="p">,</span> <span class="n">mlpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span><span class="p">)</span>
+<span class="n">stp_fixed</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_fixed</span><span class="p">(</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="n">srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ship</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">ship</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Supercell Composite Parameter:&quot;</span><span class="p">,</span> <span class="n">scp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Significant Tornado Parameter (w/CIN):&quot;</span><span class="p">,</span> <span class="n">stp_cin</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Significant Tornado Parameter (fixed):&quot;</span><span class="p">,</span> <span class="n">stp_fixed</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Significant Hail Parameter:&quot;</span><span class="p">,</span> <span class="n">ship</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code then will output this text:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Effective</span> <span class="n">Inflow</span> <span class="n">Layer</span> <span class="n">Bottom</span> <span class="n">Height</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">):</span> <span class="mf">0.0</span>
+<span class="n">Effective</span> <span class="n">Inflow</span> <span class="n">Layer</span> <span class="n">Top</span> <span class="n">Height</span> <span class="p">(</span><span class="n">m</span> <span class="n">AGL</span><span class="p">):</span> <span class="mf">2117.98</span>
+<span class="n">Effective</span> <span class="n">Inflow</span> <span class="n">Layer</span> <span class="n">SRH</span> <span class="p">(</span><span class="n">m2</span><span class="o">/</span><span class="n">s2</span><span class="p">):</span> <span class="mf">527.913472562</span>
+<span class="n">Effective</span> <span class="n">Bulk</span> <span class="n">Wind</span> <span class="n">Difference</span><span class="p">:</span> <span class="mf">43.3474336034</span>
+<span class="n">Supercell</span> <span class="n">Composite</span> <span class="n">Parameter</span><span class="p">:</span> <span class="mf">60.9130368589</span>
+<span class="n">Significant</span> <span class="n">Tornado</span> <span class="n">Parameter</span> <span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="n">CIN</span><span class="p">):</span> <span class="mf">13.8733427141</span>
+<span class="n">Significant</span> <span class="n">Tornado</span> <span class="n">Parameter</span> <span class="p">(</span><span class="n">fixed</span><span class="p">):</span> <span class="mf">13.6576402964</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="plotting-a-skew-t-using-matplotlib">
+<h2>Plotting a Skew-T using Matplotlib<a class="headerlink" href="#plotting-a-skew-t-using-matplotlib" title="Permalink to this headline">¶</a></h2>
+<p>Now, let’s try to plot the data on a Skew-T. You may want to do this if
+you’re looking to create a plot for use in a publication.</p>
+<p>First, we need to tell Matplotlib (the Python plotting package) that
+we’d like a Skew-T style plot. This can be done by using the code found at:
+<a class="reference external" href="http://matplotlib.org/examples/api/skewt.html">http://matplotlib.org/examples/api/skewt.html</a></p>
+<p>Now that Matplotlib knows about the Skew-T style plot, let’s plot the
+OAX sounding data on a Skew-T and show the Most-Unstable parcel
+trace. Let’s also include dry adiabats and moist adiabats for the user.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new figure. The dimensions here give a good aspect ratio</span>
+<span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="k">as</span> <span class="nn">skew</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.5875</span><span class="p">,</span> <span class="mf">6.2125</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;skewx&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Select the Most-Unstable parcel (this can be changed)</span>
+<span class="n">pcl</span> <span class="o">=</span> <span class="n">mupcl</span>
+
+<span class="c1"># Let&#39;s set the y-axis bounds of the plot.</span>
+<span class="n">pmax</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">pmin</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">dp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
+<span class="n">presvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pmax</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">pmin</span><span class="p">)</span><span class="o">+</span><span class="n">dp</span><span class="p">,</span> <span class="n">dp</span><span class="p">)</span>
+
+<span class="c1"># plot the moist-adiabats at surface temperatures -10 C to 45 C at 5 degree intervals.</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">tw</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">presvals</span><span class="p">:</span>
+        <span class="n">tw</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thermo</span><span class="o">.</span><span class="n">wetlift</span><span class="p">(</span><span class="mf">1000.</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+    <span class="c1"># Plot the moist-adiabat with a black line that is faded a bit.</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">tw</span><span class="p">,</span> <span class="n">presvals</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># A function to calculate the dry adiabats</span>
+<span class="k">def</span> <span class="nf">thetas</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">presvals</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">theta</span> <span class="o">+</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="mf">1000.</span> <span class="o">/</span> <span class="n">presvals</span><span class="p">),</span><span class="n">thermo</span><span class="o">.</span><span class="n">ROCP</span><span class="p">)))</span> <span class="o">-</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ZEROCNK</span>
+
+<span class="c1"># plot the dry adiabats</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">thetas</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">presvals</span><span class="p">),</span> <span class="n">presvals</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># plot the title.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39; OAX 140616/1900 (Observed)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot the data using normal plotting functions, in this case using</span>
+<span class="c1"># log scaling in Y, as dicatated by the typical meteorological plot</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Plot the parcel trace.</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">pcl</span><span class="o">.</span><span class="n">ttrace</span><span class="p">,</span> <span class="n">pcl</span><span class="o">.</span><span class="n">ptrace</span><span class="p">,</span> <span class="s1">&#39;k-.&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Denote the 0 to -20 C area on the Skew-T.</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="c1"># Set the log-scale formatting and label the y-axis tick marks.</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">ScalarFormatter</span><span class="p">())</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">1050</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Label the x-axis tick marks.</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Show the plot to the user.</span>
+<span class="c1"># plt.savefig(&#39;skewt.png&#39;, bbox_inches=&#39;tight&#39;) # saves the plot to the disk.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/SHARPpy_basics_39_0.png" src="_images/SHARPpy_basics_39_0.png" />
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="auto_examples/index.html" class="btn btn-neutral float-right" title="Example scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasource_guide.html" class="btn btn-neutral" title="Custom Data Sources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

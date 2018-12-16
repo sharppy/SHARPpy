@@ -1,0 +1,633 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.interp &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.interp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.interp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Interpolation Routines &#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">import</span> <span class="nn">numpy.testing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">thermo</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">,</span> <span class="s1">&#39;hght&#39;</span><span class="p">,</span> <span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="s1">&#39;dwpt&#39;</span><span class="p">,</span> <span class="s1">&#39;vtmp&#39;</span><span class="p">,</span> <span class="s1">&#39;components&#39;</span><span class="p">,</span> <span class="s1">&#39;vec&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;thetae&#39;</span><span class="p">,</span> <span class="s1">&#39;wetbulb&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;mixratio&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;to_agl&#39;</span><span class="p">,</span> <span class="s1">&#39;to_msl&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="pres"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.pres">[docs]</a><span class="k">def</span> <span class="nf">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a pressure at a given height</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    h : number, numpy array</span>
+<span class="sd">        Height (m) of the level for which pressure is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Pressure (hPa) at the given height : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">generic_interp_hght</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hght"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.hght">[docs]</a><span class="k">def</span> <span class="nf">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a height at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which height is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Height (m) at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<span class="k">def</span> <span class="nf">omeg</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a omega at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which temperature is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Omega (microbars/second) at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">omeg</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+<div class="viewcode-block" id="temp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.temp">[docs]</a><span class="k">def</span> <span class="nf">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a temperature at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which temperature is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="thetae"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.thetae">[docs]</a><span class="k">def</span> <span class="nf">thetae</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Interpolates the given data to calculate theta-e at a given pressure</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">        p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which temperature is desired</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Theta-E (C) at the given pressure : number, numpy array</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">thetae</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="mixratio"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.mixratio">[docs]</a><span class="k">def</span> <span class="nf">mixratio</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Interpolates the given data to calculate water vapor mixing ratio at a given pressure</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">        p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which mixing ratio is desired</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Water vapor mixing ratio (g/kg) at the given pressure : number, numpy array</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">wvmr</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="theta"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.theta">[docs]</a><span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Interpolates the given data to calculate theta at a given pressure</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">        p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which potential temperature is desired</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Theta (C) at the given pressure : number, numpy array</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">theta</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="wetbulb"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.wetbulb">[docs]</a><span class="k">def</span> <span class="nf">wetbulb</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Interpolates the given data to calculate a wetbulb temperature at a given pressure</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">        p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which wetbulb temperature is desired</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Wetbulb temperature (C) at the given pressure : number, numpy array</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">wetbulb</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="dwpt"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.dwpt">[docs]</a><span class="k">def</span> <span class="nf">dwpt</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a dew point temperature</span>
+<span class="sd">    at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which dew point temperature is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dew point tmperature (C) at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="vtmp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.vtmp">[docs]</a><span class="k">def</span> <span class="nf">vtmp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate a virtual temperature</span>
+<span class="sd">    at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which virtual temperature is desired</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Virtual tmperature (C) at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">vtmp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="components"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.components">[docs]</a><span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate the U and V components at a</span>
+<span class="sd">    given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of a level</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    U and V components at the given pressure (kts) : number, numpy array</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: numpy&#39;s interpoloation routine expects the interpoloation</span>
+    <span class="c1"># routine to be in ascending order. Because pressure decreases in the</span>
+    <span class="c1"># vertical, we must reverse the order of the two arrays to satisfy</span>
+    <span class="c1"># this requirement.</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">generic_interp_pres</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">prof</span><span class="o">.</span><span class="n">logp</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">V</span></div>
+
+
+<div class="viewcode-block" id="vec"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.vec">[docs]</a><span class="k">def</span> <span class="nf">vec</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Interpolates the given data to calculate the wind direction and speed</span>
+<span class="sd">    at a given pressure</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of a level</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Wind direction (degrees) and magnitude (kts) at the given pressure : number, numpy array</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">U</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_agl"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.to_agl">[docs]</a><span class="k">def</span> <span class="nf">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert a height from mean sea-level (MSL) to above ground-level (AGL)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : number, numpy array</span>
+<span class="sd">        Height of a level</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Converted height (m AGL) : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">h</span> <span class="o">-</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="to_msl"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.interp.to_msl">[docs]</a><span class="k">def</span> <span class="nf">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert a height from above ground-level (AGL) to mean sea-level (MSL)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : number, numpy array</span>
+<span class="sd">        Height of a level</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Converted height (m MSL) : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">h</span> <span class="o">+</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">generic_interp_hght</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">hght</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generic interpolation routine</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : number, numpy array</span>
+<span class="sd">        Height (m) of the level for which pressure is desired</span>
+<span class="sd">    hght : numpy array</span>
+<span class="sd">        The array of heights</span>
+<span class="sd">    field : numpy array</span>
+<span class="sd">        The variable which is being interpolated</span>
+<span class="sd">    log : bool</span>
+<span class="sd">        Flag to determine whether the &#39;field&#39; variable is in log10 space</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Value of the &#39;field&#39; variable at the given height : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">hght</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">hght</span><span class="p">):</span>
+        <span class="c1"># Multiplying by ones ensures that the result is an array, not a single value ... which </span>
+        <span class="c1"># happens sometimes ... &gt;.&lt;</span>
+        <span class="n">not_masked1</span> <span class="o">=</span> <span class="o">~</span><span class="n">hght</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">hght</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">not_masked1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">hght</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+        <span class="n">not_masked2</span> <span class="o">=</span> <span class="o">~</span><span class="n">field</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">not_masked2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">not_masked</span> <span class="o">=</span> <span class="n">not_masked1</span> <span class="o">*</span> <span class="n">not_masked2</span>
+
+    <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">hght</span><span class="p">[</span><span class="n">not_masked</span><span class="p">],</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">],</span>
+                         <span class="n">left</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+ 
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="p">[()]</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">h</span><span class="p">)):</span>
+        <span class="c1"># Bug fix for Numpy v1.10: returns nan on the boundary.</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">hght</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">field_intrp</span><span class="p">)</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">hght</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">field_intrp</span><span class="p">)</span>
+
+    <span class="c1"># Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!</span>
+    <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">field_intrp</span><span class="p">),</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">field_intrp</span><span class="p">)</span>
+
+    <span class="c1"># ma.where() returns a 0-d array when the arguments are floats, which confuses subsequent code.</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_intrp</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_intrp</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">field_intrp</span><span class="p">[()]</span>
+
+    <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">field_intrp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">field_intrp</span>
+
+<span class="k">def</span> <span class="nf">generic_interp_pres</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pres</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Generic interpolation routine</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa) of the level for which the field variable is desired</span>
+<span class="sd">    pres : numpy array</span>
+<span class="sd">        The array of pressure</span>
+<span class="sd">    field : numpy array</span>
+<span class="sd">        The variable which is being interpolated</span>
+<span class="sd">    log : bool</span>
+<span class="sd">        Flag to determine whether the &#39;field&#39; variable is in log10 space</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Value of the &#39;field&#39; variable at the given pressure : number, numpy array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pres</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">pres</span><span class="p">):</span>
+        <span class="n">not_masked1</span> <span class="o">=</span> <span class="o">~</span><span class="n">pres</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pres</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">not_masked1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pres</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">not_masked1</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+        <span class="n">not_masked2</span> <span class="o">=</span> <span class="o">~</span><span class="n">field</span><span class="o">.</span><span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">pres</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">not_masked2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">not_masked2</span><span class="p">[:]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">not_masked</span> <span class="o">=</span> <span class="n">not_masked1</span> <span class="o">*</span> <span class="n">not_masked2</span>
+
+    <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pres</span><span class="p">[</span><span class="n">not_masked</span><span class="p">],</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span>
+                 <span class="n">right</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[()]</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">p</span><span class="p">)):</span>
+        <span class="c1"># Bug fix for Numpy v1.10: returns nan on the boundary.</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pres</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">field_intrp</span><span class="p">)</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pres</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">field</span><span class="p">[</span><span class="n">not_masked</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">field_intrp</span><span class="p">)</span>
+
+    <span class="c1"># Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!</span>
+    <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">field_intrp</span><span class="p">),</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">field_intrp</span><span class="p">)</span>
+
+    <span class="c1"># ma.where() returns a 0-d array when the arguments are floats, which confuses subsequent code.</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_intrp</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_intrp</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">():</span>
+        <span class="n">field_intrp</span> <span class="o">=</span> <span class="n">field_intrp</span><span class="p">[()]</span>
+
+    <span class="k">return</span> <span class="n">field_intrp</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

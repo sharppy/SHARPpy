@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SHARPpy Insets &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interacting with the GUI" href="interacting_gui.html" />
+    <link rel="prev" title="Interpreting the GUI" href="interpreting_gui.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SHARPpy Insets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#thermodynamic-indices">Thermodynamic Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kinematic-indices">Kinematic Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sounding-analog-retrieval-system-sars">Sounding Analog Retrieval System (SARS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sig-tor-stats">Sig-Tor Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sig-hail-stats">Sig-Hail Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fire-weather">Fire Weather</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#winter-weather">Winter Weather</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ef-scale-probablities-stp">EF Scale Probablities (STP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ef-scale-probablities-vrot">EF Scale Probablities (VROT)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>SHARPpy Insets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/insets.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sharppy-insets">
+<span id="insets"></span><h1>SHARPpy Insets<a class="headerlink" href="#sharppy-insets" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="_images/inset_row.png"><img alt="SHARPpy GUI Example" class="align-center" src="_images/inset_row.png" style="width: 708.0px; height: 178.2px;" /></a>
+<p>At the bottom of the SHARPpy GUI lies four separate insets that can be used to assist in analyses of the sounding data.  The two insets highlighted in yellow are interchangeable with some of the other insets provided in the program.</p>
+<div class="section" id="thermodynamic-indices">
+<h2>Thermodynamic Indices<a class="headerlink" href="#thermodynamic-indices" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/inset_thermo.png"><img alt="Thermo inset" src="_images/inset_thermo.png" style="width: 298.0px; height: 202.0px;" /></a>
+</div>
+</div>
+<div class="section" id="kinematic-indices">
+<h2>Kinematic Indices<a class="headerlink" href="#kinematic-indices" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/inset_kinematics.png"><img alt="Thermo inset" src="_images/inset_kinematics.png" style="width: 296.0px; height: 197.0px;" /></a>
+</div>
+<p>Provides information on the storm-relative helicity (SRH), wind shear (Shear), pressure-weighted mean wind (MnWind) and layer-averaged storm-relative winds (SRW) for different layers. Layers shown here have been shown to correspond to storm longevity, storm mode, and tornado potential. The Bunkers storm motion and Corfidi vectors are also displayed.</p>
+</div>
+<div class="section" id="sounding-analog-retrieval-system-sars">
+<h2>Sounding Analog Retrieval System (SARS)<a class="headerlink" href="#sounding-analog-retrieval-system-sars" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/inset_sars.png"><img alt="Thermo inset" src="_images/inset_sars.png" style="width: 296.0px; height: 200.0px;" /></a>
+<p class="caption"><span class="caption-text">Sounding Analogue Retrieval System to compare soundings with previous severe weather environments.</span></p>
+</div>
+<p>Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see <a class="reference external" href="http://www.spc.noaa.gov/publications/jewell/sars.pdf">Jewell et al.</a>).  Atempts to match the current sounding to past proximity soundings from tornado and hail events using sounding parameters. “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2. The algorithm is calibrated to maximize probability of detection.</p>
+<p>Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude</p>
+<ul class="simple">
+<li>Supercells may have no tornado (NON), a weak tornado (WEAK) or a significant tornado (EF2+) (SIG).</li>
+<li>Hail size is indicated in the strict matches.</li>
+</ul>
+</div>
+<div class="section" id="sig-tor-stats">
+<h2>Sig-Tor Stats<a class="headerlink" href="#sig-tor-stats" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="_images/inset_stp.png"><img alt="Thermo inset" src="_images/inset_stp.png" style="width: 297.0px; height: 198.0px;" /></a>
+<p class="caption"><span class="caption-text">STP Ingredients and EF Probabilties for diagnosing tornadic environment ingredients.</span></p>
+</div>
+<p>Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see <a class="reference external" href="http://www.spc.noaa.gov/publications/thompson/waf-env.pdf">Thompson et al. 2012, WAF</a>).  Distributon of STP (effectve-layer) with tornado intensity for right-moving supercells. Whiskers indicate 10th-90th percentile values, while the box indicates the interquartile range and the median. Colored horizontal line indicates the value of STPE.</p>
+<p>The smaller inset embedded within this one indicates the relative frequency of EF2+ tornado damage with right moving supercells for STPE and its individual components (e.g., MLLCL, MLCAPE, EBWD, ESRH). Frequency values change color (similar to the Thermodynamic inset) as the probability increases.</p>
+</div>
+<div class="section" id="sig-hail-stats">
+<h2>Sig-Hail Stats<a class="headerlink" href="#sig-hail-stats" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id4">
+<a class="reference internal image-reference" href="_images/inset_ship.png"><img alt="Thermo inset" src="_images/inset_ship.png" style="width: 297.0px; height: 200.0px;" /></a>
+<p class="caption"><span class="caption-text">Expected Hail Sizes based on the SHIP parameter using a hail climatology.</span></p>
+</div>
+<p>Distribution of expected hail sizes associated with the significant hail parameter (SHIP).</p>
+</div>
+<div class="section" id="fire-weather">
+<h2>Fire Weather<a class="headerlink" href="#fire-weather" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id5">
+<a class="reference internal image-reference" href="_images/inset_fire.png"><img alt="Thermo inset" src="_images/inset_fire.png" style="width: 298.0px; height: 200.0px;" /></a>
+<p class="caption"><span class="caption-text">Fire weather parameters and guidance.</span></p>
+</div>
+<p>Provides a list of variables relevant to the moisture and wind properties within the convective boundary layer.  See Fosberg (1978) for information on the Fosberg Fire Weather Index (FWI).  PW changes color if the MUCAPE &gt; 50 J/kg, PW &lt; 0.5 inches, and SFC RH is &lt; 35 % to alert the user if the potential exists for fire starting, dry thunderstorms.</p>
+</div>
+<div class="section" id="winter-weather">
+<h2>Winter Weather<a class="headerlink" href="#winter-weather" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/inset_winter.png"><img alt="Thermo inset" src="_images/inset_winter.png" style="width: 293.0px; height: 196.0px;" /></a>
+</div>
+<ul class="simple">
+<li>Provides information regarding the mean atmospheric properties within the Dendritic Growth Zone (DGZ; -12  ̊C to -17  ̊C layer), which is the layer where most types of ice nuclei can become activated and grow into ice crystals (e.g., snow).</li>
+<li>Provides an estimate of the initial precipitation phase using empirical arguments.</li>
+<li>Identifies layers where falling precipitation may experience melting/freezing by considering the wetbulb temperature profile and environmental temperature profile.</li>
+<li>Performs a best guess precipitation type using <a class="reference external" href="https://journals.ametsoc.org/doi/10.1175/1520-0434%282000%29015%3C0583%3AAMTDPT%3E2.0.CO%3B2">Bourgouin (2000)</a> precipitation algorithm, the initial precipitation phase, and surface temperature.</li>
+<li>Uses top-down preciptation thinking to determine precipitation type.</li>
+</ul>
+</div>
+<div class="section" id="ef-scale-probablities-stp">
+<h2>EF Scale Probablities (STP)<a class="headerlink" href="#ef-scale-probablities-stp" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id6">
+<a class="reference internal image-reference" href="_images/inset_condstp.png"><img alt="Thermo inset" src="_images/inset_condstp.png" style="width: 297.0px; height: 198.0px;" /></a>
+<p class="caption"><span class="caption-text">Conditional probability of meetingng or exceeding a given EF scale rating for max STP (effective-layer w/ CIN) within 80 km of a tornado (all convective mode events).</span></p>
+</div>
+<p>Conditional probablities for different tornado strengths based on STPC (see <a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">Smith et al. 2015, WAF</a>). Applies only if a tornado is present.</p>
+</div>
+<div class="section" id="ef-scale-probablities-vrot">
+<h2>EF Scale Probablities (VROT)<a class="headerlink" href="#ef-scale-probablities-vrot" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id7">
+<a class="reference internal image-reference" href="_images/inset_vrot.png"><img alt="Thermo inset" src="_images/inset_vrot.png" style="width: 296.0px; height: 199.0px;" /></a>
+<p class="caption"><span class="caption-text">Conditional WSR-88D 0.5 Deg. Azimuthal Shear Tornado Intensity Probabilities</span></p>
+</div>
+<p>Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value…see <a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">Smith et al. 2015, WAF</a>).  The inset assesses the conditional probability of maximum tornado EF scale by combining information on the near-storm environment, the convective mode, and the 0.5 ̊ peak VROT (from WSR-88D).</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="interacting_gui.html" class="btn btn-neutral float-right" title="Interacting with the GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="interpreting_gui.html" class="btn btn-neutral" title="Interpreting the GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

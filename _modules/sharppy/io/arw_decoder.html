@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.io.arw_decoder &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.io.arw_decoder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.io.arw_decoder</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dattim</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.utils</span> <span class="k">as</span> <span class="nn">utils</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.thermo</span> <span class="k">as</span> <span class="nn">thermo</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.prof_collection</span> <span class="k">as</span> <span class="nn">prof_collection</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.decoder</span> <span class="k">import</span> <span class="n">Decoder</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+
+<span class="n">__fmtname__</span> <span class="o">=</span> <span class="s2">&quot;wrf-arw&quot;</span>
+<span class="n">__classname__</span> <span class="o">=</span> <span class="s2">&quot;ARWDecoder&quot;</span>
+
+
+<div class="viewcode-block" id="ARWDecoder"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.arw_decoder.ARWDecoder">[docs]</a><span class="k">class</span> <span class="nc">ARWDecoder</span><span class="p">(</span><span class="n">Decoder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ARWDecoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_downloadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overwrite the parent class version of _downloadFile.</span>
+<span class="sd">        Open the netCDF file and return an exception if no</span>
+<span class="sd">        file is found. The netCDF4 library will automatically</span>
+<span class="sd">        distinguish between a URL and local file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## check to make sure that the netCDF4 library is installed</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">netCDF4</span> <span class="k">import</span> <span class="n">Dataset</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No netCDF install found. Cannot read netCDF file.&quot;</span><span class="p">)</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No such file found&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_find_nearest_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncfile</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Locate the nearest model grid point to the location</span>
+<span class="sd">        passed through to the decoder using the formula for</span>
+<span class="sd">        calculating the distance between points on a sphere.</span>
+
+<span class="sd">        Code modified from existing code given by Nick Szapiro</span>
+<span class="sd">        at the University of Oklahoma.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## convert the map lat/lon into radians</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+
+        <span class="c1">## open the netCDF file from the WRF-ARW and convert</span>
+        <span class="c1">## its grid points into radians</span>
+        <span class="n">gridlons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ncfile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XLONG&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">gridlats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ncfile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XLAT&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+ 
+        <span class="c1">## difference between points</span>
+        <span class="n">dlat</span> <span class="o">=</span> <span class="n">gridlats</span> <span class="o">-</span> <span class="n">lat</span>
+        <span class="n">dlon</span> <span class="o">=</span> <span class="n">gridlons</span> <span class="o">-</span> <span class="n">lon</span>
+
+        <span class="c1">## latitude term of the distance equation</span>
+        <span class="n">latTerm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">dlat</span><span class="p">)</span>
+        <span class="n">latTerm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">latTerm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1">## longitude term of the distance equation</span>
+        <span class="n">lonTerm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">dlon</span><span class="p">)</span>
+        <span class="n">lonTerm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">lonTerm</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gridlats</span><span class="p">)</span>
+ 
+        <span class="c1">## we assume a radius of 1 on the unit circle</span>
+        <span class="n">dAngle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">latTerm</span><span class="o">+</span><span class="n">lonTerm</span><span class="p">)</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">*</span><span class="mf">1.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">dAngle</span><span class="p">)</span>
+
+        <span class="c1">## find the smalled distance and return the index</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">dist</span> <span class="o">==</span> <span class="n">dist</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">idx</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the netCDF file according to the variable naming and</span>
+<span class="sd">        dimmensional conventions of the WRF-ARW.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">## open the file and also store the lat/lon of the selected point</span>
+        <span class="n">file_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_downloadFile</span><span class="p">()</span>
+        <span class="n">gridx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">gridy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_name</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        
+        <span class="c1">## calculate the nearest grid point to the map point </span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_nearest_point</span><span class="p">(</span><span class="n">file_data</span><span class="p">,</span> <span class="n">gridx</span><span class="p">,</span> <span class="n">gridy</span><span class="p">)</span>
+
+        <span class="c1">## check to see if this is a 4D netCDF4 that includes all available times.</span>
+        <span class="c1">## If it does, open and compute the variables as 4D variables</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">][:]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>        
+            <span class="c1">## read in the data from the WRF file and conduct necessary processing</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="mf">300.0</span>
+            <span class="n">qvapr</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;QVAPOR&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="c1">#g/kg</span>
+            <span class="n">mpres</span> <span class="o">=</span> <span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PB&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="o">.</span><span class="mi">01</span>
+            <span class="n">mhght</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PH&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PHB&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">/</span> <span class="n">G</span>
+            <span class="c1">## unstagger the height grid</span>
+            <span class="n">mhght</span> <span class="o">=</span> <span class="p">(</span> <span class="n">mhght</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">mhght</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+
+            <span class="n">muwin</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;U&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">mvwin</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+            <span class="c1">## convert the potential temperature to air temperature</span>
+            <span class="n">mtmpc</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="n">theta</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">mpres</span><span class="p">)</span> 
+            <span class="c1">## convert the mixing ratio to dewpoint</span>
+            <span class="n">mdwpc</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">temp_at_mixrat</span><span class="p">(</span><span class="n">qvapr</span><span class="p">,</span> <span class="n">mpres</span><span class="p">)</span>
+            <span class="c1">## convert the grid relative wind to earth relative</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">muwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;COSALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">mvwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;SINALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">mvwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;COSALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">muwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;SINALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="c1">## convert from m/s to kts</span>
+            <span class="n">muwin</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+            <span class="n">mvwin</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+        <span class="c1">## if the data is not 4D, then it must be assumed that this is a file containing only a single time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">## read in the data from the WRF file and conduct necessary processing</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="mf">300.0</span>
+            <span class="n">qvapr</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;QVAPOR&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">3</span> <span class="c1">#g/kg</span>
+            <span class="n">mpres</span> <span class="o">=</span> <span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PB&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="o">.</span><span class="mi">01</span>
+            <span class="n">mhght</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PH&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;PHB&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">/</span> <span class="n">G</span>
+            <span class="c1">## unstagger the height grid</span>
+            <span class="n">mhght</span> <span class="o">=</span> <span class="p">(</span> <span class="n">mhght</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">mhght</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+
+            <span class="n">muwin</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;U&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">mvwin</span> <span class="o">=</span> <span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">][:,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+            <span class="c1">## convert the potential temperature to air temperature</span>
+            <span class="n">mtmpc</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">theta</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="n">theta</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="n">mpres</span><span class="p">)</span> 
+            <span class="c1">## convert the mixing ratio to dewpoint</span>
+            <span class="n">mdwpc</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">temp_at_mixrat</span><span class="p">(</span><span class="n">qvapr</span><span class="p">,</span> <span class="n">mpres</span><span class="p">)</span>
+            <span class="c1">## convert the grid relative wind to earth relative</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">muwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;COSALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">mvwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;SINALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">V</span> <span class="o">=</span> <span class="n">mvwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;COSALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">muwin</span><span class="o">*</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;SINALPHA&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="c1">## convert from m/s to kts</span>
+            <span class="n">muwin</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+            <span class="n">mvwin</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
+
+        <span class="c1">## get the model start time of the file</span>
+        <span class="n">inittime</span> <span class="o">=</span> <span class="n">dattim</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span> <span class="nb">str</span><span class="p">(</span> <span class="n">file_data</span><span class="o">.</span><span class="n">START_DATE</span> <span class="p">),</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">)</span>
+
+        <span class="n">profiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">## loop over the available times</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XTIME&quot;</span><span class="p">][:]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="c1">## make sure the arrays are 1D</span>
+            <span class="n">prof_pres</span> <span class="o">=</span> <span class="n">mpres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">prof_hght</span> <span class="o">=</span> <span class="n">mhght</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">prof_tmpc</span> <span class="o">=</span> <span class="n">mtmpc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">prof_dwpc</span> <span class="o">=</span> <span class="n">mdwpc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">prof_uwin</span> <span class="o">=</span> <span class="n">muwin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">prof_vwin</span> <span class="o">=</span> <span class="n">mvwin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="c1">## compute the time of the profile</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">dattim</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span> <span class="n">minutes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XTIME&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span>
+            <span class="n">curtime</span> <span class="o">=</span> <span class="n">inittime</span> <span class="o">+</span> <span class="n">delta</span>
+            <span class="n">date_obj</span> <span class="o">=</span> <span class="n">curtime</span>
+
+            <span class="c1">## construct the profile object</span>
+            <span class="n">prof</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">profile</span><span class="o">=</span><span class="s2">&quot;raw&quot;</span><span class="p">,</span> <span class="n">pres</span><span class="o">=</span><span class="n">prof_pres</span><span class="p">,</span> 
+                <span class="n">hght</span><span class="o">=</span><span class="n">prof_hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">prof_tmpc</span><span class="p">,</span> <span class="n">dwpc</span><span class="o">=</span><span class="n">prof_dwpc</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">prof_uwin</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">prof_vwin</span><span class="p">,</span>
+                <span class="n">location</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gridx</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gridy</span><span class="p">),</span> <span class="n">date</span><span class="o">=</span><span class="n">date_obj</span><span class="p">,</span> <span class="n">missing</span><span class="o">=-</span><span class="mf">999.0</span><span class="p">,</span>
+                <span class="n">latitude</span><span class="o">=</span><span class="n">gridy</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1">## append the dates and profiles</span>
+            <span class="n">profiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">date_obj</span><span class="p">)</span>
+
+        <span class="c1">## create a profile collection - dictionary has no key since this </span>
+        <span class="c1">## is not an ensemble model</span>
+        <span class="n">prof_coll</span> <span class="o">=</span> <span class="n">prof_collection</span><span class="o">.</span><span class="n">ProfCollection</span><span class="p">({</span><span class="s1">&#39;&#39;</span><span class="p">:</span><span class="n">profiles</span><span class="p">},</span> <span class="n">dates</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prof_coll</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">file</span> <span class="o">=</span> <span class="n">ARWDecoder</span><span class="p">((</span><span class="s2">&quot;/Users/keltonhalbert/Downloads/wrfout_d01_2015-10-25_00-00-00&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">97</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

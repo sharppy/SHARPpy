@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Using the Data Picker &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Interpreting the GUI" href="interpreting_gui.html" />
+    <link rel="prev" title="Installation Guide" href="install.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Data Picker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#default-data-sources">Default Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changing-preferences">Changing preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Using the Data Picker</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/picker.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-the-data-picker">
+<span id="id1"></span><h1>Using the Data Picker<a class="headerlink" href="#using-the-data-picker" title="Permalink to this headline">¶</a></h1>
+<p>Launching the SHARPpy program should load up the SHARPpy Sounding Picker:</p>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/picker_example.png"><img alt="_images/picker_example.png" src="_images/picker_example.png" style="width: 688.1999999999999px; height: 442.8px;" /></a>
+<p class="caption"><span class="caption-text">The SHARPpy Sounding Picker window showing the locations where observed sounding data may be examined through the program interface.</span></p>
+</div>
+<p>The Picker is an interface where the metadata for sounding data sources may be examined in order to help select the sounding data the user wishes to analyze.  In this window, users can select the data source (top left) which includes both observed and modeled sounding datasets.  For each sounding source, a data cycle time can be selected.  For observed data, this will generally be at 00 and 12 UTC.  For modeled data, the data may be available at hourly or synoptic time intervals (e.g., 00, 06, 12, or 18 UTC).  If point forecast soundings are desired by the user from different models (e.g., GFS), the “Select Forecast Time” list will be populated to show the model forecast times available from that model.  This list can be used to load subsets of the model run data into SHARPpy for analysis.</p>
+<p>After the data source and times are selected, the map to the right will be populated with red points indicating the sounding locations available.  While the program does default to U.S. locations, the map can be reoriented by clicking and dragging the map area.  Double clicking on the map will center the map to the cursor location.  Other global maps (e.g., Tropics and Southern Hemisphere) can be selected from the drop down box.  Should you wish to save your map view as the new default map view, you can click the “Save Map View as Default” box in the top right.  Selection of a sounding data site will turn that site green on the map.  Once a sounding data site is selected, you can click “Generate Profiles” to download the data and analyze it in the SHARPpy GUI.</p>
+<div class="section" id="default-data-sources">
+<h2>Default Data Sources<a class="headerlink" href="#default-data-sources" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy links into various datasets around the web to allow the user to explore a variety of observed and modeling datasets.  Links to these datasets come default with the SHARPpy package and files pointing SHARPpy to these datasets are placed in the user’s home directory underneath a directory called <cite>.sharppy/</cite>.  Unless you are attempting to install additional data sources that SHARPpy can read, this folder should not be modified.</p>
+<table border="1" class="colwidths-given docutils" id="id3">
+<caption><span class="caption-text">Default SHARPpy Data Sources</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="24%" />
+<col width="59%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Link</th>
+<th class="head">Datasets</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Penn State</td>
+<td><a class="reference external" href="http://www.meteo.psu.edu/bufkit/">http://www.meteo.psu.edu/bufkit/</a></td>
+<td>HRRR, GFS, NAM, 3km NAM, SREF, RAP</td>
+</tr>
+<tr class="row-odd"><td>NOAA SPC</td>
+<td><a class="reference external" href="https://www.spc.noaa.gov/exper/soundings/">https://www.spc.noaa.gov/exper/soundings/</a></td>
+<td>Observed U.S. Soundings</td>
+</tr>
+<tr class="row-even"><td>SHARP</td>
+<td><a class="reference external" href="http://sharp.weather.ou.edu/">http://sharp.weather.ou.edu/</a></td>
+<td>Observed &amp; Archived Int. Soundings</td>
+</tr>
+</tbody>
+</table>
+<p>Currently, both the NOAA SPC and SHARP server datasets are able to offer world-wide observed soundings.  While the SPC server is handled by the meteorologists at the Storm Prediction Center, the SHARPpy development team has been granted server space at the <a class="reference external" href="http://meteorology.ou.edu">University of Oklahoma</a> to generate various datastreams (e.g. international soundings).  Data from the SHARP server is generated by GEMPAK binaries that merge realtime standard and significant level data accessible <a class="reference external" href="http://weather.rap.ucar.edu/upper/Current.rawins">here</a>.  Archived soundings were downloaded from the publically available <a class="reference external" href="http://mtarchive.geol.iastate.edu">GEMPAK data archive</a> managed by the <a class="reference external" href="https://mesonet.agron.iastate.edu">Iowa Environmental Mesonet</a>.  Data from this archive starts on January 1st, 1946.  Decoding of this dataset (and the real-time international data stream on SHARP) are performed by the GEMPAK <code class="docutils literal notranslate"><span class="pre">snlist</span></code> binary distributed in the <a class="reference external" href="http://strc.comet.ucar.edu/software/bgruven/">NWS SOO’s BUFRgruven package</a>.</p>
+<p>The automated processing on the SHARP server attempts to clean up some of the sounding data that is created by <code class="docutils literal notranslate"><span class="pre">snlist</span></code> into a format that is suitable for use in SHARPpy.  Sounding files that contain only data above 100 mb (stratospheric profiles) are removed from the archive as they cannot be displayed in the SHARPpy GUI and would break some assumptions inherent in the SHARPpy algorithms about the sounding data.  Most significantly though, this automated processing attempts to remove duplicate data points as they may break the assumption in SHARPpy’s interpolation routines that the pressure and height data is monotonically increasing or decreasing.</p>
+<div class="figure align-center" id="id4">
+<a class="reference internal image-reference" href="http://sharp.weather.ou.edu/soundings/obs/recent.png"><img alt="http://sharp.weather.ou.edu/soundings/obs/recent.png" src="http://sharp.weather.ou.edu/soundings/obs/recent.png" /></a>
+<p class="caption"><span class="caption-text">A real-time status plot from the SHARP server generated for the last (00 or 12 UTC) sounding dataset available.  Each point indicates a location where sounding data was found on the Unidata stream.  The color of each point indicates the status of the data in the processing steps.  Green data points indicate data files that were able to be generated by the merge script and passed the SHARPpy data integrity checks.  Yellow data points indicate data files that were created, but threw an exception when passed to SHARPpy (likely due to data integrity issues).  Red data points are locations where the merge script failed and are likely due to incomplete data in the Unidata stream.</span></p>
+</div>
+<p>The data provided by Penn State is provided in the Bufkit format.  The foreast soundings provided within this format are derived directly from the model native vertical grid; no interpolation is performed.  Often, the forecast sounding points are located at stations where METAR observations can be found.  The forecast sounding points have been chosen by the scientists at <a class="reference external" href="http://www.emc.ncep.noaa.gov">NOAA’s Environmental Modeling Center</a> as a part of their mission to support NOAA’s mission. Although we are persuing various options for expanding the various sounding points from these models, <em>we do not have the ability to add more data points</em>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The SHARPpy development team has noticed a distinct sensitivity of various SHARPpy algorithms to the post-processing performed on model output.  Particularly, this sensitivity is best noticed when SHARPpy output is compared between model forecast soundings a.) created by interpolated from the model vertical grid to 25-mb pressure levels and b.) those created from the native model vertical grid.  Because of this sensitivity, differences may appear between different SHARPpy output across the web.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Occasionally, the default data sources go down in SHARPpy.  With the exception of the SHARP dataset, these issues are largely outside of our control and may often be resolved by trying to access the data again at another time.</p>
+</div>
+</div>
+<div class="section" id="changing-preferences">
+<h2>Changing preferences<a class="headerlink" href="#changing-preferences" title="Permalink to this headline">¶</a></h2>
+<p>Users may select “Preferences” using the menu bar of the SHARPpy program.  Doing so will load a small window where the user can modify the SHARPpy color pallet and the units of the program.  Currently, the three color pallets exist: the Standard (black background), Inverted (white background), or the Protanopia (for color blindness).</p>
+<p>Units may be changed for the surface temperature value, the winds, and the precipitble water vapor.  Switching to metric units through this method may help international users more easily use the program.  These changes may be detected in the GUI, as various locations where the units are shown will switch when a new unit is selected in the Preferences.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="interpreting_gui.html" class="btn btn-neutral float-right" title="Interpreting the GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Installation Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

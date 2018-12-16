@@ -1,0 +1,631 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.prof_collection &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.prof_collection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.prof_collection</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
+<span class="kn">import</span> <span class="nn">sharppy.sharptab.interp</span> <span class="k">as</span> <span class="nn">interp</span>
+<span class="kn">from</span> <span class="nn">utils.frozenutils</span> <span class="k">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="doCopy"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.doCopy">[docs]</a><span class="k">def</span> <span class="nf">doCopy</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\n\n\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">target_type</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">target_type</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">),</span> <span class="n">idx</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="ProfCollection"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection">[docs]</a><span class="k">class</span> <span class="nc">ProfCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ProfCollection: A class to keep track of profiles from a single data source. Handles time switching, ensemble member switching,</span>
+<span class="sd">        and modifications to profiles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profiles</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">ConvectiveProfile</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the collection.</span>
+<span class="sd">        profiles:   A dictionary of lists of profiles.  The keys of the dictionary are the ensemble member names, the</span>
+<span class="sd">            values are lists of profiles for those members over time.</span>
+<span class="sd">        dates:      A list of datetime objects corresponding to the times for each element of the lists in profiles.</span>
+<span class="sd">        target_type:    The type to copy the profiles to when requested. Default is a ConvectiveProfile.</span>
+<span class="sd">        **kwargs:   Metadata for the profile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span> <span class="o">=</span> <span class="n">profiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span> <span class="o">=</span> <span class="n">dates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span> <span class="o">=</span> <span class="n">target_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analog_date</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mod_therm</span> <span class="o">=</span> <span class="p">[</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mod_wind</span> <span class="o">=</span> <span class="p">[</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interp</span> <span class="o">=</span> <span class="p">[</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span> <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_async</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancel_copy</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_procs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ProfCollection.subset"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.subset">[docs]</a>    <span class="k">def</span> <span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Subset the profile collection over time.</span>
+<span class="sd">        idxs:   The time indices to include in the subsetted collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">extract_profile_indexes</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+            <span class="n">prof_indexed</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">prof_indexed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prof</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="k">return</span> <span class="n">prof_indexed</span>
+
+        <span class="n">profiles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">mem</span><span class="p">,</span> <span class="n">extract_profile_indexes</span><span class="p">(</span><span class="n">prof</span><span class="p">))</span> <span class="k">for</span> <span class="n">mem</span><span class="p">,</span> <span class="n">prof</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span> <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ProfCollection</span><span class="p">(</span><span class="n">profiles</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_backgroundCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">max_procs</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copies the profile objects in the background while the user can continue to do things.</span>
+<span class="sd">        This upgrades the project object types from Profile to ConvectiveProfile via the</span>
+<span class="sd">        _target_type variable.</span>
+<span class="sd">        </span>
+<span class="sd">        member:     the key indicating a specific member</span>
+<span class="sd">        max_procs:  max number of processors to perform this action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pipe</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="n">max_procs</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prof</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">member</span><span class="p">]):</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">doCopy</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pipe</span><span class="p">))</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">%</span> <span class="n">max_procs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">member</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procs</span><span class="p">:</span>
+
+                    <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                        <span class="c1"># Windows hangs here for some reason, but runs fine without it.</span>
+                        <span class="n">proc</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                        
+                    <span class="n">prof</span><span class="p">,</span> <span class="n">copy_idx</span>  <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">member</span><span class="p">][</span><span class="n">copy_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span>
+                    
+                <span class="bp">self</span><span class="o">.</span><span class="n">_procs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="ProfCollection.setAsync"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setAsync">[docs]</a>    <span class="k">def</span> <span class="nf">setAsync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">async_obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Start an asynchronous process to load objects of type &#39;target_type&#39; in the background.</span>
+<span class="sd">        Used to upgrade the Profile objects to ConvectiveProfile objects in the background</span>
+
+<span class="sd">        async:  An AsyncThreads instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_async</span> <span class="o">=</span> <span class="n">async_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_async</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backgroundCopy</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProfCollection.cancelCopy"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.cancelCopy">[docs]</a>    <span class="k">def</span> <span class="nf">cancelCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Terminates any threads that are running in the background.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_procs</span><span class="p">:</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_async</span><span class="o">.</span><span class="n">clearQueue</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getMeta"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getMeta">[docs]</a>    <span class="k">def</span> <span class="nf">getMeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns metadata about the profile.</span>
+<span class="sd">        key:    What metadata to return.</span>
+<span class="sd">        index [optional]: If true, treat the metadata as an array with the same length as dates passed in the constructor.</span>
+<span class="sd">            Returns value of that array at this time index..</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">meta</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getCurrentDate"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getCurrentDate">[docs]</a>    <span class="k">def</span> <span class="nf">getCurrentDate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the current date in the profile object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getHighlightedProf"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getHighlightedProf">[docs]</a>    <span class="k">def</span> <span class="nf">getHighlightedProf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns which profile is highlighted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="n">cur_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+        <span class="c1"># If the currently selected profile is not of the target_type (e.g., ConvectiveProfile), then</span>
+        <span class="c1"># then upgrade it via the copy function.</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getCurrentProfs"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getCurrentProfs">[docs]</a>    <span class="k">def</span> <span class="nf">getCurrentProfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the profiles at the current time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">mem</span><span class="p">,</span> <span class="n">profs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Copy the profiles on the fly</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cur_prof</span> <span class="o">=</span> <span class="n">profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mem</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">mem</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">profile</span><span class="o">.</span><span class="n">BasicProfile</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_type</span> <span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">mem</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">BasicProfile</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">cur_prof</span><span class="p">)</span>
+
+        <span class="n">profs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">mem</span><span class="p">,</span> <span class="n">profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">])</span> <span class="k">for</span> <span class="n">mem</span><span class="p">,</span> <span class="n">profs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">profs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="p">)</span> 
+        <span class="k">return</span> <span class="n">profs</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getAnalogDate"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getAnalogDate">[docs]</a>    <span class="k">def</span> <span class="nf">getAnalogDate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If this is an analog, return the date of the analog. Otherwise, returns None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analog_date</span></div>
+
+<div class="viewcode-block" id="ProfCollection.isModified"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.isModified">[docs]</a>    <span class="k">def</span> <span class="nf">isModified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the profiles at the current time have been modified.  Returns False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mod_therm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mod_wind</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.isInterpolated"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.isInterpolated">[docs]</a>    <span class="k">def</span> <span class="nf">isInterpolated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the profiles at the current time have been modified.  Returns False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.isEnsemble"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.isEnsemble">[docs]</a>    <span class="k">def</span> <span class="nf">isEnsemble</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if this collection has multiple ensemble members. Otherwise, returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="o">&gt;</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="ProfCollection.hasCurrentProf"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.hasCurrentProf">[docs]</a>    <span class="k">def</span> <span class="nf">hasCurrentProf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the collection has a profile at the current time. Otherwise, returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="ProfCollection.hasMeta"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.hasMeta">[docs]</a>    <span class="k">def</span> <span class="nf">hasMeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the collection has metadata corresponding to &#39;key&#39;. Otherwise returns False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span></div>
+
+<div class="viewcode-block" id="ProfCollection.setMeta"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setMeta">[docs]</a>    <span class="k">def</span> <span class="nf">setMeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the metadata &#39;key&#39; to &#39;value&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="ProfCollection.setHighlightedMember"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setHighlightedMember">[docs]</a>    <span class="k">def</span> <span class="nf">setHighlightedMember</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">member_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the highlighted ensemble member to be &#39;member_name&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span> <span class="o">=</span> <span class="n">member_name</span></div>
+
+<div class="viewcode-block" id="ProfCollection.getHighlightedMemberName"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.getHighlightedMemberName">[docs]</a>    <span class="k">def</span> <span class="nf">getHighlightedMemberName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the name of the member that is currently highlighted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span></div>
+
+<div class="viewcode-block" id="ProfCollection.setCurrentDate"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setCurrentDate">[docs]</a>    <span class="k">def</span> <span class="nf">setCurrentDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cur_dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the current date to be &#39;cur_dt&#39;.</span>
+<span class="sd">        cur_dt:     A datetime object specifiying which date to set it to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cur_dt</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="ProfCollection.setAnalogToDate"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setAnalogToDate">[docs]</a>    <span class="k">def</span> <span class="nf">setAnalogToDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analog_to_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specify that this collection represents an analog; the date is set to &#39;analog_to_date&#39;, and the </span>
+<span class="sd">            analog date is set to the former date.</span>
+<span class="sd">        analog_to_date: A datetime object that specifies the date to which this collection is an analog.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_analog_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span> <span class="o">=</span> <span class="p">[</span> <span class="n">analog_to_date</span> <span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.advanceTime"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.advanceTime">[docs]</a>    <span class="k">def</span> <span class="nf">advanceTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Advance time in a direction specified by &#39;direction&#39;. Returns a datetime object containing the new time.</span>
+<span class="sd">        direction:  An integer (ether 1 or -1) specifying which direction to move time in. 1 moves time forward,</span>
+<span class="sd">            -1 moves time backward.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">==</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">+=</span> <span class="n">direction</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.advanceHighlight"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.advanceHighlight">[docs]</a>    <span class="k">def</span> <span class="nf">advanceHighlight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change which member is highlighted.</span>
+<span class="sd">        direction:  An integer (either 1 or -1) specifying which direction to go in the list. The list is in</span>
+<span class="sd">            alphabetical order, so the members will be gone through in that order. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mem_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">high_idx</span> <span class="o">=</span> <span class="n">mem_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mem_names</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">doAdvance</span><span class="p">(</span><span class="n">adv_idx</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">direction</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">adv_idx</span> <span class="o">==</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">adv_idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">direction</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">adv_idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">adv_idx</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">adv_idx</span> <span class="o">=</span> <span class="n">adv_idx</span> <span class="o">+</span> <span class="n">direction</span>
+            <span class="k">return</span> <span class="n">adv_idx</span>
+
+        <span class="n">adv_idx</span> <span class="o">=</span> <span class="n">doAdvance</span><span class="p">(</span><span class="n">high_idx</span><span class="p">)</span>
+        <span class="n">highlight</span> <span class="o">=</span> <span class="n">mem_names</span><span class="p">[</span><span class="n">adv_idx</span><span class="p">]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="n">highlight</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">:</span>
+            <span class="n">adv_idx</span> <span class="o">=</span> <span class="n">doAdvance</span><span class="p">(</span><span class="n">adv_idx</span><span class="p">)</span>
+            <span class="n">highlight</span> <span class="o">=</span> <span class="n">mem_names</span><span class="p">[</span><span class="n">adv_idx</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span> <span class="o">=</span> <span class="n">highlight</span></div>
+
+<div class="viewcode-block" id="ProfCollection.defineUserParcel"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.defineUserParcel">[docs]</a>    <span class="k">def</span> <span class="nf">defineUserParcel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parcel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines a custom parcel for the current profile.</span>
+<span class="sd">        parcel:     A parcel object to use as the custom parcel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hasCurrentProf</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span><span class="o">.</span><span class="n">usrpcl</span> <span class="o">=</span> <span class="n">parcel</span></div>
+
+<div class="viewcode-block" id="ProfCollection.modify"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.modify">[docs]</a>    <span class="k">def</span> <span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modify the profile at the current time.</span>
+<span class="sd">        idx:    The vertical index to modify</span>
+<span class="sd">        **kwargs:   The variables to modify (&#39;tmpc&#39;, &#39;dwpc&#39;, &#39;u&#39;, or &#39;v&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnsemble</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t modify ensemble profiles&quot;</span><span class="p">)</span>
+
+        <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+
+        <span class="c1"># Save original, if one hasn&#39;t already been saved</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span>
+
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+        <span class="c1"># Copy the variables to be modified</span>
+        <span class="n">prof_vars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="c1"># Do the modification</span>
+        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">prof_vars</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        
+        <span class="c1"># Make a copy of the profile object with the newly modified variables inserted.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="o">**</span><span class="n">prof_vars</span><span class="p">)</span>
+
+        <span class="c1"># Update bookkeeping</span>
+        <span class="k">if</span> <span class="s1">&#39;tmpc&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s1">&#39;dwpc&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mod_therm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="s1">&#39;u&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s1">&#39;v&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s1">&#39;wdir&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="s1">&#39;wspd&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mod_wind</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ProfCollection.modifyStormMotion"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.modifyStormMotion">[docs]</a>    <span class="k">def</span> <span class="nf">modifyStormMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deviant</span><span class="p">,</span> <span class="n">vec_u</span><span class="p">,</span> <span class="n">vec_v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">deviant</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span><span class="o">.</span><span class="n">set_srleft</span><span class="p">(</span><span class="n">vec_u</span><span class="p">,</span> <span class="n">vec_v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">deviant</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span><span class="o">.</span><span class="n">set_srright</span><span class="p">(</span><span class="n">vec_u</span><span class="p">,</span> <span class="n">vec_v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProfCollection.resetStormMotion"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.resetStormMotion">[docs]</a>    <span class="k">def</span> <span class="nf">resetStormMotion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span><span class="o">.</span><span class="n">reset_srm</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProfCollection.interp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.interp">[docs]</a>    <span class="k">def</span> <span class="nf">interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">25</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpolate the profile object to a specific pressure level spacing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnsemble</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot interpolate the ensemble profiles.&quot;</span><span class="p">)</span>
+
+        <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+
+        <span class="c1"># Save original, if one hasn&#39;t already been saved</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">prof</span>
+
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+        <span class="c1"># Copy the tmpc, dwpc, etc. profiles to be inteprolated</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tmpc&#39;</span><span class="p">,</span> <span class="s1">&#39;dwpc&#39;</span><span class="p">,</span> <span class="s1">&#39;hght&#39;</span><span class="p">,</span> <span class="s1">&#39;wspd&#39;</span><span class="p">,</span> <span class="s1">&#39;wdir&#39;</span><span class="p">,</span> <span class="s1">&#39;omeg&#39;</span><span class="p">]</span>
+        
+        <span class="n">prof_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pres&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">top</span><span class="p">],</span> <span class="n">dp</span><span class="p">)}</span>
+        <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;tmpc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">])</span>
+        <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;dwpc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">dwpt</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">])</span>
+        <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;hght&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">omeg</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
+            <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;omeg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">omeg</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;omeg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">],</span> <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;pres&#39;</span><span class="p">])</span>
+        <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span>
+        <span class="n">prof_vars</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="n">interp_prof</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="o">**</span><span class="n">prof_vars</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_prof</span>
+
+         <span class="c1"># Save the original like in modify()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_prof</span>
+       
+        <span class="c1"># Update bookkeeping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ProfCollection.resetModification"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.resetModification">[docs]</a>    <span class="k">def</span> <span class="nf">resetModification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset the profile to its original state.</span>
+<span class="sd">        *args:  The variables to reset (&#39;tmpc&#39;, &#39;dwpc&#39;, &#39;u&#39;, or &#39;v&#39;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]:</span>
+            <span class="n">orig_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">orig_prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+
+        <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+
+        <span class="c1"># Get the original variables</span>
+        <span class="n">prof_vars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">orig_prof</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args</span> <span class="p">)</span>
+
+        <span class="c1"># Make a copy of the profile object with the original variables inserted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="o">**</span><span class="n">prof_vars</span><span class="p">)</span>
+
+        <span class="c1"># Update bookkeeping</span>
+        <span class="k">if</span> <span class="s1">&#39;tmpc&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;dwpc&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mod_therm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="s1">&#39;u&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;v&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;wdir&#39;</span> <span class="ow">in</span> <span class="n">args</span> <span class="ow">or</span> <span class="s1">&#39;wspd&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mod_wind</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isModified</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">isInterpolated</span><span class="p">():</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ProfCollection.resetInterpolation"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.resetInterpolation">[docs]</a>    <span class="k">def</span> <span class="nf">resetInterpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+
+        <span class="n">prof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+<span class="c1">#       print dict( (k, prof.__dict__[k].shape[0]) for k in [ &#39;pres&#39;, &#39;hght&#39;, &#39;tmpc&#39;, &#39;dwpc&#39;, &#39;u&#39;, &#39;v&#39; ])</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interp_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mod_wind</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mod_therm</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_interp</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

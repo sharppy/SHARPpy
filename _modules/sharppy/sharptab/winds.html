@@ -1,0 +1,722 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.winds &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.winds</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.winds</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Wind Manipulation Routines &#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">interp</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean_wind&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_wind_npw&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_wind_old&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_wind_npw_old&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;sr_wind&#39;</span><span class="p">,</span> <span class="s1">&#39;sr_wind_npw&#39;</span><span class="p">,</span> <span class="s1">&#39;wind_shear&#39;</span><span class="p">,</span> <span class="s1">&#39;helicity&#39;</span><span class="p">,</span> <span class="s1">&#39;max_wind&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;non_parcel_bunkers_motion&#39;</span><span class="p">,</span> <span class="s1">&#39;corfidi_mcs_motion&#39;</span><span class="p">,</span> <span class="s1">&#39;mbe_vectors&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;non_parcel_bunkers_motion_experimental&#39;</span><span class="p">,</span> <span class="s1">&#39;critical_angle&#39;</span><span class="p">]</span>
+
+<span class="c1">#warnings.warn(&quot;Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)&quot;)</span>
+
+<div class="viewcode-block" id="mean_wind"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.mean_wind">[docs]</a><span class="k">def</span> <span class="nf">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates a pressure-weighted mean wind through a layer. The default</span>
+<span class="sd">    layer is 850 to 200 hPa.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof: profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    pbot : number (optional; default 850 hPa)</span>
+<span class="sd">        Pressure of the bottom level (hPa)</span>
+<span class="sd">    ptop : number (optional; default 250 hPa)</span>
+<span class="sd">        Pressure of the top level (hPa)</span>
+<span class="sd">    dp : negative integer (optional; default -1)</span>
+<span class="sd">        The pressure increment for the interpolated sounding</span>
+<span class="sd">    stu : number (optional; default 0)</span>
+<span class="sd">        U-component of storm-motion vector (kts)</span>
+<span class="sd">    stv : number (optional; default 0)</span>
+<span class="sd">        V-component of storm-motion vector (kts)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mnu : number</span>
+<span class="sd">        U-component (kts)</span>
+<span class="sd">    mnv : number</span>
+<span class="sd">        V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">dp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">dp</span> <span class="o">=</span> <span class="o">-</span><span class="n">dp</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">pbot</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">ptop</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pbot</span><span class="p">,</span> <span class="n">ptop</span><span class="o">+</span><span class="n">dp</span><span class="p">,</span> <span class="n">dp</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+    <span class="c1"># u -= stu; v -= stv</span>
+    <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">ps</span><span class="p">)</span><span class="o">-</span><span class="n">stu</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">ps</span><span class="p">)</span><span class="o">-</span><span class="n">stv</span></div>
+
+
+<div class="viewcode-block" id="mean_wind_npw"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.mean_wind_npw">[docs]</a><span class="k">def</span> <span class="nf">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mf">850.</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mf">250.</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates a non-pressure-weighted mean wind through a layer. The default</span>
+<span class="sd">    layer is 850 to 200 hPa.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof: profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    pbot : number (optional; default 850 hPa)</span>
+<span class="sd">        Pressure of the bottom level (hPa)</span>
+<span class="sd">    ptop : number (optional; default 250 hPa)</span>
+<span class="sd">        Pressure of the top level (hPa)</span>
+<span class="sd">    dp : negative integer (optional; default -1)</span>
+<span class="sd">        The pressure increment for the interpolated sounding (mb)</span>
+<span class="sd">    stu : number (optional; default 0)</span>
+<span class="sd">        U-component of storm-motion vector (kts)</span>
+<span class="sd">    stv : number (optional; default 0)</span>
+<span class="sd">        V-component of storm-motion vector (kts)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mnu : number</span>
+<span class="sd">        U-component (kts)</span>
+<span class="sd">    mnv : number</span>
+<span class="sd">        V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">ptop</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">pbot</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="k">if</span> <span class="n">dp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">dp</span> <span class="o">=</span> <span class="o">-</span><span class="n">dp</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pbot</span><span class="p">,</span> <span class="n">ptop</span><span class="o">+</span><span class="n">dp</span><span class="p">,</span> <span class="n">dp</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+    <span class="c1"># u -= stu; v -= stv</span>
+    <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">-</span><span class="n">stu</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">-</span><span class="n">stv</span></div>
+
+
+<div class="viewcode-block" id="sr_wind"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.sr_wind">[docs]</a><span class="k">def</span> <span class="nf">sr_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates a pressure-weighted mean storm-relative wind through a layer.</span>
+<span class="sd">    The default layer is 850 to 200 hPa. This is a thin wrapper around</span>
+<span class="sd">    mean_wind().</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof: profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    pbot : number (optional; default 850 hPa)</span>
+<span class="sd">        Pressure of the bottom level (hPa)</span>
+<span class="sd">    ptop : number (optional; default 250 hPa)</span>
+<span class="sd">        Pressure of the top level (hPa)</span>
+<span class="sd">    stu : number (optional; default 0)</span>
+<span class="sd">        U-component of storm-motion vector (kts)</span>
+<span class="sd">    stv : number (optional; default 0)</span>
+<span class="sd">        V-component of storm-motion vector  (kts)</span>
+<span class="sd">    dp : negative integer (optional; default -1)</span>
+<span class="sd">        The pressure increment for the interpolated sounding (mb)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mnu : number</span>
+<span class="sd">        U-component (kts)</span>
+<span class="sd">    mnv : number</span>
+<span class="sd">        V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">pbot</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">ptop</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="n">stu</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="n">stv</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sr_wind_npw"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.sr_wind_npw">[docs]</a><span class="k">def</span> <span class="nf">sr_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates a none-pressure-weighted mean storm-relative wind through a</span>
+<span class="sd">    layer. The default layer is 850 to 200 hPa. This is a thin wrapper around</span>
+<span class="sd">    mean_wind_npw().</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof: profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    pbot : number (optional; default 850 hPa)</span>
+<span class="sd">        Pressure of the bottom level (hPa)</span>
+<span class="sd">    ptop : number (optional; default 250 hPa)</span>
+<span class="sd">        Pressure of the top level (hPa)</span>
+<span class="sd">    stu : number (optional; default 0)</span>
+<span class="sd">        U-component of storm-motion vector (kts)</span>
+<span class="sd">    stv : number (optional; default 0)</span>
+<span class="sd">        V-component of storm-motion vector (kts)</span>
+<span class="sd">    dp : negative integer (optional; default -1)</span>
+<span class="sd">        The pressure increment for the interpolated sounding (mb)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mnu : number</span>
+<span class="sd">        U-component (kts)</span>
+<span class="sd">    mnv : number</span>
+<span class="sd">        V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">pbot</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="n">ptop</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="n">dp</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="n">stu</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="n">stv</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="wind_shear"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.wind_shear">[docs]</a><span class="k">def</span> <span class="nf">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mi">850</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mi">250</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the shear between the wind at (pbot) and (ptop).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof: profile object</span>
+<span class="sd">        Profile object</span>
+<span class="sd">    pbot : number (optional; default 850 hPa)</span>
+<span class="sd">        Pressure of the bottom level (hPa)</span>
+<span class="sd">    ptop : number (optional; default 250 hPa)</span>
+<span class="sd">        Pressure of the top level (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    shu : number</span>
+<span class="sd">        U-component (kts)</span>
+<span class="sd">    shv : number</span>
+<span class="sd">        V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">ptop</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">pbot</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">ubot</span><span class="p">,</span> <span class="n">vbot</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="p">)</span>
+    <span class="n">utop</span><span class="p">,</span> <span class="n">vtop</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ptop</span><span class="p">)</span>
+    <span class="n">shu</span> <span class="o">=</span> <span class="n">utop</span> <span class="o">-</span> <span class="n">ubot</span>
+    <span class="n">shv</span> <span class="o">=</span> <span class="n">vtop</span> <span class="o">-</span> <span class="n">vbot</span>
+    <span class="k">return</span> <span class="n">shu</span><span class="p">,</span> <span class="n">shv</span></div>
+
+<div class="viewcode-block" id="non_parcel_bunkers_motion_experimental"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.non_parcel_bunkers_motion_experimental">[docs]</a><span class="k">def</span> <span class="nf">non_parcel_bunkers_motion_experimental</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute the Bunkers Storm Motion for a Right Moving Supercell</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile Object</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rstu : number</span>
+<span class="sd">            Right Storm Motion U-component (kts)</span>
+<span class="sd">        rstv : number</span>
+<span class="sd">            Right Storm Motion V-component (kts)</span>
+<span class="sd">        lstu : number</span>
+<span class="sd">            Left Storm Motion U-component (kts)</span>
+<span class="sd">        lstv : number</span>
+<span class="sd">            Left Storm Motion V-component (kts)</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="mf">7.5</span><span class="p">)</span>     <span class="c1"># Deviation value emperically derived as 7.5 m/s</span>
+    <span class="c1">## get the msl height of 500m, 5.5km, and 6.0km above the surface</span>
+    <span class="n">msl500m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">500.</span><span class="p">)</span>
+    <span class="n">msl5500m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">5500.</span><span class="p">)</span>
+    <span class="n">msl6000m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">)</span>
+    
+    <span class="c1">## get the pressure of the surface, 500m, 5.5km, and 6.0km levels</span>
+    <span class="n">psfc</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">]</span>
+    <span class="n">p500m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">msl500m</span><span class="p">)</span>
+    <span class="n">p5500m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">msl5500m</span><span class="p">)</span>
+    <span class="n">p6000m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">msl6000m</span><span class="p">)</span>
+    
+    <span class="c1">## sfc-500m Mean Wind</span>
+    <span class="n">mnu500m</span><span class="p">,</span> <span class="n">mnv500m</span> <span class="o">=</span> <span class="n">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">psfc</span><span class="p">,</span> <span class="n">p500m</span><span class="p">)</span>
+    
+    <span class="c1">## 5.5km-6.0km Mean Wind</span>
+    <span class="n">mnu5500m_6000m</span><span class="p">,</span> <span class="n">mnv5500m_6000m</span> <span class="o">=</span> <span class="n">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">p5500m</span><span class="p">,</span> <span class="n">p6000m</span><span class="p">)</span>
+    
+    <span class="c1"># shear vector of the two mean winds</span>
+    <span class="n">shru</span> <span class="o">=</span> <span class="n">mnu5500m_6000m</span> <span class="o">-</span> <span class="n">mnu500m</span>
+    <span class="n">shrv</span> <span class="o">=</span> <span class="n">mnv5500m_6000m</span> <span class="o">-</span> <span class="n">mnv500m</span>
+    
+    <span class="c1"># SFC-6km Mean Wind</span>
+    <span class="n">mnu6</span><span class="p">,</span> <span class="n">mnv6</span> <span class="o">=</span> <span class="n">mean_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">psfc</span><span class="p">,</span> <span class="n">p6000m</span><span class="p">)</span>
+    
+    <span class="c1"># Bunkers Right Motion</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="n">shru</span><span class="p">,</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">rstu</span> <span class="o">=</span> <span class="n">mnu6</span> <span class="o">+</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">rstv</span> <span class="o">=</span> <span class="n">mnv6</span> <span class="o">-</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shru</span><span class="p">)</span>
+    <span class="n">lstu</span> <span class="o">=</span> <span class="n">mnu6</span> <span class="o">-</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">lstv</span> <span class="o">=</span> <span class="n">mnv6</span> <span class="o">+</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shru</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">rstu</span><span class="p">,</span> <span class="n">rstv</span><span class="p">,</span> <span class="n">lstu</span><span class="p">,</span> <span class="n">lstv</span></div>
+
+
+<div class="viewcode-block" id="non_parcel_bunkers_motion"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.non_parcel_bunkers_motion">[docs]</a><span class="k">def</span> <span class="nf">non_parcel_bunkers_motion</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Compute the Bunkers Storm Motion for a Right Moving Supercell</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rstu : number</span>
+<span class="sd">        Right Storm Motion U-component (kts)</span>
+<span class="sd">    rstv : number</span>
+<span class="sd">        Right Storm Motion V-component (kts)</span>
+<span class="sd">    lstu : number</span>
+<span class="sd">        Left Storm Motion U-component (kts)</span>
+<span class="sd">    lstv : number</span>
+<span class="sd">        Left Storm Motion V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">MS2KTS</span><span class="p">(</span><span class="mf">7.5</span><span class="p">)</span>     <span class="c1"># Deviation value emperically derived as 7.5 m/s</span>
+    <span class="n">msl6km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">)</span>
+    <span class="n">p6km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">msl6km</span><span class="p">)</span>
+    <span class="c1"># SFC-6km Mean Wind</span>
+    <span class="n">mnu6</span><span class="p">,</span> <span class="n">mnv6</span> <span class="o">=</span> <span class="n">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">],</span> <span class="n">p6km</span><span class="p">)</span>
+    <span class="c1"># SFC-6km Shear Vector</span>
+    <span class="n">shru</span><span class="p">,</span> <span class="n">shrv</span> <span class="o">=</span> <span class="n">wind_shear</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">],</span> <span class="n">p6km</span><span class="p">)</span>
+
+    <span class="c1"># Bunkers Right Motion</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="n">shru</span><span class="p">,</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">rstu</span> <span class="o">=</span> <span class="n">mnu6</span> <span class="o">+</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">rstv</span> <span class="o">=</span> <span class="n">mnv6</span> <span class="o">-</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shru</span><span class="p">)</span>
+    <span class="n">lstu</span> <span class="o">=</span> <span class="n">mnu6</span> <span class="o">-</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shrv</span><span class="p">)</span>
+    <span class="n">lstv</span> <span class="o">=</span> <span class="n">mnv6</span> <span class="o">+</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="n">shru</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rstu</span><span class="p">,</span> <span class="n">rstv</span><span class="p">,</span> <span class="n">lstu</span><span class="p">,</span> <span class="n">lstv</span></div>
+
+
+<div class="viewcode-block" id="helicity"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.helicity">[docs]</a><span class="k">def</span> <span class="nf">helicity</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dp</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the relative helicity (m2/s2) of a layer from lower to upper.</span>
+<span class="sd">    If storm-motion vector is supplied, storm-relative helicity, both</span>
+<span class="sd">    positve and negative, is returned.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+<span class="sd">    lower : number</span>
+<span class="sd">        Bottom level of layer (m, AGL)</span>
+<span class="sd">    upper : number</span>
+<span class="sd">        Top level of layer (m, AGL)</span>
+<span class="sd">    stu : number (optional; default = 0)</span>
+<span class="sd">        U-component of storm-motion (kts)</span>
+<span class="sd">    stv : number (optional; default = 0)</span>
+<span class="sd">        V-component of storm-motion (kts)</span>
+<span class="sd">    dp : negative integer (optional; default -1)</span>
+<span class="sd">        The pressure increment for the interpolated sounding (mb)</span>
+<span class="sd">    exact : bool (optional; default = True)</span>
+<span class="sd">        Switch to choose between using the exact data (slower) or using</span>
+<span class="sd">        interpolated sounding at &#39;dp&#39; pressure levels (faster)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    phel+nhel : number</span>
+<span class="sd">        Combined Helicity (m2/s2)</span>
+<span class="sd">    phel : number</span>
+<span class="sd">        Positive Helicity (m2/s2)</span>
+<span class="sd">    nhel : number</span>
+<span class="sd">        Negative Helicity (m2/s2)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">stu</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">stv</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="k">if</span> <span class="n">lower</span> <span class="o">!=</span> <span class="n">upper</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">)</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+        <span class="n">plower</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">)</span>
+        <span class="n">pupper</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">plower</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pupper</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="nb">type</span><span class="p">(</span><span class="n">plower</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">pupper</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+        <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+            <span class="n">ind1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">plower</span> <span class="o">&gt;=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">ind2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pupper</span> <span class="o">&lt;=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">plower</span><span class="p">)</span>
+            <span class="n">u2</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pupper</span><span class="p">)</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">u1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">compressed</span><span class="p">(),</span> <span class="p">[</span><span class="n">u2</span><span class="p">]])</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">v1</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">compressed</span><span class="p">(),</span> <span class="p">[</span><span class="n">v2</span><span class="p">]])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">plower</span><span class="p">,</span> <span class="n">pupper</span><span class="o">+</span><span class="n">dp</span><span class="p">,</span> <span class="n">dp</span><span class="p">)</span>
+            <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+        <span class="n">sru</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MS</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">stu</span><span class="p">)</span>
+        <span class="n">srv</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MS</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">stv</span><span class="p">)</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">(</span><span class="n">sru</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">srv</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="n">sru</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">srv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">phel</span> <span class="o">=</span> <span class="n">layers</span><span class="p">[</span><span class="n">layers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">nhel</span> <span class="o">=</span> <span class="n">layers</span><span class="p">[</span><span class="n">layers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">phel</span> <span class="o">=</span> <span class="n">nhel</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">phel</span><span class="o">+</span><span class="n">nhel</span><span class="p">,</span> <span class="n">phel</span><span class="p">,</span> <span class="n">nhel</span></div>
+
+
+<div class="viewcode-block" id="max_wind"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.max_wind">[docs]</a><span class="k">def</span> <span class="nf">max_wind</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Finds the maximum wind speed of the layer given by lower and upper levels.</span>
+<span class="sd">    In the event of the maximum wind speed occurring at multiple levels, the</span>
+<span class="sd">    lowest level it occurs is returned by default.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+<span class="sd">    lower : number</span>
+<span class="sd">        Bottom level of layer (m, AGL)</span>
+<span class="sd">    upper : number</span>
+<span class="sd">        Top level of layer (m, AGL)</span>
+<span class="sd">    all : Boolean</span>
+<span class="sd">        Switch to change the output to sorted wind levels or maximum level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure level (hPa) of max wind speed</span>
+<span class="sd">    maxu : number, numpy array</span>
+<span class="sd">        Maximum Wind Speed U-component (kts)</span>
+<span class="sd">    maxv : number, numpy array</span>
+<span class="sd">        Maximum Wind Speed V-component (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">upper</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">)</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+    <span class="n">plower</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">lower</span><span class="p">)</span>
+    <span class="n">pupper</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">plower</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">pupper</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;winds.max_wind() was unable to interpolate between height and pressure correctly.  This may be due to a data integrity issue.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="c1">#print(lower, upper, plower, pupper, prof.pres)</span>
+    <span class="n">ind1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">plower</span> <span class="o">&gt;</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">plower</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ind2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">pupper</span> <span class="o">&lt;</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">pupper</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">)))[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ind1</span> <span class="o">==</span> <span class="n">ind2</span><span class="p">:</span>
+        <span class="n">maxu</span><span class="p">,</span> <span class="n">maxv</span> <span class="o">=</span>  <span class="n">utils</span><span class="o">.</span><span class="n">vec2comp</span><span class="p">([</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">[</span><span class="n">ind1</span><span class="p">]],</span> <span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">ind1</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">maxu</span><span class="p">,</span> <span class="n">maxv</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">ind1</span><span class="p">]</span>
+
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="o">~</span><span class="n">arr</span><span class="p">[</span><span class="n">inds</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">maxu</span><span class="p">,</span> <span class="n">maxv</span> <span class="o">=</span>  <span class="n">utils</span><span class="o">.</span><span class="n">vec2comp</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">inds</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">ind1</span><span class="p">:</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">inds</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">maxu</span><span class="p">,</span> <span class="n">maxv</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">inds</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">maxu</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">maxv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">inds</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="corfidi_mcs_motion"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.corfidi_mcs_motion">[docs]</a><span class="k">def</span> <span class="nf">corfidi_mcs_motion</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculated the Meso-beta Elements (Corfidi) Vectors</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    upu : number</span>
+<span class="sd">        U-component of the upshear vector (kts)</span>
+<span class="sd">    upv : number</span>
+<span class="sd">        V-component of the upshear vector (kts)</span>
+<span class="sd">    dnu : number</span>
+<span class="sd">        U-component of the downshear vector (kts)</span>
+<span class="sd">    dnv : number</span>
+<span class="sd">        V-component of the downshear vector (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="c1"># Compute the tropospheric (850hPa-300hPa) mean wind</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span> <span class="n">prof</span><span class="o">.</span><span class="n">sfc</span> <span class="p">]</span> <span class="o">&lt;</span> <span class="mi">850</span><span class="p">:</span>
+         <span class="n">mnu1</span><span class="p">,</span> <span class="n">mnv1</span> <span class="o">=</span> <span class="n">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">],</span> <span class="n">ptop</span><span class="o">=</span><span class="mf">300.</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mnu1</span><span class="p">,</span> <span class="n">mnv1</span> <span class="o">=</span> <span class="n">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pbot</span><span class="o">=</span><span class="mf">850.</span><span class="p">,</span> <span class="n">ptop</span><span class="o">=</span><span class="mf">300.</span><span class="p">)</span>
+
+    <span class="c1"># Compute the low-level (SFC-1500m) mean wind</span>
+    <span class="n">p_1p5km</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mf">1500.</span><span class="p">))</span>
+    <span class="n">mnu2</span><span class="p">,</span> <span class="n">mnv2</span> <span class="o">=</span> <span class="n">mean_wind_npw</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">],</span> <span class="n">p_1p5km</span><span class="p">)</span>
+
+    <span class="c1"># Compute the upshear vector</span>
+    <span class="n">upu</span> <span class="o">=</span> <span class="n">mnu1</span> <span class="o">-</span> <span class="n">mnu2</span>
+    <span class="n">upv</span> <span class="o">=</span> <span class="n">mnv1</span> <span class="o">-</span> <span class="n">mnv2</span>
+
+    <span class="c1"># Compute the downshear vector</span>
+    <span class="n">dnu</span> <span class="o">=</span> <span class="n">mnu1</span> <span class="o">+</span> <span class="n">upu</span>
+    <span class="n">dnv</span> <span class="o">=</span> <span class="n">mnv1</span> <span class="o">+</span> <span class="n">upv</span>
+
+    <span class="k">return</span> <span class="n">upu</span><span class="p">,</span> <span class="n">upv</span><span class="p">,</span> <span class="n">dnu</span><span class="p">,</span> <span class="n">dnv</span></div>
+
+
+<div class="viewcode-block" id="mbe_vectors"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.mbe_vectors">[docs]</a><span class="k">def</span> <span class="nf">mbe_vectors</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Thin wrapper around corfidi_mcs_motion()</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    upu : number</span>
+<span class="sd">        U-component of the upshear vector (kts)</span>
+<span class="sd">    upv : number</span>
+<span class="sd">        V-component of the upshear vector (kts)</span>
+<span class="sd">    dnu : number</span>
+<span class="sd">        U-component of the downshear vector (kts)</span>
+<span class="sd">    dnv : number</span>
+<span class="sd">        V-component of the downshear vector (kts)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">corfidi_mcs_motion</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="critical_angle"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.winds.critical_angle">[docs]</a><span class="k">def</span> <span class="nf">critical_angle</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">stu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stv</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the critical angle (degrees) as specified by Esterheld and Giuliano (2008).</span>
+<span class="sd">    If the critical angle is 90 degrees, this indicates that the lowest 500 meters of </span>
+<span class="sd">    the storm is experiencing pure streamwise vorticity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prof : profile object</span>
+<span class="sd">        Profile Object</span>
+<span class="sd">    stu : number (optional; default = 0)</span>
+<span class="sd">        U-component of storm-motion (kts)</span>
+<span class="sd">    stv : number (optional; default = 0)</span>
+<span class="sd">        V-component of storm-motion (kts)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    angle : number</span>
+<span class="sd">        Critical Angle (degrees)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">stu</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">stv</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="n">pres_500m</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">pres</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_msl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+    <span class="n">u500</span><span class="p">,</span> <span class="n">v500</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pres_500m</span><span class="p">)</span>
+    <span class="n">sfc_u</span><span class="p">,</span> <span class="n">sfc_v</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">components</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc</span><span class="p">])</span>
+
+    <span class="n">vec1_u</span><span class="p">,</span> <span class="n">vec1_v</span> <span class="o">=</span> <span class="n">u500</span> <span class="o">-</span> <span class="n">sfc_u</span><span class="p">,</span> <span class="n">v500</span> <span class="o">-</span> <span class="n">sfc_v</span>    
+    <span class="n">vec2_u</span><span class="p">,</span> <span class="n">vec2_v</span> <span class="o">=</span> <span class="n">stu</span> <span class="o">-</span> <span class="n">sfc_u</span><span class="p">,</span> <span class="n">stv</span> <span class="o">-</span> <span class="n">sfc_v</span>
+    <span class="n">vec_1_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">vec1_u</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">vec1_v</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">vec_2_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">vec2_u</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">vec2_v</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">dot</span> <span class="o">=</span> <span class="n">vec1_u</span> <span class="o">*</span> <span class="n">vec2_u</span> <span class="o">+</span> <span class="n">vec1_v</span> <span class="o">*</span> <span class="n">vec2_v</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">vec_1_mag</span> <span class="o">*</span> <span class="n">vec_2_mag</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">angle</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

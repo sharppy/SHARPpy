@@ -1,0 +1,854 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.watch_type &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.watch_type</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.watch_type</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">constants</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1">## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)</span>
+<span class="c1">## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu</span>
+
+<div class="viewcode-block" id="heat_index"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.heat_index">[docs]</a><span class="k">def</span> <span class="nf">heat_index</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">rh</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Heat Index Equation</span>
+
+<span class="sd">        Computes the heat index using the equation obtained by performing multiple linear</span>
+<span class="sd">        regression on the table in Steadman 1979.</span>
+<span class="sd">    </span>
+<span class="sd">        Referenced from: http://www.srh.noaa.gov/images/ffc/pdf/ta_htindx.PDF</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        temp : number</span>
+<span class="sd">            temperature (C)</span>
+<span class="sd">        rh : number</span>
+<span class="sd">            relative humidity (%)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        heat_index : number</span>
+<span class="sd">            heat index value in (F)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">temp</span> <span class="o">&lt;</span> <span class="mi">80</span> <span class="ow">or</span> <span class="n">rh</span> <span class="o">&lt;</span> <span class="mi">40</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">temp</span>
+    <span class="c1">#temp = thermo.ctof(prof.tmpc[prof.get_sfc()])</span>
+    <span class="c1">#rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])</span>
+    <span class="n">heat_index</span> <span class="o">=</span> <span class="o">-</span><span class="mf">42.379</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.04901523</span> <span class="o">*</span> <span class="n">temp</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">10.14333127</span> <span class="o">*</span> <span class="n">rh</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.22475541</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">*</span> <span class="n">rh</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">6.83783e-3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> \
+                 <span class="o">-</span> <span class="p">(</span><span class="mf">5.481717e-2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.22874e-3</span> <span class="o">*</span> <span class="n">rh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mf">8.5282e-4</span> <span class="o">*</span> <span class="n">temp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> \
+                 <span class="o">-</span> <span class="p">(</span><span class="mf">1.99e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">rh</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">heat_index</span></div>
+
+<div class="viewcode-block" id="wind_chill"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.wind_chill">[docs]</a><span class="k">def</span> <span class="nf">wind_chill</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Surface Wind Chill Equation</span>
+
+<span class="sd">        Computes wind chill at the surface data point in the profile object</span>
+<span class="sd">        using the equation found at:</span>
+
+<span class="sd">        www.nws.noaa.gov/os/windchill/index.shtml</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        wind_chill : number</span>
+<span class="sd">            wind chill value in (F)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Needs to be tested</span>
+
+    <span class="n">sfc_temp</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctof</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()])</span>
+    <span class="n">sfc_wspd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MPH</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()])</span>
+
+    <span class="n">wind_chill</span> <span class="o">=</span> <span class="mf">35.74</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.6215</span><span class="o">*</span><span class="n">sfc_temp</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">35.75</span><span class="o">*</span><span class="p">(</span><span class="n">sfc_wspd</span><span class="o">**</span><span class="mf">0.16</span><span class="p">))</span> <span class="o">+</span> \
+                 <span class="mf">0.4275</span> <span class="o">*</span> <span class="p">(</span><span class="n">sfc_temp</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">sfc_wspd</span><span class="o">**</span><span class="mf">0.16</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wind_chill</span></div>
+
+<div class="viewcode-block" id="init_phase"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.init_phase">[docs]</a><span class="k">def</span> <span class="nf">init_phase</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Inital Precipitation Phase</span>
+<span class="sd">        Adapted from SHARP code donated by Rich Thompson (SPC)</span>
+
+<span class="sd">        This function determines the initial phase of any precipitation source in the profile.</span>
+<span class="sd">        It does this either by finding a source of precipitation by searching for the highest 50 mb </span>
+<span class="sd">        layer that has a relative humidity greater than 80 percent at the top and the bottom</span>
+<span class="sd">        of the layer.  This layer may be found either in the lowest 5 km of the profile, and if</span>
+<span class="sd">        an OMEG profile is specified in the profile object, it will search for the layers with</span>
+<span class="sd">        upward motion.</span>
+
+<span class="sd">        The precipitation type is determined by using a.) the interpolated temperature in the middle</span>
+<span class="sd">        of the precipitation source layer and b.) set temperature thresholds to determine the </span>
+<span class="sd">        precipitation type.  The type may be &quot;Rain&quot;, &quot;Freezing Rain&quot;, &quot;ZR/S Mix&quot;, or &quot;Snow&quot;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object (omega profile optional)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        plevel : number</span>
+<span class="sd">            the pressure level of the precipitation source (mb)</span>
+<span class="sd">        phase : int</span>
+<span class="sd">            the phase type of the precipitation (int), phase = 0 for &quot;Rain&quot;, phase = 1 for &quot;Freezing Rain&quot; or &quot;ZR/S Mix&quot;, phase = 3 for &quot;Snow&quot;</span>
+<span class="sd">        tmp : number</span>
+<span class="sd">            the temperature at the level that is the precipitation source (C)</span>
+<span class="sd">        st : str</span>
+<span class="sd">            a string naming the precipitation type</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Needs to be tested</span>
+
+    <span class="n">plevel</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">phase</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># First, determine whether Upward VVELS are available.  If they are,  </span>
+    <span class="c1"># use them to determine level where precipitation will develop.</span>
+    <span class="n">avail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">omeg</span> <span class="o">&lt;</span> <span class="o">.</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">hght_agl</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">avail</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="c1"># No VVELS...must look for saturated level </span>
+        <span class="c1"># Find the highest near-saturated 50mb layer below 5km agl</span>
+        <span class="n">below_5km_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">hght_agl</span> <span class="o">&lt;</span> <span class="mf">5000.</span><span class="p">)</span> <span class="o">&amp;</span>\
+                                    <span class="p">(</span><span class="n">hght_agl</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use the VV to find the source of precip.</span>
+        <span class="n">below_5km_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">hght_agl</span> <span class="o">&lt;</span> <span class="mf">5000.</span><span class="p">)</span> <span class="o">&amp;</span>\
+                                    <span class="p">(</span><span class="n">hght_agl</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>\
+                                    <span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">omeg</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Compute the RH at the top and bottom of 50 mb layers</span>
+    <span class="n">rh</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">relh</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">)[</span><span class="n">below_5km_idx</span><span class="p">]</span>
+    <span class="n">sats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rh</span> <span class="o">&gt;</span> <span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">new_pres</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">below_5km_idx</span><span class="p">][</span><span class="n">sats</span><span class="p">]</span> <span class="o">+</span> <span class="mf">50.</span>
+    <span class="n">new_temp</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">new_pres</span><span class="p">)</span>
+    <span class="n">new_dwpt</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">dwpt</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">new_pres</span><span class="p">)</span>
+    <span class="n">rh_plus50</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">relh</span><span class="p">(</span><span class="n">new_pres</span><span class="p">,</span> <span class="n">new_temp</span><span class="p">,</span> <span class="n">new_dwpt</span><span class="p">)</span>
+    <span class="c1"># Find layers where the RH is &gt;80% at the top and bottom</span>
+    <span class="n">layers_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rh_plus50</span> <span class="o">&gt;</span> <span class="mi">80</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">layers_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Found no precipitation source layers</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+        <span class="k">return</span> <span class="n">prof</span><span class="o">.</span><span class="n">missing</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">missing</span><span class="p">,</span> <span class="n">st</span>
+
+    <span class="c1"># Find the highest layer up via the largest index</span>
+    <span class="n">top_most_layer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">layers_idx</span><span class="p">)</span>
+    <span class="n">plevel</span> <span class="o">=</span> <span class="n">new_pres</span><span class="p">[</span><span class="n">top_most_layer</span><span class="p">]</span> <span class="o">-</span> <span class="mf">25.</span>
+
+    <span class="c1"># Determine the initial precip type based on the temp in the layer</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">plevel</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;Rain&quot;</span>
+    <span class="k">elif</span> <span class="n">tmp</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">5</span><span class="p">:</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;Freezing Rain&quot;</span>
+    <span class="k">elif</span> <span class="n">tmp</span> <span class="o">&lt;=-</span><span class="mi">5</span> <span class="ow">and</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;ZR/S Mix&quot;</span>
+    <span class="k">elif</span> <span class="n">tmp</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;Snow&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="s2">&quot;N/A&quot;</span>
+
+    <span class="k">return</span> <span class="n">plevel</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">st</span></div>
+
+<div class="viewcode-block" id="posneg_temperature"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.posneg_temperature">[docs]</a><span class="k">def</span> <span class="nf">posneg_temperature</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Positive/Negative Temperature profile</span>
+<span class="sd">        Adapted from SHARP code donated by Rich Thompson (SPC)</span>
+
+<span class="sd">        Description:</span>
+<span class="sd">        This routine calculates the positive (above 0 C) and negative (below 0 C)</span>
+<span class="sd">        areas of the temperature profile starting from a specified pressure (start).</span>
+<span class="sd">        If the specified pressure is not given, this routine calls init_phase()</span>
+<span class="sd">        to obtain the pressure level the precipitation expected to fall begins at.</span>
+
+<span class="sd">        This is an routine considers only the temperature profile as opposed to the wet-bulb</span>
+<span class="sd">        profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object</span>
+<span class="sd">        start : number</span>
+<span class="sd">            the pressure level the precipitation originates from (found by calling init_phase()) (mb)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pos : float</span>
+<span class="sd">            the positive area (&gt; 0 C) of the wet-bulb profile (J/kg)</span>
+<span class="sd">        neg : float</span>
+<span class="sd">            the negative area (&lt; 0 C) of the wet-bulb profile (J/kg)</span>
+<span class="sd">        top : float</span>
+<span class="sd">            the top of the precipitation layer pressure (mb)</span>
+<span class="sd">        bot : float</span>
+<span class="sd">            the bottom of the precipitation layer pressure (mb)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Needs to be tested</span>
+    
+    <span class="c1"># If there is no sounding, don&#39;t compute anything</span>
+    <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">850</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="c1"># Find lowest obs in layer</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span>
+    <span class="n">lptr</span>  <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()</span>
+
+    <span class="c1"># Find the highest obs in the layer</span>
+    <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">lvl</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">st</span> <span class="o">=</span> <span class="n">init_phase</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lvl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">lvl</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="mf">500.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">start</span>
+
+    <span class="c1"># Find the level where the pressure is just greater than the upper pressure</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">uptr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uptr</span> <span class="o">=</span> <span class="n">idxs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Start with the top layer</span>
+    <span class="n">pe1</span> <span class="o">=</span> <span class="n">upper</span><span class="p">;</span>
+    <span class="n">h1</span> <span class="o">=</span>  <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe1</span><span class="p">)</span>
+    <span class="n">te1</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe1</span><span class="p">)</span>
+    <span class="n">tp1</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">warmlayer</span> <span class="o">=</span> <span class="n">coldlayer</span> <span class="o">=</span> <span class="n">lyre</span> <span class="o">=</span> <span class="n">totp</span> <span class="o">=</span> <span class="n">totn</span> <span class="o">=</span> <span class="n">tote</span> <span class="o">=</span> <span class="n">ptop</span> <span class="o">=</span> <span class="n">pbot</span> <span class="o">=</span> <span class="n">lyrlast</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">uptr</span><span class="p">,</span> <span class="n">lptr</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">pe2</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">h2</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">te2</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe2</span><span class="p">)</span>
+        <span class="n">tp2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tdef1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="n">te1</span><span class="p">)</span> <span class="o">/</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">te1</span><span class="p">);</span>
+        <span class="n">tdef2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="n">te2</span><span class="p">)</span> <span class="o">/</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">te2</span><span class="p">);</span>
+        <span class="n">lyrlast</span> <span class="o">=</span> <span class="n">lyre</span><span class="p">;</span>
+        <span class="n">lyre</span> <span class="o">=</span> <span class="mf">9.8</span> <span class="o">*</span> <span class="p">(</span><span class="n">tdef1</span> <span class="o">+</span> <span class="n">tdef2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">h2</span> <span class="o">-</span> <span class="n">h1</span><span class="p">);</span>
+
+        <span class="c1"># Has a warm layer been found yet?</span>
+        <span class="k">if</span> <span class="n">te2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">warmlayer</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">ptop</span> <span class="o">=</span> <span class="n">pe2</span>
+
+        <span class="c1"># Has a cold layer been found yet?</span>
+        <span class="k">if</span> <span class="n">te2</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">coldlayer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">coldlayer</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">pbot</span> <span class="o">=</span> <span class="n">pe2</span>
+
+        <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">lyre</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">totp</span> <span class="o">+=</span> <span class="n">lyre</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">totn</span> <span class="o">+=</span> <span class="n">lyre</span>
+            <span class="n">tote</span> <span class="o">+=</span> <span class="n">lyre</span>
+
+        <span class="n">pelast</span> <span class="o">=</span> <span class="n">pe1</span>
+        <span class="n">pe1</span> <span class="o">=</span> <span class="n">pe2</span>
+        <span class="n">h1</span> <span class="o">=</span> <span class="n">h2</span>
+        <span class="n">te1</span> <span class="o">=</span> <span class="n">te2</span>
+        <span class="n">tp1</span> <span class="o">=</span> <span class="n">tp2</span>
+    
+    <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">coldlayer</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">totp</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">totn</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">ptop</span>
+        <span class="n">bot</span> <span class="o">=</span> <span class="n">pbot</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">bot</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bot</span></div>
+
+
+<div class="viewcode-block" id="posneg_wetbulb"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.posneg_wetbulb">[docs]</a><span class="k">def</span> <span class="nf">posneg_wetbulb</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">start</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Positive/Negative Wetbulb profile</span>
+<span class="sd">        Adapted from SHARP code donated by Rich Thompson (SPC)</span>
+
+<span class="sd">        This routine calculates the positive (above 0 C) and negative (below 0 C)</span>
+<span class="sd">        areas of the wet bulb profile starting from a specified pressure (start).</span>
+<span class="sd">        If the specified pressure is not given, this routine calls init_phase()</span>
+<span class="sd">        to obtain the pressure level the precipitation expected to fall begins at.</span>
+
+<span class="sd">        This is an routine considers the wet-bulb profile instead of the temperature profile</span>
+<span class="sd">        in case the profile beneath the profile beneath the falling precipitation becomes saturated.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object</span>
+<span class="sd">        start : number</span>
+<span class="sd">            the pressure level the precipitation originates from (found by calling init_phase()) (mb)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pos : float</span>
+<span class="sd">            the positive area (&gt; 0 C) of the wet-bulb profile (J/kg)</span>
+<span class="sd">        neg : float</span>
+<span class="sd">            the negative area (&lt; 0 C) of the wet-bulb profile (J/kg)</span>
+<span class="sd">        top : float</span>
+<span class="sd">            the top of the precipitation layer pressure (mb)</span>
+<span class="sd">        bot : float</span>
+<span class="sd">            the bottom of the precipitation layer pressure (mb)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Needs to be tested</span>
+
+    <span class="c1"># If there is no sounding, don&#39;t compute anything</span>
+    <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="mi">850</span><span class="p">))</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+
+    <span class="c1"># Find lowest obs in layer</span>
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span>
+    <span class="n">lptr</span>  <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()</span>
+
+    <span class="c1"># Find the highest obs in the layer</span>
+    <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">lvl</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">st</span> <span class="o">=</span> <span class="n">init_phase</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lvl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">lvl</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="mf">500.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">start</span>
+
+    <span class="c1"># Find the level where the pressure is just greater than the upper pressure</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span> <span class="o">&gt;</span> <span class="n">upper</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">uptr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uptr</span> <span class="o">=</span> <span class="n">idxs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Start with the upper layer</span>
+    <span class="n">pe1</span> <span class="o">=</span> <span class="n">upper</span><span class="p">;</span>
+    <span class="n">h1</span> <span class="o">=</span>  <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe1</span><span class="p">);</span>
+    <span class="n">te1</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">wetbulb</span><span class="p">(</span><span class="n">pe1</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe1</span><span class="p">),</span> <span class="n">interp</span><span class="o">.</span><span class="n">dwpt</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe1</span><span class="p">))</span>
+    <span class="n">tp1</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">warmlayer</span> <span class="o">=</span> <span class="n">coldlayer</span> <span class="o">=</span> <span class="n">lyre</span> <span class="o">=</span> <span class="n">totp</span> <span class="o">=</span> <span class="n">totn</span> <span class="o">=</span> <span class="n">tote</span> <span class="o">=</span> <span class="n">ptop</span> <span class="o">=</span> <span class="n">pbot</span> <span class="o">=</span> <span class="n">lyrlast</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">uptr</span><span class="p">,</span> <span class="n">lptr</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">pe2</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">h2</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">te2</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">wetbulb</span><span class="p">(</span><span class="n">pe2</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">temp</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe2</span><span class="p">),</span> <span class="n">interp</span><span class="o">.</span><span class="n">dwpt</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">pe2</span><span class="p">))</span>
+        <span class="n">tp2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tdef1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="n">te1</span><span class="p">)</span> <span class="o">/</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">te1</span><span class="p">);</span>
+        <span class="n">tdef2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="n">te2</span><span class="p">)</span> <span class="o">/</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctok</span><span class="p">(</span><span class="n">te2</span><span class="p">);</span>
+        <span class="n">lyrlast</span> <span class="o">=</span> <span class="n">lyre</span><span class="p">;</span>
+        <span class="n">lyre</span> <span class="o">=</span> <span class="mf">9.8</span> <span class="o">*</span> <span class="p">(</span><span class="n">tdef1</span> <span class="o">+</span> <span class="n">tdef2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">h2</span> <span class="o">-</span> <span class="n">h1</span><span class="p">);</span>
+
+        <span class="c1"># Has a warm layer been found yet?</span>
+        <span class="k">if</span> <span class="n">te2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">warmlayer</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">ptop</span> <span class="o">=</span> <span class="n">pe2</span>
+
+        <span class="c1"># Has a cold layer been found yet?</span>
+        <span class="k">if</span> <span class="n">te2</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">coldlayer</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">coldlayer</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">pbot</span> <span class="o">=</span> <span class="n">pe2</span>
+
+        <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">lyre</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">totp</span> <span class="o">+=</span> <span class="n">lyre</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">totn</span> <span class="o">+=</span> <span class="n">lyre</span>
+            <span class="n">tote</span> <span class="o">+=</span> <span class="n">lyre</span>
+
+        <span class="n">pelast</span> <span class="o">=</span> <span class="n">pe1</span>
+        <span class="n">pe1</span> <span class="o">=</span> <span class="n">pe2</span>
+        <span class="n">h1</span> <span class="o">=</span> <span class="n">h2</span>
+        <span class="n">te1</span> <span class="o">=</span> <span class="n">te2</span>
+        <span class="n">tp1</span> <span class="o">=</span> <span class="n">tp2</span>
+    
+    <span class="k">if</span> <span class="n">warmlayer</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">coldlayer</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">totp</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">totn</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">ptop</span>
+        <span class="n">bot</span> <span class="o">=</span> <span class="n">pbot</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">bot</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">pos</span><span class="p">,</span> <span class="n">neg</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bot</span></div>
+
+<div class="viewcode-block" id="best_guess_precip"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.best_guess_precip">[docs]</a><span class="k">def</span> <span class="nf">best_guess_precip</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">init_phase</span><span class="p">,</span> <span class="n">init_lvl</span><span class="p">,</span> <span class="n">init_temp</span><span class="p">,</span> <span class="n">tpos</span><span class="p">,</span> <span class="n">tneg</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Best Guess Precipitation type</span>
+<span class="sd">        Adapted from SHARP code donated by Rich Thompson (SPC)</span>
+
+<span class="sd">        This algorithm utilizes the output from the init_phase() and posneg_temperature()</span>
+<span class="sd">        functions to make a best guess at the preciptation type one would observe</span>
+<span class="sd">        at the surface given a thermodynamic profile.</span>
+
+<span class="sd">        Precipitation Types Supported:</span>
+<span class="sd">        * None</span>
+<span class="sd">        * Rain</span>
+<span class="sd">        * Snow</span>
+<span class="sd">        * Sleet and Snow</span>
+<span class="sd">        * Sleet</span>
+<span class="sd">        * Freezing Rain/Drizzle</span>
+<span class="sd">        * Unknown</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            Profile object</span>
+<span class="sd">        init_phase : int</span>
+<span class="sd">            the initial phase of the precipitation (see 2nd value returned from init_phase())</span>
+<span class="sd">        init_lvl : float</span>
+<span class="sd">            the initial level of the precipitation source (mb) (see 1st value returned from init_phase())</span>
+<span class="sd">        init_temp : float</span>
+<span class="sd">            the initial level of the precipitation source (C) (see 3rd value returned from init_phase())</span>
+<span class="sd">        tpos : float</span>
+<span class="sd">            the positive area (&gt; 0 C) in the temperature profile (J/kg)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        precip_type : str</span>
+<span class="sd">            the best guess precipitation type</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Needs to be tested</span>
+
+    <span class="n">precip_type</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Case: No precip</span>
+    <span class="k">if</span> <span class="n">init_phase</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;None.&quot;</span>
+
+    <span class="c1"># Case: Always too warm - Rain</span>
+    <span class="k">elif</span> <span class="n">init_phase</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tneg</span> <span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Rain.&quot;</span>
+
+    <span class="c1"># Case: always too cold</span>
+    <span class="k">elif</span> <span class="n">init_phase</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">tpos</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Snow.&quot;</span>
+
+    <span class="c1"># Case: ZR too warm at sfc - Rain</span>
+    <span class="k">elif</span> <span class="n">init_phase</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">tpos</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Rain.&quot;</span>
+
+    <span class="c1"># Case: non-snow init...always too cold - Initphase &amp; sleet</span>
+    <span class="k">elif</span> <span class="n">init_phase</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">tpos</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1">#print interp.to_agl(prof, interp.hght(prof, init_lvl))</span>
+        <span class="k">if</span> <span class="n">interp</span><span class="o">.</span><span class="n">to_agl</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">interp</span><span class="o">.</span><span class="n">hght</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">init_lvl</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">3000</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">init_temp</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mi">4</span><span class="p">:</span>
+                <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Sleet and Snow.&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Sleet.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Freezing Rain/Drizzle.&quot;</span>
+
+    <span class="c1"># Case: Snow...but warm at sfc</span>
+    <span class="k">elif</span> <span class="n">init_phase</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">tpos</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Rain.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Snow.&quot;</span>
+   
+    <span class="c1"># Case: Warm layer.</span>
+    <span class="k">elif</span> <span class="n">tpos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">tpos</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="o">-</span><span class="n">tneg</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.62</span> <span class="o">*</span> <span class="n">x1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">60.0</span>
+        <span class="k">if</span> <span class="n">y1</span> <span class="o">&gt;</span> <span class="n">y2</span><span class="p">:</span>
+            <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Sleet.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Freezing Rain.&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Rain.&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">precip_type</span> <span class="o">=</span> <span class="s2">&quot;Unknown.&quot;</span>
+
+    <span class="k">return</span> <span class="n">precip_type</span></div>
+
+<div class="viewcode-block" id="possible_watch"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.watch_type.possible_watch">[docs]</a><span class="k">def</span> <span class="nf">possible_watch</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="n">use_left</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Possible Weather/Hazard/Watch Type</span>
+<span class="sd">        </span>
+<span class="sd">        This function generates a list of possible significant weather types</span>
+<span class="sd">        one can expect given a Profile object. (Currently works only for ConvectiveProfile.)</span>
+
+<span class="sd">        These possible weather types are computed via fuzzy logic through set thresholds that</span>
+<span class="sd">        have been found through a.) analyzing ingredients within the profile and b.) combining those ingredients</span>
+<span class="sd">        with forecasting experience to produce a suggestion of what hazards may exist.  Some of the logic is </span>
+<span class="sd">        based on experience, some of it is based on actual National Weather Service criteria.</span>
+
+<span class="sd">        This function has not been formally verified and is not meant to be comprehensive nor</span>
+<span class="sd">        a source of strict guidance for weather forecasters.  As always, the raw data is to be </span>
+<span class="sd">        consulted.</span>
+
+<span class="sd">        Wx Categories (ranked in terms of severity):</span>
+<span class="sd">        * PDS TOR</span>
+<span class="sd">        * TOR</span>
+<span class="sd">        * MRGL TOR</span>
+<span class="sd">        * SVR</span>
+<span class="sd">        * MRGL SVR</span>
+<span class="sd">        * FLASH FLOOD</span>
+<span class="sd">        * BLIZZARD</span>
+<span class="sd">        * EXCESSIVE HEAT</span>
+<span class="sd">    </span>
+<span class="sd">        Suggestions for severe/tornado thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prof : profile object</span>
+<span class="sd">            ConvectiveProfile object</span>
+<span class="sd">        use_left : bool</span>
+<span class="sd">            If True, uses the parameters computed from the left-mover bunkers vector to decide the watch type. If False,</span>
+<span class="sd">            uses parameters from the right-mover vector. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        watch_types : numpy array</span>
+<span class="sd">            strings containing the weather types in code</span>
+<span class="sd">        colors : numpy array</span>
+<span class="sd">            HEX colors corresponding to each weather type</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+        
+    <span class="n">watch_types</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="n">lr1</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">lapse_rate</span><span class="p">(</span> <span class="n">prof</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">pres</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">use_left</span><span class="p">:</span>
+        <span class="n">stp_eff</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">left_stp_cin</span>
+        <span class="n">stp_fixed</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">left_stp_fixed</span>
+        <span class="n">srw_4_6km</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">left_srw_4_6km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">prof</span><span class="o">.</span><span class="n">left_srw_4_6km</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">esrh</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">left_esrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">srh1km</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">left_srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stp_eff</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_stp_cin</span>
+        <span class="n">stp_fixed</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_stp_fixed</span>
+        <span class="n">srw_4_6km</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">right_srw_4_6km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">prof</span><span class="o">.</span><span class="n">right_srw_4_6km</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">esrh</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_esrh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">srh1km</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">latitude</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">stp_eff</span> <span class="o">=</span> <span class="o">-</span><span class="n">stp_eff</span>
+        <span class="n">stp_fixed</span> <span class="o">=</span> <span class="o">-</span><span class="n">stp_fixed</span>
+        <span class="n">esrh</span> <span class="o">=</span> <span class="o">-</span><span class="n">esrh</span>
+        <span class="n">srh1km</span> <span class="o">=</span> <span class="o">-</span><span class="n">srh1km</span>
+
+    <span class="n">sfc_8km_shear</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc_8km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">prof</span><span class="o">.</span><span class="n">sfc_8km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">srh1km</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">esrh</span> <span class="o">&gt;=</span> <span class="mi">200</span> <span class="ow">and</span> <span class="n">srw_4_6km</span> <span class="o">&gt;=</span> <span class="mf">15.0</span> <span class="ow">and</span> \
+        <span class="n">sfc_8km_shear</span> <span class="o">&gt;</span> <span class="mf">45.0</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span> <span class="o">&lt;</span> <span class="mf">1000.</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">lclhght</span> <span class="o">&lt;</span> <span class="mi">1200</span> <span class="ow">and</span> <span class="n">lr1</span> <span class="o">&gt;=</span> <span class="mf">5.0</span> <span class="ow">and</span> \
+        <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">50</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;PDS TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">MAGENTA</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">125.</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">srw_4_6km</span> <span class="o">&gt;=</span> <span class="mf">15.0</span> <span class="ow">or</span> <span class="n">sfc_8km_shear</span> <span class="o">&gt;=</span> <span class="mi">40</span><span class="p">)</span> <span class="ow">and</span> \
+        <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">50</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">prof</span><span class="o">.</span><span class="n">low_rh</span> <span class="o">+</span> <span class="n">prof</span><span class="o">.</span><span class="n">mid_rh</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lr1</span> <span class="o">&gt;=</span> <span class="mf">5.0</span> <span class="ow">and</span> \
+        <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">50</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">150</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;MRGL TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">esrh</span> <span class="o">&gt;=</span> <span class="mi">150</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">srh1km</span> <span class="o">&gt;=</span> <span class="mi">150</span><span class="p">)</span> <span class="ow">and</span> \
+        <span class="n">prof</span><span class="o">.</span><span class="n">mlpcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">50</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">ebotm</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;MRGL TOR&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FF0000&quot;</span><span class="p">)</span>
+
+    <span class="c1">#SVR LOGIC</span>
+    <span class="k">if</span> <span class="n">use_left</span><span class="p">:</span>
+        <span class="n">scp</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">left_scp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scp</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_scp</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">stp_fixed</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">scp</span> <span class="o">&gt;=</span> <span class="mf">4.0</span> <span class="ow">or</span> <span class="n">stp_eff</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">50</span><span class="p">:</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FFFF00&quot;</span><span class="p">)</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;SVR&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">scp</span> <span class="o">&gt;=</span> <span class="mf">2.0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">ship</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">prof</span><span class="o">.</span><span class="n">dcape</span> <span class="o">&gt;=</span> <span class="mi">750</span><span class="p">)</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">50</span><span class="p">:</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FFFF00&quot;</span><span class="p">)</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;SVR&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prof</span><span class="o">.</span><span class="n">sig_severe</span> <span class="o">&gt;=</span> <span class="mi">30000</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mmp</span> <span class="o">&gt;=</span> <span class="mf">0.6</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">50</span><span class="p">:</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FFFF00&quot;</span><span class="p">)</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;SVR&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">bminus</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">75.0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wndg</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">prof</span><span class="o">.</span><span class="n">ship</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">scp</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">):</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#0099CC&quot;</span><span class="p">)</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;MRGL SVR&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow</span>
+    <span class="c1"># This is trying to capture the ingredients of moisture and advection speed, but cannot</span>
+    <span class="c1"># handle precipitation efficiency or vertical motion</span>
+
+    <span class="c1"># Likely is good for handling slow moving MCSes.</span>
+    <span class="n">pw_climo_flag</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pwv_flag</span>
+    <span class="n">pwat</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">pwat</span>
+    <span class="n">upshear</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comp2vec</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">upshear_downshear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">prof</span><span class="o">.</span><span class="n">upshear_downshear</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">pw_climo_flag</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">upshear</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">25</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;FLASH FLOOD&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#5FFB17&quot;</span><span class="p">)</span>
+    <span class="c1">#elif pwat &gt; 1.3 and upshear[1] &lt; 25:</span>
+    <span class="c1">#    watch_types.append(&quot;FLASH FLOOD&quot;)</span>
+    <span class="c1">#    colors.append(&quot;#5FFB17&quot;)</span>
+    
+    <span class="c1"># Blizzard if sfc winds &gt; 35 mph and precip type detects snow </span>
+    <span class="c1"># Still needs to be tied into the </span>
+    <span class="n">sfc_wspd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MPH</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()])</span>
+    <span class="k">if</span> <span class="n">sfc_wspd</span> <span class="o">&gt;</span> <span class="mf">35.</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()]</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="s2">&quot;Snow&quot;</span> <span class="ow">in</span> <span class="n">prof</span><span class="o">.</span><span class="n">precip_type</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;BLIZZARD&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#3366FF&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Wind Chill (if wind chill gets below -20 F)</span>
+    <span class="c1"># TODO: Be reinstated in future releases if the logic becomes a little more solid.</span>
+    <span class="c1">#if wind_chill(prof) &lt; -20.:</span>
+    <span class="c1">#    watch_types.append(&quot;WIND CHILL&quot;)</span>
+    <span class="c1">#    colors.append(&quot;#3366FF&quot;)</span>
+    
+    <span class="c1"># Fire WX (sfc RH &lt; 30% and sfc_wind speed &gt; 15 mph) (needs to be updated to include SPC Fire Wx Indices)</span>
+    <span class="c1"># TODO: Be reinstated in future releases once the logic becomes a little more solid</span>
+    <span class="c1">#if sfc_wspd &gt; 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.dwpc[prof.get_sfc()]) &lt; 30. :</span>
+        <span class="c1">#watch_types.append(&quot;FIRE WEATHER&quot;)</span>
+        <span class="c1">#colors.append(&quot;#FF9900&quot;)</span>
+    
+    <span class="c1"># Excessive Heat (use the heat index calculation (and the max temperature algorithm))</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">ctof</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()])</span>
+    <span class="n">rh</span> <span class="o">=</span> <span class="n">thermo</span><span class="o">.</span><span class="n">relh</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()],</span> <span class="n">temp</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">get_sfc</span><span class="p">()])</span>
+    <span class="n">hi</span> <span class="o">=</span> <span class="n">heat_index</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">rh</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hi</span> <span class="o">&gt;</span> <span class="mf">105.</span><span class="p">:</span>
+        <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;EXCESSIVE HEAT&quot;</span><span class="p">)</span>
+        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#C85A17&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Freeze (checks to see if wetbulb is below freezing and temperature isn&#39;t and wind speeds are low)</span>
+    <span class="c1"># Still in testing.  To be reinstated in future releases.</span>
+    <span class="c1">#if thermo.ctof(prof.dwpc[prof.get_sfc()]) &lt;= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) &lt;= 32 and prof.wspd[prof.get_sfc()] &lt; 5.:</span>
+    <span class="c1">#    watch_types.append(&quot;FREEZE&quot;)</span>
+    <span class="c1">#    colors.append(&quot;#3366FF&quot;)</span>
+    
+    <span class="n">watch_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;NONE&quot;</span><span class="p">)</span>
+    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#FFCC33&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">watch_types</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

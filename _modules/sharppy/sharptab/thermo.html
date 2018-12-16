@@ -1,0 +1,790 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sharppy.sharptab.thermo &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>sharppy.sharptab.thermo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for sharppy.sharptab.thermo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Thermodynamic Library &#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;drylift&#39;</span><span class="p">,</span> <span class="s1">&#39;thalvl&#39;</span><span class="p">,</span> <span class="s1">&#39;lcltemp&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;wobf&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;satlift&#39;</span><span class="p">,</span> <span class="s1">&#39;wetlift&#39;</span><span class="p">,</span> <span class="s1">&#39;lifted&#39;</span><span class="p">,</span> <span class="s1">&#39;vappres&#39;</span><span class="p">,</span> <span class="s1">&#39;mixratio&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;temp_at_mixrat&#39;</span><span class="p">,</span> <span class="s1">&#39;wetbulb&#39;</span><span class="p">,</span> <span class="s1">&#39;thetaw&#39;</span><span class="p">,</span> <span class="s1">&#39;thetae&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;virtemp&#39;</span><span class="p">,</span> <span class="s1">&#39;relh&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;ftoc&#39;</span><span class="p">,</span> <span class="s1">&#39;ctof&#39;</span><span class="p">,</span> <span class="s1">&#39;ctok&#39;</span><span class="p">,</span> <span class="s1">&#39;ktoc&#39;</span><span class="p">,</span> <span class="s1">&#39;ftok&#39;</span><span class="p">,</span> <span class="s1">&#39;ktof&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># Constants Used</span>
+<span class="n">c1</span> <span class="o">=</span> <span class="mf">0.0498646455</span> <span class="p">;</span> <span class="n">c2</span> <span class="o">=</span> <span class="mf">2.4082965</span> <span class="p">;</span> <span class="n">c3</span> <span class="o">=</span> <span class="mf">7.07475</span>
+<span class="n">c4</span> <span class="o">=</span> <span class="mf">38.9114</span> <span class="p">;</span> <span class="n">c5</span> <span class="o">=</span> <span class="mf">0.0915</span> <span class="p">;</span> <span class="n">c6</span> <span class="o">=</span> <span class="mf">1.2035</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">0.62197</span>
+
+<div class="viewcode-block" id="drylift"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.drylift">[docs]</a><span class="k">def</span> <span class="nf">drylift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Lifts a parcel to the LCL and returns its new level and temperature.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure of initial parcel in hPa</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of inital parcel in C</span>
+<span class="sd">    td : number, numpy array</span>
+<span class="sd">        Dew Point of initial parcel in C</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p2 : number, numpy array</span>
+<span class="sd">        LCL pressure in hPa</span>
+<span class="sd">    t2 : number, numpy array</span>
+<span class="sd">        LCL Temperature in C</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">lcltemp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="n">p2</span> <span class="o">=</span> <span class="n">thalvl</span><span class="p">(</span><span class="n">theta</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">),</span> <span class="n">t2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p2</span><span class="p">,</span> <span class="n">t2</span></div>
+
+
+<div class="viewcode-block" id="lcltemp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.lcltemp">[docs]</a><span class="k">def</span> <span class="nf">lcltemp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the temperature (C) of a parcel when raised to its LCL.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    td : number, numpy array</span>
+<span class="sd">        Dewpoint temperature of the parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) of the parcel at it&#39;s LCL.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">td</span>
+    <span class="n">dlt</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.2185</span> <span class="o">+</span> <span class="mf">0.001278</span> <span class="o">*</span> <span class="n">t</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.00219</span> <span class="o">+</span> <span class="mf">1.173e-5</span> <span class="o">*</span> <span class="n">s</span> <span class="o">-</span>
+        <span class="mf">0.0000052</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">t</span> <span class="o">-</span> <span class="n">dlt</span></div>
+
+
+<div class="viewcode-block" id="thalvl"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.thalvl">[docs]</a><span class="k">def</span> <span class="nf">thalvl</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the level (hPa) of a parcel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    theta : number, numpy array</span>
+<span class="sd">        Potential temperature of the parcel (C)</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Pressure Level (hPa [float]) of the parcel</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">ZEROCNK</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">+</span> <span class="n">ZEROCNK</span>
+    <span class="k">return</span> <span class="mf">1000.</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">theta</span> <span class="o">/</span> <span class="n">t</span><span class="p">),(</span><span class="mf">1.</span><span class="o">/</span><span class="n">ROCP</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="theta"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.theta">[docs]</a><span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">1000.</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the potential temperature (C) of a parcel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        The pressure of the parcel (hPa)</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    p2 : number, numpy array (default 1000.)</span>
+<span class="sd">        Reference pressure level (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Potential temperature (C)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">t</span> <span class="o">+</span> <span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">p2</span> <span class="o">/</span> <span class="n">p</span><span class="p">),</span><span class="n">ROCP</span><span class="p">))</span> <span class="o">-</span> <span class="n">ZEROCNK</span></div>
+
+
+<div class="viewcode-block" id="thetaw"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.thetaw">[docs]</a><span class="k">def</span> <span class="nf">thetaw</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the wetbulb potential temperature (C) of a parcel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        The pressure of the parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew point of parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Wetbulb potential temperature (C)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">p2</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">drylift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wetlift</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="thetae"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.thetae">[docs]</a><span class="k">def</span> <span class="nf">thetae</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the equivalent potential temperature (C) of a parcel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        The pressure of the parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew point of parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Equivalent potential temperature (C)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">p2</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">drylift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span><span class="p">(</span><span class="mf">100.</span><span class="p">,</span> <span class="n">wetlift</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="mf">100.</span><span class="p">),</span> <span class="mf">1000.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="virtemp"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.virtemp">[docs]</a><span class="k">def</span> <span class="nf">virtemp</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the virtual temperature (C) of a parcel.  If </span>
+<span class="sd">    td is masked, then it returns the temperature passed to the </span>
+<span class="sd">    function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        The pressure of the parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew point of parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Virtual temperature (C)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="n">tk</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">ZEROCNK</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">mixratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="n">tk</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">w</span> <span class="o">/</span> <span class="n">eps</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">w</span><span class="p">))</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">QC</span><span class="p">(</span><span class="n">vt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">vt</span></div>
+
+<div class="viewcode-block" id="relh"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.relh">[docs]</a><span class="k">def</span> <span class="nf">relh</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the virtual temperature (C) of a parcel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        The pressure of the parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew point of parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Relative humidity (%) of a parcel</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="mf">100.</span> <span class="o">*</span> <span class="n">vappres</span><span class="p">(</span><span class="n">td</span><span class="p">)</span><span class="o">/</span><span class="n">vappres</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c1">#$mixratio(p, td) / mixratio(p, t)</span></div>
+
+<span class="k">def</span> <span class="nf">temp_at_vappres</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the temperature (C) given a vapor pressure value (hPa).</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    e : number</span>
+<span class="sd">        The vapor pressure of a parcel (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) of a parcel.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.5</span><span class="o">*</span><span class="mf">10.</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">R_v</span> <span class="o">=</span> <span class="mf">461.5</span>
+    <span class="n">T_o</span> <span class="o">=</span> <span class="mf">273.15</span>
+    <span class="n">e_so</span> <span class="o">=</span> <span class="mf">6.11</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="n">R_v</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">T_o</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ktoc</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="mf">1.</span><span class="o">/</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="o">/</span><span class="n">e_so</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+<div class="viewcode-block" id="wobf"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.wobf">[docs]</a><span class="k">def</span> <span class="nf">wobf</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Implementation of the Wobus Function for computing the moist adiabats.</span>
+
+<span class="sd">    .. caution::</span>
+<span class="sd">        The Wobus function has been found to have a slight</span>
+<span class="sd">        pressure dependency (Davies-Jones 2008).  This dependency</span>
+<span class="sd">        is not included in this implementation.  </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Correction to theta (C) for calculation of saturated potential temperature.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">20</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># If t is a scalar</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">t</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">npol</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">8.841660499999999e-3</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span> <span class="mf">1.4714143e-4</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.671989000000001e-7</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.2607217e-8</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.8598073e-10</span><span class="p">)))))</span>
+            <span class="n">npol</span> <span class="o">=</span> <span class="mf">15.13</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">npol</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">npol</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ppol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.9618922e-07</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">6.1059365e-09</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.9401551e-11</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.2588129e-13</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.6688280e-16</span><span class="p">)))))</span>
+            <span class="n">ppol</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.6182989e-03</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.3603273e-05</span> <span class="o">+</span> <span class="n">ppol</span><span class="p">))</span>
+            <span class="n">ppol</span> <span class="o">=</span> <span class="p">(</span><span class="mf">29.93</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">ppol</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.96</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="mf">14.8</span>
+            <span class="k">return</span> <span class="n">ppol</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># If t is an array</span>
+        <span class="n">npol</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">8.841660499999999e-3</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span> <span class="mf">1.4714143e-4</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.671989000000001e-7</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.2607217e-8</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">3.8598073e-10</span><span class="p">)))))</span>
+        <span class="n">npol</span> <span class="o">=</span> <span class="mf">15.13</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">npol</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">ppol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.9618922e-07</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">6.1059365e-09</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.9401551e-11</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.2588129e-13</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.6688280e-16</span><span class="p">)))))</span>
+        <span class="n">ppol</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.6182989e-03</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.3603273e-05</span> <span class="o">+</span> <span class="n">ppol</span><span class="p">))</span>
+        <span class="n">ppol</span> <span class="o">=</span> <span class="p">(</span><span class="mf">29.93</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">ppol</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.96</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="mf">14.8</span>
+        <span class="n">correction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">correction</span><span class="p">[</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">npol</span><span class="p">[</span><span class="n">t</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">correction</span><span class="p">[</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ppol</span><span class="p">[</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">correction</span></div>
+
+
+
+<div class="viewcode-block" id="satlift"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.satlift">[docs]</a><span class="k">def</span> <span class="nf">satlift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">thetam</span><span class="p">,</span> <span class="n">conv</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the temperature (C) of a saturated parcel (thm) when lifted to a</span>
+<span class="sd">    new pressure level (hPa)</span>
+
+<span class="sd">    .. caution::</span>
+<span class="sd">        Testing of the SHARPpy parcel lifting routines has revealed that the</span>
+<span class="sd">        convergence criteria used the SHARP version (and implemented here) may cause </span>
+<span class="sd">        drifting the pseudoadiabat to occasionally &quot;drift&quot; when high-resolution </span>
+<span class="sd">        radiosonde data is used.  While a stricter convergence criteria (e.g. 0.01) has shown</span>
+<span class="sd">        to resolve this problem, it creates a noticable departure from the SPC CAPE values and therefore</span>
+<span class="sd">        may decalibrate the other SHARPpy functions (e.g. SARS).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        Pressure to which parcel is raised (hPa)</span>
+<span class="sd">    thetam : number</span>
+<span class="sd">        Saturated Potential Temperature of parcel (C)</span>
+<span class="sd">    conv : number</span>
+<span class="sd">        Convergence criteria for satlift() (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) of saturated parcel at new level</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># If p and thetam are scalars</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1000.</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="n">thetam</span>
+        <span class="n">eor</span> <span class="o">=</span> <span class="mi">999</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">eor</span><span class="p">)</span> <span class="o">-</span> <span class="n">conv</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eor</span> <span class="o">==</span> <span class="mi">999</span><span class="p">:</span>                  <span class="c1"># First Pass</span>
+                <span class="n">pwrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">),</span><span class="n">ROCP</span><span class="p">)</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="p">(</span><span class="n">thetam</span> <span class="o">+</span> <span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">*</span> <span class="n">pwrp</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+                <span class="n">e1</span> <span class="o">=</span> <span class="n">wobf</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span> <span class="o">-</span> <span class="n">wobf</span><span class="p">(</span><span class="n">thetam</span><span class="p">)</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>                           <span class="c1"># Successive Passes</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="n">t2</span>
+                <span class="n">e1</span> <span class="o">=</span> <span class="n">e2</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="p">(</span><span class="n">e1</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span>
+            <span class="n">e2</span> <span class="o">=</span> <span class="p">(</span><span class="n">t2</span> <span class="o">+</span> <span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">/</span> <span class="n">pwrp</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+            <span class="n">e2</span> <span class="o">+=</span> <span class="n">wobf</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span> <span class="o">-</span> <span class="n">wobf</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span> <span class="o">-</span> <span class="n">thetam</span>
+            <span class="n">eor</span> <span class="o">=</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">rate</span>
+        <span class="k">return</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">eor</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># If p and thetam are arrays</span>
+        <span class="n">short</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1000.</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.001</span> <span class="o">&lt;=</span> <span class="mi">0</span>
+        <span class="n">lft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">short</span><span class="p">,</span> <span class="n">thetam</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">short</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">lft</span>
+
+        <span class="n">eor</span> <span class="o">=</span> <span class="mi">999</span>
+        <span class="n">first_pass</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">eor</span><span class="p">))</span> <span class="o">-</span> <span class="n">conv</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">first_pass</span><span class="p">:</span>                  <span class="c1"># First Pass</span>
+                <span class="n">pwrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">p</span><span class="p">[</span><span class="o">~</span><span class="n">short</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.</span><span class="p">),</span><span class="n">ROCP</span><span class="p">)</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="p">(</span><span class="n">thetam</span><span class="p">[</span><span class="o">~</span><span class="n">short</span><span class="p">]</span> <span class="o">+</span> <span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">*</span> <span class="n">pwrp</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+                <span class="n">e1</span> <span class="o">=</span> <span class="n">wobf</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span> <span class="o">-</span> <span class="n">wobf</span><span class="p">(</span><span class="n">thetam</span><span class="p">[</span><span class="o">~</span><span class="n">short</span><span class="p">])</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">first_pass</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>                           <span class="c1"># Successive Passes</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span><span class="p">)</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="n">t2</span>
+                <span class="n">e1</span> <span class="o">=</span> <span class="n">e2</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="p">(</span><span class="n">e1</span> <span class="o">*</span> <span class="n">rate</span><span class="p">)</span>
+            <span class="n">e2</span> <span class="o">=</span> <span class="p">(</span><span class="n">t2</span> <span class="o">+</span> <span class="n">ZEROCNK</span><span class="p">)</span> <span class="o">/</span> <span class="n">pwrp</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+            <span class="n">e2</span> <span class="o">+=</span> <span class="n">wobf</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span> <span class="o">-</span> <span class="n">wobf</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span> <span class="o">-</span> <span class="n">thetam</span><span class="p">[</span><span class="o">~</span><span class="n">short</span><span class="p">]</span>
+            <span class="n">eor</span> <span class="o">=</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">rate</span>
+        <span class="n">lft</span><span class="p">[</span><span class="o">~</span><span class="n">short</span><span class="p">]</span> <span class="o">=</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">eor</span>
+        <span class="k">return</span> <span class="n">lft</span></div>
+
+
+<div class="viewcode-block" id="wetlift"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.wetlift">[docs]</a><span class="k">def</span> <span class="nf">wetlift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Lifts a parcel moist adiabatically to its new level.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        Pressure of initial parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of initial parcel (C)</span>
+<span class="sd">    p2 : number</span>
+<span class="sd">        Pressure of final level (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#if p == p2:</span>
+    <span class="c1">#    return t</span>
+    <span class="n">thta</span> <span class="o">=</span> <span class="n">theta</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="mf">1000.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">thta</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span> <span class="ow">or</span> <span class="n">p2</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+    <span class="n">thetam</span> <span class="o">=</span> <span class="n">thta</span> <span class="o">-</span> <span class="n">wobf</span><span class="p">(</span><span class="n">thta</span><span class="p">)</span> <span class="o">+</span> <span class="n">wobf</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">satlift</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">thetam</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lifted"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.lifted">[docs]</a><span class="k">def</span> <span class="nf">lifted</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">lev</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate temperature (C) of parcel (defined by p, t, td) lifted</span>
+<span class="sd">    to the specified pressure level.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        Pressure of initial parcel in hPa</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of initial parcel in C</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew Point of initial parcel in C</span>
+<span class="sd">    lev : number</span>
+<span class="sd">        Pressure to which parcel is lifted in hPa</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) of lifted parcel</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">p2</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">drylift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wetlift</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">lev</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="vappres"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.vappres">[docs]</a><span class="k">def</span> <span class="nf">vappres</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the vapor pressure of dry air at given temperature</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of the parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Vapor Pressure of dry air</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.1112018e-17</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="o">-</span><span class="mf">3.0994571e-20</span><span class="p">))</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.1874425e-13</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.789232e-15</span> <span class="o">+</span> <span class="n">pol</span><span class="p">)))</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">4.3884180e-09</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.988388e-11</span> <span class="o">+</span> <span class="n">pol</span><span class="p">)))</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="mf">7.8736169e-05</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">6.111796e-07</span> <span class="o">+</span> <span class="n">pol</span><span class="p">)))</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="mf">0.99999683</span> <span class="o">+</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">9.082695e-03</span> <span class="o">+</span> <span class="n">pol</span><span class="p">))</span>
+    <span class="k">return</span> <span class="mf">6.1078</span> <span class="o">/</span> <span class="n">pol</span><span class="o">**</span><span class="mi">8</span></div>
+
+
+<div class="viewcode-block" id="mixratio"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.mixratio">[docs]</a><span class="k">def</span> <span class="nf">mixratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the mixing ratio (g/kg) of a parcel</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure of the parcel (hPa)</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        Temperature of the parcel (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Mixing Ratio (g/kg) of the given parcel</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mf">12.5</span> <span class="o">+</span> <span class="p">(</span><span class="mf">7500.</span> <span class="o">/</span> <span class="n">p</span><span class="p">))</span>
+    <span class="n">wfw</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.0000045</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.0014</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">fwesw</span> <span class="o">=</span> <span class="n">wfw</span> <span class="o">*</span> <span class="n">vappres</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">621.97</span> <span class="o">*</span> <span class="p">(</span><span class="n">fwesw</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">fwesw</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="temp_at_mixrat"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.temp_at_mixrat">[docs]</a><span class="k">def</span> <span class="nf">temp_at_mixrat</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns the temperature (C) of air at the given mixing ratio (g/kg) and</span>
+<span class="sd">    pressure (hPa)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    w : number, numpy array</span>
+<span class="sd">        Mixing Ratio (g/kg)</span>
+<span class="sd">    p : number, numpy array</span>
+<span class="sd">        Pressure (hPa)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature (C) of air at given mixing ratio and pressure</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mf">622.</span> <span class="o">+</span> <span class="n">w</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.</span><span class="p">,((</span><span class="n">c1</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c2</span><span class="p">))</span> <span class="o">-</span> <span class="n">c3</span> <span class="o">+</span> <span class="p">(</span><span class="n">c4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">10</span><span class="p">,(</span><span class="n">c5</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">c6</span><span class="p">),</span><span class="mi">2</span><span class="p">)))</span> <span class="o">-</span> <span class="n">ZEROCNK</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="wetbulb"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.wetbulb">[docs]</a><span class="k">def</span> <span class="nf">wetbulb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculates the wetbulb temperature (C) for the given parcel</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : number</span>
+<span class="sd">        Pressure of parcel (hPa)</span>
+<span class="sd">    t : number</span>
+<span class="sd">        Temperature of parcel (C)</span>
+<span class="sd">    td : number</span>
+<span class="sd">        Dew Point of parcel (C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Wetbulb temperature (C)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">p2</span><span class="p">,</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">drylift</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">td</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wetlift</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ctof"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ctof">[docs]</a><span class="k">def</span> <span class="nf">ctof</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Celsius to Fahrenheit</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Celsius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Fahrenheit (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1.8</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mf">32.</span></div>
+
+
+<div class="viewcode-block" id="ftoc"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ftoc">[docs]</a><span class="k">def</span> <span class="nf">ftoc</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Fahrenheit to Celsius</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Fahrenheit</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Celsius (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mf">32.</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">5.</span> <span class="o">/</span> <span class="mf">9.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ktoc"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ktoc">[docs]</a><span class="k">def</span> <span class="nf">ktoc</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Kelvin to Celsius</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Kelvin</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Celsius (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">t</span> <span class="o">-</span> <span class="n">ZEROCNK</span></div>
+
+
+<div class="viewcode-block" id="ctok"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ctok">[docs]</a><span class="k">def</span> <span class="nf">ctok</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Celsius to Kelvin</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Celsius</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Kelvin (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">t</span> <span class="o">+</span> <span class="n">ZEROCNK</span></div>
+
+
+<div class="viewcode-block" id="ktof"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ktof">[docs]</a><span class="k">def</span> <span class="nf">ktof</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Kelvin to Fahrenheit</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Kelvin</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Fahrenheit (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">ctof</span><span class="p">(</span><span class="n">ktoc</span><span class="p">(</span><span class="n">t</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ftok"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.thermo.ftok">[docs]</a><span class="k">def</span> <span class="nf">ftok</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Convert temperature from Fahrenheit to Kelvin</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : number, numpy array</span>
+<span class="sd">        The temperature in Fahrenheit</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Temperature in Kelvin (number or numpy array)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">ctok</span><span class="p">(</span><span class="n">ftoc</span><span class="p">(</span><span class="n">t</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Interpreting the GUI &mdash; SHARPpy 1.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SHARPpy Insets" href="insets.html" />
+    <link rel="prev" title="Using the Data Picker" href="picker.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Interpreting the GUI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#skew-t">Skew-T</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wind-speed-profile">Wind Speed Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inferred-temperature-advection-profile">Inferred Temperature Advection Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hodograph">Hodograph</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bunkers-storm-motion-vectors">Bunkers Storm Motion Vectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#corfidi-vectors">Corfidi Vectors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lcl-el-mean-wind">LCL-EL Mean Wind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#critical-angle">Critical Angle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#storm-slinky">Storm Slinky</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#theta-e-w-pressure">Theta-E w/ Pressure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#storm-relative-winds-w-height">Storm-Relative Winds w/ Height</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#possible-hazard-type">Possible Hazard Type</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flowchart">Flowchart</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Interpreting the GUI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/interpreting_gui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="interpreting-the-gui">
+<span id="interpreting-with-the-gui"></span><h1>Interpreting the GUI<a class="headerlink" href="#interpreting-the-gui" title="Permalink to this headline">¶</a></h1>
+<p>Our <a class="reference external" href="http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1">BAMS article</a> on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation provides an overview of the SHARPpy GUI features.</p>
+<p>Additional resources for interpreting the GUI include the <a class="reference external" href="http://www.spc.noaa.gov/exper/soundings/help/">SPC Sounding Analysis Help</a> and <a class="reference external" href="http://www.spc.noaa.gov/sfctest/help/sfcoa.html">Explanation of SPC Severe Weather Parameters</a> webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.</p>
+<div class="section" id="skew-t">
+<h2>Skew-T<a class="headerlink" href="#skew-t" title="Permalink to this headline">¶</a></h2>
+<p>Various sounding variables are displayed in the Skew-T, which is a central panel of the GUI:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Solid red – temperature profile</li>
+<li>Solid green – dewpoint profile</li>
+<li>Dashed red – virtual temperature profile.</li>
+<li>Cyan – wetbulb temperature profile</li>
+<li>Dashed white – parcel trace (e.g., MU, SFC, ML) (the parcel trace of the parcel highlighted in yellow in the Thermodynamic Inset.)</li>
+<li>Dashed purple – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).</li>
+<li>Winds barbs are plotted in knots (unless switched to m/s in the preferences) and are interpolated to 50-mb intervals for visibility purposes.</li>
+<li>If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. Blue bars indicate sinking motion, red bars rising motion. Dashed purple lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are “convectively contaminiated”.  This means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.</p>
+</div>
+<p>Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and purple, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The cyan and purple I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in <a class="reference external" href="https://www.spc.noaa.gov/publications/thompson/effective.pdf">Thompson et al. 2007</a>.</p>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="_images/effective_inflow.png"><img alt="_images/effective_inflow.png" src="_images/effective_inflow.png" style="width: 591.0px; height: 597.0px;" /></a>
+<p class="caption"><span class="caption-text">An example of the Skew-T inset showing a model forecast sounding for May 31, 2013 at 18 UTC.  The 2-6 km max lapse rate layer clearly denotes the elevated mixed layer, while the omega profile indicates that rising motion is occuring within the lowest 6 km of the sounding in the forecast.</span></p>
+</div>
+</div>
+<div class="section" id="wind-speed-profile">
+<h2>Wind Speed Profile<a class="headerlink" href="#wind-speed-profile" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/wind_speed_height.png"><img alt="_images/wind_speed_height.png" src="_images/wind_speed_height.png" style="width: 670.8px; height: 502.79999999999995px;" /></a>
+<p class="caption"><span class="caption-text">The tick marks for this plot are every 20 knots (should knots be the default unit selected in the preferences).</span></p>
+</div>
+</div>
+<div class="section" id="inferred-temperature-advection-profile">
+<h2>Inferred Temperature Advection Profile<a class="headerlink" href="#inferred-temperature-advection-profile" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/temp_adv_height.png"><img alt="_images/temp_adv_height.png" class="align-center" src="_images/temp_adv_height.png" style="width: 670.8px; height: 502.79999999999995px;" /></a>
+</div>
+<div class="section" id="hodograph">
+<h2>Hodograph<a class="headerlink" href="#hodograph" title="Permalink to this headline">¶</a></h2>
+<p>Although the hodograph plotted follows the traditional convention used throughout meteorology, the hodograph shown here is broken up into layers by color.  In addition, several vectors are also plotted from different SHARPpy algorithms.</p>
+<div class="section" id="bunkers-storm-motion-vectors">
+<h3>Bunkers Storm Motion Vectors<a class="headerlink" href="#bunkers-storm-motion-vectors" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/hodograph_bunkers.png"><img alt="_images/hodograph_bunkers.png" src="_images/hodograph_bunkers.png" style="width: 670.1999999999999px; height: 503.4px;" /></a>
+</div>
+<p>The storm motion vectors here are computed using the updated <a class="reference external" href="http://www.weather.gov/media/unr/soo/scm/2014-JOM11.pdf">Bunkers et al. 2014</a> algorithm, which takes into account the effective inflow layer.</p>
+</div>
+<div class="section" id="corfidi-vectors">
+<h3>Corfidi Vectors<a class="headerlink" href="#corfidi-vectors" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/hodograph_corfidi.png"><img alt="_images/hodograph_corfidi.png" src="_images/hodograph_corfidi.png" style="width: 670.8px; height: 502.79999999999995px;" /></a>
+</div>
+<p>The Corfidi vectors may be used to estimate mesoscale convective system (MCS) motion.  See <a class="reference external" href="https://www.spc.noaa.gov/publications/corfidi/mcs2003.pdf">Corfidi 2003</a> for more information about how these are calculated.</p>
+</div>
+<div class="section" id="lcl-el-mean-wind">
+<h3>LCL-EL Mean Wind<a class="headerlink" href="#lcl-el-mean-wind" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/hodograph_mean_wind.png"><img alt="_images/hodograph_mean_wind.png" src="_images/hodograph_mean_wind.png" style="width: 671.4px; height: 503.4px;" /></a>
+</div>
+</div>
+<div class="section" id="critical-angle">
+<h3>Critical Angle<a class="headerlink" href="#critical-angle" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="_images/hodograph_critical.png"><img alt="_images/hodograph_critical.png" src="_images/hodograph_critical.png" style="width: 669.6px; height: 503.4px;" /></a>
+</div>
+<p>See <a class="reference external" href="http://www.ejssm.org/ojs/index.php/ejssm/article/view/33">Esterheld and Guiliano 2008</a> for more information on the use of critical angle in forecasting.</p>
+</div>
+</div>
+<div class="section" id="storm-slinky">
+<h2>Storm Slinky<a class="headerlink" href="#storm-slinky" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/slinky_description.png"><img alt="_images/slinky_description.png" class="align-center" src="_images/slinky_description.png" style="width: 670.1999999999999px; height: 504.0px;" /></a>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/slinky_supercell.png"><img alt="_images/slinky_supercell.png" class="align-center" src="_images/slinky_supercell.png" style="width: 667.8px; height: 503.4px;" /></a>
+<a class="reference internal image-reference" href="_images/slinky_single_cell.png"><img alt="_images/slinky_single_cell.png" class="align-center" src="_images/slinky_single_cell.png" style="width: 667.8px; height: 503.4px;" /></a>
+<a class="reference internal image-reference" href="_images/slinky_warning.png"><img alt="_images/slinky_warning.png" class="align-center" src="_images/slinky_warning.png" style="width: 507.59999999999997px; height: 181.2px;" /></a>
+</div>
+</div>
+<div class="section" id="theta-e-w-pressure">
+<h2>Theta-E w/ Pressure<a class="headerlink" href="#theta-e-w-pressure" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/theta-e.png"><img alt="_images/theta-e.png" class="align-center" src="_images/theta-e.png" style="width: 671.4px; height: 504.0px;" /></a>
+<p>See <a class="reference external" href="https://journals.ametsoc.org/doi/pdf/10.1175/1520-0434%281991%29006%3C0470%3AWMAOTS%3E2.0.CO%3B2">Atkins and Wakimoto 1991</a> for more information on what to look for in this inset when forecasting wet microbursts.</p>
+</div>
+<div class="section" id="storm-relative-winds-w-height">
+<h2>Storm-Relative Winds w/ Height<a class="headerlink" href="#storm-relative-winds-w-height" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/srw.png"><img alt="_images/srw.png" class="align-center" src="_images/srw.png" style="width: 670.8px; height: 504.0px;" /></a>
+<p>See <a class="reference external" href="https://journals.ametsoc.org/doi/pdf/10.1175/1520-0493%281998%29126%3C2406%3AVISMPI%3E2.0.CO%3B2">Rasmussen and Straka 1998</a> for more information on how the anvil-level storm relative winds may be used to predict supercell morphology.  See <a class="reference external" href="https://www.spc.noaa.gov/publications/thompson/ruc_waf.pdf">Thompson et al. 2003</a> for information on using the 4-6 km storm-relative winds to predict tornado environments.</p>
+</div>
+<div class="section" id="possible-hazard-type">
+<h2>Possible Hazard Type<a class="headerlink" href="#possible-hazard-type" title="Permalink to this headline">¶</a></h2>
+<a class="reference internal image-reference" href="_images/pht.png"><img alt="_images/pht.png" class="align-center" src="_images/pht.png" style="width: 668.4px; height: 502.79999999999995px;" /></a>
+<div class="section" id="flowchart">
+<h3>Flowchart<a class="headerlink" href="#flowchart" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/pht_flowchart.png"><img alt="_images/pht_flowchart.png" class="align-center" src="_images/pht_flowchart.png" style="width: 668.4px; height: 502.79999999999995px;" /></a>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="insets.html" class="btn btn-neutral float-right" title="SHARPpy Insets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="picker.html" class="btn btn-neutral" title="Using the Data Picker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
