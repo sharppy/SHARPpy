@@ -206,6 +206,7 @@ class Outlet(object):
     def getAvailableAtTime(self, **kwargs):
         dt = kwargs.get('dt', None)
 
+        #logging.debug("Calling getAvailableAtTime()" + str(dt))
         if dt is None:
             dt = self.getMostRecentCycle(dt)
         elif dt == datetime(1700,1,1,0,0,0):
@@ -248,6 +249,7 @@ class Outlet(object):
                         times = available.available[self._name.lower()][self._ds_name.lower()](dt)
                     except TypeError:
                         times = available.available[self._name.lower()][self._ds_name.lower()]()
+                        print ("Hit a typeerror")
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
@@ -319,6 +321,7 @@ class DataSource(object):
         return prop
 
     def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
+        #logging.debug("_getOutletWithProfile: " + str(stn) + ' ' + str(cycle_dt))
         use_outlets = [ out for out, cfg in self._outlets.items() if cfg.hasProfile(stn, cycle_dt) ]
         try:
             outlet = use_outlets[outlet_num]
@@ -372,7 +375,7 @@ class DataSource(object):
         if outlet is None:
             outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         url_base = self._outlets[outlet].getURL()
-        
+        #logging.debug("URL: " + url_base)
         fmt = {
             'srcid':quote(stn['srcid']),
             'cycle':"%02d" % cycle_dt.hour,
@@ -381,9 +384,9 @@ class DataSource(object):
             'month':cycle_dt.strftime("%m"),
             'day':cycle_dt.strftime("%d")
         }
-        
 
         url = url_base.format(**fmt)
+        #logging.debug("URL: " + url)
         return url
 
     def getDecoderAndURL(self, stn, cycle_dt, outlet_num=0):

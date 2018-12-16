@@ -4,6 +4,10 @@
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/{cycle}/gfs3_{srcid}.buf" format="bufkit" >
             <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24"/>
             <points csv="gfs.csv" />
+        </outlet> 
+        <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/gfs/gfs3_{srcid}.buf" format="bufkit" >
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="gfs.csv" />
         </outlet>
     </datasource>
     <datasource name="NAM" ensemble="false" observed="false">
@@ -11,9 +15,17 @@
             <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam.csv" />
         </outlet>
+        <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam/namm_{srcid}.buf" format="bufkit" >
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="nam.csv" />
+        </outlet>
     </datasource>
     <datasource name="RAP" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/RAP/{cycle}/rap_{srcid}.buf" format="bufkit" >
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="rap.csv" />
+        </outlet>
+        <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/rap/rap_{srcid}.buf" format="bufkit" >
             <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
             <points csv="rap.csv" />
         </outlet>
@@ -24,10 +36,20 @@
             <points csv="hrrr.csv" />
         </outlet>
     </datasource>
-    <datasource name="3km NAM" ensemble="false" observed="false">
+    <datasource name="NAM NEST" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAMNEST/{cycle}/namnest_{srcid}.buf" format="bufkit" >
             <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam3km.csv" />
+        </outlet>
+        <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam4km/nam4km_{srcid}.buf" format="bufkit" >
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="nam3km.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="RUC" ensemble="false" observed="false">
+        <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/ruc/ruc_{srcid}.buf" format="bufkit" >
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <points csv="rap.csv" />
         </outlet>
     </datasource>
     <datasource name="SREF" ensemble="true" observed="false">

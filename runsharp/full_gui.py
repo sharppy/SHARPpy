@@ -415,7 +415,8 @@ class Picker(QWidget):
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
         else:
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
-        #print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
+        print(self.model, self.cal_date)
+        print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
         #print(getTimes())
         # Function to update the times.
         def update(times):
