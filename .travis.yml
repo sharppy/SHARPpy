@@ -25,11 +25,11 @@ script:
 - python sharppy/tests/test_url.py examples/data/14061619.OAX 
 # If the test script passes, build the binaries.
 after_success:
-- if [[ "$BUILD_DOCS" == "YES" ]]; then xvfb-run source ci/build_docs.sh; fi
+- if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
 - source ci/make_binary.sh
 before_deploy:
 - cd dist
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github
 deploy:
