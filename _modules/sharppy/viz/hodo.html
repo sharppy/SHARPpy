@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0-Andover-Alpha1+4.ga970aab documentation</title>
+  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0-Andover-Alpha1+5.ge289ca4 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+4.ga970aab
+                1.4.0-Andover-Alpha1+5.ge289ca4
               </div>
             
           
@@ -212,13 +212,13 @@
             <span class="n">fsize</span> <span class="o">=</span> <span class="mi">7</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fsize</span> <span class="o">=</span> <span class="mi">9</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">readout_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="mi">11</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critical_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">critical_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critical_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saveBitMap</span> <span class="o">=</span> <span class="kc">None</span>
