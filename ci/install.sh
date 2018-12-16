@@ -24,7 +24,8 @@ conda install -n -q root _license
 conda info -a
 conda create -q -n test-environment python=$PYTHON_VERSION numpy nose 
 source activate test-environment
-conda install -q conda-forge pyside pyinstaller
+conda config --add channels conda-forge 
+conda install -q pyside pyinstaller
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
