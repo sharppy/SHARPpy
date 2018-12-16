@@ -1,21 +1,22 @@
 import os, sys, shutil, glob, getpass, platform
 from setuptools import setup, find_packages
-
+import versioneer
 pkgname = "SHARPpy"
 
 
 ### GET VERSION INFORMATION ###
 setup_path = os.path.split(os.path.abspath(__file__))[0]
 sys.path.append(os.path.join(setup_path, pkgname.lower()))
-import _sharppy_version as version
-version.write_git_version()
-ver = version.get_version().split("+")[0]
+#import _sharppy_version as version
+#version.write_git_version()
+#ver = version.get_version().split("+")[0]
+
 sys.path.pop()
 
 
 ### ACTUAL SETUP VALUES ###
 name = pkgname
-version = ver
+#version = ver
 author = "Patrick Marsh, Kelton Halbert, Greg Blumberg, and Tim Supinie"
 author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu, tsupinie@ou.edu"
 description = "Sounding/Hodograph Analysis and Research Program for Python"
@@ -65,7 +66,6 @@ shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
 
 setup(
     name = name,
-    version = version,
     author = author,
     author_email = author_email,
     description = description,
@@ -76,5 +76,7 @@ setup(
     packages = packages,
     package_data = package_data,
     include_package_data = include_package_data,
-    classifiers = classifiers
+    classifiers = classifiers,
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass()
 )

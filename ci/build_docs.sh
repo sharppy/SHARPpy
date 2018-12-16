@@ -28,7 +28,6 @@ make html
 #if [[ $TRAVIS_SECURE_ENV_VARS == 'true' ]]; then
 cd build/html
 pwd
-touch .nojekyll
 git config --global user.email "sharppy-docs-bot@example.com"
 git config --global user.name "sharppy-docs-bot"
 
@@ -50,10 +49,13 @@ cd ..
 pwd
 rm -rf out/**/*
 cp -r build/html/* out/
+rm -rf out/.gitignore
+touch out/.nojekyll
 cd out
 pwd
 ls -l
 git add --all .
+git add .nojekyll
 echo "ADDING FILES"
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 git push $SSH_REPO gh-pages

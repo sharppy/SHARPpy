@@ -1,9 +1,12 @@
 import sys, os
 import numpy as np
 import warnings
-import logging
 import utils.frozenutils as frozenutils
 import logging
+from sharppy._version import get_versions
+__version__ = get_versions()['version']
+ver = get_versions()
+del get_versions
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
@@ -27,6 +30,7 @@ if len(sys.argv) > 1 and '--debug' in sys.argv:
     logging.getLogger('').addHandler(console)
 
     logging.info('Started logging output for SHARPpy')
+    logging.info('Information about SHARPpy version: ' + str(__version__)) 
 else:
     debug = False
     np.seterr(all='ignore')
@@ -47,7 +51,7 @@ from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
 from sharppy.io.arw_decoder import ARWDecoder
-from sharppy._sharppy_version import __version__, __version_name__
+#from sharppy._version import __version__#, __version_name__
 from datasources import data_source
 from utils.async_threads import AsyncThreads
 from utils.progress import progress
@@ -62,7 +66,7 @@ from utils.config import Config
 import traceback
 from functools import wraps, partial
 import argparse
-
+__version_name__ = 'Andover-dev'
 try:
     from netCDF4 import Dataset
     has_nc = True
