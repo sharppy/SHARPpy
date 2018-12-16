@@ -22,7 +22,7 @@ before_install:
 install:
 - python setup.py install
 script:
-- python sharppy/tests/test_url.py http://sharp.weather.ou.edu/soundings/archive/1973/09/19/00/DDC.txt
+- python sharppy/tests/test_url.py examples/data/14061619.OAX 
 # If the test script passes, build the binaries.
 after_success:
 # Zip the binaries, as we can't transfer 
@@ -30,7 +30,7 @@ after_success:
 - source ci/make_binary.sh
 before_deploy:
 - cd dist
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; else zip -r SHARPpy-linux.zip * ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github
 deploy:
@@ -40,8 +40,7 @@ deploy:
   file_glob: true
   file: dist/SHARPpy*.zip
   skip_cleanup: true
-  draft: true
-  overwrite: true
   on:
     repo: sharppy/SHARPpy
     tags: true
+    branch: andover

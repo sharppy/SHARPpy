@@ -26,4 +26,6 @@ source activate test-environment
 conda install -q pyside pyinstaller
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
-if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app; fi
+if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
+    conda install -q python.app;
+fi

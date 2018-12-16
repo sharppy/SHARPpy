@@ -38,15 +38,17 @@ build: off
 #  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
 
 artifacts:
-  path: "dist\\*"
+  path: "dist\\SHARPpy64.exe"
+  name: "SHARPpy64"
 
 deploy:
   provider: GitHub
-  description: ''
+  release: $(appveyor_repo_tag_name)
   auth_token:
     secure: DB6sQwYCM7Dhhy+mjPkMd6kclvw0Sc2wglTJxcTBQue63dtIQRNa1dz/aqJG7Ygc
   artifact: "dist\\SHARPpy64.exe"
   draft: true
+  prerelease: true
   on:
     appveyor_repo_tag: true
  
