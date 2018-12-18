@@ -5,11 +5,6 @@ import utils.frozenutils as frozenutils
 import logging
 import PySide
 import platform
-from sharppy._version import get_versions
-__version__ = get_versions()['version']
-ver = get_versions()
-del get_versions
-
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
 # Start the logging
@@ -35,12 +30,6 @@ else:
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
 
-logging.info('Started logging output for SHARPpy')
-logging.info('SHARPpy version: ' + str(__version__)) 
-logging.info('numpy version: ' + str(np.__version__)) 
-logging.info('PySide version: ' + str(PySide.__version__)) 
-logging.info("Python version: " + str(platform.python_version()))
-
 if frozenutils.isFrozen():
     if not os.path.exists(HOME_DIR):
         os.makedirs(HOME_DIR)
@@ -49,7 +38,18 @@ if frozenutils.isFrozen():
 
     sys.stdout = outfile
     sys.stderr = outfile
-    
+
+from sharppy._version import get_versions
+__version__ = get_versions()['version']
+ver = get_versions()
+del get_versions
+ 
+logging.info('Started logging output for SHARPpy')
+logging.info('SHARPpy version: ' + str(__version__)) 
+logging.info('numpy version: ' + str(np.__version__)) 
+logging.info('PySide version: ' + str(PySide.__version__)) 
+logging.info("Python version: " + str(platform.python_version()))
+  
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy.viz.map import MapWidget 
 from sharppy.viz.preferences import PrefDialog
