@@ -6,7 +6,7 @@
             <points csv="gfs.csv" />
         </outlet> 
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/gfs/gfs3_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24"/>
             <points csv="gfs.csv" />
         </outlet>
     </datasource>
@@ -16,7 +16,7 @@
             <points csv="nam.csv" />
         </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam/namm_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam.csv" />
         </outlet>
     </datasource>
@@ -42,7 +42,7 @@
             <points csv="nam3km.csv" />
         </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam4km/nam4km_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
             <points csv="nam3km.csv" />
         </outlet>
     </datasource>

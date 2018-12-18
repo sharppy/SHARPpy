@@ -2,6 +2,7 @@ import numpy as np
 import os
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+import sharppy.sharptab.utils as utils
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
 
@@ -32,15 +33,18 @@ class backgroundVROT(QtGui.QFrame):
             fsize = 10
         else:
             fsize = 11
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
-        self.box_font = QtGui.QFont('Helvetica', fsize)
+                
+        self.font_ratio = 0.0512
+        self.plot_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio + 1))
+        self.label_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio ))
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
-        self.box_metrics = QtGui.QFontMetrics(self.box_font)
+        self.label_metrics = QtGui.QFontMetrics(self.label_font)
         self.plot_height = self.plot_metrics.xHeight() + 5
-        self.box_height = self.box_metrics.xHeight() + 5
+        self.label_height = self.label_metrics.xHeight() + 5
         self.vrot_inset_data = inset_data.vrotData()
         self.lpad = 5.; self.rpad = 0.
-        self.tpad = 25.; self.bpad = 15.
+        self.tpad = 5 + self.plot_height + self.label_height ;
+        self.bpad = self.label_height + 5
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
@@ -95,25 +99,25 @@ class backgroundVROT(QtGui.QFrame):
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Conditional EF-scale Probs based on Vrot')
 
-        qp.setFont(QtGui.QFont('Helvetica', 9))
+        qp.setFont(QtGui.QFont('Helvetica',  self.size().height() * self.font_ratio))
         color = QtGui.QColor(self.EF01_color)
         pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        rect1 = QtCore.QRectF(self.vrot_to_pix(25), 2 + self.plot_height, 10, self.plot_height)
+        rect1 = QtCore.QRectF(self.vrot_to_pix(25), 4 + self.plot_height, 10, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'EF0-EF1')
 
         color = QtGui.QColor(self.EF23_color)
         pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        rect1 = QtCore.QRectF(self.vrot_to_pix(50), 2 + self.plot_height, 10, self.plot_height)
+        rect1 = QtCore.QRectF(self.vrot_to_pix(50), 4 + self.plot_height, 10, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'EF2-EF3')
 
         color = QtGui.QColor(self.EF45_color)
         pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
-        rect1 = QtCore.QRectF(self.vrot_to_pix(75), 2 + self.plot_height, 10, self.plot_height)
+        rect1 = QtCore.QRectF(self.vrot_to_pix(75), 4 + self.plot_height, 10, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'EF4-EF5')
 
@@ -121,13 +125,12 @@ class backgroundVROT(QtGui.QFrame):
         qp.setPen(pen)
 
         # Plot all of the Y-ticks for the probabilities
-        ytick_fontsize = 10
+        ytick_fontsize =  round(self.size().height() * self.font_ratio)
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         texts = self.vrot_inset_data['ytexts']
         spacing = self.bry / 10.
-        y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in range(len(y_ticks)):
+        for i in range(len(texts)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -149,12 +152,12 @@ class backgroundVROT(QtGui.QFrame):
 
         # Draw the x tick marks
         
-        qp.setFont(QtGui.QFont('Helvetica', 8))
+        qp.setFont(QtGui.QFont('Helvetica', self.font_ratio * self.hgt ))
         for i in range(texts.shape[0]):
             color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(self.vrot_to_pix(texts[i]) - width/2, self.prob_to_pix(-2), width, 4)
+            rect = QtCore.QRectF(self.vrot_to_pix(texts[i]) - width/2, self.bry + self.bpad/2, width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -316,19 +319,26 @@ class plotVROT(backgroundVROT):
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         rect = QtCore.QRectF(self.vrot_to_pix(self.vrot-7), self.prob_to_pix(self.probef01), 4, 7)
-        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(self.probef01))
+        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, utils.INT2STR(self.probef01))
 
         color = QtGui.QColor(self.EF23_color)
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         rect = QtCore.QRectF(self.vrot_to_pix(self.vrot), self.prob_to_pix(self.probef23), 4, 7)
-        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(self.probef23))
+        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, utils.INT2STR(self.probef23))
 
         color = QtGui.QColor(self.EF45_color)
         pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         rect = QtCore.QRectF(self.vrot_to_pix(self.vrot), self.prob_to_pix(self.probef45), 4, 7)
-        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, tab.utils.INT2STR(self.probef45))
+        qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, utils.INT2STR(self.probef45))
         qp.end()
 
 
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotVROT()
+    tester.setGeometry(50,50,293,195)
+    tester.show()        
+    app_frame.exec_()

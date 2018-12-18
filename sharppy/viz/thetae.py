@@ -2,6 +2,7 @@ import numpy as np
 from PySide import QtGui, QtCore
 from PySide.QtOpenGL import *
 import sharppy.sharptab as tab
+import sharppy.sharptab.utils as utils
 from sharppy.sharptab.constants import *
 
 ## routine written by Kelton Halbert - OU School of Meteorology
@@ -46,7 +47,8 @@ class backgroundThetae(QtGui.QFrame):
             fsize = 6
         else:
             fsize = 7
-        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.font_ratio = 0.0512
+        self.label_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio))
         ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.clear()
@@ -134,7 +136,7 @@ class backgroundThetae(QtGui.QFrame):
                 self.brx+self.rpad, y1)
         qp.drawText(0, y1-20, 20, 40,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-                tab.utils.INT2STR(p))
+                utils.INT2STR(p))
 
     def draw_thetae(self, t, qp):
         '''
@@ -159,7 +161,7 @@ class backgroundThetae(QtGui.QFrame):
         qp.drawLine(x1, self.bry+self.tpad-offset,
             x1, self.bry+self.rpad)
         qp.drawText(x1, self.bry-20, 15, 20,
-            QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, tab.utils.INT2STR(t))
+            QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter, utils.INT2STR(t))
 
     def pres_to_pix(self, p):
         '''
@@ -316,4 +318,9 @@ class plotThetae(backgroundThetae):
                 qp.setPen(pen)
                 qp.drawLine(x1, y1, x2, y2)
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotThetae()
+    tester.show()    
+    app_frame.exec_()
 

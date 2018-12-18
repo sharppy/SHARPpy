@@ -36,8 +36,9 @@ class backgroundSlinky(QtGui.QFrame):
             fsize = 7
         else:
             fsize = 9
-        self.title_font = QtGui.QFont('Helvetica', fsize)
-        self.plot_font = QtGui.QFont('Helvetica', fsize)
+        self.font_ratio = 0.0512
+        self.title_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio)+2)
+        self.plot_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.os_mod = 0
@@ -370,3 +371,9 @@ class plotSlinky(backgroundSlinky):
             center = QtCore.QPointF(xx, yy)
             qp.drawEllipse(center, 5, 5)
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSlinky()
+    tester.setGeometry(100,100,121,138)
+    tester.show()    
+    app_frame.exec_()

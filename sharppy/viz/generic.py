@@ -366,3 +366,9 @@ class plotGeneric(backgroundGeneric):
                 continue
         qp.drawPath(path)
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotGeneric()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

@@ -29,7 +29,8 @@ class backgroundAdvection(QtGui.QFrame):
         self.adv_max = 13.; self.adv_min = -13.
         self.adv_min = 0
 
-        fsize = 8
+        self.font_ratio = 0.12
+        fsize = round(self.size().width() * self.font_ratio) + 3
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics(self.label_font)
         self.os_mod = 0
@@ -64,7 +65,7 @@ class backgroundAdvection(QtGui.QFrame):
         pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setFont(self.label_font)
         qp.setPen(pen)
-        qp.drawText(2,2,self.brx - 2,8*3, QtCore.Qt.AlignLeft | QtCore.Qt.TextWordWrap, 'Inf. Temp. Adv. (C/hr)')
+        qp.drawText(2,2,self.brx - 2,8*5, QtCore.Qt.AlignLeft | QtCore.Qt.TextWordWrap, 'Inf. Temp. Adv. (C/hr)')
         qp.end()
 
     def draw_frame(self, qp):
@@ -207,3 +208,10 @@ class plotAdvection(backgroundAdvection):
                 qp.drawLine(pix_adv, pix_ptop, self.adv_to_pix(0), pix_ptop)
                 qp.drawLine(self.adv_to_pix(0), pix_ptop, self.adv_to_pix(0), pix_pbot)
         return
+
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotAdvection()
+    tester.show()    
+    app_frame.exec_()

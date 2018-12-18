@@ -533,3 +533,12 @@ class plotAnalogues(backgroundAnalogues):
         self.plotData()
         self.update()
         self.parentWidget().setFocus()
+
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    #tester = plotText(['sfcpcl', 'mlpcl', 'mupcl'])
+    tester = plotAnalogues()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

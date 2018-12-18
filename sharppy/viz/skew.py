@@ -45,22 +45,28 @@ class backgroundSkewT(QtGui.QWidget):
         self.originx = 0. # self.size().width() / 2
         self.originy = 0. # self.size().height() / 2
         self.scale = 1.
+        #self.bg_color=QColor('#000000')
         if self.physicalDpiX() > 75:
-            fsize = 6
+            fsize = 6 * ()
             fsizet = 10
         else:
             fsize = 7
             fsizet = 14
-        self.title_font = QtGui.QFont('Helvetica', fsizet)
+
+        self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.005))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
-        self.title_height = self.title_metrics.xHeight() + 5
         self.title_font.setBold(True)
-        self.label_font = QtGui.QFont('Helvetica', fsize + 2)
-        self.environment_trace_font = QtGui.QFont('Helvetica', 11)
-        self.in_plot_font = QtGui.QFont('Helvetica', fsize)
-        self.esrh_font = QtGui.QFont('Helvetica', fsize + 2)
+        self.title_height = self.title_metrics.xHeight() + 5 + (self.hgt * 0.003)
+
+        self.label_font = QtGui.QFont('Helvetica', fsize + 2 + (self.hgt * 0.0045))
+        self.environment_trace_font = QtGui.QFont('Helvetica', 11 + (self.hgt * 0.0045))
+        self.in_plot_font = QtGui.QFont('Helvetica', fsize + (self.hgt * 0.0045))
+        self.esrh_font = QtGui.QFont('Helvetica', fsize + 2 + (self.hgt * 0.0045))
+        self.hght_font = QtGui.QFont('Helvetica', 9 + (self.hgt * 0.0045))
+
         self.esrh_metrics = QtGui.QFontMetrics( self.esrh_font )
-        self.esrh_height = self.esrh_metrics.xHeight() + 9
+        self.esrh_height = self.esrh_metrics.xHeight() + 9 + (self.hgt * 0.0045)
+
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.saveBitMap = None
         self.plotBitMap.fill(self.bg_color)
@@ -950,7 +956,7 @@ class plotSkewT(backgroundSkewT):
 
             pres = np.ma.masked_invalid(np.arange(self.prof.dgz_ptop, self.prof.dgz_pbot, 5)[::-1])
             tmpc = np.ma.masked_invalid(tab.interp.temp(self.prof, pres))
-
+            qp.setFont(self.hght_font)
             self.drawTrace(tmpc, self.dgz_color, qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
@@ -1072,7 +1078,6 @@ class plotSkewT(backgroundSkewT):
     def draw_height(self, h, qp):
         logging.debug("Drawing the height marker: " + str(h))
         qp.setClipping(True)
-        self.hght_font = QtGui.QFont('Helvetica', 9)
         pen = QtGui.QPen(self.hgt_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.hght_font)
@@ -1131,6 +1136,7 @@ class plotSkewT(backgroundSkewT):
         lfcp = self.pcl.lfcpres
         elp = self.pcl.elpres
         lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']] 
+        qp.setFont(self.hght_font)
 
         # Plot LCL
         if tab.utils.QC(lclp):
@@ -1440,3 +1446,14 @@ class plotSkewT(backgroundSkewT):
         path.lineTo(err_right, y+offset)
         qp.drawPath(path)
 
+if __name__ == "__main__":
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    app_frame = QtGui.QApplication([])        
+    title = "Window"
+    width = 800
+    height = 600
+    #qp = QPainter()
+    tester = plotSkewT()
+    tester.show()        
+    # run the main Qt event loop
+    app_frame.exec_()

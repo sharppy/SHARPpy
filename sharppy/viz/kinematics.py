@@ -559,3 +559,8 @@ class plotKinematics(backgroundKinematics):
                 vspace += self.label_metrics.descent()
             y1 += vspace
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotKinematics()
+    tester.show()    
+    app_frame.exec_()

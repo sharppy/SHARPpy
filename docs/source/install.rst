@@ -27,6 +27,8 @@ SHARPpy code can be installed on *Windows, Mac OS X, and Linux*, as all these pl
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
 
+    ``pip install sharppy``
+
 Additional ways to meet these requirements may include the Enthought Python Distribution, MacPorts, or Brew, but as of this moment we cannot provide support for these methods.
 
 *Required Python Packages/Libraries:*

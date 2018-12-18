@@ -3,6 +3,10 @@
 Using the Data Picker
 =====================
 
+The SHARPpy GUI may be launched from the command line by typing in:
+
+    ``$ sharppy``
+
 Launching the SHARPpy program should load up the SHARPpy Sounding Picker:
 
 .. figure:: picker_example.png

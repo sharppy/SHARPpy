@@ -4,6 +4,7 @@ from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
+import platform 
 
 ## routine written by Kelton Halbert and Greg Blumberg
 ## keltonhalbert@ou.edu and wblumberg@ou.edu
@@ -28,22 +29,32 @@ class backgroundSHIP(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-        if self.physicalDpiX() > 75:
-            fsize = 7
-        else:
-            fsize = 8
-        self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
-        self.box_font = QtGui.QFont('Helvetica', fsize)
+        self.textpad = 5
+        self.font_ratio = 0.0512
+        fsize1 = round(self.size().height() * self.font_ratio) + 2
+        fsize2 = round(self.size().height() * self.font_ratio)
+        self.plot_font = QtGui.QFont('Helvetica', fsize1 )
+        self.box_font = QtGui.QFont('Helvetica', fsize2)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
-        self.plot_height = self.plot_metrics.xHeight() + 5
-        self.box_height = self.box_metrics.xHeight() + 5
+        if platform.system() == "Windows":
+            fsize1 -= self.plot_metrics.descent()
+            fsize2 -= self.box_metrics.descent()
+
+            self.plot_font = QtGui.QFont('Helvetica', fsize1 )
+            self.box_font = QtGui.QFont('Helvetica', fsize2)
+            self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
+            self.box_metrics = QtGui.QFontMetrics(self.box_font)
+        self.plot_height = self.plot_metrics.xHeight()# + self.textpad
+        self.box_height = self.box_metrics.xHeight() + self.textpad
+        self.tpad = self.plot_height + 15; 
+        self.bpad = self.plot_height + 2
         self.lpad = 0.; self.rpad = 0.
-        self.tpad = 15.; self.bpad = 15.
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
-        self.tlx = self.rpad; self.tly = self.tpad
-        self.brx = self.wid; self.bry = self.hgt
+        self.tlx = self.rpad; self.tly = self.tpad;
+        self.brx = self.wid; 
+        self.bry = self.hgt - self.bpad#+ round(self.font_ratio * self.hgt)
         self.shipmax = 5.; self.shipmin = 0.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(self.bg_color)
@@ -76,7 +87,7 @@ class backgroundSHIP(QtGui.QFrame):
         pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
-        rect1 = QtCore.QRectF(1.5,1.5, self.brx, self.plot_height)
+        rect1 = QtCore.QRectF(1.5,6, self.brx, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Significant Hail Param (SHIP)')
 
@@ -84,13 +95,12 @@ class backgroundSHIP(QtGui.QFrame):
         qp.setPen(pen)
         spacing = self.bry / 6.
 
-        ytick_fontsize = 10
+        ytick_fontsize = round(self.font_ratio * self.hgt)
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         ship_inset_data = inset_data.shipData()
         texts = ship_inset_data['ship_ytexts']
-        y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in range(len(y_ticks)):
+        for i in range(len(texts)):
             pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -113,7 +123,7 @@ class backgroundSHIP(QtGui.QFrame):
         center = np.arange(spacing, self.brx, spacing)
         texts = ship_inset_data['ship_xtexts']
         ef = self.ship_to_pix(ef)
-        qp.setFont(QtGui.QFont('Helvetica', 10))
+        qp.setFont(QtGui.QFont('Helvetica', round(self.font_ratio * self.hgt)))
         for i in range(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
             pen = QtGui.QPen(self.box_color, 2, QtCore.Qt.SolidLine)
@@ -133,7 +143,7 @@ class backgroundSHIP(QtGui.QFrame):
             color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i] - width/2., self.ship_to_pix(-.2), width, 4)
+            rect = QtCore.QRectF(center[i] - width/2., self.bry + self.bpad/2, width, self.bpad)
             # Change to a white pen to draw the text below the box and whisker plot
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -267,3 +277,8 @@ class plotSHIP(backgroundSHIP):
 
         return color
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSHIP()
+    tester.show()    
+    app_frame.exec_()

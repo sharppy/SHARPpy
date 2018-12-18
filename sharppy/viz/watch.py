@@ -32,8 +32,9 @@ class backgroundWatch(QtGui.QFrame):
             fsize = 10
         else:
             fsize = 12
-        self.title_font = QtGui.QFont('Helvetica', fsize)
-        self.plot_font = QtGui.QFont('Helvetica', fsize)
+        self.font_ratio = 0.0512
+        self.title_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio) + 5)
+        self.plot_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio) + 4)
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.title_height = self.title_metrics.height()
@@ -184,3 +185,8 @@ class plotWatch(backgroundWatch):
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.watch_type)
         qp.end()
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotWatch()
+    tester.show()    
+    app_frame.exec_()
