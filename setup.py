@@ -24,12 +24,14 @@ long_description = ""
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
-packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources', 'sharppy.plot']
+packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources', 'sharppy.plot', 'runsharp']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
                      "databases/shapefiles/*", "../rc/*"],}
 include_package_data = True
 classifiers = ["Development Status :: 4 - Beta"]
-
+#install_requires = ['pyside>=1.2.1', 'numpy>=1.10.1']
+install_requires = []
+entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
 # Create some directory variables to shorten the lines.
 HOME_PATH = os.path.join(os.path.expanduser("~"), ".sharppy")
 HOME_DSDIR = os.path.join(HOME_PATH, "datasources")
@@ -78,5 +80,7 @@ setup(
     include_package_data = include_package_data,
     classifiers = classifiers,
     version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass()
+    cmdclass=versioneer.get_cmdclass(),
+    install_requires=install_requires,
+    entry_points = entry_pts
 )
