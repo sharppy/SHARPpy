@@ -983,3 +983,8 @@ class SPCWindow(QMainWindow):
             self.picker_window.setFocus()
             self.picker_window.raise_()
 
+if __name__ == '__main__':
+    app_frame = QApplication([])    
+    tester = SPCWindow()
+    tester.show()    
+    app_frame.exec_()

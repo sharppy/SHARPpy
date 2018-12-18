@@ -54,8 +54,11 @@ class backgroundHodo(QtGui.QFrame):
         else:
             fsize = 9
         self.label_font = QtGui.QFont('Helvetica', fsize + (self.hgt * 0.0045))
+        self.label_font.setBold(True)
         self.critical_font = QtGui.QFont('Helvetica', fsize + 2 +  (self.hgt * 0.0045))
+        self.critical_font.setBold(True)
         self.readout_font = QtGui.QFont('Helvetica', 11 +  (self.hgt * 0.0045))
+        self.readout_font.setBold(True)
         self.label_metrics = QtGui.QFontMetrics( self.label_font )
         self.critical_metrics = QtGui.QFontMetrics( self.critical_font )
         self.label_height = self.label_metrics.xHeight() + 5 +  (self.hgt * 0.0045)
@@ -1268,7 +1271,7 @@ class plotHodo(backgroundHodo):
                     critical_angle = self.prof.left_critical_angle
                 else:
                     critical_angle = self.prof.right_critical_angle
-                qp.drawText(rect, QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle) + u"\u00B0")
+                qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, 'Critical Angle = ' + tab.utils.INT2STR(critical_angle) + u"\u00B0")
 
     def draw_hodo(self, qp, prof, colors, width=2):
         '''
@@ -1389,3 +1392,10 @@ class plotHodo(backgroundHodo):
 
             qp.drawPath(path)
 
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotHodo()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

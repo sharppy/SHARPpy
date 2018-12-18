@@ -28,10 +28,12 @@ class backgroundSTPEF(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
+        font_ratio = 0.0512
         if self.physicalDpiX() > 75:
-            fsize = 10
+            fsize = round(font_ratio * self.size().height())
         else:
-            fsize = 11
+            fsize = round(font_ratio * self.size().height() + 1)
+        self.fsize = fsize 
         self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
         self.box_font = QtGui.QFont('Helvetica', fsize)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
@@ -39,7 +41,7 @@ class backgroundSTPEF(QtGui.QFrame):
         self.plot_height = self.plot_metrics.xHeight() + 5
         self.box_height = self.box_metrics.xHeight() + 5
         self.lpad = 0.; self.rpad = 0.
-        self.tpad = 25.; self.bpad = 15.
+        self.tpad = 5+ 2*self.plot_height; self.bpad = self.plot_height + 5
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
@@ -94,7 +96,7 @@ class backgroundSTPEF(QtGui.QFrame):
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Conditional Tornado Probs based on STPC')
 
-        qp.setFont(QtGui.QFont('Helvetica', 9))
+        qp.setFont(QtGui.QFont('Helvetica', self.fsize-1))
         color = QtGui.QColor(EF1_color)
         pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -125,7 +127,7 @@ class backgroundSTPEF(QtGui.QFrame):
 
         pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        ytick_fontsize = 10
+        ytick_fontsize = self.fsize
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         efstp_inset_data = inset_data.condSTPData()
@@ -155,12 +157,12 @@ class backgroundSTPEF(QtGui.QFrame):
         texts = efstp_inset_data['xticks']
         
         # Draw the x tick marks
-        qp.setFont(QtGui.QFont('Helvetica', 8))
+        qp.setFont(QtGui.QFont('Helvetica', self.fsize - 2))
         for i in range(np.asarray(texts).shape[0]):
             color = QtGui.QColor('#000000')
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i], self.prob_to_pix(-2), width, 4)
+            rect = QtCore.QRectF(center[i], self.bry + self.bpad/2, width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -331,4 +333,9 @@ class plotSTPEF(backgroundSTPEF):
         qp.drawLine(stpc_pix, self.prob_to_pix(0), stpc_pix, self.prob_to_pix(70))
         qp.end()
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSTPEF()
+    tester.show()    
+    app_frame.exec_()
 

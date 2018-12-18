@@ -342,8 +342,8 @@ class DrawTest(QtGui.QMainWindow):
 if __name__ == "__main__":
     import sys
     import sharppy.io.buf_decoder as buf_decoder
-
-    dec  = buf_decoder.BufDecoder('/Users/blumberg/Downloads/sref_klzk.buf')
+    path = 'ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/21/sref_oun.buf'
+    dec  = buf_decoder.BufDecoder(path)
     prof_coll = dec._parse()
     app = QtGui.QApplication(sys.argv)
     mySW = DrawTest()

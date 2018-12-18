@@ -124,8 +124,7 @@ class plotText(backgroundText):
         
         Parameters
         ----------
-        prof: a Profile Object
-        
+        pcl_types :  
         '''
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
@@ -806,3 +805,11 @@ class SelectParcels(QWidget):
             self.thermo.update()
             self.thermo.parentWidget().setFocus()
             self.hide()
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    #tester = plotText(['sfcpcl', 'mlpcl', 'mupcl'])
+    tester = plotBackgroundText()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

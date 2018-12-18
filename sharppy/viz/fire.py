@@ -15,6 +15,8 @@ class backgroundFire(QtGui.QFrame):
     '''
     def __init__(self):
         super(backgroundFire, self).__init__()
+        self.init_hght = self.size().height()
+        print(self.init_hght)
         self.initUI()
 
     def initUI(self):
@@ -27,26 +29,28 @@ class backgroundFire(QtGui.QFrame):
             "  border-color: #3399CC;}")
         self.lpad = 5; self.rpad = 5
         self.tpad = 3; self.bpad = 3
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
-        self.label_font = QtGui.QFont('Helvetica', fsize)
-        self.fosberg_font = QtGui.QFont('Helvetica', fsize + 2)
-        self.label_metrics = QtGui.QFontMetrics( self.label_font )
-        self.fosberg_metrics = QtGui.QFontMetrics( self.fosberg_font )
-
         self.os_mod = 0
         if platform.system() == "Windows":
             self.os_mod = self.label_metrics.descent()
 
-        self.label_height = self.label_metrics.xHeight() + self.tpad
-        self.ylast = self.label_height
         self.barby = 0
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+        
+        if self.physicalDpiX() > 75:
+            fsize = 8
+        else:
+            fsize = 10
+        font_ratio = fsize/self.hgt
+        font_ratio = 0.0512
+        self.label_font = QtGui.QFont('Helvetica', round(font_ratio * self.hgt))
+        self.fosberg_font = QtGui.QFont('Helvetica', round(font_ratio * self.hgt) + 2)
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+        self.fosberg_metrics = QtGui.QFontMetrics( self.fosberg_font )
+        self.label_height = self.label_metrics.xHeight() + self.tpad
+        self.ylast = self.label_height
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
@@ -386,7 +390,6 @@ class plotFire(backgroundFire):
         rect1 = QtCore.QRect(0, y1, self.brx, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "PBL Height = " + tab.utils.FLOAT2STR(tab.utils.M2FT(self.pbl_h), 0) + 'ft / ' + tab.utils.FLOAT2STR(self.pbl_h, 0) + 'm')
         y1 += self.label_height + sep + self.os_mod
-        
 
 
     def getPWColor(self):
@@ -414,6 +417,9 @@ class plotFire(backgroundFire):
             color = QtGui.QColor(DBROWN)   
         return color, 12
 
-
-
-
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotFire()
+    tester.setGeometry(50,50,293,195)
+    tester.show()        
+    app_frame.exec_()

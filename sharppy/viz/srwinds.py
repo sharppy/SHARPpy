@@ -1,6 +1,7 @@
 import numpy as np
 from PySide import QtGui, QtCore
 import sharppy.sharptab as tab
+import sharppy.sharptab.utils as utils
 from sharppy.sharptab.constants import *
 
 ## routine written by Kelton Halbert
@@ -35,12 +36,8 @@ class backgroundWinds(QtGui.QFrame):
         ## used in converting to pixel units
         self.hmax = 16.; self.hmin = 0.
         self.smax = 80.; self.smin = 0.
-        ## do a DPI check for font sizing
-        if self.physicalDpiX() > 75:
-            fsize = 6
-        else:
-            fsize = 7
-        self.label_font = QtGui.QFont('Helvetica', fsize)
+        self.font_ratio = 0.0512
+        self.label_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio))
         ## initialize the QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(self.bg_color)
@@ -133,7 +130,7 @@ class backgroundWinds(QtGui.QFrame):
             self.brx+self.rpad, y1)
         qp.drawText(0, y1-20, 20, 40,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-            tab.utils.INT2STR(h))
+            utils.INT2STR(h))
 
     def draw_speed(self, s, qp):
         '''
@@ -221,16 +218,16 @@ class plotWinds(backgroundWinds):
         self.srwind = prof.srwind
 
         if self.use_left:
-            self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
-            self.srw_4_6km = tab.utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
-            self.srw_9_11km = tab.utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
+            self.srw_0_2km = utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
+            self.srw_4_6km = utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
+            self.srw_9_11km = utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
             ## get only the left mover u and v components
             self.sru = self.u - self.srwind[2]
             self.srv = self.v - self.srwind[3]
         else:
-            self.srw_0_2km = tab.utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
-            self.srw_4_6km = tab.utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
-            self.srw_9_11km = tab.utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
+            self.srw_0_2km = utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
+            self.srw_4_6km = utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
+            self.srw_9_11km = utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
             ## get only the right mover u and v components
             self.sru = self.u - self.srwind[0]
             self.srv = self.v - self.srwind[1]
@@ -251,16 +248,16 @@ class plotWinds(backgroundWinds):
 
         if update_gui:
             if self.use_left:
-                self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
-                self.srw_4_6km = tab.utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
-                self.srw_9_11km = tab.utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
+                self.srw_0_2km = utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
+                self.srw_4_6km = utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
+                self.srw_9_11km = utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
                 ## get only the left mover u and v components
                 self.sru = self.u - self.srwind[2]
                 self.srv = self.v - self.srwind[3]
             else:
-                self.srw_0_2km = tab.utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
-                self.srw_4_6km = tab.utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
-                self.srw_9_11km = tab.utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
+                self.srw_0_2km = utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
+                self.srw_4_6km = utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
+                self.srw_9_11km = utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
                 ## get only the right mover u and v components
                 self.sru = self.u - self.srwind[0]
                 self.srv = self.v - self.srwind[1]
@@ -274,16 +271,16 @@ class plotWinds(backgroundWinds):
         self.use_left = deviant == 'left'
 
         if self.use_left:
-            self.srw_0_2km = tab.utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
-            self.srw_4_6km = tab.utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
-            self.srw_9_11km = tab.utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
+            self.srw_0_2km = utils.comp2vec(self.prof.left_srw_0_2km[0], self.prof.left_srw_0_2km[1])[1]
+            self.srw_4_6km = utils.comp2vec(self.prof.left_srw_4_6km[0], self.prof.left_srw_4_6km[1])[1]
+            self.srw_9_11km = utils.comp2vec(self.prof.left_srw_9_11km[0], self.prof.left_srw_9_11km[1])[1]
             ## get only the left mover u and v components
             self.sru = self.u - self.srwind[2]
             self.srv = self.v - self.srwind[3]
         else:
-            self.srw_0_2km = tab.utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
-            self.srw_4_6km = tab.utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
-            self.srw_9_11km = tab.utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
+            self.srw_0_2km = utils.comp2vec(self.prof.right_srw_0_2km[0], self.prof.right_srw_0_2km[1])[1]
+            self.srw_4_6km = utils.comp2vec(self.prof.right_srw_4_6km[0], self.prof.right_srw_4_6km[1])[1]
+            self.srw_9_11km = utils.comp2vec(self.prof.right_srw_9_11km[0], self.prof.right_srw_9_11km[1])[1]
             ## get only the right mover u and v components
             self.sru = self.u - self.srwind[0]
             self.srv = self.v - self.srwind[1]
@@ -388,7 +385,7 @@ class plotWinds(backgroundWinds):
         qp.setPen(pen)
         for i in range(interp_hght.shape[0] - 1):
             spd1 = sr_spd[i]; spd2 = sr_spd[i+1]
-            if tab.utils.QC(spd1) and tab.utils.QC(spd2):
+            if utils.QC(spd1) and utils.QC(spd2):
                 hgt1 = (interp_hght[i] - interp_hght[0]) / 1000; hgt2 = (interp_hght[i+1] - interp_hght[0]) / 1000
                 ## convert the wind speeds to x pixels
                 x1 = self.speed_to_pix(spd1); x2 = self.speed_to_pix(spd2)
@@ -397,7 +394,7 @@ class plotWinds(backgroundWinds):
                 ## draw a line between the two points
                 qp.drawLine(x1, y1, x2, y2)
 
-        if tab.utils.QC(self.srw_0_2km):       
+        if utils.QC(self.srw_0_2km):       
             # Plot the 0-2 km mean SRW
             pen = QtGui.QPen(self.m0_2_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -406,7 +403,7 @@ class plotWinds(backgroundWinds):
             y1 = self.hgt_to_pix(0.0); y2 = self.hgt_to_pix(2.0)
             qp.drawLine(x1, y1, x2, y2)
 
-        if tab.utils.QC(self.srw_4_6km):
+        if utils.QC(self.srw_4_6km):
             # Plot the 4-6 km mean SRW
             pen = QtGui.QPen(self.m4_6_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -415,7 +412,7 @@ class plotWinds(backgroundWinds):
             y1 = self.hgt_to_pix(4.0); y2 = self.hgt_to_pix(6.0)
             qp.drawLine(x1, y1, x2, y2)
                     
-        if tab.utils.QC(self.srw_9_11km):
+        if utils.QC(self.srw_9_11km):
             # Plot the 9-11 km mean SRW
             pen = QtGui.QPen(self.m9_11_color, 2)
             pen.setStyle(QtCore.Qt.SolidLine)
@@ -423,3 +420,9 @@ class plotWinds(backgroundWinds):
             x1 = self.speed_to_pix(self.srw_9_11km); x2 = self.speed_to_pix(self.srw_9_11km)
             y1 = self.hgt_to_pix(9.0); y2 = self.hgt_to_pix(11.0)
             qp.drawLine(x1, y1, x2, y2)
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotWinds()
+    tester.show()    
+    app_frame.exec_()

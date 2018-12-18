@@ -29,24 +29,14 @@ class backgroundSTP(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-
-        self.lpad = 0.; self.rpad = 0.
-        self.tpad = 15.; self.bpad = 15.
-        self.wid = self.size().width() - self.rpad
-        self.hgt = self.size().height() - self.bpad
-        self.tlx = self.rpad; self.tly = self.tpad
-        self.brx = self.wid; self.bry = self.hgt
-        self.stpmax = 11.; self.stpmin = 0.
-
-        fsize1 = np.floor(.08 * self.hgt)
-        fsize2 = np.floor(.05 * self.hgt)
-        self.textpad = np.floor(.03 * self.hgt)
-
+        self.textpad = 5
+        self.font_ratio = 0.0512
+        fsize1 = round(self.size().height() * self.font_ratio) + 2
+        fsize2 = round(self.size().height() * self.font_ratio)
         self.plot_font = QtGui.QFont('Helvetica', fsize1 )
         self.box_font = QtGui.QFont('Helvetica', fsize2)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
-
         if platform.system() == "Windows":
             fsize1 -= self.plot_metrics.descent()
             fsize2 -= self.box_metrics.descent()
@@ -55,10 +45,17 @@ class backgroundSTP(QtGui.QFrame):
             self.box_font = QtGui.QFont('Helvetica', fsize2)
             self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
             self.box_metrics = QtGui.QFontMetrics(self.box_font)
-
-        self.plot_height = self.plot_metrics.xHeight() + self.textpad
+        self.plot_height = self.plot_metrics.xHeight()# + self.textpad
         self.box_height = self.box_metrics.xHeight() + self.textpad
-		
+        self.tpad = self.plot_height + 15; 
+        self.bpad = self.plot_height + 2
+        self.lpad = 0.; self.rpad = 0.
+        self.wid = self.size().width() - self.rpad
+        self.hgt = self.size().height() - self.bpad
+        self.tlx = self.rpad; self.tly = self.tpad;
+        self.brx = self.wid; 
+        self.bry = self.hgt - self.bpad#+ round(self.font_ratio * self.hgt)
+        self.stpmax = 11.; self.stpmin = 0.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
@@ -90,30 +87,29 @@ class backgroundSTP(QtGui.QFrame):
         pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
-        rect1 = QtCore.QRectF(1.5,1.5, self.brx, self.plot_height)
+        # Left, top, width, height
+        rect1 = QtCore.QRectF(0,5, self.brx, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Effective Layer STP (with CIN)')
 
         pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        spacing = self.bry / 12.
 
-        ytick_fontsize = 10
+        ytick_fontsize = round(self.font_ratio * self.hgt) + 1
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         stp_inset_data = inset_data.stpData()
         texts = stp_inset_data['stp_ytexts']
-        y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-
         # Plot the y-tick labels for the box and whisker plots
-        for i in range(len(y_ticks)):
+        for i in range(len(texts)):
             pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
-            qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
+            tick_pxl = self.stp_to_pix(int(texts[i]))
+            qp.drawLine(self.tlx, tick_pxl, self.brx, tick_pxl)
             color = QtGui.QColor(self.bg_color)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            ypos = y_ticks[i] - ytick_fontsize/2
+            ypos = tick_pxl - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
@@ -126,7 +122,7 @@ class backgroundSTP(QtGui.QFrame):
         center = np.arange(spacing, self.brx, spacing)
         texts = stp_inset_data['stp_xtexts']
         ef = self.stp_to_pix(ef)
-        qp.setFont(QtGui.QFont('Helvetica', 8))
+        qp.setFont(QtGui.QFont('Helvetica', round(self.font_ratio * self.hgt)))
         for i in range(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
             pen = QtGui.QPen(self.box_color, 2, QtCore.Qt.SolidLine)
@@ -146,11 +142,13 @@ class backgroundSTP(QtGui.QFrame):
             color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i] - width/2., self.stp_to_pix(-.3), width, 4)
+            rect = QtCore.QRectF(center[i] - width/2., self.bry + round(self.bpad/2), width, self.bpad)
+
             # Change to a white pen to draw the text below the box and whisker plot
             pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
+            #qp.drawText(rect, QtCore.Qt.AlignCenter, texts[i])
 
     def stp_to_pix(self, stp):
         scl1 = self.stpmax - self.stpmin
@@ -602,3 +600,10 @@ class plotSTP(backgroundSTP):
             y1 += vspace
         qp.end()
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotSTP()
+    tester.setGeometry(50,50,293,195)
+    #tester.plotBitMap.save('test.png', format='png')
+    tester.show()        
+    app_frame.exec_()

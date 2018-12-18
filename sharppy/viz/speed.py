@@ -36,7 +36,10 @@ class backgroundSpeed(QtGui.QFrame):
         elif self.wind_units == 'm/s':
             self.smax = 80.; self.smin = 0. # m/s
             self.delta = 10.
-        self.label_font = QtGui.QFont('Helvetica', 8)
+        
+        self.font_ratio = 0.12#0512
+        fsize = round(self.size().width() * self.font_ratio) + 2
+        self.label_font = QtGui.QFont('Helvetica', fsize)
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
         self.plotBitMap.fill(QtGui.QColor(self.bg_color))
         self.plotBackground()
@@ -68,10 +71,12 @@ class backgroundSpeed(QtGui.QFrame):
         ## Draw the title and units
         pen = QtGui.QPen(QtGui.QColor(self.fg_color), 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        self.title_font = QtGui.QFont('Helvetica', 9)
+
+        fsize = round(self.size().width() * self.font_ratio)
+        self.title_font = QtGui.QFont('Helvetica', fsize+1)
         qp.setFont(self.title_font)
         qp.drawText(self.tlx+2, self.tly+2, self.brx-self.tlx, 30,
-                   QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft, "Wind Speed\n(" + self.wind_units + ")")
+                   QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft | QtCore.Qt.TextWordWrap, "Wind Speed\n(" + self.wind_units + ")")
         qp.end() 
 
 
@@ -278,5 +283,9 @@ class plotSpeed(backgroundSpeed):
             qp.setPen(pen)
             qp.drawLine(0, y1, x1, y1)
 
-
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSpeed()
+    tester.show()    
+    app_frame.exec_()
 
