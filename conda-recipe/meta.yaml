@@ -1,0 +1,23 @@
+package:
+    name: sharppy
+    version: git
+
+source:
+    git_url: https://github.com/sharppy/SHARPpy.git
+
+build:
+    script: python setup.py install
+
+requirements:
+    run:
+     - numpy
+     - pyside
+test:
+    imports:
+     - pyside
+about:
+    home: 
+    summary:
+    license: BSD
+    license_file: LICENSE
+ 
