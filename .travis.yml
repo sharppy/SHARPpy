@@ -1,3 +1,7 @@
+env:
+  global:
+    # sharppy-docs-bot GH
+    secure: "Q+WHnZiCph723g0fcu0xFDtsxciAMB/ZuwivyNTkxPcAXBMekS5oD6qTAanh1FdlEuS1GtSg8HketlfeJZO0gDkQHzG/vIzhgnBRSGliHDDQtvCdHQHUi1fsiVhzGYxFT46dZmhJ0MQGNJlGG4sp81/ckmiYhoAivaeBt4VfrwwkBKo0Tcm6Cue+f8VD2r6+AjtnvOFL4M05AOhVyiq4T+BJZ9oVzwUYA5Vftht5iKt7hVAAWmi6fjxSXUIXIZDGSWJe4ofVHePiyY+OcC2qf/UoJ/kSfbnGzmkTK5M8kPctu8BdQBUj0qfYSJmQoaG2/rd3bjLMc+wYB9FqrUv19oU0bY64PDwm7Z9CKeckEGO8/2R6qhZAPxsNxMvxGNNHXQIGMeZRTkOgcA8sOqRsCP6IbWrTq3zQLUC58CQjHqtoSH41nBOxWqhTJREGSnZj7zY4CKyI7N0nPJ3JtMPZIJfThgR4zaxo+RyCG4YAUEuMmq3lEMLr/DeaONXlHMSskalkFJuIPLb95oA4bSgaUL824tT95UfxcifLHRjwIBSIAyy72p5mLgny3ZN+UaP5/eVbuG6SPr04cv248XY+BGcglXVN0IXsDZN6GXdL3GZke0u6gvEWXCUQe2YvwwEFq4xuhrgwo0vpb7KobBtmd/ObRClymi7KBaR235KUN6E="
 matrix:
   include:
   - os: osx
@@ -12,39 +16,20 @@ matrix:
   - os: linux
     language: generic
     env: PYTHON_VERSION="3.7"
+    env: BUILD_DOCS="YES"
 before_install:
-- echo $PYTHON_VERSION
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-  curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
-  else curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-  -o miniconda.sh; fi else if [[ "$PYTHON_VERSION" == "2.7" ]]; then wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
-  -O miniconda.sh; else wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  -O miniconda.sh; fi fi
-- bash miniconda.sh -b -p $HOME/miniconda
-- export PATH="$HOME/miniconda/bin:$PATH"
-- hash -r
-- conda config --set always_yes yes --set changeps1 no
-- conda update -q conda
-- conda info -a
-- conda create -q -n test-environment python=$PYTHON_VERSION numpy nose
-- source activate test-environment
-- conda install -c conda-forge pyside
-- conda install -c conda-forge pyinstaller
-# If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then conda install python.app; fi
+- source ci/install.sh
 install:
 - python setup.py install
 script:
-- python sharppy/tests/test_url.py http://sharp.weather.ou.edu/soundings/archive/1973/09/19/00/DDC.txt
+- python sharppy/tests/test_url.py examples/data/14061619.OAX 
 # If the test script passes, build the binaries.
 after_success:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pyinstaller runsharp/SHARPpy-osx.spec
-  --onefile --noconsole; else pyinstaller runsharp/SHARPpy-linux-redhat5.spec; fi
-- ls -lht dist/
-# Zip the binaries, as we can't transfer .app
+- if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
+- source ci/make_binary.sh
 before_deploy:
 - cd dist
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; else zip -r SHARPpy-linux.zip * ; if
+- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github
 deploy:
@@ -54,8 +39,7 @@ deploy:
   file_glob: true
   file: dist/SHARPpy*.zip
   skip_cleanup: true
-  draft: true
-  overwrite: true
   on:
     repo: sharppy/SHARPpy
     tags: true
+    branch: andover

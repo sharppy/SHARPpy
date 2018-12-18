@@ -28,7 +28,7 @@ def INT2STR(val):
     if np.isnan(val):
         return '--'
     try:
-        return str( int( round( val, 0 ) ) )
+        return str( int( np.round( val, 0 ) ) )
     except:
         return str(val)
 
@@ -51,7 +51,7 @@ def FLOAT2STR(val, precision):
     to a string.
     '''
     try:
-        new_val = str( round( val, precision ) )
+        new_val = str( np.round( val, precision ) )
     except:
         new_val = str( val )
 

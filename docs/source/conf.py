@@ -23,11 +23,12 @@ project = 'SHARPpy'
 copyright = '2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart'
 author = 'Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart'
 
+from sharppy._version import get_versions
 # The short X.Y version
-version = ''
+version = get_versions()['version']
 # The full version, including alpha/beta/rc tags
-release = '1.4'
-
+release = get_versions()['version']
+del get_versions 
 
 # -- General configuration ---------------------------------------------------
 
@@ -40,9 +41,17 @@ release = '1.4'
 # ones.
 extensions = ['sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
-              'sphinx.ext.autodoc']
+              'sphinx.ext.autodoc',
+              'sphinx_gallery.gen_gallery']
 
-autodoc_mock_imports = ["numpy", "PySide"]
+sphinx_gallery_conf = {
+     # path to your examples scripts
+     'examples_dirs': '../../examples',
+     # path where to save gallery generated examples
+     'gallery_dirs': 'auto_examples',
+}
+
+#autodoc_mock_imports = ["numpy", "PySide"]
 
 napoleon_google_docstring = False
 napolean_numpy_docstring = True

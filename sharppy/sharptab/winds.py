@@ -11,7 +11,7 @@ __all__ += ['sr_wind', 'sr_wind_npw', 'wind_shear', 'helicity', 'max_wind']
 __all__ += ['non_parcel_bunkers_motion', 'corfidi_mcs_motion', 'mbe_vectors']
 __all__ += ['non_parcel_bunkers_motion_experimental', 'critical_angle']
 
-warnings.warn("Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)")
+#warnings.warn("Future versions of the routines in the winds module may include options to use height values instead of pressure to specify layers (i.e. SRH, wind shear, etc.)")
 
 def mean_wind(prof, pbot=850, ptop=250, dp=-1, stu=0, stv=0):
     '''
@@ -81,7 +81,7 @@ def mean_wind_npw(prof, pbot=850., ptop=250., dp=-1, stu=0, stv=0):
         V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or not utils.QC(ptop) or not utils.QC(pbot):
         return ma.masked, ma.masked
 
     if dp > 0: dp = -dp
@@ -176,7 +176,7 @@ def wind_shear(prof, pbot=850, ptop=250):
         V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or not utils.QC(ptop) or not utils.QC(pbot):
         return ma.masked, ma.masked
 
     ubot, vbot = interp.components(prof, pbot)
@@ -320,7 +320,7 @@ def helicity(prof, lower, upper, stu=0, stv=0, dp=-1, exact=True):
         Negative Helicity (m2/s2)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or not utils.QC(lower) or not utils.QC(upper) or not utils.QC(stu) or not utils.QC(stv):
         return ma.masked, ma.masked, ma.masked
 
     if lower != upper:
@@ -379,14 +379,17 @@ def max_wind(prof, lower, upper, all=False):
         Maximum Wind Speed V-component (kts)
 
     '''
-    if prof.wdir.count() == 0:
+    if prof.wdir.count() == 0 or not utils.QC(lower) or not utils.QC(upper):
         return ma.masked, ma.masked, ma.masked
 
     lower = interp.to_msl(prof, lower)
     upper = interp.to_msl(prof, upper)
     plower = interp.pres(prof, lower)
     pupper = interp.pres(prof, upper)
-
+    if np.ma.is_masked(plower) or np.ma.is_masked(pupper):
+        warnings.warn("winds.max_wind() was unable to interpolate between height and pressure correctly.  This may be due to a data integrity issue.")
+        return ma.masked, ma.masked, ma.masked
+    #print(lower, upper, plower, pupper, prof.pres)
     ind1 = np.where((plower > prof.pres) | (np.isclose(plower, prof.pres)))[0][0]
     ind2 = np.where((pupper < prof.pres) | (np.isclose(pupper, prof.pres)))[0][-1]
 

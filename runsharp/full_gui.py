@@ -1,36 +1,45 @@
 import sys, os
 import numpy as np
 import warnings
-import logging
 import utils.frozenutils as frozenutils
 import logging
+import PySide
+import platform
+from sharppy._version import get_versions
+__version__ = get_versions()['version']
+ver = get_versions()
+del get_versions
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+
+# Start the logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
+                    filename=HOME_DIR + '/sharppy.log',
+                    filemode='w')
+console = logging.StreamHandler()
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
 
 if len(sys.argv) > 1 and '--debug' in sys.argv:
     debug = True
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
-
-    # Start the logging
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
-                        filename='sharppy.log',
-                        filemode='w')
-    # define a Handler which writes INFO messages or higher to the sys.stderr
-    console = logging.StreamHandler()
     console.setLevel(logging.DEBUG)
-    # set a format which is simpler for console use
-    formatter = logging.Formatter('%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
-    # tell the handler to use this format
-    console.setFormatter(formatter)
-    # add the handler to the root logger
-    logging.getLogger('').addHandler(console)
-
-    logging.info('Started logging output for SHARPpy')
 else:
+    console.setLevel(logging.INFO)
     debug = False
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
+
+logging.info('Started logging output for SHARPpy')
+logging.info('SHARPpy version: ' + str(__version__)) 
+logging.info('numpy version: ' + str(np.__version__)) 
+logging.info('PySide version: ' + str(PySide.__version__)) 
+logging.info("Python version: " + str(platform.python_version()))
 
 if frozenutils.isFrozen():
     if not os.path.exists(HOME_DIR):
@@ -47,7 +56,7 @@ from sharppy.viz.preferences import PrefDialog
 import sharppy.sharptab.profile as profile
 from sharppy.io.decoder import getDecoders
 from sharppy.io.arw_decoder import ARWDecoder
-from sharppy._sharppy_version import __version__, __version_name__
+#from sharppy._version import __version__#, __version_name__
 from datasources import data_source
 from utils.async_threads import AsyncThreads
 from utils.progress import progress
@@ -62,7 +71,7 @@ from utils.config import Config
 import traceback
 from functools import wraps, partial
 import argparse
-
+__version_name__ = ''
 try:
     from netCDF4 import Dataset
     has_nc = True
@@ -406,7 +415,8 @@ class Picker(QWidget):
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
         else:
             getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
-        #print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
+        print(self.model, self.cal_date)
+        print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
         #print(getTimes())
         # Function to update the times.
         def update(times):
@@ -581,11 +591,11 @@ class Picker(QWidget):
         ## if the profile is an archived file, load the file from
         ## the hard disk
         if filename is not None:
-            logging.debug("Trying to load file from local disk...")
+            logging.info("Trying to load file from local disk...")
 
             model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
-            logging.debug("Successfully loaded the profile collection for this file...")
+            logging.info("Successfully loaded the profile collection for this file...")
             disp_name = stn_id
             observed = True
             fhours = None
@@ -604,7 +614,7 @@ class Picker(QWidget):
 
         else:
         ## otherwise, download with the data thread
-            logging.debug("Loading a real-time data stream...")
+            logging.info("Loading a real-time data stream...")
             prof_idx = self.prof_idx
             disp_name = self.disp_name
             run = self.run
@@ -614,16 +624,16 @@ class Picker(QWidget):
             if self.data_sources[model].getForecastHours() == [ 0 ]:
                 prof_idx = [ 0 ]
 
-            logging.debug("Program is going to load the data...")
+            logging.info("Program is going to load the data...")
             ret = loadData(self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
            
             # failure variable makes sure the data actually exists online. 
             if isinstance(ret[0], Exception):
                 exc = ret[0]
                 failure = True
-                logging.debug("There was a problem with loadData() in obtaining the data from the Internet.")
+                logging.info("There was a problem with loadData() in obtaining the data from the Internet.")
             else:
-                logging.debug("Data was found and successfully decoded!")
+                logging.info("Data was found and successfully decoded!")
                 prof_collection = ret[0]
 
             fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
@@ -688,7 +698,7 @@ class Picker(QWidget):
             except:
                 dec = None
                 continue
-
+        
         if dec is None:
             raise IOError("Could not figure out the format of '%s'!" % filename)
         # Returns the set of profiles from the file that are from the "Profile" class.
@@ -715,8 +725,8 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
         dec = decoder((url, loc[0], loc[1]))
     else:
         decoder, url = data_source.getDecoderAndURL(loc, run, outlet_num=ntry)
-        logging.debug("Using decoder: " + str(decoder))
-        logging.debug("Data URL: " + url)
+        logging.info("Using decoder: " + str(decoder))
+        logging.info("Data URL: " + url)
         dec = decoder(url)
 
     if __text__ is not None:

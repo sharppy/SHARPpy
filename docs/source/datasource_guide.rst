@@ -44,6 +44,8 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 
 The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.  As of version 1.4, the GUI will try to plot the data should the user desire.
 
+
+
 Adding Custom Data Sources
 --------------------------
 

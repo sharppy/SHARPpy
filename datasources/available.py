@@ -197,7 +197,6 @@ iem_text = ""
 iem_time = None
 
 ### PSU CODE
-
 psu_base_url = "ftp://ftp.meteo.psu.edu/pub/bufkit/"
 psu_text = ""
 psu_time = None
@@ -249,7 +248,7 @@ def _availableat_psu(model, dt=None):
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
     return stns
 
-def _available_psu(model, nam=False, off=False, dt=None):
+def _available_psu(model, dt=None):
     '''
         _available_psu
 
@@ -265,6 +264,7 @@ def _available_psu(model, nam=False, off=False, dt=None):
         off : boolean (default: false)
             Specifies whether or not this is an off-hour run
     '''
+    #nam=(m in [ 'nam', '4km nam' ])
     if model == '4km nam': model = 'nam4km'
 
     psu_text = _download_psu()
@@ -272,6 +272,92 @@ def _available_psu(model, nam=False, off=False, dt=None):
     dt = datetime.strptime(latest, "%Y%m%d%H%M")
 
     return [ dt ]
+
+### IEM CODE
+iem_base_url = "http://mtarchive.geol.iastate.edu/%Y/%m/%d/bufkit/%H/MODEL/"
+iem_text = ""
+iem_time = None
+
+def _download_iem():
+    '''
+        _download_iem()
+
+        Downloads the IEM directory webpage that lists all the
+        files available.
+
+        Returns
+        -------
+        iem_text : string
+            Lists the files within the IEM site.
+    '''
+    global iem_time, iem_text
+    now = datetime.utcnow()
+    if iem_time is None or iem_time < now - cache_len:
+        iem_obj = urlopen(iem_base_url)
+        psu_text = url_obj.read().decode('utf-8')
+        iem_time = now
+
+    return iem_text 
+
+def _availableat_iem(model, dt=None):
+    '''
+        _availableat_iem
+
+        Downloads a list of all the BUFKIT profile stations for a given
+        model and runtime.
+
+        Parameters
+        ----------
+        model : string
+            A string representing the forecast model requested
+        dt : datetime object
+            A datetime object that represents the model initalization time.
+    '''
+    if model == '4km nam': model = 'nam4km'
+    _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4kmm?', 'hrrr':'hrrr', 'sref':'sref', 'ruc':'ruc'}
+
+    cycle = dt.hour
+    url = dt.strftime(iem_base_url).replace("MODEL", model.lower())
+    url_obj = urlopen(url)
+    text = url_obj.read().decode('utf-8')
+
+    stns = re.findall("%s_(.+)\.buf\">" % _repl[model], text)
+    
+    return stns
+
+def _available_iem(model, dt=None):
+    '''
+        _available_iem
+
+        Downloads a list of datetime objects that represents
+        the available model times from the PSU server.
+
+        Parameters
+        ----------
+        model : string
+            the name of the forecast model
+        nam : boolean (default: false)
+            Specifies whether or not this is the NAM or 4km NAM 
+        off : boolean (default: false)
+            Specifies whether or not this is an off-hour run
+    '''
+    #nam=(m in [ 'nam', '4km nam' ])
+    try:
+        a = int(dt.year)
+    except:
+        dt = datetime(dt.year(), dt.month(), dt.day())
+    
+    if model == '4km nam': model = 'nam4km'
+
+    if dt < datetime(2010,12,30): # No Bufkit files before this date
+        return []
+
+    if model == 'ruc' or model == 'rap':
+       return [datetime(dt.year, dt.month, dt.day, h, 0, 0) for h in np.arange(0,24,1)]
+    if model == 'gfs' or model == 'nam' or model == 'nam4km':
+       return [datetime(dt.year, dt.month, dt.day, h, 0, 0) for h in np.arange(0,24,6)]
+
+    return []
 
 
 ## PECAN MAPS ENSEMBLE CODE
@@ -318,6 +404,7 @@ def _available_nssl(ens=False):
 # A dictionary of the available times for profiles from observations, forecast models, etc.
 available = {
     'psu':{}, 
+    'iem':{}, 
     'spc':{'observed': lambda dt: _available_spc(dt)},
     'ou_pecan': {'pecan ensemble': lambda dt: _available_oupecan(dt) },
     'ncar_ens': {'ncar ensemble': lambda dt: _available_ncarens(dt) },
@@ -329,6 +416,7 @@ available = {
 # given a specific datetime object.
 availableat = {
     'psu':{},
+    'iem':{},
     'spc':{'observed':_availableat_spc},
     'ou_pecan': {'pecan ensemble': lambda dt: _availableat_oupecan(dt) },
     'sharp': {'ncar ensemble': lambda dt: _availableat_ncarens(dt) , 'observed':_availableat_sharp, 'goes':_availableat_goes,},
@@ -336,16 +424,26 @@ availableat = {
 
 # Set the available and available-at-time functions for the PSU data.
 for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
-    available['psu'][model] = (lambda m: lambda: _available_psu(m, nam=(m in [ 'nam', '4km nam' ]), off=False))(model)
+    available['psu'][model] = (lambda m: lambda dt: _available_psu(m, dt))(model)
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
+# Set the available and available-at-time functions for the IEM data.
+for model in [ 'gfs', 'nam', 'rap', 'ruc', '4km nam' ]:
+    available['iem'][model] = (lambda m: lambda dt: _available_iem(m, dt))(model)
+    availableat['iem'][model] = (lambda m: lambda dt: _availableat_iem(m, dt))(model)
+
+
 if __name__ == "__main__":
-    #dt = available['sharp']['observed']('test')
-    #print(dt)
-    #print(availableat['sharp']['observed'](dt[-1]))
+    
+    dt = datetime.utcnow()
+    dt = available['sharp']['observed'](dt)
+    print(dt)
+    print(availableat['sharp']['observed'](dt[-1]))
     ##stop
-    dt = available['psu']['gfs']()
-    stns = availableat['psu']['gfs'](dt[0])
+    dt = datetime(2015,1,1,0,0,0)
+    print(dt)
+    dt = available['iem']['gfs'](dt)
+    stns = availableat['iem']['gfs'](dt[0])
     print(dt, stns)
     #dt = available['spc']['observed']()
     #stns = availableat['spc']['observed'](dt[-1])

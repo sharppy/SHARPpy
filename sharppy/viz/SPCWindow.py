@@ -18,8 +18,11 @@ from os.path import expanduser
 import os
 import re
 import logging
-from sharppy._sharppy_version import __version__, __version_name__
-
+#from sharppy._sharppy_version import __version__, __version_name__
+from sharppy._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+__version_name__ = ''
 
 def _modifySheet(sheet, name, value):
     return re.sub("(?<= %s: )#[0-9A-Fa-f]{6}" % name, value, sheet)
@@ -145,7 +148,7 @@ class SPCWidget(QWidget):
                          "  border-color: " + fg_hex + ";"
                          "  margin: 0px;}")
 
-        self.brand = QLabel("SHARPpy Beta v%s %s" % (__version__, __version_name__))
+        self.brand = QLabel("SHARPpy v%s %s" % (__version__, __version_name__))
         self.brand.setAlignment(Qt.AlignRight)
         self.brand.setStyleSheet("QFrame {"
                              "  background-color: " + bg_hex + ";"

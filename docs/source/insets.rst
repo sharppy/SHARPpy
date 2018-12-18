@@ -13,8 +13,8 @@ At the bottom of the SHARPpy GUI lies four separate insets that can be used to a
 Thermodynamic Indices
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: inset_thermo.png
-    :scale: 100%
+.. figure:: tutorial_imgs/inset_thermo.png
+    :scale: 50%
     :alt: Thermo inset
     :align: center
 
@@ -23,8 +23,8 @@ Thermodynamic Indices
 Kinematic Indices
 ^^^^^^^^^^^^^^^^^
 
-.. figure:: inset_thermo.png
-    :scale: 100%
+.. figure:: tutorial_imgs/inset_kinematics.png
+    :scale: 50%
     :alt: Thermo inset
     :align: center
 
@@ -90,15 +90,15 @@ Winter Weather
 ^^^^^^^^^^^^^^
 
 .. figure:: tutorial_imgs/inset_winter.png
-    :scale: 100%
+    :scale: 50%
     :alt: Thermo inset
     :align: center
 
 * Provides information regarding the mean atmospheric properties within the Dendritic Growth Zone (DGZ; -12  ̊C to -17  ̊C layer), which is the layer where most types of ice nuclei can become activated and grow into ice crystals (e.g., snow).
 * Provides an estimate of the initial precipitation phase using empirical arguments.
 * Identifies layers where falling precipitation may experience melting/freezing by considering the wetbulb temperature profile and environmental temperature profile.
-* Performs a best guess precipitation type using Bourgouin (2000) precipitation algorithm, the initial precipitation phase, and surface temperature.
-* Uses top-down preciptation type thinking.
+* Performs a best guess precipitation type using `Bourgouin (2000) <https://journals.ametsoc.org/doi/10.1175/1520-0434%282000%29015%3C0583%3AAMTDPT%3E2.0.CO%3B2>`_ precipitation algorithm, the initial precipitation phase, and surface temperature.
+* Uses top-down preciptation thinking to determine precipitation type.
 
 
 EF Scale Probablities (STP)

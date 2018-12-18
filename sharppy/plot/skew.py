@@ -16,9 +16,10 @@ from matplotlib.patches import Circle
 from matplotlib.projections import register_projection
 import matplotlib.spines as mspines
 from matplotlib.ticker import MultipleLocator, NullFormatter, ScalarFormatter
+from matplotlib.pyplot import title
 import matplotlib.transforms as transforms
 import numpy as np
-
+import sharppy.sharptab as tab
 
 class SkewXTick(maxis.XTick):
     r"""Make x-axis ticks for Skew-T plots.
@@ -221,5 +222,137 @@ class SkewXAxes(Axes):
 # Now register the projection with matplotlib so the user can select
 # it.
 register_projection(SkewXAxes)
+pb_plot=1050
+pt_plot=100
+dp_plot=10
+plevs_plot = np.arange(pb_plot,pt_plot-1,-dp_plot)
+
+
+def draw_dry_adiabats(ax, tmin=-50, tmax=210, delta=10, color='r', alpha=.2):
+    # plot the dry adiabats
+    for t in np.arange(tmin,tmax,delta):
+        ax.semilogy(tab.thermo.thetas(t, presvals), presvals, '-', color=color)
+    return ax
+
+def draw_mixing_ratio_lines(ax, spacing=[2,4,10,12,14,16,18,20], color='g', lw=.7):
+    # plot the mixing ratio lines
+    for w in spacing:
+        line = tab.thermo.temp_at_mixrat(w, np.arange(1000,600,-1))
+        ax.semilogy(line, np.arange(1000,600,-1), '--', color=color, lw=lw)
+    return ax
+
+def draw_moist_adiabats(ax, tmin=-50, tmax=50, delta=10, color='k', alpha=0.5):
+    # plot the moist adiabats
+    for i in np.arange(tmin,tmax,delta):
+        t = []
+        for pres in np.arange(1000,90,-10):
+            t.append(tab.thermo.wetlift(1000,i,pres))
+        ax.semilogy(t, np.arange(1000,90,-10), color=color, lw=1, alpha=alpha)
+    return ax
+
+def draw_title(ax, t):
+    title(t, fontsize=14, loc='left')
+    return ax
+
+# Routine to plot the axes for the wind profile
+def plot_wind_axes(axes):
+    # plot wind barbs
+    draw_wind_line(axes)
+    axes.set_axis_off()
+    axes.axis([-1,1,pb_plot,pt_plot])
+
+     
+# Routine to plot the wind barbs.
+def plot_wind_barbs(axes, p, u, v):
+    for i in np.arange(0,len(p)):
+        if (p[i] > pt_plot):
+            if np.ma.is_masked(v[i]) is True:
+                continue
+            axes.barbs(0,p[i],u[i],v[i], length=7, clip_on=False, linewidth=1)
+
+# Routine to draw the line for the wind barbs
+def draw_wind_line(axes):
+    wind_line = []
+    for p in plevs_plot:
+        wind_line.append(0)
+    axes.semilogy(wind_line, plevs_plot, color='black', linewidth=.5)
+
+# Routine to calculate the dry adiabats.
+def thetas(theta, presvals):
+    return ((theta + thermo.ZEROCNK) / (np.power((1000. / presvals),thermo.ROCP))) - thermo.ZEROCNK
+
+def plot_sig_levels(ax, prof):
+    # Plot LCL, LFC, EL labels (if it fails, inform the user.)
+    trans = transforms.blended_transform_factory(ax.transAxes, ax.transData)
+    try:    
+        ax.text(0.90, prof.mupcl.lclpres, '- LCL', verticalalignment='center', transform=trans, color='k', alpha=0.7)
+    except:
+        print("couldn't plot LCL")
+
+    if np.isfinite(prof.mupcl.lfcpres):
+        ax.text(0.90, prof.mupcl.lfcpres, '- LFC', verticalalignment='center', transform=trans, color='k', alpha=0.7)
+    else:    
+        print("couldn't plot LFC")
+
+    try:
+        ax.text(0.90, prof.mupcl.elpres, '- EL', verticalalignment='center', transform=trans, color='k', alpha=0.7)
+    except:
+        print("couldn't plot EL")
+
+    return ax
+
+def draw_heights(ax, prof):
+    # Plot the height values on the skew-t, if there's an issue, inform the user.
+    for h in [1000,2000,3000,4000,5000,6000,9000,12000,15000]:
+        p = interp.pres(prof, interp.to_msl(prof, h))
+        try:
+            ax.text(0.01, p, str(h/1000) +' km -', verticalalignment='center', fontsize=9, transform=trans, color='r')
+        except:
+            print("problem plotting height label:", h)
+
+    ax.text(0.01, prof.pres[prof.sfc], 'Sfc', verticalalignment='center', fontsize=9, transform=trans, color='r')
+    return ax
+
+def draw_effective_inflow_layer(ax, prof):
+    # Plot the effective inflow layer on the Skew-T, like with the GUI (TODO: include the effective SRH on the top like in the GUI).
+    ax.plot([0.2,0.3], [prof.ebottom, prof.ebottom], color='c', lw=2, transform=trans)
+    ax.plot([0.25,0.25], [prof.etop, prof.ebottom], color='c', lw=2, transform=trans)
+    ax.plot([0.2,0.3], [prof.etop, prof.etop], color='c', lw=2, transform=trans)
+
+def draw_hodo_inset(ax, prof):
+    # Draw the hodograph axes on the plot.
+    from mpl_toolkits.axes_grid.inset_locator import inset_axes
+    inset_axes = inset_axes(ax,width=1.7, # width = 30% of parent_bbox
+                                        height=1.7, # height : 1 inch
+                                        loc=1)
+    inset_axes.get_xaxis().set_visible(False)
+    inset_axes.get_yaxis().set_visible(False)
+
+    # Draw the range rings around the hodograph.
+    for i in range(10,90,10):
+        circle = Circle((0,0),i,color='k',alpha=.3, fill=False)
+        if i % 10 == 0 and i <= 50:
+            inset_axes.text(-i,2,str(i), fontsize=8, horizontalalignment='center')
+        inset_axes.add_artist(circle)
+    inset_axes.set_xlim(-60,60)
+    inset_axes.set_ylim(-60,60)
+    inset_axes.axhline(y=0, color='k')
+    inset_axes.axvline(x=0, color='k')
+    #srwind = tab.params.bunkers_storm_motion(prof)
+
+    return inset_axes
+
+# Routine to plot the hodograph in segments (0-3 km, 3-6 km, etc.)
+def plotHodo(axes, h, u, v, color='k'):
+    for color, min_hght in zip(['r', 'g', 'b', 'k'], [3000,6000,9000,12000]):
+        below_12km = np.where((h <= min_hght) & (h >= min_hght - 3000))[0]
+        if len(below_12km) == 0:
+            continue
+        below_12km = np.append(below_12km, below_12km[-1] + 1)
+        # Try except to ensure missing data doesn't cause this routine to fail.
+        try:
+            axes.plot(u[below_12km][~u.mask[below_12km]],v[below_12km][~v.mask[below_12km]], color +'-', lw=2)
+        except:
+            continue
 
 
