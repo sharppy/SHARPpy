@@ -2,7 +2,7 @@ import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import constants
 from sharppy.sharptab.constants import MISSING
-from sharppy.sharptab.profile import Profile
+from sharppy.sharptab.profile import Profile, BasicProfile
 import numpy.testing as npt
 
 sounding = """
@@ -164,8 +164,8 @@ wspd = ma.asarray(wspd)
 
 class TestProfile(object):
     def __init__(self):
-        self.prof = Profile(pres=pres, hght=hght, tmpc=tmpc,
-                            dwpc=dwpc, wdir=wdir, wspd=wspd)
+        self.prof = BasicProfile(pres=pres, hght=hght, tmpc=tmpc,
+                                 dwpc=dwpc, wdir=wdir, wspd=wspd)
 
     def test_prof_pres(self):
         pres[pres == MISSING] = ma.masked
@@ -203,7 +203,7 @@ class TestProfile(object):
         d = [MISSING, 15.5, 11.5, 2.2, -17.8, -30.1, -46.1, -58.1, -67.1]
         wd = [MISSING, 155, 175, 225, 235, 240, 235, 240, 235]
         ws = [MISSING, 27, 24.01, 31.99, 44, 62.01, 85.01, 86, 94]
-        prof = Profile(pres=p, hght=z, tmpc=t, dwpc=d, wdir=wd, wspd=ws)
+        prof = BasicProfile(pres=p, hght=z, tmpc=t, dwpc=d, wdir=wd, wspd=ws)
         sfc_ind = 1
         npt.assert_almost_equal(prof.sfc, sfc_ind)
 

@@ -21,7 +21,8 @@ def decode(filename):
 
     return profs, stn_id
 
-def test_url(path):
+def test_url():
+    path = '../../examples/data/14061619.OAX'
     # Sys.argv[1] should be the URL to the file that is being tested.
     profs, stn_id = decode(path)
     print((profs._profs))
@@ -39,4 +40,3 @@ def test_url(path):
     
     print(new_prof.mupcl.bplus)
 
-test_url(sys.argv[1])
