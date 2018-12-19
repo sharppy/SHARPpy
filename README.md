@@ -20,8 +20,6 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 
 - [Developer Requests](#developer-requests)
 - [Installing SHARPpy](#installing-sharppy)
-    - [Installing a pre-compiled binary](#installing-a-pre-compiled-binary)
-    - [Installing from source](#installing-the-code)
 - [Running SHARPpy](#using_the_sharppy_application)
 - [Known GUI Issues](#known-gui-issues)
 - [SHARPpy Development Team](#sharppy-development-team)
