@@ -1,0 +1,15 @@
+name: devel
+channels:
+  - conda-forge/label/testing
+  - conda-forge
+dependencies:
+  - python=3
+  - numpy
+  - pyside
+  - sphinx
+  - sphinx-gallery
+  - sphinx-rtd-theme
+  - pip:
+    - sphinx-prompt
+
+
