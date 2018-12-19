@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Custom Data Sources &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
+  <title>Custom Data Sources &mdash; SHARPpy 1.4.0-Andover-Alpha1+30.g37fa642 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+23.g63096ee
+                1.4.0-Andover-Alpha1+30.g37fa642
               </div>
             
           
@@ -83,9 +83,9 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
@@ -199,7 +199,7 @@
 <p>While SHARPpy can be configured to accept multiple different sounding formats, the tabular (or SPC format) format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.</p>
 <p>The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  “…” is where the sections of the file ends and continues in this example and are not included in the actual data file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">TITLE</span><span class="o">%</span>
- <span class="n">SITEID</span>   <span class="n">YYMMDD</span><span class="o">/</span><span class="n">HHMM</span>
+ <span class="n">SITEID</span>   <span class="n">YYMMDD</span><span class="o">/</span><span class="n">HHMM</span> <span class="n">LAT</span><span class="p">,</span><span class="n">LON</span>
 
    <span class="n">LEVEL</span>       <span class="n">HGHT</span>       <span class="n">TEMP</span>       <span class="n">DWPT</span>       <span class="n">WDIR</span>       <span class="n">WSPD</span>
 <span class="o">-------------------------------------------------------------------</span>

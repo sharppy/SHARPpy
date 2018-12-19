@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.databases package &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
+  <title>sharppy.databases package &mdash; SHARPpy 1.4.0-Andover-Alpha1+30.g37fa642 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+23.g63096ee
+                1.4.0-Andover-Alpha1+30.g37fa642
               </div>
             
           
@@ -81,9 +81,9 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
@@ -163,9 +163,11 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-sharppy.databases.inset_data">
-<span id="sharppy-databases-inset-data-module"></span><h2>sharppy.databases.inset_data module<a class="headerlink" href="#module-sharppy.databases.inset_data" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<div class="section" id="sharppy-databases-inset-data-module">
+<h2>sharppy.databases.inset_data module<a class="headerlink" href="#sharppy-databases-inset-data-module" title="Permalink to this headline">¶</a></h2>
+<p>Contains data to be drawn on various insets (such as the
+line graphs and box and whisker plots in the SHIP or STP EF insets)</p>
+<span class="target" id="module-sharppy.databases.inset_data"></span><dl class="function">
 <dt id="sharppy.databases.inset_data.condSTPData">
 <code class="descclassname">sharppy.databases.inset_data.</code><code class="descname">condSTPData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/inset_data.html#condSTPData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.inset_data.condSTPData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -191,11 +193,12 @@
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-sharppy.databases.pwv">
-<span id="sharppy-databases-pwv-module"></span><h2>sharppy.databases.pwv module<a class="headerlink" href="#module-sharppy.databases.pwv" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<div class="section" id="sharppy-databases-pwv-module">
+<h2>sharppy.databases.pwv module<a class="headerlink" href="#sharppy-databases-pwv-module" title="Permalink to this headline">¶</a></h2>
+<p>Handles comparing the loaded sounding against the PWV climatology</p>
+<span class="target" id="module-sharppy.databases.pwv"></span><dl class="class">
 <dt id="sharppy.databases.pwv.PWDatabase">
-<em class="property">class </em><code class="descclassname">sharppy.databases.pwv.</code><code class="descname">PWDatabase</code><span class="sig-paren">(</span><em>data_path='/home/travis/miniconda/envs/test-environment/lib/python3.6/site-packages/SHARPpy-1.4.0_Andover_Alpha1_23.g63096ee-py3.6.egg/sharppy/databases'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/pwv.html#PWDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.pwv.PWDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sharppy.databases.pwv.</code><code class="descname">PWDatabase</code><span class="sig-paren">(</span><em>data_path='/home/travis/miniconda/envs/test-environment/lib/python3.6/site-packages/SHARPpy-1.4.0_Andover_Alpha1_30.g37fa642-py3.6.egg/sharppy/databases'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/pwv.html#PWDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.pwv.PWDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="sharppy.databases.pwv.PWDatabase.getClimo">
@@ -287,9 +290,10 @@ and Kelton Halbert.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-sharppy.databases.sars">
-<span id="sharppy-databases-sars-module"></span><h2>sharppy.databases.sars module<a class="headerlink" href="#module-sharppy.databases.sars" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<div class="section" id="sharppy-databases-sars-module">
+<h2>sharppy.databases.sars module<a class="headerlink" href="#sharppy-databases-sars-module" title="Permalink to this headline">¶</a></h2>
+<p>Handles comparing the loaded sounding against past severe weather soundings (the SARS function).</p>
+<span class="target" id="module-sharppy.databases.sars"></span><dl class="function">
 <dt id="sharppy.databases.sars.getSounding">
 <code class="descclassname">sharppy.databases.sars.</code><code class="descname">getSounding</code><span class="sig-paren">(</span><em>match_string</em>, <em>match_type</em>, <em>profile='default'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/sars.html#getSounding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.sars.getSounding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a match string and type (supercell:hail) from one of the

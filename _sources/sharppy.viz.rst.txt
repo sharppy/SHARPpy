@@ -4,8 +4,13 @@ sharppy.viz package
 Submodules
 ----------
 
+Contains code to handle construction of the SHARPpy GUI.
+
 sharppy.viz.SPCWindow module
 ----------------------------
+
+Master class to handle the various insets, loop through the data,
+add in new ProfileCollections.
 
 .. automodule:: sharppy.viz.SPCWindow
     :members:
@@ -15,6 +20,8 @@ sharppy.viz.SPCWindow module
 sharppy.viz.advection module
 ----------------------------
 
+Plots the Inferred Temperature Advection inset.
+
 .. automodule:: sharppy.viz.advection
     :members:
     :undoc-members:
@@ -22,6 +29,8 @@ sharppy.viz.advection module
 
 sharppy.viz.analogues module
 ----------------------------
+
+The SARS Inset.
 
 .. automodule:: sharppy.viz.analogues
     :members:
@@ -31,6 +40,8 @@ sharppy.viz.analogues module
 sharppy.viz.barbs module
 ------------------------
 
+Routines for drawing wind barbs.
+
 .. automodule:: sharppy.viz.barbs
     :members:
     :undoc-members:
@@ -38,6 +49,10 @@ sharppy.viz.barbs module
 
 sharppy.viz.draggable module
 ----------------------------
+
+Routines to handle dragging various stuff in the insets.
+Primarily used in the skew.py and hodo.py files to handle the
+click and drag feature of the sounding data.
 
 .. automodule:: sharppy.viz.draggable
     :members:
@@ -47,6 +62,8 @@ sharppy.viz.draggable module
 sharppy.viz.ensemble module
 ---------------------------
 
+Draft inset to show the Ensemble data in a scatter plot format.
+
 .. automodule:: sharppy.viz.ensemble
     :members:
     :undoc-members:
@@ -54,6 +71,8 @@ sharppy.viz.ensemble module
 
 sharppy.viz.fire module
 -----------------------
+
+The Fire Inset.
 
 .. automodule:: sharppy.viz.fire
     :members:
@@ -63,6 +82,8 @@ sharppy.viz.fire module
 sharppy.viz.generic module
 --------------------------
 
+Code for a generic inset.  Essentially a template for future insets.
+
 .. automodule:: sharppy.viz.generic
     :members:
     :undoc-members:
@@ -70,6 +91,8 @@ sharppy.viz.generic module
 
 sharppy.viz.hodo module
 -----------------------
+
+Draw the hodograph inset and handle the interactivity with the hodograph.
 
 .. automodule:: sharppy.viz.hodo
     :members:
@@ -79,6 +102,8 @@ sharppy.viz.hodo module
 sharppy.viz.kinematics module
 -----------------------------
 
+The Kinematics Inset
+
 .. automodule:: sharppy.viz.kinematics
     :members:
     :undoc-members:
@@ -86,6 +111,8 @@ sharppy.viz.kinematics module
 
 sharppy.viz.map module
 ----------------------
+
+Code to handle drawing the map in the Picker
 
 .. automodule:: sharppy.viz.map
     :members:
@@ -95,6 +122,8 @@ sharppy.viz.map module
 sharppy.viz.preferences module
 ------------------------------
 
+Code to handle the preferences window.
+
 .. automodule:: sharppy.viz.preferences
     :members:
     :undoc-members:
@@ -102,6 +131,8 @@ sharppy.viz.preferences module
 
 sharppy.viz.ship module
 -----------------------
+
+The SHIP-Stats Inset.
 
 .. automodule:: sharppy.viz.ship
     :members:
@@ -111,6 +142,8 @@ sharppy.viz.ship module
 sharppy.viz.skew module
 -----------------------
 
+Draw the skew-t and handle the interactivity with the Skew-T
+
 .. automodule:: sharppy.viz.skew
     :members:
     :undoc-members:
@@ -118,6 +151,8 @@ sharppy.viz.skew module
 
 sharppy.viz.slinky module
 -------------------------
+
+Draw the storm slinky.
 
 .. automodule:: sharppy.viz.slinky
     :members:
@@ -127,6 +162,8 @@ sharppy.viz.slinky module
 sharppy.viz.speed module
 ------------------------
 
+Draw the wind speed with height.
+
 .. automodule:: sharppy.viz.speed
     :members:
     :undoc-members:
@@ -134,6 +171,8 @@ sharppy.viz.speed module
 
 sharppy.viz.srwinds module
 --------------------------
+
+Draw the storm-relative winds with height inset.
 
 .. automodule:: sharppy.viz.srwinds
     :members:
@@ -143,6 +182,8 @@ sharppy.viz.srwinds module
 sharppy.viz.stp module
 ----------------------
 
+The STP Stats Inset
+
 .. automodule:: sharppy.viz.stp
     :members:
     :undoc-members:
@@ -150,6 +191,8 @@ sharppy.viz.stp module
 
 sharppy.viz.stpef module
 ------------------------
+
+The STP EF Inset
 
 .. automodule:: sharppy.viz.stpef
     :members:
@@ -159,6 +202,8 @@ sharppy.viz.stpef module
 sharppy.viz.thermo module
 -------------------------
 
+The Thermodynamic Indices Inset
+
 .. automodule:: sharppy.viz.thermo
     :members:
     :undoc-members:
@@ -166,6 +211,8 @@ sharppy.viz.thermo module
 
 sharppy.viz.thetae module
 -------------------------
+
+Draw the equivalent potential temperature profile.
 
 .. automodule:: sharppy.viz.thetae
     :members:
@@ -175,6 +222,8 @@ sharppy.viz.thetae module
 sharppy.viz.vrot module
 -----------------------
 
+The VROT Inset.
+
 .. automodule:: sharppy.viz.vrot
     :members:
     :undoc-members:
@@ -183,6 +232,8 @@ sharppy.viz.vrot module
 sharppy.viz.watch module
 ------------------------
 
+Draw the possible hazard type.
+
 .. automodule:: sharppy.viz.watch
     :members:
     :undoc-members:
@@ -190,6 +241,8 @@ sharppy.viz.watch module
 
 sharppy.viz.winter module
 -------------------------
+
+The Winter Inset
 
 .. automodule:: sharppy.viz.winter
     :members:

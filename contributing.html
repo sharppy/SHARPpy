@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributing &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
+  <title>Contributing &mdash; SHARPpy 1.4.0-Andover-Alpha1+30.g37fa642 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+23.g63096ee
+                1.4.0-Andover-Alpha1+30.g37fa642
               </div>
             
           
@@ -83,9 +83,9 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
@@ -166,27 +166,35 @@
             
   <div class="section" id="contributing">
 <span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the SHARPpy project!  We are eager to hear that you are interested
+in contributing to the development of this community tool.</p>
 <p>So, you’d like to contribute to the SHARPpy project, eh?  What the heck is a pull request, anyways?  Regardless of your coding experience, congratulations!  You’ve take the first step to helping grow something incredible.  SHARPpy exists in its current state today largely because of public contributions to the project.</p>
 <p>If you are a first-time contributor (or even a seasoned one), you may want to read up on how people can contribute to open-source projects.  Below are some links you may find helpful!</p>
 <ul class="simple">
 <li><a class="reference external" href="https://rubygarage.org/blog/how-contribute-to-open-source-projects">How Junior Developers Can Contribute to Open Source Projects</a></li>
 <li><a class="reference external" href="https://opensource.guide/how-to-contribute/">How to Contribute!</a></li>
 </ul>
+<p>We appreciate your contributions to the program and wish you well in your coding!</p>
 <div class="section" id="some-norms">
 <h2>Some Norms<a class="headerlink" href="#some-norms" title="Permalink to this headline">¶</a></h2>
+<p>Contributions to the program should follow some norms and need to align with the broader philosophy of SHARPpy:</p>
 <ol class="arabic simple">
 <li>Input and output files for SHARPpy must be human readable text.  We are actively trying to avoid using a binary file format in SHARPpy because we do not want to force users to use SHARPpy to read, write, or understand their data.  In particular, we do not want data files floating around the Internet that require you to install SHARPpy to know what’s in them.  We believe that the capability of viewing your data should not come with an additional software dependency.</li>
-<li>Small, incremental pull requests are desired as they allow the community (and other developers) to adapt their code to new changes in the codebase.</li>
-<li>If you want to make a large change to the codebase, we recommended you contact the primary developers of the code so they can assist you in finding a good route of incorporating your code!</li>
-<li>Communicate, communicate, communicate.  Use the Github Issues page to work through your coding problems.</li>
+<li>A primary philosophy of the SHARPpy program is that the routines should not modify the data provided by the user.  For example, SHARPpy does not run quality control routines to clean up the data prior to lifting parcels.  This philosophy tries to minimize the number of steps in data analysis and places the responsiblity of quality control in the hands of the user.  Your code should not do unexpected things to your data!</li>
 </ol>
+<p>3. SHARPpy attempts to help resolve the reproduceabiltiy crisis in science.  Additions should attempt to cite source material in the docstrings in order to encourage tracable science.  As SHARPpy was inspired by the differences inherent in sounding lifting routines, it aims to provide a source of routines that have been used widely across the science (SHARPpy is descended from SHARP-95).
+3. Small, incremental pull requests are desired as they allow the community (and other developers) to adapt their code to new changes in the codebase.
+4. If you want to make a large change to the codebase, we recommended you contact the primary developers of the code so they can assist you in finding the best way to incorporate your code!
+5. Communicate, communicate, communicate.  Use the <a class="reference external" href="https://github.com/sharppy/SHARPpy/issues">Github Issues page</a> to work through your ideas with the broader community of SHARPpy users.</p>
 </div>
 <div class="section" id="some-ideas">
 <h2>Some Ideas<a class="headerlink" href="#some-ideas" title="Permalink to this headline">¶</a></h2>
-<p>Some possible ideas for contributions:</p>
+<p>Some possible (broad) ideas for contributions:</p>
 <ol class="arabic simple">
 <li>Contribute additional data sources so other program users can view other observed and NWP data (<em>cough</em>-ECMWF-<em>cough</em>)!</li>
 <li>Add in additional insets into the program to facilitate additional analysis of the data.</li>
+<li>Work on documentation of the code base.</li>
+<li>Develop unit tests to test various aspects of the code.</li>
 <li>Search through the <a class="reference external" href="https://github.com/sharppy/SHARPpy/issues">GitHub Issues page</a> for additional ideas!</li>
 </ol>
 </div>

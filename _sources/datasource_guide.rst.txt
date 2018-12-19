@@ -29,7 +29,7 @@ The header format should be of this format, where SITEID is the three or four le
 ::
 
   %TITLE%
-   SITEID   YYMMDD/HHMM
+   SITEID   YYMMDD/HHMM LAT,LON
 
      LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
   -------------------------------------------------------------------
