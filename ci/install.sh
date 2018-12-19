@@ -22,7 +22,7 @@ conda config --set always_yes yes --set changeps1 no
 conda update -q conda
 conda install -n -q root _license
 conda info -a
-conda create -q -n test-environment python=$PYTHON_VERSION numpy nose 
+conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pytest
 source activate test-environment
 conda config --add channels conda-forge 
 conda install -q pyside pyinstaller

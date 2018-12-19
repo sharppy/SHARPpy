@@ -25,8 +25,9 @@ before_install:
 install:
 - python setup.py install
 script:
-- python sharppy/tests/test_url.py examples/data/14061619.OAX 
-
+- cd sharppy/tests
+- xvfb-run pytest 
+- cd ../../
 # If the test script passes, build the binaries.
 after_success:
 - if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
