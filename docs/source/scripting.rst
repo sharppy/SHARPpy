@@ -1,4 +1,4 @@
-.. _Scripting_:
+.. _Scripting:
 
 Scripting
 =========
@@ -157,10 +157,11 @@ indices, you probably don't want to do that.
 
     https://github.com/tsupinie/SoundingFilter
 
+Viewing the Profiles
+^^^^^^^^^^^^^^^^^^^^^
+
 Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
 Python code plotting the temperature and dewpoint profiles with height:
-
-.. literalinclude:: auto_examples/plot_test.py
 
 .. code:: python
 
@@ -200,10 +201,6 @@ AGL from MSL:
     SURFACE HEIGHT (m MSL): 350.0
     SURFACE HEIGHT (m AGL): 0.0
     SURFACE HEIGHT (m MSL): 350.0
-
-
-Showing derived profiles
-~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, Profile objects also create derived profiles such as Theta-E
 and Wet-Bulb when they are constructed. These profiles are accessible to

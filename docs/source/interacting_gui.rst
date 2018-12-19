@@ -5,20 +5,22 @@ Interacting with the GUI
 
 For information on the interactive aspects of the program, see the sections below:
 
+Changing preferences
+--------------------------
+
+Users may select "Preferences" using the menu bar of the SHARPpy program.  Doing so will load a small window where the user can modify the SHARPpy color pallet and the units of the program.  Currently, the three color pallets exist: the Standard (black background), Inverted (white background), or the Protanopia (for color blindness).  
+
+Units may be changed for the surface temperature value, the winds, and the precipitble water vapor.  Switching to metric units through this method may help international users more easily use the program.  These changes may be detected in the GUI, as various locations where the units are shown will switch when a new unit is selected in the Preferences. 
+
 Zooming and Changing Views
 --------------------------
 
 Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Skew-T plots within the window.  Right clicking on the Hodograph will also allow you to change where the hodograph is centered.  Currently, the hodograph can be centered on the Right Mover Storm Motion Vector, the Cloud-Layer Mean Wind Vector, or the origin of the hodograph.
 
-Swapping Insets
----------------
-
-The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  
-
 Color Ranking
 -------------
 
-The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):
+The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values).  Generally, brighter colors indicate larger values, such as those in the traditional SHARP color palette:
 
 1. MAGENTA
 2. RED
@@ -28,11 +30,6 @@ The GUI uses color to highlight the features a forecaster ought to look at.  Mos
 6. DARK BROWN
 
 The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by `Matthew Bunkers; NWS <https://www.weather.gov/unr/uac>`_.  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.
-
-Interacting with the Focused Sounding
--------------------------------------
-
-The current sounding that is in "focus" in the program has the traditional "red/green" temperature and dewpoint profiles, while all other soundings in the background will be colored purple.  Below are some functions of the sounding window that are specific to the sounding that is in focus.
 
 Modifying the Sounding
 ----------------------
@@ -49,8 +46,8 @@ New in version 1.3.0 is the ability to interpolate the profile to 25-mb interval
     Example interpolation of the sounding profile from the high-resolution (left) to the interpolated (right).
 
 
-Storm Mode Functions
---------------------
+Determining Storm Mode
+----------------------
 
 Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in `Dial et al. 2010, WAF <http://www.spc.noaa.gov/publications/dial/waf-mode.pdf>`_.  Clicking on the hodograph again will remove the boundary.
 
