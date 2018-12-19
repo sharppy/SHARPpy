@@ -22,6 +22,7 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
    :caption: Contents:
 
    license
+   changelog
    install
    picker
    interpreting_gui

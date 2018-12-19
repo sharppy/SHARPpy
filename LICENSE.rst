@@ -1,3 +1,8 @@
+.. _License_:
+
+License
+=======
+
 Copyright (c) 2011, Patrick T. Marsh & John Hart.
 All rights reserved.
 

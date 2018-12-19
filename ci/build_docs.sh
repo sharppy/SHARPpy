@@ -18,9 +18,18 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
+
+# Build the documentation
 cd ..
 echo "Building Docs"
 cd docs
+
+# Move the license and other stuff to the docs folder
+cp ../LICENSE.rst ../docs/source/license.rst
+cp ../CONTRIBUTING.rst ../docs/source/contributing.rst
+cp ../CHANGELOG.rst ../docs/source/changelog.rst
+
+# Run sphinx
 make html
 
 # upload to pyart-docs-travis repo is this is not a pull request and

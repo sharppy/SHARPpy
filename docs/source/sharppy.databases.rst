@@ -7,6 +7,9 @@ Submodules
 sharppy.databases.inset\_data module
 ------------------------------------
 
+Contains data to be drawn on various insets (such as the 
+line graphs and box and whisker plots in the SHIP or STP EF insets)
+
 .. automodule:: sharppy.databases.inset_data
     :members:
     :undoc-members:
@@ -15,6 +18,8 @@ sharppy.databases.inset\_data module
 sharppy.databases.pwv module
 ----------------------------
 
+Handles comparing the loaded sounding against the PWV climatology
+
 .. automodule:: sharppy.databases.pwv
     :members:
     :undoc-members:
@@ -22,6 +27,8 @@ sharppy.databases.pwv module
 
 sharppy.databases.sars module
 -----------------------------
+
+Handles comparing the loaded sounding against past severe weather soundings (the SARS function).
 
 .. automodule:: sharppy.databases.sars
     :members:
