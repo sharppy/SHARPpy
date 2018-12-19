@@ -4,16 +4,17 @@
 
 [![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=andover)](https://travis-ci.org/sharppy)
 [![Build status](https://ci.appveyor.com/api/projects/status/f7ahm2l5cdyibswc/branch/andover?svg=true)](https://ci.appveyor.com/project/sharppy/sharppy/branch/andover)
+[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/downloads.svg)](https://anaconda.org/sharppy/sharppy)
+[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/license.svg)](https://anaconda.org/sharppy/sharppy)
+[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/platforms.svg)](https://anaconda.org/sharppy/sharppy)
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
 **REMINDER: You must re-run the "python setup.py install" script for updates to take hold**
 
-**NOTICE: If you have any custom data sources, you must add an "observed" flag to each data source your XML file, or SHARPpy will fail to load (see the [Adding Custom Data Sources](#adding-custom-data-sources) section).**
-
-##Important links:
+### Important links:
 * HTML Documentation: http://sharppy.github.io/SHARPpy/index.html
-* Source code reponsitory: https://github.com/sharppy/SHARPpy
+* GitHub repository: https://github.com/sharppy/SHARPpy
 * Issue tracker: https://github.com/sharppy/SHARPpy/issues
 * Google Groups: https://groups.google.com/forum/#!forum/sharppy
 
@@ -38,7 +39,7 @@ this ready-made citation entry or provide a link back to this website:
     
  [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
 
-We wish to acknowledge Jeff Whitaker, who created the Basemap package, and from which we have borrowed data and code to develop the SHARPpy data selector GUI.
+We wish to acknowledge Jeff Whitaker, who created the Basemap package, and from which we have borrowed data and code to develop the SHARPpy data selector GUI.  We also wish to acknowledge the [MetPy](https://github.com/Unidata/MetPy), who we have borrowed their Matplotlib skew-t code from to illustrate some SHARPpy examples. 
 
 2.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
 
