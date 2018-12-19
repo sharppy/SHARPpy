@@ -50,6 +50,8 @@ https://github.com/sharppy/SHARPpy/issues
 
 SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  
 
+If you would like to run SHARPpy from a binary (if you don't want to do scripting), look for the most recent release here: https://github.com/sharppy/SHARPpy/releases
+
 For those wishing to run both the GUI and do scripting, we recommend you install the _Python 3_ Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from `conda` or `pip` by using either:
 
     `conda install -c sharppy sharppy`
