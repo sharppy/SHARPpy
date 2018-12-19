@@ -2,6 +2,7 @@ env:
   global:
     # sharppy-docs-bot GH
     secure: "Q+WHnZiCph723g0fcu0xFDtsxciAMB/ZuwivyNTkxPcAXBMekS5oD6qTAanh1FdlEuS1GtSg8HketlfeJZO0gDkQHzG/vIzhgnBRSGliHDDQtvCdHQHUi1fsiVhzGYxFT46dZmhJ0MQGNJlGG4sp81/ckmiYhoAivaeBt4VfrwwkBKo0Tcm6Cue+f8VD2r6+AjtnvOFL4M05AOhVyiq4T+BJZ9oVzwUYA5Vftht5iKt7hVAAWmi6fjxSXUIXIZDGSWJe4ofVHePiyY+OcC2qf/UoJ/kSfbnGzmkTK5M8kPctu8BdQBUj0qfYSJmQoaG2/rd3bjLMc+wYB9FqrUv19oU0bY64PDwm7Z9CKeckEGO8/2R6qhZAPxsNxMvxGNNHXQIGMeZRTkOgcA8sOqRsCP6IbWrTq3zQLUC58CQjHqtoSH41nBOxWqhTJREGSnZj7zY4CKyI7N0nPJ3JtMPZIJfThgR4zaxo+RyCG4YAUEuMmq3lEMLr/DeaONXlHMSskalkFJuIPLb95oA4bSgaUL824tT95UfxcifLHRjwIBSIAyy72p5mLgny3ZN+UaP5/eVbuG6SPr04cv248XY+BGcglXVN0IXsDZN6GXdL3GZke0u6gvEWXCUQe2YvwwEFq4xuhrgwo0vpb7KobBtmd/ObRClymi7KBaR235KUN6E="
+
 matrix:
   include:
   - os: osx
@@ -17,37 +18,45 @@ matrix:
     language: generic
     env: PYTHON_VERSION="3.7"
     env: BUILD_DOCS="YES"
+
 before_install:
 - source ci/install.sh
+
 install:
 - python setup.py install
 script:
 - python sharppy/tests/test_url.py examples/data/14061619.OAX 
+
 # If the test script passes, build the binaries.
 after_success:
 - if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
 - source ci/make_binary.sh
+
 before_deploy:
 - cd dist
 - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
-# Ship the binaries to Github
+
+# Ship the binaries to Github and PyPI and conda
 deploy:
-  provider: releases
-  api_key:
-    secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
-  file_glob: true
-  file: dist/SHARPpy*.zip
-  skip_cleanup: true
-  on:
-    repo: sharppy/SHARPpy
-    tags: true
-    branch: andover
-  provider: pypi
-  user: sharppy
-    secure: "qgE7Hef6m9m6xf0CU976z/7KbpSaRIeucwVztsJQQCqP97FMnkb0bL0fhQMoxkVti1VCAuF9FXvWzWBKuKeu+sqP3pEE7GYlTVqq4kN3W55DleVFbyWy3Fyhu+6pRJL168kZg1rCNboX7Xw8RwI0l0r3DiSvjqWSYvOfdabgYlECImS4XjxRYxN2GTDXG3D37soWiBbi7rqDj33fitUHXyJMLdPhtbGs85BStG9Op2aRXibtCH2Lo/EtY7PkWaxY8F5aXrKiufHPvkpow8S2XKD1VdWpHAV+5lO7ai9N8Z9zyogYLzIAfPqHDx6afQWUknRBn8Ot7k4Kt3cBGEhdvtAH8jhZGCmqDPsk1+qgx/OyWK9iiJsvsJWKmTf286AZl5vxO9NH1fZL0LpYQ5XvwrVi83eygLttEOU0I6ggngflJfs5KvfZXmvODdfK4oVzn3mJODbncLoYz1KxNZRPUFWycmkDaPmy2YyPjRnqE1S6SOP1zGVAEO2Leq/lGbB0J18b103oehyp6+t9KnpsoEhPDsr68xKCkKLl5QXVlfGikHJAMVI/CM0Hh8bva6bTNP5Ulsko6vYyvfGlbI0rEW3OJikvh0051M0lS175j3LMGj5Bs1iFZX43KoyebcfqYDtRQdrvigzsRAZoR9BdBAnVZtO5mfFMkrUtIX94Au8="
-  distributions: sdist bdist_wheel
-  upload_docs: no
-  on:
-    repo: sharppy/SHARPpy
-    tags: true 
+ - provider: releases
+   api_key:
+     secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
+   file_glob: true
+   file: dist/SHARPpy*.zip
+   skip_cleanup: true
+   on:
+     repo: sharppy/SHARPpy
+     tags: true
+     branch: andover
+ - provider: pypi
+   user: sharppy
+   password:
+     secure: "qgE7Hef6m9m6xf0CU976z/7KbpSaRIeucwVztsJQQCqP97FMnkb0bL0fhQMoxkVti1VCAuF9FXvWzWBKuKeu+sqP3pEE7GYlTVqq4kN3W55DleVFbyWy3Fyhu+6pRJL168kZg1rCNboX7Xw8RwI0l0r3DiSvjqWSYvOfdabgYlECImS4XjxRYxN2GTDXG3D37soWiBbi7rqDj33fitUHXyJMLdPhtbGs85BStG9Op2aRXibtCH2Lo/EtY7PkWaxY8F5aXrKiufHPvkpow8S2XKD1VdWpHAV+5lO7ai9N8Z9zyogYLzIAfPqHDx6afQWUknRBn8Ot7k4Kt3cBGEhdvtAH8jhZGCmqDPsk1+qgx/OyWK9iiJsvsJWKmTf286AZl5vxO9NH1fZL0LpYQ5XvwrVi83eygLttEOU0I6ggngflJfs5KvfZXmvODdfK4oVzn3mJODbncLoYz1KxNZRPUFWycmkDaPmy2YyPjRnqE1S6SOP1zGVAEO2Leq/lGbB0J18b103oehyp6+t9KnpsoEhPDsr68xKCkKLl5QXVlfGikHJAMVI/CM0Hh8bva6bTNP5Ulsko6vYyvfGlbI0rEW3OJikvh0051M0lS175j3LMGj5Bs1iFZX43KoyebcfqYDtRQdrvigzsRAZoR9BdBAnVZtO5mfFMkrUtIX94Au8="
+   distributions: sdist bdist_wheel
+   upload_docs: no
+   on:
+     repo: sharppy/SHARPpy
+     tags: true
+     branch: andover
+ 
