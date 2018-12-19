@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.thermo &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.thermo &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -283,8 +283,7 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        prof: a Profile Object</span>
-<span class="sd">        </span>
+<span class="sd">        pcl_types :  </span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#000000&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="s1">&#39;#ffffff&#39;</span><span class="p">)</span>
@@ -965,6 +964,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">thermo</span><span class="o">.</span><span class="n">parentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app_frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>        
+    <span class="c1">#tester = plotText([&#39;sfcpcl&#39;, &#39;mlpcl&#39;, &#39;mupcl&#39;])</span>
+    <span class="n">tester</span> <span class="o">=</span> <span class="n">plotBackgroundText</span><span class="p">()</span>
+    <span class="c1">#tester.setProf()</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>        
+    <span class="n">app_frame</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 
            </div>

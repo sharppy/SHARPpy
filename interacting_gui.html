@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with the GUI &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>Interacting with the GUI &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -91,12 +91,11 @@
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Interacting with the GUI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#changing-preferences">Changing preferences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#zooming-and-changing-views">Zooming and Changing Views</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#swapping-insets">Swapping Insets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#color-ranking">Color Ranking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#interacting-with-the-focused-sounding">Interacting with the Focused Sounding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#modifying-the-sounding">Modifying the Sounding</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#storm-mode-functions">Storm Mode Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#determining-storm-mode">Determining Storm Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lifting-parcels">Lifting Parcels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#saving-the-data">Saving the Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interacting-with-multiple-soundings">Interacting with Multiple Soundings</a></li>
@@ -174,17 +173,18 @@
   <div class="section" id="interacting-with-the-gui">
 <span id="id1"></span><h1>Interacting with the GUI<a class="headerlink" href="#interacting-with-the-gui" title="Permalink to this headline">¶</a></h1>
 <p>For information on the interactive aspects of the program, see the sections below:</p>
+<div class="section" id="changing-preferences">
+<h2>Changing preferences<a class="headerlink" href="#changing-preferences" title="Permalink to this headline">¶</a></h2>
+<p>Users may select “Preferences” using the menu bar of the SHARPpy program.  Doing so will load a small window where the user can modify the SHARPpy color pallet and the units of the program.  Currently, the three color pallets exist: the Standard (black background), Inverted (white background), or the Protanopia (for color blindness).</p>
+<p>Units may be changed for the surface temperature value, the winds, and the precipitble water vapor.  Switching to metric units through this method may help international users more easily use the program.  These changes may be detected in the GUI, as various locations where the units are shown will switch when a new unit is selected in the Preferences.</p>
+</div>
 <div class="section" id="zooming-and-changing-views">
 <h2>Zooming and Changing Views<a class="headerlink" href="#zooming-and-changing-views" title="Permalink to this headline">¶</a></h2>
 <p>Your mouse wheel or trackpad will allow you to zoom on both the Hodograph and Skew-T plots within the window.  Right clicking on the Hodograph will also allow you to change where the hodograph is centered.  Currently, the hodograph can be centered on the Right Mover Storm Motion Vector, the Cloud-Layer Mean Wind Vector, or the origin of the hodograph.</p>
 </div>
-<div class="section" id="swapping-insets">
-<h2>Swapping Insets<a class="headerlink" href="#swapping-insets" title="Permalink to this headline">¶</a></h2>
-<p>The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.</p>
-</div>
 <div class="section" id="color-ranking">
 <h2>Color Ranking<a class="headerlink" href="#color-ranking" title="Permalink to this headline">¶</a></h2>
-<p>The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):</p>
+<p>The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values).  Generally, brighter colors indicate larger values, such as those in the traditional SHARP color palette:</p>
 <ol class="arabic simple">
 <li>MAGENTA</li>
 <li>RED</li>
@@ -195,10 +195,6 @@
 </ol>
 <p>The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by <a class="reference external" href="https://www.weather.gov/unr/uac">Matthew Bunkers; NWS</a>.  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.</p>
 </div>
-<div class="section" id="interacting-with-the-focused-sounding">
-<h2>Interacting with the Focused Sounding<a class="headerlink" href="#interacting-with-the-focused-sounding" title="Permalink to this headline">¶</a></h2>
-<p>The current sounding that is in “focus” in the program has the traditional “red/green” temperature and dewpoint profiles, while all other soundings in the background will be colored purple.  Below are some functions of the sounding window that are specific to the sounding that is in focus.</p>
-</div>
 <div class="section" id="modifying-the-sounding">
 <h2>Modifying the Sounding<a class="headerlink" href="#modifying-the-sounding" title="Permalink to this headline">¶</a></h2>
 <p>The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.</p>
@@ -208,8 +204,8 @@
 <p class="caption"><span class="caption-text">Example interpolation of the sounding profile from the high-resolution (left) to the interpolated (right).</span></p>
 </div>
 </div>
-<div class="section" id="storm-mode-functions">
-<h2>Storm Mode Functions<a class="headerlink" href="#storm-mode-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="determining-storm-mode">
+<h2>Determining Storm Mode<a class="headerlink" href="#determining-storm-mode" title="Permalink to this headline">¶</a></h2>
 <p>Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in <a class="reference external" href="http://www.spc.noaa.gov/publications/dial/waf-mode.pdf">Dial et al. 2010, WAF</a>.  Clicking on the hodograph again will remove the boundary.</p>
 </div>
 <div class="section" id="lifting-parcels">

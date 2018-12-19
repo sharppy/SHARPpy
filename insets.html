@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>SHARPpy Insets &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>SHARPpy Insets &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -174,19 +174,28 @@
   <div class="section" id="sharppy-insets">
 <span id="insets"></span><h1>SHARPpy Insets<a class="headerlink" href="#sharppy-insets" title="Permalink to this headline">¶</a></h1>
 <a class="reference internal image-reference" href="_images/inset_row.png"><img alt="SHARPpy GUI Example" class="align-center" src="_images/inset_row.png" style="width: 708.0px; height: 178.2px;" /></a>
-<p>At the bottom of the SHARPpy GUI lies four separate insets that can be used to assist in analyses of the sounding data.  The two insets highlighted in yellow are interchangeable with some of the other insets provided in the program.</p>
+<p>At the bottom of the SHARPpy GUI lies four separate insets that can be used to assist in analyses of the sounding data.  The two insets highlighted in yellow are interchangeable with some of the other insets provided in the program.  Right clicking either inset will bring up a menu that shows the other insets that can be swapped with the selected one.</p>
 <div class="section" id="thermodynamic-indices">
 <h2>Thermodynamic Indices<a class="headerlink" href="#thermodynamic-indices" title="Permalink to this headline">¶</a></h2>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="_images/inset_thermo.png"><img alt="Thermo inset" src="_images/inset_thermo.png" style="width: 298.0px; height: 202.0px;" /></a>
 </div>
+<ul class="simple">
+<li>Shows four parcels that were lifted in the sounding and their various properties (e.g., CAPE, CIN, LCL, LFC, EL).</li>
+<li>Displays the lapse rate for various layers key for deep, moist convection forecasting</li>
+<li>Provides an array of indices that describes water vapor in the atmosphere and severe convection potential.</li>
+</ul>
 </div>
 <div class="section" id="kinematic-indices">
 <h2>Kinematic Indices<a class="headerlink" href="#kinematic-indices" title="Permalink to this headline">¶</a></h2>
 <div class="figure align-center">
 <a class="reference internal image-reference" href="_images/inset_kinematics.png"><img alt="Thermo inset" src="_images/inset_kinematics.png" style="width: 296.0px; height: 197.0px;" /></a>
 </div>
-<p>Provides information on the storm-relative helicity (SRH), wind shear (Shear), pressure-weighted mean wind (MnWind) and layer-averaged storm-relative winds (SRW) for different layers. Layers shown here have been shown to correspond to storm longevity, storm mode, and tornado potential. The Bunkers storm motion and Corfidi vectors are also displayed.</p>
+<ul class="simple">
+<li>Provides information on the storm-relative helicity (SRH), wind shear (Shear), pressure-weighted mean wind (MnWind) and layer-averaged storm-relative winds (SRW) for different layers.</li>
+<li>Layers shown here have been shown to correspond to storm longevity, storm mode, and tornado potential.</li>
+<li>The Bunkers storm motion and Corfidi vectors are also displayed.</li>
+</ul>
 </div>
 <div class="section" id="sounding-analog-retrieval-system-sars">
 <h2>Sounding Analog Retrieval System (SARS)<a class="headerlink" href="#sounding-analog-retrieval-system-sars" title="Permalink to this headline">¶</a></h2>
@@ -194,8 +203,14 @@
 <a class="reference internal image-reference" href="_images/inset_sars.png"><img alt="Thermo inset" src="_images/inset_sars.png" style="width: 296.0px; height: 200.0px;" /></a>
 <p class="caption"><span class="caption-text">Sounding Analogue Retrieval System to compare soundings with previous severe weather environments.</span></p>
 </div>
-<p>Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see <a class="reference external" href="http://www.spc.noaa.gov/publications/jewell/sars.pdf">Jewell et al.</a>).  Atempts to match the current sounding to past proximity soundings from tornado and hail events using sounding parameters. “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2. The algorithm is calibrated to maximize probability of detection.</p>
-<p>Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude</p>
+<p>Sounding Analog Retrieval System matches the indices of the current sounding to those from past severe weather events within the CONUS (see <a class="reference external" href="http://www.spc.noaa.gov/publications/jewell/sars.pdf">Jewell et al.</a>).</p>
+<ul class="simple">
+<li>Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection.</li>
+<li>Atempts to find “loose” matches between the current sounding to past tornado and hail events using sounding parameters.</li>
+<li>“Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2.  This algorithm is calibrated to maximize probability of detection of these events.</li>
+<li>When the indices reach very large values (e.g., SBCAPE &gt; 6000 J/kg), SARS may fail to provide a good prediction as extreme values are rare within the SARS database.</li>
+</ul>
+<p>Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude:</p>
 <ul class="simple">
 <li>Supercells may have no tornado (NON), a weak tornado (WEAK) or a significant tornado (EF2+) (SIG).</li>
 <li>Hail size is indicated in the strict matches.</li>
@@ -224,7 +239,11 @@
 <a class="reference internal image-reference" href="_images/inset_fire.png"><img alt="Thermo inset" src="_images/inset_fire.png" style="width: 298.0px; height: 200.0px;" /></a>
 <p class="caption"><span class="caption-text">Fire weather parameters and guidance.</span></p>
 </div>
-<p>Provides a list of variables relevant to the moisture and wind properties within the convective boundary layer.  See Fosberg (1978) for information on the Fosberg Fire Weather Index (FWI).  PW changes color if the MUCAPE &gt; 50 J/kg, PW &lt; 0.5 inches, and SFC RH is &lt; 35 % to alert the user if the potential exists for fire starting, dry thunderstorms.</p>
+<ul class="simple">
+<li>Provides a list of variables relevant to the moisture and wind properties within the convective boundary layer.</li>
+<li>See Fosberg (1978) for information on the Fosberg Fire Weather Index (FWI).</li>
+<li>PW changes color if the MUCAPE &gt; 50 J/kg, PW &lt; 0.5 inches, and SFC RH is &lt; 35 % to alert the user if the potential exists for fire starting, dry thunderstorms.</li>
+</ul>
 </div>
 <div class="section" id="winter-weather">
 <h2>Winter Weather<a class="headerlink" href="#winter-weather" title="Permalink to this headline">¶</a></h2>

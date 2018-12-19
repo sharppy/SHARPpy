@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.generic &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.generic &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -525,6 +525,12 @@
                 <span class="k">continue</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div></div>
 
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app_frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>        
+    <span class="n">tester</span> <span class="o">=</span> <span class="n">plotGeneric</span><span class="p">()</span>
+    <span class="c1">#tester.setProf()</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>        
+    <span class="n">app_frame</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 
            </div>

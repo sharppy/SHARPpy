@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -213,8 +213,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fsize</span> <span class="o">=</span> <span class="mi">9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">readout_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="mi">11</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout_font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critical_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">critical_font</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.0045</span><span class="p">)</span>
@@ -1427,7 +1430,7 @@
                     <span class="n">critical_angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">left_critical_angle</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">critical_angle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="o">.</span><span class="n">right_critical_angle</span>
-                <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="s1">&#39;Critical Angle = &#39;</span> <span class="o">+</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">critical_angle</span><span class="p">)</span> <span class="o">+</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u00B0</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="s1">&#39;Critical Angle = &#39;</span> <span class="o">+</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">INT2STR</span><span class="p">(</span><span class="n">critical_angle</span><span class="p">)</span> <span class="o">+</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="se">\u00B0</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="plotHodo.draw_hodo"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.hodo.plotHodo.draw_hodo">[docs]</a>    <span class="k">def</span> <span class="nf">draw_hodo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1548,6 +1551,13 @@
 
             <span class="n">qp</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div></div>
 
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app_frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>        
+    <span class="n">tester</span> <span class="o">=</span> <span class="n">plotHodo</span><span class="p">()</span>
+    <span class="c1">#tester.setProf()</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>        
+    <span class="n">app_frame</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 
            </div>

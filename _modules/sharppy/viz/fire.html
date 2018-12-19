@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.fire &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.fire &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -174,6 +174,8 @@
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">backgroundFire</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_hght</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_hght</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
 
 <div class="viewcode-block" id="backgroundFire.initUI"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.fire.backgroundFire.initUI">[docs]</a>    <span class="k">def</span> <span class="nf">initUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -186,26 +188,28 @@
             <span class="s2">&quot;  border-color: #3399CC;}&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lpad</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span> <span class="o">=</span> <span class="mi">5</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpad</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physicalDpiX</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">:</span>
-            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">8</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">10</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_font</span> <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">os_mod</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">os_mod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">descent</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">barby</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tlx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rpad</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wid</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">bry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physicalDpiX</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">75</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fsize</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">font_ratio</span> <span class="o">=</span> <span class="n">fsize</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span>
+        <span class="n">font_ratio</span> <span class="o">=</span> <span class="mf">0.0512</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">font_ratio</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">font_ratio</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hgt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fosberg_font</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tpad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotBitMap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plotBackground</span><span class="p">()</span></div>
@@ -545,7 +549,6 @@
         <span class="n">rect1</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">brx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="n">rect1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextDontClip</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">,</span> <span class="s2">&quot;PBL Height = &quot;</span> <span class="o">+</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">M2FT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pbl_h</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;ft / &#39;</span> <span class="o">+</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">FLOAT2STR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pbl_h</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
         <span class="n">y1</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_height</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">os_mod</span></div>
-        
 
 
 <div class="viewcode-block" id="plotFire.getPWColor"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.fire.plotFire.getPWColor">[docs]</a>    <span class="k">def</span> <span class="nf">getPWColor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -573,9 +576,12 @@
             <span class="n">color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">DBROWN</span><span class="p">)</span>   
         <span class="k">return</span> <span class="n">color</span><span class="p">,</span> <span class="mi">12</span></div></div>
 
-
-
-
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app_frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>        
+    <span class="n">tester</span> <span class="o">=</span> <span class="n">plotFire</span><span class="p">()</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">293</span><span class="p">,</span><span class="mi">195</span><span class="p">)</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>        
+    <span class="n">app_frame</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 
            </div>

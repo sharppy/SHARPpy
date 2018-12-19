@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.ensemble &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.ensemble &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -501,8 +501,8 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">sys</span>
     <span class="kn">import</span> <span class="nn">sharppy.io.buf_decoder</span> <span class="k">as</span> <span class="nn">buf_decoder</span>
-
-    <span class="n">dec</span>  <span class="o">=</span> <span class="n">buf_decoder</span><span class="o">.</span><span class="n">BufDecoder</span><span class="p">(</span><span class="s1">&#39;/Users/blumberg/Downloads/sref_klzk.buf&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/21/sref_oun.buf&#39;</span>
+    <span class="n">dec</span>  <span class="o">=</span> <span class="n">buf_decoder</span><span class="o">.</span><span class="n">BufDecoder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">prof_coll</span> <span class="o">=</span> <span class="n">dec</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
     <span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
     <span class="n">mySW</span> <span class="o">=</span> <span class="n">DrawTest</span><span class="p">()</span>

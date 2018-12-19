@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.advection &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>sharppy.viz.advection &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -188,7 +188,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adv_max</span> <span class="o">=</span> <span class="mf">13.</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">adv_min</span> <span class="o">=</span> <span class="o">-</span><span class="mf">13.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adv_min</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">fsize</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">font_ratio</span> <span class="o">=</span> <span class="mf">0.12</span>
+        <span class="n">fsize</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_ratio</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsize</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">os_mod</span> <span class="o">=</span> <span class="mi">0</span>
@@ -223,7 +224,7 @@
         <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label_font</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
-        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextWordWrap</span><span class="p">,</span> <span class="s1">&#39;Inf. Temp. Adv. (C/hr)&#39;</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">brx</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextWordWrap</span><span class="p">,</span> <span class="s1">&#39;Inf. Temp. Adv. (C/hr)&#39;</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="backgroundAdvection.draw_frame"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.advection.backgroundAdvection.draw_frame">[docs]</a>    <span class="k">def</span> <span class="nf">draw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qp</span><span class="p">):</span>
@@ -366,6 +367,13 @@
                 <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="n">pix_adv</span><span class="p">,</span> <span class="n">pix_ptop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adv_to_pix</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">pix_ptop</span><span class="p">)</span>
                 <span class="n">qp</span><span class="o">.</span><span class="n">drawLine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adv_to_pix</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">pix_ptop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">adv_to_pix</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">pix_pbot</span><span class="p">)</span>
         <span class="k">return</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app_frame</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="p">([])</span>    
+    <span class="n">tester</span> <span class="o">=</span> <span class="n">plotAdvection</span><span class="p">()</span>
+    <span class="n">tester</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>    
+    <span class="n">app_frame</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 
            </div>

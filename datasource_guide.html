@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Custom Data Sources &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>Custom Data Sources &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#valid-data-formats">Valid Data Formats</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#loading-in-sounding-data-files">Loading in Sounding Data Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-custom-data-sources">Adding Custom Data Sources</a></li>
 </ul>
@@ -166,11 +167,36 @@
             
   <div class="section" id="custom-data-sources">
 <span id="id1"></span><h1>Custom Data Sources<a class="headerlink" href="#custom-data-sources" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="loading-in-sounding-data-files">
-<h2>Loading in Sounding Data Files<a class="headerlink" href="#loading-in-sounding-data-files" title="Permalink to this headline">¶</a></h2>
-<p>SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File-&gt;Open menu to open up your text file in the sounding window.  See the <a class="reference external" href="https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX">4061619.OAX</a> file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.</p>
-<p><em>Notes about the file format:</em></p>
-<p>While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.</p>
+<p>Sometimes, you may want to load your own custom data into SHARPpy.</p>
+<div class="section" id="valid-data-formats">
+<h2>Valid Data Formats<a class="headerlink" href="#valid-data-formats" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy hosts a variety of decoders within the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to help decode various human-readable text files:</p>
+<table border="1" class="colwidths-given docutils" id="id2">
+<caption><span class="caption-text">SHARPpy Decoders</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Data Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>buf_decoder.py</td>
+<td>BUFKIT files which includes deterministic and ensemble point forecast soundings</td>
+</tr>
+<tr class="row-odd"><td>pecan_decoder.py</td>
+<td>Point forecast soundings for deterministic and ensemble models</td>
+</tr>
+<tr class="row-even"><td>spc_decoder.py</td>
+<td>Observed soundings</td>
+</tr>
+</tbody>
+</table>
+<p>Examples of these various files may be found within the <code class="docutils literal notranslate"><span class="pre">examples/data</span></code> folder.</p>
+<p><em>Notes about the SPC file format:</em></p>
+<p>While SHARPpy can be configured to accept multiple different sounding formats, the tabular (or SPC format) format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.</p>
 <p>The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  “…” is where the sections of the file ends and continues in this example and are not included in the actual data file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">TITLE</span><span class="o">%</span>
  <span class="n">SITEID</span>   <span class="n">YYMMDD</span><span class="o">/</span><span class="n">HHMM</span>
@@ -198,11 +224,18 @@
 </ol>
 <p>The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.  As of version 1.4, the GUI will try to plot the data should the user desire.</p>
 </div>
+<div class="section" id="loading-in-sounding-data-files">
+<h2>Loading in Sounding Data Files<a class="headerlink" href="#loading-in-sounding-data-files" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File-&gt;Open menu to open up your text file in the sounding window.  With each file, SHARPpy will search through the list of decoders in the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to find the correct one for your file.  See the <a class="reference external" href="https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX">14061619.OAX</a> file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.</p>
+</div>
 <div class="section" id="adding-custom-data-sources">
 <h2>Adding Custom Data Sources<a class="headerlink" href="#adding-custom-data-sources" title="Permalink to this headline">¶</a></h2>
-<p>SHARPpy maintains a variety of different sounding data sources in the distributed program.  These sounding data sources are provided by a variety of hosts online, and we thank them for making their data accessible for the program to be used.  Accessiblity to these various data sources are dependent upon the hosts.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the <a class="reference external" href="https://mpas-dev.github.io">MPAS</a> and the <a class="reference external" href="https://ensemble.ucar.edu">NCAR Realtime Ensemble</a> into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.</p>
-<p>Some users may wish to add their own custom data source (for example, your own NWP point forecast soundings).  To do this, add to the <cite>datasources/</cite> directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the <cite>standard.xml</cite> file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!</p>
-<p>1. Make a new XML file
+<p>Although SHARPpy maintains a variety of different sounding data sources in the distributed program, you may want to add your own to the program.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the <a class="reference external" href="https://mpas-dev.github.io">MPAS</a> and the <a class="reference external" href="https://ensemble.ucar.edu">NCAR Realtime Ensemble</a> into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.</p>
+<p>To do this, add to the <cite>datasources/</cite> directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the <cite>standard.xml</cite> file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!</p>
+<ol class="arabic simple">
+<li>Make your sounding data files.  You may wish to use either the SPC format, the BUFKIT format, or the PECAN format.  You may wish to store these locally or on a server.  Either way, they should be viewable by login credentials you will be using when running the SHARPpy GUI.</li>
+</ol>
+<p>2. Make a new XML file
 The XML file contains the information for how the data source behaves. Questions like “Is this data source an ensemble?” or “How far out does this data source forecast?” are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is <cite>.xml</cite>. The format should look like the <cite>standard.xml</cite> file in the <cite>datasources/</cite> directory, but an example follows:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot; ?&gt;</span>
 <span class="nt">&lt;sourcelist&gt;</span>
@@ -222,7 +255,7 @@ The XML file contains the information for how the data source behaves. Questions
 <li><code class="docutils literal notranslate"><span class="pre">date</span></code>: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).</li>
 <li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The current cycle hour in HHZ format (e.g. 00Z).</li>
 <li><code class="docutils literal notranslate"><span class="pre">srcid</span></code>: The source’s profile ID (will be filled in with the same column from the CSV file; see below).</li>
-<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> for model profiles and <cite>spc</cite> for observed profiles. Others will be available in the future.</li>
+<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> and <cite>pecan</cite> for model profiles and <cite>spc</cite> for observed profiles. Others will be available in the future.</li>
 </ul>
 <p>For the <code class="docutils literal notranslate"><span class="pre">time</span></code> tag:</p>
 <ul class="simple">
@@ -234,7 +267,7 @@ The XML file contains the information for how the data source behaves. Questions
 <li><code class="docutils literal notranslate"><span class="pre">archive</span></code>: The length of time in hours that data are kept on the server.</li>
 </ul>
 <p>These should all be integer numbers of hours; support for sub-hourly data is forthcoming.</p>
-<p>2. Make a new CSV file
+<p>3. Make a new CSV file
 The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">icao</span><span class="p">,</span><span class="n">iata</span><span class="p">,</span><span class="n">synop</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">country</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">elev</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">srcid</span>
 <span class="n">KTOP</span><span class="p">,</span><span class="n">TOP</span><span class="p">,</span><span class="mi">72456</span><span class="p">,</span><span class="n">Topeka</span><span class="o">/</span><span class="n">Billard</span> <span class="n">Muni</span><span class="p">,</span><span class="n">KS</span><span class="p">,</span><span class="n">US</span><span class="p">,</span><span class="mf">39.08</span><span class="p">,</span><span class="o">-</span><span class="mf">95.62</span><span class="p">,</span><span class="mi">268</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">ktop</span>
@@ -243,8 +276,9 @@ The CSV file contains information about where your profiles are located and what
 </pre></div>
 </div>
 <p>The only columns that are strictly required are the <code class="docutils literal notranslate"><span class="pre">lat</span></code>, <code class="docutils literal notranslate"><span class="pre">lon</span></code>, and <code class="docutils literal notranslate"><span class="pre">srcid</span></code> columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.</p>
-<p>3. Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>
-This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the “Data Sources” drop-down menu.</p>
+<p><em>Optional</em></p>
+<p>4. Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the “Data Sources” drop-down menu.  You should only do this step if you have edited the <cite>datasources/</cite> directory underneath the root of the SHARPpy Github directory.  If you made these modifications within the <cite>~/.sharppy</cite> directory, you will not need to do this step.</p>
 </div>
 </div>
 

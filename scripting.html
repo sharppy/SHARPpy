@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Scripting &mdash; SHARPpy 1.4.0-Andover-Alpha1+6.gf1f7036 documentation</title>
+  <title>Scripting &mdash; SHARPpy 1.4.0-Andover-Alpha1+23.g63096ee documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0-Andover-Alpha1+6.gf1f7036
+                1.4.0-Andover-Alpha1+23.g63096ee
               </div>
             
           
@@ -96,12 +96,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#steps-to-scripting">3 Steps to Scripting</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#step-1-load-in-the-modules">Step 1: Load in the modules.</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#step-2-read-in-the-data">Step 2: Read in the data.</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#step-3-make-a-profile-object">Step 3: Make a Profile object.</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#showing-derived-profiles">Showing derived profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-make-a-profile-object">Step 3: Make a Profile object.</a></li>
 </ul>
 </li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#viewing-the-profiles">Viewing the Profiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lifting-parcels">Lifting parcels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculating-kinematic-indicies">Calculating kinematic indicies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculating-other-indices">Calculating other indices</a></li>
@@ -312,6 +310,10 @@ easier for SHARPpy to work with, you can use a sounding filter such as
 the one found here:</p>
 <p class="last"><a class="reference external" href="https://github.com/tsupinie/SoundingFilter">https://github.com/tsupinie/SoundingFilter</a></p>
 </div>
+</div>
+</div>
+<div class="section" id="viewing-the-profiles">
+<h2>Viewing the Profiles<a class="headerlink" href="#viewing-the-profiles" title="Permalink to this headline">¶</a></h2>
 <p>Data can be plotted using Matplotlib by accessing the attributes of the Profile object.  Below is an example of
 Python code plotting the temperature and dewpoint profiles with height:</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -343,8 +345,6 @@ AGL from MSL:</p>
 <span class="n">SURFACE</span> <span class="n">HEIGHT</span> <span class="p">(</span><span class="n">m</span> <span class="n">MSL</span><span class="p">):</span> <span class="mf">350.0</span>
 </pre></div>
 </div>
-<div class="section" id="showing-derived-profiles">
-<h4>Showing derived profiles<a class="headerlink" href="#showing-derived-profiles" title="Permalink to this headline">¶</a></h4>
 <p>By default, Profile objects also create derived profiles such as Theta-E
 and Wet-Bulb when they are constructed. These profiles are accessible to
 the user too.</p>
@@ -358,8 +358,6 @@ the user too.</p>
 </pre></div>
 </div>
 <img alt="_images/SHARPpy_basics_26_0.png" src="_images/SHARPpy_basics_26_0.png" />
-</div>
-</div>
 </div>
 <div class="section" id="lifting-parcels">
 <h2>Lifting parcels<a class="headerlink" href="#lifting-parcels" title="Permalink to this headline">¶</a></h2>

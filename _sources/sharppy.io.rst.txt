@@ -1,3 +1,5 @@
+.. _sharppy.io:
+
 sharppy.io package
 ==================
 
