@@ -8,6 +8,7 @@ cd ci/
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
     conda install -q -c sphinx sphinx-gallery;
     conda install -q -c anaconda sphinx_rtd_theme 
+    pip install sphinx-prompt
 else
     exit 0
 fi
