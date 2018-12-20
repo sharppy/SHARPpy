@@ -1,8 +1,7 @@
 {% set data = load_setup_py_data() %}
-
 package:
     name: sharppy
-    version: 1.4.0 #{{ data['version'] }}
+    version: {{ data['version'] }}
 
 source:
     git_url: https://github.com/sharppy/SHARPpy.git
