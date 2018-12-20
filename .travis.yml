@@ -8,23 +8,28 @@ matrix:
   - os: osx
     language: generic
     env: PYTHON_VERSION="2.7"
+    env: DISPLAY_AVAIL="NO"
   - os: osx
     language: generic
-    env: PYTHON_VERSION="3.7"
+    env: PYTHON_VERSION="3.6"
+    env: DISPLAY_AVAIL="NO"
   - os: linux
     language: generic
     env: PYTHON_VERSION="2.7"
     env: BUILD_CONDA="YES"
+    env: DISPLAY_AVAIL="YES"
   - os: linux
     language: generic
-    env: PYTHON_VERSION="3.7"
+    env: PYTHON_VERSION="3.6"
     env: BUILD_DOCS="YES"
+    env: DISPLAY_AVAIL="YES"
 before_install:
 - source ci/install.sh
 install:
 - python setup.py install
 script:
 - cd sharppy/tests
+- conda install pytest
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; else pytest; fi
 - cd ../../
 # If the test script passes, build the binaries.
@@ -33,7 +38,7 @@ after_success:
 - if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
 - cd dist
-- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.6" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github and PyPI and conda
 deploy:
