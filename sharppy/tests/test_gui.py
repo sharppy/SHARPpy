@@ -5,7 +5,17 @@ from sharppy.io.spc_decoder import SPCDecoder
 
 """ plotText() and plotSkewT keep failing """
 
+def load_data():
+
+    dec = SPCDecoder('../../examples/data/14061619.OAX')
+    prof_coll = dec.getProfiles()
+    prof = prof_coll.getCurrentProfs()['']
+    app_frame = QtGui.QApplication([])    
+    return prof, prof_coll
+    
+@pytest.mark.skipif("DISPLAY" not in os.environ)
 def test_insets():
+    prof, prof_coll = load_data()
     insets = [viz.fire.plotFire,
               viz.winter.plotWinter,
               viz.kinematics.plotKinematics,
@@ -29,7 +39,9 @@ def test_insets():
         test.plotBitMap.save(name + '_test.png', format='png')
         del test
 
+@pytest.mark.skipif("DISPLAY" not in os.environ)
 def test_skew_hodo():
+    prof, prof_coll = load_data()
     skew = viz.skew.plotSkewT
     hodo = viz.hodo.plotHodo
 
@@ -43,7 +55,9 @@ def test_skew_hodo():
     #s.setActiveCollection(0)
     #s.plotBitMap.save('skew.png', format='png')
 
+@pytest.mark.skipif("DISPLAY" not in os.environ)
 def test_other():
+    prof, prof_coll = load_data()
     insets = [viz.speed.plotSpeed,
               viz.advection.plotAdvection,
               viz.watch.plotWatch,
@@ -58,12 +72,4 @@ def test_other():
         test.setGeometry(50,50,293,195)
         test.plotBitMap.save(name + '_test.png', format='png')
         del test
-
-dec = SPCDecoder('../../examples/data/14061619.OAX')
-prof_coll = dec.getProfiles()
-prof = prof_coll.getCurrentProfs()['']
-app_frame = QtGui.QApplication([])    
-test_other()
-test_skew_hodo()    
-test_insets()
 
