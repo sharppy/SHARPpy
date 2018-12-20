@@ -48,7 +48,7 @@ Plotting data from the SARS database
     plt.savefig('plot_sars.png', bbox_inches='tight')
     plt.show()
 
-**Total running time of the script:** ( 0 minutes  0.655 seconds)
+**Total running time of the script:** ( 0 minutes  0.684 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_sars.py:
