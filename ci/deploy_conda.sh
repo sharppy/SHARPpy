@@ -3,10 +3,9 @@
 
 # Download conda-build
 echo "Download conda-build and anaconda-client"
-conda install -q conda-build anaconda-client
+#conda install -q conda-build anaconda-client
 
 # Set environmental variables 
-PKG_NAME=sharppy
 USER=sharppy
 OS=$TRAVIS_OS_NAME-64
 
@@ -18,16 +17,14 @@ conda config --set anaconda_upload no
 # Set the build path and the current version
 export CONDA_BLD_PATH=~/conda-bld
 
-cd ..
 # Build the conda recipe
 echo "Build the conda recipe"
-conda build conda_recipe/
+conda build conda-recipe/
 
 # Convert the conda package to support other operating systems
 echo "Convert the recipe to other OSes"
-conda convert $CONDA_BLD_PATH/*/*.tar.bz2 --platform all --output_dir $CONDA_BLD_PATH
+conda convert -p all -o $CONDA_BLD_PATH $CONDA_BLD_PATH/*-*/*.tar.bz2
 
 # Upload to the conda package manager
-anaconda -t $CONDA_UPLOAD_TOKEN upload -u $USER -l release --force $CONDA_BLD_PATH/*/*.tar.bz2
-
-rm -rf ~/conda-bld
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy -l release $CONDA_BLD_PATH/*/*.tar.bz2 --force
+#rm -rf ~/conda-bld

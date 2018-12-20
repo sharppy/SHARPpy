@@ -14,11 +14,12 @@ matrix:
   - os: linux
     language: generic
     env: PYTHON_VERSION="2.7"
+    env: BUILD_CONDA="YES"
   - os: linux
     language: generic
     env: PYTHON_VERSION="3.7"
     env: BUILD_DOCS="YES"
-
+    env: BUILD_CONDA="YES"
 before_install:
 - source ci/install.sh
 
@@ -30,14 +31,13 @@ script:
 - cd ../../
 # If the test script passes, build the binaries.
 after_success:
+- if [ "$BUILD_CONDA" == "YES" ]; then bash ci/deploy_conda.sh; fi
 - if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
 - source ci/make_binary.sh
-
 before_deploy:
 - cd dist
 - if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
-
 # Ship the binaries to Github and PyPI and conda
 deploy:
  - provider: releases
@@ -60,4 +60,4 @@ deploy:
      repo: sharppy/SHARPpy
      tags: true
      branch: andover
- 
+      
