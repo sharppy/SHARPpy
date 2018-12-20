@@ -2,6 +2,8 @@ from PySide import QtGui, QtCore
 import sharppy.viz as viz
 import sharppy.viz.preferences as preferences
 from sharppy.io.spc_decoder import SPCDecoder
+import pytest
+import os
 
 """ plotText() and plotSkewT keep failing """
 
@@ -13,7 +15,7 @@ def load_data():
     app_frame = QtGui.QApplication([])    
     return prof, prof_coll
     
-@pytest.mark.skipif("DISPLAY" not in os.environ)
+@pytest.mark.skipif("DISPLAY" not in os.environ, reason="DISPLAY not set")
 def test_insets():
     prof, prof_coll = load_data()
     insets = [viz.fire.plotFire,
@@ -39,7 +41,7 @@ def test_insets():
         test.plotBitMap.save(name + '_test.png', format='png')
         del test
 
-@pytest.mark.skipif("DISPLAY" not in os.environ)
+@pytest.mark.skipif("DISPLAY" not in os.environ, reason="DISPLAY not set")
 def test_skew_hodo():
     prof, prof_coll = load_data()
     skew = viz.skew.plotSkewT
@@ -55,7 +57,7 @@ def test_skew_hodo():
     #s.setActiveCollection(0)
     #s.plotBitMap.save('skew.png', format='png')
 
-@pytest.mark.skipif("DISPLAY" not in os.environ)
+@pytest.mark.skipif("DISPLAY" not in os.environ, reason="DISPLAY not set")
 def test_other():
     prof, prof_coll = load_data()
     insets = [viz.speed.plotSpeed,
