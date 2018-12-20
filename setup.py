@@ -65,6 +65,8 @@ if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
 shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
+description = "SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, cross-platform application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines."
+
 ver = versioneer.get_version()
 ver = ver.split('-')[0]
 setup(
@@ -84,4 +86,5 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     install_requires=install_requires,
     entry_points = entry_pts
+    description = description
 )
