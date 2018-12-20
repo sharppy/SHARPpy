@@ -19,27 +19,26 @@ matrix:
     language: generic
     env: PYTHON_VERSION="3.7"
     env: BUILD_DOCS="YES"
-    env: BUILD_CONDA="YES"
 before_install:
 - source ci/install.sh
-
 install:
 - python setup.py install
 script:
 - cd sharppy/tests
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; fi
+#- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; fi
+- xvfb-run pytest
 - cd ../../
 # If the test script passes, build the binaries.
 after_success:
-- if [ "$BUILD_CONDA" == "YES" ]; then bash ci/deploy_conda.sh; fi
-- if [[ "$BUILD_DOCS" == "YES" ]]; then chmod +x ./ci/build_docs.sh; ./ci/build_docs.sh; fi
-- source ci/make_binary.sh
+# Build the binary if it's a new tag.
+- if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
 - cd dist
-- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github and PyPI and conda
 deploy:
+# Deploy the binaries to Github Releases
  - provider: releases
    api_key:
      secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
@@ -50,6 +49,7 @@ deploy:
      repo: sharppy/SHARPpy
      tags: true
      branch: andover
+# Deploy the code to PyPI
  - provider: pypi
    user: sharppy
    password:
@@ -58,6 +58,21 @@ deploy:
    upload_docs: no
    on:
      repo: sharppy/SHARPpy
-     tags: true
+     tags: false
      branch: andover
-      
+# Deploy code to conda
+ - provider: script
+   script: bash ci/deploy_conda.sh
+   on:
+     repo: sharppy/SHARPpy
+     tags: false
+     branch: andover
+     condition: "$BUILD_CONDA = YES"
+# Deploy docs to Github Pages
+ - provider: script
+   script: bash ci/build_docs.sh
+   on:
+     repo: sharppy/SHARPpy
+     tags: false
+     branch: andover
+     condition: "$BUILD_DOCS = YES"
