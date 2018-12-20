@@ -16,7 +16,7 @@ build:
      - CONDA_BLD_PATH
     osx_is_app: True
     entry_points: 
-     - sharppy = runsharp.__main__:main
+     - sharppy = runsharp.full_gui:main
 
 requirements:
     build:
