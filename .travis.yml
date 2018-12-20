@@ -34,7 +34,7 @@ after_success:
 - if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
 - cd dist
-- if [[ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ]]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.7" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github and PyPI and conda
 deploy:
@@ -60,6 +60,7 @@ deploy:
      repo: sharppy/SHARPpy
      tags: false
      branch: andover
+     condition: "$BUILD_CONDA = YES"
 # Deploy code to conda
  - provider: script
    script: bash ci/deploy_conda.sh
