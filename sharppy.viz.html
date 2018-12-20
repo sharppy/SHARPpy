@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz package &mdash; SHARPpy 1.4.0a2+9.g6d15b81 documentation</title>
+  <title>sharppy.viz package &mdash; SHARPpy 1.4.0a2+10.g8eb6545 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a2+9.g6d15b81
+                1.4.0a2+10.g8eb6545
               </div>
             
           
@@ -168,6 +168,298 @@
 <h2>sharppy.viz.SPCWindow module<a class="headerlink" href="#sharppy-viz-spcwindow-module" title="Permalink to this headline">¶</a></h2>
 <p>Master class to handle the various insets, loop through the data,
 add in new ProfileCollections.</p>
+<span class="target" id="module-sharppy.viz.SPCWindow"></span><dl class="class">
+<dt id="sharppy.viz.SPCWindow.SPCWidget">
+<em class="property">class </em><code class="descclassname">sharppy.viz.SPCWindow.</code><code class="descname">SPCWidget</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<p>This will create the full SPC window, handle the organization
+of the insets, and handle all click/key events and features.</p>
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.addProfileCollection">
+<code class="descname">addProfileCollection</code><span class="sig-paren">(</span><em>prof_col</em>, <em>prof_id</em>, <em>focus=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.addProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.addProfileCollection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.advanceHighlight">
+<code class="descname">advanceHighlight</code><span class="sig-paren">(</span><em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.advanceHighlight"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.advanceHighlight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.advanceTime">
+<code class="descname">advanceTime</code><span class="sig-paren">(</span><em>direction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.advanceTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.advanceTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.defineUserParcel">
+<code class="descname">defineUserParcel</code><span class="sig-paren">(</span><em>parcel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.defineUserParcel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.defineUserParcel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.getParcelName">
+<code class="descname">getParcelName</code><span class="sig-paren">(</span><em>prof</em>, <em>pcl</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.getParcelName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.getParcelName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.getParcelObj">
+<code class="descname">getParcelObj</code><span class="sig-paren">(</span><em>prof</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.getParcelObj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.getParcelObj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.initData">
+<code class="descname">initData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.initData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.initData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes all the widgets for the window.
+This gets initially called by __init__
+:return:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.inset_cfg">
+<code class="descname">inset_cfg</code><em class="property"> = {('insets', 'left_inset'): 'SARS', ('insets', 'right_inset'): 'STP STATS'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.inset_cfg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.inset_generators">
+<code class="descname">inset_generators</code><em class="property"> = {'COND STP': &lt;class 'sharppy.viz.stpef.plotSTPEF'&gt;, 'FIRE': &lt;class 'sharppy.viz.fire.plotFire'&gt;, 'SARS': &lt;class 'sharppy.viz.analogues.plotAnalogues'&gt;, 'SHIP': &lt;class 'sharppy.viz.ship.plotSHIP'&gt;, 'STP STATS': &lt;class 'sharppy.viz.stp.plotSTP'&gt;, 'VROT': &lt;class 'sharppy.viz.vrot.plotVROT'&gt;, 'WINTER': &lt;class 'sharppy.viz.winter.plotWinter'&gt;}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.inset_generators" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.inset_names">
+<code class="descname">inset_names</code><em class="property"> = {'COND STP': 'EF-Scale Probs (Sig-Tor)', 'FIRE': 'Fire Weather', 'SARS': 'Sounding Analogues', 'SHIP': 'Sig-Hail Stats', 'STP STATS': 'Sig-Tor Stats', 'VROT': 'EF-Scale Probs (V-Rot)', 'WINTER': 'Winter Weather'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.inset_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.interpProf">
+<code class="descname">interpProf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.interpProf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.interpProf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.isAllObserved">
+<code class="descname">isAllObserved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.isAllObserved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.isAllObserved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.isInterpolated">
+<code class="descname">isInterpolated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.isInterpolated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.isInterpolated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.loadWidgets">
+<code class="descname">loadWidgets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.loadWidgets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.loadWidgets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.makeInsetMenu">
+<code class="descname">makeInsetMenu</code><span class="sig-paren">(</span><em>*exclude</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.makeInsetMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.makeInsetMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.modifyProf">
+<code class="descname">modifyProf</code><span class="sig-paren">(</span><em>idx</em>, <em>kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.modifyProf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.modifyProf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.modifyVector">
+<code class="descname">modifyVector</code><span class="sig-paren">(</span><em>deviant</em>, <em>vec_u</em>, <em>vec_v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.modifyVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.modifyVector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.parcel_cfg">
+<code class="descname">parcel_cfg</code><em class="property"> = {('parcel_types', 'pcl1'): 'SFC', ('parcel_types', 'pcl2'): 'ML', ('parcel_types', 'pcl3'): 'FCST', ('parcel_types', 'pcl4'): 'MU'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.parcel_cfg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.paths_cfg">
+<code class="descname">paths_cfg</code><em class="property"> = {('paths', 'save_img'): '/home/travis', ('paths', 'save_txt'): '/home/travis'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.paths_cfg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.pixmapToFile">
+<code class="descname">pixmapToFile</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.pixmapToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.pixmapToFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.resetProfInterpolation">
+<code class="descname">resetProfInterpolation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.resetProfInterpolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.resetProfInterpolation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.resetProfModifications">
+<code class="descname">resetProfModifications</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.resetProfModifications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.resetProfModifications" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.resetVector">
+<code class="descname">resetVector</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.resetVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.resetVector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.rmProfileCollection">
+<code class="descname">rmProfileCollection</code><span class="sig-paren">(</span><em>prof_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.rmProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.rmProfileCollection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.saveimage">
+<code class="descname">saveimage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.saveimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.saveimage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.savetext">
+<code class="descname">savetext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.savetext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.savetext" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.setProfileCollection">
+<code class="descname">setProfileCollection</code><span class="sig-paren">(</span><em>prof_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.setProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.setProfileCollection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.showCursorMenu">
+<code class="descname">showCursorMenu</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.showCursorMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.showCursorMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.staticMetaObject">
+<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.swapInset">
+<code class="descname">swapInset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.swapInset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.swapInset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.swapProfCollections">
+<code class="descname">swapProfCollections</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.swapProfCollections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.swapProfCollections" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.toggleCollectObserved">
+<code class="descname">toggleCollectObserved</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.toggleCollectObserved"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.toggleCollectObserved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.toggleVector">
+<code class="descname">toggleVector</code><span class="sig-paren">(</span><em>deviant</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.toggleVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.toggleVector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.updateConfig">
+<code class="descname">updateConfig</code><span class="sig-paren">(</span><em>config</em>, <em>update_gui=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.updateConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.updateConfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.updateParcel">
+<code class="descname">updateParcel</code><span class="sig-paren">(</span><em>pcl</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.updateParcel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.updateParcel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.updateProfs">
+<code class="descname">updateProfs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.updateProfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.updateProfs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWidget.updateSARS">
+<code class="descname">updateSARS</code><span class="sig-paren">(</span><em>filematch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.updateSARS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.updateSARS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sharppy.viz.SPCWindow.SPCWindow">
+<em class="property">class </em><code class="descclassname">sharppy.viz.SPCWindow.</code><code class="descname">SPCWindow</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QMainWindow</span></code></p>
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.addProfileCollection">
+<code class="descname">addProfileCollection</code><span class="sig-paren">(</span><em>prof_col</em>, <em>focus=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.addProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.addProfileCollection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.closeEvent">
+<code class="descname">closeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closeEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.closeIfEmpty">
+<code class="descname">closeIfEmpty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.closeIfEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closeIfEmpty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.closed">
+<code class="descname">closed</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.createMenuBar">
+<code class="descname">createMenuBar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.createMenuBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.createMenuBar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.createMenuName">
+<code class="descname">createMenuName</code><span class="sig-paren">(</span><em>prof_col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.createMenuName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.createMenuName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.createProfileMenu">
+<code class="descname">createProfileMenu</code><span class="sig-paren">(</span><em>prof_col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.createProfileMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.createProfileMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.focusPicker">
+<code class="descname">focusPicker</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.focusPicker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.focusPicker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.interpProf">
+<code class="descname">interpProf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.interpProf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.interpProf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.keyPressEvent">
+<code class="descname">keyPressEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.removeProfileMenu">
+<code class="descname">removeProfileMenu</code><span class="sig-paren">(</span><em>menu_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.removeProfileMenu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.removeProfileMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.resetProf">
+<code class="descname">resetProf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.resetProf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.resetProf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.rmProfileCollection">
+<code class="descname">rmProfileCollection</code><span class="sig-paren">(</span><em>menu_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.rmProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.rmProfileCollection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.setInterpolated">
+<code class="descname">setInterpolated</code><span class="sig-paren">(</span><em>is_interpolated</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.setInterpolated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.setInterpolated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.staticMetaObject">
+<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.testDataIntegrity">
+<code class="descname">testDataIntegrity</code><span class="sig-paren">(</span><em>prof</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.testDataIntegrity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.testDataIntegrity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="sharppy.viz.SPCWindow.SPCWindow.updateConfig">
+<code class="descname">updateConfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.updateConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.updateConfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="sharppy-viz-advection-module">
 <h2>sharppy.viz.advection module<a class="headerlink" href="#sharppy-viz-advection-module" title="Permalink to this headline">¶</a></h2>
@@ -1785,7 +2077,7 @@ in the frame.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="attribute">
 <dt id="sharppy.viz.map.Mapper.data_dir">
-<code class="descname">data_dir</code><em class="property"> = '/home/travis/miniconda/envs/test-environment/lib/python3.6/site-packages/SHARPpy-1.4.0a2+9.g6d15b81-py3.6.egg/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.map.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
+<code class="descname">data_dir</code><em class="property"> = '/home/travis/miniconda/envs/test-environment/lib/python3.6/site-packages/SHARPpy-1.4.0a2+10.g8eb6545-py3.6.egg/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.map.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
