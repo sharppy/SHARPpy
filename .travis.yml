@@ -1,28 +1,28 @@
 env:
   global:
-    # sharppy-docs-bot GH
-    secure: "Q+WHnZiCph723g0fcu0xFDtsxciAMB/ZuwivyNTkxPcAXBMekS5oD6qTAanh1FdlEuS1GtSg8HketlfeJZO0gDkQHzG/vIzhgnBRSGliHDDQtvCdHQHUi1fsiVhzGYxFT46dZmhJ0MQGNJlGG4sp81/ckmiYhoAivaeBt4VfrwwkBKo0Tcm6Cue+f8VD2r6+AjtnvOFL4M05AOhVyiq4T+BJZ9oVzwUYA5Vftht5iKt7hVAAWmi6fjxSXUIXIZDGSWJe4ofVHePiyY+OcC2qf/UoJ/kSfbnGzmkTK5M8kPctu8BdQBUj0qfYSJmQoaG2/rd3bjLMc+wYB9FqrUv19oU0bY64PDwm7Z9CKeckEGO8/2R6qhZAPxsNxMvxGNNHXQIGMeZRTkOgcA8sOqRsCP6IbWrTq3zQLUC58CQjHqtoSH41nBOxWqhTJREGSnZj7zY4CKyI7N0nPJ3JtMPZIJfThgR4zaxo+RyCG4YAUEuMmq3lEMLr/DeaONXlHMSskalkFJuIPLb95oA4bSgaUL824tT95UfxcifLHRjwIBSIAyy72p5mLgny3ZN+UaP5/eVbuG6SPr04cv248XY+BGcglXVN0IXsDZN6GXdL3GZke0u6gvEWXCUQe2YvwwEFq4xuhrgwo0vpb7KobBtmd/ObRClymi7KBaR235KUN6E="
-
+    - PYTHON_VERSION
+    - DISPLAY_AVAIL
+    - BUILD_CONDA
+    - BUILD_DOCS
+    - BUILD_BINARY
 matrix:
   include:
   - os: osx
     language: generic
-    env: PYTHON_VERSION="2.7"
-    env: DISPLAY_AVAIL="NO"
+    env: 
+      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="NO"
   - os: osx
     language: generic
-    env: PYTHON_VERSION="3.6"
-    env: DISPLAY_AVAIL="NO"
+    env: 
+      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES"
   - os: linux
     language: generic
-    env: PYTHON_VERSION="2.7"
-    env: BUILD_CONDA="YES"
-    env: DISPLAY_AVAIL="YES"
+    env:
+      - PYTHON_VERSION="2.7" BUILD_CONDA="YES" DISPLAY_AVAIL="YES"
   - os: linux
     language: generic
-    env: PYTHON_VERSION="3.6"
-    env: BUILD_DOCS="YES"
-    env: DISPLAY_AVAIL="YES"
+    env:
+      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES"
 before_install:
 - source ci/install.sh
 install:
@@ -38,7 +38,7 @@ after_success:
 - if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
 - cd dist
-- if [ "$TRAVIS_OS_NAME" == "osx" ] && [ "$PYTHON_VERSION" == "3.6" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
+- if [ "$BUILD_BINARY" == "YES" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
 - cd ..
 # Ship the binaries to Github and PyPI and conda
 deploy:
