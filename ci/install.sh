@@ -22,10 +22,9 @@ conda config --set always_yes yes --set changeps1 no
 conda update -q conda
 conda install -n -q root _license
 conda info -a
-conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pytest
-source activate test-environment
 conda config --add channels conda-forge 
-conda install -q pyside pyinstaller
+conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pytest pyside pyinstaller conda-build anaconda-client
+source activate test-environment
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
