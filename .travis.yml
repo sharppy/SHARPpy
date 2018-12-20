@@ -26,7 +26,7 @@ install:
 - python setup.py install
 script:
 - cd sharppy/tests
-- xvfb-run pytest 
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; fi
 - cd ../../
 # If the test script passes, build the binaries.
 after_success:
