@@ -19,7 +19,7 @@ import os
 import re
 import logging
 #from sharppy._sharppy_version import __version__, __version_name__
-from sharppy._version import get_versions
+from sharppy._version import get_versions, __codename__
 __version__ = get_versions()['version']
 del get_versions
 __version_name__ = ''
