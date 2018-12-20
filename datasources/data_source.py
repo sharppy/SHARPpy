@@ -62,6 +62,7 @@ def loadDataSources(ds_dir=HOME_DIR):
                 traceback.print_exc()
                 print("Exception: ", e)
                 print('Unable to process %s file'%os.path.basename(ds_file))
+                print("You may want to inspect this file for possible formatting issues.")
                 print("This data source may not be loaded then.")
     return ds
 
@@ -407,6 +408,12 @@ class DataSource(object):
     def isObserved(self):
         return self._observed
 
+    def getPoint(self, stn):
+        for outlet in self._outlets.items():
+            for pnt in outlet[1].getPoints():
+                if stn in pnt['icao'] or stn in pnt['iata'] or stn in pnt['srcid']:
+                    return pnt
+ 
 if __name__ == "__main__":
     ds = loadDataSources()
     ds = dict( (n, ds[n]) for n in ['Observed', 'GFS'] )
