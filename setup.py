@@ -65,7 +65,8 @@ if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
 shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
-
+ver = versioneer.get_version()
+ver = ver.split('-')[0]
 setup(
     name = name,
     author = author,
@@ -79,7 +80,7 @@ setup(
     package_data = package_data,
     include_package_data = include_package_data,
     classifiers = classifiers,
-    version=versioneer.get_version(),
+    version=ver,
     cmdclass=versioneer.get_cmdclass(),
     install_requires=install_requires,
     entry_points = entry_pts
