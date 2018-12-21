@@ -46,7 +46,7 @@ if len(sys.argv) > 1 and '--debug' in sys.argv:
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
     console.setLevel(logging.DEBUG)
 else:
-    console.setLevel(logging.INFO)
+    console.setLevel(logging.CRITICAL)
     debug = False
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
