@@ -18,11 +18,11 @@ matrix:
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="2.7" BUILD_CONDA="YES" DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="YES"
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES" BUILD_CONDA="YES"
 before_install:
 - source ci/install.sh
 install:

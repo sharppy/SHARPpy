@@ -7,6 +7,8 @@ source deactivate
 # Download conda-build
 echo "Download conda-build and anaconda-client"
 conda install -q conda-build anaconda-client
+conda install -q jinja2 setuptools
+conda config --add channels conda-forge
 
 # Set environmental variables 
 USER=sharppy
