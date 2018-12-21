@@ -7,7 +7,7 @@ env:
     - BUILD_BINARY
 matrix:
   include:
-  - os: osx
+  - os: linux
     language: generic
     env: 
       - PYTHON_VERSION="3.6" BUILD_CONDA="YES"
@@ -26,13 +26,11 @@ matrix:
 before_install:
 - source ci/install.sh
 install:
-- python setup.py install
+- python setup.py -q install
 script:
 - cd sharppy/tests
-- conda install pytest
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; else pytest; fi
 - cd ../../
-- rm sharppy/tests/*.png
 # If the test script passes, build the binaries.
 after_success:
 # Build the binary if it's a new tag.
