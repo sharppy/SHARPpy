@@ -1,9 +1,12 @@
 #!/bin/bash
 # Inspired by: https://gist.github.com/zshaheen/fe76d1507839ed6fbfbccef6b9c13ed9
 
+# Deactivate the current environment
+source deactivate
+
 # Download conda-build
 echo "Download conda-build and anaconda-client"
-#conda install -q conda-build anaconda-client
+conda install -q conda-build anaconda-client
 
 # Set environmental variables 
 USER=sharppy
