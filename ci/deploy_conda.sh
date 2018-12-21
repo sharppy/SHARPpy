@@ -6,6 +6,7 @@ source deactivate
 
 # Download conda-build
 echo "Download conda-build and anaconda-client"
+conda install -q -c anaconda conda-build
 conda install -q -c anaconda anaconda-client
 conda install -q jinja2 setuptools
 
