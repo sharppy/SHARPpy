@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datasources.data_source &mdash; SHARPpy 1.4.0a2+28.g04606c9 documentation</title>
+  <title>datasources.data_source &mdash; SHARPpy 1.4.0a2+30.g48dd6c9 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a2+28.g04606c9
+                1.4.0a2+30.g48dd6c9
               </div>
             
           
@@ -221,7 +221,6 @@
                 <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Exception: &quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unable to process </span><span class="si">%s</span><span class="s1"> file&#39;</span><span class="o">%</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">ds_file</span><span class="p">))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You may want to inspect this file for possible formatting issues.&quot;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This data source may not be loaded then.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ds</span></div>
 
@@ -565,14 +564,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span></div>
 
 <div class="viewcode-block" id="DataSource.isObserved"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.isObserved">[docs]</a>    <span class="k">def</span> <span class="nf">isObserved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed</span></div></div>
 
-<div class="viewcode-block" id="DataSource.getPoint"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getPoint">[docs]</a>    <span class="k">def</span> <span class="nf">getPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">outlet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">pnt</span> <span class="ow">in</span> <span class="n">outlet</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getPoints</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;icao&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;iata&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]:</span>
-                    <span class="k">return</span> <span class="n">pnt</span></div></div>
- 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">ds</span> <span class="o">=</span> <span class="n">loadDataSources</span><span class="p">()</span>
     <span class="n">ds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Observed&#39;</span><span class="p">,</span> <span class="s1">&#39;GFS&#39;</span><span class="p">]</span> <span class="p">)</span>
