@@ -30,6 +30,7 @@ conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 ls $CONDA_BLD_PATH
 
 echo "Which anaconda"
