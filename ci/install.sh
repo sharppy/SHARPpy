@@ -8,6 +8,7 @@ else
 fi
 
 bash miniconda.sh -b -p $HOME/miniconda
+rm miniconda.sh
 export PATH="$HOME/miniconda/bin:$PATH"
 hash -r
 
