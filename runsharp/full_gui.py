@@ -25,31 +25,13 @@ import utils.frozenutils as frozenutils
 import logging
 import PySide
 import platform
+
+__version__ = get_versions()['version']
+ver = get_versions()
+del get_versions
+
+
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
-
-# Start the logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
-                    filename=HOME_DIR + '/sharppy.log',
-                    filemode='w')
-console = logging.StreamHandler()
-# set a format which is simpler for console use
-formatter = logging.Formatter(
-    '%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
-# tell the handler to use this format
-console.setFormatter(formatter)
-# add the handler to the root logger
-logging.getLogger('').addHandler(console)
-
-if len(sys.argv) > 1 and '--debug' in sys.argv:
-    debug = True
-    sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
-    console.setLevel(logging.DEBUG)
-else:
-    console.setLevel(logging.INFO)
-    debug = False
-    np.seterr(all='ignore')
-    warnings.simplefilter('ignore')
 
 if frozenutils.isFrozen():
     if not os.path.exists(HOME_DIR):
@@ -60,17 +42,19 @@ if frozenutils.isFrozen():
     sys.stdout = outfile
     sys.stderr = outfile
 
-__version__ = get_versions()['version']
-ver = get_versions()
-del get_versions
+if '--debug' in sys.argv:
+    debug = True
+else:
+    debug = False
 
-logging.info('Started logging output for SHARPpy')
-logging.info('SHARPpy version: ' + str(__version__))
-logging.info('numpy version: ' + str(np.__version__))
-logging.info('PySide version: ' + str(PySide.__version__))
-logging.info("Python version: " + str(platform.python_version()))
-
-# from sharppy._version import __version__#, __version_name__
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+WARNING = '\033[93m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
 
 __version_name__ = ''
 try:
@@ -78,7 +62,7 @@ try:
     has_nc = True
 except ImportError:
     has_nc = False
-    print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
+    print(WARNING + "No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk." + ENDC)
 
 
 class crasher(object):
@@ -111,10 +95,10 @@ class crasher(object):
                     msgbox.exec_()
                 else:
                     print()
-                    print(msg)
+                    print(FAIL + msg + ENDC)
                     print()
                     print("Detailed Information:")
-                    print(data)
+                    print(FAIL + data + ENDC)
 
                 # Check the flag that indicates if the program should exit when it crashes
                 if self._exit:
@@ -180,7 +164,8 @@ class Picker(QWidget):
 
         urls = data_source.pingURLs(self.data_sources)
         self.has_connection = any(urls.values())
-
+        if self.has_connection is False:
+            print(FAIL + "An internet connection was not found!" + ENDC)
         # initialize the UI
         self.__initUI()
 
@@ -255,7 +240,7 @@ class Picker(QWidget):
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
-            print("Run dropdown is missing its times ... ?")
+            print(WARNING + "Run dropdown is missing its times ... ?" + ENDC)
             print(filt_times)
 
         # connect the click actions to functions that do stuff
@@ -429,9 +414,6 @@ class Picker(QWidget):
         else:
             def getTimes(): return self.data_sources[self.model].getAvailableTimes(
                 dt=self.cal_date)
-        print(self.model, self.cal_date)
-        print(self.data_sources[self.model].getAvailableTimes(
-            dt=self.cal_date))
         # print(getTimes())
         # Function to update the times.
 
@@ -534,7 +516,7 @@ class Picker(QWidget):
                             "No outlet found with the requested profile!")
                     except Exception as e:
                         if debug:
-                            print(traceback.format_exc())
+                            print(FAIL + traceback.format_exc() + ENDC)
                         n_tries += 1
                     else:
                         break
@@ -688,7 +670,7 @@ class Picker(QWidget):
             logging.debug("Adding the profile collection to SPCWindown")
             self.skew.addProfileCollection(prof_collection)
         else:
-            print("There was an exception:", exc)
+            print(FAIL + "There was an exception:" + str(exc) + ENDC)
 
             raise exc
 
@@ -977,18 +959,69 @@ class Main(QMainWindow):
 
 
 def main():
-    ap = argparse.ArgumentParser()
+    # Start the logging
+    logging.basicConfig(format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
+                        filename=HOME_DIR + '/sharppy.log',
+                        filemode='w')
+    console = logging.StreamHandler()
+    # set a format which is simpler for console use
+    formatter = logging.Formatter(
+        '%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
+    # tell the handler to use this format
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logger = logging.getLogger('')
+    logger.addHandler(console)
+    
+    desc = """This binary launches the SHARPpy Picker and GUI from the command line.  When 
+              run from the command line without arguments, this binary simply launches the Picker 
+              and loads in the various datasets within the user's ~/.sharppy directory.  When the 
+              --debug flag is set, the GUI is run in debug mode.
+
+              When a set of files are passed as a command line argument, the program will 
+              generate images of the SHARPpy GUI for each sounding.  Soundings can be overlaid
+              on top of one another if the collect flag is set.  In addition, data from the 
+              datasources can be plotted using the datasource, station, and date-time flags."""
+    data_sources = [key for key in data_source.loadDataSources().keys()]
+    ep = "Available Datasources: " + ', '.join(data_sources)  
+    ap = argparse.ArgumentParser(description=desc, epilog=ep)
+
     ap.add_argument('file_names', nargs='*')
-    ap.add_argument('--debug', dest='debug', action='store_true')
-    ap.add_argument('--collect', dest='collect', nargs=1, default=None)
-    ap.add_argument('--noclose', dest='close', action='store_false')
-    args = ap.parse_args()
+    ap.add_argument('--debug', dest='debug', action='store_true',
+                    help='turns on debug mode for the GUI')
+    ap.add_argument('--collect', dest='collect', nargs=1, default=None,
+                    help="overlay profiles on top of one another in GUI image")
+    #ap.add_argument('--noclose', dest='close', action='store_false',
+    #                help="do not close the GUI after viewing the image")
+    ap.add_argument('--datasource', dest='ds', type=str, 
+                    help="the name of the datasource to search")
+    ap.add_argument('--station', dest='stn', type=str,
+                    help="the name of the station to search")
+    ap.add_argument('--datetime', dest='dt', type=str,
+                    help="a date-time to process (YYYYMMDD/HH)")
+    args = ap.parse_args()  
+
+    if args.debug == True:
+        sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
+        logger.setLevel(logging.NOTSET)
+        logging.debug('Started logging output for SHARPpy')
+        logging.debug('SHARPpy version: ' + str(__version__))
+        logging.debug('numpy version: ' + str(np.__version__))
+        logging.debug('PySide version: ' + str(PySide.__version__))
+        logging.debug("Python version: " + str(platform.python_version()))
+        debug = True
+    else:
+        debug = False
+        np.seterr(all='ignore')
+        warnings.simplefilter('ignore')
+        logger.setLevel(logging.CRITICAL)
 
     @crasher(exit=True)
     def createWindow(file_names, collect=False, close=True):
         main_win = Main()
         for fname in file_names:
-            print("Creating image for '%s' ..." % fname)
+            string = OKGREEN + "Creating image for '%s' ..." + ENDC
+            print(string % fname)
             main_win.picker.skewApp(filename=fname)
             if not collect:
                 fpath, fbase = os.path.split(fname)
@@ -1011,14 +1044,47 @@ def main():
                 main_win.picker.skew.close()
 
         return main_win
-
+    
+    @crasher(exit=False)
+    def search_and_plotDB(model, station, datetime, close=True):
+        main_win = Main()
+        main_win.picker.prof_idx = [0]
+        main_win.picker.run = datetime
+        main_win.picker.model = model
+        main_win.picker.loc = main_win.picker.data_sources[model].getPoint(station)
+        main_win.picker.disp_name = main_win.picker.loc['icao']
+        main_win.picker.skewApp()
+        string = OKGREEN + "Creating image for station %s using data source %s at time %s ..." + ENDC
+        print( string % (station, model, datetime.strftime('%Y%m%d/%H%M')))  
+        main_win.picker.skew.spc_widget.pixmapToFile(datetime.strftime('%Y%m%d.%H%M_' + model + '.png'))
+        if close:
+            main_win.picker.skew.close()
+        return main_win 
+    
     # Create an application
+    success = False
     app = QApplication([])
-    win = createWindow(args.file_names, collect=args.collect, close=args.close)
+    win = None
+    if args.dt is not None and args.ds is not None and args.stn is not None:
+        print("Looking in the data sources for this sounding ...")
+        dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")   
+        win = search_and_plotDB(args.ds, args.stn, dt)
+        if win is None:
+            success = False
+        else: success = True
+    elif args.file_names != []:
+        print("Looking for these files ...")
+        win = createWindow(args.file_names, collect=args.collect)
+        if win is None:
+            success = False
+        else: success = True
+    else:
+        success = True
 
-    if args.file_names != [] and args.close:
+    if success is True and win is not None:
         win.close()
     else:
+        main_win = Main() 
         sys.exit(app.exec_())
 
 

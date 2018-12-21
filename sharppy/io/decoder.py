@@ -13,6 +13,7 @@ from datetime import datetime
 import glob
 import os
 import imp
+import logging
 
 class abstract(object):
     def __init__(self, func):
@@ -36,7 +37,7 @@ def findDecoders():
 
     for dec in built_ins:
         # Load build-in decoders
-        print("Loading decoder '%s'." % dec)
+        logging.debug("Loading decoder '%s'." % dec)
         dec_imp = getattr(io, dec)
 
         dec_name = dec_imp.__classname__
@@ -49,7 +50,7 @@ def findDecoders():
     for dec in custom:
         # Find and load custom decoders
         dec_mod_name = os.path.basename(dec)[:-3]
-        print("Found custom decoder '%s'." % dec_mod_name)
+        logging.debug("Found custom decoder '%s'." % dec_mod_name)
         dec_imp = imp.load_source(dec_mod_name, dec)
         
         dec_name = dec_imp.__classname__
