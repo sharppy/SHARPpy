@@ -1,7 +1,6 @@
 name: testenv
 channels:
   - conda-forge
-  - anaconda
   - defaults
 dependencies:
   - python=2.7
@@ -13,7 +12,6 @@ dependencies:
   - anaconda-client
   - sphinx
   - sphinx-gallery
-  - sphinx-rtd-theme
   - pytest
   - pip:
     - sphinx-prompt  
