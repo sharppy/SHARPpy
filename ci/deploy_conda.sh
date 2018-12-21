@@ -28,10 +28,10 @@ conda build conda-recipe/
 
 # Convert the conda package to support other operating systems
 echo "Convert the recipe to other OSes"
-conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/linux-64/*.tar.bz2
-conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/linux-64/*.tar.bz2
-conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/linux-64/*.tar.bz2
-conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/linux-64/*.tar.bz2
+conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
+conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
+conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
+conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
 
 # Upload to the conda package manager
 anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy $CONDA_BLD_PATH/*/*.tar.bz2 --force
