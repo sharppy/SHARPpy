@@ -10,7 +10,7 @@ matrix:
   - os: osx
     language: generic
     env: 
-      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="NO"
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES"
   - os: osx
     language: generic
     env: 
@@ -22,7 +22,7 @@ matrix:
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES" BUILD_CONDA="YES"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES"
 before_install:
 - source ci/install.sh
 install:
