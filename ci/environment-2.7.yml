@@ -1,0 +1,18 @@
+name: testenv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=2.7
+  - pyside=1.2.*
+  - numpy
+  - matplotlib
+  - pyinstaller
+  - conda-build
+  - anaconda-client
+  - sphinx
+  - sphinx-gallery
+  - sphinx-rtd-theme
+  - pytest
+  - pip:
+    - sphinx-prompt  

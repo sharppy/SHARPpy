@@ -1,30 +1,23 @@
 #!/bin/bash
 echo $PYTHON_VERSION
 
-if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
-    if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
-    else
-        curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
-    fi 
-  else 
-    if [[ "$PYTHON_VERSION" == "2.7" ]]; then 
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh; 
-    else 
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
-  fi
-fi
-
-bash miniconda.sh -b -p $HOME/miniconda
-export PATH="$HOME/miniconda/bin:$PATH"
-hash -r
-conda config --set always_yes yes --set changeps1 no
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
+chmod +x miniconda.sh
+./miniconda.sh -b
+export PATH=/home/travis/miniconda3/bin:$PATH
+conda config --set always_yes yes
+conda config --set show_channel_urls true
 conda update -q conda
-conda install -n -q root _license
-conda info -a
-conda config --add channels conda-forge 
-conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pytest pyside pyinstaller conda-build anaconda-client
-source activate test-environment
+
+conda env create -f ci/environment-$PYTHON_VERSION.yml
+source activate testenv
+
+pip install --upgrade pip
+
+if [[ "$BUILD_CONDA" == "YES" ]]; then
+    conda install -q conda-build
+    conda install -q jinja2 setuptools
+fi
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
