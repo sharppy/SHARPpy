@@ -6,9 +6,10 @@ source deactivate
 
 # Download conda-build
 echo "Download conda-build and anaconda-client"
-conda install -q conda-build anaconda-client
+conda update -q conda
+conda install -q conda-build 
+conda install -q -c anaconda anaconda-client
 conda install -q jinja2 setuptools
-conda config --add channels conda-forge
 
 # Set environmental variables 
 USER=sharppy
@@ -28,10 +29,12 @@ conda build conda-recipe/
 
 # Convert the conda package to support other operating systems
 echo "Convert the recipe to other OSes"
-conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
-conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
-conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
-conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/osx-64/*.tar.bz2
+ls $CONDA_BLD_PATH
+conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS-64/*.tar.bz2
+conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS-64/*.tar.bz2
+conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS-64/*.tar.bz2
+conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS-64/*.tar.bz2
+ls $CONDA_BLD_PATH
 
 # Upload to the conda package manager
 anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy $CONDA_BLD_PATH/*/*.tar.bz2 --force
