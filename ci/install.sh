@@ -1,7 +1,13 @@
 #!/bin/bash
 echo $PYTHON_VERSION
 
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
+else
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh; 
+fi
+
+chmod +x miniconda.sh
 bash miniconda.sh -b
 export PATH=/home/travis/miniconda3/bin:$PATH
 conda config --set always_yes yes
