@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.io.decoder &mdash; SHARPpy 1.4.0a2+10.g8eb6545 documentation</title>
+  <title>sharppy.io.decoder &mdash; SHARPpy 1.4.0a2+13.gfc13c47 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a2+10.g8eb6545
+                1.4.0a2+13.gfc13c47
               </div>
             
           
@@ -172,6 +172,7 @@
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <div class="viewcode-block" id="abstract"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.decoder.abstract">[docs]</a><span class="k">class</span> <span class="nc">abstract</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
@@ -195,7 +196,7 @@
 
     <span class="k">for</span> <span class="n">dec</span> <span class="ow">in</span> <span class="n">built_ins</span><span class="p">:</span>
         <span class="c1"># Load build-in decoders</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading decoder &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">dec</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Loading decoder &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">dec</span><span class="p">)</span>
         <span class="n">dec_imp</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
 
         <span class="n">dec_name</span> <span class="o">=</span> <span class="n">dec_imp</span><span class="o">.</span><span class="n">__classname__</span>
@@ -208,7 +209,7 @@
     <span class="k">for</span> <span class="n">dec</span> <span class="ow">in</span> <span class="n">custom</span><span class="p">:</span>
         <span class="c1"># Find and load custom decoders</span>
         <span class="n">dec_mod_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dec</span><span class="p">)[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found custom decoder &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">dec_mod_name</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found custom decoder &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">dec_mod_name</span><span class="p">)</span>
         <span class="n">dec_imp</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="n">dec_mod_name</span><span class="p">,</span> <span class="n">dec</span><span class="p">)</span>
         
         <span class="n">dec_name</span> <span class="o">=</span> <span class="n">dec_imp</span><span class="o">.</span><span class="n">__classname__</span>
