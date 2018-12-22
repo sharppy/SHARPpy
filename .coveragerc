@@ -13,13 +13,12 @@ omit =
 exclude_lines = 
     if __name__ == .__main__.:
     logging.debug
-    def _*
-    def swapInset(self):
-    def keyPressEvent(self, e):
-    def focusPicker(self):
-    def wheelEvent(self, e):
-    def mouseReleaseEvent(self, e):
-    def updateReadout(self):
-    def setReadoutCursor(self):
-    def setNoCursor(self):
-    def resizeEvent(self, e):
+    def swapInset
+    def keyPressEvent
+    def focusPicker
+    def wheelEvent
+    def mouseReleaseEvent
+    def updateReadout
+    def setReadoutCursor
+    def setNoCursor
+    def resizeEvent
