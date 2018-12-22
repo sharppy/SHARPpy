@@ -1062,7 +1062,6 @@ class ConvectiveProfile(BasicProfile):
         variables:
         
         self.watch_type - possible watch type
-        self.watch_type_color - the color of type severity
         
         Parameters
         ----------
@@ -1073,19 +1072,15 @@ class ConvectiveProfile(BasicProfile):
         None
         '''
         watch_types = watch_type.possible_watch(self, use_left=False)
-        self.right_watch_type = watch_types[0][0]
-        self.right_watch_type_color = watch_types[1][0]
+        self.right_watch_type = watch_types[0]
 
         watch_types = watch_type.possible_watch(self, use_left=True)
-        self.left_watch_type = watch_types[0][0]
-        self.left_watch_type_color = watch_types[1][0]
+        self.left_watch_type = watch_types[0]
 
         if self.latitude < 0:
             self.watch_type = self.left_watch_type
-            self.watch_type_color = self.left_watch_type_color
         else:
             self.watch_type = self.right_watch_type
-            self.watch_type_color = self.right_watch_type_color
 
     def get_traj(self):
         '''

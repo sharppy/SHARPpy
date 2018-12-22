@@ -91,6 +91,31 @@ class plotWatch(backgroundWatch):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
 
+        self.pdstor_color   = QtGui.QColor('#ff00ff')
+        self.tor_color      = QtGui.QColor('#ff0000')
+        self.svr_color      = QtGui.QColor('#ffff00')
+        self.mrglsvr_color  = QtGui.QColor('#0099cc')
+        self.flood_color    = QtGui.QColor('#5ffb17')
+        self.blizzard_color = QtGui.QColor('#3366ff')
+        self.fire_color     = QtGui.QColor('#ff9900')
+        self.heat_color     = QtGui.QColor('#c85a17')
+        self.none_color     = QtGui.QColor('#ffcc33')
+
+        self.color_map = {
+            'PDS TOR':        'pdstor_color',
+            'TOR':            'tor_color',
+            'MRGL TOR':       'tor_color',
+            'SVR':            'svr_color',
+            'MRGL SVR':       'mrglsvr_color',
+            'FLASH FLOOD':    'flood_color',
+            'BLIZZARD':       'blizzard_color',
+            'WIND CHILL':     'blizzard_color',
+            'FREEZE':         'blizzard_color',
+            'FIRE WEATHER':   'fire_color',
+            'EXCESSIVE HEAT': 'heat_color',
+            'NONE':           'none_color',
+        }
+
         self.use_left = False
 
         super(plotWatch, self).__init__()
@@ -100,10 +125,8 @@ class plotWatch(backgroundWatch):
         self.prof = prof
         if self.use_left:
             self.watch_type = self.prof.left_watch_type
-            self.watch_type_color = self.prof.left_watch_type_color
         else:
             self.watch_type = self.prof.right_watch_type
-            self.watch_type_color = self.prof.right_watch_type_color
 
         self.clearData()
         self.plotBackground()
@@ -114,13 +137,20 @@ class plotWatch(backgroundWatch):
         self.bg_color = QtGui.QColor(prefs['bg_color'])
         self.fg_color = QtGui.QColor(prefs['fg_color'])
 
+        self.pdstor_color   = QtGui.QColor(prefs['watch_pdstor_color'])
+        self.tor_color      = QtGui.QColor(prefs['watch_tor_color'])
+        self.svr_color      = QtGui.QColor(prefs['watch_svr_color'])
+        self.mrglsvr_color  = QtGui.QColor(prefs['watch_mrglsvr_color'])
+        self.flood_color    = QtGui.QColor(prefs['watch_flood_color'])
+        self.blizzard_color = QtGui.QColor(prefs['watch_blizzard_color'])
+        self.heat_color     = QtGui.QColor(prefs['watch_heat_color'])
+        self.none_color     = QtGui.QColor(prefs['watch_none_color'])
+
         if update_gui:
             if self.use_left:
                 self.watch_type = self.prof.left_watch_type
-                self.watch_type_color = self.prof.left_watch_type_color
             else:
                 self.watch_type = self.prof.right_watch_type
-                self.watch_type_color = self.prof.right_watch_type_color
 
             self.clearData()
             self.plotBackground()
@@ -131,10 +161,8 @@ class plotWatch(backgroundWatch):
         self.use_left = deviant == 'left'
         if self.use_left:
             self.watch_type = self.prof.left_watch_type
-            self.watch_type_color = self.prof.left_watch_type_color
         else:
             self.watch_type = self.prof.right_watch_type
-            self.watch_type_color = self.prof.right_watch_type_color
 
         self.clearData()
         self.plotBackground()
@@ -173,11 +201,13 @@ class plotWatch(backgroundWatch):
         if self.prof is None:
             return
 
+        watch_type_color = getattr(self, self.color_map[self.watch_type])
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
-        pen = QtGui.QPen(QtGui.QColor(self.watch_type_color), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(QtGui.QColor(watch_type_color), 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
         qp.setFont(self.plot_font)
         centery = self.bry / 2.

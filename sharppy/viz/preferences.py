@@ -171,6 +171,16 @@ class PrefDialog(QDialog):
             'srw_9_11_color':'#9400d3',
 
             'winter_dgz_color':'#ffff00',
+
+            'watch_pdstor_color':'#ff00ff',
+            'watch_tor_color':'#ff0000',
+            'watch_svr_color':'#ffff00',
+            'watch_mrglsvr_color':'#0099cc',
+            'watch_flood_color':'#5ffb17',
+            'watch_blizzard_color':'#3366ff',
+            'watch_fire_color':'#ff9900',
+            'watch_heat_color':'#c85a17',
+            'watch_none_color':'#ffcc33',
         },
         'inverted': {
             'bg_color': '#ffffff',
@@ -232,6 +242,16 @@ class PrefDialog(QDialog):
             'srw_9_11_color':'#9400d3',
 
             'winter_dgz_color':'#999900',
+
+            'watch_pdstor_color':'#ff00ff',
+            'watch_tor_color':'#ff0000',
+            'watch_svr_color':'#ffff00',
+            'watch_mrglsvr_color':'#0099cc',
+            'watch_flood_color':'#5ffb17',
+            'watch_blizzard_color':'#3366ff',
+            'watch_fire_color':'#ff9900',
+            'watch_heat_color':'#c85a17',
+            'watch_none_color':'#ffcc33',
         },
         'protanopia': {
             'bg_color': '#000000',
@@ -292,6 +312,16 @@ class PrefDialog(QDialog):
             'srw_9_11_color':'#9400d3',
 
             'winter_dgz_color':'#ffff00',
+
+            'watch_pdstor_color':'#ff00ff',
+            'watch_tor_color':'#ff0000',
+            'watch_svr_color':'#ffff00',
+            'watch_mrglsvr_color':'#0099cc',
+            'watch_flood_color':'#5ffb17',
+            'watch_blizzard_color':'#3366ff',
+            'watch_fire_color':'#ff9900',
+            'watch_heat_color':'#c85a17',
+            'watch_none_color':'#ffcc33',
         }
     }
 
