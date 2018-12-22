@@ -15,5 +15,10 @@ from .fire import plotFire
 from .ship import plotSHIP
 from .stpef import plotSTPEF
 from .vrot import plotVROT
-
-__all__ = []
+from .generic import plotGeneric
+from .ensemble import plotENS
+from .map import Mapper, MapWidget
+__all__ = ['plotSkewT', 'plotHodo', 'plotText', 'plotThetae', 'plotWinds', 'plotSpeed',\
+           'plotKinematics', 'plotAnalogues', 'plotWatch', 'plotSlinky', 'plotAdvection',\
+           'plotSTP', 'plotWinter', 'plotFire', 'plotSHIP', 'plotSTPEF', 'plotVROT',\
+           'Mapper', 'MapWidget', 'plotGeneric', 'plotENS']
