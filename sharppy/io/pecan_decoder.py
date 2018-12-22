@@ -3,11 +3,12 @@ import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from datetime import datetime, timedelta
 from sharppy.io.decoder import Decoder
+from utils.utils import is_py3
 
 try:
     from StringIO import StringIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO
 
 __fmtname__ = "pecan"
 __classname__ = "PECANDecoder"
@@ -28,7 +29,7 @@ class PECANDecoder(Decoder):
             try:
                 prof, dt_obj, init_dt, member = self._parseSection(m)
             except Exception as e:
-                print(e)
+            #    print(e)
                 continue
             
             loc = prof.location
@@ -63,7 +64,12 @@ class PECANDecoder(Decoder):
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
         headers = [ h.lower() for h in parts[4].split(", ") ]
         data = '\n'.join(parts[5:])
-        sound_data = StringIO( data )
+    
+        if not is_py3():
+            sound_data = StringIO(data)
+        else:
+            sound_data = BytesIO(data.encode())
+
         prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
         prof_var_dict = dict(zip(headers, prof_vars))
         def maybe_replace(old_var, new_var):
@@ -73,6 +79,9 @@ class PECANDecoder(Decoder):
         maybe_replace('omga', 'omeg')
         maybe_replace('temp', 'tmpc')
         maybe_replace('dewp', 'dwpc')
+        maybe_replace('uwin', 'u')
+        maybe_replace('vwin', 'v')
+        
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
         
         return prof, dt_obj, dt_obj - timedelta(hours=fhr), member
