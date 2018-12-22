@@ -72,17 +72,20 @@ class PECANDecoder(Decoder):
         data = '\n'.join(parts[5:])
         print("TYPE OF DATA:", type(data))
         sound_data = StringIO( data )
-        
+        print("TYPE OF SOUND_DATA:", type(sound_data)) 
         prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
+        print("PROF_VARS:", prof_vars)
         prof_var_dict = dict(zip(headers, prof_vars))
-        
+        print("PROF_VAR_DICT:", prof_var_dict) 
         def maybe_replace(old_var, new_var):
             if old_var in prof_var_dict:
                 prof_var_dict[new_var] = prof_var_dict[old_var]
                 del prof_var_dict[old_var]
-
+        print("Maybe Replace:") 
         maybe_replace('omga', 'omeg')
+        print(prof_var_dict)
         maybe_replace('temp', 'tmpc')
+        print(prof_var_dict)
         maybe_replace('dewp', 'dwpc')
         print('STUFF GOING TO BE PASSED TO THE PROFILE OBJECT:', prof_var_dict.keys(), location, dt_obj)
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
