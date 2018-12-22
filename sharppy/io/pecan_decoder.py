@@ -36,7 +36,9 @@ class PECANDecoder(Decoder):
             try:
                 profiles[member] = profiles[member] + [prof]
             except Exception as e:
+                print('THERE WAS AN EXCEPTION:', e
                 profiles[member] = [prof]
+                print("Length of profiles:". len(profiles))
             if not dt_obj in dates:
                 dates.append(dt_obj)
             if date_init is None or init_dt < date_init:
@@ -80,6 +82,7 @@ class PECANDecoder(Decoder):
         maybe_replace('omga', 'omeg')
         maybe_replace('temp', 'tmpc')
         maybe_replace('dewp', 'dwpc')
+        print('STUFF GOING TO BE PASSED TO THE PROFILE OBJECT:', prof_var_dict.keys(), location, dt_obj, missing)
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
         
         return prof, dt_obj, dt_obj - timedelta(hours=fhr), member
