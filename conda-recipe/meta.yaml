@@ -25,7 +25,7 @@ requirements:
      - pyside
     run:
      - python >=3.4
-     - numpy 
+     - numpy=1.14.* 
      - pyside
 
 test:
