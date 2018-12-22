@@ -26,7 +26,7 @@ matrix:
 before_install:
 - source ci/install.sh
 install:
-- pip install -e
+- pip install -e .
 script:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run py.test -v --cov=sharppy sharppy/ ; else py.test -v --cov=sharppy sharppy/; fi
 # If the test script passes, deploy if it's tagged..generate the binaries.
