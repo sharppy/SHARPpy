@@ -22,3 +22,6 @@ exclude_lines =
     def setReadoutCursor
     def setNoCursor
     def resizeEvent
+    def mouseMoveEvent
+    def mouseDoubleClickEvent
+    def mousePressEvent
