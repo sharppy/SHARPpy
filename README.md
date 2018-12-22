@@ -7,6 +7,9 @@
 [![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/downloads.svg)](https://anaconda.org/sharppy/sharppy)
 [![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/license.svg)](https://anaconda.org/sharppy/sharppy)
 [![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/platforms.svg)](https://anaconda.org/sharppy/sharppy)
+[![HitCount](http://hits.dwyl.io/sharppy/SHARPpy.svg)](http://hits.dwyl.io/sharppy/SHARPpy)
+[![](https://img.shields.io/github/downloads/sharppy/SHARPpy/total.svg?style=popout)](https://github.com/sharppy/SHARPpy/releases)
+[![](https://img.shields.io/conda/dn/sharppy/sharppy.svg?style=popout)](https://anaconda.org/sharppy/sharppy)
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
