@@ -20,7 +20,6 @@ class PECANDecoder(Decoder):
         file_data = self._downloadFile()
 
         file_profiles = file_data.split('\n\n\n')
-        print("Found", len(file_profiles), " profile chunks in the file")  
         profiles = {}
         dates = []
         date_init = None
@@ -37,15 +36,12 @@ class PECANDecoder(Decoder):
             try:
                 profiles[member] = profiles[member] + [prof]
             except Exception as e:
-                print('THERE WAS AN EXCEPTION:', e)
                 profiles[member] = [prof]
-                print("Length of profiles:", len(prof.tmpc))
             if not dt_obj in dates:
                 dates.append(dt_obj)
             if date_init is None or init_dt < date_init:
                 date_init = init_dt
             #print(profiles)
-        print(profiles, dates) 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         if "MEAN" in list(profiles.keys()):
             prof_coll.setHighlightedMember("MEAN")
@@ -55,39 +51,28 @@ class PECANDecoder(Decoder):
         return prof_coll
 
     def _parseSection(self, section):
-        print("TYPE OF SECTION:", type(section)) 
         parts = section.split('\n')
         if ' F' in parts[1]:
             valid, fhr = parts[1].split(' F')
-            print(valid, fhr)
             fhr = int(fhr)
         else:
             valid = parts[1]
             fhr = 0
-        print("TYPE OF VALID:", type(valid)) 
         dt_obj = datetime.strptime(valid, 'TIME = %y%m%d/%H%M')
         member = parts[0].split('=')[-1].strip()
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
         headers = [ h.lower() for h in parts[4].split(", ") ]
         data = '\n'.join(parts[5:])
-        print("TYPE OF DATA:", type(data))
         sound_data = StringIO( data )
-        print("TYPE OF SOUND_DATA:", type(sound_data)) 
         prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
-        print("PROF_VARS:", prof_vars)
         prof_var_dict = dict(zip(headers, prof_vars))
-        print("PROF_VAR_DICT:", prof_var_dict) 
         def maybe_replace(old_var, new_var):
             if old_var in prof_var_dict:
                 prof_var_dict[new_var] = prof_var_dict[old_var]
                 del prof_var_dict[old_var]
-        print("Maybe Replace:") 
         maybe_replace('omga', 'omeg')
-        print(prof_var_dict)
         maybe_replace('temp', 'tmpc')
-        print(prof_var_dict)
         maybe_replace('dewp', 'dwpc')
-        print('STUFF GOING TO BE PASSED TO THE PROFILE OBJECT:', prof_var_dict.keys(), location, dt_obj)
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
         
         return prof, dt_obj, dt_obj - timedelta(hours=fhr), member
