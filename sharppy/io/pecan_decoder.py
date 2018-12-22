@@ -20,7 +20,7 @@ class PECANDecoder(Decoder):
         file_data = self._downloadFile()
 
         file_profiles = file_data.split('\n\n\n')
-        
+        print("Found", len(file_profiles), " profile chunks in the file")  
         profiles = {}
         dates = []
         date_init = None
@@ -29,6 +29,7 @@ class PECANDecoder(Decoder):
             try:
                 prof, dt_obj, init_dt, member = self._parseSection(m)
             except Exception as e:
+                print(e)
                 continue
             
             loc = prof.location
@@ -38,7 +39,7 @@ class PECANDecoder(Decoder):
             except Exception as e:
                 print('THERE WAS AN EXCEPTION:', e)
                 profiles[member] = [prof]
-                print("Length of profiles:". len(profiles))
+                print("Length of profiles:", len(prof.tmpc))
             if not dt_obj in dates:
                 dates.append(dt_obj)
             if date_init is None or init_dt < date_init:
@@ -82,7 +83,7 @@ class PECANDecoder(Decoder):
         maybe_replace('omga', 'omeg')
         maybe_replace('temp', 'tmpc')
         maybe_replace('dewp', 'dwpc')
-        print('STUFF GOING TO BE PASSED TO THE PROFILE OBJECT:', prof_var_dict.keys(), location, dt_obj, missing)
+        print('STUFF GOING TO BE PASSED TO THE PROFILE OBJECT:', prof_var_dict.keys(), location, dt_obj)
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
         
         return prof, dt_obj, dt_obj - timedelta(hours=fhr), member
