@@ -24,3 +24,4 @@ exclude_lines =
     def resizeEvent
     def mouseMoveEvent
     def mouseDoubleClickEvent
+    def mousePressEvent
