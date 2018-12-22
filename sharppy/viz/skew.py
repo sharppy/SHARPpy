@@ -47,7 +47,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.scale = 1.
         #self.bg_color=QColor('#000000')
         if self.physicalDpiX() > 75:
-            fsize = 6 * ()
+            fsize = 6 
             fsizet = 10
         else:
             fsize = 7
