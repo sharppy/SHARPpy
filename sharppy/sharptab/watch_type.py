@@ -520,13 +520,9 @@ def possible_watch(prof, use_left=False):
         -------
         watch_types : numpy array
             strings containing the weather types in code
-        colors : numpy array
-            HEX colors corresponding to each weather type
-
     '''
         
     watch_types = []
-    colors = []
     
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
     if use_left:
@@ -554,25 +550,19 @@ def possible_watch(prof, use_left=False):
         sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("PDS TOR")
-        colors.append(constants.MAGENTA)
     elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and (srw_4_6km >= 15.0 or sfc_8km_shear >= 40) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and ((prof.low_rh + prof.mid_rh)/2. >= 60) and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 0.5 and esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
-        colors.append("#FF0000")
 
     #SVR LOGIC
     if use_left:
@@ -581,16 +571,12 @@ def possible_watch(prof, use_left=False):
         scp = prof.right_scp
 
     if (stp_fixed >= 1.0 or scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
         watch_types.append("SVR")
     elif scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
         watch_types.append("SVR")
     elif prof.sig_severe >= 30000 and prof.mmp >= 0.6 and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
         watch_types.append("SVR")
     elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or scp >= 0.5):
-        colors.append("#0099CC")
         watch_types.append("MRGL SVR")
     
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
@@ -603,29 +589,24 @@ def possible_watch(prof, use_left=False):
     upshear = utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
     if pw_climo_flag >= 2 and upshear[1] < 25:
         watch_types.append("FLASH FLOOD")
-        colors.append("#5FFB17")
     #elif pwat > 1.3 and upshear[1] < 25:
     #    watch_types.append("FLASH FLOOD")
-    #    colors.append("#5FFB17")
     
     # Blizzard if sfc winds > 35 mph and precip type detects snow 
     # Still needs to be tied into the 
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
     if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0 and "Snow" in prof.precip_type:
         watch_types.append("BLIZZARD")
-        colors.append("#3366FF")
     
     # Wind Chill (if wind chill gets below -20 F)
     # TODO: Be reinstated in future releases if the logic becomes a little more solid.
     #if wind_chill(prof) < -20.:
     #    watch_types.append("WIND CHILL")
-    #    colors.append("#3366FF")
     
     # Fire WX (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
     # TODO: Be reinstated in future releases once the logic becomes a little more solid
     #if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.dwpc[prof.get_sfc()]) < 30. :
         #watch_types.append("FIRE WEATHER")
-        #colors.append("#FF9900")
     
     # Excessive Heat (use the heat index calculation (and the max temperature algorithm))
     temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
@@ -633,16 +614,13 @@ def possible_watch(prof, use_left=False):
     hi = heat_index(temp, rh)
     if hi > 105.:
         watch_types.append("EXCESSIVE HEAT")
-        colors.append("#C85A17")
     
     # Freeze (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
     # Still in testing.  To be reinstated in future releases.
     #if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
     #    watch_types.append("FREEZE")
-    #    colors.append("#3366FF")
     
     watch_types.append("NONE")
-    colors.append("#FFCC33")
     
-    return np.asarray(watch_types), np.asarray(colors)
+    return np.asarray(watch_types)
 

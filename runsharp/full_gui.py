@@ -676,7 +676,7 @@ class Picker(QWidget):
                 prof_collection.setAsync(Picker.async_obj)
 
             if self.skew is None:
-                logging.debug("Constructing SPCWindown")
+                logging.debug("Constructing SPCWindow")
                 # If the SPCWindow isn't shown, set it up.
                 self.skew = SPCWindow(parent=self.parent(), cfg=self.config)
                 self.parent().config_changed.connect(self.skew.centralWidget().updateConfig)
@@ -685,7 +685,7 @@ class Picker(QWidget):
 
             logging.debug("Focusing on the SkewApp")
             self.focusSkewApp()
-            logging.debug("Adding the profile collection to SPCWindown")
+            logging.debug("Adding the profile collection to SPCWindow")
             self.skew.addProfileCollection(prof_collection)
         else:
             print("There was an exception:", exc)
