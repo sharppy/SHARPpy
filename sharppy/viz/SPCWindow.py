@@ -497,6 +497,7 @@ class SPCWidget(QWidget):
 
     @Slot(int, dict)
     def modifyProf(self, idx, kwargs):
+        # TODO: Use this as a template to modify layers of the sounding
         self.prof_collections[self.pc_idx].modify(idx, **kwargs)
         self.updateProfs()
         self.setFocus()
