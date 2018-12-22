@@ -2,11 +2,13 @@ import sharppy.io.decoder as decoder
 import sharppy.io.buf_decoder as buf_decoder
 import sharppy.io.spc_decoder as spc_decoder
 import sharppy.io.pecan_decoder as pecan_decoder
+import sharppy.io.uwyo_decoder as uwyo_decoder
 """
     Unit tests to test to see if decoders work on different file types
 """
 files = ['examples/data/14061619.OAX',
          'examples/data/rap_oun.buf',
+         'examples/data/oun_uwyo.html',
          'examples/data/ABR.txt',
          'examples/data/OUN.txt']
    
@@ -25,11 +27,11 @@ def test_decoder():
     assert profs.isModified() == False
     assert profs.getAnalogDate() is None
     assert profs.hasCurrentProf() == True
-    
-    #profs.interp()
-    #profs.resetInterpolation()
-    #dec = pecan_decoder.PECANDecoder(files[2])
-    #dec = pecan_decoder.PECANDecoder(files[3])
+   
+    dec = uwyo_decoder.UWYODecoder(files[2]) 
+    dec = pecan_decoder.PECANDecoder(files[3])
+    dec = pecan_decoder.PECANDecoder(files[4])
+    assert dec.getProfiles().isEnsemble() == True
 
-    print(profs) 
+    #print(profs) 
 test_decoder()

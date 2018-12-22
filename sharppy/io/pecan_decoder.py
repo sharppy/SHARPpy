@@ -20,7 +20,7 @@ class PECANDecoder(Decoder):
         file_data = self._downloadFile()
 
         file_profiles = file_data.split('\n\n\n')
-
+        
         profiles = {}
         dates = []
         date_init = None
@@ -28,9 +28,9 @@ class PECANDecoder(Decoder):
         for m in file_profiles:
             try:
                 prof, dt_obj, init_dt, member = self._parseSection(m)
-            except:
+            except Exception as e:
                 continue
-
+            
             loc = prof.location
             # Try to add the profile object to the list of profiles for this member
             try:
@@ -41,7 +41,8 @@ class PECANDecoder(Decoder):
                 dates.append(dt_obj)
             if date_init is None or init_dt < date_init:
                 date_init = init_dt
-
+            #print(profiles)
+        print(profiles, dates) 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         if "MEAN" in list(profiles.keys()):
             prof_coll.setHighlightedMember("MEAN")
@@ -52,24 +53,25 @@ class PECANDecoder(Decoder):
 
     def _parseSection(self, section):
         parts = section.split('\n')
-
+        
         if ' F' in parts[1]:
             valid, fhr = parts[1].split(' F')
+            print(valid, fhr)
             fhr = int(fhr)
         else:
             valid = parts[1]
             fhr = 0
-
+        
         dt_obj = datetime.strptime(valid, 'TIME = %y%m%d/%H%M')
         member = parts[0].split('=')[-1].strip()
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
         headers = [ h.lower() for h in parts[4].split(", ") ]
         data = '\n'.join(parts[5:])
         sound_data = StringIO( data )
-
+        
         prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
         prof_var_dict = dict(zip(headers, prof_vars))
-
+        
         def maybe_replace(old_var, new_var):
             if old_var in prof_var_dict:
                 prof_var_dict[new_var] = prof_var_dict[old_var]
@@ -77,11 +79,14 @@ class PECANDecoder(Decoder):
 
         maybe_replace('omga', 'omeg')
         maybe_replace('temp', 'tmpc')
-        maybe_replace('dewp', 'dewp')
-
+        maybe_replace('dewp', 'dwpc')
         prof = profile.create_profile(profile='raw', location=location, date=dt_obj, missing=-999.0, **prof_var_dict)
+        
         return prof, dt_obj, dt_obj - timedelta(hours=fhr), member
 
 if __name__ == '__main__':
-	file = PECANDecoder("http://arctic.som.ou.edu/OUN.txt")
-	print(file.getProfileTimes())
+    prof_col = PECANDecoder("../../examples/data/ABR.txt")
+    print(prof_col.getProfiles())
+    #file.getProfs()
+
+
