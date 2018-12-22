@@ -146,7 +146,8 @@ class ARWDecoder(Decoder):
         profiles = []
         dates = []
         ## loop over the available times
-        for i in range(file_data.variables["XTIME"][:].shape[0]):
+        
+        for i in range(file_data.variables["T"][:].shape[0]):
             ## make sure the arrays are 1D
             prof_pres = mpres[i].flatten()
             prof_hght = mhght[i].flatten()
@@ -155,8 +156,12 @@ class ARWDecoder(Decoder):
             prof_uwin = muwin[i].flatten()
             prof_vwin = mvwin[i].flatten()
             ## compute the time of the profile
-            delta = dattim.timedelta( minutes=int(file_data.variables["XTIME"][i]) )
-            curtime = inittime + delta
+            try:
+                delta = dattim.timedelta( minutes=int(file_data.variables["XTIME"][i]) )
+                curtime = inittime + delta
+            except KeyError:
+                var = ''.join(np.asarray(file_data.variables['Times'][i], dtype=str))
+                curtime = dattim.datetime.strptime(var, '%Y-%m-%d_%H:%M:%S') 
             date_obj = curtime
 
             ## construct the profile object
@@ -176,4 +181,4 @@ class ARWDecoder(Decoder):
         return prof_coll
 
 if __name__ == '__main__':
-	file = ARWDecoder(("/Users/keltonhalbert/Downloads/wrfout_d01_2015-10-25_00-00-00", -97, 35))
+	file = ARWDecoder(("/Users/blumberg/Downloads/wrfout_v2_Lambert.nc", -97, 35))
