@@ -26,6 +26,7 @@ conda config --add channels conda-forge
 conda create -q -n test-environment python=$PYTHON_VERSION numpy nose pyside pyinstaller conda-build anaconda-client
 source activate test-environment
 
+pip install --upgrade pip
 conda install -c conda-forge -q pytest-cov
 if [[ "$COVERALLS" == "YES" ]]; then
     conda install -c conda-forge -q coveralls
