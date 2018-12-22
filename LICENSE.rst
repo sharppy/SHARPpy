@@ -1,10 +1,15 @@
+.. _License_:
+
+License
+=======
+
 Copyright (c) 2011, Patrick T. Marsh & John Hart.
 All rights reserved.
 
 Copyright (c) 2012, MetPy Developers.
 All rights reserved.
 
-Copyright (c) 2017, Kelton Halbert, Greg Blumberg & Tim Supinie. 
+Copyright (c) 2018, Kelton Halbert, Greg Blumberg & Tim Supinie. 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

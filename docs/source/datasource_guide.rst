@@ -1,23 +1,35 @@
-.. _Custom_Data_Sources_:
+.. _Custom_Data_Sources:
 
 Custom Data Sources
 ===================
 
-Loading in Sounding Data Files
-------------------------------
+Sometimes, you may want to load your own custom data into SHARPpy.
 
-SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  See the `4061619.OAX <https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX>`_ file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+Valid Data Formats
+^^^^^^^^^^^^^^^^^^
 
-*Notes about the file format:*
+SHARPpy hosts a variety of decoders within the :ref:`sharppy.io` to help decode various human-readable text files:
 
-While SHARPpy can be configured to accept multiple different sounding formats, the tabular format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
+.. csv-table:: SHARPpy Decoders
+    :header: "Name", "Data Type"
+    :widths: 20,50
+    
+    "buf_decoder.py", "BUFKIT files which includes deterministic and ensemble point forecast soundings"
+    "pecan_decoder.py", "Point forecast soundings for deterministic and ensemble models"
+    "spc_decoder.py", "Observed soundings"
+
+Examples of these various files may be found within the ``examples/data`` folder.
+
+*Notes about the SPC file format:*
+
+While SHARPpy can be configured to accept multiple different sounding formats, the tabular (or SPC format) format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.
 
 The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  "..." is where the sections of the file ends and continues in this example and are not included in the actual data file:
 
 ::
 
   %TITLE%
-   SITEID   YYMMDD/HHMM
+   SITEID   YYMMDD/HHMM LAT,LON
 
      LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
   -------------------------------------------------------------------
@@ -45,15 +57,22 @@ Upon loading the data into the SHARPpy GUI, the program first does several check
 The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.  As of version 1.4, the GUI will try to plot the data should the user desire.
 
 
+Loading in Sounding Data Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File->Open menu to open up your text file in the sounding window.  With each file, SHARPpy will search through the list of decoders in the :ref:`sharppy.io` to find the correct one for your file.  See the `14061619.OAX <https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX>`_ file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.
+
 
 Adding Custom Data Sources
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SHARPpy maintains a variety of different sounding data sources in the distributed program.  These sounding data sources are provided by a variety of hosts online, and we thank them for making their data accessible for the program to be used.  Accessiblity to these various data sources are dependent upon the hosts.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the `MPAS <https://mpas-dev.github.io>`_ and the `NCAR Realtime Ensemble <https://ensemble.ucar.edu>`_ into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.
+Although SHARPpy maintains a variety of different sounding data sources in the distributed program, you may want to add your own to the program.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the `MPAS <https://mpas-dev.github.io>`_ and the `NCAR Realtime Ensemble <https://ensemble.ucar.edu>`_ into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.
 
-Some users may wish to add their own custom data source (for example, your own NWP point forecast soundings).  To do this, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!
+To do this, add to the `datasources/` directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the `standard.xml` file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!
 
-1. Make a new XML file
+1. Make your sounding data files.  You may wish to use either the SPC format, the BUFKIT format, or the PECAN format.  You may wish to store these locally or on a server.  Either way, they should be viewable by login credentials you will be using when running the SHARPpy GUI.
+
+2. Make a new XML file
 The XML file contains the information for how the data source behaves. Questions like "Is this data source an ensemble?" or "How far out does this data source forecast?" are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is `.xml`. The format should look like the `standard.xml` file in the `datasources/` directory, but an example follows:
 
 .. code-block:: xml
@@ -75,7 +94,7 @@ For the ``outlet`` tag:
 * ``date``: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).
 * ``cycle``: The current cycle hour in HHZ format (e.g. 00Z).
 * ``srcid``: The source's profile ID (will be filled in with the same column from the CSV file; see below).
-* ``format``: The format of the data source.  Currently, the only supported formats are `bufkit` for model profiles and `spc` for observed profiles. Others will be available in the future.
+* ``format``: The format of the data source.  Currently, the only supported formats are `bufkit` and `pecan` for model profiles and `spc` for observed profiles. Others will be available in the future.
 
 For the ``time`` tag:
 
@@ -88,7 +107,7 @@ For the ``time`` tag:
 
 These should all be integer numbers of hours; support for sub-hourly data is forthcoming.
 
-2. Make a new CSV file
+3. Make a new CSV file
 The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:
 
 ::
@@ -100,5 +119,8 @@ The CSV file contains information about where your profiles are located and what
 
 The only columns that are strictly required are the ``lat``, ``lon``, and ``srcid`` columns.  The rest must be present, but can be left empty. However, SHARPpy will use as much information as it can get to make a pretty name for the station on the picker map.
 
-3. Run ``python setup.py install``
-This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.
+*Optional*
+
+4. Run ``python setup.py install``
+This will install your new data source and allow SHARPpy to find it. If the installation was successful, you should see it in the "Data Sources" drop-down menu.  You should only do this step if you have edited the `datasources/` directory underneath the root of the SHARPpy Github directory.  If you made these modifications within the `~/.sharppy` directory, you will not need to do this step.
+

@@ -33,6 +33,7 @@ Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and 
 
     An example of the Skew-T inset showing a model forecast sounding for May 31, 2013 at 18 UTC.  The 2-6 km max lapse rate layer clearly denotes the elevated mixed layer, while the omega profile indicates that rising motion is occuring within the lowest 6 km of the sounding in the forecast.
 
+If the Winter inset is selected, SHARPpy will label the the dendritic growth zone (DGZ), the wet-bulb zero (WBZ), and the freezing level (FRZ) on the Skew-T diagram.  If the Fire inset is selected, the convective boundary layer top will be denoted on the Skew-T. 
 
 Wind Speed Profile
 ------------------

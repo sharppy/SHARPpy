@@ -8,7 +8,7 @@ SHARPpy Insets
     :alt: SHARPpy GUI Example
     :align: center
 
-At the bottom of the SHARPpy GUI lies four separate insets that can be used to assist in analyses of the sounding data.  The two insets highlighted in yellow are interchangeable with some of the other insets provided in the program.
+At the bottom of the SHARPpy GUI lies four separate insets that can be used to assist in analyses of the sounding data.  The two insets highlighted in yellow are interchangeable with some of the other insets provided in the program.  Right clicking either inset will bring up a menu that shows the other insets that can be swapped with the selected one.
 
 Thermodynamic Indices
 ^^^^^^^^^^^^^^^^^^^^^
@@ -18,7 +18,9 @@ Thermodynamic Indices
     :alt: Thermo inset
     :align: center
 
-
+* Shows four parcels that were lifted in the sounding and their various properties (e.g., CAPE, CIN, LCL, LFC, EL).
+* Displays the lapse rate for various layers key for deep, moist convection forecasting
+* Provides an array of indices that describes water vapor in the atmosphere and severe convection potential.
 
 Kinematic Indices
 ^^^^^^^^^^^^^^^^^
@@ -28,7 +30,9 @@ Kinematic Indices
     :alt: Thermo inset
     :align: center
 
-Provides information on the storm-relative helicity (SRH), wind shear (Shear), pressure-weighted mean wind (MnWind) and layer-averaged storm-relative winds (SRW) for different layers. Layers shown here have been shown to correspond to storm longevity, storm mode, and tornado potential. The Bunkers storm motion and Corfidi vectors are also displayed.
+* Provides information on the storm-relative helicity (SRH), wind shear (Shear), pressure-weighted mean wind (MnWind) and layer-averaged storm-relative winds (SRW) for different layers. 
+* Layers shown here have been shown to correspond to storm longevity, storm mode, and tornado potential. 
+* The Bunkers storm motion and Corfidi vectors are also displayed.
 
 Sounding Analog Retrieval System (SARS)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -40,9 +44,14 @@ Sounding Analog Retrieval System (SARS)
 
     Sounding Analogue Retrieval System to compare soundings with previous severe weather environments.
 
-Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see `Jewell et al. <http://www.spc.noaa.gov/publications/jewell/sars.pdf>`_).  Atempts to match the current sounding to past proximity soundings from tornado and hail events using sounding parameters. “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2. The algorithm is calibrated to maximize probability of detection.
+Sounding Analog Retrieval System matches the indices of the current sounding to those from past severe weather events within the CONUS (see `Jewell et al. <http://www.spc.noaa.gov/publications/jewell/sars.pdf>`_).  
 
-Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude
+* Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection.  
+* Atempts to find "loose" matches between the current sounding to past tornado and hail events using sounding parameters. 
+* “Loose” matches are used to provide a probability of hail exceeding 2 inches and a tornado intensity exceeding EF2.  This algorithm is calibrated to maximize probability of detection of these events.
+* When the indices reach very large values (e.g., SBCAPE > 6000 J/kg), SARS may fail to provide a good prediction as extreme values are rare within the SARS database.
+
+Strict (very close) matches are also displayed showing the date, time, location, and threat magnitude:
 
 * Supercells may have no tornado (NON), a weak tornado (WEAK) or a significant tornado (EF2+) (SIG).
 * Hail size is indicated in the strict matches.
@@ -84,7 +93,9 @@ Fire Weather
 
     Fire weather parameters and guidance.
 
-Provides a list of variables relevant to the moisture and wind properties within the convective boundary layer.  See Fosberg (1978) for information on the Fosberg Fire Weather Index (FWI).  PW changes color if the MUCAPE > 50 J/kg, PW < 0.5 inches, and SFC RH is < 35 % to alert the user if the potential exists for fire starting, dry thunderstorms.
+* Provides a list of variables relevant to the moisture and wind properties within the convective boundary layer.  
+* See Fosberg (1978) for information on the Fosberg Fire Weather Index (FWI).  
+* PW changes color if the MUCAPE > 50 J/kg, PW < 0.5 inches, and SFC RH is < 35 % to alert the user if the potential exists for fire starting, dry thunderstorms.
 
 Winter Weather
 ^^^^^^^^^^^^^^

@@ -44,8 +44,8 @@ def test_vec2comp_default_missing_val_single():
     input_wdir = MISSING
     input_wspd = 30
     returned_u, returned_v = utils.vec2comp(input_wdir, input_wspd)
-    npt.assertTrue(type(returned_u), type(ma.masked))
-    npt.assertTrue(type(returned_v), type(ma.masked))
+    npt.assert_equal(type(returned_u), type(ma.masked))
+    npt.assert_equal(type(returned_v), type(ma.masked))
 
 def test_vec2comp_default_missing_val_array():
     input_wdir = [0, 90, 180, MISSING]
@@ -69,8 +69,8 @@ def test_vec2comp_user_missing_val_single():
     input_wdir = missing
     input_wspd = 30
     returned_u, returned_v = utils.vec2comp(input_wdir, input_wspd, missing)
-    npt.assertTrue(type(returned_u), type(ma.masked))
-    npt.assertTrue(type(returned_v), type(ma.masked))
+    npt.assert_equal(type(returned_u), type(ma.masked))
+    npt.assert_equal(type(returned_v), type(ma.masked))
 
 def test_vec2comp_user_missing_val_array():
     missing = 50
@@ -129,8 +129,8 @@ def test_comp2vec_default_missing_val_single():
     input_u = MISSING
     input_v = 30
     returned_wdir, returned_wspd = utils.comp2vec(input_u, input_v)
-    npt.assertTrue(type(returned_wdir), type(ma.masked))
-    npt.assertTrue(type(returned_wspd), type(ma.masked))
+    npt.assert_equal(type(returned_wdir), type(ma.masked))
+    npt.assert_equal(type(returned_wspd), type(ma.masked))
 
 def test_comp2vec_default_missing_val_array():
     input_u = [MISSING, -10, 0, MISSING]
@@ -154,8 +154,8 @@ def test_comp2vec_user_missing_val_single():
     input_u = missing
     input_v = 30
     returned_wdir, returned_wspd = utils.vec2comp(input_u, input_v, missing)
-    npt.assertTrue(type(returned_wdir), type(ma.masked))
-    npt.assertTrue(type(returned_wspd), type(ma.masked))
+    npt.assert_equal(type(returned_wdir), type(ma.masked))
+    npt.assert_equal(type(returned_wspd), type(ma.masked))
 
 def test_comp2vec_user_missing_val_array():
     missing = 50
@@ -205,7 +205,7 @@ def test_mag_default_missing_single():
     input_v = 10
     correct_answer = ma.masked
     returned_answer = utils.mag(input_u, input_v)
-    npt.assertTrue(type(returned_answer), type(correct_answer))
+    npt.assert_equal(type(returned_answer), type(correct_answer))
 
 def test_mag_default_missing_array():
     rt2 = np.sqrt(2)
@@ -223,7 +223,7 @@ def test_mag_user_missing_single():
     input_v = 10
     correct_answer = ma.masked
     returned_answer = utils.mag(input_u, input_v, missing)
-    npt.assertTrue(type(returned_answer), type(correct_answer))
+    npt.assert_equal(type(returned_answer), type(correct_answer))
 
 def test_mag_user_missing_array():
     missing = 50

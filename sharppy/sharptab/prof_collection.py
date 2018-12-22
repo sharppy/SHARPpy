@@ -299,6 +299,9 @@ class ProfCollection(object):
         Modify the profile at the current time.
         idx:    The vertical index to modify
         **kwargs:   The variables to modify ('tmpc', 'dwpc', 'u', or 'v')
+        
+        TODO: Allow modification of layers.  Could be that idx is -999 for layer
+              and kwargs passes information about the layers to be modified.
         """
         if self.isEnsemble():
             raise ValueError("Can't modify ensemble profiles")

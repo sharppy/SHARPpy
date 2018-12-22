@@ -20,7 +20,7 @@ name = pkgname
 author = "Patrick Marsh, Kelton Halbert, Greg Blumberg, and Tim Supinie"
 author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu, tsupinie@ou.edu"
 description = "Sounding/Hodograph Analysis and Research Program for Python"
-long_description = ""
+long_description = "SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, cross-platform application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines."
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
@@ -28,7 +28,8 @@ packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 's
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
                      "databases/shapefiles/*", "../rc/*"],}
 include_package_data = True
-classifiers = ["Development Status :: 4 - Beta"]
+classifiers = ["Development Status :: 3 - Alpha"]
+
 #install_requires = ['pyside>=1.2.1', 'numpy>=1.10.1']
 install_requires = []
 entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
@@ -66,6 +67,8 @@ shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
 
+ver = versioneer.get_version()
+ver = ver.split('-')[0]
 setup(
     name = name,
     author = author,
@@ -79,7 +82,7 @@ setup(
     package_data = package_data,
     include_package_data = include_package_data,
     classifiers = classifiers,
-    version=versioneer.get_version(),
+    version=ver,
     cmdclass=versioneer.get_cmdclass(),
     install_requires=install_requires,
     entry_points = entry_pts

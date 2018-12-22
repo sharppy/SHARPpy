@@ -42,7 +42,8 @@ del get_versions
 extensions = ['sphinx.ext.napoleon',
               'sphinx.ext.viewcode',
               'sphinx.ext.autodoc',
-              'sphinx_gallery.gen_gallery']
+              'sphinx_gallery.gen_gallery',
+              'sphinx-prompt']
 
 sphinx_gallery_conf = {
      # path to your examples scripts

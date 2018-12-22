@@ -1,4 +1,24 @@
-import sys, os
+from sharppy.viz.map import MapWidget
+import argparse
+import traceback
+from utils.config import Config
+from os.path import expanduser
+import cProfile
+from functools import wraps, partial
+import datetime as date
+from PySide.QtGui import *
+from PySide.QtCore import *
+from utils.progress import progress
+from utils.async_threads import AsyncThreads
+from datasources import data_source
+from sharppy.io.arw_decoder import ARWDecoder
+from sharppy.io.decoder import getDecoders
+import sharppy.sharptab.profile as profile
+from sharppy.viz.preferences import PrefDialog
+from sharppy.viz.SPCWindow import SPCWindow
+from sharppy._version import get_versions
+import sys
+import os
 import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
@@ -14,7 +34,8 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 console = logging.StreamHandler()
 # set a format which is simpler for console use
-formatter = logging.Formatter('%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s')
 # tell the handler to use this format
 console.setFormatter(formatter)
 # add the handler to the root logger
@@ -25,7 +46,7 @@ if len(sys.argv) > 1 and '--debug' in sys.argv:
     sys.path.insert(0, os.path.normpath(os.getcwd() + "/.."))
     console.setLevel(logging.DEBUG)
 else:
-    console.setLevel(logging.INFO)
+    console.setLevel(logging.CRITICAL)
     debug = False
     np.seterr(all='ignore')
     warnings.simplefilter('ignore')
@@ -39,38 +60,18 @@ if frozenutils.isFrozen():
     sys.stdout = outfile
     sys.stderr = outfile
 
-from sharppy._version import get_versions
 __version__ = get_versions()['version']
 ver = get_versions()
 del get_versions
- 
-logging.info('Started logging output for SHARPpy')
-logging.info('SHARPpy version: ' + str(__version__)) 
-logging.info('numpy version: ' + str(np.__version__)) 
-logging.info('PySide version: ' + str(PySide.__version__)) 
-logging.info("Python version: " + str(platform.python_version()))
-  
-from sharppy.viz.SPCWindow import SPCWindow
-from sharppy.viz.map import MapWidget 
-from sharppy.viz.preferences import PrefDialog
-import sharppy.sharptab.profile as profile
-from sharppy.io.decoder import getDecoders
-from sharppy.io.arw_decoder import ARWDecoder
-#from sharppy._version import __version__#, __version_name__
-from datasources import data_source
-from utils.async_threads import AsyncThreads
-from utils.progress import progress
 
-from PySide.QtCore import *
-from PySide.QtGui import *
-import datetime as date
-from functools import wraps, partial
-import cProfile
-from os.path import expanduser
-from utils.config import Config
-import traceback
-from functools import wraps, partial
-import argparse
+logging.info('Started logging output for SHARPpy')
+logging.info('SHARPpy version: ' + str(__version__))
+logging.info('numpy version: ' + str(np.__version__))
+logging.info('PySide version: ' + str(PySide.__version__))
+logging.info("Python version: " + str(platform.python_version()))
+
+# from sharppy._version import __version__#, __version_name__
+
 __version_name__ = ''
 try:
     from netCDF4 import Dataset
@@ -78,6 +79,7 @@ try:
 except ImportError:
     has_nc = False
     print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
+
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -123,13 +125,13 @@ class crasher(object):
 
 class Calendar(QCalendarWidget):
     def __init__(self, *args, **kwargs):
-        dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(minute=0, second=0, microsecond=0))
+        dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(
+            minute=0, second=0, microsecond=0))
 
         super(Calendar, self).__init__(*args, **kwargs)
 
         min_date = QDate(1946, 1, 1)
         qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
-
 
         self.setGridVisible(True)
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
@@ -155,30 +157,31 @@ class Picker(QWidget):
         Construct the main picker widget: a means for interactively selecting
         which sounding profile(s) to view.
         """
-        
+
         super(Picker, self).__init__(**kwargs)
-        #print("data_source.loadDataSource()")
+        # print("data_source.loadDataSource()")
         self.data_sources = data_source.loadDataSources()
         #print("Done loading Data Sources\n")
         self.config = config
         self.skew = None
 
-        ## default the sounding location to OUN because obviously I'm biased
+        # default the sounding location to OUN because obviously I'm biased
         self.loc = None
-        ## the index of the item in the list that corresponds
-        ## to the profile selected from the list
+        # the index of the item in the list that corresponds
+        # to the profile selected from the list
         self.prof_idx = []
-        ## set the default profile type to Observed
+        # set the default profile type to Observed
         self.model = "Observed"
-        ## this is the default model initialization time
-        #print("Looping over AvailableTimes")    
-        self.run = sorted([ t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12] ])[-1]
-        #print("Done")
+        # this is the default model initialization time
+        #print("Looping over AvailableTimes")
+        self.run = sorted(
+            [t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12]])[-1]
+        # print("Done")
 
         urls = data_source.pingURLs(self.data_sources)
-        self.has_connection = any( urls.values() )
+        self.has_connection = any(urls.values())
 
-        ## initialize the UI
+        # initialize the UI
         self.__initUI()
 
     def __initUI(self):
@@ -186,8 +189,8 @@ class Picker(QWidget):
         Initialize the main user interface.
         """
 
-        ## Give the main window a layout. Using GridLayout
-        ## in order to control placement of objects.
+        # Give the main window a layout. Using GridLayout
+        # in order to control placement of objects.
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)
@@ -211,30 +214,33 @@ class Picker(QWidget):
         self.profile_list.setSelectionMode(QAbstractItemView.MultiSelection)
         self.profile_list.setDisabled(True)
 
-        ## create subwidgets that will hold the individual GUI items
+        # create subwidgets that will hold the individual GUI items
         self.left_data_frame = QWidget()
         self.right_map_frame = QWidget()
-        ## set the layouts for these widgets
+        # set the layouts for these widgets
         self.left_layout = QVBoxLayout()
-        self.right_layout = QGridLayout() #QVBoxLayout()
+        self.right_layout = QGridLayout()  # QVBoxLayout()
         self.left_data_frame.setLayout(self.left_layout)
- 
+
         self.right_map_frame.setLayout(self.right_layout)
 
-        self.all_times = sorted(self.data_sources[self.model].getAvailableTimes(dt=None))
+        self.all_times = sorted(
+            self.data_sources[self.model].getAvailableTimes(dt=None))
 
         self.cal = Calendar(self, dt_avail=self.all_times[-1])
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
-        filt_times = [ t for t in self.all_times  if t.day == self.cal_date.day() and t.year == self.cal_date.year() and t.month == self.cal_date.month()]
-        
-        ## create dropdown menus
+        filt_times = [t for t in self.all_times if t.day == self.cal_date.day(
+        ) and t.year == self.cal_date.year() and t.month == self.cal_date.month()]
+
+        # create dropdown menus
         models = sorted(self.data_sources.keys())
         self.model_dropdown = self.dropdown_menu(models)
         self.model_dropdown.setCurrentIndex(models.index(self.model))
 
-        ## Setup the map
-        projs = [ ('npstere', 'Northern Hemisphere'), ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere') ]
+        # Setup the map
+        projs = [('npstere', 'Northern Hemisphere'),
+                 ('merc', 'Tropics'), ('spstere', 'Southern Hemisphere')]
         if ('map', 'proj') in self.config:
             proj = self.config['map', 'proj']
             proj_idx = list(zip(*projs))[0].index(proj)
@@ -244,26 +250,27 @@ class Picker(QWidget):
         self.map_dropdown.setCurrentIndex(proj_idx)
 
         # Set up the run dropdown box and select the correct index
-        self.run_dropdown = self.dropdown_menu([ t.strftime(Picker.run_format) for t in filt_times ])
+        self.run_dropdown = self.dropdown_menu(
+            [t.strftime(Picker.run_format) for t in filt_times])
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
             print("Run dropdown is missing its times ... ?")
             print(filt_times)
 
-        ## connect the click actions to functions that do stuff
+        # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
         self.run_dropdown.activated.connect(self.get_run)
 
-        ## Create text labels to describe the various menus
+        # Create text labels to describe the various menus
         self.type_label = QLabel("Select Sounding Source")
         self.date_label = QLabel("Select Forecast Time")
         self.map_label = QLabel("Select Map Area")
         self.run_label = QLabel("Select Cycle")
         self.date_label.setDisabled(True)
 
-        ## add the elements to the left side of the GUI
+        # add the elements to the left side of the GUI
         self.left_layout.addWidget(self.type_label)
         self.left_layout.addWidget(self.model_dropdown)
         self.left_layout.addWidget(self.run_label)
@@ -273,15 +280,15 @@ class Picker(QWidget):
         self.left_layout.addWidget(self.profile_list)
         self.left_layout.addWidget(self.all_profs)
         self.left_layout.addWidget(self.button)
-        
-        ## add the elements to the right side of the GUI
+
+        # add the elements to the right side of the GUI
         self.right_layout.setColumnMinimumWidth(0, 500)
         self.right_layout.addWidget(self.map_label, 0, 0, 1, 1)
         self.right_layout.addWidget(self.save_view_button, 0, 1, 1, 1)
         self.right_layout.addWidget(self.map_dropdown, 1, 0, 1, 2)
         self.right_layout.addWidget(self.view, 2, 0, 1, 2)
 
-        ## add the left and right sides to the main window
+        # add the left and right sides to the main window
         self.layout.addWidget(self.left_data_frame, 0, 0, 1, 1)
         self.layout.addWidget(self.right_map_frame, 0, 1, 1, 1)
         self.left_data_frame.setMaximumWidth(280)
@@ -296,7 +303,9 @@ class Picker(QWidget):
         view : QWebView object
         """
 
-        view = MapWidget(self.data_sources[self.model], self.run, self.async_obj, cfg=self.config) #minimumWidth=800, minimumHeight=500, 
+        # minimumWidth=800, minimumHeight=500,
+        view = MapWidget(
+            self.data_sources[self.model], self.run, self.async_obj, cfg=self.config)
         view.clicked.connect(self.map_link)
 
         return view
@@ -314,14 +323,14 @@ class Picker(QWidget):
         dropdown : a QtGui.QComboBox object
         """
         logging.debug("Calling full_gui.dropdown_menu")
-        ## create the dropdown menu
+        # create the dropdown menu
         dropdown = QComboBox()
-        ## set the text as editable so that it can have centered text
+        # set the text as editable so that it can have centered text
         dropdown.setEditable(True)
         dropdown.lineEdit().setReadOnly(True)
         dropdown.lineEdit().setAlignment(Qt.AlignCenter)
 
-        ## add each item in the list to the dropdown
+        # add each item in the list to the dropdown
         for item in item_list:
             dropdown.addItem(item)
 
@@ -336,8 +345,8 @@ class Picker(QWidget):
         models = sorted(self.data_sources.keys())
         self.get_model(models.index(self.model))
 
-        #self.update_run_dropdown()
-        #self.update_list() 
+        # self.update_run_dropdown()
+        # self.update_list()
         #print(self.run, self.model)
         #self.view.setDataSource(self.data_sources[self.model], self.run)
 
@@ -356,28 +365,29 @@ class Picker(QWidget):
         timelist = []
 
         # If the run is outside the available times.
-        if self.run == date.datetime(1700,1,1,0,0,0):
+        if self.run == date.datetime(1700, 1, 1, 0, 0, 0):
             self.profile_list.setDisabled(True)
             self.all_profs.setDisabled(True)
             self.date_label.setDisabled(True)
         else:
             fcst_hours = self.data_sources[self.model].getForecastHours()
-            if fcst_hours != [ 0 ]:
+            if fcst_hours != [0]:
                 self.profile_list.setEnabled(True)
                 self.all_profs.setEnabled(True)
                 self.date_label.setEnabled(True)
                 for fh in fcst_hours:
-                    fcst_str = (self.run + date.timedelta(hours=fh)).strftime(Picker.date_format) + "   (F%03d)" % fh
+                    fcst_str = (self.run + date.timedelta(hours=fh)
+                                ).strftime(Picker.date_format) + "   (F%03d)" % fh
                     timelist.append(fcst_str)
             else:
                 self.profile_list.setDisabled(True)
                 self.all_profs.setDisabled(True)
                 self.date_label.setDisabled(True)
-        
-        #Loop throught the timelist and each string to the list
+
+        # Loop throught the timelist and each string to the list
         for item in timelist:
             self.profile_list.addItem(item)
-     
+
         self.profile_list.update()
         self.all_profs.setText("Select All")
         self.select_flag = False
@@ -411,43 +421,51 @@ class Picker(QWidget):
 
         self.cal_date = self.cal.selectedDate()
         if self.model.startswith("Local"):
-            url = self.data_sources[self.model].getURLList(outlet="Local")[0].replace("file://", "")
-            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(url)
+            url = self.data_sources[self.model].getURLList(
+                outlet="Local")[0].replace("file://", "")
+
+            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
+                url)
         else:
-            getTimes = lambda: self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
+            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
+                dt=self.cal_date)
         print(self.model, self.cal_date)
-        print(self.data_sources[self.model].getAvailableTimes(dt=self.cal_date))
-        #print(getTimes())
+        print(self.data_sources[self.model].getAvailableTimes(
+            dt=self.cal_date))
+        # print(getTimes())
         # Function to update the times.
+
         def update(times):
             times = times[0]
-            self.run_dropdown.clear() # Clear all of the items from the dropdown
+            self.run_dropdown.clear()  # Clear all of the items from the dropdown
 
             # Filter out only times for the specified date.
             filtered_times = []
             for i, data_time in enumerate(times):
                 if data_time.day == self.cal_date.day() and data_time.year == self.cal_date.year() and data_time.month == self.cal_date.month():
-                    self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
+                    self.run_dropdown.addItem(
+                        data_time.strftime(Picker.run_format))
                     filtered_times.append(i)
-            
+
             if len(filtered_times) > 0:
-                filtered_times = np.sort(np.asarray(filtered_times))            
+                filtered_times = np.sort(np.asarray(filtered_times))
                 times = times[filtered_times.min(): filtered_times.max()+1]
                 # Pick the index for which to highlight
                 if self.model == "Observed":
                     try:
-                        self.run = [ t for t in times if t.hour in [ 0, 12 ] and t.day == self.cal_date.day() and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
+                        self.run = [t for t in times if t.hour in [0, 12] and t.day == self.cal_date.day(
+                        ) and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
                     except:
                         self.run = times[-1]
                 else:
                     self.run = times[-1]
             else:
-                self.run = date.datetime(1700,1,1,0,0,0)
+                self.run = date.datetime(1700, 1, 1, 0, 0, 0)
             self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
             if len(filtered_times) > 0:
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
-        
+
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
         self.async_id = self.async_obj.post(getTimes, update)
@@ -470,7 +488,7 @@ class Picker(QWidget):
             self.areal_lon, self.areal_y = point
 
         else:
-            self.loc = point #url.toString().split('/')[-1]
+            self.loc = point  # url.toString().split('/')[-1]
             if point['icao'] != "":
                 self.disp_name = point['icao']
             elif point['iata'] != "":
@@ -480,7 +498,7 @@ class Picker(QWidget):
 
             self.button.setText(self.disp_name + ' | Generate Profiles')
             if self.has_connection:
-                self.button.setEnabled(True) 
+                self.button.setEnabled(True)
 
     @crasher(exit=False)
     def complete_name(self):
@@ -512,7 +530,8 @@ class Picker(QWidget):
                         # We've run out of data sources. Uh-oh.
                         if self.skew is not None:
                             self.skew.closeIfEmpty()
-                        raise IOError("No outlet found with the requested profile!")
+                        raise IOError(
+                            "No outlet found with the requested profile!")
                     except Exception as e:
                         if debug:
                             print(traceback.format_exc())
@@ -538,7 +557,8 @@ class Picker(QWidget):
         Get the user's run hour selection for the model
         """
         logging.debug("Calling full_gui.get_run")
-        self.run = date.datetime.strptime(self.run_dropdown.currentText(), Picker.run_format)
+        self.run = date.datetime.strptime(
+            self.run_dropdown.currentText(), Picker.run_format)
         self.view.setCurrentTime(self.run)
         self.update_list()
 
@@ -547,7 +567,8 @@ class Picker(QWidget):
         Get the user's map selection
         """
         logging.debug("Calling full_gui.get_map")
-        proj = {'Northern Hemisphere':'npstere', 'Tropics':'merc', 'Southern Hemisphere':'spstere'}[self.map_dropdown.currentText()]
+        proj = {'Northern Hemisphere': 'npstere', 'Tropics': 'merc',
+                'Southern Hemisphere': 'spstere'}[self.map_dropdown.currentText()]
         self.view.setProjection(proj)
 
     def save_view(self):
@@ -588,14 +609,15 @@ class Picker(QWidget):
 
         exc = ""
 
-        ## if the profile is an archived file, load the file from
-        ## the hard disk
+        # if the profile is an archived file, load the file from
+        # the hard disk
         if filename is not None:
             logging.info("Trying to load file from local disk...")
 
             model = "Archive"
             prof_collection, stn_id = self.loadArchive(filename)
-            logging.info("Successfully loaded the profile collection for this file...")
+            logging.info(
+                "Successfully loaded the profile collection for this file...")
             disp_name = stn_id
             observed = True
             fhours = None
@@ -603,7 +625,8 @@ class Picker(QWidget):
             # Determine if the dataset passed was from a model or is observed
             if len(prof_collection._dates) > 1:
                 prof_idx = self.prof_idx
-                fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if idx in prof_idx]
+                fhours = ["F%03d" % fh for idx, fh in enumerate(
+                    self.data_sources[self.model].getForecastHours()) if idx in prof_idx]
                 observed = False
             else:
                 fhours = None
@@ -611,9 +634,8 @@ class Picker(QWidget):
 
             run = prof_collection.getCurrentDate()
 
-
         else:
-        ## otherwise, download with the data thread
+            # otherwise, download with the data thread
             logging.info("Loading a real-time data stream...")
             prof_idx = self.prof_idx
             disp_name = self.disp_name
@@ -621,17 +643,19 @@ class Picker(QWidget):
             model = self.model
             observed = self.data_sources[model].isObserved()
 
-            if self.data_sources[model].getForecastHours() == [ 0 ]:
-                prof_idx = [ 0 ]
+            if self.data_sources[model].getForecastHours() == [0]:
+                prof_idx = [0]
 
             logging.info("Program is going to load the data...")
-            ret = loadData(self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
-           
-            # failure variable makes sure the data actually exists online. 
+            ret = loadData(
+                self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
+
+            # failure variable makes sure the data actually exists online.
             if isinstance(ret[0], Exception):
                 exc = ret[0]
                 failure = True
-                logging.info("There was a problem with loadData() in obtaining the data from the Internet.")
+                logging.info(
+                    "There was a problem with loadData() in obtaining the data from the Internet.")
             else:
                 logging.info("Data was found and successfully decoded!")
                 prof_collection = ret[0]
@@ -639,7 +663,7 @@ class Picker(QWidget):
             fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
                       idx in prof_idx]
 
-        # If the observed or model profile (not Archive) successfully loaded) 
+        # If the observed or model profile (not Archive) successfully loaded)
         if not failure:
             prof_collection.setMeta('model', model)
             prof_collection.setMeta('run', run)
@@ -665,7 +689,7 @@ class Picker(QWidget):
             self.skew.addProfileCollection(prof_collection)
         else:
             print("There was an exception:", exc)
-            
+
             raise exc
 
     def skewAppClosed(self):
@@ -690,7 +714,8 @@ class Picker(QWidget):
         Also reads it using the Decoders and gets both the stationID and the profile objects
         for that archive sounding.  Tries a variety of decoders available to the program.
         """
-        logging.debug("Looping over all decoders to find which one to use to decode User Selected file.")
+        logging.debug(
+            "Looping over all decoders to find which one to use to decode User Selected file.")
         for decname, deccls in getDecoders().items():
             try:
                 dec = deccls(filename)
@@ -698,9 +723,10 @@ class Picker(QWidget):
             except:
                 dec = None
                 continue
-        
+
         if dec is None:
-            raise IOError("Could not figure out the format of '%s'!" % filename)
+            raise IOError(
+                "Could not figure out the format of '%s'!" % filename)
         # Returns the set of profiles from the file that are from the "Profile" class.
         logging.debug('Get the profiles from the decoded file.')
         profs = dec.getProfiles()
@@ -710,6 +736,7 @@ class Picker(QWidget):
 
     def hasConnection(self):
         return self.has_connection
+
 
 @progress(Picker.async_obj)
 def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=None):
@@ -731,15 +758,16 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
-    
+
     profs = dec.getProfiles(indexes=indexes)
     return profs
+
 
 class Main(QMainWindow):
     config_changed = Signal(Config)
 
     HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
-    cfg_file_name = os.path.join(HOME_DIR,'sharppy.ini')
+    cfg_file_name = os.path.join(HOME_DIR, 'sharppy.ini')
 
     def __init__(self):
         """
@@ -747,14 +775,14 @@ class Main(QMainWindow):
         """
         super(Main, self).__init__()
 
-        ## All of these variables get set/reset by the various menus in the GUI
+        # All of these variables get set/reset by the various menus in the GUI
 #       self.config = ConfigParser.RawConfigParser()
 #       self.config.read(Main.cfg_file_name)
 #       if not self.config.has_section('paths'):
 #           self.config.add_section('paths')
 #           self.config.set('paths', 'load_txt', expanduser('~'))
         self.config = Config(Main.cfg_file_name)
-        paths_init = { ('paths', 'load_txt'):expanduser("~") }
+        paths_init = {('paths', 'load_txt'): expanduser("~")}
         self.config.initialize(paths_init)
 
         PrefDialog.initConfig(self.config)
@@ -768,11 +796,11 @@ class Main(QMainWindow):
         self.picker = Picker(self.config, parent=self)
         self.setCentralWidget(self.picker)
         self.createMenuBar()
-        
-        ## set the window title
+
+        # set the window title
         window_title = 'SHARPpy Sounding Picker'
         self.setWindowTitle(window_title)
-        
+
         self.show()
         self.raise_()
 
@@ -788,7 +816,7 @@ class Main(QMainWindow):
         filemenu.addAction(opendata)
 
         exit = QAction("Exit", self, shortcut=QKeySequence("Ctrl+Q"))
-        exit.triggered.connect(self.exitApp)        
+        exit.triggered.connect(self.exitApp)
         filemenu.addAction(exit)
 
         pref = QAction("Preferences", self)
@@ -813,7 +841,7 @@ class Main(QMainWindow):
         path = self.config['paths', 'load_txt']
 
         link, _ = QFileDialog.getOpenFileNames(self, 'Open file', path)
-        
+
         if len(link) == 0 or link[0] == '':
             return
 
@@ -822,59 +850,68 @@ class Main(QMainWindow):
 
         # Loop through all of the files selected and load them into the SPCWindow
         if link[0].endswith("nc") and has_nc:
-           ncfile = Dataset(link[0])
-         
-           xlon1 = ncfile.variables["XLONG"][0][:, 0]
-           xlat1 = ncfile.variables["XLAT"][0][:, 0]
+            ncfile = Dataset(link[0])
 
-           xlon2 = ncfile.variables["XLONG"][0][:, -1]
-           xlat2 = ncfile.variables["XLAT"][0][:, -1]
+            xlon1 = ncfile.variables["XLONG"][0][:, 0]
+            xlat1 = ncfile.variables["XLAT"][0][:, 0]
 
-           xlon3 = ncfile.variables["XLONG"][0][0, :]
-           xlat3 = ncfile.variables["XLAT"][0][0, :]
+            xlon2 = ncfile.variables["XLONG"][0][:, -1]
+            xlat2 = ncfile.variables["XLAT"][0][:, -1]
 
-           xlon4 = ncfile.variables["XLONG"][0][-1, :]
-           xlat4 = ncfile.variables["XLAT"][0][-1, :]
+            xlon3 = ncfile.variables["XLONG"][0][0, :]
+            xlat3 = ncfile.variables["XLAT"][0][0, :]
 
-           delta = ncfile.variables["XTIME"][1] / 60.
-           maxt = ncfile.variables["XTIME"][-1] / 60.
+            xlon4 = ncfile.variables["XLONG"][0][-1, :]
+            xlat4 = ncfile.variables["XLAT"][0][-1, :]
 
-           ## write the CSV file 
-           csvfile = open(HOME_DIR + "/datasources/wrf-arw.csv", 'w')
-           csvfile.write("icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid\n")
+            delta = ncfile.variables["XTIME"][1] / 60.
+            maxt = ncfile.variables["XTIME"][-1] / 60.
 
-           for idx, val in np.ndenumerate(xlon1):
-               lat = xlat1[idx]
-               lon = xlon1[idx]
-               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
-           for idx, val in np.ndenumerate(xlon2):
-               lat = xlat2[idx]
-               lon = xlon2[idx]
-               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
-           for idx, val in np.ndenumerate(xlon3):
-               lat = xlat3[idx]
-               lon = xlon3[idx]
-               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
-           for idx, val in np.ndenumerate(xlon4):
-               lat = xlat4[idx]
-               lon = xlon4[idx]
-               csvfile.write(",,,,,," + str(lat) + "," + str(lon) + ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
-           csvfile.close()
+            # write the CSV file
+            csvfile = open(HOME_DIR + "/datasources/wrf-arw.csv", 'w')
+            csvfile.write(
+                "icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid\n")
 
-           ## write the xml file
-           xmlfile = open(HOME_DIR + "/datasources/wrf-arw.xml", 'w')
-           xmlfile.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
-           xmlfile.write('<sourcelist>\n')
-           xmlfile.write('    <datasource name="Local WRF-ARW" ensemble="false" observed="false">\n')
-           xmlfile.write('        <outlet name="Local" url="file://' + link[0] + '" format="wrf-arw">\n')
-           xmlfile.write('            <time range="' + str(int(maxt)) + '" delta="' + str(int(delta)) + '" offset="0" delay="0" cycle="24" archive="1"/>\n')
-           xmlfile.write('            <points csv="wrf-arw.csv" />\n')
-           xmlfile.write('        </outlet>\n')
-           xmlfile.write('    </datasource>\n')
-           xmlfile.write('</sourcelist>\n')
-           xmlfile.close()
+            for idx, val in np.ndenumerate(xlon1):
+                lat = xlat1[idx]
+                lon = xlon1[idx]
+                csvfile.write(",,,,,," + str(lat) + "," + str(lon) +
+                              ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+            for idx, val in np.ndenumerate(xlon2):
+                lat = xlat2[idx]
+                lon = xlon2[idx]
+                csvfile.write(",,,,,," + str(lat) + "," + str(lon) +
+                              ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+            for idx, val in np.ndenumerate(xlon3):
+                lat = xlat3[idx]
+                lon = xlon3[idx]
+                csvfile.write(",,,,,," + str(lat) + "," + str(lon) +
+                              ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+            for idx, val in np.ndenumerate(xlon4):
+                lat = xlat4[idx]
+                lon = xlon4[idx]
+                csvfile.write(",,,,,," + str(lat) + "," + str(lon) +
+                              ",0,,LAT" + str(lat) + "LON" + str(lon) + "\n")
+            csvfile.close()
 
-           self.picker.update_datasource_dropdown(selected="Local WRF-ARW")
+            # write the xml file
+            xmlfile = open(HOME_DIR + "/datasources/wrf-arw.xml", 'w')
+            xmlfile.write(
+                '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+            xmlfile.write('<sourcelist>\n')
+            xmlfile.write(
+                '    <datasource name="Local WRF-ARW" ensemble="false" observed="false">\n')
+            xmlfile.write('        <outlet name="Local" url="file://' +
+                          link[0] + '" format="wrf-arw">\n')
+            xmlfile.write('            <time range="' + str(int(maxt)) + '" delta="' +
+                          str(int(delta)) + '" offset="0" delay="0" cycle="24" archive="1"/>\n')
+            xmlfile.write('            <points csv="wrf-arw.csv" />\n')
+            xmlfile.write('        </outlet>\n')
+            xmlfile.write('    </datasource>\n')
+            xmlfile.write('</sourcelist>\n')
+            xmlfile.close()
+
+            self.picker.update_datasource_dropdown(selected="Local WRF-ARW")
         else:
             for l in link:
                 self.picker.skewApp(filename=l)
@@ -938,6 +975,7 @@ class Main(QMainWindow):
         """
         self.config.toFile()
 
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('file_names', nargs='*')
@@ -956,7 +994,7 @@ def main():
                 fpath, fbase = os.path.split(fname)
 
                 if '.' in fbase:
-                    img_base = ".".join(fbase.split(".")[:-1] + [ 'png' ])
+                    img_base = ".".join(fbase.split(".")[:-1] + ['png'])
                 else:
                     img_base = fbase + '.png'
 
@@ -982,6 +1020,7 @@ def main():
         win.close()
     else:
         sys.exit(app.exec_())
-    
+
+
 if __name__ == '__main__':
     main()

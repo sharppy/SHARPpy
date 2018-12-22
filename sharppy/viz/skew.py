@@ -47,7 +47,7 @@ class backgroundSkewT(QtGui.QWidget):
         self.scale = 1.
         #self.bg_color=QColor('#000000')
         if self.physicalDpiX() > 75:
-            fsize = 6 * ()
+            fsize = 6 
             fsizet = 10
         else:
             fsize = 7
@@ -500,15 +500,15 @@ class plotSkewT(backgroundSkewT):
 
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
-
-        #modify_sfc = QAction(self)
-        #modify_sfc.setText("Modify Surface")
-        #modify_sfc.setCheckable(True)
-        #modify_sfc.setEnabled(False)
-        #modify_sfc.triggered.connect(self.setReadoutCursor)
-        #self.popupmenu.addAction(mod
+        """
         self.popupmenu.addSeparator()
-
+        modify_sfc = QAction(self)
+        modify_sfc.setText("Modify Surface")
+        modify_sfc.setCheckable(False)
+        modify_sfc.triggered.connect(self.modifySfc)
+        self.popupmenu.addAction(modify_sfc)
+        """
+        self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
         reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
@@ -711,7 +711,9 @@ class plotSkewT(backgroundSkewT):
             trans_x = (rls_x - self.originx) * self.scale
             trans_y = (rls_y - self.originy) * self.scale
             tmpc = self.pix_to_tmpc(trans_x, trans_y)
-
+            
+            # Example: 4 {'tmpc': 10.790866472309446} (changed the 4th point of the tmpc profile to the temperature value set in tmpc)
+            # So, if we want to modify an entire layer of the sounding, we'll have to get creative.
             self.modified.emit(drag_idx, {prof_name:tmpc})
 
         self.was_right_click = False
@@ -741,6 +743,11 @@ class plotSkewT(backgroundSkewT):
             drag.drag(e.x(), e.y(), restrictions=rest)
 
         self.update()
+
+    def modifySfc(self):
+        temp = input("Temp:")
+        dwpt = input("Dewpoint:")
+
 
     def updateReadout(self):
         y = self.originy + self.pres_to_pix(self.readout_pres) / self.scale

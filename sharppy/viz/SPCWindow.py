@@ -20,6 +20,7 @@ import re
 import logging
 #from sharppy._sharppy_version import __version__, __version_name__
 from sharppy._version import get_versions
+__codename__ = "Andover"
 __version__ = get_versions()['version']
 del get_versions
 __version_name__ = ''
@@ -496,6 +497,7 @@ class SPCWidget(QWidget):
 
     @Slot(int, dict)
     def modifyProf(self, idx, kwargs):
+        # TODO: Use this as a template to modify layers of the sounding
         self.prof_collections[self.pc_idx].modify(idx, **kwargs)
         self.updateProfs()
         self.setFocus()
