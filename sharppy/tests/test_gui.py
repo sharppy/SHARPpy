@@ -14,7 +14,7 @@ import sys
 
 def load_data():
 
-    dec = SPCDecoder('../../examples/data/14061619.OAX')
+    dec = SPCDecoder('examples/data/14061619.OAX')
     prof_coll = dec.getProfiles()
     prof = prof_coll.getCurrentProfs()['']
     app = QtGui.QApplication([])    
