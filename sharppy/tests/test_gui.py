@@ -52,6 +52,9 @@ def test_hodo():
     s = hodo()
     s.addProfileCollection(prof_coll)
     s.setActiveCollection(0)
+    #s.setMWCenter()
+    #s.setSRCenter()
+    #s.setDeviant('left')
     s.plotBitMap.save('hodo.png', format='png')
 
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")
