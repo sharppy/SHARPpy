@@ -36,7 +36,7 @@ class PECANDecoder(Decoder):
             try:
                 profiles[member] = profiles[member] + [prof]
             except Exception as e:
-                print('THERE WAS AN EXCEPTION:', e
+                print('THERE WAS AN EXCEPTION:', e)
                 profiles[member] = [prof]
                 print("Length of profiles:". len(profiles))
             if not dt_obj in dates:
