@@ -10,29 +10,31 @@ matrix:
   - os: linux
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" BUILD_CONDA="YES"
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" COVERALLS="YES" PYTEST_ARGS="-v --cov"
   - os: osx
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES"
+      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES" PYTEST_ARGS="-v --cov"
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="YES" PYTEST_ARGS="-v --cov"
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" DISPLAY_AVAIL="YES" PYTEST_ARGS="-v --cov"
 before_install:
 - source ci/install.sh
 install:
 - python setup.py -q install
 script:
 - cd sharppy/tests
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run pytest; else pytest; fi
-- cd ../../
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval xvfb-run pytest $PYTEST_ARGS ; else eval pytest $PYTEST_ARGS; fi
 # If the test script passes, build the binaries.
 after_success:
+# Deploy test information to coveralls
+- if [[ "$COVERALLS" == "YES" ]] ; then coveralls || echo "Coveralls failed" ;fi
+- cd ../../
 # Build the binary if it's a new tag.
 - if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
