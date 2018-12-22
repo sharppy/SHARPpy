@@ -1,0 +1,10 @@
+[run]
+source = sharppy
+include = */sharppy/*
+omit =
+    */setup.py
+    */tests*
+
+[report]
+exclude_lines = 
+    if __name__ == .__main__.: 
