@@ -55,8 +55,8 @@ class PECANDecoder(Decoder):
         return prof_coll
 
     def _parseSection(self, section):
+        print("TYPE OF SECTION:", type(section)) 
         parts = section.split('\n')
-        
         if ' F' in parts[1]:
             valid, fhr = parts[1].split(' F')
             print(valid, fhr)
@@ -64,12 +64,13 @@ class PECANDecoder(Decoder):
         else:
             valid = parts[1]
             fhr = 0
-        
+        print("TYPE OF VALID:", type(valid)) 
         dt_obj = datetime.strptime(valid, 'TIME = %y%m%d/%H%M')
         member = parts[0].split('=')[-1].strip()
         location = parts[2].split('SLAT')[0].split('=')[-1].strip()
         headers = [ h.lower() for h in parts[4].split(", ") ]
         data = '\n'.join(parts[5:])
+        print("TYPE OF DATA:", type(data))
         sound_data = StringIO( data )
         
         prof_vars = np.genfromtxt( sound_data, delimiter=',', unpack=True)
