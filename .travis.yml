@@ -28,7 +28,7 @@ before_install:
 install:
 - python setup.py -q install
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then eval xvfb-run pytest $PYTEST_ARGS ; else eval pytest $PYTEST_ARGS; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then xvfb-run py.test -v --cov=sharppy sharppy/ ; else py.test -v --cov=sharppy sharppy/; fi
 # If the test script passes, deploy if it's tagged..generate the binaries.
 after_success:
 # Deploy test information to coveralls
