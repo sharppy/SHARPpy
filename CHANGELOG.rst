@@ -30,7 +30,7 @@ NEW FEATURES
 * New versioning system now consistent with PEP-440 (thanks to versioneer).
 * Included more scripting examples.
 * Deployment to conda and pip with each tagged SHARPpy release.
-
+* Added test scripts to unit test various GUI parts, decoders, and numerical routines
 
 BUG FIXES
 
