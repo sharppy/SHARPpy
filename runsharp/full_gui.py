@@ -256,7 +256,6 @@ class Picker(QWidget):
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
             print("Run dropdown is missing its times ... ?")
-            print(filt_times)
 
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -429,9 +428,9 @@ class Picker(QWidget):
         else:
             def getTimes(): return self.data_sources[self.model].getAvailableTimes(
                 dt=self.cal_date)
-        print(self.model, self.cal_date)
-        print(self.data_sources[self.model].getAvailableTimes(
-            dt=self.cal_date))
+        #print(self.model, self.cal_date)
+        #print(self.data_sources[self.model].getAvailableTimes(
+        #    dt=self.cal_date))
         # print(getTimes())
         # Function to update the times.
 

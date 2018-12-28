@@ -265,6 +265,10 @@ def _available_psu(model, dt=None):
             Specifies whether or not this is an off-hour run
     '''
     #nam=(m in [ 'nam', '4km nam' ])
+
+    if dt < datetime.utcnow() - timedelta(3600*29): # We know PSU is only a 24 hr service
+        return []    
+
     if model == '4km nam': model = 'nam4km'
 
     psu_text = _download_psu()
@@ -350,6 +354,8 @@ def _available_iem(model, dt=None):
     if model == '4km nam': model = 'nam4km'
 
     if dt < datetime(2010,12,30): # No Bufkit files before this date
+        return []
+    if dt > datetime.utcnow() - timedelta(seconds=3600*24):
         return []
 
     if model == 'ruc' or model == 'rap':

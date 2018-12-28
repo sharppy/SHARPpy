@@ -206,21 +206,19 @@ class Outlet(object):
     def getAvailableAtTime(self, **kwargs):
         dt = kwargs.get('dt', None)
 
-        #logging.debug("Calling getAvailableAtTime()" + str(dt))
+        logging.debug("Calling getAvailableAtTime()" + str(dt) + " " + self._ds_name.lower() + " " + self._name.lower())
         if dt is None:
             dt = self.getMostRecentCycle(dt)
         elif dt == datetime(1700,1,1,0,0,0):
             return []
-
         stns_avail = self.getPoints()
-
         if self._name.lower() in available.availableat and self._ds_name.lower() in available.availableat[self._name.lower()]:
+            #avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)
             try:
                 avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)
                 stns_avail = []
                 points = self.getPoints()
                 srcids = [ p['srcid'] for p in points ]
-
                 for stn in avail:
                     try:
                         idx = srcids.index(stn)
@@ -233,13 +231,15 @@ class Outlet(object):
             except URLError:
                 stns_avail = []
                 self._is_available = False
+        logging.debug("_is_available: "+ str(self._is_available))
+        logging.debug('Number of stations found:' + str(len(stns_avail)))
         return stns_avail
 
     def getAvailableTimes(self, max_cycles=100, **kwargs):
         # THIS IS WHERE I COULD POTENTIALLY PASS AN ARGUMENT TO FILTER OUT WHAT RAOBS OR MODELS ARE AVAILABLE
         custom_failed = False
         dt = kwargs.get('dt', None) #Used to help search for times
-        #logging.debug("Called outlet.getAvailableTimes():" + " dt=" + str(dt) + " self._name=" + str(self._name) + " self._ds_name=" + str(self._ds_name))
+        logging.debug("Called outlet.getAvailableTimes():" + " dt=" + str(dt) + " self._name=" + str(self._name) + " self._ds_name=" + str(self._ds_name))
         if self._custom_avail:
             try:
                 if self._name.lower() == "local":
@@ -249,7 +249,6 @@ class Outlet(object):
                         times = available.available[self._name.lower()][self._ds_name.lower()](dt)
                     except TypeError:
                         times = available.available[self._name.lower()][self._ds_name.lower()]()
-                        print ("Hit a typeerror")
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
@@ -259,7 +258,7 @@ class Outlet(object):
      
         if not self._custom_avail or custom_failed:
             times = self.getArchivedCycles(max_cycles=max_cycles)
-        #logging.debug("outlet.getAvailableTimes() times Found:" + str(times[~max_cycles:]))
+        logging.debug("outlet.getAvailableTimes() times Found:" + str(times[~max_cycles:]))
         return times[-max_cycles:]
 
     def getArchiveLen(self):
@@ -272,6 +271,7 @@ class Outlet(object):
         return decoder.getDecoder(self._format)
 
     def hasProfile(self, point, cycle):
+        logging.debug("Calling outlet.hasProfile() ")
         times = self.getAvailableTimes(dt=cycle)
         has_prof = cycle in times
 
@@ -321,7 +321,7 @@ class DataSource(object):
         return prop
 
     def _getOutletWithProfile(self, stn, cycle_dt, outlet_num=0):
-        #logging.debug("_getOutletWithProfile: " + str(stn) + ' ' + str(cycle_dt))
+        logging.debug("_getOutletWithProfile: " + str(stn) + ' ' + str(cycle_dt))
         use_outlets = [ out for out, cfg in self._outlets.items() if cfg.hasProfile(stn, cycle_dt) ]
         try:
             outlet = use_outlets[outlet_num]
@@ -350,7 +350,7 @@ class DataSource(object):
         return max(cycles)
 
     def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100, dt=None):
-        #logging.debug("data_source.getAvailableTimes() filename="+str(filename)+' outlent_num=' +str(outlet_num) + ' dt=' + str(dt))
+        logging.debug("data_source.getAvailableTimes() filename="+str(filename)+' outlent_num=' +str(outlet_num) + ' dt=' + str(dt))
         cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles, dt=dt)
         return cycles[-max_cycles:]
 
@@ -375,7 +375,7 @@ class DataSource(object):
         if outlet is None:
             outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         url_base = self._outlets[outlet].getURL()
-        #logging.debug("URL: " + url_base)
+        logging.debug("URL: " + url_base)
         fmt = {
             'srcid':quote(stn['srcid']),
             'cycle':"%02d" % cycle_dt.hour,
@@ -386,10 +386,11 @@ class DataSource(object):
         }
 
         url = url_base.format(**fmt)
-        #logging.debug("URL: " + url)
+        logging.debug("Formatted URL: " + url)
         return url
 
     def getDecoderAndURL(self, stn, cycle_dt, outlet_num=0):
+        logging.debug("Getting the decoder and the URL to the data ...")
         outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         decoder = self._outlets[outlet].getDecoder()
         url = self.getURL(stn, cycle_dt, outlet_num, outlet=outlet)
