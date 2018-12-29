@@ -427,27 +427,12 @@ class plotSkewT(backgroundSkewT):
         fg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
         bg_rgb = self.fg_color.getRgb()
 #       print bg_rgb, self.fg_color.getRgb()
-        rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',50%)'
-        self.presReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: " + fg_hex + ";}")
-        self.hghtReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FF0000;}")
-        self.tmpcReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FF0000;}")
-        self.dwpcReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #00FF00;}")
+        #rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',100%)'
+        rgb_string = kwargs.get('bg_color', '#000000')
+        self.presReadout.setStyleSheet(self.getStyleSheet(self.fg_color.name()))
+        self.hghtReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        self.tmpcReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        self.dwpcReadout.setStyleSheet(self.getStyleSheet("#00FF00"))
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -513,6 +498,15 @@ class plotSkewT(backgroundSkewT):
         reset.setText("Reset Skew-T")
         reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
         self.popupmenu.addAction(reset)
+
+    def getStyleSheet(self, color, fsize=11):
+        rgb_string = self.bg_color.name()
+        readout_stylesheet = "QLabel {" + \
+                             "  background-color: " + rgb_string + ";" + \
+                             "  border-width: 0px;" + \
+                             "  font-size: " + str(fsize) + "px;" + \
+                             "  color: " + color + ";}"
+        return readout_stylesheet
 
     def getPlotTitle(self, prof_coll):
         logging.debug("Calling plotSkewT.getPlotTitle")
@@ -663,8 +657,11 @@ class plotSkewT(backgroundSkewT):
         self.wind_units = kwargs['wind_units']
 
         # READOUT VARIABLES NOT SURE WHY THIS WAS THROWING AN EXCEPTION
-        #self.readout_vars = [kwargs['readout_br'],kwargs['readout_tr']]
-        self.readout_vars = ['tmpc', 'dwpc']
+        self.readout_vars = [kwargs['readout_tr'],kwargs['readout_br']]
+        self.presReadout.setStyleSheet(self.getStyleSheet(self.fg_color.name()))
+        self.hghtReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        #print(self.readout_vars)
+        #self.readout_vars = ['tmpc', 'dwpc']
 
         if update_gui:
             self.plotBitMap.fill(self.bg_color)
@@ -748,6 +745,56 @@ class plotSkewT(backgroundSkewT):
         temp = input("Temp:")
         dwpt = input("Dewpoint:")
 
+    def getReadoutVal(self, var):
+        if var == 'tmpc':  
+            val = tab.interp.temp(self.prof, self.readout_pres)
+            var_id = 'T='
+            unit = 'C'
+            round_val = 1
+            color = self.temp_color.name()
+        elif var == 'dwpc':
+            val = tab.interp.dwpt(self.prof, self.readout_pres)
+            var_id = 'Td='
+            unit = "C"
+            round_val = 1
+            color = self.dewp_color.name()
+        elif var == 'thetae':
+            val = tab.interp.thetae(self.prof, self.readout_pres)
+            var_id = u"\u03B8" + 'e='
+            unit = "K"
+            round_val = 0
+            color = self.lfc_mkr_color.name()
+        elif var == 'wetbulb':
+            val = tab.interp.wetbulb(self.prof, self.readout_pres)
+            var_id = 'Tw='
+            unit = "C"
+            round_val = 1
+            color = self.wetbulb_color.name()
+        elif var == 'theta':
+            val = tab.interp.theta(self.prof, self.readout_pres)
+            var_id = u"\u03B8" + '='
+            unit = "K"
+            round_val = 0
+            color = self.lfc_mkr_color.name()
+        elif var == 'wvmr':
+            val = tab.interp.mixratio(self.prof, self.readout_pres)
+            var_id = 'q='
+            unit = "g/kg"
+            round_val = 1
+            color = self.dewp_color.name()
+        else:
+            try:
+                val = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
+            except:
+                val = '--' 
+            var_id = u"\u03C9" + '='
+            unit = "mb/hr"
+            color = self.el_mkr_color.name()
+            round_val = 1
+        ss = self.getStyleSheet(color)
+        text = var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit
+        
+        return ss, text
 
     def updateReadout(self):
         y = self.originy + self.pres_to_pix(self.readout_pres) / self.scale
@@ -757,49 +804,14 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(65)
         self.dwpcReadout.setFixedWidth(65)
       
-        microbars_units = u"\u00B5" + 'b/s'
+        #microbars_units = u"\u00B5" + 'b/s'
+        ss, text = self.getReadoutVal(self.readout_vars[0])
+        self.tmpcReadout.setStyleSheet(ss)
+        self.tmpcReadout.setText(text) 
+        ss, text = self.getReadoutVal(self.readout_vars[1])
+        self.dwpcReadout.setStyleSheet(ss)
+        self.dwpcReadout.setText(text)
 
-        for var, ReadOut in zip(self.readout_vars, [self.tmpcReadout, self.dwpcReadout]):
-            if var == 'tmpc':  
-                val = tab.interp.temp(self.prof, self.readout_pres)
-                var_id = 'T='
-                unit = 'C'
-                round_val = 1
-            elif var == 'dwpc':
-                val = tab.interp.dwpt(self.prof, self.readout_pres)
-                var_id = 'Td='
-                unit = "C"
-                round_val = 1
-            elif var == 'thetae':
-                val = tab.interp.thetae(self.prof, self.readout_pres)
-                var_id = u"\u03B8" + 'e='
-                unit = "K"
-                round_val = 0
-            elif var == 'wetbulb':
-                tw = tab.interp.wetbulb(self.prof, self.readout_pres)
-                var_id = 'Tw='
-                unit = "K"
-                round_val = 1
-            elif var == 'theta':
-                tha = tab.interp.theta(self.prof, self.readout_pres)
-                var_id = u"\u03B8" + '='
-                unit = "K"
-                round_val = 0
-            elif var == 'wvmr':
-                q = tab.interp.mixratio(self.prof, self.readout_pres)
-                var_id = 'q='
-                unit = "g/kg"
-                round_val = 1
-            else:
-                try:
-                    omg = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
-                except:
-                    omg = '--' 
-                omega_unicode = u"\u03C9" + '='
-                unit = "mb/hr"
-                round_val = 1
-            ReadOut.setText(var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit)
- 
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
         # TODO: Also allow for an output in ft AGL vs m AGL
