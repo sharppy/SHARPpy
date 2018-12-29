@@ -485,14 +485,14 @@ class plotSkewT(backgroundSkewT):
 
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
-        """
+        
         self.popupmenu.addSeparator()
         modify_sfc = QAction(self)
         modify_sfc.setText("Modify Surface")
         modify_sfc.setCheckable(False)
         modify_sfc.triggered.connect(self.modifySfc)
         self.popupmenu.addAction(modify_sfc)
-        """
+        
         self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
@@ -711,6 +711,7 @@ class plotSkewT(backgroundSkewT):
             
             # Example: 4 {'tmpc': 10.790866472309446} (changed the 4th point of the tmpc profile to the temperature value set in tmpc)
             # So, if we want to modify an entire layer of the sounding, we'll have to get creative.
+            print(drag_idx, {prof_name: tmpc})
             self.modified.emit(drag_idx, {prof_name:tmpc})
 
         self.was_right_click = False
@@ -742,8 +743,36 @@ class plotSkewT(backgroundSkewT):
         self.update()
 
     def modifySfc(self):
-        temp = input("Temp:")
-        dwpt = input("Dewpoint:")
+        box = SfcModifyDialog(None)
+        box.exec_()
+        result = box.result()
+        
+        if result == QDialog.Rejected:
+            return
+
+        def templvl(theta, p):
+            ''' theta : potential temp in kelvin
+                p : pressure in hPa
+                Returns: temperature in C
+            '''
+            return tab.thermo.ktoc(theta / np.power(1000./p, tab.constants.ROCP))
+        
+        temp = box.getTemp()
+        dwpt = box.getDewPoint() 
+        if box.getMix():
+            theta = tab.thermo.ctok(tab.thermo.theta(self.prof.pres[self.prof.sfc], float(temp)))
+            theta_copy = self.prof.theta.copy()
+            theta_copy[self.prof.sfc] = theta
+            idx = np.ma.where(theta_copy <= theta)[0]
+            tmp = templvl(theta, self.prof.pres[idx])
+            temp = self.prof.tmpc.copy()
+            temp[idx] = tmp
+            mixrat = tab.thermo.mixratio(self.prof.pres[self.prof.sfc], float(dwpt))
+            dwpt = self.prof.dwpc.copy()
+            dwpt[idx] = tab.thermo.temp_at_mixrat(np.repeat(mixrat, len(idx)), self.prof.pres[idx])
+            self.modified.emit(-999, {'tmpc': temp, 'idx_range':idx, 'dwpc': dwpt})
+        else:
+            self.modified.emit(self.prof.sfc, {'tmpc': temp, 'dwpc': dwpt})        
 
     def getReadoutVal(self, var):
         if var == 'tmpc':  
@@ -1464,6 +1493,69 @@ class plotSkewT(backgroundSkewT):
         path.lineTo(err_right, y-offset)
         path.lineTo(err_right, y+offset)
         qp.drawPath(path)
+
+class SfcModifyDialog(QDialog):
+
+    def __init__(self, parent=None):
+        """ 
+        Construct the preferences dialog box.
+        config: A Config object containing the user's configuration.
+        """
+        super(SfcModifyDialog, self).__init__(parent=parent)
+
+        self.__initUI()
+
+    def __initUI(self):
+        """ 
+        Set up the user interface [private method].
+        """
+        self.setWindowTitle("Modify Surface")
+        main_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+
+        self.accept_button = QPushButton("Accept")
+        self.accept_button.setDefault(True)
+        self.accept_button.clicked.connect(self.accept)
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        button_layout.addWidget(self.accept_button)
+        button_layout.addWidget(self.cancel_button)
+        self.accept_button.setEnabled(False)
+        self.layout = main_layout
+        self.mix_check = QCheckBox("Mix")
+        label = QLabel("New Surface Temperature (C):")
+        self.new_temp = QLineEdit()
+        double_valid = QDoubleValidator()
+        double_valid.setRange(-273.15, 500, 3)
+        self.new_temp.setValidator(double_valid)
+        main_layout.addWidget(label)
+        main_layout.addWidget(self.new_temp)
+        main_layout.addWidget(QLabel("New Surface Dewpoint (C):"))
+        self.new_dwpt = QLineEdit()
+        self.new_dwpt.setValidator(double_valid)
+        main_layout.addWidget(self.new_dwpt)
+        main_layout.addWidget(self.mix_check)
+        main_layout.addLayout(button_layout)
+        self.setLayout(main_layout)
+
+        self.new_temp.textChanged.connect(self.validateText)   
+        self.new_dwpt.textChanged.connect(self.validateText)   
+
+    def validateText(self):
+        if self.new_temp.hasAcceptableInput() and self.new_dwpt.hasAcceptableInput() and self.getTemp() >= self.getDewPoint():
+            self.accept_button.setEnabled(True)
+        else:
+            self.accept_button.setEnabled(False)
+ 
+    def getTemp(self):
+        return float(self.new_temp.text())
+ 
+    def getDewPoint(self):
+        return float(self.new_dwpt.text())
+
+    def getMix(self):
+        return self.mix_check.isChecked()
+
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
