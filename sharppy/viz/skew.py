@@ -486,7 +486,6 @@ class plotSkewT(backgroundSkewT):
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
         
-        self.popupmenu.addSeparator()
         modify_sfc = QAction(self)
         modify_sfc.setText("Modify Surface")
         modify_sfc.setCheckable(False)
