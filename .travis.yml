@@ -11,7 +11,7 @@ matrix:
   - os: linux
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" COVERALLS="YES" PYTEST_ARGS="-v --cov" NUMPY_VERSION=1.15.*
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" PYTEST_ARGS="-v --cov" NUMPY_VERSION=1.15.*
   - os: osx
     language: generic
     env: 
@@ -19,7 +19,7 @@ matrix:
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="2.7" DISPLAY_AVAIL="YES" PYTEST_ARGS="-v --cov" NUMPY_VERSION=1.15.*
+      - PYTHON_VERSION="2.7" COVERALLS="YES" DISPLAY_AVAIL="YES" PYTEST_ARGS="-v --cov" NUMPY_VERSION=1.15.*
   - os: linux
     language: generic
     env:

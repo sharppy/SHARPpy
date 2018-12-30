@@ -1,4 +1,6 @@
-import matplotlib
+import pytest
+matplotlib = pytest.importorskip('matplotlib')
+#import matplotlib
 matplotlib.use('Agg')
 import sharppy.io.spc_decoder as spc_decoder
 import sharppy.plot.skew as skew
