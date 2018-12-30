@@ -225,13 +225,13 @@ register_projection(SkewXAxes)
 pb_plot=1050
 pt_plot=100
 dp_plot=10
-plevs_plot = np.arange(pb_plot,pt_plot-1,-dp_plot)
+plevs_plot = presvals = np.arange(pb_plot,pt_plot-1,-dp_plot)
 
 
 def draw_dry_adiabats(ax, tmin=-50, tmax=210, delta=10, color='r', alpha=.2):
     # plot the dry adiabats
     for t in np.arange(tmin,tmax,delta):
-        ax.semilogy(tab.thermo.thetas(t, presvals), presvals, '-', color=color)
+        ax.semilogy(thetas(t, presvals), presvals, '-', color=color, alpha=alpha)
     return ax
 
 def draw_mixing_ratio_lines(ax, spacing=[2,4,10,12,14,16,18,20], color='g', lw=.7):
@@ -279,7 +279,7 @@ def draw_wind_line(axes):
 
 # Routine to calculate the dry adiabats.
 def thetas(theta, presvals):
-    return ((theta + thermo.ZEROCNK) / (np.power((1000. / presvals),thermo.ROCP))) - thermo.ZEROCNK
+    return ((theta + tab.thermo.ZEROCNK) / (np.power((1000. / presvals),tab.thermo.ROCP))) - tab.thermo.ZEROCNK
 
 def plot_sig_levels(ax, prof):
     # Plot LCL, LFC, EL labels (if it fails, inform the user.)
@@ -302,9 +302,11 @@ def plot_sig_levels(ax, prof):
     return ax
 
 def draw_heights(ax, prof):
+    trans = transforms.blended_transform_factory(ax.transAxes,ax.transData)
+
     # Plot the height values on the skew-t, if there's an issue, inform the user.
     for h in [1000,2000,3000,4000,5000,6000,9000,12000,15000]:
-        p = interp.pres(prof, interp.to_msl(prof, h))
+        p = tab.interp.pres(prof, tab.interp.to_msl(prof, h))
         try:
             ax.text(0.01, p, str(h/1000) +' km -', verticalalignment='center', fontsize=9, transform=trans, color='r')
         except:
@@ -315,6 +317,7 @@ def draw_heights(ax, prof):
 
 def draw_effective_inflow_layer(ax, prof):
     # Plot the effective inflow layer on the Skew-T, like with the GUI (TODO: include the effective SRH on the top like in the GUI).
+    trans = transforms.blended_transform_factory(ax.transAxes,ax.transData)
     ax.plot([0.2,0.3], [prof.ebottom, prof.ebottom], color='c', lw=2, transform=trans)
     ax.plot([0.25,0.25], [prof.etop, prof.ebottom], color='c', lw=2, transform=trans)
     ax.plot([0.2,0.3], [prof.etop, prof.etop], color='c', lw=2, transform=trans)
