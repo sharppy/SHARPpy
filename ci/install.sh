@@ -25,7 +25,7 @@ conda info -a
 conda config --add channels conda-forge 
 conda create -q -n test-environment python=$PYTHON_VERSION nose matplotlib pyinstaller conda-build anaconda-client numpy=$NUMPY_VERSION
 source activate test-environment
-conda install -q pyside
+conda install -c conda-forge -q pyside
 
 pip install --upgrade pip
 conda install -c conda-forge -q pytest-cov
