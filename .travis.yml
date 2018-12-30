@@ -5,6 +5,7 @@ env:
     - BUILD_CONDA
     - BUILD_DOCS
     - BUILD_BINARY
+    - MPL_VERSION=2.2.3
 matrix:
   include:
   - os: linux
