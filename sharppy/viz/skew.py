@@ -742,7 +742,7 @@ class plotSkewT(backgroundSkewT):
         self.update()
 
     def modifySfc(self):
-        box = SfcModifyDialog(None)
+        box = SfcModifyDialog(self.sfc_units, None)
         box.exec_()
         result = box.result()
         
@@ -1495,13 +1495,13 @@ class plotSkewT(backgroundSkewT):
 
 class SfcModifyDialog(QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, units, parent=None):
         """ 
         Construct the preferences dialog box.
         config: A Config object containing the user's configuration.
         """
         super(SfcModifyDialog, self).__init__(parent=parent)
-
+        self.units = units
         self.__initUI()
 
     def __initUI(self):
@@ -1522,14 +1522,18 @@ class SfcModifyDialog(QDialog):
         self.accept_button.setEnabled(False)
         self.layout = main_layout
         self.mix_check = QCheckBox("Mix")
-        label = QLabel("New Surface Temperature (C):")
+        if self.units == 'Fahrenheit':
+            self.unit = "F"
+        else:
+            self.unit = "C"
+        label = QLabel("New Surface Temperature (" + self.unit + "):")
         self.new_temp = QLineEdit()
         double_valid = QDoubleValidator()
         double_valid.setRange(-273.15, 500, 3)
         self.new_temp.setValidator(double_valid)
         main_layout.addWidget(label)
         main_layout.addWidget(self.new_temp)
-        main_layout.addWidget(QLabel("New Surface Dewpoint (C):"))
+        main_layout.addWidget(QLabel("New Surface Dewpoint (" + self.unit + "):"))
         self.new_dwpt = QLineEdit()
         self.new_dwpt.setValidator(double_valid)
         main_layout.addWidget(self.new_dwpt)
@@ -1547,10 +1551,16 @@ class SfcModifyDialog(QDialog):
             self.accept_button.setEnabled(False)
  
     def getTemp(self):
-        return float(self.new_temp.text())
+        if self.unit == "C":
+            return float(self.new_temp.text())
+        else:
+            return tab.thermo.ftoc(float(self.new_temp.text()))
  
     def getDewPoint(self):
-        return float(self.new_dwpt.text())
+        if self.unit == "C":
+            return float(self.new_dwpt.text())
+        else:
+            return tab.thermo.ftoc(float(self.new_dwpt.text()))
 
     def getMix(self):
         return self.mix_check.isChecked()
