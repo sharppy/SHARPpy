@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 import sharppy.sharptab.utils as utils
 from sharppy.sharptab.constants import *
@@ -9,7 +9,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundWinds', 'plotWinds']
 
-class backgroundWinds(QtGui.QFrame):
+class backgroundWinds(QtWidgets.QFrame):
     '''
     Handles the plotting of the frame boarders and ticks.
     Draws the frame onto a QPixmap.

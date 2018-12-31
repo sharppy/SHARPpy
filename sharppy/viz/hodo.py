@@ -1,19 +1,20 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.viz.draggable import Draggable
 from sharppy.sharptab.profile import Profile, create_profile
 from sharppy.sharptab.constants import *
-from PySide.QtGui import *
-from PySide.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtWidgets import *
 
 __all__ = ['backgroundHodo', 'plotHodo']
 
 
-class backgroundHodo(QtGui.QFrame):
+class backgroundHodo(QFrame):
     '''
     Handles the plotting of the backgroun frame onto
-    a QPixmap. Inherits from the QtGui.QFrame object.
+    a QPixmap. Inherits from the QtWidgets.QFrame object.
     Unlike most plotting classes in SHARPPy, this class
     will not call the function to draw the background.
     This is so that the background can be redrawn when 
@@ -387,7 +388,7 @@ class plotHodo(backgroundHodo):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showCursorMenu)
         self.popupmenu=QMenu("Cursor Type:")
-        ag = QtGui.QActionGroup(self, exclusive=True)
+        ag = QtWidgets.QActionGroup(self, exclusive=True)
 
         self.readout_hght = -999.
         self.readout_visible = False
@@ -408,7 +409,7 @@ class plotHodo(backgroundHodo):
         self.popupmenu.addAction(a)
 
         self.popupmenu.addSeparator()
-        ag2 = QtGui.QActionGroup(self, exclusive=True)
+        ag2 = QtWidgets.QActionGroup(self, exclusive=True)
 
         norm = QAction(self)
         norm.setText("Normal")

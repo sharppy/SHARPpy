@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab.params as params
 import sharppy.sharptab.winds as winds
 import sharppy.sharptab.interp as interp
@@ -12,7 +12,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundENS', 'plotENS']
 
-class backgroundENS(QtGui.QFrame):
+class backgroundENS(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''
@@ -323,7 +323,7 @@ class plotENS(backgroundENS):
         return
 
 
-class DrawTest(QtGui.QMainWindow):
+class DrawTest(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(DrawTest, self).__init__(parent)
         # x = np.asarray([1,2,3,4])

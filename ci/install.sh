@@ -23,10 +23,12 @@ conda update -q conda
 conda install -n -q root _license
 conda info -a
 conda config --add channels conda-forge 
-conda create -q -n test-environment python=$PYTHON_VERSION nose pyside pyinstaller conda-build anaconda-client numpy=$NUMPY_VERSION
+conda create -q -n test-environment python=$PYTHON_VERSION nose pyinstaller conda-build anaconda-client numpy=$NUMPY_VERSION
 source activate test-environment
 
 pip install --upgrade pip
+pip install PySide2
+conda install -q qtpy
 conda install -c conda-forge -q pytest-cov
 if [[ "$COVERALLS" == "YES" ]]; then
     conda install -c conda-forge -q coveralls

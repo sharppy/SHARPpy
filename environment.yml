@@ -10,7 +10,8 @@ dependencies:
   - sphinx-gallery
   - sphinx-rtd-theme
   - pytest
+  - qtpy
   - pip:
     - sphinx-prompt
     - pydocstyle
-
+    - PySide2

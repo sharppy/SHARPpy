@@ -1,3 +1,10 @@
+from qtpy.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtWidgets import *
+QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+#QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+#QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 from sharppy.viz.map import MapWidget
 import argparse
 import traceback
@@ -6,8 +13,7 @@ from os.path import expanduser
 import cProfile
 from functools import wraps, partial
 import datetime as date
-from PySide.QtGui import *
-from PySide.QtCore import *
+
 from utils.progress import progress
 from utils.async_threads import AsyncThreads
 from datasources import data_source
@@ -23,7 +29,7 @@ import numpy as np
 import warnings
 import utils.frozenutils as frozenutils
 import logging
-import PySide
+import qtpy
 import platform
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
@@ -67,7 +73,7 @@ del get_versions
 logging.info('Started logging output for SHARPpy')
 logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
-logging.info('PySide version: ' + str(PySide.__version__))
+logging.info('qtpy version: ' + str(qtpy.__version__))
 logging.info("Python version: " + str(platform.python_version()))
 
 # from sharppy._version import __version__#, __version_name__
@@ -1013,6 +1019,10 @@ def main():
 
     # Create an application
     app = QApplication([])
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    app.setAttribute(Qt.AA_UseHighDpiPixmaps)
+#
+    #app.setStyle("fusion")
     win = createWindow(args.file_names, collect=args.collect, close=args.close)
 
     if args.file_names != [] and args.close:
@@ -1022,4 +1032,7 @@ def main():
 
 
 if __name__ == '__main__':
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+#
     main()

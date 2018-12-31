@@ -64,9 +64,9 @@ The Anaconda Python Distribution can be downloaded here: https://www.anaconda.co
 __Required Python Packages/Libraries:__
 
 * NumPy
-* PySide
+* qtpy
 
-Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
+Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
 
     conda install -c conda-forge pyside=1.2.4
 

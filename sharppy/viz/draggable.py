@@ -1,8 +1,8 @@
 
 import numpy as np
 
-from PySide.QtGui import *
-from PySide.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtCore import *
 
 class Draggable(object):
     """

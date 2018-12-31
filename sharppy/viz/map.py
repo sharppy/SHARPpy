@@ -1,7 +1,8 @@
 
 import numpy as np
 import sharppy
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtWidgets import *
 from datetime import datetime
 import sys, os
 import re
@@ -269,7 +270,7 @@ class Mapper(object):
             paths.append(path)
         return paths
 
-class MapWidget(QtGui.QWidget):
+class MapWidget(QWidget):
     clicked = QtCore.Signal(dict)
 
     def __init__(self, data_source, init_time, async_object, **kwargs):
@@ -313,27 +314,27 @@ class MapWidget(QtGui.QWidget):
         self.setMinimumSize(self.width(), self.height())
 
         self.clicked_stn = None
-        self.stn_readout = QtGui.QLabel(parent=self)
+        self.stn_readout = QtWidgets.QLabel(parent=self)
         self.stn_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 16px; color: #FFFFFF; }")
         self.stn_readout.setText("")
         self.stn_readout.show()
         self.stn_readout.move(self.width(), self.height())
 
-        self.load_readout = QtGui.QLabel(parent=self)
+        self.load_readout = QtWidgets.QLabel(parent=self)
         self.load_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
         self.load_readout.setText("Loading ...")
         self.load_readout.setFixedWidth(100)
         self.load_readout.show()
         self.load_readout.move(self.width(), self.height())
 
-        self.latlon_readout = QtGui.QLabel(parent=self)
+        self.latlon_readout = QtWidgets.QLabel(parent=self)
         self.latlon_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
         self.latlon_readout.setText("")
         self.latlon_readout.setFixedWidth(150)
         self.latlon_readout.show()
         self.latlon_readout.move(10, 10)
 
-        self.no_internet = QtGui.QLabel(parent=self)
+        self.no_internet = QtWidgets.QLabel(parent=self)
         self.no_internet.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 32px; color: #FFFFFF; }")
         self.no_internet.setText("No Internet Connection")
         self.no_internet.show()

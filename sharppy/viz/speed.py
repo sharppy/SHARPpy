@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 
@@ -8,7 +8,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundSpeed', 'plotSpeed']
 
-class backgroundSpeed(QtGui.QFrame):
+class backgroundSpeed(QtWidgets.QFrame):
     '''
     Handles drawing the plot background.
     '''

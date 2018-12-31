@@ -88,7 +88,7 @@ BUG FIXES
 * Additional error handling for partial profiles.
 * Various model forecast points relocated to their proper places.
 * Error handling for opening the program without an Internet connection.
-* Removed PySide dependency and unused imports for those using SHARPpy routines in scripts.
+* Removed qtpy dependency and unused imports for those using SHARPpy routines in scripts.
 
 SHARPpy v1.2.0 "El Reno" Release
 --------------------------------

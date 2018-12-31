@@ -84,13 +84,13 @@ install the required packages manually.  These instructions assume that you have
 *Required Python Packages/Libraries:*
 
 * NumPy
-* PySide
+* qtpy
 
-Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
+Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
 
 .. prompt:: bash
 
-    conda install -c conda-forge pyside=1.2.4
+    pip install PySide2
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 

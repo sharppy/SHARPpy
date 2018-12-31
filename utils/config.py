@@ -1,6 +1,6 @@
 
-from PySide.QtGui import *
-from PySide.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtCore import *
 
 try:
     import ConfigParser

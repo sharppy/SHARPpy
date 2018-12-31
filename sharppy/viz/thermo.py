@@ -1,7 +1,7 @@
 import numpy as np
-from PySide import QtGui, QtCore
-from PySide.QtCore import *
-from PySide.QtGui import *
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtCore import *
+from qtpy.QtGui import *
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import datetime
@@ -12,10 +12,10 @@ import platform
 
 __all__ = ['backgroundText', 'plotText']
 
-class backgroundText(QtGui.QFrame):
+class backgroundText(QtWidgets.QFrame):
     '''
     Handles drawing the background frame onto a QPixmap.
-    Inherits a QtGui.QFrame Object.
+    Inherits a QtWidgets.QFrame Object.
     '''
     def __init__(self, **kwargs):
         super(backgroundText, self).__init__()
@@ -701,9 +701,9 @@ class plotText(backgroundText):
                 self.parentWidget().setFocus()
                 break
 
-class SelectParcels(QWidget):
+class SelectParcels(QtWidgets.QWidget):
     def __init__(self, parcel_types, parent):
-        QWidget.__init__(self)
+        QtWidgets.QWidget.__init__(self)
         self.thermo = parent
         self.parcel_types = parcel_types
         self.max_pcls = 4
@@ -712,42 +712,42 @@ class SelectParcels(QWidget):
 
     def initUI(self):
 
-        self.sb = QtGui.QCheckBox('Surface-Based Parcel', self)
+        self.sb = QtWidgets.QCheckBox('Surface-Based Parcel', self)
         self.sb.move(20, 20)
         if "SFC" in self.parcel_types:
             self.sb.toggle()
             self.pcl_count += 1
         self.sb.stateChanged.connect(self.changeParcel)
 
-        self.ml = QtGui.QCheckBox('100 mb Mixed Layer Parcel', self)
+        self.ml = QtWidgets.QCheckBox('100 mb Mixed Layer Parcel', self)
         self.ml.move(20, 40)
         if "ML" in self.parcel_types:
             self.ml.toggle()
             self.pcl_count += 1
         self.ml.stateChanged.connect(self.changeParcel)
 
-        self.fcst = QtGui.QCheckBox('Forecast Surface Parcel', self)
+        self.fcst = QtWidgets.QCheckBox('Forecast Surface Parcel', self)
         self.fcst.move(20, 60)
         if "FCST" in self.parcel_types:
             self.fcst.toggle()
             self.pcl_count += 1
         self.fcst.stateChanged.connect(self.changeParcel)
 
-        self.mu = QtGui.QCheckBox('Most Unstable Parcel', self)
+        self.mu = QtWidgets.QCheckBox('Most Unstable Parcel', self)
         self.mu.move(20, 80)
         if "MU" in self.parcel_types:
             self.mu.toggle()
             self.pcl_count += 1
         self.mu.stateChanged.connect(self.changeParcel)
 
-        self.eff = QtGui.QCheckBox('Effective Inflow Layer Parcel', self)
+        self.eff = QtWidgets.QCheckBox('Effective Inflow Layer Parcel', self)
         self.eff.move(20, 100)
         if "EFF" in self.parcel_types:
             self.eff.toggle()
             self.pcl_count += 1
         self.eff.stateChanged.connect(self.changeParcel)
 
-        self.usr = QtGui.QCheckBox('User Defined Parcel', self)
+        self.usr = QtWidgets.QCheckBox('User Defined Parcel', self)
         self.usr.move(20, 120)
         if "USER" in self.parcel_types:
             self.usr.toggle()
@@ -757,7 +757,7 @@ class SelectParcels(QWidget):
 
         self.setGeometry(300, 300, 250, 180)
         self.setWindowTitle('Show Parcels')
-        self.ok = QtGui.QPushButton('Ok', self)
+        self.ok = QtWidgets.QPushButton('Ok', self)
         self.ok.move(20,150)
         self.ok.clicked.connect(self.okPushed)
 

@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.viz as viz
 import sharppy.viz.preferences as preferences
 from sharppy.io.spc_decoder import SPCDecoder

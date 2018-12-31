@@ -1,11 +1,11 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
 
 __all__ = ['backgroundAdvection', 'plotAdvection']
-class backgroundAdvection(QtGui.QFrame):
+class backgroundAdvection(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''
