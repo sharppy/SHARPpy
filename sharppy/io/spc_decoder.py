@@ -65,6 +65,10 @@ class SPCDecoder(Decoder):
         wspd = wspd #[idx]
         wdir = wdir #[idx]
 
+        # Br00tal hack
+        if hght[0] > 30000:
+            hght[0] = -9999.00
+
         # Force latitude to be 35 N. Figure out a way to fix this later.
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
             wdir=wdir, wspd=wspd, location=location, date=time, latitude=lat, missing=-9999.00)
