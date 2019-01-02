@@ -17,7 +17,7 @@ def heat_index(temp, rh):
         Parameters
         ----------
         temp : number
-            temperature (C)
+            temperature (F)
         rh : number
             relative humidity (%)
 
@@ -26,14 +26,25 @@ def heat_index(temp, rh):
         heat_index : number
             heat index value in (F)
     '''
-    if temp < 80 or rh < 40:
+    if temp < 40:
         return temp
+
+    hi = 0.5 * ( temp + 61.0 + ((temp - 68.0) * 1.2) + (rh * 0.094))
+    avg = (hi + temp)/2.
+    if avg < 80:
+        return hi
     #temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
     #rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
     heat_index = -42.379 + (2.04901523 * temp) + (10.14333127 * rh) - (0.22475541 * temp * rh) - (6.83783e-3 * np.power(temp,2)) \
                  - (5.481717e-2 * np.power(rh, 2)) + (1.22874e-3 * rh * np.power(temp,2)) + (8.5282e-4 * temp * np.power(rh, 2)) \
                  - (1.99e-6 * np.power(rh, 2) * np.power(temp, 2))
-    
+
+    if rh < 13 and temp > 80 and temp < 112:
+        adjustment = ((13-rh)/4.) * np.sqrt((17 - np.abs(temp - 95))/17.)
+        heat_index = heat_index - adjustment
+    elif rh > 85 and temp > 80 and temp < 87:
+        adjustment = ((rh - 85)/10.) * ((87 - temp)/5.)
+        heat_index = heat_index + adjustment  
     return heat_index
 
 def wind_chill(prof):

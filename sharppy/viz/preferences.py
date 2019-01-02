@@ -3,6 +3,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 
 from collections import OrderedDict
+import numpy as np
 
 import os
 
@@ -374,7 +375,31 @@ class PrefDialog(QDialog):
         self.layout.addWidget(tab_widget, 0, 0, 1, 1)
 
     def _createReadoutWidget(self):
+        layout = QVBoxLayout()
         box = QWidget()
+        label = QLabel("Top Right Readout Variable:")
+        box.setLayout(layout)
+        layout.addWidget(label)
+        self.combo1 = QComboBox()
+        layout.addWidget(self.combo1)
+        self.combo2 = QComboBox()
+        layout.addWidget(QLabel("Bottom Right Readout Variable:"))
+        layout.addWidget(self.combo2)
+        self.variables = {"Temperature (C)": 'tmpc', 'Dewpoint (C)': 'dwpc',\
+                          "Equiv. Potential Temp. (K)": 'thetae',\
+                          "Wetbulb Temperature (C)": 'wetbulb',\
+                          "Potential Temperature (K)": 'theta',\
+                          "Water Vapor Mixing Ratio (g/kg)": 'wvmr',\
+                          "Vertical Velocity (mb/hr)": 'omeg'}
+        for k in self.variables.keys():  
+            self.combo1.addItem(k)
+            self.combo2.addItem(k) 
+
+        idx1 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_tr'])[0]
+        idx2 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_br'])[0]
+        self.combo1.setCurrentIndex(idx1)
+        self.combo2.setCurrentIndex(idx2)
+
         return box
 
     def _createColorWidget(self):
@@ -493,6 +518,9 @@ class PrefDialog(QDialog):
         for item, color in PrefDialog._styles[self._color_style].items():
             self._config['preferences', item] = color
 
+        self._config['preferences', 'readout_tr'] = self.variables[self.combo1.currentText()]
+        self._config['preferences', 'readout_br'] = self.variables[self.combo2.currentText()]
+
         self.accept()
 
     def rejectChanges(self):
@@ -511,9 +539,11 @@ class PrefDialog(QDialog):
             ('preferences', 'temp_units'):'Fahrenheit',
             ('preferences', 'wind_units'):'knots',
             ('preferences', 'pw_units'):'in',
-            ('preferences', 'color_style'):'standard'
+            ('preferences', 'color_style'):'standard',
+            ('preferences', 'readout_br'): 'dwpc',
+            ('preferences', 'readout_tr'): 'tmpc'
         }
-
+        
         color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].items())
         pref_config.update(color_config)
 

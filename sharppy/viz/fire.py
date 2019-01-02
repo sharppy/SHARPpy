@@ -16,7 +16,7 @@ class backgroundFire(QtGui.QFrame):
     def __init__(self):
         super(backgroundFire, self).__init__()
         self.init_hght = self.size().height()
-        print(self.init_hght)
+        #print(self.init_hght)
         self.initUI()
 
     def initUI(self):

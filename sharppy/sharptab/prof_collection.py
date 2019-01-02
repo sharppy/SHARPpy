@@ -314,12 +314,17 @@ class ProfCollection(object):
 
         cls = type(prof)
         # Copy the variables to be modified
-        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.keys() )
-
-        # Do the modification
-        for var, val in kwargs.items():
-            prof_vars[var][idx] = val
+        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.keys() if k != 'idx_range')
         
+        if idx != -999:
+            # Do the modification
+            for var, val in kwargs.items():
+                prof_vars[var][idx] = val
+        else:
+            idx = kwargs.get('idx_range')
+            for key in prof_vars.keys():
+                prof_vars[key] = kwargs.get(key)
+ 
         # Make a copy of the profile object with the newly modified variables inserted.
         self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
 

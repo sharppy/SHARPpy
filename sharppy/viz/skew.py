@@ -427,27 +427,12 @@ class plotSkewT(backgroundSkewT):
         fg_hex = "#%02x%02x%02x" % (self.bg_color.red(), self.bg_color.green(), self.bg_color.blue())
         bg_rgb = self.fg_color.getRgb()
 #       print bg_rgb, self.fg_color.getRgb()
-        rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',50%)'
-        self.presReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: " + fg_hex + ";}")
-        self.hghtReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FF0000;}")
-        self.tmpcReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #FF0000;}")
-        self.dwpcReadout.setStyleSheet("QLabel {"
-            "  background-color: " + rgb_string + ";"
-            "  border-width: 0px;"
-            "  font-size: 11px;"
-            "  color: #00FF00;}")
+        #rgb_string = 'rgb(' + str(bg_rgb[0]) + ',' + str(bg_rgb[1]) + ',' + str(bg_rgb[2]) + ',100%)'
+        rgb_string = kwargs.get('bg_color', '#000000')
+        self.presReadout.setStyleSheet(self.getStyleSheet(self.fg_color.name()))
+        self.hghtReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        self.tmpcReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        self.dwpcReadout.setStyleSheet(self.getStyleSheet("#00FF00"))
         self.rubberBand = QRubberBand(QRubberBand.Line, self)
 
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -500,19 +485,27 @@ class plotSkewT(backgroundSkewT):
 
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
-        """
-        self.popupmenu.addSeparator()
+        
         modify_sfc = QAction(self)
         modify_sfc.setText("Modify Surface")
         modify_sfc.setCheckable(False)
         modify_sfc.triggered.connect(self.modifySfc)
         self.popupmenu.addAction(modify_sfc)
-        """
+        
         self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
         reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
         self.popupmenu.addAction(reset)
+
+    def getStyleSheet(self, color, fsize=11):
+        rgb_string = self.bg_color.name()
+        readout_stylesheet = "QLabel {" + \
+                             "  background-color: " + rgb_string + ";" + \
+                             "  border-width: 0px;" + \
+                             "  font-size: " + str(fsize) + "px;" + \
+                             "  color: " + color + ";}"
+        return readout_stylesheet
 
     def getPlotTitle(self, prof_coll):
         logging.debug("Calling plotSkewT.getPlotTitle")
@@ -663,8 +656,11 @@ class plotSkewT(backgroundSkewT):
         self.wind_units = kwargs['wind_units']
 
         # READOUT VARIABLES NOT SURE WHY THIS WAS THROWING AN EXCEPTION
-        #self.readout_vars = [kwargs['readout_br'],kwargs['readout_tr']]
-        self.readout_vars = ['tmpc', 'dwpc']
+        self.readout_vars = [kwargs['readout_tr'],kwargs['readout_br']]
+        self.presReadout.setStyleSheet(self.getStyleSheet(self.fg_color.name()))
+        self.hghtReadout.setStyleSheet(self.getStyleSheet("#FF0000"))
+        #print(self.readout_vars)
+        #self.readout_vars = ['tmpc', 'dwpc']
 
         if update_gui:
             self.plotBitMap.fill(self.bg_color)
@@ -714,6 +710,7 @@ class plotSkewT(backgroundSkewT):
             
             # Example: 4 {'tmpc': 10.790866472309446} (changed the 4th point of the tmpc profile to the temperature value set in tmpc)
             # So, if we want to modify an entire layer of the sounding, we'll have to get creative.
+            print(drag_idx, {prof_name: tmpc})
             self.modified.emit(drag_idx, {prof_name:tmpc})
 
         self.was_right_click = False
@@ -745,9 +742,87 @@ class plotSkewT(backgroundSkewT):
         self.update()
 
     def modifySfc(self):
-        temp = input("Temp:")
-        dwpt = input("Dewpoint:")
+        box = SfcModifyDialog(self.sfc_units, None)
+        box.exec_()
+        result = box.result()
+        
+        if result == QDialog.Rejected:
+            return
 
+        def templvl(theta, p):
+            ''' theta : potential temp in kelvin
+                p : pressure in hPa
+                Returns: temperature in C
+            '''
+            return tab.thermo.ktoc(theta / np.power(1000./p, tab.constants.ROCP))
+        
+        temp = box.getTemp()
+        dwpt = box.getDewPoint() 
+        if box.getMix():
+            theta = tab.thermo.ctok(tab.thermo.theta(self.prof.pres[self.prof.sfc], float(temp)))
+            theta_copy = self.prof.theta.copy()
+            theta_copy[self.prof.sfc] = theta
+            idx = np.ma.where(theta_copy <= theta)[0]
+            tmp = templvl(theta, self.prof.pres[idx])
+            temp = self.prof.tmpc.copy()
+            temp[idx] = tmp
+            mixrat = tab.thermo.mixratio(self.prof.pres[self.prof.sfc], float(dwpt))
+            dwpt = self.prof.dwpc.copy()
+            dwpt[idx] = tab.thermo.temp_at_mixrat(np.repeat(mixrat, len(idx)), self.prof.pres[idx])
+            self.modified.emit(-999, {'tmpc': temp, 'idx_range':idx, 'dwpc': dwpt})
+        else:
+            self.modified.emit(self.prof.sfc, {'tmpc': temp, 'dwpc': dwpt})        
+
+    def getReadoutVal(self, var):
+        if var == 'tmpc':  
+            val = tab.interp.temp(self.prof, self.readout_pres)
+            var_id = 'T='
+            unit = 'C'
+            round_val = 1
+            color = self.temp_color.name()
+        elif var == 'dwpc':
+            val = tab.interp.dwpt(self.prof, self.readout_pres)
+            var_id = 'Td='
+            unit = "C"
+            round_val = 1
+            color = self.dewp_color.name()
+        elif var == 'thetae':
+            val = tab.interp.thetae(self.prof, self.readout_pres)
+            var_id = u"\u03B8" + 'e='
+            unit = "K"
+            round_val = 0
+            color = self.lfc_mkr_color.name()
+        elif var == 'wetbulb':
+            val = tab.interp.wetbulb(self.prof, self.readout_pres)
+            var_id = 'Tw='
+            unit = "C"
+            round_val = 1
+            color = self.wetbulb_color.name()
+        elif var == 'theta':
+            val = tab.interp.theta(self.prof, self.readout_pres)
+            var_id = u"\u03B8" + '='
+            unit = "K"
+            round_val = 0
+            color = self.lfc_mkr_color.name()
+        elif var == 'wvmr':
+            val = tab.interp.mixratio(self.prof, self.readout_pres)
+            var_id = 'q='
+            unit = "g/kg"
+            round_val = 1
+            color = self.dewp_color.name()
+        else:
+            try:
+                val = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
+            except:
+                val = '--' 
+            var_id = u"\u03C9" + '='
+            unit = "mb/hr"
+            color = self.el_mkr_color.name()
+            round_val = 1
+        ss = self.getStyleSheet(color)
+        text = var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit
+        
+        return ss, text
 
     def updateReadout(self):
         y = self.originy + self.pres_to_pix(self.readout_pres) / self.scale
@@ -757,49 +832,14 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(65)
         self.dwpcReadout.setFixedWidth(65)
       
-        microbars_units = u"\u00B5" + 'b/s'
+        #microbars_units = u"\u00B5" + 'b/s'
+        ss, text = self.getReadoutVal(self.readout_vars[0])
+        self.tmpcReadout.setStyleSheet(ss)
+        self.tmpcReadout.setText(text) 
+        ss, text = self.getReadoutVal(self.readout_vars[1])
+        self.dwpcReadout.setStyleSheet(ss)
+        self.dwpcReadout.setText(text)
 
-        for var, ReadOut in zip(self.readout_vars, [self.tmpcReadout, self.dwpcReadout]):
-            if var == 'tmpc':  
-                val = tab.interp.temp(self.prof, self.readout_pres)
-                var_id = 'T='
-                unit = 'C'
-                round_val = 1
-            elif var == 'dwpc':
-                val = tab.interp.dwpt(self.prof, self.readout_pres)
-                var_id = 'Td='
-                unit = "C"
-                round_val = 1
-            elif var == 'thetae':
-                val = tab.interp.thetae(self.prof, self.readout_pres)
-                var_id = u"\u03B8" + 'e='
-                unit = "K"
-                round_val = 0
-            elif var == 'wetbulb':
-                tw = tab.interp.wetbulb(self.prof, self.readout_pres)
-                var_id = 'Tw='
-                unit = "K"
-                round_val = 1
-            elif var == 'theta':
-                tha = tab.interp.theta(self.prof, self.readout_pres)
-                var_id = u"\u03B8" + '='
-                unit = "K"
-                round_val = 0
-            elif var == 'wvmr':
-                q = tab.interp.mixratio(self.prof, self.readout_pres)
-                var_id = 'q='
-                unit = "g/kg"
-                round_val = 1
-            else:
-                try:
-                    omg = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
-                except:
-                    omg = '--' 
-                omega_unicode = u"\u03C9" + '='
-                unit = "mb/hr"
-                round_val = 1
-            ReadOut.setText(var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit)
- 
         hgt = tab.interp.to_agl( self.prof, tab.interp.hght(self.prof, self.readout_pres) )
         self.presReadout.setText(tab.utils.FLOAT2STR(self.readout_pres, 1) + ' hPa')
         # TODO: Also allow for an output in ft AGL vs m AGL
@@ -1452,6 +1492,79 @@ class plotSkewT(backgroundSkewT):
         path.lineTo(err_right, y-offset)
         path.lineTo(err_right, y+offset)
         qp.drawPath(path)
+
+class SfcModifyDialog(QDialog):
+
+    def __init__(self, units, parent=None):
+        """ 
+        Construct the preferences dialog box.
+        config: A Config object containing the user's configuration.
+        """
+        super(SfcModifyDialog, self).__init__(parent=parent)
+        self.units = units
+        self.__initUI()
+
+    def __initUI(self):
+        """ 
+        Set up the user interface [private method].
+        """
+        self.setWindowTitle("Modify Surface")
+        main_layout = QVBoxLayout()
+        button_layout = QHBoxLayout()
+
+        self.accept_button = QPushButton("Accept")
+        self.accept_button.setDefault(True)
+        self.accept_button.clicked.connect(self.accept)
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        button_layout.addWidget(self.accept_button)
+        button_layout.addWidget(self.cancel_button)
+        self.accept_button.setEnabled(False)
+        self.layout = main_layout
+        self.mix_check = QCheckBox("Mix")
+        if self.units == 'Fahrenheit':
+            self.unit = "F"
+        else:
+            self.unit = "C"
+        label = QLabel("New Surface Temperature (" + self.unit + "):")
+        self.new_temp = QLineEdit()
+        double_valid = QDoubleValidator()
+        double_valid.setRange(-273.15, 500, 3)
+        self.new_temp.setValidator(double_valid)
+        main_layout.addWidget(label)
+        main_layout.addWidget(self.new_temp)
+        main_layout.addWidget(QLabel("New Surface Dewpoint (" + self.unit + "):"))
+        self.new_dwpt = QLineEdit()
+        self.new_dwpt.setValidator(double_valid)
+        main_layout.addWidget(self.new_dwpt)
+        main_layout.addWidget(self.mix_check)
+        main_layout.addLayout(button_layout)
+        self.setLayout(main_layout)
+
+        self.new_temp.textChanged.connect(self.validateText)   
+        self.new_dwpt.textChanged.connect(self.validateText)   
+
+    def validateText(self):
+        if self.new_temp.hasAcceptableInput() and self.new_dwpt.hasAcceptableInput() and self.getTemp() >= self.getDewPoint():
+            self.accept_button.setEnabled(True)
+        else:
+            self.accept_button.setEnabled(False)
+ 
+    def getTemp(self):
+        if self.unit == "C":
+            return float(self.new_temp.text())
+        else:
+            return tab.thermo.ftoc(float(self.new_temp.text()))
+ 
+    def getDewPoint(self):
+        if self.unit == "C":
+            return float(self.new_dwpt.text())
+        else:
+            return tab.thermo.ftoc(float(self.new_dwpt.text()))
+
+    def getMix(self):
+        return self.mix_check.isChecked()
+
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)

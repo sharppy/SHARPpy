@@ -37,7 +37,7 @@ this ready-made citation entry or provide a link back to this website:
     
  [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
 
-We wish to acknowledge Jeff Whitaker, who created the Basemap package, and from which we have borrowed data and code to develop the SHARPpy data selector GUI.  We also wish to acknowledge the [MetPy](https://github.com/Unidata/MetPy), who we have borrowed their Matplotlib skew-t code from to illustrate some SHARPpy examples. 
+We wish to acknowledge Jeff Whitaker, who created the [Basemap](https://matplotlib.org/basemap/) package, and from which we have borrowed data and code to develop the SHARPpy data Picker.  We also wish to acknowledge [MetPy](https://github.com/Unidata/MetPy), who we have borrowed their Matplotlib skew-t code from to illustrate some SHARPpy examples. 
 
 2.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
 
@@ -53,11 +53,11 @@ If you would like to run SHARPpy from a binary (if you don't want to do scriptin
 
 For those wishing to run both the GUI and do scripting, we recommend you install the _Python 3_ Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from `conda` or `pip` by using either:
 
-    `conda install -c sharppy sharppy`
+    conda install -c sharppy sharppy
 
-    or
+ or
     
-    `pip install sharppy`
+    pip install sharppy
 
 The Anaconda Python Distribution can be downloaded here: https://www.anaconda.com/download/
 
@@ -109,7 +109,7 @@ Known Issues:
 
 SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
-- Kelton Halbert (OU School of Meteorology)
+- Kelton Halbert (UW-Madison)
 - Greg Blumberg (OU/CIMMS)
 - Tim Supinie (OU School of Meteorology)
 
