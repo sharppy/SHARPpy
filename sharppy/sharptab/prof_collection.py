@@ -234,7 +234,7 @@ class ProfCollection(object):
         try:
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
-            self._prof_idx = -1
+            pass
 
     def setAnalogToDate(self, analog_to_date):
         """
