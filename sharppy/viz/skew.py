@@ -667,6 +667,8 @@ class plotSkewT(backgroundSkewT):
             self.plotBackground()
             self.clearData()
             self.plotData()
+            if self.readout:
+                self.updateReadout()
             self.update()
 
     def setDeviant(self, deviant):
@@ -832,7 +834,6 @@ class plotSkewT(backgroundSkewT):
         self.tmpcReadout.setFixedWidth(65)
         self.dwpcReadout.setFixedWidth(65)
       
-        #microbars_units = u"\u00B5" + 'b/s'
         ss, text = self.getReadoutVal(self.readout_vars[0])
         self.tmpcReadout.setStyleSheet(ss)
         self.tmpcReadout.setText(text) 
