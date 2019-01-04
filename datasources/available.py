@@ -26,7 +26,7 @@ def _download_goes():
 
     return goes_text
 
-def _available_goes(dt):
+def _available_goes(dt=None):
     '''
         _available_sharp()
 
@@ -95,7 +95,7 @@ def _download_sharp_archive(dt):
         sharp_time = now
     return sharp_archive_text, dt
 
-def _available_sharp(dt):
+def _available_sharp(dt=None):
     '''
         _available_sharp()
 
@@ -155,7 +155,7 @@ def _download_spc():
 
     return spc_text
 
-def _available_spc(dt):
+def _available_spc(dt=None):
     '''
         _available_spc()
 
@@ -223,7 +223,7 @@ def _download_psu():
 
     return psu_text 
 
-def _availableat_psu(model, dt=None):
+def _availableat_psu(model, dt):
     '''
         _availableat_psu
 
@@ -264,9 +264,8 @@ def _available_psu(model, dt=None):
         off : boolean (default: false)
             Specifies whether or not this is an off-hour run
     '''
-    #nam=(m in [ 'nam', '4km nam' ])
 
-    if dt < datetime.utcnow() - timedelta(3600*29): # We know PSU is only a 24 hr service
+    if dt is not None and dt < datetime.utcnow() - timedelta(3600*29): # We know PSU is only a 24 hr service
         return []    
 
     if model == '4km nam': model = 'nam4km'
@@ -274,7 +273,6 @@ def _available_psu(model, dt=None):
     psu_text = _download_psu()
     latest = re.search("%s\.([\d]{12})\.done" % model, psu_text).groups(0)[0]
     dt = datetime.strptime(latest, "%Y%m%d%H%M")
-
     return [ dt ]
 
 ### IEM CODE
@@ -303,7 +301,7 @@ def _download_iem():
 
     return iem_text 
 
-def _availableat_iem(model, dt=None):
+def _availableat_iem(model, dt):
     '''
         _availableat_iem
 
@@ -346,10 +344,13 @@ def _available_iem(model, dt=None):
             Specifies whether or not this is an off-hour run
     '''
     #nam=(m in [ 'nam', '4km nam' ])
-    try:
-        a = int(dt.year)
-    except:
-        dt = datetime(dt.year(), dt.month(), dt.day())
+    if dt is None:
+        dt = datetime.utcnow()
+    else:
+        try:
+            a = int(dt.year)
+        except:
+            dt = datetime(dt.year(), dt.month(), dt.day())
     
     if model == '4km nam': model = 'nam4km'
 
@@ -387,7 +388,7 @@ def _availableat_oupecan(dt):
 ## NCAR ENSEMBLE CODE
 ncarens_base_url = 'http://sharp.weather.ou.edu/soundings/ncarens/'
 
-def _available_ncarens(dt):
+def _available_ncarens(dt=None):
     text = urlopen(ncarens_base_url).read().decode('utf-8')
 
     matches = sorted(list(set(re.findall("([\d]{8}_[\d]{2})", text))))
@@ -411,10 +412,10 @@ def _available_nssl(ens=False):
 available = {
     'psu':{}, 
     'iem':{}, 
-    'spc':{'observed': lambda dt: _available_spc(dt)},
-    'ou_pecan': {'pecan ensemble': lambda dt: _available_oupecan(dt) },
-    'ncar_ens': {'ncar ensemble': lambda dt: _available_ncarens(dt) },
-    'sharp': {'ncar ensemble': lambda dt: _available_ncarens(dt), 'observed': lambda dt: _available_sharp(dt), 'goes': lambda dt: _available_goes(dt) },
+    'spc':{'observed': lambda dt=None: _available_spc(dt=dt)},
+    'ou_pecan': {'pecan ensemble': lambda dt=None: _available_oupecan(dt=dt) },
+    'ncar_ens': {'ncar ensemble': lambda dt=None: _available_ncarens(dt=dt) },
+    'sharp': {'ncar ensemble': lambda dt=None: _available_ncarens(dt=dt), 'observed': lambda dt=None: _available_sharp(dt=dt), 'goes': lambda dt=None: _available_goes(dt=dt) },
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
 
@@ -430,12 +431,12 @@ availableat = {
 
 # Set the available and available-at-time functions for the PSU data.
 for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
-    available['psu'][model] = (lambda m: lambda dt: _available_psu(m, dt))(model)
+    available['psu'][model] = (lambda m: lambda dt=None: _available_psu(m, dt=dt))(model)
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 # Set the available and available-at-time functions for the IEM data.
 for model in [ 'gfs', 'nam', 'rap', 'ruc', '4km nam' ]:
-    available['iem'][model] = (lambda m: lambda dt: _available_iem(m, dt))(model)
+    available['iem'][model] = (lambda m: lambda dt=None: _available_iem(m, dt=dt))(model)
     availableat['iem'][model] = (lambda m: lambda dt: _availableat_iem(m, dt))(model)
 
 

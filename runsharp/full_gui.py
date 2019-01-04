@@ -131,20 +131,23 @@ class Calendar(QCalendarWidget):
         super(Calendar, self).__init__(*args, **kwargs)
 
         min_date = QDate(1946, 1, 1)
-        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
 
         self.setGridVisible(True)
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
         self.setMinimumDate(min_date)
-        self.setMaximumDate(qdate_avail)
-        self.setSelectedDate(qdate_avail)
+        self.setLatestAvailable(dt_avail)
 
         for day in [Qt.Sunday, Qt.Saturday]:
             txt_fmt = self.weekdayTextFormat(day)
             txt_fmt.setForeground(QBrush(Qt.black))
             self.setWeekdayTextFormat(day, txt_fmt)
 
+    def setLatestAvailable(self, dt_avail):
+        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
+        self.setMaximumDate(qdate_avail)
+        self.setSelectedDate(qdate_avail)
+        
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -328,19 +331,16 @@ class Picker(QWidget):
 
         return dropdown
 
-    def update_from_cal(self):
+    def update_from_cal(self, dt, updated_model=False):
         """
         Update the dropdown list and the forecast times list if a new date
         is selected in the calendar app.
         """
 
-        models = sorted(self.data_sources.keys())
-        self.get_model(models.index(self.model))
+        self.update_run_dropdown(updated_model=updated_model)
 
-        # self.update_run_dropdown()
-        # self.update_list()
-        #print(self.run, self.model)
-        #self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.update_list()
+        self.view.setDataSource(self.data_sources[self.model], self.run)
 
     def update_list(self):
         """
@@ -403,7 +403,7 @@ class Picker(QWidget):
         self.model_dropdown.setCurrentIndex(models.index(selected))
         self.get_model(models.index(selected))
 
-    def update_run_dropdown(self):
+    def update_run_dropdown(self, updated_model=False):
         """
         Updates the dropdown menu that contains the model run
         information.
@@ -411,20 +411,29 @@ class Picker(QWidget):
         """
         logging.debug("Calling full_gui.update_run_dropdown")
 
-        self.cal_date = self.cal.selectedDate()
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(
                 outlet="Local")[0].replace("file://", "")
 
-            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
-                url)
+            def getTimes(): 
+                return self.data_sources[self.model].getAvailableTimes(url)
         else:
-            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
-                dt=self.cal_date)
+            if updated_model:
+                def getTimes():
+                    return self.data_sources[self.model].getAvailableTimes()
+            else:
+                self.cal_date = self.cal.selectedDate()
+                def getTimes(): 
+                    return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
         # Function to update the times.
         def update(times):
             times = times[0]
+
+            if updated_model:
+                self.cal.setLatestAvailable(max(times))
+                self.cal_date = self.cal.selectedDate()
+
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
 
             # Filter out only times for the specified date.
@@ -449,14 +458,14 @@ class Picker(QWidget):
                     self.run = times[-1]
             else:
                 self.run = date.datetime(1700, 1, 1, 0, 0, 0)
-            self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
             if len(filtered_times) > 0:
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
-        self.async_id = self.async_obj.post(getTimes, update)
+        async_id = self.async_obj.post(getTimes, update)
+        self.async_obj.join(async_id)
 
     def map_link(self, point):
         """
@@ -534,11 +543,7 @@ class Picker(QWidget):
         logging.debug("Calling full_gui.get_model")
         self.model = self.model_dropdown.currentText()
 
-        self.update_run_dropdown()
-        self.async_obj.join(self.async_id)
-
-        self.update_list()
-        self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.update_from_cal(None, updated_model=True)
 
     def get_run(self, index):
         """
