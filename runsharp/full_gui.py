@@ -125,17 +125,16 @@ class crasher(object):
 
 class Calendar(QCalendarWidget):
     def __init__(self, *args, **kwargs):
+        dt_earliest = kwargs.pop('dt_earliest', date.datetime(1946, 1, 1))
         dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(
             minute=0, second=0, microsecond=0))
 
         super(Calendar, self).__init__(*args, **kwargs)
 
-        min_date = QDate(1946, 1, 1)
-
         self.setGridVisible(True)
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.setMinimumDate(min_date)
+        self.setEarliestAvailable(dt_earliest)
         self.setLatestAvailable(dt_avail)
 
         for day in [Qt.Sunday, Qt.Saturday]:
@@ -147,7 +146,11 @@ class Calendar(QCalendarWidget):
         qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
         self.setMaximumDate(qdate_avail)
         self.setSelectedDate(qdate_avail)
-        
+
+    def setEarliestAvailable(self, dt_earliest):
+        qdate_earliest = QDate(dt_earliest.year, dt_earliest.month, dt_earliest.day)
+        self.setMinimumDate(qdate_earliest)
+
 
 class Picker(QWidget):
     date_format = "%Y-%m-%d %HZ"
@@ -431,7 +434,15 @@ class Picker(QWidget):
             times = times[0]
 
             if updated_model:
-                self.cal.setLatestAvailable(max(times))
+                dt_avail = max(times)
+                dt_earliest = min(times)
+                if self.model == 'observed':
+                    dt_earliest = date.datetime(1946, 1, 1)
+                elif self.model.lower() in ['gfs', 'nam', 'rap', 'nam4km', 'ruc']:
+                    dt_earliest = date.datetime(2010, 12, 30)
+
+                self.cal.setLatestAvailable(dt_avail)
+                self.cal.setEarliestAvailable(dt_earliest)
                 self.cal_date = self.cal.selectedDate()
 
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
