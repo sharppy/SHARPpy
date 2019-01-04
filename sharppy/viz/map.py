@@ -724,8 +724,10 @@ class MapWidget(QtGui.QWidget):
 
     def _showLoading(self):
         self.load_readout.move(10, self.height() - 25)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
 
     def _hideLoading(self):
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):
