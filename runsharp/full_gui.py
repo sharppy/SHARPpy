@@ -159,9 +159,7 @@ class Picker(QWidget):
         """
 
         super(Picker, self).__init__(**kwargs)
-        # print("data_source.loadDataSource()")
         self.data_sources = data_source.loadDataSources()
-        #print("Done loading Data Sources\n")
         self.config = config
         self.skew = None
 
@@ -173,10 +171,8 @@ class Picker(QWidget):
         # set the default profile type to Observed
         self.model = "Observed"
         # this is the default model initialization time
-        #print("Looping over AvailableTimes")
-        self.run = sorted(
-            [t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12]])[-1]
-        # print("Done")
+        self.all_times = sorted(self.data_sources[self.model].getAvailableTimes())
+        self.run = [t for t in self.all_times if t.hour in [0, 12]][-1]
 
         urls = data_source.pingURLs(self.data_sources)
         self.has_connection = any(urls.values())
@@ -224,10 +220,7 @@ class Picker(QWidget):
 
         self.right_map_frame.setLayout(self.right_layout)
 
-        self.all_times = sorted(
-            self.data_sources[self.model].getAvailableTimes(dt=None))
-
-        self.cal = Calendar(self, dt_avail=self.all_times[-1])
+        self.cal = Calendar(self, dt_avail=self.run)
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = [t for t in self.all_times if t.day == self.cal_date.day(
@@ -255,7 +248,7 @@ class Picker(QWidget):
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
-            print("Run dropdown is missing its times ... ?")
+            logging.error("Run dropdown is missing its times ... ?")
 
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -428,12 +421,8 @@ class Picker(QWidget):
         else:
             def getTimes(): return self.data_sources[self.model].getAvailableTimes(
                 dt=self.cal_date)
-        #print(self.model, self.cal_date)
-        #print(self.data_sources[self.model].getAvailableTimes(
-        #    dt=self.cal_date))
-        # print(getTimes())
-        # Function to update the times.
 
+        # Function to update the times.
         def update(times):
             times = times[0]
             self.run_dropdown.clear()  # Clear all of the items from the dropdown

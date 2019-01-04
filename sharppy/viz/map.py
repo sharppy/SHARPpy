@@ -414,7 +414,6 @@ class MapWidget(QtGui.QWidget):
        
         self.current_time = data_time
         getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
-        points = getPoints()
 
         if init:
             points = getPoints()
