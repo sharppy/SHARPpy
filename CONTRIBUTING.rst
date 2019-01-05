@@ -27,9 +27,8 @@ Some possible (broad) ideas for contributions:
 Using the issue tracker
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-The issue tracker is the preferred channel for [bug reports](#bugs),
-[features requests](#features) and [submitting pull
-requests](#pull-requests), but please respect the following restrictions:
+The issue tracker is the preferred channel for bug reports, feature requests and submitting pull
+requests, but please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests (use
   `Stack Overflow <http://stackoverflow.com>`_).
@@ -45,18 +44,18 @@ Good bug reports are extremely helpful - thank you!
 
 Guidelines for bug reports:
 
-1. **Use the GitHub issue search** &mdash; check if the issue has already been
+1. **Use the GitHub issue search** - check if the issue has already been
    reported.
 
-2. **Check if the issue has been fixed** &mdash; try to reproduce it using the
+2. **Check if the issue has been fixed** - try to reproduce it using the
    latest `master` or development branch in the repository.
 
-3. **Isolate the problem** &mdash; create a `reduced test
-   case <http://css-tricks.com/reduced-test-cases/>`_ and a live example.
+3. **Isolate the problem** - create a `reduced test
+   case <http://css-tricks.com/reduced-test-cases/>`_ and document the steps.
 
 A good bug report shouldn't leave others needing to chase you up for more
 information. Please try to be as detailed as possible in your report. What is
-your environment? What steps will reproduce the issue? What browser(s) and OS
+your environment? What steps will reproduce the issue? What OS or Python packages
 experience the problem? What would you expect to be the outcome? All these
 details will help people to fix any potential bugs.
 
