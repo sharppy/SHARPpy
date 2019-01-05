@@ -60,25 +60,30 @@ your environment? What steps will reproduce the issue? What browser(s) and OS
 experience the problem? What would you expect to be the outcome? All these
 details will help people to fix any potential bugs.
 
-Example:
+You should also attach any log and config files created by SHARPpy
+(this is particularly helpful when debugging the GUI).  These are kept in the ~/.sharppy directory.
 
-> Short and descriptive example bug report title
->
-> Information about your OS and package (e.g., numpy, Qt) dependencies including version numbers.
->
-> A summary of the issue and the browser/OS environment in which it occurs. If
-> suitable, include the steps required to reproduce the bug.
->
-> 1. This is the first step
-> 2. This is the second step
-> 3. Further steps, etc.
->
-> `<url>` - a link to the reduced test case
->
-> Any other information you want to share that is relevant to the issue being
-> reported. This might include the lines of code that you have identified as
-> causing the bug, and potential solutions (and your opinions on their
-> merits).
+Example::
+
+  Short and descriptive example bug report title
+  
+  Information about your OS and package (e.g., numpy, Qt) dependencies including version numbers.
+  
+  Include the steps required to reproduce the bug:
+  
+  1. This is the first step
+  2. This is the second step
+  3. Further steps, etc.
+  
+  Explain the expected behavior needed when performing these steps.
+  
+  `<url>` - a link to the reduced test case
+  
+  Any other information you want to share that is relevant to the issue being
+  reported. This might include the lines of code that you have identified as
+  causing the bug, and potential solutions (and your opinions on their
+  merits).
+
 
 Set up a development environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
