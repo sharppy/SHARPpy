@@ -10,6 +10,7 @@ from PySide.QtGui import *
 from PySide.QtCore import *
 from utils.progress import progress
 from utils.async_threads import AsyncThreads
+from utils.ver_updates import check_latest
 from datasources import data_source
 from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.io.decoder import getDecoders
@@ -25,6 +26,10 @@ import utils.frozenutils as frozenutils
 import logging
 import PySide
 import platform
+
+# Check to see if there's a newer version of SHARPpy on Github Releases
+latest = check_latest()
+
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
 # Start the logging
@@ -69,6 +74,12 @@ logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
 logging.info('PySide version: ' + str(PySide.__version__))
 logging.info("Python version: " + str(platform.python_version()))
+logging.info("Qt version: " + str(PySide.QtCore.__version__))
+
+if latest[0] is False:
+    logging.info("A newer release of SHARPpy was found on Github Releases.")
+else:
+    logging.info("This is the most recent version of SHARPpy.")
 
 # from sharppy._version import __version__#, __version_name__
 
@@ -926,34 +937,39 @@ class Main(QMainWindow):
         """
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
-        str = """
-        SHARPpy v%s %s
-
-        Sounding and Hodograph Analysis and Research
-        Program for Python
-
-        (C) 2014-%d by Patrick Marsh, John Hart,
-        Kelton Halbert, Greg Blumberg, and Tim Supinie.
-
-        SHARPpy is a collection of open source sounding
-        and hodograph analysis routines, a sounding
-        plotting package, and an interactive application
-        for analyzing real-time soundings all written in
-        Python. It was developed to provide the
-        atmospheric science community a free and
-        consistent source of routines for analyzing sounding
-        data. SHARPpy is constantly updated and
-        vetted by professional meteorologists and
-        climatologists within the scientific community to
-        help maintain a standard source of sounding
-        routines.
-
-        Website: http://sharppy.github.io/SHARPpy/
-        Contact: sharppy.project@gmail.com
-        Contribute: https://github.com/sharppy/SHARPpy/
-        """ % (__version__, __version_name__, cur_year)
-        msgBox.setText(str)
+        documentationButton = msgBox.addButton(self.tr("Online Docs"), QMessageBox.ActionRole)
+        bugButton = msgBox.addButton(self.tr("Report Bug"), QMessageBox.ActionRole)
+        githubButton = msgBox.addButton(self.tr("Github"), QMessageBox.ActionRole)
+        msgBox.addButton(QMessageBox.Close)
+#        closeButton = msgBox.addButton(self.tr("Close"), QMessageBox.RejectRole)
+        msgBox.setDefaultButton(QMessageBox.Close)
+        txt = "SHARPpy v%s %s\n\n" % (__version__, __version_name__)
+        txt += "Sounding and Hodograph Analysis and Research Program for Python\n\n"
+        txt += "(C) 2014-%d by Patrick Marsh, John Hart, Kelton Halbert, Greg Blumberg, and Tim Supinie." % cur_year
+        desc = "\n\nSHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding " + \
+               "plotting package, and an interactive application " + \
+               "for analyzing real-time soundings all written in " + \
+               "Python. It was developed to provide the " + \
+               "atmospheric science community a free and " + \
+               "consistent source of routines for analyzing sounding data. SHARPpy is constantly updated and " + \
+               "vetted by professional meteorologists and " + \
+               "climatologists within the scientific community to " + \
+               "help maintain a standard source of sounding routines.\n\n"
+        txt += desc
+        txt += "PySide version: " + str(PySide.__version__) + '\n'
+        txt += "Numpy version: " + str(np.__version__) + '\n'
+        txt += "Python version: " + str(platform.python_version()) + '\n'
+        txt += "Qt version: " + str(PySide.QtCore.__version__)
+        txt += "\n\nContribute: https://github.com/sharppy/SHARPpy/"
+        msgBox.setText(txt)
         msgBox.exec_()
+        
+        if msgBox.clickedButton() == documentationButton:
+            QDesktopServices.openUrl(QUrl('http://sharppy.github.io/SHARPpy/'))
+        elif msgBox.clickedButton() == githubButton:
+            QDesktopServices.openUrl(QUrl('https://github.com/sharppy/SHARPpy'))
+        elif msgBox.clickedButton() == bugButton:
+            QDesktopServices.openUrl(QUrl('https://github.com/sharppy/SHARPpy/issues'))
 
     def preferencesbox(self):
         pref_dialog = PrefDialog(self.config, parent=self)
@@ -979,6 +995,14 @@ class Main(QMainWindow):
         """
         self.config.toFile()
 
+def newerRelease(latest):
+    #msgBox = QMessageBox()
+    txt = "A newer version of SHARPpy (" + latest[1] + ") was found.\n\n"
+    txt += "Do you want to launch a web browser to download the new version from Github?  "
+    txt += "(if you downloaded from pip or conda you may want to use those commands instead.)"
+    ret_code = QMessageBox.information(None, "New SHARPpy Version!" , txt, QMessageBox.Yes, QMessageBox.No)
+    if ret_code == QMessageBox.Yes:
+        QDesktopServices.openUrl(QUrl(latest[2]))
 
 def main():
     ap = argparse.ArgumentParser()
@@ -1018,6 +1042,11 @@ def main():
 
     # Create an application
     app = QApplication([])
+
+    # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
+    if latest[0] is False:
+        newerRelease(latest)    
+ 
     win = createWindow(args.file_names, collect=args.collect, close=args.close)
 
     if args.file_names != [] and args.close:
