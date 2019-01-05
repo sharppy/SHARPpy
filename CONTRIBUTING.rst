@@ -93,16 +93,17 @@ package if you wish to make a contribution to the program:
 1. Install `miniconda <https://conda.io/miniconda.html>`_ on your system.
 2. Install git on your system if it is not already there (install XCode command line tools on a Mac or git bash on Windows)
 3. Login to your GitHub account and make a fork of the `SHARPpy repository <https://github.com/sharppy/SHARPpy/>`_ by clicking the "Fork" button.
-4. Clone your fork of the SHARPpy repository (in terminal on Mac/Linux or git shell/GUI on Windows) in the location you'd like to keep it 
-  ``git clone https://github.com/your-user-name/SHARPpy.git``.
-5. Navigate to that folder in the terminal or in Anaconda Prompt if you're on Windows.
+4. Clone your fork of the SHARPpy repository (in terminal on Mac/Linux or git shell/GUI on Windows) in the location you'd like to keep it:
+  ``git clone https://github.com/your-user-name/SHARPpy.git``
+
+5. Navigate to that folder in the terminal or in Anaconda Prompt if you're on Windows:
   ``cd SHARPpy``
-6. Connect your repository to the upstream (main project).
+
+6. Connect your repository to the upstream (main project):
   ``git remote add sharppy https://github.com/sharppy/SHARPpy.git``
-7. Create the development environment by running ``conda env create``. This will install
-  all of the packages in the ``environment.yml`` file.
-8. Activate our new development environment ``source activate devel`` on Mac/Linux or
-  ``activate devel`` on Windows.
+
+7. Create the development environment by running ``conda env create``. This will install all of the packages in the ``environment.yml`` file.
+8. Activate our new development environment ``source activate devel`` on Mac/Linux or ``activate devel`` on Windows.
 9. Make an editable install of SHARPpy by running ``pip install -e .``
 
 Now you're all set! You have an environment called ``devel`` that you can work in. You'll need

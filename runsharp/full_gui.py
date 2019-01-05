@@ -436,10 +436,10 @@ class Picker(QWidget):
                 def getTimes():
                     return self.data_sources[self.model].getAvailableTimes()
             else:
-                self.cal_date = self.cal.selectedDate()
                 def getTimes(): 
                     return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
+        self.cal_date = self.cal.selectedDate()
         # Function to update the times.
         def update(times):
             times = times[0]
@@ -451,11 +451,18 @@ class Picker(QWidget):
                     dt_earliest = date.datetime(1946, 1, 1)
                 elif self.model.lower() in ['gfs', 'nam', 'rap', 'nam4km', 'ruc']:
                     dt_earliest = date.datetime(2010, 12, 30)
-
-                self.cal.setLatestAvailable(dt_avail)
+                #print(self.cal_date, self.cal.selectedDate())
+                # NOTE TO TIM: setLatestAvailable resets the selectedDate of the calendar widget
+                # This is what forces the calendar widget to always reset to the latest date in the calendar
+                # whenever you switch the data source. 
+                # not sure how you want to go about fixing this. 
+                self.cal.setLatestAvailable(dt_avail, self.cal_date)
+                #print(self.cal_date, self.cal.selectedDate())
                 self.cal.setEarliestAvailable(dt_earliest)
+                #print(self.cal_date, self.cal.selectedDate())
                 self.cal_date = self.cal.selectedDate()
-
+                #print(self.cal_date, self.cal.selectedDate())
+            #print(self.cal_date)
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
 
             # Filter out only times for the specified date.
@@ -472,9 +479,14 @@ class Picker(QWidget):
                 # Pick the index for which to highlight
                 if self.model == "Observed":
                     try:
-                        self.run = [t for t in times if t.hour in [0, 12] and t.day == self.cal_date.day(
+                        # Try to grab the 0 or 12 UTC data for this day (or 3 or 15 if before 5/1/1957)
+                        if self.cal_date.toPython() >= date.datetime(1957,5,1).date():
+                            synoptic_times = [0,12]
+                        else:
+                            synoptic_times = [3,15]
+                        self.run = [t for t in times if t.hour in synoptic_times and t.day == self.cal_date.day(
                         ) and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
-                    except:
+                    except Exception as e:
                         self.run = times[-1]
                 else:
                     self.run = times[-1]
