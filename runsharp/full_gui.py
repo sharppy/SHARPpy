@@ -366,8 +366,8 @@ class Picker(QWidget):
 
         self.update_run_dropdown(updated_model=updated_model)
 
-        self.update_list()
         self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.update_list()
 
     def update_list(self):
         """
@@ -516,7 +516,11 @@ class Picker(QWidget):
                 self.run_dropdown.setEnabled(True)
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
             elif len(filtered_times) == 0:
-                self.run_dropdown.addItem(self.tr("- No times available - "))
+                if self.model == "Observed":
+                    string = "obs"
+                else:
+                    string = "runs"
+                self.run_dropdown.addItem(self.tr("- No " + string + " available - "))
                 self.run_dropdown.setCurrentIndex(0)
                 self.run_dropdown.update()
                 self.run_dropdown.setEnabled(False)
