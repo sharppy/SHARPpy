@@ -139,7 +139,7 @@ class Calendar(QCalendarWidget):
         dt_earliest = kwargs.pop('dt_earliest', date.datetime(1946, 1, 1))
         dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(
             minute=0, second=0, microsecond=0))
-
+        self.max_date = dt_avail.date()
         super(Calendar, self).__init__(*args, **kwargs)
 
         self.setGridVisible(True)
@@ -153,14 +153,26 @@ class Calendar(QCalendarWidget):
             txt_fmt.setForeground(QBrush(Qt.black))
             self.setWeekdayTextFormat(day, txt_fmt)
 
+    def paintCell(self, painter, rect, date):
+        QCalendarWidget.paintCell(self, painter, rect, date)
+        if date.toPython() > self.max_date or date.toPython() < self.min_date:
+            color = QColor('#808080')
+            color.setAlphaF(0.5)
+            painter.fillRect(rect, color)
+ 
     def setLatestAvailable(self, dt_avail):
         qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
-        self.setMaximumDate(qdate_avail)
-        self.setSelectedDate(qdate_avail)
+        #self.setMaximumDate(qdate_avail)
+        self.max_date = qdate_avail.toPython()
+        #if self.selectedDate().toPython() > qdate_avail.toPython():
+        ##    self.setSelectedDate(qdate_avail)
+        #else:
+        self.setSelectedDate(self.selectedDate())
 
     def setEarliestAvailable(self, dt_earliest):
         qdate_earliest = QDate(dt_earliest.year, dt_earliest.month, dt_earliest.day)
-        self.setMinimumDate(qdate_earliest)
+        self.min_date = dt_earliest.date()
+        #self.setMinimumDate(qdate_earliest)
 
 
 class Picker(QWidget):
@@ -236,8 +248,9 @@ class Picker(QWidget):
         self.left_data_frame.setLayout(self.left_layout)
 
         self.right_map_frame.setLayout(self.right_layout)
-
+        #print(self.run)
         self.cal = Calendar(self, dt_avail=self.run)
+        self.cal.setSelectedDate(self.run)
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = [t for t in self.all_times if t.day == self.cal_date.day(
@@ -432,38 +445,44 @@ class Picker(QWidget):
             def getTimes(): 
                 return self.data_sources[self.model].getAvailableTimes(url)
         else:
-            if updated_model:
-                def getTimes():
-                    return self.data_sources[self.model].getAvailableTimes()
-            else:
-                def getTimes(): 
-                    return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
+            def getTimes():
+                return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
         self.cal_date = self.cal.selectedDate()
         # Function to update the times.
         def update(times):
+            self.run_dropdown.clear()  # Clear all of the items from the dropdown
             times = times[0]
-
-            if updated_model:
+            #if updated_model:
+            if self.model.lower() == 'observed':
+                dt_earliest = date.datetime(1946, 1, 1)
+                dt_avail = date.datetime.utcnow()
+            elif self.model.lower() in ['gfs', 'nam']:
+                dt_earliest = date.datetime(2010, 12, 30)
+                dt_avail = date.datetime.utcnow() 
+            elif self.model.lower() == 'ruc':
+                dt_earliest = date.datetime(2010, 12, 30)
+                dt_avail = date.datetime(2012, 5, 1)
+            elif self.model.lower() == 'rap':
+                dt_earliest = date.datetime(2012, 5, 1)
+                dt_avail = date.datetime.utcnow()
+            elif self.model.lower() == 'nam nest':
+                dt_earliest = date.datetime(2013,3,25)
+                dt_avail = date.datetime.utcnow()
+            elif len(times) > 0:
                 dt_avail = max(times)
                 dt_earliest = min(times)
-                if self.model == 'observed':
-                    dt_earliest = date.datetime(1946, 1, 1)
-                elif self.model.lower() in ['gfs', 'nam', 'rap', 'nam4km', 'ruc']:
-                    dt_earliest = date.datetime(2010, 12, 30)
-                #print(self.cal_date, self.cal.selectedDate())
-                # NOTE TO TIM: setLatestAvailable resets the selectedDate of the calendar widget
-                # This is what forces the calendar widget to always reset to the latest date in the calendar
-                # whenever you switch the data source. 
-                # not sure how you want to go about fixing this. 
-                self.cal.setLatestAvailable(dt_avail, self.cal_date)
-                #print(self.cal_date, self.cal.selectedDate())
-                self.cal.setEarliestAvailable(dt_earliest)
-                #print(self.cal_date, self.cal.selectedDate())
-                self.cal_date = self.cal.selectedDate()
-                #print(self.cal_date, self.cal.selectedDate())
-            #print(self.cal_date)
-            self.run_dropdown.clear()  # Clear all of the items from the dropdown
+            #if self.model.lower() == 'ruc':
+            #    dt_avail = date.datetime(2012, 5, 1)
+            #print(self.cal_date, self.cal.selectedDate())
+            self.cal.setLatestAvailable(dt_avail)
+            #print(self.cal_date, self.cal.selectedDate())
+            self.cal.setEarliestAvailable(dt_earliest)
+            #print(self.cal_date, self.cal.selectedDate())
+            self.cal_date = self.cal.selectedDate()
+            #print(self.cal_date, self.cal.selectedDate())
+            self.cal.update()
+        #print(self.cal_date)
 
             # Filter out only times for the specified date.
             filtered_times = []
@@ -494,7 +513,14 @@ class Picker(QWidget):
                 self.run = date.datetime(1700, 1, 1, 0, 0, 0)
             self.run_dropdown.update()
             if len(filtered_times) > 0:
+                self.run_dropdown.setEnabled(True)
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
+            elif len(filtered_times) == 0:
+                self.run_dropdown.addItem(self.tr("- No times available - "))
+                self.run_dropdown.setCurrentIndex(0)
+                self.run_dropdown.update()
+                self.run_dropdown.setEnabled(False)
+
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.

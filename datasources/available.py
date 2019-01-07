@@ -315,7 +315,7 @@ def _availableat_iem(model, dt):
         dt : datetime object
             A datetime object that represents the model initalization time.
     '''
-    if model == '4km nam': model = 'nam4km'
+    if model == '4km nam' or model == 'nam nest': model = 'nam4km'
     _repl = {'gfs':'gfs3', 'nam':'namm?', 'rap':'rap', 'nam4km':'nam4kmm?', 'hrrr':'hrrr', 'sref':'sref', 'ruc':'ruc'}
 
     cycle = dt.hour
@@ -352,7 +352,7 @@ def _available_iem(model, dt=None):
         except:
             dt = datetime(dt.year(), dt.month(), dt.day())
     
-    if model == '4km nam': model = 'nam4km'
+    if model == '4km nam' or model == 'nam nest': model = 'nam4km'
 
     # Filtering out datetimes where we know there is no data on the IEM server.
     # Either due to no data, depreciated modeling systems, etc.
@@ -363,6 +363,8 @@ def _available_iem(model, dt=None):
     if model == 'ruc' and dt > datetime(2012,5,1,11,0,0): # RIP RUC
         return []
     if model == 'nam4km' and dt < datetime(2013,3,25,0,0,0): # No NAM 4 km data before this time
+        return []
+    if model == 'rap' and dt < datetime(2012,5,1): # No RAP data prior to this date
         return []
 
     if model == 'ruc' or model == 'rap':
@@ -449,7 +451,7 @@ for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 # Set the available and available-at-time functions for the IEM data.
-for model in [ 'gfs', 'nam', 'rap', 'ruc', '4km nam' ]:
+for model in [ 'gfs', 'nam', 'rap', 'ruc', 'nam nest' ]:
     available['iem'][model] = (lambda m: lambda dt=None: _available_iem(m, dt=dt))(model)
     availableat['iem'][model] = (lambda m: lambda dt: _availableat_iem(m, dt))(model)
 
