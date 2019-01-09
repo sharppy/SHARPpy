@@ -468,10 +468,6 @@ class plotAnalogues(backgroundAnalogues):
             self.ylast = self.tpad
 
     def mousePressEvent(self, e):
-        try:
-            print("PARENT1:", self.parentWidget())
-        except:
-            print("Parent widget print failed")
         if self.prof is None or (len(self.sup_matches[0]) == 0 and len(self.hail_matches[0]) == 0):
             return
 
@@ -508,7 +504,6 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
-        print("PARENT2:", self.parentWidget())
         #logging.debug("Calling plotAnaloges.parentWidget().setFocus()")
         self.parentWidget().setFocus()
 
@@ -517,13 +512,16 @@ class plotAnalogues(backgroundAnalogues):
             Load in the SARS analog you've clicked.
         """
         match_name = os.path.basename(filematch)
-        print("\n\nSETSELECION:", match_name, filematch)
-        if match_name in self.sup_matches[0]:
-            idx = np.where(self.sup_matches[0] == match_name)[0][0]
+#        print("\n\nSETSELECION:", match_name, filematch, self.sup_matches[0], self.hail_matches[0])
+        sup_matches = [sars.getSounding(f, 'supercell').split('/')[-1] for f in self.sup_matches[0]] 
+        hail_matches = [sars.getSounding(f, 'hail').split('/')[-1] for f in self.hail_matches[0]]
+#        print(sup_matches, hail_matches) 
+        if match_name in sup_matches:
+            idx = np.where(np.asarray(sup_matches, dtype=str) == match_name)[0][0]
             lbx = 0.
             ybounds = self.ybounds_sup
-        if match_name in self.hail_matches[0]:
-            idx = np.where(self.hail_matches[0] == match_name)[0][0]
+        if match_name in hail_matches:
+            idx = np.where(np.asarray(hail_matches, dtype=str) == match_name)[0][0]
             lbx = self.brx / 2.
             ybounds = self.ybounds_hail
 
@@ -533,6 +531,7 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def clearSelection(self):
         self.selectRect = None

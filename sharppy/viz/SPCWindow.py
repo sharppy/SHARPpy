@@ -616,7 +616,6 @@ class SPCWidget(QWidget):
         if prof_col.hasMeta('analogfile'):
             match = prof_col.getMeta('analogfile')
             dt = prof_col.getCurrentDate()
-            print("\n\nIN IF:", dt, match)
             if dt in match:
                 self.insets['SARS'].setSelection(match[dt])
             else:
@@ -644,7 +643,6 @@ class SPCWidget(QWidget):
         if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
             match = self.prof_collections[self.pc_idx].getMeta('analogfile')
             dt = prof_col.getCurrentDate()
-            print(dt, match)
             if dt in match:
                 self.insets['SARS'].setSelection(match[dt])
             else:
@@ -754,7 +752,6 @@ class SPCWindow(QMainWindow):
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
         super(SPCWindow, self).__init__(parent=parent)
-        print("SPCWINDOW PARENT:", parent)
         logging.debug("Initialize SPCWindow...")
         self.menu_items = []
         self.picker_window = parent
