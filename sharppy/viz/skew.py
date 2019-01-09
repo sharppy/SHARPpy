@@ -712,7 +712,7 @@ class plotSkewT(backgroundSkewT):
             
             # Example: 4 {'tmpc': 10.790866472309446} (changed the 4th point of the tmpc profile to the temperature value set in tmpc)
             # So, if we want to modify an entire layer of the sounding, we'll have to get creative.
-            print(drag_idx, {prof_name: tmpc})
+            #print(drag_idx, {prof_name: tmpc})
             self.modified.emit(drag_idx, {prof_name:tmpc})
 
         self.was_right_click = False

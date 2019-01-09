@@ -267,6 +267,7 @@ class SPCWidget(QWidget):
         # initialize swappable insets
         for inset, inset_gen in SPCWidget.inset_generators.items():
             self.insets[inset] = inset_gen()
+#            self.insets[inset].setParent(self.text)
 
         self.updateConfig(self.config, update_gui=False)
 
@@ -615,11 +616,13 @@ class SPCWidget(QWidget):
         if prof_col.hasMeta('analogfile'):
             match = prof_col.getMeta('analogfile')
             dt = prof_col.getCurrentDate()
+            print("\n\nIN IF:", dt, match)
             if dt in match:
                 self.insets['SARS'].setSelection(match[dt])
             else:
                 self.insets['SARS'].clearSelection()
         else:
+            self.insets['SARS'].setParent(self.text)
             self.insets['SARS'].clearSelection()
 
     def advanceHighlight(self, direction):
@@ -641,6 +644,7 @@ class SPCWidget(QWidget):
         if self.prof_collections[self.pc_idx].hasMeta('analogfile'):
             match = self.prof_collections[self.pc_idx].getMeta('analogfile')
             dt = prof_col.getCurrentDate()
+            print(dt, match)
             if dt in match:
                 self.insets['SARS'].setSelection(match[dt])
             else:
@@ -705,6 +709,7 @@ class SPCWidget(QWidget):
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
             self.insets[self.left_inset].setProf(self.default_prof)
             self.insets[self.left_inset].setPreferences(update_gui=False, **prefs)
+            self.insets[self.left_inset].setParent(self.text)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -726,6 +731,7 @@ class SPCWidget(QWidget):
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
             self.insets[self.right_inset].setProf(self.default_prof)
             self.insets[self.right_inset].setPreferences(update_gui=False, **prefs)
+            self.insets[self.right_inset].setParent(self.text)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
@@ -748,6 +754,7 @@ class SPCWindow(QMainWindow):
     def __init__(self, **kwargs):
         parent = kwargs.get('parent', None)
         super(SPCWindow, self).__init__(parent=parent)
+        print("SPCWINDOW PARENT:", parent)
         logging.debug("Initialize SPCWindow...")
         self.menu_items = []
         self.picker_window = parent
