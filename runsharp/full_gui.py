@@ -29,6 +29,15 @@ import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+WARNING = '\033[93m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+
 # Start the logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
@@ -83,6 +92,16 @@ except ImportError:
     has_nc = False
     print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
 
+
+def versioning_info(include_sharppy=False):
+    txt = ""
+    if include_sharppy is True:
+        txt += "SHARPpy version: " + str(__version__) + '\n'
+    txt += "PySide version: " + str(PySide.__version__) + '\n'
+    txt += "Numpy version: " + str(np.__version__) + '\n'
+    txt += "Python version: " + str(platform.python_version()) + '\n'
+    txt += "Qt version: " + str(PySide.QtCore.__version__)
+    return txt 
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -990,10 +1009,11 @@ class Main(QMainWindow):
                "climatologists within the scientific community to " + \
                "help maintain a standard source of sounding routines.\n\n"
         txt += desc
-        txt += "PySide version: " + str(PySide.__version__) + '\n'
-        txt += "Numpy version: " + str(np.__version__) + '\n'
-        txt += "Python version: " + str(platform.python_version()) + '\n'
-        txt += "Qt version: " + str(PySide.QtCore.__version__)
+        txt += versioning_info()
+        #txt += "PySide version: " + str(PySide.__version__) + '\n'
+        #txt += "Numpy version: " + str(np.__version__) + '\n'
+        #txt += "Python version: " + str(platform.python_version()) + '\n'
+        #txt += "Qt version: " + str(PySide.QtCore.__version__)
         txt += "\n\nContribute: https://github.com/sharppy/SHARPpy/"
         msgBox.setText(txt)
         msgBox.exec_()
@@ -1039,10 +1059,11 @@ def newerRelease(latest):
         QDesktopServices.openUrl(QUrl(latest[2]))
 
 @crasher(exit=True)
-def createWindow(file_names, collect=False, close=True):
+def createWindow(file_names, collect=False, close=True, output='./'):
     main_win = Main()
     for fname in file_names:
-        print("Creating image for '%s' ..." % fname)
+        txt = OKGREEN + "Creating image for '%s' ..." + ENDC
+        print(txt % fname)
         main_win.picker.skewApp(filename=fname)
         if not collect:
             fpath, fbase = os.path.split(fname)
@@ -1053,17 +1074,38 @@ def createWindow(file_names, collect=False, close=True):
                 img_base = fbase + '.png'
 
             img_name = os.path.join(fpath, img_base)
-            main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+            main_win.picker.skew.spc_widget.pixmapToFile(output + img_name)
             if fname != file_names[-1] or close:
                 main_win.picker.skew.close()
 
     if collect:
         main_win.picker.skew.spc_widget.toggleCollectObserved()
         img_name = collect[0]
-        main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+        main_win.picker.skew.spc_widget.pixmapToFile(output + img_name)
         if close:
             main_win.picker.skew.close()
 
+    return main_win
+
+@crasher(exit=False)
+def search_and_plotDB(model, station, datetime, close=True, output='./'):
+    main_win = Main()
+    main_win.picker.prof_idx = [0]
+    main_win.picker.run = datetime
+    main_win.picker.model = model
+    main_win.picker.loc = main_win.picker.data_sources[model].getPoint(station)
+    main_win.picker.disp_name = main_win.picker.loc['icao']
+    try:
+        main_win.picker.skewApp()
+    except data_source.DataSourceError:
+        print(FAIL + "Couldn't find data for the requested time and location." + ENDC)
+        return main_win
+
+    string = OKGREEN + "Creating image for station %s using data source %s at time %s ..." + ENDC
+    print( string % (station, model, datetime.strftime('%Y%m%d/%H%M')))  
+    main_win.picker.skew.spc_widget.pixmapToFile(output + datetime.strftime('%Y%m%d.%H%M_' + model + '.png'))
+    if close:
+        main_win.picker.skew.close()
     return main_win
 
 def test(fn):
@@ -1075,14 +1117,64 @@ def test(fn):
     win = createWindow([fn])
     win.close()
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('file_names', nargs='*')
-    ap.add_argument('--debug', dest='debug', action='store_true')
-    ap.add_argument('--collect', dest='collect', nargs=1, default=None)
-    ap.add_argument('--noclose', dest='close', action='store_false')
-    args = ap.parse_args()
+def parseArgs():
+    desc = """This binary launches the SHARPpy Picker and GUI from the command line.  When 
+           run from the command line without arguments, this binary simply launches the Picker 
+           and loads in the various datasets within the user's ~/.sharppy directory.  When the 
+           --debug flag is set, the GUI is run in debug mode.
+
+           When a set of files are passed as a command line argument, the program will 
+           generate images of the SHARPpy GUI for each sounding.  Soundings can be overlaid
+           on top of one another if the collect flag is set.  In addition, data from the 
+           datasources can be plotted using the datasource, station, and datetime arguments."""
+    data_sources = [key for key in data_source.loadDataSources().keys()]
+    ep = "Available Datasources: " + ', '.join(data_sources)
+    ap = argparse.ArgumentParser(description=desc, epilog=ep)
+
+    ap.add_argument('file_names', nargs='*',
+                    help='a list of files to read and plot')
+    ap.add_argument('--debug', dest='debug', action='store_true',
+                    help='turns on debug mode for the GUI')
+    ap.add_argument('--version', dest='version', action='store_true',
+                    help="print out versioning information")
+    ap.add_argument('--collect', dest='collect', action='store_true',
+                    help="overlay profiles from filename on top of one another in GUI image")
+    #ap.add_argument('--noclose', dest='close', action='store_false',
+    #                help="do not close the GUI after viewing the image")
+    group = ap.add_argument_group("datasource access arguments")
+
+    group.add_argument('--datasource', dest='ds', type=str, 
+                    help="the name of the datasource to search")
+    group.add_argument('--station', dest='stn', type=str,
+                    help="the name of the station to plot (ICAO, IATA)")
+    group.add_argument('--datetime', dest='dt', type=str, 
+                    help="the date/time of the data to plot (YYYYMMDD/HH)")
+    ap.add_argument('--output', dest='output', type=str,
+                    help="the output directory to store the images", default='./')
+    args = ap.parse_args() 
+
+    # Print out versioning information and quit
+    if args.version is True:
+        ap.exit(0, versioning_info(True) + '\n')
     
+    # Catch invalid data source 
+    if args.ds is not None and args.ds not in data_sources:
+        txt = FAIL + "Invalid data source passed to the program.  Exiting." + ENDC
+        ap.error(txt)
+
+    # Catch invalid datetime format
+    if args.dt is not None:
+        try:
+            date.datetime.strptime(args.dt , '%Y%m%d/%H')
+        except:
+            txt = FAIL + "Invalid datetime passed to the program. Exiting." + ENDC
+            ap.error(txt)
+
+    return args
+
+def main():
+    args = parseArgs()
+ 
     # Create an application
     if QApplication.instance() is None:
         app = QApplication([])
@@ -1100,12 +1192,16 @@ def main():
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
     if latest[0] is False:
         newerRelease(latest)    
- 
-    win = createWindow(args.file_names, collect=args.collect, close=args.close)
 
-    if args.file_names != [] and args.close:
+    if args.dt is not None and args.ds is not None and args.stn is not None:
+        dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")   
+        win = search_and_plotDB(args.ds, args.stn, dt, args.output)
+        win.close()
+    elif args.file_names != []:
+        win = createWindow(args.file_names, collect=args.collect, close=True, output=args.output)
         win.close()
     else:
+        main_win = Main()
         sys.exit(app.exec_())
 
 
