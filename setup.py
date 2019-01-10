@@ -28,7 +28,6 @@ packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 's
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
                      "databases/shapefiles/*", "../rc/*"],}
 include_package_data = True
-classifiers = ["Development Status :: 3 - Alpha"]
 
 #install_requires = ['pyside>=1.2.1', 'numpy>=1.10.1']
 install_requires = []
@@ -69,6 +68,13 @@ shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
 
 ver = versioneer.get_version()
 ver = ver.split('-')[0]
+if 'a' in ver:
+    classifiers = ["Development Status :: 3 - Alpha"]
+elif 'b' in ver:
+    classifiers = ["Development Status :: 4 - Beta"]
+else:
+    classifiers = ["Development Status :: 5 - Production/Stable"]
+
 setup(
     name = name,
     author = author,

@@ -1,6 +1,8 @@
 import os
+print("Current DIR:", os.getcwd())
 import sys
 import pytest
+print("Current DIR:", os.getcwd())
 #import runsharp.full_gui as full_gui
 from runsharp import full_gui
 
