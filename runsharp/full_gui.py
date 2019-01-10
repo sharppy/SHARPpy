@@ -73,11 +73,6 @@ logging.info('PySide version: ' + str(PySide.__version__))
 logging.info("Python version: " + str(platform.python_version()))
 logging.info("Qt version: " + str(PySide.QtCore.__version__))
 
-if latest[0] is False:
-    logging.info("A newer release of SHARPpy was found on Github Releases.")
-else:
-    logging.info("This is the most recent version of SHARPpy.")
-
 # from sharppy._version import __version__#, __version_name__
 
 __version_name__ = ''
@@ -1096,6 +1091,11 @@ def main():
 
     # Check to see if there's a newer version of SHARPpy on Github Releases
     latest = check_latest()
+
+    if latest[0] is False:
+        logging.info("A newer release of SHARPpy was found on Github Releases.")
+    else:
+        logging.info("This is the most recent version of SHARPpy.")
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
     if latest[0] is False:
