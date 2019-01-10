@@ -27,9 +27,6 @@ import logging
 import PySide
 import platform
 
-# Check to see if there's a newer version of SHARPpy on Github Releases
-latest = check_latest()
-
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 
 # Start the logging
@@ -1096,6 +1093,9 @@ def main():
         app = QApplication([])
     else:
         app = QApplication.instance()
+
+    # Check to see if there's a newer version of SHARPpy on Github Releases
+    latest = check_latest()
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
     if latest[0] is False:
