@@ -1,8 +1,8 @@
 import os
 import sys
 import pytest
-import runsharp.full_gui as full_gui
-#from runsharp import full_gui
+#import runsharp.full_gui as full_gui
+from runsharp import full_gui
 
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")
 def test_main_entry_pt():
