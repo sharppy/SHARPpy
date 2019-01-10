@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990525/0300F000    fst 
+  FST 990525/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          10.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   34 C	7.8 C/km
+
+----- Note -----
+Old Title:  RUC 990525/0300F000    fst 
+

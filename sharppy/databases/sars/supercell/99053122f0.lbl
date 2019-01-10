@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990531/2200F000    lbl 
+  LBL 990531/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          12.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.1 C/km
 850-500mb   36 C	8.4 C/km
+
+----- Note -----
+Old Title:  RUC 990531/2200F000    lbl 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990926/0000F000    gky 
+  GKY 990926/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          13.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.3 C/km
 850-500mb   29 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 990926/0000F000    gky 
+

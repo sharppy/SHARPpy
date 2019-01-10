@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990628/0100F000    bgd 
+  BGD 990628/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          13.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.5 C/km
 850-500mb   37 C	8.4 C/km
+
+----- Note -----
+Old Title:  RUC 990628/0100F000    bgd 
+

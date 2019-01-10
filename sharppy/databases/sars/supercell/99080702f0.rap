@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990807/0200F000    rap 
+  RAP 990807/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          12.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.3 C/km
 850-500mb   30 C	6.8 C/km
+
+----- Note -----
+Old Title:  RUC 990807/0200F000    rap 
+

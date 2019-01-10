@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000720/0400F000    gld 
+  GLD 000720/0400     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          12.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.4 C/km
 850-500mb   34 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000720/0400F000    gld 
+

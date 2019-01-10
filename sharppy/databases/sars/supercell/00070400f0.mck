@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000704/0000F000    mck 
+  MCK 000704/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          14.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.6 C/km
 850-500mb   31 C	7.0 C/km
+
+----- Note -----
+Old Title:  RUC 000704/0000F000    mck 
+

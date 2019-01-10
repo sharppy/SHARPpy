@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990627/0100F000    mck 
+  MCK 990627/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          16.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.2 C/km
 850-500mb   35 C	7.9 C/km
+
+----- Note -----
+Old Title:  RUC 990627/0100F000    mck 
+

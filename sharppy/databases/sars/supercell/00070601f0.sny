@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000706/0100F000    sny 
+  SNY 000706/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          13.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.1 C/km
 850-500mb   37 C	8.4 C/km
+
+----- Note -----
+Old Title:  RUC 000706/0100F000    sny 
+

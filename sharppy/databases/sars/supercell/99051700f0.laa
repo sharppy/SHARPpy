@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990517/0000F000    laa 
+  LAA 990517/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          7.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.6 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 990517/0000F000    laa 
+

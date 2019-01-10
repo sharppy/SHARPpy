@@ -1,5 +1,5 @@
 %TITLE%
- RUC 001031/2200F000    fnb 
+  FNB 001031/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.9 C/km
 850-500mb   28 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 001031/2200F000    fnb 
+

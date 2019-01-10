@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000420/2100F000    bwg 
+  BWG 000420/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          11.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.4 C/km
 850-500mb   27 C	6.2 C/km
+
+----- Note -----
+Old Title:  RUC 000420/2100F000    bwg 
+

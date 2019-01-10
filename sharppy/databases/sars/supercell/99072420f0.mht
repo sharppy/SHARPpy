@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990724/2000F000    mht 
+  MHT 990724/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.5 C/km
 850-500mb   29 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 990724/2000F000    mht 
+

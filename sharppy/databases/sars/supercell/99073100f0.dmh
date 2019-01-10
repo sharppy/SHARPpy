@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990731/0000F000    dmh 
+  DMH 990731/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.0 C/km
 850-500mb   31 C	7.3 C/km
+
+----- Note -----
+Old Title:  RUC 990731/0000F000    dmh 
+

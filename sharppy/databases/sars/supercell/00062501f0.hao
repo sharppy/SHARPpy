@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000625/0100F000    hao 
+  HAO 000625/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          13.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.7 C/km
 850-500mb   28 C	6.4 C/km
+
+----- Note -----
+Old Title:  RUC 000625/0100F000    hao 
+

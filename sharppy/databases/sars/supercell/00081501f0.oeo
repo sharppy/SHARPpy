@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000815/0100F000    oeo 
+  OEO 000815/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          16.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.5 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 000815/0100F000    oeo 
+

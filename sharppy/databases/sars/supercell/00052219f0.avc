@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000522/1900F000    avc 
+  AVC 000522/1900     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          10.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.9 C/km
 850-500mb   26 C	6.1 C/km
+
+----- Note -----
+Old Title:  RUC 000522/1900F000    avc 
+

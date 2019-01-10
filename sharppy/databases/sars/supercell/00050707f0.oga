@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000507/0700F000    oga 
+  OGA 000507/0700     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          11.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.2 C/km
 850-500mb   28 C	6.4 C/km
+
+----- Note -----
+Old Title:  RUC 000507/0700F000    oga 
+

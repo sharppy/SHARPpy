@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990809/0100F000    dik 
+  DIK 990809/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          12.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.5 C/km
 850-500mb   36 C	8.4 C/km
+
+----- Note -----
+Old Title:  RUC 990809/0100F000    dik 
+

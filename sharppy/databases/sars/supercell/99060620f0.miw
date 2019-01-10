@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990606/2000F000    miw 
+  MIW 990606/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          16.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.4 C/km
 850-500mb   31 C	7.2 C/km
+
+----- Note -----
+Old Title:  RUC 990606/2000F000    miw 
+

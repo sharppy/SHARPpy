@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990521/2300F000    rap 
+  RAP 990521/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          8.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.7 C/km
 850-500mb   37 C	8.7 C/km
+
+----- Note -----
+Old Title:  RUC 990521/2300F000    rap 
+

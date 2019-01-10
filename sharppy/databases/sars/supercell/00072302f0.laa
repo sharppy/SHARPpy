@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000723/0200F000    laa 
+  LAA 000723/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          10.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.7 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000723/0200F000    laa 
+

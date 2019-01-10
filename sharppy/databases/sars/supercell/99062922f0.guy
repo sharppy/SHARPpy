@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990629/2200F000    guy 
+  GUY 990629/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          13.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   24 C 	9.0 C/km
 850-500mb   39 C	8.7 C/km
+
+----- Note -----
+Old Title:  RUC 990629/2200F000    guy 
+

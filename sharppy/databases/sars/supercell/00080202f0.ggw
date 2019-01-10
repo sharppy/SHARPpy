@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000802/0200F000    ggw 
+  GGW 000802/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          10.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.0 C/km
 850-500mb   35 C	8.0 C/km
+
+----- Note -----
+Old Title:  RUC 000802/0200F000    ggw 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000625/2200F000    ama 
+  AMA 000625/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          13.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   39 C	8.9 C/km
+
+----- Note -----
+Old Title:  RUC 000625/2200F000    ama 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000702/2200F000    ryv 
+  RYV 000702/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          15.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	5.9 C/km
 850-500mb   29 C	6.6 C/km
+
+----- Note -----
+Old Title:  RUC 000702/2200F000    ryv 
+

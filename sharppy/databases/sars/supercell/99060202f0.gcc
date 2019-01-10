@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990602/0200F000    gcc 
+  GCC 990602/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          6.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   34 C	8.0 C/km
+
+----- Note -----
+Old Title:  RUC 990602/0200F000    gcc 
+
