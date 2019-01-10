@@ -12,6 +12,7 @@ omit =
     sharppy/viz/barbs.py
     sharppy/viz/preferences.py
     sharppy/viz/generic.py
+    sharppy/databases/check_sars_cal.py
 
 [report]
 exclude_lines = 
