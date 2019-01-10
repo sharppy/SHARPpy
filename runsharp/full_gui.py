@@ -1046,6 +1046,43 @@ def newerRelease(latest):
     if ret_code == QMessageBox.Yes:
         QDesktopServices.openUrl(QUrl(latest[2]))
 
+@crasher(exit=True)
+def createWindow(file_names, collect=False, close=True):
+    main_win = Main()
+    for fname in file_names:
+        print("Creating image for '%s' ..." % fname)
+        main_win.picker.skewApp(filename=fname)
+        if not collect:
+            fpath, fbase = os.path.split(fname)
+
+            if '.' in fbase:
+                img_base = ".".join(fbase.split(".")[:-1] + ['png'])
+            else:
+                img_base = fbase + '.png'
+
+            img_name = os.path.join(fpath, img_base)
+            main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+            if fname != file_names[-1] or close:
+                main_win.picker.skew.close()
+
+    if collect:
+        main_win.picker.skew.spc_widget.toggleCollectObserved()
+        img_name = collect[0]
+        main_win.picker.skew.spc_widget.pixmapToFile(img_name)
+        if close:
+            main_win.picker.skew.close()
+
+    return main_win
+
+def test(fn):
+    # Run the binary and output a test profile
+    if QApplication.instance() is None:
+        app = QApplication([])
+    else:
+        app = QApplication.instance()
+    win = createWindow([fn])
+    win.close()
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('file_names', nargs='*')
@@ -1053,37 +1090,12 @@ def main():
     ap.add_argument('--collect', dest='collect', nargs=1, default=None)
     ap.add_argument('--noclose', dest='close', action='store_false')
     args = ap.parse_args()
-
-    @crasher(exit=True)
-    def createWindow(file_names, collect=False, close=True):
-        main_win = Main()
-        for fname in file_names:
-            print("Creating image for '%s' ..." % fname)
-            main_win.picker.skewApp(filename=fname)
-            if not collect:
-                fpath, fbase = os.path.split(fname)
-
-                if '.' in fbase:
-                    img_base = ".".join(fbase.split(".")[:-1] + ['png'])
-                else:
-                    img_base = fbase + '.png'
-
-                img_name = os.path.join(fpath, img_base)
-                main_win.picker.skew.spc_widget.pixmapToFile(img_name)
-                if fname != file_names[-1] or close:
-                    main_win.picker.skew.close()
-
-        if collect:
-            main_win.picker.skew.spc_widget.toggleCollectObserved()
-            img_name = collect[0]
-            main_win.picker.skew.spc_widget.pixmapToFile(img_name)
-            if close:
-                main_win.picker.skew.close()
-
-        return main_win
-
+    
     # Create an application
-    app = QApplication([])
+    if QApplication.instance() is None:
+        app = QApplication([])
+    else:
+        app = QApplication.instance()
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
     if latest[0] is False:
