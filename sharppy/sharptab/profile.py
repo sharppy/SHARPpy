@@ -951,6 +951,8 @@ class ConvectiveProfile(BasicProfile):
         wspd = utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])
         self.right_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.right_srh1km[0], utils.KTS2MS(wspd))
         self.left_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.left_srh1km[0], utils.KTS2MS(wspd))
+        self.sherbe = params.sherb(self, effective=True)
+        
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
             self.right_stp_cin = 0.0; self.left_stp_cin = 0.0
