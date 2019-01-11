@@ -3,9 +3,11 @@ environment:
     - PYTHON_VERSION: 2.7
       MINICONDA: C:\Miniconda
       ARCH: "64"
+      NUMPY_VERSION: "1.15.*"
     - PYTHON_VERSION: 3.6
       MINICONDA: C:\Miniconda3
       ARCH: "64"
+      NUMPY_VERSION: "1.15.*"
 init:
   - "ECHO %PYTHON_VERSION% %MINICONDA%"
 
@@ -14,11 +16,11 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - "conda create -q -n test-environment python=%PYTHON_VERSION% numpy nose"
+  - "conda create -q -n test-environment python=%PYTHON_VERSION%"
 
   # Install dependencies
   - activate test-environment
-  - conda install -q -c conda-forge pyside pyinstaller pytest
+  - "conda install -q -c conda-forge pyside pyinstaller pytest numpy=%NUMPY_VERSION%"
  
   # Add to path the current folder
   #- "SET PYTHONPATH=%PYTHONPATH%;%CD%"
@@ -39,8 +41,11 @@ before_deploy:
   - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 artifacts:
-  path: "dist\\SHARPpy64.exe"
-  name: "SHARPpy64"
+  - path: "dist\\SHARPpy64.exe"
+    name: "SHARPpy64"
+  
+  - path: "*.png"
+    name: test images
 
 deploy:
   provider: GitHub
