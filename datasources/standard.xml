@@ -2,93 +2,93 @@
 <sourcelist>
     <datasource name="GFS" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/{cycle}/gfs3_{srcid}.buf" format="bufkit" >
-            <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24"/>
+            <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24" start="-" end="-"/>
             <points csv="gfs.csv" />
         </outlet> 
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/gfs/gfs3_{srcid}.buf" format="bufkit" >
-            <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24"/>
+            <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24" start="2010/12/30" end="now"/>
             <points csv="gfs.csv" />
         </outlet>
     </datasource>
     <datasource name="NAM" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAM/{cycle}/nam_{srcid}.buf" format="bufkit" >
-            <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
+            <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24" start="-" end="-"/>
             <points csv="nam.csv" />
         </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam/namm_{srcid}.buf" format="bufkit" >
-            <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
+            <time first="0" range="84" delta="1" offset="0" delay="3" cycle="6" archive="24" start="2010/12/30" end="now"/>
             <points csv="nam.csv" />
         </outlet>
     </datasource>
     <datasource name="RAP" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/RAP/{cycle}/rap_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24" start="-" end="-"/>
             <points csv="rap.csv" />
         </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/rap/rap_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24" start="2012/05/01" end="now"/>
             <points csv="rap.csv" />
         </outlet>
     </datasource>
     <datasource name="HRRR" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HRRR/{cycle}/hrrr_{srcid}.buf" format="bufkit" >
-            <time first="0" range="15" delta="1" offset="0" delay="2" cycle="1" archive="24"/>
+            <time first="0" range="15" delta="1" offset="0" delay="2" cycle="1" archive="24" start="-" end="-"/>
             <points csv="hrrr.csv" />
         </outlet>
     </datasource>
     <datasource name="NAM NEST" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/NAMNEST/{cycle}/namnest_{srcid}.buf" format="bufkit" >
-            <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
+            <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24" start="-" end="-"/>
             <points csv="nam3km.csv" />
         </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/nam4km/nam4km_{srcid}.buf" format="bufkit" >
-            <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24"/>
+            <time first="0" range="60" delta="1" offset="0" delay="3" cycle="6" archive="24" start="2013/03/25" end="now"/>
             <points csv="nam3km.csv" />
         </outlet>
     </datasource>
     <datasource name="RUC" ensemble="false" observed="false">
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/ruc/ruc_{srcid}.buf" format="bufkit" >
-            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24"/>
+            <time first="0" range="18" delta="1" offset="0" delay="1" cycle="1" archive="24" start="2010/12/30" end="2012/05/01"/>
             <points csv="rap.csv" />
         </outlet>
     </datasource>
     <datasource name="SREF" ensemble="true" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/SREF/{cycle}/sref_{srcid}.buf" format="bufkit" >
-            <time first="0" range="84" delta="1" offset="3" delay="4" cycle="6" archive="24"/>
+            <time first="0" range="84" delta="1" offset="3" delay="4" cycle="6" archive="24" start="-" end="-"/>
             <points csv="sref.csv" />
         </outlet>
     </datasource>
     <datasource name="HiResW CONUS ARW" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HIRESW/{cycle}/arw/arw_{srcid}.buf" format="bufkit" >
-            <time first="0" range="48" delta="1" offset="0" delay="4" cycle="12" archive="24"/>
+            <time first="0" range="48" delta="1" offset="0" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="hires_conus.csv" />
         </outlet>
     </datasource>
     <datasource name="HiResW CONUS NMB" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HIRESW/{cycle}/nmb/nmb_{srcid}.buf" format="bufkit" >
-            <time first="0" range="48" delta="1" offset="0" delay="4" cycle="12" archive="24"/>
+            <time first="0" range="48" delta="1" offset="0" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="hires_conus.csv" />
         </outlet>
     </datasource>
     <datasource name="HiResW Alaska ARW" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HIRESW/{cycle}/arw/arw_{srcid}.buf" format="bufkit" >
-            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24"/>
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="hires_ak.csv" />
         </outlet>
     </datasource>
     <datasource name="HiResW Alaska NMB" ensemble="false" observed="false">
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/HIRESW/{cycle}/nmb/nmb_{srcid}.buf" format="bufkit" >
-            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24"/>
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="hires_ak.csv" />
         </outlet>
     </datasource>
     <datasource name="Observed" ensemble="false" observed="true">
         <outlet name="SPC" url="http://www.spc.noaa.gov/exper/soundings/{date}{cycle}_OBS/{srcid}.txt" format="spc" >
-            <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168"/>
+            <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168" start="-" end="-"/>
             <points csv="spc_ua.csv" />
         </outlet>
         <outlet name="SHARP" url="http://sharp.weather.ou.edu/soundings/archive/{year}/{month}/{day}/{cycle}/{srcid}.txt" format="spc" >
-            <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168"/>
+            <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168" start="1946/01/01" end="now"/>
             <points csv="sharp.csv" />
         </outlet>
     </datasource>

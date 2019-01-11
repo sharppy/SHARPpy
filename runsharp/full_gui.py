@@ -464,36 +464,21 @@ class Picker(QWidget):
         def update(times):
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
             times = times[0]
-            #if updated_model:
-            if self.model.lower() == 'observed':
-                dt_earliest = date.datetime(1946, 1, 1)
-                dt_avail = date.datetime.utcnow()
-            elif self.model.lower() in ['gfs', 'nam']:
-                dt_earliest = date.datetime(2010, 12, 30)
-                dt_avail = date.datetime.utcnow() 
-            elif self.model.lower() == 'ruc':
-                dt_earliest = date.datetime(2010, 12, 30)
-                dt_avail = date.datetime(2012, 5, 1)
-            elif self.model.lower() == 'rap':
-                dt_earliest = date.datetime(2012, 5, 1)
-                dt_avail = date.datetime.utcnow()
-            elif self.model.lower() == 'nam nest':
-                dt_earliest = date.datetime(2013,3,25)
-                dt_avail = date.datetime.utcnow()
-            elif len(times) > 0:
+            time_span = self.data_sources[self.model].updateTimeSpan()
+            for outlet in time_span:
+                if np.asarray(outlet).all() == None:
+                    span = True
+                else:
+                    dt_earliest = outlet[0]
+                    dt_avail = outlet[1]
+                    span = False
+            if span is True and len(times) > 0:
                 dt_avail = max(times)
                 dt_earliest = min(times)
-            #if self.model.lower() == 'ruc':
-            #    dt_avail = date.datetime(2012, 5, 1)
-            #print(self.cal_date, self.cal.selectedDate())
             self.cal.setLatestAvailable(dt_avail)
-            #print(self.cal_date, self.cal.selectedDate())
             self.cal.setEarliestAvailable(dt_earliest)
-            #print(self.cal_date, self.cal.selectedDate())
             self.cal_date = self.cal.selectedDate()
-            #print(self.cal_date, self.cal.selectedDate())
             self.cal.update()
-        #print(self.cal_date)
 
             # Filter out only times for the specified date.
             filtered_times = []
