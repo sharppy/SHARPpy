@@ -20,7 +20,7 @@ install:
 
   # Install dependencies
   - activate test-environment
-  - "conda install -q -c conda-forge pyside pyinstaller pytest numpy=%NUMPY_VERSION%"
+  - "conda install -q -c conda-forge pyside pyinstaller pytest requests numpy=%NUMPY_VERSION%"
  
   # Add to path the current folder
   #- "SET PYTHONPATH=%PYTHONPATH%;%CD%"
@@ -32,8 +32,8 @@ build: off
 
 # Turning off Test Script for now  
 test_script:
-  - pytest -v
   - sharppy examples/data/14061619.OAX
+  - pytest -v
 
 before_deploy:
   # Make binaries using PyInstaller
