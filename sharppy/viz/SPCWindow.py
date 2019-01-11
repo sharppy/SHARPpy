@@ -685,7 +685,7 @@ class SPCWidget(QWidget):
             self.setFocus()
 
     def swapInset(self):
-        logging.debug("Swapping an inset.")
+        logging.debug("Swapping the " + self.inset_to_swap + " inset.")
         ## This will swap either the left or right inset depending on whether or not the
         ## self.inset_to_swap value is LEFT or RIGHT.
         a = self.menu_ag.checkedAction()
@@ -922,14 +922,13 @@ class SPCWindow(QMainWindow):
             actions[names.index("Remove")].setVisible(False)
 
     def keyPressEvent(self, e):
-        #TODO: Up and down keys to loop through profile collection members.
-        if e.key() == Qt.Key_Left:
+        if e.key() == Qt.Key_Left: # Step forward/backwards in time
             self.spc_widget.advanceTime(-1)
             self.setInterpolated(self.spc_widget.isInterpolated())
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
             self.setInterpolated(self.spc_widget.isInterpolated())
-        elif e.key() == Qt.Key_Up:
+        elif e.key() == Qt.Key_Up: # Change focus from member to member of the ensemble
             self.spc_widget.advanceHighlight(1)
         elif e.key() == Qt.Key_Down:
             self.spc_widget.advanceHighlight(-1)
@@ -941,6 +940,7 @@ class SPCWindow(QMainWindow):
             # Save an image
             self.spc_widget.saveimage()
         elif e.key() == Qt.Key_W:
+            # Return focus to the Sounding Picker
             self.focusPicker()
 
     def closeEvent(self, e):
