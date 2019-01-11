@@ -30,9 +30,6 @@ class backgroundFire(QtGui.QFrame):
         self.lpad = 5; self.rpad = 5
         self.tpad = 3; self.bpad = 3
         self.os_mod = 0
-        if platform.system() == "Windows":
-            self.os_mod = self.label_metrics.descent()
-
         self.barby = 0
         self.wid = self.size().width()
         self.hgt = self.size().height()
@@ -51,6 +48,9 @@ class backgroundFire(QtGui.QFrame):
         self.fosberg_metrics = QtGui.QFontMetrics( self.fosberg_font )
         self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
+        if platform.system() == "Windows":
+            self.os_mod = self.label_metrics.descent()
+
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
