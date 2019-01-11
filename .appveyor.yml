@@ -18,10 +18,10 @@ install:
 
   # Install dependencies
   - activate test-environment
-  - conda install -q -c conda-forge pyside pyinstaller pytest-cov
+  - conda install -q -c conda-forge pyside pyinstaller pytest
  
   # Add to path the current folder
-  - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
+  #- "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
   - "pip install -e ."
@@ -30,10 +30,10 @@ build: off
 
 # Turning off Test Script for now  
 test_script:
-  - pytest --cov -v
+  - pytest -v
 #  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
 
-after_test:
+before_deploy:
   # Make binaries using PyInstaller
   - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
   - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
