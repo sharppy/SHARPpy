@@ -216,6 +216,7 @@ class Picker(QWidget):
 
         urls = data_source.pingURLs(self.data_sources)
         self.has_connection = any(urls.values())
+        self.strictQC = True
 
         # initialize the UI
         self.__initUI()
@@ -739,7 +740,7 @@ class Picker(QWidget):
             logging.debug("Focusing on the SkewApp")
             self.focusSkewApp()
             logging.debug("Adding the profile collection to SPCWindow")
-            self.skew.addProfileCollection(prof_collection)
+            self.skew.addProfileCollection(prof_collection, check_integrity=self.strictQC)
         else:
             print("There was an exception:", exc)
 
@@ -790,6 +791,8 @@ class Picker(QWidget):
     def hasConnection(self):
         return self.has_connection
 
+    def setStrictQC(self, val):
+        self.strictQC = val
 
 @progress(Picker.async_obj)
 def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=None):
@@ -1044,11 +1047,12 @@ def newerRelease(latest):
         QDesktopServices.openUrl(QUrl(latest[2]))
 
 @crasher(exit=True)
-def createWindow(file_names, collect=False, close=True, output='./'):
+def createWindow(file_names, collect=False, close=True, output='./', strictQC=False):
     main_win = Main()
     for fname in file_names:
         txt = OKGREEN + "Creating image for '%s' ..." + ENDC
         print(txt % fname)
+        main_win.picker.setStrictQC(strictQC)
         main_win.picker.skewApp(filename=fname)
         if not collect:
             fpath, fbase = os.path.split(fname)
@@ -1099,7 +1103,7 @@ def test(fn):
         app = QApplication([])
     else:
         app = QApplication.instance()
-    win = createWindow([fn])
+    win = createWindow(fn, strictQC=False)
     win.close()
 
 def parseArgs():

@@ -847,17 +847,18 @@ class SPCWindow(QMainWindow):
         for mitem in menu_items:
             mitem.menuAction().setVisible(False)
 
-    def addProfileCollection(self, prof_col, focus=True):
+    def addProfileCollection(self, prof_col, focus=True, check_integrity=True):
         logging.debug("Calling SPCWindow.addProfileCollection")
 
-        logging.debug("Testing data integrity")
-        exit_code = self.testDataIntegrity(prof_col.getHighlightedProf())
-        if exit_code == 0:
-            if len(self.menu_items) == 0:
-                self.focusPicker()
-                self.close()
-            else:
-                return
+        if check_integrity is True:
+            logging.debug("Testing data integrity")
+            exit_code = self.testDataIntegrity(prof_col.getHighlightedProf())
+            if exit_code == 0:
+                if len(self.menu_items) == 0:
+                    self.focusPicker()
+                    self.close()
+                else:
+                    return
 
         menu_name = self.createMenuName(prof_col)
         if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):

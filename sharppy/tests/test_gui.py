@@ -16,8 +16,12 @@ import numpy as np
 dec = SPCDecoder('examples/data/14061619.OAX')
 prof_coll = dec.getProfiles()
 prof = prof_coll.getCurrentProfs()['']
-app = QtGui.QApplication([])    
-    
+
+if QtGui.QApplication.instance() is None:
+    app = QtGui.QApplication([])    
+else:
+    app = QtGui.QApplication.instance()
+
 #@pytest.mark.skipif(True, reason="DISPLAY not set")
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")
 def test_insets():

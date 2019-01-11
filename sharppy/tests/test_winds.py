@@ -103,4 +103,8 @@ def test_mbe_vectors():
     returned = winds.mbe_vectors(prof)
     npt.assert_almost_equal(returned, correct)
 
+def test_critical_angle():
+    correct = [169.2658597]
+    returned = [winds.critical_angle(prof)]
+    npt.assert_almost_equal(returned, correct)
 

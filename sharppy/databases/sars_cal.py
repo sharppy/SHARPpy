@@ -1,8 +1,9 @@
-import sars
+import sharppy.databases.sars as sars
 import sharppy.sharptab as tab
 from sharppy.io.spc_decoder import SPCDecoder
 import numpy as np
 from datetime import datetime
+import os
 
 def get_profile(fname, sars_type):
     # Create a convective profile object
@@ -55,7 +56,8 @@ def calc_inputs(new_prof, sars_type):
     
 def check_supercell_cal(use_db=True):
     # Use to check the SARS supercell calibration
-    supercell_db = np.loadtxt('sars_supercell.txt', skiprows=1, dtype=bytes, comments="%%%%") 
+    database_fn = os.path.join( os.path.dirname( __file__ ), 'sars_supercell.txt' )
+    supercell_db = np.loadtxt(database_fn, skiprows=1, dtype=bytes, comments="%%%%") 
     hits = 0
     fa = 0
     cn = 0
@@ -95,6 +97,7 @@ def check_supercell_cal(use_db=True):
             miss += 1
     print("--- SARS SUPERCELL CALIBRATION ---")
     print_stats(hits, cn, miss, fa, match)
+    return {'hits': hits, 'cn': cn, 'miss':miss, 'fa': fa, 'match':match}
 
 def print_stats(hits, cn, miss, fa, matches):
     # Print out the verification stats
@@ -112,9 +115,27 @@ def print_stats(hits, cn, miss, fa, matches):
     print("TSS: %.3f" % (float(hits)/float(hits+miss) - float(fa)/float(fa+cn)))
     print()
 
+def calc_verification(vals):
+    stats = {}
+    stats['num'] = vals['hits'] + vals['cn'] + vals['miss'] + vals['fa']
+    for key in vals.keys():
+        stats[key] = vals[key]
+    hits = stats['hits']
+    miss = stats['miss']
+    fa = stats['fa']
+    cn = stats['cn']
+    stats["ACCURACY"] = float(hits+cn)/float(hits+cn+miss+fa)
+    stats["BIAS"] = float(hits+fa)/float(hits+miss)
+    stats["POD"] = float(hits)/float(hits+miss)
+    stats["FAR"] = float(fa)/float(fa+hits)
+    stats["CSI"] = float(hits)/float(hits + miss + fa)
+    stats["TSS"] = float(hits)/float(hits+miss) - float(fa)/float(fa+cn)
+    return stats
+
 def check_hail_cal(use_db=True):
     # Check the calibration of the SARS hail 
-    hail_db = np.loadtxt('sars_hail.txt', skiprows=1, dtype=bytes)
+    database_fn = os.path.join( os.path.dirname( __file__ ), 'sars_hail.txt' )
+    hail_db = np.loadtxt(database_fn, skiprows=1, dtype=bytes)
     hits = 0
     cn = 0
     miss = 0
@@ -153,7 +174,8 @@ def check_hail_cal(use_db=True):
             miss += 1
     print("--- SARS HAIL CALIBRATION ---")
     print_stats(hits, cn, miss, fa, match)
+    return {'hits': hits, 'cn': cn, 'miss':miss, 'fa': fa, 'match':match}
 
-check_db = False
-check_supercell_cal(check_db)
-check_hail_cal(check_db)
+#check_db = False
+#check_supercell_cal(check_db)
+#check_hail_cal(check_db)
