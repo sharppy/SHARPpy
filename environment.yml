@@ -9,7 +9,8 @@ dependencies:
   - sphinx
   - sphinx-gallery
   - sphinx-rtd-theme
-  - pytest
+  - pytest-cov
+  - matplotlib
   - pip:
     - sphinx-prompt
     - pydocstyle
