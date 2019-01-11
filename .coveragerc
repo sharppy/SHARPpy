@@ -1,5 +1,7 @@
 [run]
 source = sharppy
+         runsharp
+         datasources
 omit = 
     */tests*
     _*.py
@@ -13,7 +15,10 @@ omit =
     sharppy/viz/preferences.py
     sharppy/viz/generic.py
     sharppy/io/arw_decoder.py
- 
+    runsharp/SHARPpy.py
+    datasources/available.py
+    sharppy/plot/*
+
 [report]
 exclude_lines = 
     if __name__ == .__main__.:
@@ -36,3 +41,5 @@ exclude_lines =
     def showCursorMenu
     class SfcModifyDialog
     class PWDatabase
+    def get_profile
+    def calc_inputs

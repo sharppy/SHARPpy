@@ -429,8 +429,8 @@ available = {
     'psu':{}, 
     'iem':{}, 
     'spc':{'observed': lambda dt=None: _available_spc(dt=dt)},
-    'ou_pecan': {'pecan ensemble': lambda dt=None: _available_oupecan(dt=dt) },
-    'ncar_ens': {'ncar ensemble': lambda dt=None: _available_ncarens(dt=dt) },
+#    'ou_pecan': {'pecan ensemble': lambda dt=None: _available_oupecan(dt=dt) },
+#    'ncar_ens': {'ncar ensemble': lambda dt=None: _available_ncarens(dt=dt) },
     'sharp': {'ncar ensemble': lambda dt=None: _available_ncarens(dt=dt), 'observed': lambda dt=None: _available_sharp(dt=dt), 'goes': lambda dt=None: _available_goes(dt=dt) },
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
 }
