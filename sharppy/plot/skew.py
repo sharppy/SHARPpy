@@ -324,7 +324,7 @@ def draw_effective_inflow_layer(ax, prof):
 
 def draw_hodo_inset(ax, prof):
     # Draw the hodograph axes on the plot.
-    from mpl_toolkits.axes_grid.inset_locator import inset_axes
+    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     inset_axes = inset_axes(ax,width=1.7, # width = 30% of parent_bbox
                                         height=1.7, # height : 1 inch
                                         loc=1)
