@@ -11,6 +11,8 @@ dependencies:
   - sphinx-rtd-theme
   - pytest-cov
   - matplotlib
+  - requests
+  - dateutil
   - pip:
     - sphinx-prompt
     - pydocstyle

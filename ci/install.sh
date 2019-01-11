@@ -23,7 +23,7 @@ conda update -q conda
 conda install -n -q root _license
 conda info -a
 conda config --add channels conda-forge 
-conda create -q -n test-environment python=$PYTHON_VERSION pyside pyinstaller requests conda-build anaconda-client numpy=$NUMPY_VERSION
+conda create -q -n test-environment python=$PYTHON_VERSION pyside pyinstaller requests dateutil conda-build anaconda-client numpy=$NUMPY_VERSION
 source activate test-environment
 
 pip install --upgrade pip
