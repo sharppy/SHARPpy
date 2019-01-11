@@ -4,8 +4,10 @@ import pytest
 import glob
 import sharppy.databases.sars as sars
 import numpy as np
+#from PySide import QtGui
 full_gui = pytest.importorskip('runsharp.full_gui') 
 
+#@pytest.mark.skipif(QtGui.QX11Info.display())
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")
 def test_main_entry_pt():
     #sys.argv = []
@@ -21,5 +23,5 @@ def test_main_entry_pt():
     full_gui.test(files)
 
     
-test_main_entry_pt()
+#test_main_entry_pt()
 
