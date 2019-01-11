@@ -8,7 +8,6 @@ import platform
 import numpy as np
 
 def doCopy(target_type, prof, idx, pipe):
-    print('\n\n\n\n\n',target_type, prof, idx, pipe)
     pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
