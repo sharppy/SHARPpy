@@ -18,24 +18,25 @@ install:
 
   # Install dependencies
   - activate test-environment
-  - conda install -c conda-forge pyside
-  - conda install -c conda-forge pyinstaller
+  - conda install -q -c conda-forge pyside pyinstaller pytest-cov
  
   # Add to path the current folder
   - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
-  - "python setup.py install"
-  
-  # Make binaries using PyInstaller
-  - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
-  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
+  - "pip install -e ."
 
 build: off
 
 # Turning off Test Script for now  
-#test_script:
+test_script:
+  - pytest --cov -v
 #  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
+
+after_test:
+  # Make binaries using PyInstaller
+  - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
+  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 artifacts:
   path: "dist\\SHARPpy64.exe"
