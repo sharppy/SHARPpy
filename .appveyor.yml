@@ -33,7 +33,7 @@ build: off
 # Turning off Test Script for now  
 test_script:
   - pytest -v
-#  - "python sharppy/tests/test_url.py https://www.spc.noaa.gov/exper/soundings/18112100_OBS/OUN.txt"
+  - sharppy examples/data/14061619.OAX
 
 before_deploy:
   # Make binaries using PyInstaller
@@ -46,6 +46,9 @@ artifacts:
   
   - path: "*.png"
     name: test images
+
+  - path: "examples\\data\\14061619.png"
+    name: test gui
 
 deploy:
   provider: GitHub
