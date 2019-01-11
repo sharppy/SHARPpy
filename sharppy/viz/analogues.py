@@ -349,7 +349,7 @@ class plotAnalogues(backgroundAnalogues):
 
         ## if there are no matches, leave the function to prevent crashing
         pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
-        if self.matches[0] == []:
+        if self.matches[0].size == 0:
             pen.setColor(self.fg_color)
             qp.setPen(pen)
             qp.setFont(self.match_font)
