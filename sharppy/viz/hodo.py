@@ -1239,16 +1239,20 @@ class plotHodo(backgroundHodo):
         qp : QtGui.QPainter object
         '''
 
-        if tab.utils.QC(self.ptop) and tab.utils.QC(self.pbottom) and self.pbottom == self.prof.pres[self.prof.sfc]:
+        pres_500m = tab.interp.pres(self.prof, tab.interp.to_msl(self.prof, 500))
+        sfc_u, sfc_v = tab.interp.components(self.prof, self.prof.pres[self.prof.get_sfc()])
+        u500, v500 = tab.interp.components(self.prof, pres_500m)
+        if tab.utils.QC(self.ptop) and tab.utils.QC(self.pbottom) and \
+           self.pbottom == self.prof.pres[self.prof.sfc] and \
+           tab.utils.QC(sfc_u) and tab.utils.QC(sfc_v) and \
+           tab.utils.QC(u500) and tab.utils.QC(v500):
             # There is an effective inflow layer at the surface so draw the critical angle line
             ca_color = QtGui.QColor("#FF00FF")
-            pres_500m = tab.interp.pres(self.prof, tab.interp.to_msl(self.prof, 500))
-            u500, v500 = tab.interp.components(self.prof, pres_500m)
-            sfc_u, sfc_v = tab.interp.components(self.prof, self.prof.pres[self.prof.get_sfc()])
             sfc_u_pix, sfc_v_pix = self.uv_to_pix(sfc_u,sfc_v)
             u500_pix, v500_pix = self.uv_to_pix(u500, v500)
             pen = QtGui.QPen(ca_color, 1.0, QtCore.Qt.SolidLine)
             qp.setPen(pen)
+            print(sfc_u_pix, sfc_v_pix, u500_pix, v500_pix)
             qp.drawLine(sfc_u_pix, sfc_v_pix, u500_pix, v500_pix)
             vec1_u, vec1_v = u500 - sfc_u, v500 - sfc_v
             try:
