@@ -16,24 +16,38 @@ strategy:
       imageName: 'ubuntu-16.04'
       screen_w: 1280
       screen_h: 1024
-      screen_d: 32 
+      screen_d: 16 
     mac:
       # macOS 10.13
       imageName: 'macos-10.13'
       screen_w: 1280
       screen_h: 1024
-      screen_d: 32
+      screen_d: 16
     windows:
       # Windows Docker Container not Visual Studio 2017 on Windows Server 2016
       imageName: 'win1803'
       screen_w: 1280
       screen_h: 1024
-      screen_d: 32 
+      screen_d: 16 
  
 pool:
   vmImage: $(imageName)
 
 steps:
+
+- script: |
+    wmic desktopmonitor get screenheight, screenwidth
+    PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
+    wmic desktopmonitor get screenheight, screenwidth
+  displayName: "Seeing if the screen resolution will get set in this Windows image"
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
+
+# python ci/screen.py
+# PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
+# PowerShell -Command {SetDisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
+# python ci/screen.py
+ 
 
 - task: CondaEnvironment@1
   displayName: 'Install Conda and packages'
