@@ -12,7 +12,7 @@ dependencies:
   - pytest-cov
   - matplotlib
   - requests
-  - dateutil
+  - python-dateutil 
   - pip:
     - sphinx-prompt
     - pydocstyle

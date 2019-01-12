@@ -20,7 +20,7 @@ install:
 
   # Install dependencies
   - activate test-environment
-  - "conda install -q -c conda-forge pyside pyinstaller pytest requests dateutil numpy=%NUMPY_VERSION%"
+  - "conda install -q -c conda-forge pyside pyinstaller pytest requests python-dateutil numpy=%NUMPY_VERSION%"
  
   # Add to path the current folder
   #- "SET PYTHONPATH=%PYTHONPATH%;%CD%"
