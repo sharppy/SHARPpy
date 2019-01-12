@@ -37,7 +37,7 @@ steps:
 
 
 - powershell: |
-    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1')) 
     Set-ScreenResolution $(screen_w) $(screen_h)
   displayName: "Seeing if the screen resolution will get set in this Windows image"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
