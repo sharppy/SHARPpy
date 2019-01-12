@@ -1,0 +1,33 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- andover
+
+# Build NodeJS Express app using Azure Pipelines
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript?view=vsts
+strategy:
+  matrix:
+    linux:
+      imageName: 'ubuntu-16.04'
+    mac:
+      imageName: 'macos-10.13'
+    windows:
+      imageName: 'vs2017-win2016'
+
+pool:
+  vmImage: $(imageName)
+
+steps:
+- task: CondaEnvironment@1
+  displayName: 'Install Conda'
+  inputs:
+    packageSpecs: 'python=3' 'numpy=1.15.*' 'pyside' 'pytest' 'pip'
+
+- script: |
+    pip install -e .
+    pytest -v
+  displayName: 'Running SHARPpy tests'
+
