@@ -50,13 +50,19 @@ steps:
   displayName: "Status"
 
 - script: |
-    sudo python setup.py install
-    sudo pytest -v
-  displayName: "Installing code and running tests (*nix)"
-  condition: ne( variables['Agent.OS'], 'Windows_NT')
+    python setup.py -q install --user
+    pytest -v
+  displayName: "Installing code and running tests (Linux)"
+  condition: eq( variables['Agent.OS'], 'Linux')
 
 - script: |
-    python setup.py install --user
+    sudo python setup.py -q install
+    sudo pytest -v
+  displayName: "Installing code and running tests (macOS)"
+  condition: eq( variables['Agent.OS'], 'Darwin')
+
+- script: |
+    python setup.py -q install --user
     pytest -v
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
