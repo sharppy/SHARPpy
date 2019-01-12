@@ -27,10 +27,10 @@ steps:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests'
     installOptions: '-c conda-forge'
 
-- script: which python & which pip
+- script: which python & which pip & ls
   displayName: "Status"
 
-- script: python pip install -e --user .
+- script: sudo pip install -e .
   displayName: "Installing code"
 
 - script: pytest -v
