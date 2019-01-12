@@ -28,6 +28,11 @@ install:
   # Install SHARPpy
   - "pip install -e ."
 
+  # Resize the screen 
+  #- nuget restore
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))  
+  - ps: Set-ScreenResolution 1366 768
+
 build: off
 
 # Turning off Test Script for now  
