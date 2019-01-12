@@ -1,3 +1,4 @@
+import pytest
 import sharppy.io.decoder as decoder
 import sharppy.io.buf_decoder as buf_decoder
 import sharppy.io.spc_decoder as spc_decoder
@@ -11,12 +12,11 @@ files = ['examples/data/14061619.OAX',
          'examples/data/oun_uwyo.html',
          'examples/data/ABR.txt',
          'examples/data/OUN.txt']
-   
-def test_decoder():
-   
-    decoders = decoder.getDecoders()
-    assert len(decoders) > 0
-    
+
+decoders = decoder.getDecoders()
+assert len(decoders) > 0
+
+def test_spc_decoder():
     dec = spc_decoder.SPCDecoder(files[0])
     profs = dec.getProfiles()
     profs._backgroundCopy("")
@@ -40,7 +40,8 @@ def test_decoder():
     profs.modify(-999, tmpc=tmp, idx_range=[0,1])
     profs.resetModification('tmpc')
     profs.resetModification('u')
-    
+   
+def test_bufkit_decoder(): 
     # Load in a BUFKIT file     
     dec = buf_decoder.BufDecoder(files[1])
     profs = dec.getProfiles()
@@ -51,10 +52,15 @@ def test_decoder():
     assert profs.isModified() == False
     assert profs.getAnalogDate() is None
     assert profs.hasCurrentProf() == True
-   
-    # Try to load in the UWYO file
-    #dec = uwyo_decoder.UWYODecoder(files[2]) 
 
+def test_uwyo_decoder():
+    # Try to load in the UWYO file
+    try:
+        dec = uwyo_decoder.UWYODecoder(files[2]) 
+    except:
+        print("FAILED")
+
+def test_pecan_decoder():
     # Load in the PECAN-type files
     dec = pecan_decoder.PECANDecoder(files[3])
     dec = pecan_decoder.PECANDecoder(files[4])
@@ -68,4 +74,3 @@ def test_decoder():
     profs.advanceTime(-1)
     #print(profs) 
 
-#test_decoder()
