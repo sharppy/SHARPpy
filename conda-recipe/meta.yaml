@@ -27,6 +27,8 @@ requirements:
      - python >=3.4
      - numpy=$NUMPY_VERSION 
      - pyside
+     - requests
+     - python-dateutil
 
 test:
     imports:
