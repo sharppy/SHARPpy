@@ -52,7 +52,8 @@ steps:
 - script: |
     python setup.py -q install --user
     ls -l /usr/share/miniconda/bin/python
-    ls -l pytest
+    which pytest
+    ls -l /usr/share/miniconda/bin/pytest
     pwd
     pytest -v
   displayName: "Installing code and running tests (Linux)"
