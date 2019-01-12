@@ -29,5 +29,5 @@ steps:
 - script: |
     pip install -e .
     pytest -v
-  displayName: 'Running SHARPpy tests'
+  displayName: 'Running SHARPpy tests2'
 
