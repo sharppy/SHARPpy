@@ -12,16 +12,19 @@ strategy:
   matrix:
 
     linux:
+      # Ubuntu 16.04
       imageName: 'ubuntu-16.04'
       screen_w: 1280
       screen_h: 1024
       screen_d: 8 
     mac:
+      # macOS 10.13
       imageName: 'macos-10.13'
       screen_w: 1280
       screen_h: 1024
       screen_d: 8 
     windows:
+      # Visual Studio 2017 on Windows Server 2016
       imageName: 'vs2017-win2016'
       screen_w: 1280
       screen_h: 1024
@@ -61,6 +64,7 @@ steps:
     system_profiler SPDisplaysDataType | grep Resolution
     sudo python ci/screen.py
     sudo chmod +x ci/cscreen
+    ./ci/cscreen -v
     ./ci/cscreen -x $(screen_w) -y $(screen_h) -d $(screen_d)
     sudo python ci/screen.py
     sudo python setup.py -q install
@@ -71,8 +75,9 @@ steps:
 
 - script: |
     python ci/screen.py
-    PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
-    PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
+    #PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    #PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
+    PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
     python ci/screen.py
     python setup.py -q install --user
     pytest -v
