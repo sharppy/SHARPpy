@@ -51,6 +51,9 @@ steps:
 
 - script: |
     python setup.py -q install --user
+    ls -l /usr/share/miniconda/bin/python
+    ls -l pytest
+    pwd
     pytest -v
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
