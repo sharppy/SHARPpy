@@ -4,6 +4,7 @@
 
 [![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=andover)](https://travis-ci.org/sharppy)
 [![Build status](https://ci.appveyor.com/api/projects/status/f7ahm2l5cdyibswc/branch/andover?svg=true)](https://ci.appveyor.com/project/sharppy/sharppy/branch/andover)
+[![Build Status](https://dev.azure.com/sharppy/SHARPpy/_apis/build/status/sharppy.SHARPpy?branchName=andover)](https://dev.azure.com/sharppy/SHARPpy/_build/latest?definitionId=1?branchName=andover)
 [![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/downloads.svg)](https://anaconda.org/sharppy/sharppy)
 [![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/license.svg)](https://anaconda.org/sharppy/sharppy)
 [![](https://img.shields.io/github/downloads/sharppy/SHARPpy/total.svg?style=popout)](https://github.com/sharppy/SHARPpy/releases)
@@ -63,12 +64,14 @@ The Anaconda Python Distribution can be downloaded here: https://www.anaconda.co
 
 __Required Python Packages/Libraries:__
 
-* NumPy
-* PySide
+* NumPy v1.15
+* PySide v1.2.4
+* requests
+* python-dateutil
 
-Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
+Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
 
-    conda install -c conda-forge pyside=1.2.4
+    conda install -c conda-forge pyside=1.2.4 requests python-dateutil
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 
