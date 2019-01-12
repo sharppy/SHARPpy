@@ -24,7 +24,8 @@ steps:
 - task: CondaEnvironment@1
   displayName: 'Install Conda'
   inputs:
-    packageSpecs: 'python=3' 'numpy=1.15.*' 'pyside' 'pytest' 'pip'
+    packageSpecs: 'python=3'
+    installOptions: 'numpy=1.15.* pyside pytest pip python-dateutil requests'
 
 - script: |
     pip install -e .
