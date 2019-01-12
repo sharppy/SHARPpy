@@ -38,7 +38,7 @@ steps:
   inputs:
     environmentName: 'test-env'
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools' 
-    installOptions: '-c conda-forge'
+    installOptions: '-q -c conda-forge'
 
 #- script: |
 #    which python
@@ -49,14 +49,16 @@ steps:
 - script: which python & which pip & conda list
   displayName: "Status"
 
-- script: sudo python setup.py install
-  displayName: "Installing code"
+- script: |
+    sudo python setup.py install
+    sudo pytest -v
+  displayName: "Installing code and running tests (*nix)"
   condition: ne( variables['Agent.OS'], 'Windows_NT')
 
-- script: python setup.py install --user
-  displayName: "Installing code (Windows)"
+- script: |
+    python setup.py install --user
+    pytest -v
+  displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
-- script: pytest -v
-  displayName: 'Running SHARPpy tests'
 
