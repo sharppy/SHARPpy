@@ -25,7 +25,7 @@ steps:
   displayName: 'Install Conda'
   inputs:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests'
-
+    installOptions: '-c conda-forge'
 - script: |
     pip install -e .
     pytest -v
