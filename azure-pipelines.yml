@@ -12,6 +12,9 @@ strategy:
   matrix:
     linux:
       imageName: 'ubuntu-16.04'
+      screen_w: 1280
+      screen_h: 1024
+      screen_d: 8 
     mac:
       imageName: 'macos-10.13'
     windows:
@@ -51,16 +54,22 @@ steps:
 
 - script: |
     python setup.py -q install --user
+    xdpyinfo | grep dimensions
+    python ci/screen.py
     # NEED TO FIND OUT HOW TO SET DISPLAY SIZE
-    Xvfb :99 &
+    Xvfb :99 -screen 0 $(screen_w)x$(screen_h)x$(screen_d) &
     export DISPLAY=:99
     sleep 3 # give xvfb some time to start
+    xdpyinfo | grep dimensions
+    python ci/screen.py
     pytest -v
     mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
 
 - script: |
+    system_profiler SPDisplaysDataType | grep Resolution
+    sudo python ci/screen.py
     sudo python setup.py -q install
     sudo pytest -v
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
@@ -68,6 +77,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Darwin')
 
 - script: |
+    python ci/screen.py
     python setup.py -q install --user
     pytest -v
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
