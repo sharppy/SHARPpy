@@ -72,7 +72,6 @@ steps:
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
-steps:
 - task: PublishPipelineArtifact@0
   inputs:
     artifactName: 'testgui'
