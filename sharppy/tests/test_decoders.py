@@ -53,7 +53,7 @@ def test_decoder():
     assert profs.hasCurrentProf() == True
    
     # Try to load in the UWYO file
-    dec = uwyo_decoder.UWYODecoder(files[2]) 
+    #dec = uwyo_decoder.UWYODecoder(files[2]) 
 
     # Load in the PECAN-type files
     dec = pecan_decoder.PECANDecoder(files[3])
