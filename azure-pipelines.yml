@@ -51,10 +51,11 @@ steps:
 
 - script: |
     python setup.py -q install --user
-    ls -l /usr/share/miniconda/bin/python
-    which pytest
-    ls -l /usr/share/miniconda/bin/pytest
-    pwd
+    # NEED TO FIND OUT HOW TO SET DISPLAY SIZE
+    Xvfb :99 &
+    export DISPLAY=:99
+    sleep 3 # give xvfb some time to start
+    python -c "import PySide; print(PySide.__version__);"
     pytest -v
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
