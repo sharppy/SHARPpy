@@ -25,7 +25,7 @@ strategy:
       screen_d: 16
     windows:
       # Windows Docker Container not Visual Studio 2017 on Windows Server 2016
-      imageName: 'win1803'
+      imageName: 'vs2017-win2016'
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
@@ -35,11 +35,10 @@ pool:
 
 steps:
 
-- script: |
-    wmic desktopmonitor get screenheight, screenwidth
-    PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
-    PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
-    wmic desktopmonitor get screenheight, screenwidth
+
+- powershell: |
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    Set-ScreenResolution $(screen_w) $(screen_h)
   displayName: "Seeing if the screen resolution will get set in this Windows image"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
@@ -61,7 +60,6 @@ steps:
 
 - script: |
     python setup.py -q install --user
-    xdpyinfo | grep dimensions
     python ci/screen.py
     # NEED TO FIND OUT HOW TO SET DISPLAY SIZE
     Xvfb :99 -screen 0 $(screen_w)x$(screen_h)x$(screen_d) &
@@ -89,11 +87,11 @@ steps:
 
 - script: |
     python ci/screen.py
-    PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
-    PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
-    #PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-    #PowerShell -Command {SetDisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-    python ci/screen.py
+    # PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    # PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
+    # PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
+    # PowerShell -Command {SetDisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
+    # python ci/screen.py
     python setup.py -q install --user
     pytest -v
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
