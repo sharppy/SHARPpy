@@ -26,8 +26,13 @@ steps:
   inputs:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests'
     installOptions: '-c conda-forge'
-- script: |
-    pip install -e --user .
-    pytest -v
+
+- script: which python & which pip
+  displayName: "Status"
+
+- script: python pip install -e --user .
+  displayName: "Installing code"
+
+- script: pytest -v
   displayName: 'Running SHARPpy tests'
 
