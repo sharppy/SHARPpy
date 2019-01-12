@@ -21,35 +21,41 @@ pool:
   vmImage: $(imageName)
 
 steps:
-- script: sudo install -d -m 0777 /usr/local/miniconda/
-  displayName: Fix Conda permissions (Mac)
-  condition: eq( variables['Agent.OS'], 'Darwin')
+#- script: sudo install -d -m 0777 /usr/local/miniconda/
+#  displayName: Fix Conda permissions (Mac)
+#  condition: eq( variables['Agent.OS'], 'Darwin')
 
-- script: sudo install -d -m 0777 /usr/share/miniconda/
-  displayName: Fix Conda permissions (Linux)
-  condition: eq( variables['Agent.OS'], 'Linux')
+#- script: sudo install -d -m 0777 /usr/share/miniconda/
+#  displayName: Fix Conda permissions (Linux)
+#  condition: eq( variables['Agent.OS'], 'Linux')
 
-- script: echo "HELLO"
-  displayName: Fix Conda permissions (Windows)
-  condition: eq( variables['Agent.OS'], 'Windows_NT')  
+#- script: echo "HELLO"
+#  displayName: Fix Conda permissions (Windows)
+#  condition: eq( variables['Agent.OS'], 'Windows_NT')  
 
 - task: CondaEnvironment@1
-  displayName: 'Install Conda'
+  displayName: 'Install Conda and packages'
   inputs:
     environmentName: 'test-env'
-    packageSpecs: 'python=3' 
+    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools' 
+    installOptions: '-c conda-forge'
 
-- script: |
-    which python
-    conda activate test-env
-    conda install -y -c conda-forge numpy=1.15.* pyside pytest pip python-dateutil requests setuptools
-  displayName: "Install packages"
+#- script: |
+#    which python
+#    conda activate test-env
+#    conda install -y -c conda-forge numpy=1.15.* pyside pytest pip python-dateutil requests setuptools
+#  displayName: "Install packages"
 
 - script: which python & which pip & conda list
   displayName: "Status"
 
-- script: pip install -e . #python setup.py install --user --prefix=
+- script: sudo python setup.py install
   displayName: "Installing code"
+  condition: ne( variables['Agent.OS'], 'Windows_NT')
+
+- script: python setup.py install --user
+  displayName: "Installing code (Windows)"
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
 
 - script: pytest -v
   displayName: 'Running SHARPpy tests'
