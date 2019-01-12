@@ -21,6 +21,18 @@ pool:
   vmImage: $(imageName)
 
 steps:
+- script: sudo install -d -m 0777 /usr/local/miniconda/envs/
+  displayName: Fix Conda permissions
+  condition: eq($(imageName), 'macos-10.13')
+
+- script: sudo install -d -m 0777 /usr/share/miniconda/envs/
+  displayName: Fix Conda permissions
+  condition: eq($(imageName), 'ubuntu-16.04')
+
+- script: echo "HELLO"
+  displayName: Fix Conda permissions
+  condition: eq($(imageName), 'vs2017-win2016')  
+
 - task: CondaEnvironment@1
   displayName: 'Install Conda'
   inputs:
@@ -28,12 +40,12 @@ steps:
     packageSpecs: 'python=3' 
 
 - script: |
+    which python
     conda activate test-env
-    conda install -y conda 
     conda install -y -c conda-forge numpy=1.15.* pyside pytest pip python-dateutil requests setuptools
   displayName: "Install packages"
 
-- script: which python & which pip % conda list
+- script: which python & which pip & conda list
   displayName: "Status"
 
 - script: pip install -e . #python setup.py install --user --prefix=
