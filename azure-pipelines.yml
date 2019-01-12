@@ -10,6 +10,7 @@ trigger:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript?view=vsts
 strategy:
   matrix:
+
     linux:
       imageName: 'ubuntu-16.04'
       screen_w: 1280
@@ -17,24 +18,19 @@ strategy:
       screen_d: 8 
     mac:
       imageName: 'macos-10.13'
+      screen_w: 1280
+      screen_h: 1024
+      screen_d: 8 
     windows:
       imageName: 'vs2017-win2016'
-
+      screen_w: 1280
+      screen_h: 1024
+      screen_d: 8 
+ 
 pool:
   vmImage: $(imageName)
 
 steps:
-#- script: sudo install -d -m 0777 /usr/local/miniconda/
-#  displayName: Fix Conda permissions (Mac)
-#  condition: eq( variables['Agent.OS'], 'Darwin')
-
-#- script: sudo install -d -m 0777 /usr/share/miniconda/
-#  displayName: Fix Conda permissions (Linux)
-#  condition: eq( variables['Agent.OS'], 'Linux')
-
-#- script: echo "HELLO"
-#  displayName: Fix Conda permissions (Windows)
-#  condition: eq( variables['Agent.OS'], 'Windows_NT')  
 
 - task: CondaEnvironment@1
   displayName: 'Install Conda and packages'
@@ -43,14 +39,8 @@ steps:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools' 
     installOptions: '-q -c conda-forge'
 
-#- script: |
-#    which python
-#    conda activate test-env
-#    conda install -y -c conda-forge numpy=1.15.* pyside pytest pip python-dateutil requests setuptools
-#  displayName: "Install packages"
-
 - script: which python & which pip & conda list
-  displayName: "Status"
+  displayName: "Dump Python Install Status"
 
 - script: |
     python setup.py -q install --user
@@ -70,6 +60,9 @@ steps:
 - script: |
     system_profiler SPDisplaysDataType | grep Resolution
     sudo python ci/screen.py
+    sudo chmod +x ci/cscreen
+    ./ci/cscreen -x $(screen_w) -y $(screen_h) -d $(screen_d)
+    sudo python ci/screen.py
     sudo python setup.py -q install
     sudo pytest -v
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
@@ -77,6 +70,9 @@ steps:
   condition: eq( variables['Agent.OS'], 'Darwin')
 
 - script: |
+    python ci/screen.py
+    PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
+    PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
     python ci/screen.py
     python setup.py -q install --user
     pytest -v
