@@ -23,15 +23,15 @@ pool:
 steps:
 - script: sudo install -d -m 0777 /usr/local/miniconda/envs/
   displayName: Fix Conda permissions
-  condition: agent.os -equals Darwin # eq( variables['imageName'], 'macos-10.13')
+  condition: eq( variables['Agent.OS'], 'Darwin')
 
 - script: sudo install -d -m 0777 /usr/share/miniconda/envs/
   displayName: Fix Conda permissions
-  condition: agent.os -equals Linux #eq( variables['imageName'], 'ubuntu-16.04')
+  condition: eq( variables['Agent.OS'], 'Linux')
 
 - script: echo "HELLO"
   displayName: Fix Conda permissions
-  condition: agent.os -equals Windows_NT # variables['AgentOS'], 'vs2017-win2016')  
+  condition: eq( variables['Agent.OS'], 'Windows_NT')  
 
 - task: CondaEnvironment@1
   displayName: 'Install Conda'
