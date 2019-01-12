@@ -1,53 +1,38 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
+# MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
 trigger:
 - andover
 
-# Build NodeJS Express app using Azure Pipelines
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript?view=vsts
+# Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
 
-    linux:
+    linux-1280x1024:
       # Ubuntu 16.04
       imageName: 'ubuntu-16.04'
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
-    mac:
+    mac-defaultres:
       # macOS 10.13
       imageName: 'macos-10.13'
-      screen_w: 1280
-      screen_h: 1024
-      screen_d: 16
-    windows:
+      # screen_w: 1280
+      # screen_h: 1024
+      # screen_d: 16
+    windows-1280x1024:
       # Windows Docker Container not Visual Studio 2017 on Windows Server 2016
       imageName: 'vs2017-win2016'
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
- 
+
+# Set up the pool of VMs for CI
 pool:
   vmImage: $(imageName)
 
+# Describe the steps to install conda, the code, do tests, and deploy the artifacts
 steps:
 
-
-- powershell: |
-    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1')) 
-    Set-ScreenResolution $(screen_w) $(screen_h)
-  displayName: "Seeing if the screen resolution will get set in this Windows image"
-  condition: eq( variables['Agent.OS'], 'Windows_NT')
-
-# python ci/screen.py
-# PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-# PowerShell -Command {SetDisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-# python ci/screen.py
- 
-
+# Setup the conda environment and install the needed packages (use conda-forge)
 - task: CondaEnvironment@1
   displayName: 'Install Conda and packages'
   inputs:
@@ -55,55 +40,72 @@ steps:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools' 
     installOptions: '-q -c conda-forge'
 
+# Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
 - script: which python & which pip & conda list
-  displayName: "Dump Python Install Status"
+  displayName: "Show python and conda configuration"
 
+# Install and test scripts for Ubuntu/Linuxs
 - script: |
-    python setup.py -q install --user
-    python ci/screen.py
-    # NEED TO FIND OUT HOW TO SET DISPLAY SIZE
-    Xvfb :99 -screen 0 $(screen_w)x$(screen_h)x$(screen_d) &
-    export DISPLAY=:99
+    python setup.py -q install --user # Install the 
+    Xvfb :99 -screen 0 $(screen_w)x$(screen_h)x$(screen_d) & # Spin up a virtual screen with the correct dimensions
+    export DISPLAY=:99 # Set up the DISPLAY variable
     sleep 3 # give xvfb some time to start
-    xdpyinfo | grep dimensions
-    python ci/screen.py
+    xdpyinfo | grep dimensions # Check display dimensions
+    python ci/screen.py # Check display dimensions as seen by PySide
     pytest -v
     mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
 
+# Install and test scripts for macOS
+# 
+# Unable to handle the screen resolution changes in macOS
+# Must use sudo for python-dependent stuff because conda permissions have
+# stupid bug under macOS.
 - script: |
-    system_profiler SPDisplaysDataType | grep Resolution
-    sudo python ci/screen.py
-    sudo chmod +x ci/cscreen
-    ./ci/cscreen -v
-    ./ci/cscreen -x $(screen_w) -y $(screen_h) -d $(screen_d) -f -s a
-    sudo python ci/screen.py
+    system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
+    sudo python ci/screen.py # Check display dimensions as seen by PySide
     sudo python setup.py -q install
     sudo pytest -v
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
+# Set display resolution on Windows
+- powershell: |
+    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1')) 
+    Set-ScreenResolution $(screen_w) $(screen_h)
+  displayName: "Run Powershell script to set Windows screen size"
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
+
+# Install and test scripts for Windows
 - script: |
     python ci/screen.py
-    # PowerShell -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/set-screenresolution.ps1'))" 
-    # PowerShell -Command {Set-ScreenResolution $(screen_w) $(screen_h)}
-    # PowerShell -Command {Set-DisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-    # PowerShell -Command {SetDisplayResolution -Width $(screen_w) -Height $(screen_h) -Force}
-    # python ci/screen.py
     python setup.py -q install --user
     pytest -v
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
+# Copy files to the artifacts directory
 - task: CopyFiles@2
   inputs:
     contents: examples/data/14*.png
     targetFolder: $(Build.ArtifactStagingDirectory)
 
+# Publish those artifacts for this build so testers can view them.
 - task: PublishBuildArtifacts@1
   inputs:
     artifactName: 'testgui'
     targetPath: $(Build.ArtifactStagingDirectory)
+
+# Old code trying to change the macOS display resolution (didn't work)
+# sudo brew cask install xquartz
+# sudo python ci/screen.py
+# sudo chmod +x ci/cscreen
+# ./ci/cscreen -v
+# ./ci/cscreen -x $(screen_w) -y $(screen_h) -d $(screen_d) -f -s a
+# Could try Xvfb that comes distributed with xquartz, but
+# since we develop on macOS we really care more about how
+# SHARPpy behaves on Windows and Linux. 
+#
