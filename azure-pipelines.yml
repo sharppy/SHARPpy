@@ -24,15 +24,21 @@ steps:
 - task: CondaEnvironment@1
   displayName: 'Install Conda'
   inputs:
-    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools'
-    installOptions: '-c conda-forge'
+    environmentName: 'test-env'
+    packageSpecs: 'python=3' 
 
-- script: which python & which pip & ls
+- script: |
+    conda activate test-env
+    conda install -y conda 
+    conda install -y -c conda-forge numpy=1.15.* pyside pytest pip python-dateutil requests setuptools
+  displayName: "Install packages"
+
+- script: which python & which pip % conda list
   displayName: "Status"
 
-- script: sudo pip install -e .
+- script: pip install -e . #python setup.py install --user --prefix=
   displayName: "Installing code"
 
-- script: sudo pytest -v
+- script: pytest -v
   displayName: 'Running SHARPpy tests'
 
