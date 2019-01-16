@@ -29,14 +29,15 @@ package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databas
                      "databases/shapefiles/*", "../rc/*"],}
 include_package_data = True
 
-install_requires = ['python-dateutil', 'requests', 'numpy==1.15.*']
+install_requires = []
+#install_requires = ['python-dateutil', 'requests', 'numpy==1.15.*']
 # Because pip doesn't recognize it when PySide is installed by conda from conda-forge
 # Try to import PySide.  If it fails, add the PySide to the install_requires
-try:
-    import PySide
-    print("Success importing PySide")
-except:
-    install_requires.append("PySide==1.2.*")    
+#try:
+#    import PySide
+#    print("Success importing PySide")
+#except:
+#    install_requires.append("PySide==1.2.*")    
 
 entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
 # Create some directory variables to shorten the lines.

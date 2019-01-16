@@ -3,8 +3,8 @@
 # https://github.com/pydata/pandas
 set -e
 
+echo "Installing sphinx, etc. to build the documentation ..."
 cd "$TRAVIS_BUILD_DIR"
-cd ci/
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
     conda install -q -c sphinx sphinx-gallery;
     conda install -q -c anaconda sphinx_rtd_theme 
@@ -13,6 +13,8 @@ else
     exit 0
 fi
 
+echo "Adding the SSH key ..."
+cd ci/
 openssl aes-256-cbc -K $encrypted_08ee84f00b5d_key -iv $encrypted_08ee84f00b5d_iv -in deploy_key.enc -out deploy_key -d
 chmod 600 deploy_key
 eval `ssh-agent -s`
@@ -25,11 +27,13 @@ echo "Building Docs"
 cd docs
 
 # Move the license and other stuff to the docs folder
+echo "Copying over some of the files to be included in the documentation ..."
 cp ../LICENSE.rst ../docs/source/license.rst
 cp ../CONTRIBUTING.rst ../docs/source/contributing.rst
 cp ../CHANGELOG.rst ../docs/source/changelog.rst
 
 # Run sphinx
+echo "Running Sphinx ..."
 make html
 
 # upload to pyart-docs-travis repo is this is not a pull request and
