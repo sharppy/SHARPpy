@@ -37,9 +37,9 @@ after_success:
 # Build the binary if it's a new tag.
 - if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
-- cd dist
-- if [ "$BUILD_BINARY" == "YES" ] && [ -n "$TRAVIS_TAG" ]; then zip -r SHARPpy-osx.zip SHARPpy.app; fi
-- cd ..
+- ls
+- pwd
+- if [ "$BUILD_BINARY" == "YES" ] && [ -n "$TRAVIS_TAG" ]; then cd dist; zip -r SHARPpy-osx.zip SHARPpy.app; cd ..; fi
 # Ship the binaries to Github and PyPI and conda
 deploy:
 # Deploy the binaries to Github Releases
