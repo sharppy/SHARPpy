@@ -1,43 +1,43 @@
 {% set data = load_setup_py_data() %}
 package:
-    name: sharppy
-    version: {{ data['version'] }}
+  name: sharppy
+  version: {{ data['version'] }}
 
 source:
-    git_url: https://github.com/sharppy/SHARPpy.git
-    git_rev: andover
+  git_url: https://github.com/sharppy/SHARPpy.git
+  git_rev: andover
 
 extra:
-    channels:
-     - conda-forge
+  channels:
+   - conda-forge
  
 build:
-    script_env:
-     - CONDA_BLD_PATH
-    osx_is_app: True
-    entry_points: 
-     - sharppy = runsharp.full_gui:main
+  script_env:
+   - CONDA_BLD_PATH
+  osx_is_app: True
+  entry_points: 
+   - sharppy = runsharp.full_gui:main
 
 requirements:
-    build:
-     - setuptools
-     - python >=3.4
-     - pyside
-    run:
-     - python >=3.4
-     - numpy=$NUMPY_VERSION 
-     - pyside
-     - requests
-     - python-dateutil
+  build:
+   - setuptools
+   - python >=3.4
+   - pyside
+  run:
+   - python >=3.4
+   - numpy=$NUMPY_VERSION 
+   - pyside
+   - requests
+   - python-dateutil
 
 test:
-    imports:
-     - sharppy
+  imports:
+   - sharppy
 
 about:
-    home: https://github.com/sharppy/SHARPpy
-    summary: Sounding/Hodograph Analysis and Research Program for Python 
-    description: SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, cross-platform application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
-    license: BSD
-    license_file: LICENSE.rst
-    doc_url: https://sharppy.github.io/SHARPpy/index.html 
+  home: https://github.com/sharppy/SHARPpy
+  summary: Sounding/Hodograph Analysis and Research Program for Python 
+  description: SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, cross-platform application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
+  license: BSD
+  license_file: LICENSE.rst
+  doc_url: https://sharppy.github.io/SHARPpy/index.html 
