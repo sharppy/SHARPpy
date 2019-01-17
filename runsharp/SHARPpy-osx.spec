@@ -5,12 +5,14 @@ import sharppy
 import glob
 
 a = Analysis(['SHARPpy.py'],
-             pathex=['/Users/tsupinie/SHARPpy/runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
+             pathex=['/Users/blumberg/SHARPpy/runsharp'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'dateutil.parser', 'requests'],
              hookspath=None,
              runtime_hooks=None)
 
 a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
+for b in a.binaries:
+    print(b)
 
 a.datas += [("sharppy/databases/PW-mean-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-mean-inches.txt"), "DATA")]
 a.datas += [("sharppy/databases/PW-stdev-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-stdev-inches.txt"), "DATA")]
