@@ -1252,7 +1252,6 @@ class plotHodo(backgroundHodo):
             u500_pix, v500_pix = self.uv_to_pix(u500, v500)
             pen = QtGui.QPen(ca_color, 1.0, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            print(sfc_u_pix, sfc_v_pix, u500_pix, v500_pix)
             qp.drawLine(sfc_u_pix, sfc_v_pix, u500_pix, v500_pix)
             vec1_u, vec1_v = u500 - sfc_u, v500 - sfc_v
             try:
