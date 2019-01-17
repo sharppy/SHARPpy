@@ -6,8 +6,11 @@ set -e
 echo "Installing sphinx, etc. to build the documentation ..."
 cd "$TRAVIS_BUILD_DIR"
 if [[ "$BUILD_DOCS" == "YES" ]]; then 
-    conda install -q -c sphinx sphinx-gallery;
-    conda install -q -c anaconda sphinx_rtd_theme 
+    conda install -q -c anaconda sphinx sphinx_rtd_theme 
+    cconda install -q -c conda-forge sphinx-gallery
+ 11     pip install sphinx-prompt
+ 12 else
+onda install -q -c conda-forge sphinx-gallery
     pip install sphinx-prompt
 else
     exit 0
