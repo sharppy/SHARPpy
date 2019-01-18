@@ -11,19 +11,19 @@ matrix:
   - os: linux
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.15.*
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.15
   - os: osx
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES" NUMPY_VERSION=1.15.*
+      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES" NUMPY_VERSION=1.15
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="2.7" NUMPY_VERSION=1.15.*
+      - PYTHON_VERSION="2.7" NUMPY_VERSION=1.15
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" NUMPY_VERSION=1.15.* COVERALLS="YES"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" NUMPY_VERSION=1.15 COVERALLS="YES"
 before_install:
 - source ci/install.sh
 install:
