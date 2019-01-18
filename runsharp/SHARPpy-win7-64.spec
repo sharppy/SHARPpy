@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-#import sys
+import sys
 sys.path.append('./')
 
 import glob
