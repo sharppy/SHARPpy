@@ -26,7 +26,7 @@ install:
   - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
-  - "pip install -e ."
+  - python setup.py -q install
 
   # Resize the screen 
   #- nuget restore
