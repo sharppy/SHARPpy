@@ -39,6 +39,9 @@ cp ../CHANGELOG.rst ../docs/source/changelog.rst
 echo "Running Sphinx ..."
 make html
 
+echo "ENDING BUILD OF DOCS EARLY BECAUSE OF TESTING"
+exit 0
+
 # upload to pyart-docs-travis repo is this is not a pull request and
 # secure token is available (aka in the ARM-DOE repository.
 #if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then

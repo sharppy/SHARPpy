@@ -33,6 +33,9 @@ conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 ls $CONDA_BLD_PATH
 
+echo "ENDING BUILD CONDA SCRIPT EARLY BECAUSE TESTING"
+exit 0
+
 echo "Which anaconda"
 which anaconda
 # Upload to the conda package manager
