@@ -101,7 +101,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
 # Zipping MacOS .app
-- task:
+- task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: dist/SHARPpy.app
     archiveType: zip
