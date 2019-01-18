@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datasources.data_source &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>datasources.data_source &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../scripting.html">Scripting</a></li>
@@ -270,8 +270,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_format</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;format&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
         <span class="n">point_csv</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;points&#39;</span><span class="p">)</span>
+        <span class="c1">#self.start, self.end = self.getTimeSpan()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_csv_fields</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points</span> <span class="o">=</span> <span class="n">loadCSV</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="n">point_csv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)))</span>
-
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_points</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
@@ -279,6 +279,33 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_available</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Outlet.getTimeSpan"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getTimeSpan">[docs]</a>    <span class="k">def</span> <span class="nf">getTimeSpan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read in the XML data to determine the dates/times this outlet spans across</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span> <span class="ow">or</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">start</span> <span class="o">==</span> <span class="s2">&quot;now&quot;</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="s1">&#39;%Y/%m/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+ 
+        <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span> <span class="ow">or</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">end</span> <span class="o">==</span> <span class="s1">&#39;now&#39;</span><span class="p">:</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span> 
+        <span class="k">else</span><span class="p">:</span>   
+            <span class="n">e</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="s1">&#39;%Y/%m/</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Outlet.getForecastHours"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getForecastHours">[docs]</a>    <span class="k">def</span> <span class="nf">getForecastHours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -365,21 +392,19 @@
 <div class="viewcode-block" id="Outlet.getAvailableAtTime"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getAvailableAtTime">[docs]</a>    <span class="k">def</span> <span class="nf">getAvailableAtTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="c1">#logging.debug(&quot;Calling getAvailableAtTime()&quot; + str(dt))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calling getAvailableAtTime()&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMostRecentCycle</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dt</span> <span class="o">==</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1700</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[]</span>
-
         <span class="n">stns_avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPoints</span><span class="p">()</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">availableat</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">available</span><span class="o">.</span><span class="n">availableat</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]:</span>
+            <span class="c1">#avail = available.availableat[self._name.lower()][self._ds_name.lower()](dt)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">avail</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">availableat</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()](</span><span class="n">dt</span><span class="p">)</span>
                 <span class="n">stns_avail</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPoints</span><span class="p">()</span>
                 <span class="n">srcids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span> <span class="p">]</span>
-
                 <span class="k">for</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">avail</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">idx</span> <span class="o">=</span> <span class="n">srcids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stn</span><span class="p">)</span>
@@ -392,13 +417,15 @@
             <span class="k">except</span> <span class="n">URLError</span><span class="p">:</span>
                 <span class="n">stns_avail</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_available</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;_is_available: &quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_available</span><span class="p">))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Number of stations found:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stns_avail</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">stns_avail</span></div>
 
 <div class="viewcode-block" id="Outlet.getAvailableTimes"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getAvailableTimes">[docs]</a>    <span class="k">def</span> <span class="nf">getAvailableTimes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># THIS IS WHERE I COULD POTENTIALLY PASS AN ARGUMENT TO FILTER OUT WHAT RAOBS OR MODELS ARE AVAILABLE</span>
         <span class="n">custom_failed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1">#Used to help search for times</span>
-        <span class="c1">#logging.debug(&quot;Called outlet.getAvailableTimes():&quot; + &quot; dt=&quot; + str(dt) + &quot; self._name=&quot; + str(self._name) + &quot; self._ds_name=&quot; + str(self._ds_name))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Called outlet.getAvailableTimes():&quot;</span> <span class="o">+</span> <span class="s2">&quot; dt=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; self._name=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; self._ds_name=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_custom_avail</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;local&quot;</span><span class="p">:</span>
@@ -408,7 +435,6 @@
                         <span class="n">times</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()](</span><span class="n">dt</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                         <span class="n">times</span> <span class="o">=</span> <span class="n">available</span><span class="o">.</span><span class="n">available</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="bp">self</span><span class="o">.</span><span class="n">_ds_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]()</span>
-                        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Hit a typeerror&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getArchivedCycles</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">max_cycles</span><span class="o">=</span><span class="n">max_cycles</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_available</span> <span class="o">=</span> <span class="kc">True</span>
@@ -418,7 +444,7 @@
      
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_custom_avail</span> <span class="ow">or</span> <span class="n">custom_failed</span><span class="p">:</span>
             <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getArchivedCycles</span><span class="p">(</span><span class="n">max_cycles</span><span class="o">=</span><span class="n">max_cycles</span><span class="p">)</span>
-        <span class="c1">#logging.debug(&quot;outlet.getAvailableTimes() times Found:&quot; + str(times[~max_cycles:]))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;outlet.getAvailableTimes() times Found:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">times</span><span class="p">[</span><span class="o">~</span><span class="n">max_cycles</span><span class="p">:]))</span>
         <span class="k">return</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="n">max_cycles</span><span class="p">:]</span></div>
 
 <div class="viewcode-block" id="Outlet.getArchiveLen"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.getArchiveLen">[docs]</a>    <span class="k">def</span> <span class="nf">getArchiveLen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -431,6 +457,7 @@
         <span class="k">return</span> <span class="n">decoder</span><span class="o">.</span><span class="n">getDecoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Outlet.hasProfile"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.Outlet.hasProfile">[docs]</a>    <span class="k">def</span> <span class="nf">hasProfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calling outlet.hasProfile() &quot;</span><span class="p">)</span>
         <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getAvailableTimes</span><span class="p">(</span><span class="n">dt</span><span class="o">=</span><span class="n">cycle</span><span class="p">)</span>
         <span class="n">has_prof</span> <span class="o">=</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">times</span>
 
@@ -480,13 +507,17 @@
         <span class="k">return</span> <span class="n">prop</span>
 
     <span class="k">def</span> <span class="nf">_getOutletWithProfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="c1">#logging.debug(&quot;_getOutletWithProfile: &quot; + str(stn) + &#39; &#39; + str(cycle_dt))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;_getOutletWithProfile: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">stn</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cycle_dt</span><span class="p">))</span>
         <span class="n">use_outlets</span> <span class="o">=</span> <span class="p">[</span> <span class="n">out</span> <span class="k">for</span> <span class="n">out</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">hasProfile</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">)</span> <span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">outlet</span> <span class="o">=</span> <span class="n">use_outlets</span><span class="p">[</span><span class="n">outlet_num</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DataSourceError</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">outlet</span>
+
+<div class="viewcode-block" id="DataSource.updateTimeSpan"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.updateTimeSpan">[docs]</a>    <span class="k">def</span> <span class="nf">updateTimeSpan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">outlets</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">getTimeSpan</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">]</span>
+        <span class="k">return</span> <span class="n">outlets</span></div>
 
 <div class="viewcode-block" id="DataSource.getForecastHours"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getForecastHours">[docs]</a>    <span class="k">def</span> <span class="nf">getForecastHours</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s1">&#39;getForecastHours&#39;</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="n">outlet_num</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="n">flatten</span><span class="p">)</span>
@@ -509,7 +540,7 @@
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">cycles</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DataSource.getAvailableTimes"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getAvailableTimes">[docs]</a>    <span class="k">def</span> <span class="nf">getAvailableTimes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1">#logging.debug(&quot;data_source.getAvailableTimes() filename=&quot;+str(filename)+&#39; outlent_num=&#39; +str(outlet_num) + &#39; dt=&#39; + str(dt))</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;data_source.getAvailableTimes() filename=&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; outlent_num=&#39;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">outlet_num</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; dt=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dt</span><span class="p">))</span>
         <span class="n">cycles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="s1">&#39;getAvailableTimes&#39;</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="n">outlet_num</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="n">max_cycles</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cycles</span><span class="p">[</span><span class="o">-</span><span class="n">max_cycles</span><span class="p">:]</span></div>
 
@@ -534,7 +565,7 @@
         <span class="k">if</span> <span class="n">outlet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">outlet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getOutletWithProfile</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="n">outlet_num</span><span class="p">)</span>
         <span class="n">url_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="p">[</span><span class="n">outlet</span><span class="p">]</span><span class="o">.</span><span class="n">getURL</span><span class="p">()</span>
-        <span class="c1">#logging.debug(&quot;URL: &quot; + url_base)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;URL: &quot;</span> <span class="o">+</span> <span class="n">url_base</span><span class="p">)</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;srcid&#39;</span><span class="p">:</span><span class="n">quote</span><span class="p">(</span><span class="n">stn</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]),</span>
             <span class="s1">&#39;cycle&#39;</span><span class="p">:</span><span class="s2">&quot;</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">cycle_dt</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
@@ -545,10 +576,11 @@
         <span class="p">}</span>
 
         <span class="n">url</span> <span class="o">=</span> <span class="n">url_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">fmt</span><span class="p">)</span>
-        <span class="c1">#logging.debug(&quot;URL: &quot; + url)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Formatted URL: &quot;</span> <span class="o">+</span> <span class="n">url</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">url</span></div>
 
 <div class="viewcode-block" id="DataSource.getDecoderAndURL"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getDecoderAndURL">[docs]</a>    <span class="k">def</span> <span class="nf">getDecoderAndURL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting the decoder and the URL to the data ...&quot;</span><span class="p">)</span>
         <span class="n">outlet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getOutletWithProfile</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="o">=</span><span class="n">outlet_num</span><span class="p">)</span>
         <span class="n">decoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="p">[</span><span class="n">outlet</span><span class="p">]</span><span class="o">.</span><span class="n">getDecoder</span><span class="p">()</span>
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getURL</span><span class="p">(</span><span class="n">stn</span><span class="p">,</span> <span class="n">cycle_dt</span><span class="p">,</span> <span class="n">outlet_num</span><span class="p">,</span> <span class="n">outlet</span><span class="o">=</span><span class="n">outlet</span><span class="p">)</span>
@@ -564,17 +596,24 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span></div>
 
 <div class="viewcode-block" id="DataSource.isObserved"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.isObserved">[docs]</a>    <span class="k">def</span> <span class="nf">isObserved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observed</span></div>
+
+<div class="viewcode-block" id="DataSource.getPoint"><a class="viewcode-back" href="../../datasources.html#datasources.data_source.DataSource.getPoint">[docs]</a>    <span class="k">def</span> <span class="nf">getPoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stn</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">outlet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">pnt</span> <span class="ow">in</span> <span class="n">outlet</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getPoints</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;icao&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;iata&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">stn</span> <span class="ow">in</span> <span class="n">pnt</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="n">pnt</span></div></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">loadDataSources</span><span class="p">()</span>
-    <span class="n">ds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Observed&#39;</span><span class="p">,</span> <span class="s1">&#39;GFS&#39;</span><span class="p">]</span> <span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">loadDataSources</span><span class="p">(</span><span class="s1">&#39;./&#39;</span><span class="p">)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Observed&#39;</span><span class="p">,</span> <span class="s1">&#39;GFS&#39;</span><span class="p">,</span> <span class="s1">&#39;HRRR&#39;</span><span class="p">,</span> <span class="s1">&#39;NAM&#39;</span><span class="p">]</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;GFS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">updateTimeSpan</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;HRRR&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">updateTimeSpan</span><span class="p">())</span>
+<span class="c1">#    for n, d in ds.items():</span>
 <span class="c1">#       print n, d.getMostRecentCycle()</span>
-        <span class="n">times</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">getAvailableTimes</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">times</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">[</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;srcid&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">getAvailableAtTime</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="p">])</span>
+        <span class="c1">#times = d.getAvailableTimes()</span>
+        <span class="c1">#for t in times:</span>
+        <span class="c1">#    print(n, t, [ s[&#39;srcid&#39;] for s in d.getAvailableAtTime(t) ])</span>
 </pre></div>
 
            </div>

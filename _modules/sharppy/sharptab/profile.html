@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.sharptab.profile &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.sharptab.profile &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
@@ -322,7 +322,7 @@
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            Copies a profile object.</span>
-<span class="sd">        &#39;&#39;&#39;</span>            
+<span class="sd">        &#39;&#39;&#39;</span> 
         <span class="n">new_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span> <span class="s1">&#39;pres&#39;</span><span class="p">,</span> <span class="s1">&#39;hght&#39;</span><span class="p">,</span> <span class="s1">&#39;tmpc&#39;</span><span class="p">,</span> <span class="s1">&#39;dwpc&#39;</span><span class="p">,</span> <span class="s1">&#39;omeg&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;strictQC&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span> <span class="p">])</span>
 
         <span class="k">if</span> <span class="n">prof</span><span class="o">.</span><span class="n">u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prof</span><span class="o">.</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -351,7 +351,7 @@
         <span class="n">snd_loc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">)))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">location</span>
 
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+        <span class="c1">#print(now, self.date)</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
         <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%TITLE%</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1">#snd_file.write(&quot;%s   %s\n Saved by user: %s on %s UTC\n&quot; % (snd_loc, self.date.strftime(&quot;%y%m%d/%H%M&quot;), user, now.strftime(&#39;%Y%m%d/%H%M&#39;)))</span>
@@ -368,7 +368,6 @@
         <span class="n">snd_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Profile.checkDataIntegrity"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.profile.Profile.checkDataIntegrity">[docs]</a>    <span class="k">def</span> <span class="nf">checkDataIntegrity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">qc_tools</span><span class="o">.</span><span class="n">isHGHTValid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hght</span><span class="p">):</span>
             <span class="n">qc_tools</span><span class="o">.</span><span class="n">raiseError</span><span class="p">(</span><span class="s2">&quot;Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.&quot;</span><span class="p">,</span> <span class="n">qc_tools</span><span class="o">.</span><span class="n">DataQualityException</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">qc_tools</span><span class="o">.</span><span class="n">isTMPCValid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmpc</span><span class="p">):</span>
@@ -1111,6 +1110,8 @@
         <span class="n">wspd</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">mag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfc_6km_shear</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">right_stp_fixed</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_fixed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MS</span><span class="p">(</span><span class="n">wspd</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">left_stp_fixed</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">stp_fixed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">bplus</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfcpcl</span><span class="o">.</span><span class="n">lclhght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_srh1km</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">utils</span><span class="o">.</span><span class="n">KTS2MS</span><span class="p">(</span><span class="n">wspd</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sherbe</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">sherb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effective</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">etop</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">ebottom</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">right_scp</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_scp</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">right_stp_cin</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_stp_cin</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -1221,7 +1222,6 @@
 <span class="sd">        variables:</span>
 <span class="sd">        </span>
 <span class="sd">        self.watch_type - possible watch type</span>
-<span class="sd">        self.watch_type_color - the color of type severity</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1232,19 +1232,15 @@
 <span class="sd">        None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">watch_types</span> <span class="o">=</span> <span class="n">watch_type</span><span class="o">.</span><span class="n">possible_watch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type_color</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">watch_types</span> <span class="o">=</span> <span class="n">watch_type</span><span class="o">.</span><span class="n">possible_watch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_left</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">left_watch_type</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">left_watch_type_color</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_watch_type</span> <span class="o">=</span> <span class="n">watch_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">watch_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_watch_type</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">watch_type_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_watch_type_color</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">watch_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">watch_type_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type_color</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">watch_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_watch_type</span></div>
 
 <div class="viewcode-block" id="ConvectiveProfile.get_traj"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.profile.ConvectiveProfile.get_traj">[docs]</a>    <span class="k">def</span> <span class="nf">get_traj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>

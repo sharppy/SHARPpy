@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Custom Data Sources &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Custom Data Sources &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -87,9 +87,9 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom Data Sources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#valid-data-formats">Valid Data Formats</a></li>
@@ -168,6 +168,7 @@
   <div class="section" id="custom-data-sources">
 <span id="id1"></span><h1>Custom Data Sources<a class="headerlink" href="#custom-data-sources" title="Permalink to this headline">¶</a></h1>
 <p>Sometimes, you may want to load your own custom data into SHARPpy.</p>
+<p>This section of the documentation covers just that.</p>
 <div class="section" id="valid-data-formats">
 <h2>Valid Data Formats<a class="headerlink" href="#valid-data-formats" title="Permalink to this headline">¶</a></h2>
 <p>SHARPpy hosts a variety of decoders within the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to help decode various human-readable text files:</p>
@@ -192,12 +193,19 @@
 <tr class="row-even"><td>spc_decoder.py</td>
 <td>Observed soundings</td>
 </tr>
+<tr class="row-odd"><td>uwyo_decoder.py</td>
+<td>University of Wyoming sounding archive text format</td>
+</tr>
 </tbody>
 </table>
-<p>Examples of these various files may be found within the <code class="docutils literal notranslate"><span class="pre">examples/data</span></code> folder.</p>
-<p><em>Notes about the SPC file format:</em></p>
+<p>All decoders in the SHARPpy program inherit from the Decoder class described in <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a>.  Each decoder
+returns a ProfCollection object, which contains Profile objects generated from the extended Decoder class.
+For example, the SPCDecoder returns a ProfileCollection object with only one Profile object, as the SPCDecoder
+reads in data files meant for only observed soundings.</p>
+<p>Examples of these various input files may be found within the <cite>examples/data</cite> folder.</p>
+<p><strong>Notes about the SPC file format:</strong></p>
 <p>While SHARPpy can be configured to accept multiple different sounding formats, the tabular (or SPC format) format is the most common format used.  This text file format requires several tags (%TITLE%, %RAW%, and %END%) to indicate where the header information is for the sounding and where the actual data is kept in the file.</p>
-<p>The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  “…” is where the sections of the file ends and continues in this example and are not included in the actual data file:</p>
+<p>The header format should be of this format, where SITEID is the three or four letter identifier and YYMMDD/HHMM is the 2-letter year, month, day, hour, and minute time of the sounding.  LAT, LON denote the latitude and longitude of the sounding - SHARPpy uses this information for hemispheric-dependent calculations.  “…” is where the sections of the file ends and continues in this example and are not included in the actual data file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">TITLE</span><span class="o">%</span>
  <span class="n">SITEID</span>   <span class="n">YYMMDD</span><span class="o">/</span><span class="n">HHMM</span> <span class="n">LAT</span><span class="p">,</span><span class="n">LON</span>
 
@@ -226,7 +234,7 @@
 </div>
 <div class="section" id="loading-in-sounding-data-files">
 <h2>Loading in Sounding Data Files<a class="headerlink" href="#loading-in-sounding-data-files" title="Permalink to this headline">¶</a></h2>
-<p>SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File-&gt;Open menu to open up your text file in the sounding window.  With each file, SHARPpy will search through the list of decoders in the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to find the correct one for your file.  See the <a class="reference external" href="https://github.com/sharppy/SHARPpy/blob/master/tutorials/14061619.OAX">14061619.OAX</a> file in the tutorials folder for an example of the tabular format SHARPpy requires to use this function.</p>
+<p>SHARPpy supports opening up multiple observed sounding data files in the sounding window.  While in the SHARPpy Sounding Picker, use File-&gt;Open menu to open up your text file in the sounding window.  With each file, SHARPpy will search through the list of decoders in the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to find the correct one for your file.  Example files to test this are included in the <cite>examples/data</cite> folder.</p>
 </div>
 <div class="section" id="adding-custom-data-sources">
 <h2>Adding Custom Data Sources<a class="headerlink" href="#adding-custom-data-sources" title="Permalink to this headline">¶</a></h2>
@@ -241,7 +249,7 @@ The XML file contains the information for how the data source behaves. Questions
 <span class="nt">&lt;sourcelist&gt;</span>
     <span class="nt">&lt;datasource</span> <span class="na">name=</span><span class="s">&quot;My Data Source&quot;</span> <span class="na">observed=</span><span class="s">&quot;false&quot;</span> <span class="na">ensemble=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
         <span class="nt">&lt;outlet</span> <span class="na">name=</span><span class="s">&quot;My Server&quot;</span> <span class="na">url=</span><span class="s">&quot;http://www.example.com/myprofile_{date}{cycle}_{srcid}.buf&quot;</span> <span class="na">format=</span><span class="s">&quot;bufkit&quot;</span> <span class="nt">&gt;</span>
-            <span class="nt">&lt;time</span> <span class="na">range=</span><span class="s">&quot;24&quot;</span> <span class="na">delta=</span><span class="s">&quot;1&quot;</span> <span class="na">cycle=</span><span class="s">&quot;6&quot;</span> <span class="na">offset=</span><span class="s">&quot;0&quot;</span> <span class="na">delay=</span><span class="s">&quot;2&quot;</span> <span class="na">archive=</span><span class="s">&quot;24&quot;</span><span class="nt">/&gt;</span>
+            <span class="nt">&lt;time</span> <span class="na">range=</span><span class="s">&quot;24&quot;</span> <span class="na">delta=</span><span class="s">&quot;1&quot;</span> <span class="na">cycle=</span><span class="s">&quot;6&quot;</span> <span class="na">offset=</span><span class="s">&quot;0&quot;</span> <span class="na">delay=</span><span class="s">&quot;2&quot;</span> <span class="na">archive=</span><span class="s">&quot;24&quot;</span> <span class="na">start=</span><span class="s">&quot;2012/04/01&quot;</span> <span class="na">end=</span><span class="s">&quot;now&quot;</span><span class="nt">/&gt;</span>
             <span class="nt">&lt;points</span> <span class="na">csv=</span><span class="s">&quot;mydatasource.csv&quot;</span> <span class="nt">/&gt;</span>
         <span class="nt">&lt;/outlet&gt;</span>
     <span class="nt">&lt;/datasource&gt;</span>
@@ -250,12 +258,22 @@ The XML file contains the information for how the data source behaves. Questions
 </div>
 <p>For the <code class="docutils literal notranslate"><span class="pre">outlet</span></code> tag:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">name</span></code>: A name for the data source outlet</li>
-<li><code class="docutils literal notranslate"><span class="pre">url</span></code>: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">url</span></code>: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:</dt>
+<dd><ul class="first last">
 <li><code class="docutils literal notranslate"><span class="pre">date</span></code>: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).</li>
 <li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The current cycle hour in HHZ format (e.g. 00Z).</li>
 <li><code class="docutils literal notranslate"><span class="pre">srcid</span></code>: The source’s profile ID (will be filled in with the same column from the CSV file; see below).</li>
-<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> and <cite>pecan</cite> for model profiles and <cite>spc</cite> for observed profiles. Others will be available in the future.</li>
+<li><code class="docutils literal notranslate"><span class="pre">day</span></code>: The day of the data (not shown)</li>
+<li><code class="docutils literal notranslate"><span class="pre">hour</span></code>: the hour of the data (not shown)</li>
+<li><code class="docutils literal notranslate"><span class="pre">month</span></code>: the month of the data (not shown)</li>
+<li><code class="docutils literal notranslate"><span class="pre">year</span></code>: the year of the data (not shown)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">name</span></code>: A name for the data source outlet</li>
+<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> and <cite>pecan</cite> for model profiles and <cite>spc</cite> for observed profiles. Others may be available in the future.</li>
 </ul>
 <p>For the <code class="docutils literal notranslate"><span class="pre">time</span></code> tag:</p>
 <ul class="simple">
@@ -267,6 +285,15 @@ The XML file contains the information for how the data source behaves. Questions
 <li><code class="docutils literal notranslate"><span class="pre">archive</span></code>: The length of time in hours that data are kept on the server.</li>
 </ul>
 <p>These should all be integer numbers of hours; support for sub-hourly data is forthcoming.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">start</span></code>: A start date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</li>
+<li><code class="docutils literal notranslate"><span class="pre">end</span></code>: A end date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</li>
+</ul>
+<p>These two tags are used to grey out parts of the Calendar that is shown on the Sounding Picker.
+For example, a sounding archive in SHARPpy may have a start date of “1946/01/01” and an end value
+of “now” as the archive keeps growing.  If these tags are not specified, or “-” is used for the
+<code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code>, then dates outside those available or determined by the <code class="docutils literal notranslate"><span class="pre">archive</span></code> value
+are greyed out.</p>
 <p>3. Make a new CSV file
 The CSV file contains information about where your profiles are located and what the locations are called. It should look like the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">icao</span><span class="p">,</span><span class="n">iata</span><span class="p">,</span><span class="n">synop</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">country</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">elev</span><span class="p">,</span><span class="n">priority</span><span class="p">,</span><span class="n">srcid</span>

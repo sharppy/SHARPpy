@@ -8,7 +8,7 @@ SHARPpy code can be installed on *Windows, macOS, and Linux*, as all these platf
 SHARPpy can be installed from one of these three places: 
 
 * a pre-compiled binary executable
-* a Python package manager (pip and conda)
+* a Python package manager (:command:`pip` and :command:`conda`)
 * from source (downloaded from Github).  
 
 Binary executables are available for Windows (64 bit) and macOS 10.6+ (Snow Leopard and later; 64 bit only).
@@ -24,12 +24,10 @@ https://github.com/sharppy/SHARPpy/releases/
 
 Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
 
-After downloading the binary, launching the program is as easy as double clicking on the SHARPpy icon.
+Installing using package managers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Installing using conda or pip
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-SHARPpy is also available for download through the `conda` and `pip` package managers.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
+SHARPpy is also available for download through the :command:`conda` and :command:`pip` package managers.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
 
 From conda
 ----------
@@ -51,29 +49,6 @@ If you hate snakes, you may want to use :command:`pip` instead:
 
     pip install sharppy
 
-To launch the GUI, simply type in the following command into the the command line and press Enter:
-
-.. prompt:: bash
-
-    sharppy
-
-If the X-window is enabled (most desktops will have this already available), the GUI should launch.
-Debug mode is accessible if the modifier ``--debug`` is appended to the end of the ``sharppy`` command.
-
-.. prompt:: bash
-
-    sharppy --debug
-
-As mentioned, this allows the user to access both the libraries for scripting and also the GUI interface.
-To access the libraries, write a script or launch a Python interpreter:
-
-.. code:: python
-
-    >>> import sharppy
-    >>> print(sharppy.__version__)
-
-More information about scripting with SHARPpy may be found on the :ref:`Scripting` page. 
-
 Installing the code from source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -85,12 +60,14 @@ install the required packages manually.  These instructions assume that you have
 
 * NumPy
 * PySide
+* requests
+* python-dateutil
 
-Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
+Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
 
 .. prompt:: bash
 
-    conda install -c conda-forge pyside=1.2.4
+    conda install -c conda-forge pyside=1.2.4 requests python-dateutil
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 

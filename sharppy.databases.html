@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.databases package &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.databases package &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -198,7 +198,7 @@ line graphs and box and whisker plots in the SHIP or STP EF insets)</p>
 <p>Handles comparing the loaded sounding against the PWV climatology</p>
 <span class="target" id="module-sharppy.databases.pwv"></span><dl class="class">
 <dt id="sharppy.databases.pwv.PWDatabase">
-<em class="property">class </em><code class="descclassname">sharppy.databases.pwv.</code><code class="descname">PWDatabase</code><span class="sig-paren">(</span><em>data_path='/home/travis/miniconda/envs/test-environment/lib/python3.6/site-packages/SHARPpy-1.4.0a3-py3.6.egg/sharppy/databases'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/pwv.html#PWDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.pwv.PWDatabase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sharppy.databases.pwv.</code><code class="descname">PWDatabase</code><span class="sig-paren">(</span><em>data_path='/home/travis/build/sharppy/SHARPpy/sharppy/databases'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/pwv.html#PWDatabase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.pwv.PWDatabase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="sharppy.databases.pwv.PWDatabase.getClimo">
@@ -313,6 +313,24 @@ set to profile=”convective” if indices are desired.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a Profile object</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="sharppy.databases.sars.get_sars_dir">
+<code class="descclassname">sharppy.databases.sars.</code><code class="descname">get_sars_dir</code><span class="sig-paren">(</span><em>match_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/sars.html#get_sars_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.sars.get_sars_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the directory where the raw SARS files are.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>match_type</strong> (<em>str</em>) – ‘supercell’ or ‘hail’</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>

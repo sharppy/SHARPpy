@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.io.arw_decoder &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.io.arw_decoder &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
@@ -305,7 +305,8 @@
         <span class="n">profiles</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1">## loop over the available times</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XTIME&quot;</span><span class="p">][:]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">][:]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="c1">## make sure the arrays are 1D</span>
             <span class="n">prof_pres</span> <span class="o">=</span> <span class="n">mpres</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="n">prof_hght</span> <span class="o">=</span> <span class="n">mhght</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
@@ -314,8 +315,12 @@
             <span class="n">prof_uwin</span> <span class="o">=</span> <span class="n">muwin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="n">prof_vwin</span> <span class="o">=</span> <span class="n">mvwin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="c1">## compute the time of the profile</span>
-            <span class="n">delta</span> <span class="o">=</span> <span class="n">dattim</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span> <span class="n">minutes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XTIME&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span>
-            <span class="n">curtime</span> <span class="o">=</span> <span class="n">inittime</span> <span class="o">+</span> <span class="n">delta</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">dattim</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span> <span class="n">minutes</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;XTIME&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span>
+                <span class="n">curtime</span> <span class="o">=</span> <span class="n">inittime</span> <span class="o">+</span> <span class="n">delta</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">file_data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;Times&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">))</span>
+                <span class="n">curtime</span> <span class="o">=</span> <span class="n">dattim</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H:%M:%S&#39;</span><span class="p">)</span> 
             <span class="n">date_obj</span> <span class="o">=</span> <span class="n">curtime</span>
 
             <span class="c1">## construct the profile object</span>
@@ -335,7 +340,7 @@
         <span class="k">return</span> <span class="n">prof_coll</span></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-	<span class="n">file</span> <span class="o">=</span> <span class="n">ARWDecoder</span><span class="p">((</span><span class="s2">&quot;/Users/keltonhalbert/Downloads/wrfout_d01_2015-10-25_00-00-00&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">97</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>
+	<span class="n">file</span> <span class="o">=</span> <span class="n">ARWDecoder</span><span class="p">((</span><span class="s2">&quot;/Users/blumberg/Downloads/wrfout_v2_Lambert.nc&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">97</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>
 </pre></div>
 
            </div>

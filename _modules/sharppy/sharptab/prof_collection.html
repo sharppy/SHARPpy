@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.sharptab.prof_collection &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.sharptab.prof_collection &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
@@ -167,7 +167,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <div class="viewcode-block" id="doCopy"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.doCopy">[docs]</a><span class="k">def</span> <span class="nf">doCopy</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n\n\n\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">target_type</span><span class="p">,</span> <span class="n">prof</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
     <span class="n">pipe</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">target_type</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">),</span> <span class="n">idx</span><span class="p">))</span></div>
     
 <div class="viewcode-block" id="ProfCollection"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection">[docs]</a><span class="k">class</span> <span class="nc">ProfCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -393,7 +392,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">cur_dt</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
+            <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="ProfCollection.setAnalogToDate"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.prof_collection.ProfCollection.setAnalogToDate">[docs]</a>    <span class="k">def</span> <span class="nf">setAnalogToDate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analog_to_date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -458,6 +457,9 @@
 <span class="sd">        Modify the profile at the current time.</span>
 <span class="sd">        idx:    The vertical index to modify</span>
 <span class="sd">        **kwargs:   The variables to modify (&#39;tmpc&#39;, &#39;dwpc&#39;, &#39;u&#39;, or &#39;v&#39;)</span>
+<span class="sd">        </span>
+<span class="sd">        TODO: Allow modification of layers.  Could be that idx is -999 for layer</span>
+<span class="sd">              and kwargs passes information about the layers to be modified.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isEnsemble</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t modify ensemble profiles&quot;</span><span class="p">)</span>
@@ -470,12 +472,17 @@
 
         <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prof</span><span class="p">)</span>
         <span class="c1"># Copy the variables to be modified</span>
-        <span class="n">prof_vars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">)</span>
-
-        <span class="c1"># Do the modification</span>
-        <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">prof_vars</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="n">prof_vars</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;idx_range&#39;</span><span class="p">)</span>
         
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">999</span><span class="p">:</span>
+            <span class="c1"># Do the modification</span>
+            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">prof_vars</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;idx_range&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">prof_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">prof_vars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+ 
         <span class="c1"># Make a copy of the profile object with the newly modified variables inserted.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_profs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_highlight</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_prof_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">prof</span><span class="p">,</span> <span class="o">**</span><span class="n">prof_vars</span><span class="p">)</span>
 

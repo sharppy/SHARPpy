@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.databases.sars &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.databases.sars &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripting.html">Scripting</a></li>
@@ -505,6 +505,21 @@
     <span class="k">return</span> <span class="n">quality_match_dates</span><span class="p">,</span> <span class="n">quality_match_sizes</span><span class="p">,</span> <span class="n">num_loose_matches</span><span class="p">,</span> <span class="n">num_sig_reports</span><span class="p">,</span> <span class="n">prob_sig_hail</span></div>
 
 
+<div class="viewcode-block" id="get_sars_dir"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.sars.get_sars_dir">[docs]</a><span class="k">def</span> <span class="nf">get_sars_dir</span><span class="p">(</span><span class="n">match_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the directory where the raw SARS files are.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    match_type : str</span>
+<span class="sd">        &#39;supercell&#39; or &#39;hail&#39;</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;sars/&quot;</span> <span class="o">+</span> <span class="n">match_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span></div>
+
 <span class="c1">## written by Kelton Halbert</span>
 <div class="viewcode-block" id="getSounding"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.sars.getSounding">[docs]</a><span class="k">def</span> <span class="nf">getSounding</span><span class="p">(</span><span class="n">match_string</span><span class="p">,</span> <span class="n">match_type</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -522,7 +537,7 @@
     <span class="c1">#if (match_type.lower() != &quot;supercell&quot;) or (match_type.lower() != &quot;hail&quot;):</span>
     <span class="c1">#    raise Exception(&quot;InvalidSARSType&quot;, match_type.lower() + &quot; is an invalid SARS type.&quot;)</span>
     <span class="c1">## get the directory with the data</span>
-    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;sars/&quot;</span> <span class="o">+</span> <span class="n">match_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_sars_dir</span><span class="p">(</span><span class="n">match_type</span><span class="p">)</span>
 
     <span class="n">match_date</span><span class="p">,</span> <span class="n">match_loc</span> <span class="o">=</span> <span class="n">match_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>

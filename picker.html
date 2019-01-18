@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Data Picker &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Running SHARPpy &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -87,12 +87,19 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Data Picker</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running SHARPpy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#launching-the-program">Launching the Program</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-sounding-picker">The Sounding Picker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#default-data-sources">Default Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#batch-mode">Batch Mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#when-things-go-wrong">When things go wrong</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -144,7 +151,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Using the Data Picker</li>
+      <li>Running SHARPpy</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -163,20 +170,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="using-the-data-picker">
-<span id="id1"></span><h1>Using the Data Picker<a class="headerlink" href="#using-the-data-picker" title="Permalink to this headline">¶</a></h1>
-<p>Launching the SHARPpy program should load up the SHARPpy Sounding Picker:</p>
-<div class="figure align-center" id="id2">
+  <div class="section" id="running-sharppy">
+<span id="using-the-data-picker"></span><h1>Running SHARPpy<a class="headerlink" href="#running-sharppy" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="launching-the-program">
+<h2>Launching the Program<a class="headerlink" href="#launching-the-program" title="Permalink to this headline">¶</a></h2>
+<p>If you installed the pre-compiled binary, simply double click on the SHARPpy program on your computer.
+If you installed from source or from a package manager, navigate to your terminal and type
+in the following command into the the command line:</p>
+<pre class="highlight"><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">sharppy</span>
+</pre><p>If the X-window is enabled (most desktops will have this already available), the Sounding Picker should launch.</p>
+<p>As mentioned, installing via command line allows the user to access both the libraries for scripting and also the GUI interface.
+The following sections will discuss the GUI functionality.  For more information about scripting with SHARPpy see the <a class="reference internal" href="scripting.html#scripting"><span class="std std-ref">Scripting</span></a> page.</p>
+</div>
+<div class="section" id="the-sounding-picker">
+<h2>The Sounding Picker<a class="headerlink" href="#the-sounding-picker" title="Permalink to this headline">¶</a></h2>
+<p>Launching the SHARPpy program (from the command line or from the binaries) should load up the SHARPpy Sounding Picker:</p>
+<div class="figure align-center" id="id1">
 <a class="reference internal image-reference" href="_images/picker_example.png"><img alt="_images/picker_example.png" src="_images/picker_example.png" style="width: 688.1999999999999px; height: 442.8px;" /></a>
 <p class="caption"><span class="caption-text">The SHARPpy Sounding Picker window showing the locations where observed sounding data may be examined through the program interface.</span></p>
 </div>
 <p>The Picker is an interface where the metadata for sounding data sources may be examined in order to help select the sounding data the user wishes to analyze.  In this window, users can select the data source (top left) which includes both observed and modeled sounding datasets.  For each sounding source, a data cycle time can be selected.  For observed data, this will generally be at 00 and 12 UTC.  For modeled data, the data may be available at hourly or synoptic time intervals (e.g., 00, 06, 12, or 18 UTC).  If point forecast soundings are desired by the user from different models (e.g., GFS), the “Select Forecast Time” list will be populated to show the model forecast times available from that model.  This list can be used to load subsets of the model run data into SHARPpy for analysis.</p>
 <p>After the data source and times are selected, the map to the right will be populated with red points indicating the sounding locations available.  While the program does default to U.S. locations, the map can be reoriented by clicking and dragging the map area.  Double clicking on the map will center the map to the cursor location.  Other global maps (e.g., Tropics and Southern Hemisphere) can be selected from the drop down box.  Should you wish to save your map view as the new default map view, you can click the “Save Map View as Default” box in the top right.  Selection of a sounding data site will turn that site green on the map.  Once a sounding data site is selected, you can click “Generate Profiles” to download the data and analyze it in the SHARPpy GUI.</p>
+</div>
 <div class="section" id="default-data-sources">
 <h2>Default Data Sources<a class="headerlink" href="#default-data-sources" title="Permalink to this headline">¶</a></h2>
-<p>SHARPpy links into various datasets around the web to allow the user to explore a variety of observed and modeling datasets.  Combined, these datasets offer SHARPpy users accessiblity to over <cite>100 million different sounding data files</cite> directly from the Picker.  Links to these datasets come default with the SHARPpy package and files pointing SHARPpy to these datasets are placed in the user’s home directory underneath a directory called <cite>.sharppy/</cite>.  Unless you are attempting to install additional data sources that SHARPpy can read (see <a class="reference internal" href="datasource_guide.html#custom-data-sources"><span class="std std-ref">Custom Data Sources</span></a>), this folder should not be modified.</p>
-<table border="1" class="colwidths-given docutils" id="id3">
-<caption><span class="caption-text">Default SHARPpy Data Sources</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<p>SHARPpy links into various datasets around the web to allow the user to explore a variety of observed and modeling datasets.  Combined, these datasets offer SHARPpy users accessiblity to <strong>over 100 million different sounding data files</strong> directly from the Picker.  Links to these datasets come default with the SHARPpy package and files pointing SHARPpy to these datasets are placed in the user’s home directory underneath a directory called <cite>.sharppy/</cite>.  Unless you are attempting to install additional data sources that SHARPpy can read (see <a class="reference internal" href="datasource_guide.html#custom-data-sources"><span class="std std-ref">Custom Data Sources</span></a>), this folder should not be modified.</p>
+<table border="1" class="colwidths-given docutils" id="id2">
+<caption><span class="caption-text">Default SHARPpy Data Sources</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="24%" />
 <col width="59%" />
@@ -213,7 +237,7 @@
 <p class="first admonition-title">Warning</p>
 <p class="last">While we have taken care to provide accurate data through SHARPpy, errors may occur due to various reasons.  Because of this reason, the users should use this data at their own risk and should take care to scrutinize the data provided.  This data is provided without any warranty of accuracy.</p>
 </div>
-<div class="figure align-center" id="id4">
+<div class="figure align-center" id="id3">
 <a class="reference internal image-reference" href="http://sharp.weather.ou.edu/soundings/obs/recent.png"><img alt="http://sharp.weather.ou.edu/soundings/obs/recent.png" src="http://sharp.weather.ou.edu/soundings/obs/recent.png" /></a>
 <p class="caption"><span class="caption-text">A real-time status plot from the SHARP server generated for the last (00 or 12 UTC) sounding dataset available.  Each point indicates a location where sounding data was found on the Unidata stream.  The color of each point indicates the status of the data in the processing steps.  Green data points indicate data files that were able to be generated by the merge script and passed the SHARPpy data integrity checks.  Yellow data points indicate data files that were created, but threw an exception when passed to SHARPpy (likely due to data integrity issues).  Red data points are locations where the merge script failed and are likely due to incomplete data in the Unidata stream.</span></p>
 </div>
@@ -226,6 +250,30 @@
 <p class="first admonition-title">Warning</p>
 <p class="last">Occasionally, the default data sources go down in SHARPpy.  With the exception of the SHARP dataset, these issues are largely outside of our control and may often be resolved by trying to access the data again at another time.</p>
 </div>
+</div>
+<div class="section" id="batch-mode">
+<h2>Batch Mode<a class="headerlink" href="#batch-mode" title="Permalink to this headline">¶</a></h2>
+<p>If you installed via the command line, the SHARPpy batch mode may be accessible through the <strong class="command">sharppy</strong> command.
+In this mode, the Picker and GUI may be bypassed to generate images of the SHARPpy GUI to show your data.</p>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<p>To generate a plot of the test data included in SHARPpy:</p>
+<pre class="highlight"><span class="prompt1">sharppy examples/data/14061619.OAX</span>
+</pre><p>To generate a plot of the 00 UTC sounding released from Dayton, Ohio during the 1974 Super Outbreak:</p>
+<pre class="highlight"><span class="prompt1">sharppy --datasource Observed --station DAY --datetime <span class="m">19740404</span>/00</span>
+</pre><p>To learn more about the batch mode commands:</p>
+<pre class="highlight"><span class="prompt1">sharppy --help</span>
+</pre></div>
+</div>
+<div class="section" id="when-things-go-wrong">
+<h2>When things go wrong<a class="headerlink" href="#when-things-go-wrong" title="Permalink to this headline">¶</a></h2>
+<p>Occasionally, bugs arise in programs.  To better understand them and communicate them to others,
+the user can use modifier <code class="docutils literal notranslate"><span class="pre">--debug</span></code> to turn on logging:</p>
+<pre class="highlight"><span class="prompt1">sharppy --debug</span>
+</pre><p>Logs are stored within the <code class="docutils literal notranslate"><span class="pre">~/.sharppy</span></code> folder.  Versioning info may also be output from the <strong class="command">sharppy</strong> commmand:</p>
+<pre class="highlight"><span class="prompt1">sharppy --version</span>
+</pre><p>Versioning is also output when the About box is launched by the user from the program.  These
+tools may be used when debugging the code and <a class="reference external" href="https://github.com/sharppy/SHARPpy/issues">submitting bug reports to Github</a>:</p>
 </div>
 </div>
 

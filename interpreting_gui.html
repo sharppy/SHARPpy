@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interpreting the GUI &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Interpreting the GUI &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="SHARPpy Insets" href="insets.html" />
-    <link rel="prev" title="Using the Data Picker" href="picker.html" /> 
+    <link rel="next" title="Interpreting the Insets" href="insets.html" />
+    <link rel="prev" title="Running SHARPpy" href="picker.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -87,7 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Interpreting the GUI</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#skew-t">Skew-T</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wind-speed-profile">Wind Speed Profile</a></li>
@@ -111,7 +111,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -182,30 +182,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="interpreting-the-gui">
-<span id="interpreting-with-the-gui"></span><h1>Interpreting the GUI<a class="headerlink" href="#interpreting-the-gui" title="Permalink to this headline">¶</a></h1>
-<p>Our <a class="reference external" href="http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1">BAMS article</a> on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation provides an overview of the SHARPpy GUI features.</p>
+  <style> .red {color:red}
+.green{color:green}
+.cyan{color:#00D7D7}
+.purple{color:purple}
+.blue{color:blue}
+.yellow{color:#CDCD00}
+
+</style><div class="section" id="interpreting-the-gui">
+<h1>Interpreting the GUI<a class="headerlink" href="#interpreting-the-gui" title="Permalink to this headline">¶</a></h1>
+<p>Our <a class="reference external" href="http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1">BAMS article</a> on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation repeats some of the information included in the BAMS article and describes the various parts of the SHARPpy GUI.</p>
 <p>Additional resources for interpreting the GUI include the <a class="reference external" href="http://www.spc.noaa.gov/exper/soundings/help/">SPC Sounding Analysis Help</a> and <a class="reference external" href="http://www.spc.noaa.gov/sfctest/help/sfcoa.html">Explanation of SPC Severe Weather Parameters</a> webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.</p>
 <div class="section" id="skew-t">
 <h2>Skew-T<a class="headerlink" href="#skew-t" title="Permalink to this headline">¶</a></h2>
 <p>Various sounding variables are displayed in the Skew-T, which is a central panel of the GUI:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Solid red – temperature profile</li>
-<li>Solid green – dewpoint profile</li>
-<li>Dashed red – virtual temperature profile.</li>
-<li>Cyan – wetbulb temperature profile</li>
+<li>Solid <span class="red">red</span> – temperature profile</li>
+<li>Solid <span class="green">green</span> – dewpoint profile</li>
+<li>Dashed <span class="red">red</span> – virtual temperature profile.</li>
+<li>Solid <span class="cyan">cyan</span> – wetbulb temperature profile</li>
 <li>Dashed white – parcel trace (e.g., MU, SFC, ML) (the parcel trace of the parcel highlighted in yellow in the Thermodynamic Inset.)</li>
-<li>Dashed purple – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).</li>
+<li>Dashed <span class="purple">purple</span> – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).</li>
 <li>Winds barbs are plotted in knots (unless switched to m/s in the preferences) and are interpolated to 50-mb intervals for visibility purposes.</li>
-<li>If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. Blue bars indicate sinking motion, red bars rising motion. Dashed purple lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.</li>
+<li>If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. <span class="blue">Blue</span> bars indicate sinking motion, <span class="red">red</span> bars rising motion. Dashed <span class="purple">purple</span> lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.</li>
 </ul>
 </div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are “convectively contaminiated”.  This means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.</p>
+<p class="last">When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are “convectively contaminated”.  This phrase means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.</p>
 </div>
-<p>Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and purple, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The cyan and purple I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in <a class="reference external" href="https://www.spc.noaa.gov/publications/thompson/effective.pdf">Thompson et al. 2007</a>.</p>
+<p>Parcel LCL, LFC, and EL are denoted on the right-hand side in <span class="green">green</span>, <span class="yellow">yellow</span> and <span class="purple">purple</span>, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The <span class="cyan">cyan</span> and <span class="purple">purple</span> I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in <a class="reference external" href="https://www.spc.noaa.gov/publications/thompson/effective.pdf">Thompson et al. 2007</a>.</p>
 <div class="figure align-center" id="id1">
 <a class="reference internal image-reference" href="_images/effective_inflow.png"><img alt="_images/effective_inflow.png" src="_images/effective_inflow.png" style="width: 591.0px; height: 597.0px;" /></a>
 <p class="caption"><span class="caption-text">An example of the Skew-T inset showing a model forecast sounding for May 31, 2013 at 18 UTC.  The 2-6 km max lapse rate layer clearly denotes the elevated mixed layer, while the omega profile indicates that rising motion is occuring within the lowest 6 km of the sounding in the forecast.</span></p>
@@ -292,10 +299,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="insets.html" class="btn btn-neutral float-right" title="SHARPpy Insets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="insets.html" class="btn btn-neutral float-right" title="Interpreting the Insets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="picker.html" class="btn btn-neutral" title="Using the Data Picker" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="picker.html" class="btn btn-neutral" title="Running SHARPpy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

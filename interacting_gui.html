@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Interacting with the GUI &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Interacting with the GUI &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Custom Data Sources" href="datasource_guide.html" />
-    <link rel="prev" title="SHARPpy Insets" href="insets.html" /> 
+    <link rel="prev" title="Interpreting the Insets" href="insets.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -87,18 +87,19 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Interacting with the GUI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#printing-out-values">Printing out values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#changing-preferences">Changing preferences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#zooming-and-changing-views">Zooming and Changing Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#color-ranking">Color Ranking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#modifying-the-sounding">Modifying the Sounding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modifying-the-data">Modifying the Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#determining-storm-mode">Determining Storm Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#lifting-parcels">Lifting Parcels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#saving-the-data">Saving the Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interacting-with-multiple-soundings">Interacting with Multiple Soundings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#saving-the-data">Saving the Data</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
@@ -173,6 +174,19 @@
   <div class="section" id="interacting-with-the-gui">
 <span id="id1"></span><h1>Interacting with the GUI<a class="headerlink" href="#interacting-with-the-gui" title="Permalink to this headline">¶</a></h1>
 <p>For information on the interactive aspects of the program, see the sections below:</p>
+<div class="section" id="printing-out-values">
+<h2>Printing out values<a class="headerlink" href="#printing-out-values" title="Permalink to this headline">¶</a></h2>
+<p>Right clicking on the Skew-T will enable you to switch to the Readout Cursor.  As you move your cursor
+up and down along the Skew-T, readouts will show you the values of different variables of the sounding.
+The variables shown by the Readout cursor can be changed in the Preferences window.  Variables that can be
+printed out by the Readout cursor include temperature, dewpoint, potential temperature, water vapor
+mixing ratio, equivalent potential temperature, vertical velocity, and wetbulb temperature.</p>
+<div class="figure align-center">
+<img alt="_images/readout.gif" src="_images/readout.gif" />
+</div>
+<p>The Readout Cursor also shows the location of the cursor on the hodograph
+along with the wind speed and direction (not shown here).</p>
+</div>
 <div class="section" id="changing-preferences">
 <h2>Changing preferences<a class="headerlink" href="#changing-preferences" title="Permalink to this headline">¶</a></h2>
 <p>Users may select “Preferences” using the menu bar of the SHARPpy program.  Doing so will load a small window where the user can modify the SHARPpy color pallet and the units of the program.  Currently, the three color pallets exist: the Standard (black background), Inverted (white background), or the Protanopia (for color blindness).</p>
@@ -184,29 +198,36 @@
 </div>
 <div class="section" id="color-ranking">
 <h2>Color Ranking<a class="headerlink" href="#color-ranking" title="Permalink to this headline">¶</a></h2>
-<p>The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values).  Generally, brighter colors indicate larger values, such as those in the traditional SHARP color palette:</p>
-<ol class="arabic simple">
-<li>MAGENTA</li>
-<li>RED</li>
-<li>YELLOW</li>
-<li>WHITE</li>
-<li>LIGHT BROWN</li>
-<li>DARK BROWN</li>
-</ol>
+<p>The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values).  Generally, brighter colors indicate larger values, such as those in the traditional SHARP color palette.</p>
 <p>The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by <a class="reference external" href="https://www.weather.gov/unr/uac">Matthew Bunkers; NWS</a>.  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.</p>
 </div>
-<div class="section" id="modifying-the-sounding">
-<h2>Modifying the Sounding<a class="headerlink" href="#modifying-the-sounding" title="Permalink to this headline">¶</a></h2>
-<p>The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.  To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and look for the option to reset the data.</p>
-<p>New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the ‘I’ key on the keyboard or by selecting Profiles-&gt;Interpolate on the menu bar. Interpolating the profile will take into account any modifications you’ve done to the original profile.  Pressing the ‘I’ key again or selecting Profiles-&gt;Reset Interpolation will reset the profile, undoing all modifications, so be sure you want to reset the profile before doing so.</p>
+<div class="section" id="modifying-the-data">
+<h2>Modifying the Data<a class="headerlink" href="#modifying-the-data" title="Permalink to this headline">¶</a></h2>
+<p>The sounding that is in focus can be modified by clicking and dragging the points of the temperature/dewpoint/hodograph lines.  Recalculations of all indices will take place when this is done.</p>
+<p>To speed up the editing process, the profile can be interpolated to 25-mb intervals.  This can be done by either pressing the ‘I’ key on the keyboard or by selecting Profiles-&gt;Interpolate on the menu bar. Interpolating the profile will take into account any modifications you’ve done to the original profile.  Pressing the ‘I’ key again or selecting Profiles-&gt;Reset Interpolation will reset the profile, undoing all modifications, so be sure you want to reset the profile before doing so.</p>
 <div class="figure align-center" id="id2">
-<a class="reference internal image-reference" href="_images/interp.png"><img alt="_images/interp.png" src="_images/interp.png" style="width: 589.0px; height: 300.0px;" /></a>
-<p class="caption"><span class="caption-text">Example interpolation of the sounding profile from the high-resolution (left) to the interpolated (right).</span></p>
+<img alt="_images/click_drag.gif" src="_images/click_drag.gif" />
+<p class="caption"><span class="caption-text">This animation shows an example of the profile being interpolated to 25-mb intervals and then the dewpoint profile being modified.</span></p>
 </div>
+<p>In addition, the surface properties of the sounding can also be modified.  By right clicking on the Skew-T diagram, select Modify Surface.  This will create a popup box where you can alter the surface thermodynamic properties.  If the “Mix” box is checked, the surface values will be mixed upwards in the sounding to generate a surface-based mixed layer.  Should a superadiabatic contact layer be needed, the Modify Surface operation can be repeated again.</p>
+<div class="figure align-center" id="id3">
+<img alt="_images/modify_sfc.gif" src="_images/modify_sfc.gif" />
+<p class="caption"><span class="caption-text">An example of the surface properties being modified within the SHARPpy GUI.</span></p>
+</div>
+<p>To reset the Skew-T or hodograph back to the original data, right click on either the Skew-T or the hodograph and click “Reset Skew-T” or “Reset Hodograph”.</p>
 </div>
 <div class="section" id="determining-storm-mode">
 <h2>Determining Storm Mode<a class="headerlink" href="#determining-storm-mode" title="Permalink to this headline">¶</a></h2>
-<p>Right clicking on the hodograph will open up a menu that includes some functions that allow further inspection of the type of storm mode that can be expected from the focused sounding.  In particular, the Storm Motion Cursor and the Boundary Cursor can be used.  Using the Storm Motion Cursor will allow you to determine the 0-1 km, 0-3 km, and effective storm-relative helicity for differen storm motions than the supercell right mover motion plotted on the hodograph.  The Boundary Cursor, allows you to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in <a class="reference external" href="http://www.spc.noaa.gov/publications/dial/waf-mode.pdf">Dial et al. 2010, WAF</a>.  Clicking on the hodograph again will remove the boundary.</p>
+<p>The hodograph may be modified in SHARPpy to better understand the storm mode that can be expected from the focused sounding.</p>
+<p>First, either Bunkers storm motion vector plotted on the hodograph may be selected by double clicking the RM or LM cross hairs.
+This will change the storm motion vector used to calculate various storm-motion vector dependent functions in SHARPpy
+(e.g., Storm Slinky, storm relative helicity).  In addition, the storm motion vectors may be modified by clicking and dragging
+the markers to their new location on the hodograph.  Modifying the location will also force a re-calculation of the SHARPpy indices.</p>
+<p>Seconds, the Boundary Cursor may be used to plot a boundary on the hodograph in order to determine how long convective updrafts may stay within a zone of ascent provided by a boundary.  Clicking on the hodograph with the Boundary Cursor will plot a boundary in orange on the hodograph and will also plot the 0-6 km shear (blue) and the 9-11 km storm relative wind (pink) vectors on the hodograph.  This allows you to visualize if the environment is favorable for storms growing upscale via the work done in <a class="reference external" href="http://www.spc.noaa.gov/publications/dial/waf-mode.pdf">Dial et al. 2010, WAF</a>.  Clicking on the hodograph again will remove the boundary.</p>
+<div class="figure align-center" id="id4">
+<img alt="_images/bndy_cursor.gif" src="_images/bndy_cursor.gif" />
+<p class="caption"><span class="caption-text">Animation showing how to select and place the boundary on the hodograph.</span></p>
+</div>
 </div>
 <div class="section" id="lifting-parcels">
 <h2>Lifting Parcels<a class="headerlink" href="#lifting-parcels" title="Permalink to this headline">¶</a></h2>
@@ -225,16 +246,18 @@
 <div class="figure align-center">
 <a class="reference internal image-reference" href="_images/selecting_parcels.png"><img alt="_images/selecting_parcels.png" src="_images/selecting_parcels.png" style="width: 647.4px; height: 504.0px;" /></a>
 </div>
-<p>The current parcel shown in the Skew-T is highlighted by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the “User Parcel”.  Then, right click on the Skew-T and select the “Readout Cursor”.  Once you find the location in your profile you wish to lift, right click again and look under the “Lift Parcel” menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.</p>
-</div>
-<div class="section" id="saving-the-data">
-<h2>Saving the Data<a class="headerlink" href="#saving-the-data" title="Permalink to this headline">¶</a></h2>
-<p>When the sounding window is up, you can select to either save the sounding as an image or save the current focused sounding as a text file that can be loaded back into SHARPpy.  These functions are found underneath the File-&gt;Save Text or File-&gt;Save Image functions.</p>
+<p>The current parcel shown in the Skew-T is highlighted by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the “User Parcel”.  Then, right click on the Skew-T and select the “Readout Cursor”.  Once you find the location in your profile you wish to lift, right click again and look under the “Lift Parcel” menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.</p>
 </div>
 <div class="section" id="interacting-with-multiple-soundings">
 <h2>Interacting with Multiple Soundings<a class="headerlink" href="#interacting-with-multiple-soundings" title="Permalink to this headline">¶</a></h2>
-<p>After adding other soundings into the sounding window, the user can change which sounding is the “focus” by accessing the list of available profiles.  This list is kept underneath the “Profiles” menu on the menu bar.   SHARPpy keeps track of the time aspect of all data loaded into the sounding window and attempts to show all profiles valid at a given time.  For the given sounding source that is in focus, the right and left buttons on your keyboard will step through the data in time and will attempt to show any other data sources available.  When observed or user selected data is loaded into the sounding window, SHARPpy will not overlay soundings from different times unless the “Collect Observed” function is checked.  This can be accessed through underneath the “Profiles” menu item or by pressing “C” on your keyboard.</p>
-<p>The space bar on your keyboard is used to swap the focus between the profiles shown in the sounding window.  Additionally, to swap between the SHARPpy Sounding Picker and sounding window, hit “W” on your keyboard.  With this change, the right and left arrow keys now will step through the profiles available from the sounding data source that is active.  SHARPpy will match up other.</p>
+<p>After adding other soundings into the sounding window by using the Sounding Picker,
+the user can change which sounding is the “focus” by accessing the list of available
+profiles.  This list is kept underneath the “Profiles” menu on the menu bar.   SHARPpy keeps track of the time aspect of all data loaded into the sounding window and attempts to show all profiles valid at a given time.  For the given sounding source that is in focus, the right and left buttons on your keyboard will step through the data in time and will attempt to show any other data sources available.  When observed or user selected data is loaded into the sounding window, SHARPpy will not overlay soundings from different times unless the “Collect Observed” function is checked.  This can be accessed through underneath the “Profiles” menu item or by pressing “C” on your keyboard.</p>
+<p>The space bar on your keyboard is used to swap the focus between the profiles shown in the sounding window.  Additionally, to swap between the SHARPpy Sounding Picker and sounding window, hit “W” on your keyboard.  With this change, the right and left arrow keys now will step through the profiles available from the sounding data source that is active.  SHARPpy will automatically match up the soundings in time.</p>
+</div>
+<div class="section" id="saving-the-data">
+<h2>Saving the Data<a class="headerlink" href="#saving-the-data" title="Permalink to this headline">¶</a></h2>
+<p>When the sounding window is up, you can select to either save the sounding as an image or save the current focused sounding as a text file that can be loaded back into SHARPpy.  These functions are found underneath the File-&gt;Save Text or File-&gt;Save Image functions.  “Save Text” will save the current sounding shown in the GUI to an SPC tabular-formatted text file.</p>
 </div>
 </div>
 
@@ -249,7 +272,7 @@
         <a href="datasource_guide.html" class="btn btn-neutral float-right" title="Custom Data Sources" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="insets.html" class="btn btn-neutral" title="SHARPpy Insets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="insets.html" class="btn btn-neutral" title="Interpreting the Insets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

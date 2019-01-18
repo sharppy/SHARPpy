@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Change Log &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Change Log &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -93,9 +93,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -212,14 +212,26 @@
 </dd>
 </dl>
 </li>
+<li><dl class="first docutils">
+<dt>New documentation and API accessible through Github pages</dt>
+<dd><ul class="first last">
+<li>Improved documentation online (no longer in README)</li>
+<li>Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Readout cursor can be configured to output other variables (e.g., potential temperature, theta-E)</li>
+<li>Ability to modify surface by changing the surface temperature or dewpoint (mixed layer optional)</li>
 <li>Up/down buttons on keyboard can now be used to flip through the ensemble members plotted in the SHARPpy GUI.</li>
 <li>Logging enabled when –debug flag is enabled.</li>
 <li>GUI now displays alert box when questionable data is requested to be plotted. Users now have the option to choose if they wish to still try to plot the data.</li>
-<li>Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.</li>
-<li>Continuous Integration (TravisCI and Appveyor) now enabled to test changes, pull requests, deploy docs, deploy binaries to Github, and deploy packages to package managers.</li>
+<li>Continuous Integration (TravisCI, Appveyor, Azure Pipelines) now enabled to test changes, GUI quality, pull requests, deploy docs, deploy binaries to Github, and deploy packages to package managers.</li>
 <li>New versioning system now consistent with PEP-440 (thanks to versioneer).</li>
-<li>Included more scripting examples.</li>
+<li>Included more scripting examples in docs.</li>
 <li>Deployment to conda and pip with each tagged SHARPpy release.</li>
+<li>Added test scripts to unit test various GUI parts, decoders, and numerical routines</li>
+<li>GUI checks Github Releases to see if the code being run is the current version</li>
 </ul>
 <p>BUG FIXES</p>
 <ul class="simple">

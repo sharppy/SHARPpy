@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributing &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Contributing &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -87,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Example scripts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-can-i-do-to-help">What can I do to help?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-issue-tracker">Using the issue tracker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bug-reports">Bug reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#set-up-a-development-environment">Set up a development environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writing-tests">Writing tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#some-norms">Some Norms</a></li>
@@ -184,7 +186,61 @@
 <li>Work on documentation of the code base.</li>
 <li>Develop unit tests to test various aspects of the code.</li>
 <li>Search through the <a class="reference external" href="https://github.com/sharppy/SHARPpy/issues">GitHub Issues page</a> for additional ideas!</li>
+<li>Report and/or fix bugs on the Github Issues page.</li>
 </ol>
+</div>
+<div class="section" id="using-the-issue-tracker">
+<h2>Using the issue tracker<a class="headerlink" href="#using-the-issue-tracker" title="Permalink to this headline">¶</a></h2>
+<p>The issue tracker is the preferred channel for bug reports, feature requests and submitting pull
+requests, but please respect the following restrictions:</p>
+<ul class="simple">
+<li>Please <strong>do not</strong> use the issue tracker for personal support requests (use
+<a class="reference external" href="http://stackoverflow.com">Stack Overflow</a>).</li>
+<li>Please <strong>do not</strong> derail or troll issues. Keep the discussion on topic and
+respect the opinions of others.</li>
+</ul>
+</div>
+<div class="section" id="bug-reports">
+<h2>Bug reports<a class="headerlink" href="#bug-reports" title="Permalink to this headline">¶</a></h2>
+<p>A bug is a <em>demonstrable problem</em> that is caused by the code in the repository.
+Good bug reports are extremely helpful - thank you!</p>
+<p>Guidelines for bug reports:</p>
+<ol class="arabic simple">
+<li><strong>Use the GitHub issue search</strong> - check if the issue has already been
+reported.</li>
+<li><strong>Check if the issue has been fixed</strong> - try to reproduce it using the
+latest <cite>master</cite> or development branch in the repository.</li>
+<li><strong>Isolate the problem</strong> - create a <a class="reference external" href="http://css-tricks.com/reduced-test-cases/">reduced test
+case</a> and document the steps.</li>
+</ol>
+<p>A good bug report shouldn’t leave others needing to chase you up for more
+information. Please try to be as detailed as possible in your report. What is
+your environment? What steps will reproduce the issue? What OS or Python packages
+experience the problem? What would you expect to be the outcome? All these
+details will help people to fix any potential bugs.</p>
+<p>You should also attach any log and config files created by SHARPpy
+(this is particularly helpful when debugging the GUI).  These are kept in the ~/.sharppy directory.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Short and descriptive example bug report title
+
+Information about your OS and package (e.g., numpy, Qt) dependencies including version numbers.
+
+Include the steps required to reproduce the bug:
+
+1. This is the first step
+2. This is the second step
+3. Further steps, etc.
+
+Explain the expected behavior needed when performing these steps.
+
+`&lt;url&gt;` - a link to the reduced test case
+
+Any other information you want to share that is relevant to the issue being
+reported. This might include the lines of code that you have identified as
+causing the bug, and potential solutions (and your opinions on their
+merits).
+</pre></div>
+</div>
 </div>
 <div class="section" id="set-up-a-development-environment">
 <h2>Set up a development environment<a class="headerlink" href="#set-up-a-development-environment" title="Permalink to this headline">¶</a></h2>
@@ -194,31 +250,16 @@ package if you wish to make a contribution to the program:</p>
 <li>Install <a class="reference external" href="https://conda.io/miniconda.html">miniconda</a> on your system.</li>
 <li>Install git on your system if it is not already there (install XCode command line tools on a Mac or git bash on Windows)</li>
 <li>Login to your GitHub account and make a fork of the <a class="reference external" href="https://github.com/sharppy/SHARPpy/">SHARPpy repository</a> by clicking the “Fork” button.</li>
-<li>Clone your fork of the SHARPpy repository (in terminal on Mac/Linux or git shell/GUI on Windows) in the location you’d like to keep it</li>
 </ol>
-<blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/your-user-name/SHARPpy.git</span></code>.</div></blockquote>
-<ol class="arabic simple" start="5">
-<li>Navigate to that folder in the terminal or in Anaconda Prompt if you’re on Windows.</li>
-</ol>
-<blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">SHARPpy</span></code></div></blockquote>
-<ol class="arabic simple" start="6">
-<li>Connect your repository to the upstream (main project).</li>
-</ol>
-<blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">add</span> <span class="pre">sharppy</span> <span class="pre">https://github.com/sharppy/SHARPpy.git</span></code></div></blockquote>
+<p>4. Clone your fork of the SHARPpy repository (in terminal on Mac/Linux or git shell/GUI on Windows) in the location you’d like to keep it:
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/your-user-name/SHARPpy.git</span></code></p>
+<p>5. Navigate to that folder in the terminal or in Anaconda Prompt if you’re on Windows:
+<code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">SHARPpy</span></code></p>
+<p>6. Connect your repository to the upstream (main project):
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">add</span> <span class="pre">sharppy</span> <span class="pre">https://github.com/sharppy/SHARPpy.git</span></code></p>
 <ol class="arabic simple" start="7">
-<li>Create the development environment by running <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span></code>. This will install</li>
-</ol>
-<blockquote>
-<div>all of the packages in the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> file.</div></blockquote>
-<ol class="arabic simple" start="8">
-<li>Activate our new development environment <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">devel</span></code> on Mac/Linux or</li>
-</ol>
-<blockquote>
-<div><code class="docutils literal notranslate"><span class="pre">activate</span> <span class="pre">devel</span></code> on Windows.</div></blockquote>
-<ol class="arabic simple" start="9">
+<li>Create the development environment by running <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span></code>. This will install all of the packages in the <code class="docutils literal notranslate"><span class="pre">environment.yml</span></code> file.</li>
+<li>Activate our new development environment <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">devel</span></code> on Mac/Linux or <code class="docutils literal notranslate"><span class="pre">activate</span> <span class="pre">devel</span></code> on Windows.</li>
 <li>Make an editable install of SHARPpy by running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></li>
 </ol>
 <p>Now you’re all set! You have an environment called <code class="docutils literal notranslate"><span class="pre">devel</span></code> that you can work in. You’ll need
@@ -228,6 +269,18 @@ terminal or your system. If you want to get back to the root environment, just r
 </div>
 <div class="section" id="writing-tests">
 <h2>Writing tests<a class="headerlink" href="#writing-tests" title="Permalink to this headline">¶</a></h2>
+<p>Tests allow for the automated bots that analyze and run the SHARPpy code to make sure that:</p>
+<ol class="arabic simple">
+<li>The submitted code runs.</li>
+<li>The submitted code behaves as expected (e.g. the CAPE routine provides the expected value given some test data.)</li>
+</ol>
+<p>We ask that additions made to the SHARPpy code base include test scripts that are included in the <code class="docutils literal notranslate"><span class="pre">sharppy/tests</span></code> directory.
+Example tests are included in this directory that others may use as a template for the tests they write.</p>
+<p>To run the tests, navigate to the root directory of the project and run:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--cov</span> <span class="pre">-v</span></code></p>
+<p>pytest-cov must be installed for this to work!</p>
+<p>This will generate a coverage report (telling you what percentage of the code was run during the tests) and run all of the test
+functions included in the <code class="docutils literal notranslate"><span class="pre">sharppy/tests</span></code> directory.</p>
 </div>
 <div class="section" id="some-norms">
 <h2>Some Norms<a class="headerlink" href="#some-norms" title="Permalink to this headline">¶</a></h2>

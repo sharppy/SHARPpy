@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation Guide &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>Installation Guide &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   <link rel="stylesheet" href="_static/gallery.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Using the Data Picker" href="picker.html" />
+    <link rel="next" title="Running SHARPpy" href="picker.html" />
     <link rel="prev" title="Change Log" href="changelog.html" /> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -88,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installing-a-pre-compiled-binary">Installing a pre-compiled binary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-using-conda-or-pip">Installing using conda or pip</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-using-package-managers">Installing using package managers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#from-conda">From conda</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#from-pip">From pip</a></li>
 </ul>
@@ -96,9 +96,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#installing-the-code-from-source">Installing the code from source</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -175,7 +175,7 @@
 <p>SHARPpy can be installed from one of these three places:</p>
 <ul class="simple">
 <li>a pre-compiled binary executable</li>
-<li>a Python package manager (pip and conda)</li>
+<li>a Python package manager (<strong class="command">pip</strong> and <strong class="command">conda</strong>)</li>
 <li>from source (downloaded from Github).</li>
 </ul>
 <p>Binary executables are available for Windows (64 bit) and macOS 10.6+ (Snow Leopard and later; 64 bit only).</p>
@@ -186,11 +186,10 @@ Pre-compiled binaries are available on the Github Releases page.  These are rege
 Integration software with each update we make to the primary code base:</p>
 <p><a class="reference external" href="https://github.com/sharppy/SHARPpy/releases/">https://github.com/sharppy/SHARPpy/releases/</a></p>
 <p>Installing a pre-compiled binary <em>should</em> be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you’re unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.</p>
-<p>After downloading the binary, launching the program is as easy as double clicking on the SHARPpy icon.</p>
 </div>
-<div class="section" id="installing-using-conda-or-pip">
-<h2>Installing using conda or pip<a class="headerlink" href="#installing-using-conda-or-pip" title="Permalink to this headline">¶</a></h2>
-<p>SHARPpy is also available for download through the <cite>conda</cite> and <cite>pip</cite> package managers.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.</p>
+<div class="section" id="installing-using-package-managers">
+<h2>Installing using package managers<a class="headerlink" href="#installing-using-package-managers" title="Permalink to this headline">¶</a></h2>
+<p>SHARPpy is also available for download through the <strong class="command">conda</strong> and <strong class="command">pip</strong> package managers.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.</p>
 <div class="section" id="from-conda">
 <h3>From conda<a class="headerlink" href="#from-conda" title="Permalink to this headline">¶</a></h3>
 <p>The Anaconda Python Distribution can be downloaded here: <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">https://store.continuum.io/cshop/anaconda/</a>
@@ -206,19 +205,7 @@ span.prompt1:before {
 <h3>From pip<a class="headerlink" href="#from-pip" title="Permalink to this headline">¶</a></h3>
 <p>If you hate snakes, you may want to use <strong class="command">pip</strong> instead:</p>
 <pre class="highlight"><span class="prompt1">pip install sharppy</span>
-</pre><p>To launch the GUI, simply type in the following command into the the command line and press Enter:</p>
-<pre class="highlight"><span class="prompt1">sharppy</span>
-</pre><p>If the X-window is enabled (most desktops will have this already available), the GUI should launch.
-Debug mode is accessible if the modifier <code class="docutils literal notranslate"><span class="pre">--debug</span></code> is appended to the end of the <code class="docutils literal notranslate"><span class="pre">sharppy</span></code> command.</p>
-<pre class="highlight"><span class="prompt1">sharppy --debug</span>
-</pre><p>As mentioned, this allows the user to access both the libraries for scripting and also the GUI interface.
-To access the libraries, write a script or launch a Python interpreter:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sharppy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sharppy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
 </pre></div>
-</div>
-<p>More information about scripting with SHARPpy may be found on the <a class="reference internal" href="scripting.html#scripting"><span class="std std-ref">Scripting</span></a> page.</p>
-</div>
 </div>
 <div class="section" id="installing-the-code-from-source">
 <h2>Installing the code from source<a class="headerlink" href="#installing-the-code-from-source" title="Permalink to this headline">¶</a></h2>
@@ -229,9 +216,11 @@ install the required packages manually.  These instructions assume that you have
 <ul class="simple">
 <li>NumPy</li>
 <li>PySide</li>
+<li>requests</li>
+<li>python-dateutil</li>
 </ul>
-<p>Since SHARPpy requires the PySide and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:</p>
-<pre class="highlight"><span class="prompt1">conda install -c conda-forge <span class="nv">pyside</span><span class="o">=</span><span class="m">1</span>.2.4</span>
+<p>Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:</p>
+<pre class="highlight"><span class="prompt1">conda install -c conda-forge <span class="nv">pyside</span><span class="o">=</span><span class="m">1</span>.2.4 requests python-dateutil</span>
 </pre><p>After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You’ll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:</p>
 <pre class="highlight"><span class="prompt1">git clone https://github.com/sharppy/SHARPpy.git</span>
 </pre><p>If you decide you wish to contribute to the code, you will want to make a fork of the SHARPpy project on Github.
@@ -254,7 +243,7 @@ The GUI can be launched similar to the method described above in the “Installi
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="picker.html" class="btn btn-neutral float-right" title="Using the Data Picker" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="picker.html" class="btn btn-neutral float-right" title="Running SHARPpy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="changelog.html" class="btn btn-neutral" title="Change Log" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

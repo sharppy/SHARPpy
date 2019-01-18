@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.sharptab package &mdash; SHARPpy 1.4.0a3 documentation</title>
+  <title>sharppy.sharptab package &mdash; SHARPpy 1.4.0a4+10.g42e63db.dirty documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.0a3
+                1.4.0a4+10.g42e63db.dirty
               </div>
             
           
@@ -85,9 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="picker.html">Using the Data Picker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="picker.html">Running SHARPpy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interpreting_gui.html">Interpreting the GUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="insets.html">SHARPpy Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="insets.html">Interpreting the Insets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="interacting_gui.html">Interacting with the GUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="datasource_guide.html">Custom Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripting.html">Scripting</a></li>
@@ -2522,7 +2522,7 @@ it is set to be the surface pressure.</p>
 <p>Code that describes the “Profile Collection” objects that is used by the
 sharppy.io.decoders and the SHARPpy GUI.  This is essentially an object that
 is a collection of Profile objects.</p>
-<span class="target" id="module-sharppy.sharptab.prof_collection"></span><dl class="class">
+<span class="target" id="module-sharppy.sharptab.prof_collection"><span id="sharppy-sharptab-prof-collection"></span></span><dl class="class">
 <dt id="sharppy.sharptab.prof_collection.ProfCollection">
 <em class="property">class </em><code class="descclassname">sharppy.sharptab.prof_collection.</code><code class="descname">ProfCollection</code><span class="sig-paren">(</span><em>profiles</em>, <em>dates</em>, <em>target_type=&lt;class 'sharppy.sharptab.profile.ConvectiveProfile'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/sharptab/prof_collection.html#ProfCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.sharptab.prof_collection.ProfCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -2643,6 +2643,10 @@ index [optional]: If true, treat the metadata as an array with the same length a
 <dd><p>Modify the profile at the current time.
 idx:    The vertical index to modify
 <a href="#id12"><span class="problematic" id="id13">**</span></a>kwargs:   The variables to modify (‘tmpc’, ‘dwpc’, ‘u’, or ‘v’)</p>
+<dl class="docutils">
+<dt>TODO: Allow modification of layers.  Could be that idx is -999 for layer</dt>
+<dd>and kwargs passes information about the layers to be modified.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3122,8 +3126,7 @@ self.updraft_tilt - the updraft tilt (an angle) with respect to the horizon</p>
 <dd><p>Function to get the possible watch type.
 Function returns nothing, but sets the following
 variables:</p>
-<p>self.watch_type - possible watch type
-self.watch_type_color - the color of type severity</p>
+<p>self.watch_type - possible watch type</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -4170,7 +4173,7 @@ regression on the table in Steadman 1979.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>temp</strong> (<em>number</em>) – temperature (C)</li>
+<li><strong>temp</strong> (<em>number</em>) – temperature (F)</li>
 <li><strong>rh</strong> (<em>number</em>) – relative humidity (%)</li>
 </ul>
 </td>
@@ -4320,11 +4323,10 @@ uses parameters from the right-mover vector. The default is False.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>watch_types</strong> (<em>numpy array</em>) – strings containing the weather types in code</li>
-<li><strong>colors</strong> (<em>numpy array</em>) – HEX colors corresponding to each weather type</li>
-</ul>
-</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>watch_types</strong> – strings containing the weather types in code</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy array</p>
 </td>
 </tr>
 </tbody>

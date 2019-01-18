@@ -55,6 +55,8 @@ Code that describes the "Profile Collection" objects that is used by the
 sharppy.io.decoders and the SHARPpy GUI.  This is essentially an object that
 is a collection of Profile objects.
 
+.. _sharppy.sharptab.prof_collection:
+
 .. automodule:: sharppy.sharptab.prof_collection
     :members:
     :undoc-members:
