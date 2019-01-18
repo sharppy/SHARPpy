@@ -40,8 +40,7 @@ test_script:
 #  - sharppy examples/data/14061619.OAX
   - pytest -v
 
-before_deploy:
-  # Make binaries using PyInstaller
+after_test:
   - "conda list"
   - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
   - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
@@ -65,7 +64,6 @@ deploy:
   draft: true
   prerelease: true
   on:
-    branch: andover-off
     appveyor_repo_tag: true
 
 # Don't deploy because andover-off 
