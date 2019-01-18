@@ -66,8 +66,8 @@ steps:
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     sudo python ci/screen.py # Check display dimensions as seen by PySide
     sudo python setup.py -q install
-    #sudo pytest -v --junitxml=junit/test-results.xml
-    #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
+    sudo pytest -v --junitxml=junit/test-results.xml
+    sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     sudo python -m PyInstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     sudo chmod 777 dist/SHARPpy.app
     ls -lh dist
@@ -86,8 +86,8 @@ steps:
     python ci/screen.py
     python setup.py -q install --user
     
-    #pytest -v --junitxml=junit/test-results.xml
-    #move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    pytest -v --junitxml=junit/test-results.xml
+    move examples\\data\\14061619.png examples\\data\\14061619_win.png
     python -m PyInstaller runsharp/SHARPpy-win7-64.spec --log-level DEBUG
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')

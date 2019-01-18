@@ -37,6 +37,7 @@ datasources = glob.glob("../datasources/*.csv") + glob.glob("../datasources/*.xm
 
 for hail in sars_hail:
     a.datas += [("sharppy/databases/sars/hail/" + hail.split("/")[-1], hail, "DATA")]
+
 for supr in sars_supr:
     a.datas += [("sharppy/databases/sars/supercell/" + supr.split("/")[-1], supr, "DATA")]
 
@@ -58,11 +59,6 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           console=False )
-
-
-# Revert the _version.py file to its original version using git
-import subprocess
-subprocess.Popen(['git', 'checkout', '--', ver_fname])
 
 # Revert the _version.py file to its original version using git
 import subprocess

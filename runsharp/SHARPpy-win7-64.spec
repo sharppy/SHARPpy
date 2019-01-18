@@ -1,4 +1,7 @@
 # -*- mode: python -*-
+#import sys
+sys.path.append('./')
+
 import glob
 import sharppy
 from sharppy._version import get_versions

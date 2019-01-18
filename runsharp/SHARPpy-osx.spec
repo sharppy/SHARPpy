@@ -1,5 +1,7 @@
 # -*- mode: python -*-
 # Compile using `pyinstaller SHARPpy-osx.spec --onefile --noconsole`
+import sys
+sys.path.append('./')
 
 import glob
 import sharppy
