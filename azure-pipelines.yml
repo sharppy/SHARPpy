@@ -37,7 +37,7 @@ steps:
   displayName: 'Install Conda and packages'
   inputs:
     environmentName: 'test-env'
-    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools' 
+    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller' 
     installOptions: '-q -c conda-forge'
 
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
@@ -82,8 +82,9 @@ steps:
 - script: |
     python ci/screen.py
     python setup.py -q install --user
-    pytest -v
-    move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    #pytest -v
+    #move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    pyinstaller runsharp/SHARPpy-win7-64.spec
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
