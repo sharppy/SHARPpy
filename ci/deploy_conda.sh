@@ -26,10 +26,15 @@ conda build conda-recipe/
 # Convert the conda package to support other operating systems
 echo "Convert the recipe to other OSes"
 ls $CONDA_BLD_PATH
+echo "Coverting to Windows 32"
 conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+echo "Coverting to Windows 64"
 conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+echo "Coverting to Linux 32"
 conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+echo "Coverting to Linux 64"
 conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+echo "Coverting to OS X 64"
 conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
 ls $CONDA_BLD_PATH
 

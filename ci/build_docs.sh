@@ -5,16 +5,9 @@ set -e
 
 echo "Installing sphinx, etc. to build the documentation ..."
 cd "$TRAVIS_BUILD_DIR"
-if [[ "$BUILD_DOCS" == "YES" ]]; then 
-    conda install -q -c anaconda sphinx sphinx_rtd_theme 
-    cconda install -q -c conda-forge sphinx-gallery
- 11     pip install sphinx-prompt
- 12 else
-onda install -q -c conda-forge sphinx-gallery
-    pip install sphinx-prompt
-else
-    exit 0
-fi
+conda install -q -c anaconda sphinx sphinx_rtd_theme 
+conda install -q -c conda-forge sphinx-gallery
+pip install sphinx-prompt
 
 echo "Adding the SSH key ..."
 cd ci/
@@ -39,8 +32,8 @@ cp ../CHANGELOG.rst ../docs/source/changelog.rst
 echo "Running Sphinx ..."
 make html
 
-echo "ENDING BUILD OF DOCS EARLY BECAUSE OF TESTING"
-exit 0
+#echo "ENDING BUILD OF DOCS EARLY BECAUSE OF TESTING"
+#exit 0
 
 # upload to pyart-docs-travis repo is this is not a pull request and
 # secure token is available (aka in the ARM-DOE repository.
