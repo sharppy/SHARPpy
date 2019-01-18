@@ -10,6 +10,6 @@ now = datetime.now()
 files = glob.glob(path + '/*zip')
 while len(files) != 2 and (datetime.now() - now).total_seconds() < timeout: 
     files = glob.glob(path + '/*zip')
-    print(num_files)   
+    print(files)   
 
 print("ALL FILES IN THE BUILD ARTIFACT STAGING DIRECTORY...NEXT STEP SHOULD BE DEPLOYING") 
