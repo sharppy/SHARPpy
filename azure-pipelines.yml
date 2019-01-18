@@ -93,7 +93,7 @@ steps:
 
 # Copy SHARPpy Binaries to staging directory
 - task: CopyFiles@2
-  name: Copy SHARPpy binaries to artifact staging directory
+  displayName: "Copy SHARPpy binaries to staging directory"
   inputs:
     contents: |
         dist/*.exe
