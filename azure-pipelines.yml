@@ -52,7 +52,7 @@ steps:
     sleep 3 # give xvfb some time to start
     xdpyinfo | grep dimensions # Check display dimensions
     python ci/screen.py # Check display dimensions as seen by PySide
-    pytest -v
+    #pytest -v
     mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
@@ -66,11 +66,11 @@ steps:
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     sudo python ci/screen.py # Check display dimensions as seen by PySide
     sudo python setup.py -q install
-    sudo pytest -v
-    sudo mv examples/data/14061619.png examples/data/14061619_mac.png
+    #sudo pytest -v
+    #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     sudo pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile
     sudo chmod 777 dist/SHARPpy.app
-    
+    ls -lh dist
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -91,14 +91,22 @@ steps:
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
-# Copy SHARPpy Binaries to staging directory
-- task: CopyFiles@2
-  displayName: "Copy SHARPpy binaries to artifact staging directory"
+# Zipping Windows files
+- task: ArchiveFiles@2
+  inputs: 
+    rootFolderOrFile: dist/SHARPpy.exe
+    archiveType: zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)/SHARPpy-win-64.zip'
+  displayName: "Zipping Windows .exe"
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
+
+# Zipping MacOS .app
+- task:
   inputs:
-    contents: |
-        dist/*.exe
-        dist/*.app
-    targetFolder: $(Build.ArtifactStagingDirectory)
+    rootFolderOrFile: dist/SHARPpy.app
+    archiveType: zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)/SHARPpy-osx-64.zip'
+  condition: eq( variables['Agent.OS'], 'Darwin')
 
 # Deploy to Github Releases
 - task: GithubRelease@0
@@ -109,12 +117,11 @@ steps:
     target: '$(build.sourceVersion)' # Required when action == create || action == edit
     tagSource: 'manual' # Required when action == create. Options: auto, manual
     tag: azure-test # Required when action == edit || action == discard || tagSource == manual
-    #title: # Optional
+    title: # Optional
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
     #releaseNotes: # Optional
-    assets: '$(build.artifactStagingDirectory)/*' # Optional
-    assetUploadMode: 'delete' # Optional. Options: delete, replace
+    assetUploadMode: 'replace' # Optional. Options: delete, replace
     isDraft: true # Optional
     isPreRelease: true # Optional
     addChangeLog: true # Optional
