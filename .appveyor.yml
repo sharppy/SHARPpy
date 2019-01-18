@@ -23,7 +23,7 @@ install:
   - "conda install -q -c conda-forge pyside pyinstaller pytest requests python-dateutil numpy=%NUMPY_VERSION%"
  
   # Add to path the current folder
-  #- "SET PYTHONPATH=%PYTHONPATH%;%CD%"
+  - "SET PYTHONPATH=%PYTHONPATH%;%CD%"
 
   # Install SHARPpy
   - "pip install -e ."
@@ -42,13 +42,14 @@ test_script:
 
 before_deploy:
   # Make binaries using PyInstaller
+  - "conda list"
   - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
   - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 artifacts:
   - path: "dist\\SHARPpy64.exe"
-    name: "SHARPpy64"
-  
+    name: binary
+ 
   - path: "*.png"
     name: test images
 
@@ -64,5 +65,7 @@ deploy:
   draft: true
   prerelease: true
   on:
+    branch: andover-off
     appveyor_repo_tag: true
- 
+
+# Don't deploy because andover-off 
