@@ -104,7 +104,7 @@ steps:
 - task: GithubRelease@0
   inputs:
     gitHubConnection: releases
-    repositoryName: SHARPpy
+    repositoryName: sharppy/SHARPpy
     action: 'create' # Options: create, edit, discard
     target: '$(build.sourceVersion)' # Required when action == create || action == edit
     tagSource: 'manual' # Required when action == create. Options: auto, manual
