@@ -149,7 +149,7 @@ steps:
 # Copy PyInstaller build leftovers the artifacts directory
 - task: CopyFiles@2
   inputs:
-    contents: build/**/
+    contents: build/**/*
     targetFolder: $(Build.ArtifactStagingDirectory)
   displayName: "Copy PyInstaller build artifacts to staging dir"
  
