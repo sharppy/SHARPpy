@@ -1,18 +1,27 @@
 # -*- mode: python -*-
 # Compile using `pyinstaller SHARPpy-osx.spec --onefile --noconsole`
 
-import sharppy
 import glob
+import sharppy
+from sharppy._version import get_versions
 
+# Write the versions file using versioneer, because PyInstaller doesn't do this automatically
+ver = get_versions()
+ver = str(ver)
+ver_fname = os.path.dirname(sharppy.__file__) + '/_version.py'
+ver_file = open(ver_fname, 'w')
+ver_file.write('def get_versions():\n')
+ver_file.write('    return ' + ver)
+ver_file.close()
+
+# Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
              pathex=['/Users/blumberg/SHARPpy/runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'dateutil.parser', 'requests'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
              hookspath=None,
              runtime_hooks=None)
 
 a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
-for b in a.binaries:
-    print(b)
 
 a.datas += [("sharppy/databases/PW-mean-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-mean-inches.txt"), "DATA")]
 a.datas += [("sharppy/databases/PW-stdev-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-stdev-inches.txt"), "DATA")]
@@ -56,3 +65,8 @@ app = BUNDLE(exe,
                     'NSHighResolutionCapable': 'True',
                 },
             )
+
+# Revert the _version.py file to its original version using git
+import subprocess
+subprocess.Popen(['git', 'checkout', '--', ver_fname])
+

@@ -1,6 +1,17 @@
 # -*- mode: python -*-
 import glob
 import sharppy
+from sharppy._version import get_versions
+
+# Write the versions file using versioneer, because PyInstaller doesn't do this automatically
+ver = get_versions()
+ver = str(ver)
+ver_fname = os.path.dirname(sharppy.__file__) + "\\_version.py"
+ver_file = open(ver_fname, 'w')
+ver_file.write("def get_versions():\n")
+ver_file.write('    return ' + ver)
+ver_file.close()
+
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'C:\Users\Tim\SHARPpy\runsharp'],
@@ -49,3 +60,8 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           console=False, icon='runsharp\\icons\\SHARPpy.ico')
+
+# Revert the _version.py file to its original version using git
+import subprocess
+subprocess.Popen(['git', 'checkout', '--', ver_fname])
+
