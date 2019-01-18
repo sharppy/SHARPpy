@@ -41,7 +41,7 @@ steps:
     installOptions: '-q -c conda-forge'
 
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
-- script: which python & which pip & conda list
+- script: which python & which pip & which pyinstaller & conda list
   displayName: "Show python and conda configuration"
 
 # Install and test scripts for Ubuntu/Linuxs
@@ -68,7 +68,7 @@ steps:
     sudo python setup.py -q install
     #sudo pytest -v --junitxml=junit/test-results.xml
     #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
-    sudo pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    sudo python -m PyInstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     sudo chmod 777 dist/SHARPpy.app
     ls -lh dist
   displayName: "Installing code and running tests (macOS)"
@@ -85,9 +85,10 @@ steps:
 - script: |
     python ci/screen.py
     python setup.py -q install --user
+    
     #pytest -v --junitxml=junit/test-results.xml
     #move examples\\data\\14061619.png examples\\data\\14061619_win.png
-    pyinstaller runsharp/SHARPpy-win7-64.spec --log-level DEBUG
+    python -m PyInstaller runsharp/SHARPpy-win7-64.spec --log-level DEBUG
   displayName: "Installing code and running tests (Windows)"
   condition: eq( variables['Agent.OS'], 'Windows_NT')
 
@@ -117,8 +118,8 @@ steps:
   condition: eq( variables['Agent.OS'], 'Darwin')
 
 # Wait till the ArtifactStagingDirectory has both zip files using Python.
-- script: python ci/check_artifact_dir.py
-  displayName: "Waiting till all artifacts needed for Github Releases have been built."
+#- script: python ci/check_artifact_dir.py
+#  displayName: "Waiting till all artifacts needed for Github Releases have been built."
 
 # Deploy to Github Releases
 - task: GithubRelease@0
@@ -143,14 +144,28 @@ steps:
   inputs:
     contents: examples/data/14*.png
     targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: "Copy screenshots to staging directory"
+
+# Copy PyInstaller build leftovers the artifacts directory
+- task: CopyFiles@2
+  inputs:
+    contents: build/**/
+    targetFolder: $(Build.ArtifactStagingDirectory)
+  displayName: "Copy PyInstaller build artifacts to staging dir"
+ 
+# Publish those artifacts for this build so testers can view them.
+- task: PublishBuildArtifacts@1
+  inputs:
+    artifactName: 'screenshots'
+    targetPath: $(Build.ArtifactStagingDirectory)/examples/data
+  displayName: "Publishing screenshots"
 
 # Publish those artifacts for this build so testers can view them.
 - task: PublishBuildArtifacts@1
   inputs:
-    artifactName: 'testgui'
-    targetPath: $(Build.ArtifactStagingDirectory)
-
-
+    artifactName: 'pyinstaller'
+    targetPath: $(Build.ArtifactStagingDirectory)/build
+  displayName: "Publishing PyInstaller build artifacts"
 
 # Old code trying to change the macOS display resolution (didn't work)
 # sudo brew cask install xquartz
