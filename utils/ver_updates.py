@@ -1,15 +1,17 @@
 import requests
 from sharppy._version import get_versions
-from dateutil import parser
+import dateutil.parser as parser
 
 ## Code to check to see if this version of SHARPpy is the most recent one.
 
-__version__ = get_versions()['version']
-ver = get_versions() # A dictionary with the date of the most recent commit.
-del get_versions
-
 # SEE https://developer.github.com/v3/repos/releases/
 url = 'https://api.github.com/repos/sharppy/SHARPpy/releases/latest'
+
+def get_sharppy_ver():
+    __version__ = get_versions()['version']
+    ver = get_versions() # A dictionary with the date of the most recent commit.
+    
+    return ver
 
 def get_latest_ver():
     response = requests.get(url)
@@ -29,6 +31,9 @@ def get_url(data):
 def compare_versions(data):
     # Checks to see if the publication date of the most recent Github Release
     # is less than the current version's date.
+    ver = get_sharppy_ver()
+    print(data, ver)
+    print(ver['date'], data['published_at'])
     ver_date = parser.parse(ver['date'])
     latest_date = parser.parse(data['published_at'])
 #    print(ver_date, latest_date)
