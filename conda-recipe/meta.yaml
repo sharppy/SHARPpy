@@ -1,4 +1,5 @@
 {% set data = load_setup_py_data() %}
+
 package:
   name: sharppy
   version: {{ data['version'] }}
@@ -14,6 +15,7 @@ extra:
 build:
   script_env:
    - CONDA_BLD_PATH
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv"
   osx_is_app: True
   entry_points: 
    - sharppy = runsharp.full_gui:main
@@ -23,9 +25,10 @@ requirements:
    - setuptools
    - python >=3.4
    - pyside
+   - pip
   run:
    - python >=3.4
-   - numpy=$NUMPY_VERSION 
+   - numpy={{ os.environ.get('NUMPY_VERSION', '1.15') }} 
    - pyside
    - requests
    - python-dateutil
