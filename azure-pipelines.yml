@@ -34,19 +34,10 @@ steps:
 
 # Setup the conda environment and install the needed packages (use conda-forge)
 - task: CondaEnvironment@1
-  displayName: 'Install Conda and packages (OS X)'
-  inputs:
-    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller python.app' 
-    installOptions: '-q -c conda-forge'
-  condition: eq( variables['Agent.OS'], 'Darwin')
-
-- task: CondaEnvironment@1
-  displayName: 'Install Conda and packages (Linux, Windows)'
+  displayName: 'Install Conda and packages'
   inputs:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller' 
     installOptions: '-q -c conda-forge'
-  condition: ne( variables['Agent.OS'], 'Darwin')
- 
 #    environmentName: 'test-env'
 #    createCustomEnvironment: true
 
@@ -99,8 +90,8 @@ steps:
 # Install and test scripts for Windows
 - script: |
     python ci/screen.py
-    #python setup.py -q install --user
-    pip install -e . 
+    python setup.py -q install --user
+    #pip install -e . 
     pytest -v --junitxml=junit/test-results.xml
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp

@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 import sys
-sys.path.append('./')
+sys.path.append('../')
 
 import glob
 import sharppy
