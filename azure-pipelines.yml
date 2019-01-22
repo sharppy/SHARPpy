@@ -63,7 +63,7 @@ steps:
 # Must use sudo for python-dependent stuff because conda permissions have
 # stupid bug under macOS.
 - script: |
-    sudo conda install -y -q -c conda-forge python.app 
+    sudo conda install -y -q -n test-env -c conda-forge python.app 
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     sudo python ci/screen.py # Check display dimensions as seen by PySide
     sudo python setup.py -q install
@@ -71,9 +71,9 @@ steps:
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     cd runsharp
     sudo pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
-    cd ..
     sudo chmod 777 dist/SHARPpy.app
     ls -lh dist
+    cd ..
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -87,8 +87,8 @@ steps:
 # Install and test scripts for Windows
 - script: |
     python ci/screen.py
-    #python setup.py -q install --user
-    pip install -e . 
+    python setup.py -q install --user
+    #pip install -e . 
     pytest -v --junitxml=junit/test-results.xml
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
@@ -154,7 +154,7 @@ steps:
 # Copy PyInstaller build leftovers the artifacts directory
 - task: CopyFiles@2
   inputs:
-    contents: build/**/*
+    contents: runsharp/build/**/*
     targetFolder: $(Build.ArtifactStagingDirectory)
   displayName: "Copy PyInstaller build artifacts to staging dir"
  
