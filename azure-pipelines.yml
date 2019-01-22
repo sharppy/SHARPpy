@@ -73,6 +73,7 @@ steps:
 # Must use sudo for python-dependent stuff because conda permissions have
 # stupid bug under macOS.
 - script: |
+    sudo conda install -y -q -c anaconda python.app
     which python.app
     ls /usr/local/miniconda/python.app/Contents/Resources
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
