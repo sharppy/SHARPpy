@@ -38,9 +38,9 @@ steps:
   inputs:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller' 
     installOptions: '-q -c conda-forge'
+    environmentName: 'test-env'
+    createCustomEnvironment: true
 
-#   environmentName: 'test-env'
-#    createCustomEnvironment: true
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
 - script: which python & which pip & which pyinstaller & conda list
   displayName: "Show python and conda configuration"
@@ -64,7 +64,7 @@ steps:
 # Must use sudo for python-dependent stuff because conda permissions have
 # stupid bug under macOS.
 - script: |
-    sudo conda install -y -q -c conda-forge python.app 
+    sudo conda install -y -q -n test-env -c conda-forge python.app 
     which python.app
     ls /usr/local/miniconda/python.app/Contents/Resources
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
