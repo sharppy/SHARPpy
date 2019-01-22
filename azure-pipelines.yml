@@ -34,12 +34,21 @@ steps:
 
 # Setup the conda environment and install the needed packages (use conda-forge)
 - task: CondaEnvironment@1
-  displayName: 'Install Conda and packages'
+  displayName: 'Install Conda and packages (OS X)'
+  inputs:
+    packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller python.app' 
+    installOptions: '-q -c conda-forge'
+  condition: eq( variables['Agent.OS'], 'Darwin')
+
+- task: CondaEnvironment@1
+  displayName: 'Install Conda and packages (Linux, Windows)'
   inputs:
     packageSpecs: 'python=3 numpy=1.15.* pyside pytest pip python-dateutil requests setuptools pyinstaller' 
     installOptions: '-q -c conda-forge'
-    environmentName: 'test-env'
-    createCustomEnvironment: true
+  condition: ne( variables['Agent.OS'], 'Darwin')
+ 
+#    environmentName: 'test-env'
+#    createCustomEnvironment: true
 
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
 - script: which python & which pip & which pyinstaller & conda list
@@ -64,7 +73,6 @@ steps:
 # Must use sudo for python-dependent stuff because conda permissions have
 # stupid bug under macOS.
 - script: |
-    sudo conda install -y -q -n test-env -c conda-forge python.app 
     which python.app
     ls /usr/local/miniconda/python.app/Contents/Resources
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
@@ -73,7 +81,7 @@ steps:
     sudo pytest -v --junitxml=junit/test-results.xml
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     cd runsharp
-    sudo python.app -m PyInstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    sudo pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     sudo chmod 777 dist/SHARPpy.app
     ls -lh dist
     cd ..
@@ -90,8 +98,8 @@ steps:
 # Install and test scripts for Windows
 - script: |
     python ci/screen.py
-    python setup.py -q install --user
-    #pip install -e . 
+    #python setup.py -q install --user
+    pip install -e . 
     pytest -v --junitxml=junit/test-results.xml
     move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
