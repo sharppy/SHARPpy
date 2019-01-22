@@ -44,6 +44,8 @@ for sf in shapefiles:
     a.datas += [("sharppy/databases/shapefiles/" + sf.split("/")[-1], sf, "DATA")]
 
 for ds in datasources:
+    if "__pycache__" in ds:
+        continue
     a.datas += [("sharppy/datasources/" + ds.split("/")[-1], ds, "DATA")]
 
 pyz = PYZ(a.pure)
