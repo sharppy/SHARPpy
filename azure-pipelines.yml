@@ -63,7 +63,7 @@ steps:
 # Must use sudo for python-dependent stuff because conda permissions have
 # stupid bug under macOS.
 - script: |
-    conda install -y -c conda-forge python.app 
+    sudo conda install -y -q -c conda-forge python.app 
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     sudo python ci/screen.py # Check display dimensions as seen by PySide
     sudo python setup.py -q install
