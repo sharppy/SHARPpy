@@ -208,7 +208,7 @@ __ link_
     # Plot the data
     plt.savefig('plot_ci.png', bbox_inches='tight', dpi=180)
 
-**Total running time of the script:** ( 1 minutes  14.952 seconds)
+**Total running time of the script:** ( 1 minutes  12.355 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_ci_uncertainty.py:
