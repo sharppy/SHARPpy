@@ -7,6 +7,7 @@ import glob
 import sharppy
 from sharppy._version import get_versions
 
+print("PATH TO SHARPPY:", sharppy.__file__)
 # Write the versions file using versioneer, because PyInstaller doesn't do this automatically
 ver = get_versions()
 ver = str(ver)
@@ -15,6 +16,9 @@ ver_file = open(ver_fname, 'w')
 ver_file.write('def get_versions():\n')
 ver_file.write('    return ' + ver)
 ver_file.close()
+
+def sharppy
+import sharppy
 
 # Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
