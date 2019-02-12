@@ -4,7 +4,7 @@ channels:
   - conda-forge
   - anaconda
 dependencies:
-  - python=3
+  - python=3.4
   - numpy=1.15.*
   - pyside
   - sphinx
