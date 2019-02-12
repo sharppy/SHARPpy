@@ -62,7 +62,7 @@ steps:
 # Install and test scripts for Ubuntu/Linuxs
 - script: |
     source activate devel
-    python setup.py -q install # Install the 
+    pip install -e . # Install the 
     Xvfb :99 -screen 0 $(screen_w)x$(screen_h)x$(screen_d) & # Spin up a virtual screen with the correct dimensions
     export DISPLAY=:99 # Set up the DISPLAY variable
     sleep 3 # give xvfb some time to start
@@ -85,7 +85,7 @@ steps:
     ls /usr/local/miniconda/python.app/Contents/Resources
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     python ci/screen.py # Check display dimensions as seen by PySide
-    python setup.py -q install
+    pip install -e .
     #sudo pytest -v --junitxml=junit/test-results.xml
     #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     cd runsharp
@@ -108,8 +108,7 @@ steps:
     call activate devel
     python ci/screen.py
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
-    python setup.py -q install
-    #pip install -e . 
+    pip install -e .
     #pytest -v --junitxml=junit/test-results.xml
     #move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
