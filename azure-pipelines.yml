@@ -31,6 +31,17 @@ pool:
 
 # Describe the steps to install conda, the code, do tests, and deploy the artifacts
 steps:
+- bash: echo "##vso[task.prependpath]/usr/share/miniconda/bin"
+  displayName: Add conda to PATH
+  condition: eq( variables['Agent.OS'], 'Linux')
+
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
+  condition: eq( variables['Agent.OS'], 'Darwin')
+
+- powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+  displayName: Add conda to PATH
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
 
 # Setup the conda environment and install the needed packages (use conda-forge)
 #- task: CondaEnvironment@1
