@@ -10,9 +10,7 @@ dependencies:
   - sphinx
   - pytest
   - sphinx-gallery
-  - sphinx-rtd-theme
-  - pytest-cov
-  - matplotlib
+  - sphinx_rtd_theme
   - requests
   - python-dateutil 
   - pyinstaller
