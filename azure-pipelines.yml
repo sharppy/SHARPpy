@@ -91,7 +91,7 @@ steps:
 - script: |
     python ci/screen.py
     SET PYTHONPATH=%PYTHONPATH%;%CD%
-    python setup.py -q install --user
+    python setup.py -q install
     #pip install -e . 
     #pytest -v --junitxml=junit/test-results.xml
     #move examples\\data\\14061619.png examples\\data\\14061619_win.png
