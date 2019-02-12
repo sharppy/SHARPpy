@@ -42,8 +42,10 @@ test_script:
 
 after_test:
   - "conda list"
-  - "pyinstaller runsharp/SHARPpy-win7-%ARCH%.spec"
-  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
+  - "cd runsharp"
+  - "pyinstaller SHARPpy-win7-%ARCH%.spec"
+  - "cd .."
+#  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 artifacts:
   - path: "dist\\SHARPpy64.exe"

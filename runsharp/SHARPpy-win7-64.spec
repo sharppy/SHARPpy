@@ -16,7 +16,7 @@ ver_file.write("def get_versions():\n")
 ver_file.write('    return ' + ver)
 ver_file.close()
 
-def sharppy
+del sharppy
 import sharppy
 
 a = Analysis(['SHARPpy.py'],
