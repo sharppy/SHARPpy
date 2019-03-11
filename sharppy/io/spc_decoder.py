@@ -32,7 +32,17 @@ class SPCDecoder(Decoder):
         ## create the plot title
         data_header = data[title_idx + 1].split()
         location = data_header[0]
-        time = datetime.strptime(data_header[1][:11], '%y%m%d/%H%M')
+        ## Is this the standard SPC text format header?
+        try:
+            time = datetime.strptime(data_header[1][:11], '%y%m%d/%H%M')
+        ## If it's not, then it's probably one of the SPC archive files with a different
+        ## header format. This is probably not the greatest way to handle this, as SPC 
+        ## isn't exactly consistent with all of their archive text files. But this seems
+        ## to do the trick. 
+        except:
+            data_header = data[title_idx + 2].split()
+            time = datetime.strptime(data_header[0], "%y%m%d/%H%M")
+
         if len(data_header) > 2:
             lat, lon = data_header[2].split(',')
             lat = float(lat)
@@ -49,13 +59,28 @@ class SPCDecoder(Decoder):
         ## put it all together for StringIO
         full_data = '\n'.join(data[start_idx : finish_idx][:])
 
-        if not is_py3():
-            sound_data = StringIO( full_data )
-        else:
-            sound_data = BytesIO( full_data.encode() )
+        ## read the data into arrays.
+        ## The SPC Mesoanalysis soundings contain a field
+        ## for Omega - this is the brute-force way of checking
+        ## for that. If the omega field isn't present, it's
+        ## probably an observed file. 
+        try:
+            if not is_py3():
+                sound_data = StringIO( full_data )
+            else:
+                sound_data = BytesIO( full_data.encode() )
 
-        ## read the data into arrays
-        p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+            p, h, T, Td, wdir, wspd, omeg = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+
+        ## If Omega isn't present, then try again.
+        except:
+            if not is_py3():
+                sound_data = StringIO( full_data )
+            else:
+                sound_data = BytesIO( full_data.encode() )
+            p, h, T, Td, wdir, wspd = np.genfromtxt( sound_data, delimiter=',', comments="%", unpack=True )
+            omeg = None
+
 #       idx = np.argsort(p, kind='mergesort')[::-1] # sort by pressure in case the pressure array is off.
 
         pres = p #[idx]
@@ -71,7 +96,7 @@ class SPCDecoder(Decoder):
 
         # Force latitude to be 35 N. Figure out a way to fix this later.
         prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc,
-            wdir=wdir, wspd=wspd, location=location, date=time, latitude=lat, missing=-9999.00)
+            wdir=wdir, wspd=wspd, omeg=omeg, location=location, date=time, latitude=lat, missing=-9999.00)
 
         prof_coll = prof_collection.ProfCollection(
             {'':[ prof ]}, 
