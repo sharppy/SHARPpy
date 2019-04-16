@@ -176,11 +176,11 @@
 <div class="sphx-glr-example-title section" id="plotting-data-from-the-sars-database">
 <span id="sphx-glr-auto-examples-plot-sars-py"></span><h1>Plotting data from the SARS database<a class="headerlink" href="#plotting-data-from-the-sars-database" title="Permalink to this headline">¶</a></h1>
 <img alt="../_images/sphx_glr_plot_sars_001.png" class="sphx-glr-single-img" src="../_images/sphx_glr_plot_sars_001.png" />
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="kn">as</span> <span class="nn">tab</span>
-<span class="kn">import</span> <span class="nn">sharppy.databases.sars</span> <span class="kn">as</span> <span class="nn">sars</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
+<span class="kn">import</span> <span class="nn">sharppy.databases.sars</span> <span class="k">as</span> <span class="nn">sars</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">database_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span> <span class="n">sars</span><span class="o">.</span><span class="vm">__file__</span> <span class="p">),</span> <span class="s1">&#39;sars_supercell.txt&#39;</span><span class="p">)</span>
 <span class="n">supercell_database</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">database_fn</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%%%%</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -196,12 +196,12 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mlcape</span><span class="p">,</span> <span class="n">srh01</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">magnitude</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;MLCAPE [J/kg]&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0-1 km Storm Relative Helicity [$m^{2}/s^{2}$]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;0-1 km Storm Relative Helicity [$m^</span><span class="si">{2}</span><span class="s1">/s^</span><span class="si">{2}</span><span class="s1">$]&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;plot_sars.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  0.542 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.805 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-sars-py">
 <div class="sphx-glr-download docutils container">
 <a class="reference download internal" download="" href="../_downloads/240b81d974fdda832085ca867a12bb99/plot_sars.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_sars.py</span></code></a></div>

@@ -179,12 +179,12 @@
 <p>If you installed the pre-compiled binary, simply double click on the SHARPpy program on your computer.
 If you installed from source or from a package manager, navigate to your terminal and type
 in the following command into the the command line:</p>
-<pre class="highlight"><style type="text/css">
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
 }
 </style><span class="prompt1">sharppy</span>
-</pre><p>If the X-window is enabled (most desktops will have this already available), the Sounding Picker should launch.</p>
+</pre></div></div><p>If the X-window is enabled (most desktops will have this already available), the Sounding Picker should launch.</p>
 <p>As mentioned, installing via command line allows the user to access both the libraries for scripting and also the GUI interface.
 The following sections will discuss the GUI functionality.  For more information about scripting with SHARPpy see the <a class="reference internal" href="scripting.html#scripting"><span class="std std-ref">Scripting</span></a> page.</p>
 </div>
@@ -260,21 +260,21 @@ In this mode, the Picker and GUI may be bypassed to generate images of the SHARP
 <div class="section" id="examples">
 <h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
 <p>To generate a plot of the test data included in SHARPpy:</p>
-<pre class="highlight"><span class="prompt1">sharppy examples/data/14061619.OAX</span>
-</pre><p>To generate a plot of the 00 UTC sounding released from Dayton, Ohio during the 1974 Super Outbreak:</p>
-<pre class="highlight"><span class="prompt1">sharppy --datasource Observed --station DAY --datetime <span class="m">19740404</span>/00</span>
-</pre><p>To learn more about the batch mode commands:</p>
-<pre class="highlight"><span class="prompt1">sharppy --help</span>
-</pre></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">sharppy examples/data/14061619.OAX</span>
+</pre></div></div><p>To generate a plot of the 00 UTC sounding released from Dayton, Ohio during the 1974 Super Outbreak:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">sharppy --datasource Observed --station DAY --datetime <span class="m">19740404</span>/00</span>
+</pre></div></div><p>To learn more about the batch mode commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">sharppy --help</span>
+</pre></div></div></div>
 </div>
 <div class="section" id="when-things-go-wrong">
 <h2>When things go wrong<a class="headerlink" href="#when-things-go-wrong" title="Permalink to this headline">¶</a></h2>
 <p>Occasionally, bugs arise in programs.  To better understand them and communicate them to others,
 the user can use modifier <code class="docutils literal notranslate"><span class="pre">--debug</span></code> to turn on logging:</p>
-<pre class="highlight"><span class="prompt1">sharppy --debug</span>
-</pre><p>Logs are stored within the <code class="docutils literal notranslate"><span class="pre">~/.sharppy</span></code> folder.  Versioning info may also be output from the <strong class="command">sharppy</strong> commmand:</p>
-<pre class="highlight"><span class="prompt1">sharppy --version</span>
-</pre><p>Versioning is also output when the About box is launched by the user from the program.  These
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">sharppy --debug</span>
+</pre></div></div><p>Logs are stored within the <code class="docutils literal notranslate"><span class="pre">~/.sharppy</span></code> folder.  Versioning info may also be output from the <strong class="command">sharppy</strong> commmand:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">sharppy --version</span>
+</pre></div></div><p>Versioning is also output when the About box is launched by the user from the program.  These
 tools may be used when debugging the code and <a class="reference external" href="https://github.com/sharppy/SHARPpy/issues">submitting bug reports to Github</a>:</p>
 </div>
 </div>

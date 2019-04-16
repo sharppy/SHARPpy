@@ -234,24 +234,24 @@ SVR Probability: 0.9090909090909091
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="c1"># Silence the warnings from SHARPpy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="c1"># Silence the warnings from SHARPpy</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="kn">as</span> <span class="nn">skew</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
-<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">LineCollection</span>
-<span class="kn">import</span> <span class="nn">matplotlib.transforms</span> <span class="kn">as</span> <span class="nn">transforms</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">gridspec</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="kn">import</span> <span class="n">winds</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">profile</span>
-<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="kn">import</span> <span class="n">SPCDecoder</span>
+<span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="k">as</span> <span class="nn">skew</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="k">import</span> <span class="n">LineCollection</span>
+<span class="kn">import</span> <span class="nn">matplotlib.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">gridspec</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">winds</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">profile</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="k">import</span> <span class="n">SPCDecoder</span>
 
 <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 
     <span class="n">dec</span> <span class="o">=</span> <span class="n">SPCDecoder</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">dec</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not figure out the format of &#39;</span><span class="si">%s</span><span class="s2">&#39;!&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
 
     <span class="c1"># Returns the set of profiles from the file that are from the &quot;Profile&quot; class.</span>
@@ -264,7 +264,7 @@ SVR Probability: 0.9090909090909091
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_prof</span><span class="p">)):</span>
             <span class="n">prof</span> <span class="o">=</span> <span class="n">all_prof</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">new_prof</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">create_profile</span><span class="p">(</span><span class="n">pres</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">hght</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">hght</span><span class="p">,</span> <span class="n">tmpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">tmpc</span><span class="p">,</span> <span class="n">dwpc</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">wspd</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wspd</span><span class="p">,</span> \
-                                              <span class="n">wdir</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s1">&#39;convective&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                                              <span class="n">wdir</span><span class="o">=</span><span class="n">prof</span><span class="o">.</span><span class="n">wdir</span><span class="p">,</span> <span class="n">strictQC</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="s1">&#39;convective&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">new_prof</span><span class="p">,</span> <span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">stn_id</span>
 
 <span class="n">FILENAME</span> <span class="o">=</span> <span class="s1">&#39;data/14061619.OAX&#39;</span>
@@ -283,8 +283,8 @@ SVR Probability: 0.9090909090909091
 <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;skewx&#39;</span><span class="p">)</span>
 <span class="n">skew</span><span class="o">.</span><span class="n">draw_title</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Plot the background variables</span>
 <span class="n">presvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">)</span>
@@ -298,7 +298,7 @@ SVR Probability: 0.9090909090909091
 <span class="k">try</span><span class="p">:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">ttrace</span><span class="p">,</span> <span class="n">prof</span><span class="o">.</span><span class="n">mupcl</span><span class="o">.</span><span class="n">ptrace</span><span class="p">,</span> <span class="s1">&#39;k--&#39;</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t plot parcel traces...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t plot parcel traces...&quot;</span><span class="p">)</span>
 
 <span class="c1"># Highlight the 0 C and -20 C isotherms.</span>
 <span class="n">l</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
@@ -389,16 +389,16 @@ SVR Probability: 0.9090909090909091
 <span class="n">trans</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">blended_transform_factory</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span><span class="n">ax</span><span class="o">.</span><span class="n">transData</span><span class="p">)</span>
 
 <span class="c1"># Write out all of the indices to the figure.</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;   INDICES    &quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   INDICES    &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;##############&quot;</span><span class="p">)</span>
 <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 <span class="n">keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">indices</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
     <span class="n">string</span> <span class="o">=</span> <span class="n">string</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="k">print</span><span class="p">((</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">indices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
     <span class="k">if</span> <span class="n">counter</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
         <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">continue</span>
@@ -418,31 +418,31 @@ SVR Probability: 0.9090909090909091
     <span class="n">supercell_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_supercell_matches</span>
     <span class="n">hail_matches</span> <span class="o">=</span> <span class="n">prof</span><span class="o">.</span><span class="n">right_matches</span>
 
-<span class="k">print</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot; SARS OUTPUT &quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; SARS OUTPUT &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#############&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">mtype</span><span class="p">,</span> <span class="n">matches</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;Supercell&#39;</span><span class="p">,</span> <span class="s1">&#39;Hail&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">supercell_matches</span><span class="p">,</span> <span class="n">hail_matches</span><span class="p">]):</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">mtype</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-----------&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mtype</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-----------&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;NO QUALITY MATCHES&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NO QUALITY MATCHES&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Total Loose Matches:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;# of Loose Matches that met Criteria:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;SVR Probability:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-    <span class="k">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total Loose Matches:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;# of Loose Matches that met Criteria:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SVR Probability:&quot;</span><span class="p">,</span> <span class="n">matches</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">()</span>
 
 <span class="c1"># Finalize the image formatting and alignments, and save the image to the file.</span>
 <span class="n">gs</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
 <span class="n">fn</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">.%H%M&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">location</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
 <span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">((</span><span class="s2">&quot;SHARPpy Skew-T image output at:&quot;</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">((</span><span class="s2">&quot;SHARPpy Skew-T image output at:&quot;</span><span class="p">,</span> <span class="n">fn</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><strong>Total running time of the script:</strong> ( 0 minutes  3.324 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  3.875 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-sounding-py">
 <div class="sphx-glr-download docutils container">
 <a class="reference download internal" download="" href="../_downloads/618f00d5caa2380f11a15a4b87fd8a25/plot_sounding.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_sounding.py</span></code></a></div>

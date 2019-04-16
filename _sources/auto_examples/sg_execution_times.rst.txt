@@ -1,0 +1,12 @@
+
+:orphan:
+
+.. _sphx_glr_auto_examples_sg_execution_times:
+
+Computation times
+=================
+**01:28.523** total execution time for **auto_examples** files:
+
+- **01:23.843**: :ref:`sphx_glr_auto_examples_plot_ci_uncertainty.py` (``plot_ci_uncertainty.py``)
+- **00:03.875**: :ref:`sphx_glr_auto_examples_plot_sounding.py` (``plot_sounding.py``)
+- **00:00.805**: :ref:`sphx_glr_auto_examples_plot_sars.py` (``plot_sars.py``)
