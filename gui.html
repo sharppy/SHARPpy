@@ -171,25 +171,25 @@
 <h2>Swapping Insets<a class="headerlink" href="#swapping-insets" title="Permalink to this headline">¶</a></h2>
 <p>The right 2 insets of the SHARPpy program can be changed by right clicking on either one.  Right clicking will bring up a menu that shows the different insets available for the user.  These insets exist to help the user further interrogate the data.  Below is a list of the current available insets:</p>
 <ol class="arabic simple">
-<li>SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](<a class="reference external" href="http://www.spc.noaa.gov/publications/jewell/sars.pdf">http://www.spc.noaa.gov/publications/jewell/sars.pdf</a>)).</li>
-<li>STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/thompson/waf-env.pdf">http://www.spc.noaa.gov/publications/thompson/waf-env.pdf</a>)).</li>
-<li>SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).</li>
-<li>STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">http://www.spc.noaa.gov/publications/smith/vrot-env.pdf</a>)).</li>
-<li>WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.</li>
-<li>FIRE - Fire weather information such as wind speed and humidity in the boundary layer.</li>
-<li>VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value…see [Smith et al. 2015, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">http://www.spc.noaa.gov/publications/smith/vrot-env.pdf</a>))</li>
+<li><p>SARS - Sounding Analog Retrieval System provides matching of the current sounding to past severe weather events.  Clicking on any of the close matches will load the sounding from that event into the sounding window for closer comparison and inspection (see [Jewell et al.](<a class="reference external" href="http://www.spc.noaa.gov/publications/jewell/sars.pdf">http://www.spc.noaa.gov/publications/jewell/sars.pdf</a>)).</p></li>
+<li><p>STP STATS - Information on the significant tornado parameter with CIN (STPC) associated with the sounding (see [Thompson et al. 2012, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/thompson/waf-env.pdf">http://www.spc.noaa.gov/publications/thompson/waf-env.pdf</a>)).</p></li>
+<li><p>SHIP - Distribution of expected hail sizes associated with the significant hail parameter (SHIP).</p></li>
+<li><p>STP COND - Conditional probablities for different tornado strengths based on STPC (see [Smith et al. 2015, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">http://www.spc.noaa.gov/publications/smith/vrot-env.pdf</a>)).</p></li>
+<li><p>WINTER - Information on precipitation type, melting and freezing in the profile, and the dendritic growth zone.</p></li>
+<li><p>FIRE - Fire weather information such as wind speed and humidity in the boundary layer.</p></li>
+<li><p>VROT - Conditional probabilities for different tornado strengths based on the 0.5 degree rotational velocity. (Double click inside the inset to input a VROT value…see [Smith et al. 2015, WAF](<a class="reference external" href="http://www.spc.noaa.gov/publications/smith/vrot-env.pdf">http://www.spc.noaa.gov/publications/smith/vrot-env.pdf</a>))</p></li>
 </ol>
 </div>
 <div class="section" id="color-ranking">
 <h2>Color Ranking<a class="headerlink" href="#color-ranking" title="Permalink to this headline">¶</a></h2>
 <p>The GUI uses color to highlight the features a forecaster ought to look at.  Most indices have a color ranking and thresholds using these colors (1, very high values to 6, very low values):</p>
 <ol class="arabic simple">
-<li>MAGENTA</li>
-<li>RED</li>
-<li>YELLOW</li>
-<li>WHITE</li>
-<li>LIGHT BROWN</li>
-<li>DARK BROWN</li>
+<li><p>MAGENTA</p></li>
+<li><p>RED</p></li>
+<li><p>YELLOW</p></li>
+<li><p>WHITE</p></li>
+<li><p>LIGHT BROWN</p></li>
+<li><p>DARK BROWN</p></li>
 </ol>
 <p>The precipitable water (PW) value in the sounding window follows a different color scale, as it is based upon the precipitable water vapor climatology for each month (donated by [Matthew Bunkers; NWS](<a class="reference external" href="https://www.weather.gov/unr/uac">https://www.weather.gov/unr/uac</a>)).  Green colors means that the PW value is moister than average, while brown values mean the PW value is drier than average.  The intensity of the color corresponds to how far outside the PW distribution the value is (by standard deviation). NOTE: This function only works for current US radiosonde stations.</p>
 </div>
@@ -203,7 +203,7 @@
 <p>New in version 1.3.0 is the ability to interpolate the profile to 25-mb intervals.  This can be done by either pressing the ‘I’ key on the keyboard or by selecting Profiles-&gt;Interpolate on the menu bar. Interpolating the profile will take into account any modifications you’ve done to the original profile.  Pressing the ‘I’ key again or selecting Profiles-&gt;Reset Interpolation will reset the profile, undoing all modifications, so be sure you want to reset the profile before doing so.</p>
 <div class="figure align-center" id="id2">
 <a class="reference internal image-reference" href="_images/interp.png"><img alt="_images/interp.png" src="_images/interp.png" style="width: 589.0px; height: 300.0px;" /></a>
-<p class="caption"><span class="caption-text">Example interpolation of the sounding profile from the high-resolution (left) to the interpolated (right).</span></p>
+<p class="caption"><span class="caption-text">Example interpolation of the sounding profile from the high-resolution (left) to the interpolated (right).</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="storm-mode-functions">
@@ -214,15 +214,15 @@
 <h2>Lifting Parcels<a class="headerlink" href="#lifting-parcels" title="Permalink to this headline">¶</a></h2>
 <p>By default, soundings opened up in the GUI show these 4 parcels in the lower left inset window:</p>
 <ol class="arabic simple">
-<li>Surface-based Parcel</li>
-<li>100 mb Mixed-layer Parcel</li>
-<li>Forecasted Surface Parcel</li>
-<li>Most-Unstable Parcel</li>
+<li><p>Surface-based Parcel</p></li>
+<li><p>100 mb Mixed-layer Parcel</p></li>
+<li><p>Forecasted Surface Parcel</p></li>
+<li><p>Most-Unstable Parcel</p></li>
 </ol>
 <p>Double clicking on this inset will allow you to swap out these parcels for two others:</p>
 <ol class="arabic simple">
-<li>Effective Inflow Layer Mean Parcel</li>
-<li>User Defined Parcel</li>
+<li><p>Effective Inflow Layer Mean Parcel</p></li>
+<li><p>User Defined Parcel</p></li>
 </ol>
 <p>The current parcel shown in the Skew-T is highlighted by a brown box within the Thermo inset.  Clicking on any of the 4 parcels in the inset will change the a) the parcel trace drawn on the Skew-T and b) change the parcel used in the parcel trajectory calculation (aka Storm Slinky.)  To lift custom parcels, double click on the Thermo (lower left) inset and select the “User Parcel”.  Then, right click on the Skew-T and select the “Readout Cursor”.  Once you find the location in your profile you wish to lift, right click again and look under the “Lift Parcel” menu to select a parcel lifting routine.  If you are lifting a layer averaged parcel, the location of the cursor selects the level (or bottom of the layer) you are lifting.</p>
 </div>

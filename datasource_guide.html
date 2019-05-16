@@ -174,29 +174,29 @@
 <div class="section" id="valid-data-formats">
 <h2>Valid Data Formats<a class="headerlink" href="#valid-data-formats" title="Permalink to this headline">¶</a></h2>
 <p>SHARPpy hosts a variety of decoders within the <a class="reference internal" href="sharppy.io.html#sharppy-io"><span class="std std-ref">sharppy.io package</span></a> to help decode various human-readable text files:</p>
-<table border="1" class="colwidths-given docutils" id="id2">
+<table class="colwidths-given docutils align-center" id="id2">
 <caption><span class="caption-text">SHARPpy Decoders</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
-<col width="29%" />
-<col width="71%" />
+<col style="width: 29%" />
+<col style="width: 71%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Data Type</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Data Type</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>buf_decoder.py</td>
-<td>BUFKIT files which includes deterministic and ensemble point forecast soundings</td>
+<tbody>
+<tr class="row-even"><td><p>buf_decoder.py</p></td>
+<td><p>BUFKIT files which includes deterministic and ensemble point forecast soundings</p></td>
 </tr>
-<tr class="row-odd"><td>pecan_decoder.py</td>
-<td>Point forecast soundings for deterministic and ensemble models</td>
+<tr class="row-odd"><td><p>pecan_decoder.py</p></td>
+<td><p>Point forecast soundings for deterministic and ensemble models</p></td>
 </tr>
-<tr class="row-even"><td>spc_decoder.py</td>
-<td>Observed soundings</td>
+<tr class="row-even"><td><p>spc_decoder.py</p></td>
+<td><p>Observed soundings</p></td>
 </tr>
-<tr class="row-odd"><td>uwyo_decoder.py</td>
-<td>University of Wyoming sounding archive text format</td>
+<tr class="row-odd"><td><p>uwyo_decoder.py</p></td>
+<td><p>University of Wyoming sounding archive text format</p></td>
 </tr>
 </tbody>
 </table>
@@ -227,10 +227,10 @@ reads in data files meant for only observed soundings.</p>
 </div>
 <p>Upon loading the data into the SHARPpy GUI, the program first does several checks on the integrity of the data.  As many of the program’s routines are repeatedly checked, incorrect or bad values from the program are usually a result of the quality of the data.  The program operates on the principle that if the data is good, all the resulting calculations will be good.  Some of the checks include:</p>
 <ol class="arabic simple">
-<li>Making sure that no temperature or dewpoint values are below 273.15 K.</li>
-<li>Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR &lt; 360, respectively.</li>
-<li>Making sure that no repeat values of pressure or height occur.</li>
-<li>Checking to see that pressure decreases with height within the profile.</li>
+<li><p>Making sure that no temperature or dewpoint values are below 273.15 K.</p></li>
+<li><p>Ensuring that wind speed and wind direction values are WSPD ≥ 0 and 0 ≤ WDIR &lt; 360, respectively.</p></li>
+<li><p>Making sure that no repeat values of pressure or height occur.</p></li>
+<li><p>Checking to see that pressure decreases with height within the profile.</p></li>
 </ol>
 <p>The GUI should provide an error message explaining the variable type (e.g., wind speed, height) that is failing these checks.  As of version 1.4, the GUI will try to plot the data should the user desire.</p>
 </div>
@@ -243,7 +243,7 @@ reads in data files meant for only observed soundings.</p>
 <p>Although SHARPpy maintains a variety of different sounding data sources in the distributed program, you may want to add your own to the program.  In the past, the developers have incorporated datastreams from other experimental NWP runs including the <a class="reference external" href="https://mpas-dev.github.io">MPAS</a> and the <a class="reference external" href="https://ensemble.ucar.edu">NCAR Realtime Ensemble</a> into the program.  We welcome the opportunity to expand the set of sounding data sources available to the general SHARPpy user base.</p>
 <p>To do this, add to the <cite>datasources/</cite> directory an XML file containing the data source information and a CSV file containing all the location information.  We do not recommend modifying the <cite>standard.xml</cite> file, as it may break SHARPpy, and your custom data source information may get overwritten when you update SHARPpy.  If you have a reliable data source that you wish to share with the broader community, please consider submitting a pull request with your proposed changes to Github!</p>
 <ol class="arabic simple">
-<li>Make your sounding data files.  You may wish to use either the SPC format, the BUFKIT format, or the PECAN format.  You may wish to store these locally or on a server.  Either way, they should be viewable by login credentials you will be using when running the SHARPpy GUI.</li>
+<li><p>Make your sounding data files.  You may wish to use either the SPC format, the BUFKIT format, or the PECAN format.  You may wish to store these locally or on a server.  Either way, they should be viewable by login credentials you will be using when running the SHARPpy GUI.</p></li>
 </ol>
 <p>2. Make a new XML file
 The XML file contains the information for how the data source behaves. Questions like “Is this data source an ensemble?” or “How far out does this data source forecast?” are answered in this file. It should be a completely new file.  It can be named whatever you like, as long as the extension is <cite>.xml</cite>. The format should look like the <cite>standard.xml</cite> file in the <cite>datasources/</cite> directory, but an example follows:</p>
@@ -260,36 +260,35 @@ The XML file contains the information for how the data source behaves. Questions
 </div>
 <p>For the <code class="docutils literal notranslate"><span class="pre">outlet</span></code> tag:</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">url</span></code>: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:</dt>
-<dd><ul class="first last">
-<li><code class="docutils literal notranslate"><span class="pre">date</span></code>: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).</li>
-<li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The current cycle hour in HHZ format (e.g. 00Z).</li>
-<li><code class="docutils literal notranslate"><span class="pre">srcid</span></code>: The source’s profile ID (will be filled in with the same column from the CSV file; see below).</li>
-<li><code class="docutils literal notranslate"><span class="pre">day</span></code>: The day of the data (not shown)</li>
-<li><code class="docutils literal notranslate"><span class="pre">hour</span></code>: the hour of the data (not shown)</li>
-<li><code class="docutils literal notranslate"><span class="pre">month</span></code>: the month of the data (not shown)</li>
-<li><code class="docutils literal notranslate"><span class="pre">year</span></code>: the year of the data (not shown)</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">url</span></code>: The URL for the profiles. The names in curly braces are special variables that SHARPpy fills in the following manner:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">date</span></code>: The current date in YYMMDD format (e.g. 150602 for 2 June 2015).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The current cycle hour in HHZ format (e.g. 00Z).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">srcid</span></code>: The source’s profile ID (will be filled in with the same column from the CSV file; see below).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">day</span></code>: The day of the data (not shown)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hour</span></code>: the hour of the data (not shown)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">month</span></code>: the month of the data (not shown)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">year</span></code>: the year of the data (not shown)</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><code class="docutils literal notranslate"><span class="pre">name</span></code>: A name for the data source outlet</li>
-<li><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> and <cite>pecan</cite> for model profiles and <cite>spc</cite> for observed profiles. Others may be available in the future.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: A name for the data source outlet</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">format</span></code>: The format of the data source.  Currently, the only supported formats are <cite>bufkit</cite> and <cite>pecan</cite> for model profiles and <cite>spc</cite> for observed profiles. Others may be available in the future.</p></li>
 </ul>
 <p>For the <code class="docutils literal notranslate"><span class="pre">time</span></code> tag:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">range</span></code>: The forecast range in hours for the data source. Observed data sources should set this to 0.</li>
-<li><code class="docutils literal notranslate"><span class="pre">delta</span></code>: The time step in hours between profiles. Observed data sources should set this to 0.</li>
-<li><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The amount of time in hours between cycles for the data source.</li>
-<li><code class="docutils literal notranslate"><span class="pre">offset</span></code>: The time offset in hours of the cycles from 00 UTC.</li>
-<li><code class="docutils literal notranslate"><span class="pre">delay</span></code>: The time delay in hours between the cycle and the data becoming available.</li>
-<li><code class="docutils literal notranslate"><span class="pre">archive</span></code>: The length of time in hours that data are kept on the server.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">range</span></code>: The forecast range in hours for the data source. Observed data sources should set this to 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delta</span></code>: The time step in hours between profiles. Observed data sources should set this to 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycle</span></code>: The amount of time in hours between cycles for the data source.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">offset</span></code>: The time offset in hours of the cycles from 00 UTC.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delay</span></code>: The time delay in hours between the cycle and the data becoming available.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive</span></code>: The length of time in hours that data are kept on the server.</p></li>
 </ul>
 <p>These should all be integer numbers of hours; support for sub-hourly data is forthcoming.</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">start</span></code>: A start date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</li>
-<li><code class="docutils literal notranslate"><span class="pre">end</span></code>: A end date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">start</span></code>: A start date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">end</span></code>: A end date of the data in the outlet “YYYY/MM/DD”, “now”, or “-“</p></li>
 </ul>
 <p>These two tags are used to grey out parts of the Calendar that is shown on the Sounding Picker.
 For example, a sounding archive in SHARPpy may have a start date of “1946/01/01” and an end value

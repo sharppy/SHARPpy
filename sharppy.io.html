@@ -203,15 +203,12 @@
 <code class="descname">getProfiles</code><span class="sig-paren">(</span><em>indexes=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/io/decoder.html#Decoder.getProfiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.io.decoder.Decoder.getProfiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of profile objects generated from the
 file that was read in.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prof_idxs</strong> (<em>list</em><em> (</em><em>optional</em><em>)</em>) – A list of indices corresponding to the profiles to be returned.
-Default is to return the full list of profiles</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>prof_idxs</strong> (<em>list</em><em> (</em><em>optional</em><em>)</em>) – A list of indices corresponding to the profiles to be returned.
+Default is to return the full list of profiles</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -258,24 +255,20 @@ Default is to return the full list of profiles</td>
 <dt id="sharppy.io.qc_tools.raiseError">
 <code class="descclassname">sharppy.io.qc_tools.</code><code class="descname">raiseError</code><span class="sig-paren">(</span><em>string</em>, <em>errorType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/io/qc_tools.html#raiseError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.io.qc_tools.raiseError" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will raise an exception specified by the errorType variable.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>string</strong> (<em>str</em>) – the string to be printed out to the user when the exception is thrown</li>
-<li><strong>errorType</strong> (<em>Exception</em>) – the type of exception.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<em>str</em>) – the string to be printed out to the user when the exception is thrown</p></li>
+<li><p><strong>errorType</strong> (<em>Exception</em>) – the type of exception.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -283,20 +276,18 @@ Default is to return the full list of profiles</td>
 <code class="descclassname">sharppy.io.qc_tools.</code><code class="descname">numMasked</code><span class="sig-paren">(</span><em>arr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/io/qc_tools.html#numMasked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.io.qc_tools.numMasked" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the number of unmasked array elements as well as the
 length of the array.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>arr</strong> (<em>masked numpy array</em>) – The maksed numpy array</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>count</strong> (<em>number</em>) – the number of unmasked array elements</li>
-<li><strong>length</strong> (<em>number</em>) – the length of the unmasked array</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>arr</strong> (<em>masked numpy array</em>) – The maksed numpy array</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>count</strong> (<em>number</em>) – the number of unmasked array elements</p></li>
+<li><p><strong>length</strong> (<em>number</em>) – the length of the unmasked array</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -305,27 +296,26 @@ length of the array.</p>
 <dd><p>This function checks to see if valid pressure (mb)
 values are within the pres array that is passed to the
 Profile object</p>
-<dl class="docutils">
-<dt>True If:</dt>
-<dd><p class="first">1.) pressure array length is &gt; 1
+<dl>
+<dt>True If:</dt><dd><p>1.) pressure array length is &gt; 1
 2.) pressure array is not filled with masked values
 3.) if the pressure array is decreasing with the index</p>
-<blockquote class="last">
-<div>and there are no repeat values.</div></blockquote>
+<blockquote>
+<div><p>and there are no repeat values.</p>
+</div></blockquote>
 </dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pres</strong> (<em>array</em>) – pressure array (mb)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pres</strong> (<em>array</em>) – pressure array (mb)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>value</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -334,27 +324,26 @@ Profile object</p>
 <dd><p>This function checks to see if valid height (m)
 values are within the hght array that is passed to the
 Profile object</p>
-<dl class="docutils">
-<dt>True/False: True If:</dt>
-<dd><p class="first">1.) height array length is &gt; 0
+<dl>
+<dt>True/False: True If:</dt><dd><p>1.) height array length is &gt; 0
 2.) height array is not filled with masked values
 3.) if the height array is increasing with the index</p>
-<blockquote class="last">
-<div>and there are no repeat values.</div></blockquote>
+<blockquote>
+<div><p>and there are no repeat values.</p>
+</div></blockquote>
 </dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hght</strong> (<em>array</em>) – height array (m)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>hght</strong> (<em>array</em>) – height array (m)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>value</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -363,18 +352,17 @@ Profile object</p>
 <dd><p>This function checks to see if valid wind speed (knots)
 values are within the wspd array that is passed to the
 Profile object</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>wspd</strong> (<em>the wind speed array</em><em> (</em><em>knots</em><em>)</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>True/False</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">True if the wind speeds in the wspd array are all &gt;= 0.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wspd</strong> (<em>the wind speed array</em><em> (</em><em>knots</em><em>)</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>True/False</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>True if the wind speeds in the wspd array are all &gt;= 0.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -383,18 +371,17 @@ Profile object</p>
 <dd><p>This function checks to see if valid dewpoint (Celsius)
 values are within the dwpc array that is passed to the
 Profile object</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dwpc</strong> (<em>the dewpoint array</em><em> (</em><em>Celsius</em><em>)</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>True/False</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">True if the values in the dewpoint array are all above absolute zero.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dwpc</strong> (<em>the dewpoint array</em><em> (</em><em>Celsius</em><em>)</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>True/False</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>True if the values in the dewpoint array are all above absolute zero.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -403,18 +390,17 @@ Profile object</p>
 <dd><p>This function checks to see if valid temperature (Celsius)
 values are within the tmpc array that is passed to the
 Profile object</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tmpc</strong> (<em>the temperature array</em><em> (</em><em>Celsius</em><em>)</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>True/False</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">True if the values in the temperature array are all above absolute zero.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tmpc</strong> (<em>the temperature array</em><em> (</em><em>Celsius</em><em>)</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>True/False</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>True if the values in the temperature array are all above absolute zero.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

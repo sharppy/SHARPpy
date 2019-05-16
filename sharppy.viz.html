@@ -630,20 +630,16 @@ in the frame.</p>
 <dt id="sharppy.viz.analogues.plotAnalogues.drawSARS">
 <code class="descname">drawSARS</code><span class="sig-paren">(</span><em>qp</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.drawSARS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.drawSARS" title="Permalink to this definition">¶</a></dt>
 <dd><p>This draws the SARS matches.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>qp</strong> (<em>a QtGui.QPainter Object</em>) – </li>
-<li><strong>type</strong> (<em>A string for the type of</em>) – SARS matches. ‘HAIL’ for
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qp</strong> (<em>a QtGui.QPainter Object</em>) – </p></li>
+<li><p><strong>type</strong> (<em>A string for the type of</em>) – SARS matches. ‘HAIL’ for
 hail matches and ‘TOR’ for
-supercell matches.</li>
+supercell matches.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -656,14 +652,11 @@ supercell matches.</li>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles drawing the QPixmap onto the
 widget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -677,14 +670,11 @@ matches onto the QPixmap.</p>
 <dt id="sharppy.viz.analogues.plotAnalogues.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -771,9 +761,9 @@ click and drag feature of the sounding data.</p>
 <dl class="method">
 <dt id="sharppy.viz.draggable.Draggable.click">
 <code class="descname">click</code><span class="sig-paren">(</span><em>click_x</em>, <em>click_y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/draggable.html#Draggable.click"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.draggable.Draggable.click" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Check to see whether the user clicked on a vertex in this profile. If they did, initialize</dt>
-<dd>the drag operation.</dd>
+<dd><dl class="simple">
+<dt>Check to see whether the user clicked on a vertex in this profile. If they did, initialize</dt><dd><p>the drag operation.</p>
+</dd>
 </dl>
 <p>click_x:    x coordinate in pixels of the click
 click_y:    y coordinate in pixels of the click
@@ -783,17 +773,18 @@ Returns a boolean specifying whether a drag operation was initialized.</p>
 <dl class="method">
 <dt id="sharppy.viz.draggable.Draggable.drag">
 <code class="descname">drag</code><span class="sig-paren">(</span><em>drag_x</em>, <em>drag_y</em>, <em>restrictions=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/draggable.html#Draggable.drag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.draggable.Draggable.drag" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Drag a point or a vertex in a line. Applies restrictions to the drag point based on the lock_dim</dt>
-<dd>argument to the constructor and the restrictions argument to this method.</dd>
+<dd><dl class="simple">
+<dt>Drag a point or a vertex in a line. Applies restrictions to the drag point based on the lock_dim</dt><dd><p>argument to the constructor and the restrictions argument to this method.</p>
+</dd>
 </dl>
 <p>drag_x: x coordinate in pixels of the point to drag to.
 drag_y: y coordinate in pixels of the point to drag to.
 restrictions:   A callable object (e.g. callback function) that takes two arguments (x and y</p>
 <blockquote>
-<div>coordinates) and returns a modified x and y based on restrictions on the
+<div><p>coordinates) and returns a modified x and y based on restrictions on the
 dragging. Used, for example, to restrict dragging on the temperature line
-to be greater than the dewpoint.</div></blockquote>
+to be greater than the dewpoint.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">
@@ -1116,16 +1107,14 @@ Haines Index elevations</p>
 frame includes the background color and the frame border.
 This is primarily used in the initUI function and is not
 necessarily intended to be called outside of it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> – QtGui.QPainter object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> – QtGui.QPainter object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1139,32 +1128,28 @@ necessarily intended to be called outside of it.</p>
 <dt id="sharppy.viz.generic.backgroundGeneric.draw_xticks">
 <code class="descname">draw_xticks</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.draw_xticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.draw_xticks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dray the xtick labels for the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> – a QtGui.QPainter object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> – a QtGui.QPainter object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.generic.backgroundGeneric.draw_yticks">
 <code class="descname">draw_yticks</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.draw_yticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.draw_yticks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dray the ytick labels for the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> – a QtGui.QPainter object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> – a QtGui.QPainter object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1172,14 +1157,11 @@ necessarily intended to be called outside of it.</p>
 <code class="descname">initUI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.initUI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.initUI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the user interface. This will set necessary constants
 such as margins, min/max axes values, font sizes, etc.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1195,56 +1177,45 @@ such as margins, min/max axes values, font sizes, etc.</p>
 <dd><p>Handles what to do when the widget is resized.
 This will call self.initUI() when resized in order
 to re-generate the necessary variables.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.generic.backgroundGeneric.set_xlim">
 <code class="descname">set_xlim</code><span class="sig-paren">(</span><em>xmin</em>, <em>xmax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.set_xlim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.set_xlim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the range of values for the x axis.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xmin</strong> – The minimum x axis value</li>
-<li><strong>xmax</strong> – The maximum x axis value</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xmin</strong> – The minimum x axis value</p></li>
+<li><p><strong>xmax</strong> – The maximum x axis value</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.generic.backgroundGeneric.set_ylim">
 <code class="descname">set_ylim</code><span class="sig-paren">(</span><em>ymin</em>, <em>ymax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.set_ylim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.set_ylim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the range of values for the y axis.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ymin</strong> – The minimum y axis value</li>
-<li><strong>ymax</strong> – The maximum y axis value</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ymin</strong> – The minimum y axis value</p></li>
+<li><p><strong>ymax</strong> – The maximum y axis value</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1256,32 +1227,28 @@ to re-generate the necessary variables.</p>
 <dt id="sharppy.viz.generic.backgroundGeneric.x_to_pix">
 <code class="descname">x_to_pix</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.x_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.x_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scale an x coordinate value to pixel space and return it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> – An x coordinate value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">x converted to pixel space</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> – An x coordinate value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>x converted to pixel space</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.generic.backgroundGeneric.y_to_pix">
 <code class="descname">y_to_pix</code><span class="sig-paren">(</span><em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric.y_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.y_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scale a y coordinate value to pixel space and return it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> – A y coordinate value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">y converted to pixel space</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>y</strong> – A y coordinate value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>y converted to pixel space</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1304,16 +1271,14 @@ in the frame.</p>
 <dt id="sharppy.viz.generic.plotGeneric.draw_lines">
 <code class="descname">draw_lines</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.draw_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.plotGeneric.draw_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the line profile on the widget</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> – QtGui.QPainter object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> – QtGui.QPainter object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1321,16 +1286,14 @@ in the frame.</p>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.plotGeneric.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the paint event and calls the functions
 to draw on the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> – an Event object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> – an Event object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1344,16 +1307,14 @@ to draw on the frame.</p>
 <dt id="sharppy.viz.generic.plotGeneric.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.plotGeneric.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the resizing of the frame</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> – an Event object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> – an Event object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1387,78 +1348,61 @@ the hodograph gets centered on a vector.</p>
 <code class="descname">center_hodo</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.center_hodo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.center_hodo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Center the hodograph in the window. It will either center it about
 the origin, about the mean wind vector, or the storm motion vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point</strong> (<em>A</em><em> (</em><em>u</em><em>,</em><em>v</em><em>) </em><em>vector that the hodograph is to be centered on.</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>A</em><em> (</em><em>u</em><em>,</em><em>v</em><em>) </em><em>vector that the hodograph is to be centered on.</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.backgroundHodo.draw_axes">
 <code class="descname">draw_axes</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.draw_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.draw_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the X, Y Axes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.backgroundHodo.draw_frame">
 <code class="descname">draw_frame</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.draw_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.draw_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw frame around object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.backgroundHodo.draw_ring">
 <code class="descname">draw_ring</code><span class="sig-paren">(</span><em>spd</em>, <em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.draw_ring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.draw_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw a range ring.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>spd</strong> (<em>wind speed</em>) – </li>
-<li><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spd</strong> (<em>wind speed</em>) – </p></li>
+<li><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.backgroundHodo.hodo_to_pix">
 <code class="descname">hodo_to_pix</code><span class="sig-paren">(</span><em>ang</em>, <em>spd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.hodo_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.hodo_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a (direction, speed) to (x, y) coordinates.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ang</strong> (<em>wind direction</em>) – </li>
-<li><strong>spd</strong> (<em>wind speed</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ang</strong> (<em>wind direction</em>) – </p></li>
+<li><p><strong>spd</strong> (<em>wind speed</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1471,18 +1415,14 @@ the origin, about the mean wind vector, or the storm motion vector.</p>
 <dt id="sharppy.viz.hodo.backgroundHodo.pix_to_uv">
 <code class="descname">pix_to_uv</code><span class="sig-paren">(</span><em>xx</em>, <em>yy</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.pix_to_uv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.pix_to_uv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert (x,y) to (u,v) coordinates.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>xx</strong> (<em>the x pixel value</em>) – </li>
-<li><strong>yy</strong> (<em>the y pixel value</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xx</strong> (<em>the x pixel value</em>) – </p></li>
+<li><p><strong>yy</strong> (<em>the y pixel value</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1496,14 +1436,11 @@ QPixmap.</p>
 <dt id="sharppy.viz.hodo.backgroundHodo.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resize the plot based on adjusting the main window.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1515,32 +1452,25 @@ QPixmap.</p>
 <dt id="sharppy.viz.hodo.backgroundHodo.uv_to_pix">
 <code class="descname">uv_to_pix</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.uv_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.uv_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert (u, v) to (x, y) coordinates.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>u</strong> (<em>the u wind component</em>) – </li>
-<li><strong>v</strong> (<em>the v wind component</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>the u wind component</em>) – </p></li>
+<li><p><strong>v</strong> (<em>the v wind component</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.backgroundHodo.wheelEvent">
 <code class="descname">wheelEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handeles the zooming of the hodograph window.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1582,84 +1512,66 @@ class that plots the background frame onto a QPixmap.</p>
 <dt id="sharppy.viz.hodo.plotHodo.drawCorfidi">
 <code class="descname">drawCorfidi</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawCorfidi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.drawCorfidi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the Corfidi upshear/downshear vectors</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.drawCriticalAngle">
 <code class="descname">drawCriticalAngle</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawCriticalAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.drawCriticalAngle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the critical angle on the hodograph and show the value in the hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.drawLCLtoEL_MW">
 <code class="descname">drawLCLtoEL_MW</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawLCLtoEL_MW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.drawLCLtoEL_MW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the LCL to EL mean wind onto the hodo.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.drawSMV">
 <code class="descname">drawSMV</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawSMV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.drawSMV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the storm motion vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.draw_hodo">
 <code class="descname">draw_hodo</code><span class="sig-paren">(</span><em>qp</em>, <em>prof</em>, <em>colors</em>, <em>width=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.draw_hodo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.draw_hodo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the Hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em>, <em>prof</em>, <em>color='#6666CC'</em>, <em>width=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the Hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -1682,14 +1594,11 @@ class that plots the background frame onto a QPixmap.</p>
 <code class="descname">mouseMoveEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the tracking of the mouse to
 provide the dynamic readouts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1697,14 +1606,11 @@ provide the dynamic readouts.</p>
 <code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the mouse is pressed.
 Used to set the storm motion vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1716,14 +1622,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.hodo.plotHodo.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles painting the QPixmap onto the QWidget frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1751,14 +1654,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.hodo.plotHodo.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resize the plot based on adjusting the main window.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1840,14 +1740,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.hodo.plotHodo.wheelEvent">
 <code class="descname">wheelEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the zooming of the hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2721,28 +2618,22 @@ Draws onto a QPixmap.</p>
 <dt id="sharppy.viz.slinky.backgroundSlinky.draw_axes">
 <code class="descname">draw_axes</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#backgroundSlinky.draw_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.backgroundSlinky.draw_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the X, Y Axes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.slinky.backgroundSlinky.draw_frame">
 <code class="descname">draw_frame</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#backgroundSlinky.draw_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.backgroundSlinky.draw_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the background frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2794,14 +2685,11 @@ in the frame.</p>
 <dt id="sharppy.viz.slinky.plotSlinky.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles painting the QPixmap onto the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2814,56 +2702,44 @@ in the frame.</p>
 <dt id="sharppy.viz.slinky.plotSlinky.plotSMV">
 <code class="descname">plotSMV</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotSMV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.plotSMV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the line representing the Storm Motion Vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.slinky.plotSlinky.plotSlinky">
 <code class="descname">plotSlinky</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotSlinky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.plotSlinky" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the circles of the Storm Slinky.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.slinky.plotSlinky.plotTilt">
 <code class="descname">plotTilt</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotTilt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.plotTilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the data for the updraft tilt.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.slinky.plotSlinky.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3017,64 +2893,50 @@ Draws the frame onto a QPixmap.</p>
 <dt id="sharppy.viz.srwinds.backgroundWinds.draw_frame">
 <code class="descname">draw_frame</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds.draw_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.draw_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the background frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.srwinds.backgroundWinds.draw_height">
 <code class="descname">draw_height</code><span class="sig-paren">(</span><em>h</em>, <em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds.draw_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.draw_height" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw background height ticks in km.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>h</strong> (<em>height in km</em>) – </li>
-<li><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>h</strong> (<em>height in km</em>) – </p></li>
+<li><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.srwinds.backgroundWinds.draw_speed">
 <code class="descname">draw_speed</code><span class="sig-paren">(</span><em>s</em>, <em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds.draw_speed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.draw_speed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw background speed ticks.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>s</strong> (<em>windpeed</em>) – </li>
-<li><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>windpeed</em>) – </p></li>
+<li><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.srwinds.backgroundWinds.hgt_to_pix">
 <code class="descname">hgt_to_pix</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds.hgt_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.hgt_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a height value (km) to a Y pixel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>h</strong> (<em>height in km</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>h</strong> (<em>height in km</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3099,14 +2961,11 @@ Draws the frame onto a QPixmap.</p>
 <dt id="sharppy.viz.srwinds.backgroundWinds.speed_to_pix">
 <code class="descname">speed_to_pix</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds.speed_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.speed_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a wind speed value to a X pixel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> (<em>speed in kts</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>speed in kts</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -3135,14 +2994,11 @@ in the frame.</p>
 <dt id="sharppy.viz.srwinds.plotWinds.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.plotWinds.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the storm relative wind profile.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3150,14 +3006,11 @@ in the frame.</p>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.plotWinds.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the painting of the QPixmap onto
 the QWidget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3171,14 +3024,11 @@ QPixmap.</p>
 <dt id="sharppy.viz.srwinds.plotWinds.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.plotWinds.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3511,42 +3361,33 @@ in the frame.</p>
 <dt id="sharppy.viz.thermo.plotText.drawConvectiveIndices">
 <code class="descname">drawConvectiveIndices</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawConvectiveIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.drawConvectiveIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>This handles the drawing of the parcel indices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thermo.plotText.drawIndices">
 <code class="descname">drawIndices</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.drawIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the non-parcel indices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thermo.plotText.drawSevere">
 <code class="descname">drawSevere</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawSevere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.drawSevere" title="Permalink to this definition">¶</a></dt>
 <dd><p>This handles the severe indices, such as STP, sig hail, etc.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3646,50 +3487,39 @@ Draws the background on a QPixmap.</p>
 <dt id="sharppy.viz.thetae.backgroundThetae.draw_frame">
 <code class="descname">draw_frame</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.draw_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.draw_frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the background frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thetae.backgroundThetae.draw_isobar">
 <code class="descname">draw_isobar</code><span class="sig-paren">(</span><em>p</em>, <em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.draw_isobar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.draw_isobar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw background isobar ticks.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>p</strong> (<em>pressure in hPa</em><em> or </em><em>mb</em>) – </li>
-<li><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<em>pressure in hPa</em><em> or </em><em>mb</em>) – </p></li>
+<li><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thetae.backgroundThetae.draw_thetae">
 <code class="descname">draw_thetae</code><span class="sig-paren">(</span><em>t</em>, <em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.draw_thetae"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.draw_thetae" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw background Theta-E ticks.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>t</strong> (<em>Theta-E in degrees Kelvin</em>) – </li>
-<li><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>Theta-E in degrees Kelvin</em>) – </p></li>
+<li><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3710,28 +3540,22 @@ the QPixmap.</p>
 <dt id="sharppy.viz.thetae.backgroundThetae.pres_to_pix">
 <code class="descname">pres_to_pix</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.pres_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.pres_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a pressure value (hPa) to a Y pixel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>p</strong> (<em>pressure in hPa</em><em> or </em><em>mb</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>p</strong> (<em>pressure in hPa</em><em> or </em><em>mb</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thetae.backgroundThetae.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the event the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -3743,14 +3567,11 @@ the QPixmap.</p>
 <dt id="sharppy.viz.thetae.backgroundThetae.theta_to_pix">
 <code class="descname">theta_to_pix</code><span class="sig-paren">(</span><em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.theta_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.theta_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a Theta-E value (K) to a X pixel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>t</strong> (<em>temperature in Kelvin</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>t</strong> (<em>temperature in Kelvin</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -3766,28 +3587,22 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 <dt id="sharppy.viz.thetae.plotThetae.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.plotThetae.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the Theta-E v. Pres profile.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thetae.plotThetae.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.plotThetae.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the QPixmap onto the QWidget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3800,14 +3615,11 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 <dt id="sharppy.viz.thetae.plotThetae.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.plotThetae.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3879,14 +3691,11 @@ qp: QtGui.QPainter object</p>
 <dt id="sharppy.viz.vrot.backgroundVROT.vrot_to_pix">
 <code class="descname">vrot_to_pix</code><span class="sig-paren">(</span><em>vrot</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#backgroundVROT.vrot_to_pix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.backgroundVROT.vrot_to_pix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to convert a wind speed value to a X pixel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> (<em>speed in kts</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>speed in kts</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -4449,84 +4258,66 @@ class that plots the background frame onto a QPixmap.</p>
 <dt id="sharppy.viz.plotHodo.drawCorfidi">
 <code class="descname">drawCorfidi</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawCorfidi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.drawCorfidi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the Corfidi upshear/downshear vectors</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.drawCriticalAngle">
 <code class="descname">drawCriticalAngle</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawCriticalAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.drawCriticalAngle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the critical angle on the hodograph and show the value in the hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.drawLCLtoEL_MW">
 <code class="descname">drawLCLtoEL_MW</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawLCLtoEL_MW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.drawLCLtoEL_MW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the LCL to EL mean wind onto the hodo.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.drawSMV">
 <code class="descname">drawSMV</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.drawSMV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.drawSMV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the storm motion vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.draw_hodo">
 <code class="descname">draw_hodo</code><span class="sig-paren">(</span><em>qp</em>, <em>prof</em>, <em>colors</em>, <em>width=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.draw_hodo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.draw_hodo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the Hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em>, <em>prof</em>, <em>color='#6666CC'</em>, <em>width=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the Hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -4549,14 +4340,11 @@ class that plots the background frame onto a QPixmap.</p>
 <code class="descname">mouseMoveEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the tracking of the mouse to
 provide the dynamic readouts.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4564,14 +4352,11 @@ provide the dynamic readouts.</p>
 <code class="descname">mousePressEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the mouse is pressed.
 Used to set the storm motion vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4583,14 +4368,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.plotHodo.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles painting the QPixmap onto the QWidget frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4618,14 +4400,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.plotHodo.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resize the plot based on adjusting the main window.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4707,14 +4486,11 @@ Used to set the storm motion vector.</p>
 <dt id="sharppy.viz.plotHodo.wheelEvent">
 <code class="descname">wheelEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the zooming of the hodograph.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -4734,42 +4510,33 @@ in the frame.</p>
 <dt id="sharppy.viz.plotText.drawConvectiveIndices">
 <code class="descname">drawConvectiveIndices</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawConvectiveIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.drawConvectiveIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>This handles the drawing of the parcel indices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotText.drawIndices">
 <code class="descname">drawIndices</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.drawIndices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the non-parcel indices.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotText.drawSevere">
 <code class="descname">drawSevere</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.drawSevere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.drawSevere" title="Permalink to this definition">¶</a></dt>
 <dd><p>This handles the severe indices, such as STP, sig hail, etc.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4859,28 +4626,22 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 <dt id="sharppy.viz.plotThetae.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotThetae.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the Theta-E v. Pres profile.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotThetae.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotThetae.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the QPixmap onto the QWidget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4893,14 +4654,11 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 <dt id="sharppy.viz.plotThetae.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#plotThetae.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotThetae.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4939,14 +4697,11 @@ in the frame.</p>
 <dt id="sharppy.viz.plotWinds.draw_profile">
 <code class="descname">draw_profile</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.draw_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotWinds.draw_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the storm relative wind profile.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4954,14 +4709,11 @@ in the frame.</p>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotWinds.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the painting of the QPixmap onto
 the QWidget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -4975,14 +4727,11 @@ QPixmap.</p>
 <dt id="sharppy.viz.plotWinds.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#plotWinds.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotWinds.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -5141,20 +4890,16 @@ in the frame.</p>
 <dt id="sharppy.viz.plotAnalogues.drawSARS">
 <code class="descname">drawSARS</code><span class="sig-paren">(</span><em>qp</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.drawSARS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotAnalogues.drawSARS" title="Permalink to this definition">¶</a></dt>
 <dd><p>This draws the SARS matches.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>qp</strong> (<em>a QtGui.QPainter Object</em>) – </li>
-<li><strong>type</strong> (<em>A string for the type of</em>) – SARS matches. ‘HAIL’ for
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>qp</strong> (<em>a QtGui.QPainter Object</em>) – </p></li>
+<li><p><strong>type</strong> (<em>A string for the type of</em>) – SARS matches. ‘HAIL’ for
 hail matches and ‘TOR’ for
-supercell matches.</li>
+supercell matches.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -5167,14 +4912,11 @@ supercell matches.</li>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotAnalogues.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles drawing the QPixmap onto the
 widget.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -5188,14 +4930,11 @@ matches onto the QPixmap.</p>
 <dt id="sharppy.viz.plotAnalogues.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotAnalogues.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -5309,14 +5048,11 @@ in the frame.</p>
 <dt id="sharppy.viz.plotSlinky.paintEvent">
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSlinky.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles painting the QPixmap onto the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -5329,56 +5065,44 @@ in the frame.</p>
 <dt id="sharppy.viz.plotSlinky.plotSMV">
 <code class="descname">plotSMV</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotSMV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSlinky.plotSMV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws the line representing the Storm Motion Vector.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSlinky.plotSlinky">
 <code class="descname">plotSlinky</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotSlinky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSlinky.plotSlinky" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the circles of the Storm Slinky.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSlinky.plotTilt">
 <code class="descname">plotTilt</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.plotTilt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSlinky.plotTilt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the data for the updraft tilt.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> (<em>a QtGui.QPainter object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSlinky.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/slinky.html#plotSlinky.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSlinky.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles when the window is resized.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> (<em>an Event object</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> (<em>an Event object</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -6087,16 +5811,14 @@ in the frame.</p>
 <dt id="sharppy.viz.plotGeneric.draw_lines">
 <code class="descname">draw_lines</code><span class="sig-paren">(</span><em>qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.draw_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotGeneric.draw_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the line profile on the widget</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qp</strong> – QtGui.QPainter object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qp</strong> – QtGui.QPainter object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -6104,16 +5826,14 @@ in the frame.</p>
 <code class="descname">paintEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotGeneric.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the paint event and calls the functions
 to draw on the frame.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> – an Event object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> – an Event object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -6127,16 +5847,14 @@ to draw on the frame.</p>
 <dt id="sharppy.viz.plotGeneric.resizeEvent">
 <code class="descname">resizeEvent</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#plotGeneric.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotGeneric.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the resizing of the frame</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>e</strong> – an Event object</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>e</strong> – an Event object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

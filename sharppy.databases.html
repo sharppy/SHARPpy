@@ -219,27 +219,23 @@ line graphs and box and whisker plots in the SHIP or STP EF insets)</p>
 <code class="descclassname">sharppy.databases.pwv.</code><code class="descname">get_mean_pwv</code><span class="sig-paren">(</span><em>station</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/pwv.html#get_mean_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.pwv.get_mean_pwv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to get the mean precipitable water vapor (inches) values
 for every month of the year, based on the station passed through.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Staion</strong> (<em>Can be the 4 letter station ID</em><em> (</em><em>i.e. KOUN</em><em>)</em><em>, </em><em>3 letter station</em>) – </li>
-<li><strong>(</strong><strong>i.e. OUN</strong><strong>)</strong><strong>, or </strong><strong>the 5 digit WMO ID</strong><strong> (</strong><strong>i.e. 72357</strong><strong>)</strong><strong></strong> (<em>ID</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Staion</strong> (<em>Can be the 4 letter station ID</em><em> (</em><em>i.e. KOUN</em><em>)</em><em>, </em><em>3 letter station</em>) – </p></li>
+<li><p><strong>(</strong><strong>i.e. OUN</strong><strong>)</strong><strong>, or </strong><strong>the 5 digit WMO ID</strong><strong> (</strong><strong>i.e. 72357</strong><strong>)</strong><strong></strong> (<em>ID</em>) – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>mean_pwv</strong> (<em>1D Array of float values corresponding to the mean PWV</em>)</li>
-<li><em>Jan - December.</em></li>
-<li><em>Written by Greg Blumberg</em></li>
-<li><em>and Kelton Halbert.</em></li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mean_pwv</strong> (<em>1D Array of float values corresponding to the mean PWV</em>)</p></li>
+<li><p><em>Jan - December.</em></p></li>
+<li><p><em>Written by Greg Blumberg</em></p></li>
+<li><p><em>and Kelton Halbert.</em></p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -248,28 +244,24 @@ for every month of the year, based on the station passed through.</p>
 <dd><p>Function to get the standard deviation from the mean precipitable water
 vapor (inches) values for every month of the year, based on the station
 passed through.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>Staion</strong> (<em>Can be the 4 letter station ID</em><em> (</em><em>i.e. KOUN</em><em>)</em><em>, </em><em>3 letter station</em>) – </li>
-<li><strong>(</strong><strong>i.e. OUN</strong><strong>)</strong><strong>, or </strong><strong>the 5 digit WMO ID</strong><strong> (</strong><strong>i.e. 72357</strong><strong>)</strong><strong></strong> (<em>ID</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Staion</strong> (<em>Can be the 4 letter station ID</em><em> (</em><em>i.e. KOUN</em><em>)</em><em>, </em><em>3 letter station</em>) – </p></li>
+<li><p><strong>(</strong><strong>i.e. OUN</strong><strong>)</strong><strong>, or </strong><strong>the 5 digit WMO ID</strong><strong> (</strong><strong>i.e. 72357</strong><strong>)</strong><strong></strong> (<em>ID</em>) – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>stdev_pwv</strong> (<em>1D Array of float values corresponding to the standard deviation</em>)</li>
-<li><em>from the mean PWV</em></li>
-<li><em>Jan - December.</em></li>
-<li><em>Written by Greg Blumberg</em></li>
-<li><em>and Kelton Halbert.</em></li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>stdev_pwv</strong> (<em>1D Array of float values corresponding to the standard deviation</em>)</p></li>
+<li><p><em>from the mean PWV</em></p></li>
+<li><p><em>Jan - December.</em></p></li>
+<li><p><em>Written by Greg Blumberg</em></p></li>
+<li><p><em>and Kelton Halbert.</em></p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -303,39 +295,34 @@ SARS routines, decode the raw sounding data into a Profile
 object and return said object. It will default to a “default”
 profile object that does not compute any indices, but can be
 set to profile=”convective” if indices are desired.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>match_string</strong> – </li>
-<li><strong>match_type</strong> – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>match_string</strong> – </p></li>
+<li><p><strong>match_type</strong> – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a Profile object</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Profile object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="sharppy.databases.sars.get_sars_dir">
 <code class="descclassname">sharppy.databases.sars.</code><code class="descname">get_sars_dir</code><span class="sig-paren">(</span><em>match_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/databases/sars.html#get_sars_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.databases.sars.get_sars_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the directory where the raw SARS files are.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>match_type</strong> (<em>str</em>) – ‘supercell’ or ‘hail’</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>match_type</strong> (<em>str</em>) – ‘supercell’ or ‘hail’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -355,22 +342,21 @@ internally by SPC.</p>
 <p>The loose matches are based on the most unstable parcel mixing ratio (mumr),
 most unstable cape (mucape), 700-500mb labse rate (lr), 500mb temperature
 (h5_temp), 0-3km shear (shr3), 0-6km shear (shr6), and the 0-9km shear (shr9).</p>
-<dl class="docutils">
-<dt>The ranges for the loose matches are set as such:</dt>
-<dd>mumr: +/- 2.0 g/kg
+<dl class="simple">
+<dt>The ranges for the loose matches are set as such:</dt><dd><p>mumr: +/- 2.0 g/kg
 mucape: +/- 30% J/kg
 lr: +/- 2.0 C/km
 h5_temp: +/- 9.0 C
 shr6: +/- 12 m^2/s^2
 shr9: +/- 22 m^2/s^2
-shr3: +/- 10 m^2/s^2</dd>
+shr3: +/- 10 m^2/s^2</p>
+</dd>
 </dl>
 <p>The quality matches use the fields described in the loose matches, plus the
 0-3km Storm Relative Helicity (srh). The bounds for the search for quality
 matches is much more strict that the loose matches.</p>
-<dl class="docutils">
-<dt>The ranges for the quality matches are set as such:</dt>
-<dd>mumr: +/- 2.0 g/kg
+<dl class="simple">
+<dt>The ranges for the quality matches are set as such:</dt><dd><p>mumr: +/- 2.0 g/kg
 mucape &lt; 500 J/kg: +/- 50% J/kg
 mucape &lt; 2000 J/kg: +/- 25% J/kg
 mucape &gt;= 2000 J/kg: +/- 20% J/kg
@@ -380,36 +366,33 @@ shr6: +/- 6 m^2/s^2
 shr9: +/- 15 m^2/s^2
 shr3: +/- 8 m^2/s^2
 srh &lt; 50 m^2/s^2: +/- 25 m^2/s^2
-srh &gt;= 50 m^2/s^2: +/- 50% m^2/s^2</dd>
+srh &gt;= 50 m^2/s^2: +/- 50% m^2/s^2</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>- most unstable parcel mixing ratio</strong><strong> (</strong><strong>g/kg</strong><strong>)</strong> (<em>mumr</em>) – </li>
-<li><strong>- most unstable CAPE</strong><strong> (</strong><strong>J/kg</strong><strong>)</strong> (<em>mucape</em>) – </li>
-<li><strong>- 500 mb temperature</strong><strong> (</strong><strong>C</strong><strong>)</strong> (<em>h5_temp</em>) – </li>
-<li><strong>- 700-500 mb lapse rate</strong><strong> (</strong><strong>C/km</strong><strong>)</strong> (<em>lr</em>) – </li>
-<li><strong>- 0-6 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr6</em>) – </li>
-<li><strong>- 0-9 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr9</em>) – </li>
-<li><strong>- 0-3 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr3</em>) – </li>
-<li><strong>- 0-3 Storm Relative Helicity</strong><strong> (</strong><strong>m2/s2</strong><strong>)</strong> (<em>srh</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- most unstable parcel mixing ratio</strong><strong> (</strong><strong>g/kg</strong><strong>)</strong> (<em>mumr</em>) – </p></li>
+<li><p><strong>- most unstable CAPE</strong><strong> (</strong><strong>J/kg</strong><strong>)</strong> (<em>mucape</em>) – </p></li>
+<li><p><strong>- 500 mb temperature</strong><strong> (</strong><strong>C</strong><strong>)</strong> (<em>h5_temp</em>) – </p></li>
+<li><p><strong>- 700-500 mb lapse rate</strong><strong> (</strong><strong>C/km</strong><strong>)</strong> (<em>lr</em>) – </p></li>
+<li><p><strong>- 0-6 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr6</em>) – </p></li>
+<li><p><strong>- 0-9 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr9</em>) – </p></li>
+<li><p><strong>- 0-3 km shear</strong><strong> (</strong><strong>m/s</strong><strong>)</strong> (<em>shr3</em>) – </p></li>
+<li><p><strong>- 0-3 Storm Relative Helicity</strong><strong> (</strong><strong>m2/s2</strong><strong>)</strong> (<em>srh</em>) – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>quality_match_dates (str) - dates of the quality matches</em></li>
-<li><em>quality_match_sizes (float) - hail sizes of the quality matches</em></li>
-<li><em>num_loose_matches (int) - number of loose matches</em></li>
-<li><em>num_sig_reports (int) - number of significant hail reports (&gt;= 2 inches)</em></li>
-<li><em>prob_sig_hail (float) - SARS sig. hail probability</em></li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>quality_match_dates (str) - dates of the quality matches</em></p></li>
+<li><p><em>quality_match_sizes (float) - hail sizes of the quality matches</em></p></li>
+<li><p><em>num_loose_matches (int) - number of loose matches</em></p></li>
+<li><p><em>num_sig_reports (int) - number of significant hail reports (&gt;= 2 inches)</em></p></li>
+<li><p><em>prob_sig_hail (float) - SARS sig. hail probability</em></p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -430,22 +413,21 @@ be similar to the given sounding.</p>
 <p>The loose matches are based on the mixed layer cape (mlcape), mixed layer
 lcl (mllcl), 0-1km shear (shr), 0-1km storm relative helicity (srh), 500mb
 temperature (h5temp), and the 700-500mb lapse rate (lr).</p>
-<dl class="docutils">
-<dt>The ranges for the loose matches are set as such:</dt>
-<dd>mlcape: +/- 1300 J/kg
+<dl class="simple">
+<dt>The ranges for the loose matches are set as such:</dt><dd><p>mlcape: +/- 1300 J/kg
 mllcl: +/- 500 m
 shr: +/- 14 kts
 srh &lt; 50 m^2/s^2: +/- 100 m^2/s^2
 srh &gt;= 50 m^2/s^2: +/- 100% m^2/s^2
 h5temp: +/- 7.0 C
-lr: +/-1.0 C/km</dd>
+lr: +/-1.0 C/km</p>
+</dd>
 </dl>
 <p>The quality matches are based on the same variables as the loose matches,
 with the addition of the 0-3km shear (shr3k), 0-9km shear (shr9k), and the
 0-3km Storm Relative Helicity (srh3).</p>
-<dl class="docutils">
-<dt>The ranges for the quality matches are set as such:</dt>
-<dd>mlcape: +/- 25% J/kg
+<dl class="simple">
+<dt>The ranges for the quality matches are set as such:</dt><dd><p>mlcape: +/- 25% J/kg
 mllcl: +/- 200 m
 shr: +/- 10 kts
 srh &lt; 100 m^2/s^2: +/- 50 m^2/s^2
@@ -455,38 +437,35 @@ srh3 &gt;= 100 m^2/s^2: +/- 50% m^s/s^2
 h5temp: +/- 5 C
 lr: +/- 0.8 C/km
 shr3k: +/- 15 kts
-shr9k: +/- 25 kts</dd>
+shr9k: +/- 25 kts</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>- filename of the database</strong> (<em>database_fn</em>) – </li>
-<li><strong>- the mixed layer cape</strong><strong> (</strong><strong>J/kg</strong><strong>)</strong> (<em>mlcape</em>) – </li>
-<li><strong>- the mixed layer LCL</strong><strong> (</strong><strong>m</strong><strong>)</strong> (<em>mllcl</em>) – </li>
-<li><strong>- the 500mb temp</strong><strong> (</strong><strong>C</strong><strong>)</strong> (<em>h5temp</em>) – </li>
-<li><strong>- the 700-500mb lapse rate</strong><strong> (</strong><strong>C/km</strong><strong>)</strong> (<em>lr</em>) – </li>
-<li><strong>- the 0-1km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr</em>) – </li>
-<li><strong>- the 0-1km storm relative helicity</strong><strong> (</strong><strong>m^2/s^2</strong><strong>)</strong> (<em>srh</em>) – </li>
-<li><strong>- the 0-3km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr3k</em>) – </li>
-<li><strong>- the 0-9km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr9k</em>) – </li>
-<li><strong>- the 0-3km storm relative helicity</strong><strong> (</strong><strong>m^2/s^2</strong><strong>)</strong> (<em>srh3</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>- filename of the database</strong> (<em>database_fn</em>) – </p></li>
+<li><p><strong>- the mixed layer cape</strong><strong> (</strong><strong>J/kg</strong><strong>)</strong> (<em>mlcape</em>) – </p></li>
+<li><p><strong>- the mixed layer LCL</strong><strong> (</strong><strong>m</strong><strong>)</strong> (<em>mllcl</em>) – </p></li>
+<li><p><strong>- the 500mb temp</strong><strong> (</strong><strong>C</strong><strong>)</strong> (<em>h5temp</em>) – </p></li>
+<li><p><strong>- the 700-500mb lapse rate</strong><strong> (</strong><strong>C/km</strong><strong>)</strong> (<em>lr</em>) – </p></li>
+<li><p><strong>- the 0-1km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr</em>) – </p></li>
+<li><p><strong>- the 0-1km storm relative helicity</strong><strong> (</strong><strong>m^2/s^2</strong><strong>)</strong> (<em>srh</em>) – </p></li>
+<li><p><strong>- the 0-3km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr3k</em>) – </p></li>
+<li><p><strong>- the 0-9km shear</strong><strong> (</strong><strong>kts</strong><strong>)</strong> (<em>shr9k</em>) – </p></li>
+<li><p><strong>- the 0-3km storm relative helicity</strong><strong> (</strong><strong>m^2/s^2</strong><strong>)</strong> (<em>srh3</em>) – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>quality_match_soundings</strong> (<em>The dates/locations of the quality matches</em>)</li>
-<li><strong>quality_match_tortype</strong> (<em>The type of quality match (SIGTOR/WEAKTOR/NONTOR)</em>)</li>
-<li><strong>len(loose_match_idx)</strong> (<em>The number of loose matches</em>)</li>
-<li><strong>num_matches</strong> (<em>The number of weak and sig matches in the loose matches</em>)</li>
-<li><strong>tor_prob</strong> (<em>SARS sig. tornado probability</em>)</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>quality_match_soundings</strong> (<em>The dates/locations of the quality matches</em>)</p></li>
+<li><p><strong>quality_match_tortype</strong> (<em>The type of quality match (SIGTOR/WEAKTOR/NONTOR)</em>)</p></li>
+<li><p><strong>len(loose_match_idx)</strong> (<em>The number of loose matches</em>)</p></li>
+<li><p><strong>num_matches</strong> (<em>The number of weak and sig matches in the loose matches</em>)</p></li>
+<li><p><strong>tor_prob</strong> (<em>SARS sig. tornado probability</em>)</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

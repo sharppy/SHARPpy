@@ -174,92 +174,87 @@
 <h2>SHARPpy v1.4.0 “Andover” Release<a class="headerlink" href="#sharppy-v1-4-0-andover-release" title="Permalink to this headline">¶</a></h2>
 <p>NEW FEATURES</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>User preferences</dt>
-<dd><ul class="first last">
-<li>Change units for wind, surface temperature and dewpoint</li>
-<li>Choice of three color schemes: standard (the usual white-on-black), inverted (black-on-white), and protanopia (white-on-black, but with colorblind-friendly colors)</li>
+<li><dl class="simple">
+<dt>User preferences</dt><dd><ul>
+<li><p>Change units for wind, surface temperature and dewpoint</p></li>
+<li><p>Choice of three color schemes: standard (the usual white-on-black), inverted (black-on-white), and protanopia (white-on-black, but with colorblind-friendly colors)</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li>Python 3 support</li>
-<li><dl class="first docutils">
-<dt>Hodograph improvements</dt>
-<dd><ul class="first last">
-<li>Can now click and drag the storm-motion vectors, updating all the other insets</li>
-<li>Double click to change which storm motion vector is used for storm-relative calculations</li>
-<li>New readout on the hodograph, coupled to the readout on the Skew-T</li>
+<li><p>Python 3 support</p></li>
+<li><dl class="simple">
+<dt>Hodograph improvements</dt><dd><ul>
+<li><p>Can now click and drag the storm-motion vectors, updating all the other insets</p></li>
+<li><p>Double click to change which storm motion vector is used for storm-relative calculations</p></li>
+<li><p>New readout on the hodograph, coupled to the readout on the Skew-T</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Improvements for southern-hemisphere users</dt>
-<dd><ul class="first last">
-<li>Wind barbs are flipped</li>
-<li>Left-mover vector is used by default</li>
-<li>Storm motion vector is chosen if the SPC-formatted sounding file specifies the latitude and longitude of the input sounding (southern-hemisphere uses the left-mover, northern the right-mover).</li>
-<li>Left-mover vector is used in all other storm-motion dependent functions (e.g., STP insets, SARS).</li>
+<li><dl class="simple">
+<dt>Improvements for southern-hemisphere users</dt><dd><ul>
+<li><p>Wind barbs are flipped</p></li>
+<li><p>Left-mover vector is used by default</p></li>
+<li><p>Storm motion vector is chosen if the SPC-formatted sounding file specifies the latitude and longitude of the input sounding (southern-hemisphere uses the left-mover, northern the right-mover).</p></li>
+<li><p>Left-mover vector is used in all other storm-motion dependent functions (e.g., STP insets, SARS).</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>New data sources for international and U.S. users</dt>
-<dd><ul class="first last">
-<li>Realtime and historical U.S. and international soundings from 1946-now are accessible through the Picker. Soundings include the latitude and longitude.</li>
-<li>IEM BUFKIT sounding archive (data back to 2010 from RUC, NAM, GFS, RAP)</li>
+<li><dl class="simple">
+<dt>New data sources for international and U.S. users</dt><dd><ul>
+<li><p>Realtime and historical U.S. and international soundings from 1946-now are accessible through the Picker. Soundings include the latitude and longitude.</p></li>
+<li><p>IEM BUFKIT sounding archive (data back to 2010 from RUC, NAM, GFS, RAP)</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>New documentation and API accessible through Github pages</dt>
-<dd><ul class="first last">
-<li>Improved documentation online (no longer in README)</li>
-<li>Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.</li>
+<li><dl class="simple">
+<dt>New documentation and API accessible through Github pages</dt><dd><ul>
+<li><p>Improved documentation online (no longer in README)</p></li>
+<li><p>Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li>Readout cursor can be configured to output other variables (e.g., potential temperature, theta-E)</li>
-<li>Ability to modify surface by changing the surface temperature or dewpoint (mixed layer optional)</li>
-<li>Up/down buttons on keyboard can now be used to flip through the ensemble members plotted in the SHARPpy GUI.</li>
-<li>Logging enabled when –debug flag is enabled.</li>
-<li>GUI now displays alert box when questionable data is requested to be plotted. Users now have the option to choose if they wish to still try to plot the data.</li>
-<li>Continuous Integration (TravisCI, Appveyor, Azure Pipelines) now enabled to test changes, GUI quality, pull requests, deploy docs, deploy binaries to Github, and deploy packages to package managers.</li>
-<li>New versioning system now consistent with PEP-440 (thanks to versioneer).</li>
-<li>Included more scripting examples in docs.</li>
-<li>Deployment to conda and pip with each tagged SHARPpy release.</li>
-<li>Added test scripts to unit test various GUI parts, decoders, and numerical routines</li>
-<li>GUI checks Github Releases to see if the code being run is the current version</li>
+<li><p>Readout cursor can be configured to output other variables (e.g., potential temperature, theta-E)</p></li>
+<li><p>Ability to modify surface by changing the surface temperature or dewpoint (mixed layer optional)</p></li>
+<li><p>Up/down buttons on keyboard can now be used to flip through the ensemble members plotted in the SHARPpy GUI.</p></li>
+<li><p>Logging enabled when –debug flag is enabled.</p></li>
+<li><p>GUI now displays alert box when questionable data is requested to be plotted. Users now have the option to choose if they wish to still try to plot the data.</p></li>
+<li><p>Continuous Integration (TravisCI, Appveyor, Azure Pipelines) now enabled to test changes, GUI quality, pull requests, deploy docs, deploy binaries to Github, and deploy packages to package managers.</p></li>
+<li><p>New versioning system now consistent with PEP-440 (thanks to versioneer).</p></li>
+<li><p>Included more scripting examples in docs.</p></li>
+<li><p>Deployment to conda and pip with each tagged SHARPpy release.</p></li>
+<li><p>Added test scripts to unit test various GUI parts, decoders, and numerical routines</p></li>
+<li><p>GUI checks Github Releases to see if the code being run is the current version</p></li>
 </ul>
 <p>BUG FIXES</p>
 <ul class="simple">
-<li>Fixed issue with resizing GUI where text would not resize or plots would become decoupled</li>
-<li>GUI now will handle profile objects where all of the wind speed or direction data is missing.</li>
-<li>Fixed an issue where rounding did not happen on the Fire inset</li>
-<li>Fixed bug when convective temperature routine would error if SBCAPE was 0</li>
-<li>Adjusted SWEAT calculation due to issue #153</li>
-<li>Fixed SHERB calculation due to issue #151.</li>
-<li>MBURST was fixed to use VT instead of TT.</li>
-<li>Fixed bug where masked values were getting passed to np.arange</li>
-<li>prof_collection was modified to handle missing ensemble members</li>
-<li>Fixed the incorrect matching criteria for SARS using the MLLCL</li>
-<li>Updated the code to stop SHARPpy from showing nans on GUI</li>
-<li>Fixed unhandled case where Haines index coloring was not activated</li>
-<li>Stopped precip_water() from extrapolating the water vapor profile if missing data is present.</li>
-<li>Mapping and BUFKIT decoder bugs</li>
-<li>Fix for MMP if there are no data points betwee 6 and 10 km.</li>
-<li>Corrected location of sounding data points</li>
-<li>Stopped crashing of program when lapse-rate was calculated using low altitude data</li>
-<li>Tropical projection on mapping.py fixed</li>
-<li>Stopped Excessive Heat hazard type from firing at South Pole soundings</li>
-<li>Fixed bug where user selected soundings would cause an incorrect PWV climatology calculation.</li>
-<li>Hodograph drawing doesn’t crash on incomplete profiles</li>
-<li>Fixed bug where missing kwarg wasn’t passed on profile copy()</li>
-<li>Fixed fatal bug with boundary motion cursor</li>
+<li><p>Fixed issue with resizing GUI where text would not resize or plots would become decoupled</p></li>
+<li><p>GUI now will handle profile objects where all of the wind speed or direction data is missing.</p></li>
+<li><p>Fixed an issue where rounding did not happen on the Fire inset</p></li>
+<li><p>Fixed bug when convective temperature routine would error if SBCAPE was 0</p></li>
+<li><p>Adjusted SWEAT calculation due to issue #153</p></li>
+<li><p>Fixed SHERB calculation due to issue #151.</p></li>
+<li><p>MBURST was fixed to use VT instead of TT.</p></li>
+<li><p>Fixed bug where masked values were getting passed to np.arange</p></li>
+<li><p>prof_collection was modified to handle missing ensemble members</p></li>
+<li><p>Fixed the incorrect matching criteria for SARS using the MLLCL</p></li>
+<li><p>Updated the code to stop SHARPpy from showing nans on GUI</p></li>
+<li><p>Fixed unhandled case where Haines index coloring was not activated</p></li>
+<li><p>Stopped precip_water() from extrapolating the water vapor profile if missing data is present.</p></li>
+<li><p>Mapping and BUFKIT decoder bugs</p></li>
+<li><p>Fix for MMP if there are no data points betwee 6 and 10 km.</p></li>
+<li><p>Corrected location of sounding data points</p></li>
+<li><p>Stopped crashing of program when lapse-rate was calculated using low altitude data</p></li>
+<li><p>Tropical projection on mapping.py fixed</p></li>
+<li><p>Stopped Excessive Heat hazard type from firing at South Pole soundings</p></li>
+<li><p>Fixed bug where user selected soundings would cause an incorrect PWV climatology calculation.</p></li>
+<li><p>Hodograph drawing doesn’t crash on incomplete profiles</p></li>
+<li><p>Fixed bug where missing kwarg wasn’t passed on profile copy()</p></li>
+<li><p>Fixed fatal bug with boundary motion cursor</p></li>
 </ul>
 </div>
 <div class="section" id="sharppy-v1-3-0-xenia-release">
@@ -267,29 +262,29 @@
 <p>SHARPpy v1.3.0, Xenia Release supports multiple profiles in the Skew-T window and features improvements to the picker map and usability of the Skew-T window.</p>
 <p>NEW FEATURES</p>
 <ul class="simple">
-<li>Ability to add and remove any data from the sounding picker in the sounding viewer and view it simultaneously.</li>
-<li>Can switch focus between profiles using the spacebar.</li>
-<li>Ability to focus and remove profiles from the Skew-T via the menus.</li>
-<li>Analogue profiles can be focused and removed by the same mechanisms.</li>
-<li>More picker map improvements</li>
-<li>Tropics and Southern Hemisphere maps are now available.</li>
-<li>Ability to recenter the map projection by double-clicking.</li>
-<li>Ability to save map view as the default for when the program loads.</li>
-<li>Installable binaries are available for Mac OS X and Windows</li>
-<li>Interpolation: interpolate profiles to 25-mb intervals for easy graphical modification.</li>
-<li>Skew-T zooming improved.</li>
-<li>Program now loads profiles in the background, decreasing the load time for the Skew-T window.</li>
-<li>Ability to save sounding text to a file.</li>
-<li>New MBURST index added to the sounding window.</li>
+<li><p>Ability to add and remove any data from the sounding picker in the sounding viewer and view it simultaneously.</p></li>
+<li><p>Can switch focus between profiles using the spacebar.</p></li>
+<li><p>Ability to focus and remove profiles from the Skew-T via the menus.</p></li>
+<li><p>Analogue profiles can be focused and removed by the same mechanisms.</p></li>
+<li><p>More picker map improvements</p></li>
+<li><p>Tropics and Southern Hemisphere maps are now available.</p></li>
+<li><p>Ability to recenter the map projection by double-clicking.</p></li>
+<li><p>Ability to save map view as the default for when the program loads.</p></li>
+<li><p>Installable binaries are available for Mac OS X and Windows</p></li>
+<li><p>Interpolation: interpolate profiles to 25-mb intervals for easy graphical modification.</p></li>
+<li><p>Skew-T zooming improved.</p></li>
+<li><p>Program now loads profiles in the background, decreasing the load time for the Skew-T window.</p></li>
+<li><p>Ability to save sounding text to a file.</p></li>
+<li><p>New MBURST index added to the sounding window.</p></li>
 </ul>
 <p>BUG FIXES</p>
 <ul class="simple">
-<li>Menus now work on Windows and Linux.</li>
-<li>Model profiles compute the correct inferred temperature advection for their latitude.</li>
-<li>Additional error handling for partial profiles.</li>
-<li>Various model forecast points relocated to their proper places.</li>
-<li>Error handling for opening the program without an Internet connection.</li>
-<li>Removed PySide dependency and unused imports for those using SHARPpy routines in scripts.</li>
+<li><p>Menus now work on Windows and Linux.</p></li>
+<li><p>Model profiles compute the correct inferred temperature advection for their latitude.</p></li>
+<li><p>Additional error handling for partial profiles.</p></li>
+<li><p>Various model forecast points relocated to their proper places.</p></li>
+<li><p>Error handling for opening the program without an Internet connection.</p></li>
+<li><p>Removed PySide dependency and unused imports for those using SHARPpy routines in scripts.</p></li>
 </ul>
 </div>
 <div class="section" id="sharppy-v1-2-0-el-reno-release">
@@ -297,31 +292,31 @@
 <p>SHARPpy v1.2.0, El Reno Release, supports and features a new and improved user interface for selecting and interacting with sounding data sources, in addition to new SARS inset interactivity, and numerous backend changes/improvements. Please note that with these changes, the runsharp and datasources folders must not be moved, and must be run in the parent SHARPpy directory.</p>
 <p>UPDATES/FIXES</p>
 <ul class="simple">
-<li>New pan/zoom map for selecting sounding locations from observed/model data sources</li>
-<li>Northern hemispheric map for global data sources (tropics and southern hemisphere maps coming soon)</li>
-<li>County map zooming for CONUS data sources</li>
-<li>Cursor readout for sounding locations includes station ID, city, and state/province or country</li>
-<li>Map checks the server for currently available points and only displays those that are available</li>
-<li>Bug fixes on selecting model initialization cycles and supports non-synoptic hour observed data</li>
-<li>Stations with special characters now work properly</li>
-<li>Mapping shapefiles have been added to the databases directory</li>
-<li>New XML backend for managing different data sources available to the GUI</li>
-<li>Allows custom configuration for data urls, initialization offset, model dt, forecast range, and point click locations for configured data sources. No tutorial has been generated for this yet.</li>
-<li>New SARS analogue interactivity</li>
-<li>SARS hail and supercell analogues can now be displayed alongside soundings by left-clicking on the analogue in the SARS inset window. It can be removed by right-clicking the skew-t window and hitting reset</li>
-<li>Improved the UI’s look and feel on the Windows platform</li>
-<li>Added 0-3 km MLCAPE to the thermodynamics panel</li>
-<li>Fixed the 0-6 km shear and 9-11 km storm-relative wind vectors that are plotted when plotting a boundary motion in the Hodograph window.</li>
-<li>Data decoders have been modified, consolidated, and made more customization-friendly</li>
-<li>Moved the existing Profile object to a BasicProfile object, and made Profile an object that makes no computations upon construction and only stores data</li>
-<li>The “About” menu option (currently only works on OS X) has been updated with a new description and contact info</li>
-<li>Removed accidental SciPy dependency</li>
-<li>An Issue with the PWV climatology crashing on non-US stations has been fixed</li>
-<li>Save image and open user sounding text file functions now default to the user’s home directory.</li>
-<li>Microburst Composite (MBURST), Derecho Composite Parameter (DCP), Energy-Helicity Index (EHI), and Severe Weather Threat Index (SWEAT) added to params.py</li>
-<li>Overall stability of the program has been increased.</li>
-<li>Tutorial has been updated to reflect some of the internal changes of the program libraries.</li>
-<li>Custom user sounding text files can now be opened by pressing Ctrl+O on Windows and Linux.</li>
+<li><p>New pan/zoom map for selecting sounding locations from observed/model data sources</p></li>
+<li><p>Northern hemispheric map for global data sources (tropics and southern hemisphere maps coming soon)</p></li>
+<li><p>County map zooming for CONUS data sources</p></li>
+<li><p>Cursor readout for sounding locations includes station ID, city, and state/province or country</p></li>
+<li><p>Map checks the server for currently available points and only displays those that are available</p></li>
+<li><p>Bug fixes on selecting model initialization cycles and supports non-synoptic hour observed data</p></li>
+<li><p>Stations with special characters now work properly</p></li>
+<li><p>Mapping shapefiles have been added to the databases directory</p></li>
+<li><p>New XML backend for managing different data sources available to the GUI</p></li>
+<li><p>Allows custom configuration for data urls, initialization offset, model dt, forecast range, and point click locations for configured data sources. No tutorial has been generated for this yet.</p></li>
+<li><p>New SARS analogue interactivity</p></li>
+<li><p>SARS hail and supercell analogues can now be displayed alongside soundings by left-clicking on the analogue in the SARS inset window. It can be removed by right-clicking the skew-t window and hitting reset</p></li>
+<li><p>Improved the UI’s look and feel on the Windows platform</p></li>
+<li><p>Added 0-3 km MLCAPE to the thermodynamics panel</p></li>
+<li><p>Fixed the 0-6 km shear and 9-11 km storm-relative wind vectors that are plotted when plotting a boundary motion in the Hodograph window.</p></li>
+<li><p>Data decoders have been modified, consolidated, and made more customization-friendly</p></li>
+<li><p>Moved the existing Profile object to a BasicProfile object, and made Profile an object that makes no computations upon construction and only stores data</p></li>
+<li><p>The “About” menu option (currently only works on OS X) has been updated with a new description and contact info</p></li>
+<li><p>Removed accidental SciPy dependency</p></li>
+<li><p>An Issue with the PWV climatology crashing on non-US stations has been fixed</p></li>
+<li><p>Save image and open user sounding text file functions now default to the user’s home directory.</p></li>
+<li><p>Microburst Composite (MBURST), Derecho Composite Parameter (DCP), Energy-Helicity Index (EHI), and Severe Weather Threat Index (SWEAT) added to params.py</p></li>
+<li><p>Overall stability of the program has been increased.</p></li>
+<li><p>Tutorial has been updated to reflect some of the internal changes of the program libraries.</p></li>
+<li><p>Custom user sounding text files can now be opened by pressing Ctrl+O on Windows and Linux.</p></li>
 </ul>
 </div>
 <div class="section" id="sharppy-v1-0-0-beta-ams-2015-release">
