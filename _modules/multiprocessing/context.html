@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>multiprocessing.context &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> SHARPpy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0+untagged.50.g22e3563.dirty
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../picker.html">Running SHARPpy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interpreting_gui.html">Interpreting the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../insets.html">Interpreting the Insets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../interacting_gui.html">Interacting with the GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasource_guide.html">Custom Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../scripting.html">Scripting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Example scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SHARPpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>multiprocessing.context</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for multiprocessing.context</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">process</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">reduction</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[]</span>            <span class="c1"># things are copied from here to __init__.py</span>
+
+<span class="c1">#</span>
+<span class="c1"># Exceptions</span>
+<span class="c1">#</span>
+
+<span class="k">class</span> <span class="nc">ProcessError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">BufferTooShort</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">TimeoutError</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">AuthenticationError</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1">#</span>
+<span class="c1"># Base type for contexts</span>
+<span class="c1">#</span>
+
+<span class="k">class</span> <span class="nc">BaseContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">ProcessError</span> <span class="o">=</span> <span class="n">ProcessError</span>
+    <span class="n">BufferTooShort</span> <span class="o">=</span> <span class="n">BufferTooShort</span>
+    <span class="ne">TimeoutError</span> <span class="o">=</span> <span class="ne">TimeoutError</span>
+    <span class="n">AuthenticationError</span> <span class="o">=</span> <span class="n">AuthenticationError</span>
+
+    <span class="n">current_process</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">current_process</span><span class="p">)</span>
+    <span class="n">active_children</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">active_children</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cpu_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the number of CPUs in the system&#39;&#39;&#39;</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;cannot determine number of cpus&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">num</span>
+
+    <span class="k">def</span> <span class="nf">Manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a manager associated with a running server process</span>
+
+<span class="sd">        The managers methods such as `Lock()`, `Condition()` and `Queue()`</span>
+<span class="sd">        can be used to create shared objects.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.managers</span> <span class="k">import</span> <span class="n">SyncManager</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">SyncManager</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">m</span>
+
+    <span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duplex</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns two connection object connected by a pipe&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.connection</span> <span class="k">import</span> <span class="n">Pipe</span>
+        <span class="k">return</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">duplex</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">Lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a non-recursive lock object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">Lock</span>
+        <span class="k">return</span> <span class="n">Lock</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">RLock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a recursive lock object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">RLock</span>
+        <span class="k">return</span> <span class="n">RLock</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a condition object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">Condition</span>
+        <span class="k">return</span> <span class="n">Condition</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Semaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a semaphore object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">Semaphore</span>
+        <span class="k">return</span> <span class="n">Semaphore</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">BoundedSemaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a bounded semaphore object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">BoundedSemaphore</span>
+        <span class="k">return</span> <span class="n">BoundedSemaphore</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns an event object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">Event</span>
+        <span class="k">return</span> <span class="n">Event</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Barrier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a barrier object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.synchronize</span> <span class="k">import</span> <span class="n">Barrier</span>
+        <span class="k">return</span> <span class="n">Barrier</span><span class="p">(</span><span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.queues</span> <span class="k">import</span> <span class="n">Queue</span>
+        <span class="k">return</span> <span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">JoinableQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.queues</span> <span class="k">import</span> <span class="n">JoinableQueue</span>
+        <span class="k">return</span> <span class="n">JoinableQueue</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">SimpleQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.queues</span> <span class="k">import</span> <span class="n">SimpleQueue</span>
+        <span class="k">return</span> <span class="n">SimpleQueue</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span>
+             <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a process pool object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.pool</span> <span class="k">import</span> <span class="n">Pool</span>
+        <span class="k">return</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">initargs</span><span class="p">,</span> <span class="n">maxtasksperchild</span><span class="p">,</span>
+                    <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">RawValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a shared object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.sharedctypes</span> <span class="k">import</span> <span class="n">RawValue</span>
+        <span class="k">return</span> <span class="n">RawValue</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">RawArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a shared array&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.sharedctypes</span> <span class="k">import</span> <span class="n">RawArray</span>
+        <span class="k">return</span> <span class="n">RawArray</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">Value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a synchronized shared object&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.sharedctypes</span> <span class="k">import</span> <span class="n">Value</span>
+        <span class="k">return</span> <span class="n">Value</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="n">lock</span><span class="p">,</span>
+                     <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">Array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a synchronized shared array&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.sharedctypes</span> <span class="k">import</span> <span class="n">Array</span>
+        <span class="k">return</span> <span class="n">Array</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="n">lock</span><span class="p">,</span>
+                     <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">freeze_support</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Check whether this is a fake forked process in a frozen executable.</span>
+<span class="sd">        If so then run code specified by commandline and exit.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;frozen&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.spawn</span> <span class="k">import</span> <span class="n">freeze_support</span>
+            <span class="n">freeze_support</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Return package logger -- if it does not already exist then</span>
+<span class="sd">        it is created.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">get_logger</span>
+        <span class="k">return</span> <span class="n">get_logger</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">log_to_stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Turn on logging and add a handler which prints to stderr&#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">log_to_stderr</span>
+        <span class="k">return</span> <span class="n">log_to_stderr</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">allow_connection_pickling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Install support for sending connections and sockets</span>
+<span class="sd">        between processes</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># This is undocumented.  In previous versions of multiprocessing</span>
+        <span class="c1"># its only effect was to make socket objects inheritable on Windows.</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">connection</span>
+
+    <span class="k">def</span> <span class="nf">set_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sets the path to a python.exe or pythonw.exe binary used to run</span>
+<span class="sd">        child processes instead of sys.executable when using the &#39;spawn&#39;</span>
+<span class="sd">        start method.  Useful for people embedding Python.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.spawn</span> <span class="k">import</span> <span class="n">set_executable</span>
+        <span class="n">set_executable</span><span class="p">(</span><span class="n">executable</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_forkserver_preload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_names</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set list of module names to try to load in forkserver process.</span>
+<span class="sd">        This is really just a hint.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.forkserver</span> <span class="k">import</span> <span class="n">set_forkserver_preload</span>
+        <span class="n">set_forkserver_preload</span><span class="p">(</span><span class="n">module_names</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">_concrete_contexts</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot find context for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">method</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">_check_available</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+
+    <span class="k">def</span> <span class="nf">get_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="k">def</span> <span class="nf">set_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot set start method of concrete context&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reducer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Controls how objects will be reduced to a form that can be</span>
+<span class="sd">        shared with other processes.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;reduction&#39;</span><span class="p">)</span>
+
+    <span class="nd">@reducer</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">reducer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">):</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduction</span>
+
+    <span class="k">def</span> <span class="nf">_check_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="c1">#</span>
+<span class="c1"># Type of default context -- underlying context can be set at most once</span>
+<span class="c1">#</span>
+
+<span class="k">class</span> <span class="nc">Process</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+    <span class="n">_start_method</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_default_context</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">DefaultContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+    <span class="n">Process</span> <span class="o">=</span> <span class="n">Process</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span> <span class="o">=</span> <span class="n">context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;context has already been set&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">force</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_none</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="k">def</span> <span class="nf">get_all_start_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reduction</span><span class="o">.</span><span class="n">HAVE_SEND_HANDLE</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;fork&#39;</span><span class="p">,</span> <span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="s1">&#39;forkserver&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;fork&#39;</span><span class="p">,</span> <span class="s1">&#39;spawn&#39;</span><span class="p">]</span>
+
+<span class="n">DefaultContext</span><span class="o">.</span><span class="n">__all__</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">DefaultContext</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Context types for fixed start method</span>
+<span class="c1">#</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">!=</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+
+    <span class="k">class</span> <span class="nc">ForkProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.popen_fork</span> <span class="k">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">SpawnProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.popen_spawn_posix</span> <span class="k">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">ForkServerProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;forkserver&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.popen_forkserver</span> <span class="k">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">ForkContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">ForkProcess</span>
+
+    <span class="k">class</span> <span class="nc">SpawnContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">SpawnProcess</span>
+
+    <span class="k">class</span> <span class="nc">ForkServerContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;forkserver&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">ForkServerProcess</span>
+        <span class="k">def</span> <span class="nf">_check_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">reduction</span><span class="o">.</span><span class="n">HAVE_SEND_HANDLE</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;forkserver start method not available&#39;</span><span class="p">)</span>
+
+    <span class="n">_concrete_contexts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fork&#39;</span><span class="p">:</span> <span class="n">ForkContext</span><span class="p">(),</span>
+        <span class="s1">&#39;spawn&#39;</span><span class="p">:</span> <span class="n">SpawnContext</span><span class="p">(),</span>
+        <span class="s1">&#39;forkserver&#39;</span><span class="p">:</span> <span class="n">ForkServerContext</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">_default_context</span> <span class="o">=</span> <span class="n">DefaultContext</span><span class="p">(</span><span class="n">_concrete_contexts</span><span class="p">[</span><span class="s1">&#39;fork&#39;</span><span class="p">])</span>
+
+<span class="k">else</span><span class="p">:</span>
+
+    <span class="k">class</span> <span class="nc">SpawnProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span> <span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">.popen_spawn_win32</span> <span class="k">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">SpawnContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">SpawnProcess</span>
+
+    <span class="n">_concrete_contexts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;spawn&#39;</span><span class="p">:</span> <span class="n">SpawnContext</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">_default_context</span> <span class="o">=</span> <span class="n">DefaultContext</span><span class="p">(</span><span class="n">_concrete_contexts</span><span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">])</span>
+
+<span class="c1">#</span>
+<span class="c1"># Force the start method</span>
+<span class="c1">#</span>
+
+<span class="k">def</span> <span class="nf">_force_start_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="n">_default_context</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="n">_concrete_contexts</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+
+<span class="c1">#</span>
+<span class="c1"># Check that the current thread is spawning a child process</span>
+<span class="c1">#</span>
+
+<span class="n">_tls</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_spawning_popen</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_tls</span><span class="p">,</span> <span class="s1">&#39;spawning_popen&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">set_spawning_popen</span><span class="p">(</span><span class="n">popen</span><span class="p">):</span>
+    <span class="n">_tls</span><span class="o">.</span><span class="n">spawning_popen</span> <span class="o">=</span> <span class="n">popen</span>
+
+<span class="k">def</span> <span class="nf">assert_spawning</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">get_spawning_popen</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> objects should only be shared between processes&#39;</span>
+            <span class="s1">&#39; through inheritance&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Blumberg, W.G, Halbert, K.T., Supinie, T.A., Marsh, P.T., Thompson, R., and J. Hart
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

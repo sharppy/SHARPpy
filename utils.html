@@ -169,35 +169,35 @@
 <span id="utils-async-module"></span><h2>utils.async module<a class="headerlink" href="#module-utils.async" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="utils.async.AsyncThreads">
-<em class="property">class </em><code class="descclassname">utils.async.</code><code class="descname">AsyncThreads</code><span class="sig-paren">(</span><em>max_threads</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">utils.async.</code><code class="sig-name descname">AsyncThreads</code><span class="sig-paren">(</span><em class="sig-param">max_threads</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
 <p>AsyncThreads: A class to generate threads for whenever something can’t run in the main process.</p>
 <dl class="method">
 <dt id="utils.async.AsyncThreads.clearQueue">
-<code class="descname">clearQueue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.clearQueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.clearQueue" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clearQueue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.clearQueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.clearQueue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears the queue of processes waiting to be started and kills any threads currently running.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async.AsyncThreads.finish">
-<code class="descname">finish</code><span class="sig-paren">(</span><em>thread_id</em>, <em>ret_val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.finish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.finish" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">finish</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em>, <em class="sig-param">ret_val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.finish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.finish" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="utils.async.AsyncThreads.isFinished">
-<code class="descname">isFinished</code><span class="sig-paren">(</span><em>thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.isFinished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.isFinished" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">isFinished</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.isFinished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.isFinished" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a boolean specifying whether the thread corresponding to thread_id is finished.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async.AsyncThreads.join">
-<code class="descname">join</code><span class="sig-paren">(</span><em>thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.join" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits until the thread corresponding to thread_id is finished.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async.AsyncThreads.post">
-<code class="descname">post</code><span class="sig-paren">(</span><em>func</em>, <em>callback</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.post" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">callback</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post a thread to be run.
 func:   The function to run in a separate thread
 callback:   The function to run once func() is done. It will be passed the output from func() as a single tuple.
@@ -210,12 +210,12 @@ background [optional]: Boolean specifying whether to run in the background. Back
 
 <dl class="method">
 <dt id="utils.async.AsyncThreads.startNext">
-<code class="descname">startNext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.startNext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.startNext" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">startNext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads.startNext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads.startNext" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="utils.async.AsyncThreads.staticMetaObject">
-<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -225,35 +225,35 @@ background [optional]: Boolean specifying whether to run in the background. Back
 <span id="utils-async-threads-module"></span><h2>utils.async_threads module<a class="headerlink" href="#module-utils.async_threads" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="utils.async_threads.AsyncThreads">
-<em class="property">class </em><code class="descclassname">utils.async_threads.</code><code class="descname">AsyncThreads</code><span class="sig-paren">(</span><em>max_threads</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">utils.async_threads.</code><code class="sig-name descname">AsyncThreads</code><span class="sig-paren">(</span><em class="sig-param">max_threads</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
 <p>AsyncThreads: A class to generate threads for whenever something can’t run in the main process.</p>
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.clearQueue">
-<code class="descname">clearQueue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.clearQueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.clearQueue" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clearQueue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.clearQueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.clearQueue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears the queue of processes waiting to be started and kills any threads currently running.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.finish">
-<code class="descname">finish</code><span class="sig-paren">(</span><em>thread_id</em>, <em>ret_val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.finish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.finish" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">finish</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em>, <em class="sig-param">ret_val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.finish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.finish" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.isFinished">
-<code class="descname">isFinished</code><span class="sig-paren">(</span><em>thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.isFinished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.isFinished" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">isFinished</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.isFinished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.isFinished" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a boolean specifying whether the thread corresponding to thread_id is finished.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.join">
-<code class="descname">join</code><span class="sig-paren">(</span><em>thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.join" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">join</code><span class="sig-paren">(</span><em class="sig-param">thread_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.join" title="Permalink to this definition">¶</a></dt>
 <dd><p>Waits until the thread corresponding to thread_id is finished.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.post">
-<code class="descname">post</code><span class="sig-paren">(</span><em>func</em>, <em>callback</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.post" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param">func</em>, <em class="sig-param">callback</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post a thread to be run.
 func:   The function to run in a separate thread
 callback:   The function to run once func() is done. It will be passed the output from func() as a single tuple.
@@ -266,12 +266,12 @@ background [optional]: Boolean specifying whether to run in the background. Back
 
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.startNext">
-<code class="descname">startNext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.startNext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.startNext" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">startNext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads.startNext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads.startNext" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="utils.async_threads.AsyncThreads.staticMetaObject">
-<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async_threads.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async_threads.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -281,13 +281,13 @@ background [optional]: Boolean specifying whether to run in the background. Back
 <span id="utils-config-module"></span><h2>utils.config module<a class="headerlink" href="#module-utils.config" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="utils.config.Config">
-<em class="property">class </em><code class="descclassname">utils.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">utils.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
 <p>The Config class keeps track of the configuration in a QObject, so that it
 can be passed via signals and slots.</p>
 <dl class="method">
 <dt id="utils.config.Config.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><em>cfg_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.initialize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">cfg_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add items in the configuration. This function doesn’t modify items that already exist.
 cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuples, and the values</p>
 <blockquote>
@@ -297,12 +297,12 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 
 <dl class="attribute">
 <dt id="utils.config.Config.staticMetaObject">
-<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.config.Config.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.config.Config.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="utils.config.Config.toFile">
-<code class="descname">toFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.toFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.toFile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">toFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config.toFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config.toFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the configuration to the file.</p>
 </dd></dl>
 
@@ -313,23 +313,29 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 <span id="utils-frozenutils-module"></span><h2>utils.frozenutils module<a class="headerlink" href="#module-utils.frozenutils" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="utils.frozenutils.Process">
-<em class="property">class </em><code class="descclassname">utils.frozenutils.</code><code class="descname">Process</code><span class="sig-paren">(</span><em>group=None</em>, <em>target=None</em>, <em>name=None</em>, <em>args=()</em>, <em>kwargs={}</em>, <em>*</em>, <em>daemon=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#Process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.Process" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">Process</code><span class="sig-paren">(</span><em class="sig-param">group=None</em>, <em class="sig-param">target=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">args=()</em>, <em class="sig-param">kwargs={}</em>, <em class="sig-param">*</em>, <em class="sig-param">daemon=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#Process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.Process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.context.Process</span></code></p>
 </dd></dl>
 
 <dl class="function">
+<dt id="utils.frozenutils.Queue">
+<code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">Queue</code><span class="sig-paren">(</span><em class="sig-param">maxsize=0</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.frozenutils.Queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a queue object</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="utils.frozenutils.freezeSupport">
-<code class="descclassname">utils.frozenutils.</code><code class="descname">freezeSupport</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#freezeSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.freezeSupport" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">freezeSupport</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#freezeSupport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.freezeSupport" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="utils.frozenutils.frozenPath">
-<code class="descclassname">utils.frozenutils.</code><code class="descname">frozenPath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#frozenPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.frozenPath" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">frozenPath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#frozenPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.frozenPath" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="utils.frozenutils.isFrozen">
-<code class="descclassname">utils.frozenutils.</code><code class="descname">isFrozen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#isFrozen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.isFrozen" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">isFrozen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#isFrozen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.isFrozen" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -337,26 +343,26 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 <span id="utils-progress-module"></span><h2>utils.progress module<a class="headerlink" href="#module-utils.progress" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="utils.progress.progress">
-<em class="property">class </em><code class="descclassname">utils.progress.</code><code class="descname">progress</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">utils.progress.</code><code class="sig-name descname">progress</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
 <dl class="method">
 <dt id="utils.progress.progress.doasync">
-<code class="descname">doasync</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.doasync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.doasync" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">doasync</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.doasync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.doasync" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="utils.progress.progress.staticMetaObject">
-<code class="descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.progress.progress.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.progress.progress.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="utils.progress.progress.updateProgress">
-<code class="descname">updateProgress</code><span class="sig-paren">(</span><em>value</em>, <em>maximum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.updateProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.updateProgress" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updateProgress</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">maximum</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.updateProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.updateProgress" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="utils.progress.progress.updateText">
-<code class="descname">updateText</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.updateText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.updateText" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updateText</code><span class="sig-paren">(</span><em class="sig-param">text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.updateText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.updateText" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -366,12 +372,12 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 <span id="utils-utils-module"></span><h2>utils.utils module<a class="headerlink" href="#module-utils.utils" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="utils.utils.is_py3">
-<code class="descclassname">utils.utils.</code><code class="descname">is_py3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#is_py3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.utils.is_py3" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">utils.utils.</code><code class="sig-name descname">is_py3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#is_py3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.utils.is_py3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="utils.utils.total_seconds">
-<code class="descclassname">utils.utils.</code><code class="descname">total_seconds</code><span class="sig-paren">(</span><em>td</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#total_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.utils.total_seconds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">utils.utils.</code><code class="sig-name descname">total_seconds</code><span class="sig-paren">(</span><em class="sig-param">td</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#total_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.utils.total_seconds" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
