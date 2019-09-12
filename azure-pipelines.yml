@@ -68,7 +68,7 @@ steps:
     sleep 3 # give xvfb some time to start
     xdpyinfo | grep dimensions # Check display dimensions
     python ci/screen.py # Check display dimensions as seen by PySide
-    #pytest -v --junitxml=junit/test-results.xml
+    pytest -v --junitxml=junit/test-results.xml
     #mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
@@ -86,7 +86,7 @@ steps:
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     python ci/screen.py # Check display dimensions as seen by PySide
     pip install -e .
-    #sudo pytest -v --junitxml=junit/test-results.xml
+    sudo pytest -v --junitxml=junit/test-results.xml
     #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     cd runsharp
     pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
@@ -109,7 +109,7 @@ steps:
     python ci/screen.py
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
     pip install -e .
-    #pytest -v --junitxml=junit/test-results.xml
+    pytest -v --junitxml=junit/test-results.xml
     #move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
     pyinstaller SHARPpy-win7-64.spec --log-level DEBUG
