@@ -53,7 +53,7 @@ class backgroundSkewT(QWidget):
         else:
             fsize = 7
             fsizet = 14
-        self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.003))
+        self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.006))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         #self.title_font.setBold(True)
         self.title_height = self.title_metrics.xHeight() + 5 + (self.hgt * 0.003)
