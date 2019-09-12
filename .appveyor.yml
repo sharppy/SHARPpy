@@ -1,9 +1,5 @@
 environment:
   matrix:
-    - PYTHON_VERSION: 2.7
-      MINICONDA: C:\Miniconda
-      ARCH: "64"
-      NUMPY_VERSION: "1.15.*"
     - PYTHON_VERSION: 3.6
       MINICONDA: C:\Miniconda3
       ARCH: "64"
@@ -16,11 +12,10 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - "conda create -q -n test-environment python=%PYTHON_VERSION%"
+  - conda env create -f environment.yml
 
   # Install dependencies
-  - activate test-environment
-  - "conda install -q -c conda-forge pyside pyinstaller pytest requests python-dateutil numpy=%NUMPY_VERSION%"
+  - activate devel
  
   # Add to path the current folder
   - "SET PYTHONPATH=%PYTHONPATH%;%CD%"

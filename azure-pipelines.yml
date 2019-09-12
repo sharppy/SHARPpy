@@ -90,11 +90,10 @@ steps:
     pip install -e .
     sudo pytest -v --junitxml=junit/test-results.xml
     #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
-    cd runsharp
-    pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     #sudo chmod 777 dist/SHARPpy.app
+    cd runsharp
     ls -lh dist
-    cd ..
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
