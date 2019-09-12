@@ -13,7 +13,7 @@ cd "$TRAVIS_BUILD_DIR"
 # Swap out conda environments for one that supports building the documentation
 cd ci/
 conda env create -f docs_env.yml
-conda activate docs-env
+source activate docs-env
 
 echo "**************************************************************************************"
 echo "Step 1: Adding the SSH key ..."
@@ -23,13 +23,11 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
-
 # Build the documentation
-cd ..
 echo "**************************************************************************************"
 echo "Step 2: Building Docs"
 echo "**************************************************************************************"
-cd docs
+cd ../docs
 
 # Move the license and other stuff to the docs folder
 echo "**************************************************************************************"
