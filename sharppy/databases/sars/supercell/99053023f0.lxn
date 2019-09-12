@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990530/2300F000    lxn 
+  LXN 990530/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          11.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.1 C/km
 850-500mb   34 C	7.9 C/km
+
+----- Note -----
+Old Title:  RUC 990530/2300F000    lxn 
+

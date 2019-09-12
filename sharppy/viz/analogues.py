@@ -181,6 +181,7 @@ class plotAnalogues(backgroundAnalogues):
         Parameters
         ----------
         prof: a Profile object
+        self.view.setDataSource(self.data_sources[self.model], self.run)
         
         '''
         ## get the surfce based, most unstable, and mixed layer
@@ -189,7 +190,6 @@ class plotAnalogues(backgroundAnalogues):
         self.bg_color = QtGui.QColor('#000000')
         self.fg_color = QtGui.QColor('#ffffff')
         self.use_left = False
-
         super(plotAnalogues, self).__init__()
         self.prof = None 
 
@@ -349,7 +349,7 @@ class plotAnalogues(backgroundAnalogues):
 
         ## if there are no matches, leave the function to prevent crashing
         pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
-        if self.matches[0] == []:
+        if self.matches[0].size == 0:
             pen.setColor(self.fg_color)
             qp.setPen(pen)
             qp.setFont(self.match_font)
@@ -478,6 +478,7 @@ class plotAnalogues(backgroundAnalogues):
             for i, bound in enumerate(self.ybounds_sup):
                 if bound[0] < pos.y() and bound[1] > pos.y():
                     filematch = sars.getSounding(self.sup_matches[0][i], "supercell")
+                    print(filematch)
                     self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
@@ -491,6 +492,7 @@ class plotAnalogues(backgroundAnalogues):
             for i, bound in enumerate(self.ybounds_hail):
                 if bound[0] < pos.y() and bound[1] > pos.y():
                     filematch = sars.getSounding(self.hail_matches[0][i], "hail")
+                    print(filematch)
                     self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
@@ -502,6 +504,7 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        #logging.debug("Calling plotAnaloges.parentWidget().setFocus()")
         self.parentWidget().setFocus()
 
     def setSelection(self, filematch):
@@ -509,12 +512,16 @@ class plotAnalogues(backgroundAnalogues):
             Load in the SARS analog you've clicked.
         """
         match_name = os.path.basename(filematch)
-        if match_name in self.sup_matches[0]:
-            idx = np.where(self.sup_matches[0] == match_name)[0][0]
+#        print("\n\nSETSELECION:", match_name, filematch, self.sup_matches[0], self.hail_matches[0])
+        sup_matches = [sars.getSounding(f, 'supercell').split('/')[-1] for f in self.sup_matches[0]] 
+        hail_matches = [sars.getSounding(f, 'hail').split('/')[-1] for f in self.hail_matches[0]]
+#        print(sup_matches, hail_matches) 
+        if match_name in sup_matches:
+            idx = np.where(np.asarray(sup_matches, dtype=str) == match_name)[0][0]
             lbx = 0.
             ybounds = self.ybounds_sup
-        if match_name in self.hail_matches[0]:
-            idx = np.where(self.hail_matches[0] == match_name)[0][0]
+        if match_name in hail_matches:
+            idx = np.where(np.asarray(hail_matches, dtype=str) == match_name)[0][0]
             lbx = self.brx / 2.
             ybounds = self.ybounds_hail
 
@@ -524,6 +531,7 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def clearSelection(self):
         self.selectRect = None
@@ -532,6 +540,8 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        #print(self.parent, self.parentWidget())
+        #self.setParent(self.parent)
         self.parentWidget().setFocus()
 
 

@@ -346,6 +346,21 @@ def hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
     return quality_match_dates, quality_match_sizes, num_loose_matches, num_sig_reports, prob_sig_hail
 
 
+def get_sars_dir(match_type):
+    """
+    Returns the directory where the raw SARS files are.
+    
+    Parameters
+    ----------
+    match_type : str
+        'supercell' or 'hail'
+    Returns
+    -------
+    string
+
+    """
+    return os.path.join(os.path.dirname(__file__), "sars/" + match_type.lower() + "/")
+
 ## written by Kelton Halbert
 def getSounding(match_string, match_type, profile="default"):
     """
@@ -363,7 +378,7 @@ def getSounding(match_string, match_type, profile="default"):
     #if (match_type.lower() != "supercell") or (match_type.lower() != "hail"):
     #    raise Exception("InvalidSARSType", match_type.lower() + " is an invalid SARS type.")
     ## get the directory with the data
-    data_dir = os.path.join(os.path.dirname(__file__), "sars/" + match_type.lower() + "/")
+    data_dir = get_sars_dir(match_type)
 
     match_date, match_loc = match_string.split(".")
     files = os.listdir(data_dir)

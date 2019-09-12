@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000902/0100F000    gxy 
+  GXY 000902/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          10.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.0 C/km
 850-500mb   35 C	8.1 C/km
+
+----- Note -----
+Old Title:  RUC 000902/0100F000    gxy 
+

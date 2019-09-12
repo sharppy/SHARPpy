@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010531/0000F000    cvn 
+  CVN 010531/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          8.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   36 C	8.2 C/km
+
+----- Note -----
+Old Title:  RUC 010531/0000F000    cvn 
+

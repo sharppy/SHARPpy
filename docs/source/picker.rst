@@ -1,9 +1,28 @@
 .. _Using_the_Data_Picker_:
 
-Using the Data Picker
-=====================
+Running SHARPpy
+===============
 
-Launching the SHARPpy program should load up the SHARPpy Sounding Picker:
+Launching the Program
+^^^^^^^^^^^^^^^^^^^^^
+
+If you installed the pre-compiled binary, simply double click on the SHARPpy program on your computer.
+If you installed from source or from a package manager, navigate to your terminal and type
+in the following command into the the command line:
+
+.. prompt:: bash
+
+    sharppy
+
+If the X-window is enabled (most desktops will have this already available), the Sounding Picker should launch.
+
+As mentioned, installing via command line allows the user to access both the libraries for scripting and also the GUI interface.
+The following sections will discuss the GUI functionality.  For more information about scripting with SHARPpy see the :ref:`Scripting` page. 
+
+The Sounding Picker
+^^^^^^^^^^^^^^^^^^^
+
+Launching the SHARPpy program (from the command line or from the binaries) should load up the SHARPpy Sounding Picker:
 
 .. figure:: picker_example.png
    :scale: 30%
@@ -18,7 +37,7 @@ After the data source and times are selected, the map to the right will be popul
 Default Data Sources
 ^^^^^^^^^^^^^^^^^^^^
 
-SHARPpy links into various datasets around the web to allow the user to explore a variety of observed and modeling datasets.  Combined, these datasets offer SHARPpy users accessiblity to over `100 million different sounding data files` directly from the Picker.  Links to these datasets come default with the SHARPpy package and files pointing SHARPpy to these datasets are placed in the user's home directory underneath a directory called `.sharppy/`.  Unless you are attempting to install additional data sources that SHARPpy can read (see :ref:`Custom_Data_Sources`), this folder should not be modified. 
+SHARPpy links into various datasets around the web to allow the user to explore a variety of observed and modeling datasets.  Combined, these datasets offer SHARPpy users accessiblity to **over 100 million different sounding data files** directly from the Picker.  Links to these datasets come default with the SHARPpy package and files pointing SHARPpy to these datasets are placed in the user's home directory underneath a directory called `.sharppy/`.  Unless you are attempting to install additional data sources that SHARPpy can read (see :ref:`Custom_Data_Sources`), this folder should not be modified. 
 
 .. csv-table:: Default SHARPpy Data Sources
    :header: "Name", "Link", "Datasets"
@@ -49,4 +68,50 @@ The data provided by Penn State is provided in the Bufkit format.  The foreast s
 
 .. warning::
    Occasionally, the default data sources go down in SHARPpy.  With the exception of the SHARP dataset, these issues are largely outside of our control and may often be resolved by trying to access the data again at another time.
+
+Batch Mode
+^^^^^^^^^^
+
+If you installed via the command line, the SHARPpy batch mode may be accessible through the :command:`sharppy` command.
+In this mode, the Picker and GUI may be bypassed to generate images of the SHARPpy GUI to show your data.
+
+Examples
+--------
+
+To generate a plot of the test data included in SHARPpy:
+
+.. prompt:: bash
+
+    sharppy examples/data/14061619.OAX
+
+To generate a plot of the 00 UTC sounding released from Dayton, Ohio during the 1974 Super Outbreak:
+
+.. prompt:: bash
+
+    sharppy --datasource Observed --station DAY --datetime 19740404/00
+
+To learn more about the batch mode commands:
+
+.. prompt:: bash $
+
+    sharppy --help
+
+When things go wrong
+^^^^^^^^^^^^^^^^^^^^
+
+Occasionally, bugs arise in programs.  To better understand them and communicate them to others,
+the user can use modifier ``--debug`` to turn on logging:
+
+.. prompt:: bash
+
+    sharppy --debug
+
+Logs are stored within the ``~/.sharppy`` folder.  Versioning info may also be output from the :command:`sharppy` commmand:
+
+.. prompt:: bash
+
+    sharppy --version
+
+Versioning is also output when the About box is launched by the user from the program.  These 
+tools may be used when debugging the code and `submitting bug reports to Github <https://github.com/sharppy/SHARPpy/issues>`_:
 

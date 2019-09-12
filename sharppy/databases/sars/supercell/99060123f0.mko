@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990601/2300F000    mko 
+  MKO 990601/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          17.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.9 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 990601/2300F000    mko 
+

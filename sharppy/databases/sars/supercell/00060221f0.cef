@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000602/2100F000    cef 
+  CEF 000602/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.6 C/km
 850-500mb   29 C	6.6 C/km
+
+----- Note -----
+Old Title:  RUC 000602/2100F000    cef 
+

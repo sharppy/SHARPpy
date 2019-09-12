@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000423/2000F000    txk 
+  TXK 000423/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.4 C/km
 850-500mb   29 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 000423/2000F000    txk 
+

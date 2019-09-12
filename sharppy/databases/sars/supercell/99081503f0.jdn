@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990815/0300F000    jdn 
+  JDN 990815/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          7.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.0 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 990815/0300F000    jdn 
+

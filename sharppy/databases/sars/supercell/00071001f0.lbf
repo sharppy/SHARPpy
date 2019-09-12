@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000710/0100F000    lbf 
+  LBF 000710/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          14.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.8 C/km
 850-500mb   34 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000710/0100F000    lbf 
+

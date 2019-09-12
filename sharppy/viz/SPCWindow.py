@@ -268,6 +268,7 @@ class SPCWidget(QWidget):
         # initialize swappable insets
         for inset, inset_gen in SPCWidget.inset_generators.items():
             self.insets[inset] = inset_gen()
+#            self.insets[inset].setParent(self.text)
 
         self.updateConfig(self.config, update_gui=False)
 
@@ -621,6 +622,7 @@ class SPCWidget(QWidget):
             else:
                 self.insets['SARS'].clearSelection()
         else:
+            self.insets['SARS'].setParent(self.text)
             self.insets['SARS'].clearSelection()
 
     def advanceHighlight(self, direction):
@@ -684,7 +686,7 @@ class SPCWidget(QWidget):
             self.setFocus()
 
     def swapInset(self):
-        logging.debug("Swapping an inset.")
+        logging.debug("Swapping the " + self.inset_to_swap + " inset.")
         ## This will swap either the left or right inset depending on whether or not the
         ## self.inset_to_swap value is LEFT or RIGHT.
         a = self.menu_ag.checkedAction()
@@ -706,6 +708,7 @@ class SPCWidget(QWidget):
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
             self.insets[self.left_inset].setProf(self.default_prof)
             self.insets[self.left_inset].setPreferences(update_gui=False, **prefs)
+            self.insets[self.left_inset].setParent(self.text)
 
             self.left_inset = a.data()
             self.left_inset_ob = self.insets[self.left_inset]
@@ -727,6 +730,7 @@ class SPCWidget(QWidget):
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
             self.insets[self.right_inset].setProf(self.default_prof)
             self.insets[self.right_inset].setPreferences(update_gui=False, **prefs)
+            self.insets[self.right_inset].setParent(self.text)
 
             self.right_inset = a.data()
             self.right_inset_ob = self.insets[self.right_inset]
@@ -844,17 +848,18 @@ class SPCWindow(QMainWindow):
         for mitem in menu_items:
             mitem.menuAction().setVisible(False)
 
-    def addProfileCollection(self, prof_col, focus=True):
+    def addProfileCollection(self, prof_col, focus=True, check_integrity=True):
         logging.debug("Calling SPCWindow.addProfileCollection")
 
-        logging.debug("Testing data integrity")
-        exit_code = self.testDataIntegrity(prof_col.getHighlightedProf())
-        if exit_code == 0:
-            if len(self.menu_items) == 0:
-                self.focusPicker()
-                self.close()
-            else:
-                return
+        if check_integrity is True:
+            logging.debug("Testing data integrity")
+            exit_code = self.testDataIntegrity(prof_col.getHighlightedProf())
+            if exit_code == 0:
+                if len(self.menu_items) == 0:
+                    self.focusPicker()
+                    self.close()
+                else:
+                    return
 
         menu_name = self.createMenuName(prof_col)
         if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):
@@ -919,14 +924,13 @@ class SPCWindow(QMainWindow):
             actions[names.index("Remove")].setVisible(False)
 
     def keyPressEvent(self, e):
-        #TODO: Up and down keys to loop through profile collection members.
-        if e.key() == Qt.Key_Left:
+        if e.key() == Qt.Key_Left: # Step forward/backwards in time
             self.spc_widget.advanceTime(-1)
             self.setInterpolated(self.spc_widget.isInterpolated())
         elif e.key() == Qt.Key_Right:
             self.spc_widget.advanceTime(1)
             self.setInterpolated(self.spc_widget.isInterpolated())
-        elif e.key() == Qt.Key_Up:
+        elif e.key() == Qt.Key_Up: # Change focus from member to member of the ensemble
             self.spc_widget.advanceHighlight(1)
         elif e.key() == Qt.Key_Down:
             self.spc_widget.advanceHighlight(-1)
@@ -938,6 +942,7 @@ class SPCWindow(QMainWindow):
             # Save an image
             self.spc_widget.saveimage()
         elif e.key() == Qt.Key_W:
+            # Return focus to the Sounding Picker
             self.focusPicker()
 
     def closeEvent(self, e):

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000620/0100F000    hsi 
+  HSI 000620/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          13.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.0 C/km
 850-500mb   30 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 000620/0100F000    hsi 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990708/0300F000    gdv 
+  GDV 990708/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          14.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.0 C/km
 850-500mb   33 C	7.4 C/km
+
+----- Note -----
+Old Title:  RUC 990708/0300F000    gdv 
+

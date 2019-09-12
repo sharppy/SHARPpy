@@ -8,7 +8,6 @@ import platform
 import numpy as np
 
 def doCopy(target_type, prof, idx, pipe):
-    print('\n\n\n\n\n',target_type, prof, idx, pipe)
     pipe.put((target_type.copy(prof), idx))
     
 class ProfCollection(object):
@@ -234,7 +233,7 @@ class ProfCollection(object):
         try:
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
-            self._prof_idx = -1
+            pass
 
     def setAnalogToDate(self, analog_to_date):
         """

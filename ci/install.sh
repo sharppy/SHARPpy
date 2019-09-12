@@ -27,12 +27,12 @@ conda create -q -n test-environment python=$PYTHON_VERSION nose pyinstaller cond
 source activate test-environment
 
 pip install --upgrade pip
-pip install PySide2
 conda install -q qtpy
+conda install -q conda-forge pyside2
 conda install -c conda-forge -q pytest-cov
 if [[ "$COVERALLS" == "YES" ]]; then
+    echo "Installing coveralls ..."
     conda install -c conda-forge -q coveralls
-    conda install -c conda-forge -q matplotlib
 fi
 
 # If we're building on OSX, we need to download python.app to get around the qt_menu.nib problem.

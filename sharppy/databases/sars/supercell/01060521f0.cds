@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010605/2100F000    cds 
+  CDS 010605/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          14.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.0 C/km
 850-500mb   36 C	8.2 C/km
+
+----- Note -----
+Old Title:  RUC 010605/2100F000    cds 
+

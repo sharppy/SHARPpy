@@ -16,6 +16,7 @@ import datetime as date
 
 from utils.progress import progress
 from utils.async_threads import AsyncThreads
+from utils.ver_updates import check_latest
 from datasources import data_source
 from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.io.decoder import getDecoders
@@ -31,7 +32,17 @@ import utils.frozenutils as frozenutils
 import logging
 import qtpy
 import platform
+
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+
+HEADER = '\033[95m'
+OKBLUE = '\033[94m'
+OKGREEN = '\033[92m'
+WARNING = '\033[93m'
+FAIL = '\033[91m'
+ENDC = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
 
 # Start the logging
 logging.basicConfig(level=logging.DEBUG,
@@ -75,6 +86,7 @@ logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
 logging.info('qtpy version: ' + str(qtpy.__version__))
 logging.info("Python version: " + str(platform.python_version()))
+logging.info("Qt version: " + str(PySide.QtCore.__version__))
 
 # from sharppy._version import __version__#, __version_name__
 
@@ -86,6 +98,16 @@ except ImportError:
     has_nc = False
     print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
 
+
+def versioning_info(include_sharppy=False):
+    txt = ""
+    if include_sharppy is True:
+        txt += "SHARPpy version: " + str(__version__) + '\n'
+    txt += "PySide version: " + str(PySide.__version__) + '\n'
+    txt += "Numpy version: " + str(np.__version__) + '\n'
+    txt += "Python version: " + str(platform.python_version()) + '\n'
+    txt += "Qt version: " + str(PySide.QtCore.__version__)
+    return txt 
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -131,25 +153,43 @@ class crasher(object):
 
 class Calendar(QCalendarWidget):
     def __init__(self, *args, **kwargs):
+        dt_earliest = kwargs.pop('dt_earliest', date.datetime(1946, 1, 1))
         dt_avail = kwargs.pop('dt_avail', date.datetime.utcnow().replace(
             minute=0, second=0, microsecond=0))
-
+        self.max_date = dt_avail.date()
         super(Calendar, self).__init__(*args, **kwargs)
-
-        min_date = QDate(1946, 1, 1)
-        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
 
         self.setGridVisible(True)
         self.setVerticalHeaderFormat(QCalendarWidget.NoVerticalHeader)
         self.setHorizontalHeaderFormat(QCalendarWidget.SingleLetterDayNames)
-        self.setMinimumDate(min_date)
-        self.setMaximumDate(qdate_avail)
-        self.setSelectedDate(qdate_avail)
+        self.setEarliestAvailable(dt_earliest)
+        self.setLatestAvailable(dt_avail)
 
         for day in [Qt.Sunday, Qt.Saturday]:
             txt_fmt = self.weekdayTextFormat(day)
             txt_fmt.setForeground(QBrush(Qt.black))
             self.setWeekdayTextFormat(day, txt_fmt)
+
+    def paintCell(self, painter, rect, date):
+        QCalendarWidget.paintCell(self, painter, rect, date)
+        if date.toPython() > self.max_date or date.toPython() < self.min_date:
+            color = QColor('#808080')
+            color.setAlphaF(0.5)
+            painter.fillRect(rect, color)
+ 
+    def setLatestAvailable(self, dt_avail):
+        qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
+        #self.setMaximumDate(qdate_avail)
+        self.max_date = qdate_avail.toPython()
+        #if self.selectedDate().toPython() > qdate_avail.toPython():
+        ##    self.setSelectedDate(qdate_avail)
+        #else:
+        self.setSelectedDate(self.selectedDate())
+
+    def setEarliestAvailable(self, dt_earliest):
+        qdate_earliest = QDate(dt_earliest.year, dt_earliest.month, dt_earliest.day)
+        self.min_date = dt_earliest.date()
+        #self.setMinimumDate(qdate_earliest)
 
 
 class Picker(QWidget):
@@ -165,9 +205,7 @@ class Picker(QWidget):
         """
 
         super(Picker, self).__init__(**kwargs)
-        # print("data_source.loadDataSource()")
         self.data_sources = data_source.loadDataSources()
-        #print("Done loading Data Sources\n")
         self.config = config
         self.skew = None
 
@@ -179,13 +217,12 @@ class Picker(QWidget):
         # set the default profile type to Observed
         self.model = "Observed"
         # this is the default model initialization time
-        #print("Looping over AvailableTimes")
-        self.run = sorted(
-            [t for t in self.data_sources[self.model].getAvailableTimes() if t.hour in [0, 12]])[-1]
-        # print("Done")
+        self.all_times = sorted(self.data_sources[self.model].getAvailableTimes())
+        self.run = [t for t in self.all_times if t.hour in [0, 12]][-1]
 
         urls = data_source.pingURLs(self.data_sources)
         self.has_connection = any(urls.values())
+        self.strictQC = True
 
         # initialize the UI
         self.__initUI()
@@ -229,11 +266,9 @@ class Picker(QWidget):
         self.left_data_frame.setLayout(self.left_layout)
 
         self.right_map_frame.setLayout(self.right_layout)
-
-        self.all_times = sorted(
-            self.data_sources[self.model].getAvailableTimes(dt=None))
-
-        self.cal = Calendar(self, dt_avail=self.all_times[-1])
+        #print(self.run)
+        self.cal = Calendar(self, dt_avail=self.run)
+        self.cal.setSelectedDate(self.run)
         self.cal.clicked.connect(self.update_from_cal)
         self.cal_date = self.cal.selectedDate()
         filt_times = [t for t in self.all_times if t.day == self.cal_date.day(
@@ -261,7 +296,7 @@ class Picker(QWidget):
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError:
-            print("Run dropdown is missing its times ... ?")
+            logging.error("Run dropdown is missing its times ... ?")
 
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
@@ -341,19 +376,16 @@ class Picker(QWidget):
 
         return dropdown
 
-    def update_from_cal(self):
+    def update_from_cal(self, dt, updated_model=False):
         """
         Update the dropdown list and the forecast times list if a new date
         is selected in the calendar app.
         """
 
-        models = sorted(self.data_sources.keys())
-        self.get_model(models.index(self.model))
+        self.update_run_dropdown(updated_model=updated_model)
 
-        # self.update_run_dropdown()
-        # self.update_list()
-        #print(self.run, self.model)
-        #self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.update_list()
 
     def update_list(self):
         """
@@ -416,7 +448,7 @@ class Picker(QWidget):
         self.model_dropdown.setCurrentIndex(models.index(selected))
         self.get_model(models.index(selected))
 
-    def update_run_dropdown(self):
+    def update_run_dropdown(self, updated_model=False):
         """
         Updates the dropdown menu that contains the model run
         information.
@@ -424,25 +456,36 @@ class Picker(QWidget):
         """
         logging.debug("Calling full_gui.update_run_dropdown")
 
-        self.cal_date = self.cal.selectedDate()
         if self.model.startswith("Local"):
             url = self.data_sources[self.model].getURLList(
                 outlet="Local")[0].replace("file://", "")
 
-            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
-                url)
+            def getTimes(): 
+                return self.data_sources[self.model].getAvailableTimes(url)
         else:
-            def getTimes(): return self.data_sources[self.model].getAvailableTimes(
-                dt=self.cal_date)
-        #print(self.model, self.cal_date)
-        #print(self.data_sources[self.model].getAvailableTimes(
-        #    dt=self.cal_date))
-        # print(getTimes())
-        # Function to update the times.
+            def getTimes():
+                return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
+        self.cal_date = self.cal.selectedDate()
+        # Function to update the times.
         def update(times):
-            times = times[0]
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
+            times = times[0]
+            time_span = self.data_sources[self.model].updateTimeSpan()
+            for outlet in time_span:
+                if np.asarray(outlet).all() == None:
+                    span = True
+                else:
+                    dt_earliest = outlet[0]
+                    dt_avail = outlet[1]
+                    span = False
+            if span is True and len(times) > 0:
+                dt_avail = max(times)
+                dt_earliest = min(times)
+            self.cal.setLatestAvailable(dt_avail)
+            self.cal.setEarliestAvailable(dt_earliest)
+            self.cal_date = self.cal.selectedDate()
+            self.cal.update()
 
             # Filter out only times for the specified date.
             filtered_times = []
@@ -458,22 +501,38 @@ class Picker(QWidget):
                 # Pick the index for which to highlight
                 if self.model == "Observed":
                     try:
-                        self.run = [t for t in times if t.hour in [0, 12] and t.day == self.cal_date.day(
+                        # Try to grab the 0 or 12 UTC data for this day (or 3 or 15 if before 5/1/1957)
+                        if self.cal_date.toPython() >= date.datetime(1957,5,1).date():
+                            synoptic_times = [0,12]
+                        else:
+                            synoptic_times = [3,15]
+                        self.run = [t for t in times if t.hour in synoptic_times and t.day == self.cal_date.day(
                         ) and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
-                    except:
+                    except Exception as e:
                         self.run = times[-1]
                 else:
                     self.run = times[-1]
             else:
                 self.run = date.datetime(1700, 1, 1, 0, 0, 0)
-            self.view.setCurrentTime(self.run)
             self.run_dropdown.update()
             if len(filtered_times) > 0:
+                self.run_dropdown.setEnabled(True)
                 self.run_dropdown.setCurrentIndex(times.index(self.run))
+            elif len(filtered_times) == 0:
+                if self.model == "Observed":
+                    string = "obs"
+                else:
+                    string = "runs"
+                self.run_dropdown.addItem(self.tr("- No " + string + " available - "))
+                self.run_dropdown.setCurrentIndex(0)
+                self.run_dropdown.update()
+                self.run_dropdown.setEnabled(False)
+
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
-        self.async_id = self.async_obj.post(getTimes, update)
+        async_id = self.async_obj.post(getTimes, update)
+        self.async_obj.join(async_id)
 
     def map_link(self, point):
         """
@@ -551,11 +610,7 @@ class Picker(QWidget):
         logging.debug("Calling full_gui.get_model")
         self.model = self.model_dropdown.currentText()
 
-        self.update_run_dropdown()
-        self.async_obj.join(self.async_id)
-
-        self.update_list()
-        self.view.setDataSource(self.data_sources[self.model], self.run)
+        self.update_from_cal(None, updated_model=True)
 
     def get_run(self, index):
         """
@@ -691,7 +746,7 @@ class Picker(QWidget):
             logging.debug("Focusing on the SkewApp")
             self.focusSkewApp()
             logging.debug("Adding the profile collection to SPCWindow")
-            self.skew.addProfileCollection(prof_collection)
+            self.skew.addProfileCollection(prof_collection, check_integrity=self.strictQC)
         else:
             print("There was an exception:", exc)
 
@@ -742,6 +797,8 @@ class Picker(QWidget):
     def hasConnection(self):
         return self.has_connection
 
+    def setStrictQC(self, val):
+        self.strictQC = val
 
 @progress(Picker.async_obj)
 def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=None):
@@ -808,6 +865,9 @@ class Main(QMainWindow):
 
         self.show()
         self.raise_()
+        import time
+        time.sleep(3)
+        QPixmap.grabWidget(self).save('./screenshot.png', 'png')
 
     def createMenuBar(self):
         """
@@ -927,34 +987,40 @@ class Main(QMainWindow):
         """
         cur_year = date.datetime.utcnow().year
         msgBox = QMessageBox()
-        str = """
-        SHARPpy v%s %s
-
-        Sounding and Hodograph Analysis and Research
-        Program for Python
-
-        (C) 2014-%d by Patrick Marsh, John Hart,
-        Kelton Halbert, Greg Blumberg, and Tim Supinie.
-
-        SHARPpy is a collection of open source sounding
-        and hodograph analysis routines, a sounding
-        plotting package, and an interactive application
-        for analyzing real-time soundings all written in
-        Python. It was developed to provide the
-        atmospheric science community a free and
-        consistent source of routines for analyzing sounding
-        data. SHARPpy is constantly updated and
-        vetted by professional meteorologists and
-        climatologists within the scientific community to
-        help maintain a standard source of sounding
-        routines.
-
-        Website: http://sharppy.github.io/SHARPpy/
-        Contact: sharppy.project@gmail.com
-        Contribute: https://github.com/sharppy/SHARPpy/
-        """ % (__version__, __version_name__, cur_year)
-        msgBox.setText(str)
+        documentationButton = msgBox.addButton(self.tr("Online Docs"), QMessageBox.ActionRole)
+        bugButton = msgBox.addButton(self.tr("Report Bug"), QMessageBox.ActionRole)
+        githubButton = msgBox.addButton(self.tr("Github"), QMessageBox.ActionRole)
+        msgBox.addButton(QMessageBox.Close)
+#        closeButton = msgBox.addButton(self.tr("Close"), QMessageBox.RejectRole)
+        msgBox.setDefaultButton(QMessageBox.Close)
+        txt = "SHARPpy v%s %s\n\n" % (__version__, __version_name__)
+        txt += "Sounding and Hodograph Analysis and Research Program for Python\n\n"
+        txt += "(C) 2014-%d by Patrick Marsh, John Hart, Kelton Halbert, Greg Blumberg, and Tim Supinie." % cur_year
+        desc = "\n\nSHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding " + \
+               "plotting package, and an interactive application " + \
+               "for analyzing real-time soundings all written in " + \
+               "Python. It was developed to provide the " + \
+               "atmospheric science community a free and " + \
+               "consistent source of routines for analyzing sounding data. SHARPpy is constantly updated and " + \
+               "vetted by professional meteorologists and " + \
+               "climatologists within the scientific community to " + \
+               "help maintain a standard source of sounding routines.\n\n"
+        txt += desc
+        txt += versioning_info()
+        #txt += "PySide version: " + str(PySide.__version__) + '\n'
+        #txt += "Numpy version: " + str(np.__version__) + '\n'
+        #txt += "Python version: " + str(platform.python_version()) + '\n'
+        #txt += "Qt version: " + str(PySide.QtCore.__version__)
+        txt += "\n\nContribute: https://github.com/sharppy/SHARPpy/"
+        msgBox.setText(txt)
         msgBox.exec_()
+        
+        if msgBox.clickedButton() == documentationButton:
+            QDesktopServices.openUrl(QUrl('http://sharppy.github.io/SHARPpy/'))
+        elif msgBox.clickedButton() == githubButton:
+            QDesktopServices.openUrl(QUrl('https://github.com/sharppy/SHARPpy'))
+        elif msgBox.clickedButton() == bugButton:
+            QDesktopServices.openUrl(QUrl('https://github.com/sharppy/SHARPpy/issues'))
 
     def preferencesbox(self):
         pref_dialog = PrefDialog(self.config, parent=self)
@@ -980,56 +1046,168 @@ class Main(QMainWindow):
         """
         self.config.toFile()
 
+def newerRelease(latest):
+    #msgBox = QMessageBox()
+    txt = "A newer version of SHARPpy (" + latest[1] + ") was found.\n\n"
+    txt += "Do you want to launch a web browser to download the new version from Github?  "
+    txt += "(if you downloaded from pip or conda you may want to use those commands instead.)"
+    ret_code = QMessageBox.information(None, "New SHARPpy Version!" , txt, QMessageBox.Yes, QMessageBox.No)
+    if ret_code == QMessageBox.Yes:
+        QDesktopServices.openUrl(QUrl(latest[2]))
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('file_names', nargs='*')
-    ap.add_argument('--debug', dest='debug', action='store_true')
-    ap.add_argument('--collect', dest='collect', nargs=1, default=None)
-    ap.add_argument('--noclose', dest='close', action='store_false')
-    args = ap.parse_args()
+@crasher(exit=True)
+def createWindow(file_names, collect=False, close=True, output='./', strictQC=False):
+    main_win = Main()
+    for fname in file_names:
+        txt = OKGREEN + "Creating image for '%s' ..." + ENDC
+        print(txt % fname)
+        main_win.picker.setStrictQC(strictQC)
+        main_win.picker.skewApp(filename=fname)
+        if not collect:
+            fpath, fbase = os.path.split(fname)
 
-    @crasher(exit=True)
-    def createWindow(file_names, collect=False, close=True):
-        main_win = Main()
-        for fname in file_names:
-            print("Creating image for '%s' ..." % fname)
-            main_win.picker.skewApp(filename=fname)
-            if not collect:
-                fpath, fbase = os.path.split(fname)
+            if '.' in fbase:
+                img_base = ".".join(fbase.split(".")[:-1] + ['png'])
+            else:
+                img_base = fbase + '.png'
 
-                if '.' in fbase:
-                    img_base = ".".join(fbase.split(".")[:-1] + ['png'])
-                else:
-                    img_base = fbase + '.png'
-
-                img_name = os.path.join(fpath, img_base)
-                main_win.picker.skew.spc_widget.pixmapToFile(img_name)
-                if fname != file_names[-1] or close:
-                    main_win.picker.skew.close()
-
-        if collect:
-            main_win.picker.skew.spc_widget.toggleCollectObserved()
-            img_name = collect[0]
-            main_win.picker.skew.spc_widget.pixmapToFile(img_name)
-            if close:
+            img_name = os.path.join(fpath, img_base)
+            main_win.picker.skew.spc_widget.pixmapToFile(output + img_name)
+            if fname != file_names[-1] or close:
                 main_win.picker.skew.close()
 
+    if collect:
+        main_win.picker.skew.spc_widget.toggleCollectObserved()
+        img_name = collect[0]
+        main_win.picker.skew.spc_widget.pixmapToFile(output + img_name)
+        if close:
+            main_win.picker.skew.close()
+
+    return main_win
+
+@crasher(exit=False)
+def search_and_plotDB(model, station, datetime, close=True, output='./'):
+    main_win = Main()
+    main_win.picker.prof_idx = [0]
+    main_win.picker.run = datetime
+    main_win.picker.model = model
+    main_win.picker.loc = main_win.picker.data_sources[model].getPoint(station)
+    main_win.picker.disp_name = main_win.picker.loc['icao']
+    try:
+        main_win.picker.skewApp()
+    except data_source.DataSourceError:
+        print(FAIL + "Couldn't find data for the requested time and location." + ENDC)
         return main_win
 
+    string = OKGREEN + "Creating image for station %s using data source %s at time %s ..." + ENDC
+    print( string % (station, model, datetime.strftime('%Y%m%d/%H%M')))  
+    main_win.picker.skew.spc_widget.pixmapToFile(output + datetime.strftime('%Y%m%d.%H%M_' + model + '.png'))
+    if close:
+        main_win.picker.skew.close()
+    return main_win
+
+def test(fn):
+    # Run the binary and output a test profile
+    if QApplication.instance() is None:
+        app = QApplication([])
+    else:
+        app = QApplication.instance()
+    win = createWindow(fn, strictQC=False)
+    win.close()
+
+def parseArgs():
+    desc = """This binary launches the SHARPpy Picker and GUI from the command line.  When 
+           run from the command line without arguments, this binary simply launches the Picker 
+           and loads in the various datasets within the user's ~/.sharppy directory.  When the 
+           --debug flag is set, the GUI is run in debug mode.
+
+           When a set of files are passed as a command line argument, the program will 
+           generate images of the SHARPpy GUI for each sounding.  Soundings can be overlaid
+           on top of one another if the collect flag is set.  In addition, data from the 
+           datasources can be plotted using the datasource, station, and datetime arguments."""
+    data_sources = [key for key in data_source.loadDataSources().keys()]
+    ep = "Available Datasources: " + ', '.join(data_sources)
+    ap = argparse.ArgumentParser(description=desc, epilog=ep)
+
+    ap.add_argument('file_names', nargs='*',
+                    help='a list of files to read and plot')
+    ap.add_argument('--debug', dest='debug', action='store_true',
+                    help='turns on debug mode for the GUI')
+    ap.add_argument('--version', dest='version', action='store_true',
+                    help="print out versioning information")
+    ap.add_argument('--collect', dest='collect', action='store_true',
+                    help="overlay profiles from filename on top of one another in GUI image")
+    #ap.add_argument('--noclose', dest='close', action='store_false',
+    #                help="do not close the GUI after viewing the image")
+    group = ap.add_argument_group("datasource access arguments")
+
+    group.add_argument('--datasource', dest='ds', type=str, 
+                    help="the name of the datasource to search")
+    group.add_argument('--station', dest='stn', type=str,
+                    help="the name of the station to plot (ICAO, IATA)")
+    group.add_argument('--datetime', dest='dt', type=str, 
+                    help="the date/time of the data to plot (YYYYMMDD/HH)")
+    ap.add_argument('--output', dest='output', type=str,
+                    help="the output directory to store the images", default='./')
+    args = ap.parse_args() 
+
+    # Print out versioning information and quit
+    if args.version is True:
+        ap.exit(0, versioning_info(True) + '\n')
+    
+    # Catch invalid data source 
+    if args.ds is not None and args.ds not in data_sources:
+        txt = FAIL + "Invalid data source passed to the program.  Exiting." + ENDC
+        ap.error(txt)
+
+    # Catch invalid datetime format
+    if args.dt is not None:
+        try:
+            date.datetime.strptime(args.dt , '%Y%m%d/%H')
+        except:
+            txt = FAIL + "Invalid datetime passed to the program. Exiting." + ENDC
+            ap.error(txt)
+
+    return args
+
+def main():
+    args = parseArgs()
+ 
     # Create an application
-    app = QApplication([])
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps)
+    #app = QApplication([])
+    #app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    #app.setAttribute(Qt.AA_UseHighDpiPixmaps)
 #
     #app.setStyle("fusion")
     win = createWindow(args.file_names, collect=args.collect, close=args.close)
+    if QApplication.instance() is None:
+        app = QApplication([])
+    else:
+        app = QApplication.instance()
 
-    if args.file_names != [] and args.close:
+    # Check to see if there's a newer version of SHARPpy on Github Releases
+    latest = check_latest()
+
+    if latest[0] is False:
+        logging.info("A newer release of SHARPpy was found on Github Releases.")
+    else:
+        logging.info("This is the most recent version of SHARPpy.")
+
+    # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
+    if latest[0] is False:
+        newerRelease(latest)    
+
+    if args.dt is not None and args.ds is not None and args.stn is not None:
+        dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")   
+        win = search_and_plotDB(args.ds, args.stn, dt, args.output)
+        win.close()
+    elif args.file_names != []:
+        win = createWindow(args.file_names, collect=args.collect, close=True, output=args.output)
         win.close()
     else:
+        main_win = Main()
+        #app.exec_()
         sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

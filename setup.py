@@ -28,10 +28,18 @@ packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 's
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
                      "databases/shapefiles/*", "../rc/*"],}
 include_package_data = True
-classifiers = ["Development Status :: 3 - Alpha"]
 
-#install_requires = ['pyside>=1.2.1', 'numpy>=1.10.1']
-install_requires = []
+#install_requires = []
+install_requires = ['python-dateutil', 'requests', 'numpy==1.15.*']
+# Because pip doesn't recognize it when PySide is installed by conda from conda-forge
+# Try to import PySide.  If it fails, add the PySide to the install_requires
+# Because of this, the conda meta.yaml will require PySide to build SHARPpy
+try:
+    import PySide
+    print("Success importing PySide")
+except:
+    install_requires.append("PySide==1.2.*")    
+
 entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
 # Create some directory variables to shorten the lines.
 HOME_PATH = os.path.join(os.path.expanduser("~"), ".sharppy")
@@ -69,6 +77,13 @@ shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
 
 ver = versioneer.get_version()
 ver = ver.split('-')[0]
+if 'a' in ver:
+    classifiers = ["Development Status :: 3 - Alpha"]
+elif 'b' in ver:
+    classifiers = ["Development Status :: 4 - Beta"]
+else:
+    classifiers = ["Development Status :: 5 - Production/Stable"]
+
 setup(
     name = name,
     author = author,

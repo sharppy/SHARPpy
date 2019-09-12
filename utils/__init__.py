@@ -1,1 +1,1 @@
-__all__ = [ 'async', 'progress', 'frozenutils' ] 
+__all__ = [ 'async', 'progress', 'frozenutils', 'ver_updates' ] 

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000213/2300F000    lrf 
+  LRF 000213/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          9.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.5 C/km
 850-500mb   31 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 000213/2300F000    lrf 
+

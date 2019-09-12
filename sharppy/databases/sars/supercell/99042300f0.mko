@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990423/0000F000    mko 
+  MKO 990423/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          13.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.8 C/km
 850-500mb   29 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 990423/0000F000    mko 
+

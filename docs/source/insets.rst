@@ -1,7 +1,7 @@
 .. _Insets_:
 
-SHARPpy Insets
-==============
+Interpreting the Insets
+=======================
 
 .. image:: tutorial_imgs/inset_row.png
     :scale: 60%

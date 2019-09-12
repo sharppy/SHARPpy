@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990709/0000F000    ona 
+  ONA 990709/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          18.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.5 C/km
 850-500mb   29 C	6.6 C/km
+
+----- Note -----
+Old Title:  RUC 990709/0000F000    ona 
+

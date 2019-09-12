@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010403/0000F000    bff 
+  BFF 010403/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          5.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.5 C/km
 850-500mb   32 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 010403/0000F000    bff 
+

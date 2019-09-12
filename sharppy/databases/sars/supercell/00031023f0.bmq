@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000310/2300F000    bmq 
+  BMQ 000310/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          12.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.6 C/km
 850-500mb   32 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 000310/2300F000    bmq 
+

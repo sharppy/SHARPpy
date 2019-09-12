@@ -111,8 +111,8 @@ class Outlet(object):
         self._format = config.get('format')
         self._time = config.find('time')
         point_csv = config.find('points')
+        #self.start, self.end = self.getTimeSpan()
         self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
-
         for idx in range(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
             self._points[idx]['lon'] = float(self._points[idx]['lon'])
@@ -120,6 +120,33 @@ class Outlet(object):
 
         self._custom_avail = self._name.lower() in available.available and self._ds_name.lower() in available.available[self._name.lower()]
         self._is_available = True
+
+    def getTimeSpan(self):
+        """
+        Read in the XML data to determine the dates/times this outlet spans across
+        """
+        try:
+            start = self._time.get('start')
+        except:
+            start = '-'
+        try:
+            end = self._time.get('end')
+        except:
+            end = '-'
+        if start == "-" or start is None:
+            s = None
+        elif start == "now":
+            s = datetime.utcnow()
+        else:
+            s = datetime.strptime(start, '%Y/%m/%d')
+ 
+        if end == "-" or end is None:
+            e = None
+        elif end == 'now':
+            e = datetime.utcnow() 
+        else:   
+            e = datetime.strptime(end, '%Y/%m/%d')
+        return [s, e]
 
     def getForecastHours(self):
         """
@@ -329,6 +356,10 @@ class DataSource(object):
             raise DataSourceError()
         return outlet
 
+    def updateTimeSpan(self):
+        outlets = [ self._outlets[key].getTimeSpan() for key in self._outlets.keys() ]
+        return outlets
+
     def getForecastHours(self, outlet_num=None, flatten=True):
         times = self._get('getForecastHours', outlet_num=outlet_num, flatten=flatten)
         return times
@@ -408,12 +439,19 @@ class DataSource(object):
     def isObserved(self):
         return self._observed
 
-if __name__ == "__main__":
-    ds = loadDataSources()
-    ds = dict( (n, ds[n]) for n in ['Observed', 'GFS'] )
+    def getPoint(self, stn):
+        for outlet in self._outlets.items():
+            for pnt in outlet[1].getPoints():
+                if stn in pnt['icao'] or stn in pnt['iata'] or stn in pnt['srcid']:
+                    return pnt
 
-    for n, d in ds.items():
+if __name__ == "__main__":
+    ds = loadDataSources('./')
+    ds = dict( (n, ds[n]) for n in ['Observed', 'GFS', 'HRRR', 'NAM'] )
+    print(ds['GFS'].updateTimeSpan())
+    print(ds['HRRR'].updateTimeSpan())
+#    for n, d in ds.items():
 #       print n, d.getMostRecentCycle()
-        times = d.getAvailableTimes()
-        for t in times:
-            print(n, t, [ s['srcid'] for s in d.getAvailableAtTime(t) ])
+        #times = d.getAvailableTimes()
+        #for t in times:
+        #    print(n, t, [ s['srcid'] for s in d.getAvailableAtTime(t) ])

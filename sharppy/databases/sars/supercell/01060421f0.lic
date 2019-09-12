@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010604/2100F000    lic 
+  LIC 010604/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -62,3 +62,7 @@ Mean W:          8.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.5 C/km
 850-500mb   -999 C	-999.0 C/km
+
+----- Note -----
+Old Title:  RUC 010604/2100F000    lic 
+

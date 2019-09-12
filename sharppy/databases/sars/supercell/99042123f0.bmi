@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990421/2300F000    bmi 
+  BMI 990421/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          11.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.8 C/km
 850-500mb   31 C	7.2 C/km
+
+----- Note -----
+Old Title:  RUC 990421/2300F000    bmi 
+

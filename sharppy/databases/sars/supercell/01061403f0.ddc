@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010614/0300F000    ddc 
+  DDC 010614/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          14.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   24 C 	9.3 C/km
 850-500mb   41 C	9.3 C/km
+
+----- Note -----
+Old Title:  RUC 010614/0300F000    ddc 
+

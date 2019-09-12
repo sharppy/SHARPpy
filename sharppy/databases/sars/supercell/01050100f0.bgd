@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010501/0000F000    bgd 
+  BGD 010501/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          8.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	8.0 C/km
 850-500mb   37 C	8.6 C/km
+
+----- Note -----
+Old Title:  RUC 010501/0000F000    bgd 
+

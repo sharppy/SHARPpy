@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990920/0300F000    ogd 
+  OGD 990920/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -62,3 +62,7 @@ Mean W:          5.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.3 C/km
 850-500mb   -999 C	-999.0 C/km
+
+----- Note -----
+Old Title:  RUC 990920/0300F000    ogd 
+

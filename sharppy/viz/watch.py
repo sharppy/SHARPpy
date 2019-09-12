@@ -32,6 +32,7 @@ class backgroundWatch(QtWidgets.QFrame):
             fsize = 10
         else:
             fsize = 12
+        #fsize = 10
         self.font_ratio = 0.0512
         self.title_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio) + 5)
         self.plot_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio) + 4)
@@ -143,6 +144,7 @@ class plotWatch(backgroundWatch):
         self.mrglsvr_color  = QtGui.QColor(prefs['watch_mrglsvr_color'])
         self.flood_color    = QtGui.QColor(prefs['watch_flood_color'])
         self.blizzard_color = QtGui.QColor(prefs['watch_blizzard_color'])
+        self.fire_color     = QtGui.QColor(prefs['watch_fire_color'])
         self.heat_color     = QtGui.QColor(prefs['watch_heat_color'])
         self.none_color     = QtGui.QColor(prefs['watch_none_color'])
 

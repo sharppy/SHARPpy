@@ -2,16 +2,20 @@ name: devel
 channels:
   - conda-forge/label/testing
   - conda-forge
+  - anaconda
 dependencies:
   - python=3
   - numpy=1.15.*
-  - pyside
+  - pyside2
   - sphinx
-  - sphinx-gallery
-  - sphinx-rtd-theme
   - pytest
   - qtpy
+  - sphinx-gallery
+  - sphinx_rtd_theme
+  - requests
+  - python-dateutil 
+  - pyinstaller
+  - setuptools
   - pip:
     - sphinx-prompt
     - pydocstyle
-    - PySide2

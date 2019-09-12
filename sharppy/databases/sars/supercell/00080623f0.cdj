@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000806/2300F000    cdj 
+  CDJ 000806/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.3 C/km
 850-500mb   30 C	6.8 C/km
+
+----- Note -----
+Old Title:  RUC 000806/2300F000    cdj 
+

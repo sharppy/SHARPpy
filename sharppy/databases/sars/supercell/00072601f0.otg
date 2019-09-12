@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000726/0100F000    otg 
+  OTG 000726/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          14.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.2 C/km
 850-500mb   34 C	7.9 C/km
+
+----- Note -----
+Old Title:  RUC 000726/0100F000    otg 
+

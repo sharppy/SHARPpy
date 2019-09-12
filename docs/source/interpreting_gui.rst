@@ -1,9 +1,27 @@
 .. _Interpreting_with_the_GUI:
 
+.. raw:: html
+
+    <style> .red {color:red} 
+    .green{color:green}
+    .cyan{color:#00D7D7}
+    .purple{color:purple}
+    .blue{color:blue}
+    .yellow{color:#CDCD00}
+
+    </style>
+
+.. role:: red
+.. role:: green
+.. role:: cyan
+.. role:: purple
+.. role:: blue
+.. role:: yellow
+
 Interpreting the GUI
 ========================
 
-Our `BAMS article <http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1>`_ on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation provides an overview of the SHARPpy GUI features.
+Our `BAMS article <http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1>`_ on SHARPpy provides an overview of the various insets and information included in the SHARPpy sounding window.  Included within the paper is a list of references to journal articles which describe the relevance of each aspect of the SHARPpy sounding window to research in atmospheric science and the scientific forecasting process.  This documentation repeats some of the information included in the BAMS article and describes the various parts of the SHARPpy GUI.
 
 Additional resources for interpreting the GUI include the `SPC Sounding Analysis Help <http://www.spc.noaa.gov/exper/soundings/help/>`_ and `Explanation of SPC Severe Weather Parameters <http://www.spc.noaa.gov/sfctest/help/sfcoa.html>`_ webpages.  The first site describes the SHARP GUI, which is the basis for the SHARPpy GUI.  The second can be used to help interpret some of the various convection indices shown in the SHARPpy GUI.  Not all features shown on these two sites are shown in the SHARPpy GUI.
 
@@ -12,19 +30,19 @@ Skew-T
 
 Various sounding variables are displayed in the Skew-T, which is a central panel of the GUI:
 
-    * Solid red – temperature profile
-    * Solid green – dewpoint profile
-    * Dashed red – virtual temperature profile.
-    * Cyan – wetbulb temperature profile
+    * Solid :red:`red` – temperature profile
+    * Solid :green:`green` – dewpoint profile
+    * Dashed :red:`red` – virtual temperature profile.
+    * Solid :cyan:`cyan` – wetbulb temperature profile
     * Dashed white – parcel trace (e.g., MU, SFC, ML) (the parcel trace of the parcel highlighted in yellow in the Thermodynamic Inset.)
-    * Dashed purple – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).
+    * Dashed :purple:`purple` – downdraft parcel trace (parcel origin height is at minimum 100-mb mean layer equivalent potenial temperature).
     * Winds barbs are plotted in knots (unless switched to m/s in the preferences) and are interpolated to 50-mb intervals for visibility purposes.
-    * If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. Blue bars indicate sinking motion, red bars rising motion. Dashed purple lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.
+    * If a vertical velocity profile (omega) is found (e.g., sounding is from a model), it is plotted on the left. :blue:`Blue` bars indicate sinking motion, :red:`red` bars rising motion. Dashed :purple:`purple` lines indicate the bounds of synopic scale vertical motion.  Units of the vertical velocity are in microbars/second.
 
 .. note::
-    When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are "convectively contaminiated".  This means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.
+    When analyzing model forecast soundings, the omega profile can be used to determine whether or not models are "convectively contaminated".  This phrase means that the sounding being viewed is under the influence of convection and therefore is not representitive of the large-scale environment surrounding the storm.  When omega values become much larger than synoptic scale vertical motion values, users should take care to when interpreting the data.
 
-Parcel LCL, LFC, and EL are denoted on the right-hand side in green, yellow and purple, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The cyan and purple I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in `Thompson et al. 2007 <https://www.spc.noaa.gov/publications/thompson/effective.pdf>`_.
+Parcel LCL, LFC, and EL are denoted on the right-hand side in :green:`green`, :yellow:`yellow` and :purple:`purple`, respectively.  Levels where the environmental temperature are 0, -20, and -30 C are labeled in dark blue.  The :cyan:`cyan` and :purple:`purple` I-bars indicate the effective inflow layer and the layer with the maximum lapse rate between 2-6 km AGL.  Information about the effective inflow layer may be found in `Thompson et al. 2007 <https://www.spc.noaa.gov/publications/thompson/effective.pdf>`_.
 
 
 .. figure:: tutorial_imgs/effective_inflow.png

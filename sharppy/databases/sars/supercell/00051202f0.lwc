@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000512/0200F000    lwc 
+  LWC 000512/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          15.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.5 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 000512/0200F000    lwc 
+

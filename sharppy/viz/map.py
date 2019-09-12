@@ -228,7 +228,8 @@ class Mapper(object):
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
+                #b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
+                b = np.array(np.frombuffer(polystring,dtype='<f4'),'f8')
                 b.shape = (npts, 2)
 
                 if np.any(b[:, 0] > 180):
@@ -415,7 +416,6 @@ class MapWidget(QWidget):
        
         self.current_time = data_time
         getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
-        points = getPoints()
 
         if init:
             points = getPoints()
@@ -726,8 +726,10 @@ class MapWidget(QWidget):
 
     def _showLoading(self):
         self.load_readout.move(10, self.height() - 25)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
 
     def _hideLoading(self):
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):

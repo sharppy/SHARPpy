@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990729/2200F000    fvx 
+  FVX 990729/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   14 C 	5.6 C/km
 850-500mb   28 C	6.3 C/km
+
+----- Note -----
+Old Title:  RUC 990729/2200F000    fvx 
+

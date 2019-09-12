@@ -163,7 +163,7 @@ class Profile(object):
     def copy(cls, prof, strictQC=False, **kwargs):
         '''
             Copies a profile object.
-        '''            
+        ''' 
         new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC', 'missing' ])
 
         if prof.u is not None and prof.v is not None:
@@ -192,7 +192,7 @@ class Profile(object):
         snd_loc = (" " * (4 - len(self.location))) + self.location
 
         now = datetime.utcnow()
-        print(now, self.date)
+        #print(now, self.date)
         user = getpass.getuser()
         snd_file.write("%TITLE%\n")
         #snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
@@ -209,7 +209,6 @@ class Profile(object):
         snd_file.close()
 
     def checkDataIntegrity(self):
-
         if not qc_tools.isHGHTValid(self.hght):
             qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQualityException)
         if not qc_tools.isTMPCValid(self.tmpc):
@@ -952,6 +951,8 @@ class ConvectiveProfile(BasicProfile):
         wspd = utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])
         self.right_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.right_srh1km[0], utils.KTS2MS(wspd))
         self.left_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.left_srh1km[0], utils.KTS2MS(wspd))
+        self.sherbe = params.sherb(self, effective=True)
+        
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
             self.right_stp_cin = 0.0; self.left_stp_cin = 0.0
