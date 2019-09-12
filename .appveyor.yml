@@ -48,7 +48,7 @@ after_test:
 #  - "move dist\\SHARPpy.exe dist\\SHARPpy%ARCH%.exe"
 
 artifacts:
-  - path: "dist\\SHARPpy64.exe"
+  - path: "runsharp\\dist\\SHARPpy64.exe"
     name: binary
  
   - path: "*.png"
@@ -62,7 +62,7 @@ deploy:
   release: $(appveyor_repo_tag_name)
   auth_token:
     secure: DB6sQwYCM7Dhhy+mjPkMd6kclvw0Sc2wglTJxcTBQue63dtIQRNa1dz/aqJG7Ygc
-  artifact: "dist\\SHARPpy64.exe"
+  artifact: "runsharp\\dist\\SHARPpy64.exe"
   draft: true
   prerelease: true
   on:

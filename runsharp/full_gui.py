@@ -859,6 +859,9 @@ class Main(QMainWindow):
 
         self.show()
         self.raise_()
+        import time
+        time.sleep(3)
+        QPixmap.grabWidget(self).save('./screenshot.png', 'png')
 
     def createMenuBar(self):
         """
@@ -1191,8 +1194,8 @@ def main():
         win.close()
     else:
         main_win = Main()
+        #app.exec_()
         sys.exit(app.exec_())
-
 
 if __name__ == '__main__':
     main()
