@@ -16,6 +16,7 @@ dependencies:
   - python-dateutil 
   - pyinstaller
   - setuptools
+  - pip
   - pip:
     - sphinx-prompt
     - pydocstyle
