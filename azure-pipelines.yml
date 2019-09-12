@@ -8,19 +8,19 @@ strategy:
 
     linux-1280x1024:
       # Ubuntu 16.04
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-latest'
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
     mac-defaultres:
       # macOS 10.13
-      imageName: 'macos-10.13'
+      imageName: 'macos-latest'
       # screen_w: 1280
       # screen_h: 1024
       # screen_d: 16
     windows-1280x1024:
       # Windows Docker Container not Visual Studio 2017 on Windows Server 2016
-      imageName: 'vs2015-win2012r2' ##'vs2017-win2016'
+      imageName: 'windows-latest' #'vs2017-win2016' # 'vs2015-win2012r2' 
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
@@ -35,7 +35,9 @@ steps:
   displayName: Add conda to PATH
   condition: eq( variables['Agent.OS'], 'Linux')
 
-- bash: echo "##vso[task.prependpath]$CONDA/bin"
+- bash: |
+     echo "##vso[task.prependpath]$CONDA/bin"
+     sudo chown -R $USER $CONDA
   displayName: Add conda to PATH
   condition: eq( variables['Agent.OS'], 'Darwin')
 
