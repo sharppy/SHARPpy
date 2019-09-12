@@ -1,6 +1,7 @@
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
+import qtpy
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 #QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
@@ -86,7 +87,7 @@ logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
 logging.info('qtpy version: ' + str(qtpy.__version__))
 logging.info("Python version: " + str(platform.python_version()))
-logging.info("Qt version: " + str(PySide.QtCore.__version__))
+logging.info("Qt version: " + str(qtpy.QtCore.__version__))
 
 # from sharppy._version import __version__#, __version_name__
 
@@ -103,10 +104,9 @@ def versioning_info(include_sharppy=False):
     txt = ""
     if include_sharppy is True:
         txt += "SHARPpy version: " + str(__version__) + '\n'
-    txt += "PySide version: " + str(PySide.__version__) + '\n'
     txt += "Numpy version: " + str(np.__version__) + '\n'
     txt += "Python version: " + str(platform.python_version()) + '\n'
-    txt += "Qt version: " + str(PySide.QtCore.__version__)
+    txt += "PySide/Qt version: " + str(qtpy.QtCore.__version__)
     return txt 
 
 class crasher(object):
@@ -1179,12 +1179,12 @@ def main():
     #app.setAttribute(Qt.AA_UseHighDpiPixmaps)
 #
     #app.setStyle("fusion")
-    win = createWindow(args.file_names, collect=args.collect, close=args.close)
     if QApplication.instance() is None:
         app = QApplication([])
     else:
         app = QApplication.instance()
 
+    #win = createWindow(args.file_names, collect=args.collect, close=False)
     # Check to see if there's a newer version of SHARPpy on Github Releases
     latest = check_latest()
 
