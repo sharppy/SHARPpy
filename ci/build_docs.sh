@@ -15,6 +15,10 @@ cd ci/
 conda env create -f docs_env.yml
 source activate docs-env
 
+cd ..
+pip install -e .
+cd ci/
+
 echo "**************************************************************************************"
 echo "Step 1: Adding the SSH key ..."
 echo "**************************************************************************************"
