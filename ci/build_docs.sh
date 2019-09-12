@@ -5,11 +5,11 @@ set -e
 
 echo "Installing sphinx, etc. to build the documentation ..."
 cd "$TRAVIS_BUILD_DIR"
-conda install -q -c anaconda sphinx sphinx_rtd_theme 
-conda install -q -c conda-forge sphinx-gallery
-pip install sphinx-prompt
+
+# Swap out conda environments for one that supports building the documentation
 conda deactivate
-conda activate devel
+conda env create -f ci/docs_env.yml
+conda activate docs-env
 
 echo "Adding the SSH key ..."
 cd ci/
