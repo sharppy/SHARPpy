@@ -6,12 +6,13 @@ channels:
 dependencies:
   - python=3
   - numpy=1.15.*
-  - pyside2
+  - pyside2=5.13.*
   - sphinx
   - pytest
   - qtpy
-  - sphinx-gallery
   - sphinx_rtd_theme
+  #- sphinx-gallery
+  #Sphinx-Gallery removed because it requires matplotlib/pyqt and conflicts with pyside2's Qt version
   - requests
   - python-dateutil 
   - pyinstaller
