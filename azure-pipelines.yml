@@ -71,7 +71,7 @@ steps:
     xdpyinfo | grep dimensions # Check display dimensions
     python ci/screen.py # Check display dimensions as seen by PySide
     pytest -v --junitxml=junit/test-results.xml
-    #mv examples/data/14061619.png examples/data/14061619_linux.png
+    mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
 
@@ -89,11 +89,11 @@ steps:
     python ci/screen.py # Check display dimensions as seen by PySide
     pip install -e .
     sudo pytest -v --junitxml=junit/test-results.xml
-    #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
+    sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     #sudo chmod 777 dist/SHARPpy.app
-    cd runsharp
-    ls -lh dist
+    #cd runsharp
+    #ls -lh dist
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -111,7 +111,7 @@ steps:
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
     pip install -e .
     pytest -v --junitxml=junit/test-results.xml
-    #move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
     pyinstaller SHARPpy-win7-64.spec --log-level DEBUG
     cd ..
@@ -137,7 +137,7 @@ steps:
 # Zipping MacOS .app
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: runsharp/dist/SHARPpy.app
+    rootFolderOrFile: dist/SHARPpy.app
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/SHARPpy-osx-64.zip'
   displayName: "Zipping macOS .app"
