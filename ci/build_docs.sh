@@ -4,16 +4,20 @@
 set -e
 conda init bash
 
-echo "Installing sphinx, etc. to build the documentation ..."
+
+echo "**************************************************************************************"
+echo "Step 0: Installing sphinx, etc. to build the documentation ..."
+echo "**************************************************************************************"
 cd "$TRAVIS_BUILD_DIR"
 
 # Swap out conda environments for one that supports building the documentation
-source deactivate
-conda env create -f ci/docs_env.yml
-source activate docs-env
-
-echo "Adding the SSH key ..."
 cd ci/
+conda env create -f docs_env.yml
+conda activate docs-env
+
+echo "**************************************************************************************"
+echo "Step 1: Adding the SSH key ..."
+echo "**************************************************************************************"
 openssl aes-256-cbc -K $encrypted_08ee84f00b5d_key -iv $encrypted_08ee84f00b5d_iv -in deploy_key.enc -out deploy_key -d
 chmod 600 deploy_key
 eval `ssh-agent -s`
@@ -22,17 +26,23 @@ ssh-add deploy_key
 
 # Build the documentation
 cd ..
-echo "Building Docs"
+echo "**************************************************************************************"
+echo "Step 2: Building Docs"
+echo "**************************************************************************************"
 cd docs
 
 # Move the license and other stuff to the docs folder
-echo "Copying over some of the files to be included in the documentation ..."
+echo "**************************************************************************************"
+echo "Step 3: Copying over some of the files to be included in the documentation ..."
+echo "**************************************************************************************"
 cp ../LICENSE.rst ../docs/source/license.rst
 cp ../CONTRIBUTING.rst ../docs/source/contributing.rst
 cp ../CHANGELOG.rst ../docs/source/changelog.rst
 
 # Run sphinx
-echo "Running Sphinx ..."
+echo "**************************************************************************************"
+echo "Step 4: Running Sphinx ..."
+echo "**************************************************************************************"
 make html
 
 #echo "ENDING BUILD OF DOCS EARLY BECAUSE OF TESTING"
@@ -42,6 +52,9 @@ make html
 # secure token is available (aka in the ARM-DOE repository.
 #if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ $TRAVIS_SECURE_ENV_VARS == 'true' ]; then
 #if [[ $TRAVIS_SECURE_ENV_VARS == 'true' ]]; then
+echo "**************************************************************************************"
+echo "Step 5: Preparing built documentation to be uploaded to Github"
+echo "**************************************************************************************"
 cd build/html
 pwd
 git config --global user.email "sharppy-docs-bot@example.com"
@@ -73,6 +86,9 @@ ls -l
 git add --all .
 git add .nojekyll
 echo "ADDING FILES"
+echo "**************************************************************************************"
+echo "Step 6: Pushing documentation to Github Pages."
+echo "**************************************************************************************"
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 git push $SSH_REPO gh-pages
 
