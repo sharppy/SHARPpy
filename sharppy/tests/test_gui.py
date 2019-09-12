@@ -23,6 +23,7 @@ else:
     app = QtWidgets.QApplication.instance()
 
 #@pytest.mark.skipif(True, reason="DISPLAY not set")
+#@pytest.mark.skipif(True)
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")
 def test_insets():
     insets = [viz.fire.plotFire,
