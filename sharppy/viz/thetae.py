@@ -1,6 +1,6 @@
 import numpy as np
-from PySide import QtGui, QtCore
-from PySide.QtOpenGL import *
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtOpenGL import *
 import sharppy.sharptab as tab
 import sharppy.sharptab.utils as utils
 from sharppy.sharptab.constants import *
@@ -11,12 +11,12 @@ from sharppy.sharptab.constants import *
 __all__ = ['backgroundThetae', 'plotThetae']
 
 
-class backgroundThetae(QtGui.QFrame):
+class backgroundThetae(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot.
     Draws the background on a QPixmap.
     
-    Inherits a QtGui.QFrame Object
+    Inherits a QtWidgets.QFrame Object
     '''
     def __init__(self):
         super(backgroundThetae, self).__init__()

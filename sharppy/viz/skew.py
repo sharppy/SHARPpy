@@ -4,10 +4,11 @@ from sharppy.sharptab.constants import *
 from sharppy.sharptab.profile import Profile, create_profile
 from sharppy.viz.draggable import Draggable
 from sharppy.viz.barbs import drawBarb
-from PySide import QtGui, QtCore
-from PySide.QtGui import *
-from PySide.QtCore import *
-from PySide.QtOpenGL import *
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtWidgets import *
+from qtpy.QtOpenGL import *
 from utils.utils import total_seconds
 import logging
 
@@ -15,7 +16,7 @@ from datetime import datetime, timedelta
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
-class backgroundSkewT(QtGui.QWidget):
+class backgroundSkewT(QWidget):
     def __init__(self, plot_omega=False):
         super(backgroundSkewT, self).__init__()
         self.plot_omega = plot_omega
@@ -52,7 +53,7 @@ class backgroundSkewT(QtGui.QWidget):
         else:
             fsize = 7
             fsizet = 14
-        self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.003))
+        self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.006))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         #self.title_font.setBold(True)
         self.title_height = self.title_metrics.xHeight() + 5 + (self.hgt * 0.003)
@@ -465,7 +466,7 @@ class plotSkewT(backgroundSkewT):
         self.parcelmenu.addAction(pcl4)
         self.parcelmenu.setEnabled(False)
         self.popupmenu=QMenu("Cursor Type:")
-        ag = QtGui.QActionGroup(self, exclusive=True)
+        ag = QtWidgets.QActionGroup(self, exclusive=True)
 
         nocurs = QAction(self)
         nocurs.setText("No Cursor")

@@ -83,3 +83,6 @@ class SPCDecoder(Decoder):
         prof_coll.setMeta('base_time', time)
         return prof_coll
 
+#if __name__ == '__main__':
+#    import sys
+#    SPCDecoder(sys.argv[1])

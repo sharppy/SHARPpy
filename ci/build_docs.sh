@@ -8,6 +8,8 @@ cd "$TRAVIS_BUILD_DIR"
 conda install -q -c anaconda sphinx sphinx_rtd_theme 
 conda install -q -c conda-forge sphinx-gallery
 pip install sphinx-prompt
+conda deactivate
+conda activate devel
 
 echo "Adding the SSH key ..."
 cd ci/

@@ -1,6 +1,7 @@
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 class progress(QObject):
     _progress = Signal(int, int)

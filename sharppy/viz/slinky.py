@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
@@ -9,7 +9,7 @@ __all__ = ['backgroundSlinky', 'plotSlinky']
 ## Written by Greg Blumberg - CIMMS
 ## wblumberg@ou.edu
 
-class backgroundSlinky(QtGui.QFrame):
+class backgroundSlinky(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Storm Slinky.
     Draws onto a QPixmap.

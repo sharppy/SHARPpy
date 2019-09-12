@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
@@ -9,7 +9,7 @@ import platform
 
 __all__ = ['backgroundFire', 'plotFire']
 
-class backgroundFire(QtGui.QFrame):
+class backgroundFire(QtWidgets.QFrame):
     '''
     Handles drawing the background frame.
     '''

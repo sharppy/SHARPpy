@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.viz as viz
 import sharppy.viz.preferences as preferences
 from sharppy.io.spc_decoder import SPCDecoder
@@ -17,10 +17,10 @@ dec = SPCDecoder('examples/data/14061619.OAX')
 prof_coll = dec.getProfiles()
 prof = prof_coll.getCurrentProfs()['']
 
-if QtGui.QApplication.instance() is None:
-    app = QtGui.QApplication([])    
+if QtWidgets.QApplication.instance() is None:
+    app = QtWidgets.QApplication([])    
 else:
-    app = QtGui.QApplication.instance()
+    app = QtWidgets.QApplication.instance()
 
 #@pytest.mark.skipif(True, reason="DISPLAY not set")
 @pytest.mark.skipif("DISPLAY_AVAIL" in os.environ and os.environ["DISPLAY_AVAIL"] == 'NO', reason="DISPLAY not set")

@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import sharppy.databases.sars as sars
@@ -13,7 +13,7 @@ from datetime import datetime
 
 __all__ = ['backgroundAnalogues', 'plotAnalogues']
 
-class backgroundAnalogues(QtGui.QFrame):
+class backgroundAnalogues(QtWidgets.QFrame):
     '''
     Handles drawing the background frame for the
     SARS window.
@@ -21,7 +21,7 @@ class backgroundAnalogues(QtGui.QFrame):
     def __init__(self):
         ''' Calls the initUI function to initialize
             the background frame. Inherits from the
-            QtGui.QFrame Object.
+            QtWidgets.QFrame Object.
         '''
         super(backgroundAnalogues, self).__init__()
         self.initUI()

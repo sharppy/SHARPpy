@@ -8,19 +8,19 @@ strategy:
 
     linux-1280x1024:
       # Ubuntu 16.04
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-latest'
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
     mac-defaultres:
       # macOS 10.13
-      imageName: 'macos-10.13'
+      imageName: 'macos-latest'
       # screen_w: 1280
       # screen_h: 1024
       # screen_d: 16
     windows-1280x1024:
       # Windows Docker Container not Visual Studio 2017 on Windows Server 2016
-      imageName: 'vs2015-win2012r2' ##'vs2017-win2016'
+      imageName: 'windows-latest' #'vs2017-win2016' # 'vs2015-win2012r2' 
       screen_w: 1280
       screen_h: 1024
       screen_d: 16 
@@ -35,7 +35,9 @@ steps:
   displayName: Add conda to PATH
   condition: eq( variables['Agent.OS'], 'Linux')
 
-- bash: echo "##vso[task.prependpath]$CONDA/bin"
+- bash: |
+     echo "##vso[task.prependpath]$CONDA/bin"
+     sudo chown -R $USER $CONDA
   displayName: Add conda to PATH
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -68,8 +70,8 @@ steps:
     sleep 3 # give xvfb some time to start
     xdpyinfo | grep dimensions # Check display dimensions
     python ci/screen.py # Check display dimensions as seen by PySide
-    #pytest -v --junitxml=junit/test-results.xml
-    #mv examples/data/14061619.png examples/data/14061619_linux.png
+    pytest -v --junitxml=junit/test-results.xml
+    mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
 
@@ -86,13 +88,12 @@ steps:
     system_profiler SPDisplaysDataType | grep Resolution # Check display dimensions using OS tools
     python ci/screen.py # Check display dimensions as seen by PySide
     pip install -e .
-    #sudo pytest -v --junitxml=junit/test-results.xml
-    #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
-    cd runsharp
-    pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    sudo pytest -v --junitxml=junit/test-results.xml
+    sudo mv examples/data/14061619.png examples/data/14061619_mac.png
+    pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
     #sudo chmod 777 dist/SHARPpy.app
-    ls -lh dist
-    cd ..
+    #cd runsharp
+    #ls -lh dist
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -109,8 +110,8 @@ steps:
     python ci/screen.py
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
     pip install -e .
-    #pytest -v --junitxml=junit/test-results.xml
-    #move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    pytest -v --junitxml=junit/test-results.xml
+    move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
     pyinstaller SHARPpy-win7-64.spec --log-level DEBUG
     cd ..
@@ -136,7 +137,7 @@ steps:
 # Zipping MacOS .app
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: runsharp/dist/SHARPpy.app
+    rootFolderOrFile: dist/SHARPpy.app
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/SHARPpy-osx-64.zip'
   displayName: "Zipping macOS .app"

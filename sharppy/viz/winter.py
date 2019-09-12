@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
@@ -9,7 +9,7 @@ import platform
 
 __all__ = ['backgroundWinter', 'plotWinter']
 
-class backgroundWinter(QtGui.QFrame):
+class backgroundWinter(QtWidgets.QFrame):
     '''
     Handles drawing the background frame.
     '''

@@ -64,14 +64,16 @@ The Anaconda Python Distribution can be downloaded here: https://www.anaconda.co
 
 __Required Python Packages/Libraries:__
 
+Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
+
+* NumPy
+* qtpy
 * NumPy v1.15
-* PySide v1.2.4
+* PySide2
 * requests
 * python-dateutil
 
 Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
-
-    conda install -c conda-forge pyside=1.2.4 requests python-dateutil
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 

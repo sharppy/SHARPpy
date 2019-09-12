@@ -52,7 +52,7 @@ sphinx_gallery_conf = {
      'gallery_dirs': 'auto_examples',
 }
 
-#autodoc_mock_imports = ["numpy", "PySide"]
+#autodoc_mock_imports = ["numpy", "qtpy"]
 
 napoleon_google_docstring = False
 napolean_numpy_docstring = True

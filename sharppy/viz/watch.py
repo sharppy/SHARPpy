@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 
@@ -9,7 +9,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundWatch', 'plotWatch']
 
-class backgroundWatch(QtGui.QFrame):
+class backgroundWatch(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the watch plot frame
     '''

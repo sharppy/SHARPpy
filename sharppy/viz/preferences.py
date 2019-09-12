@@ -1,6 +1,7 @@
 
-from PySide.QtCore import *
-from PySide.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtGui import *
+from qtpy.QtWidgets import *
 
 from collections import OrderedDict
 import numpy as np

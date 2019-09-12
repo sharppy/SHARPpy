@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
@@ -11,7 +11,7 @@ import platform
 
 __all__ = ['backgroundSHIP', 'plotSHIP']
 
-class backgroundSHIP(QtGui.QFrame):
+class backgroundSHIP(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''

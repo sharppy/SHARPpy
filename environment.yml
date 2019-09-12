@@ -1,21 +1,23 @@
 name: devel
 channels:
-  - conda-forge/label/testing
   - conda-forge
+  - conda-forge/label/testing
   - anaconda
 dependencies:
   - python=3
   - numpy=1.15.*
-  - pyside
+  - pyside2=5.13.*
   - sphinx
   - pytest
-  - sphinx-gallery
+  - qtpy
   - sphinx_rtd_theme
+  #- sphinx-gallery
+  #Sphinx-Gallery removed because it requires matplotlib/pyqt and conflicts with pyside2's Qt version
   - requests
   - python-dateutil 
   - pyinstaller
   - setuptools
+  - pip
   - pip:
     - sphinx-prompt
     - pydocstyle
-

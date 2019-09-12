@@ -24,6 +24,8 @@ https://github.com/sharppy/SHARPpy/releases/
 
 Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
 
+.. note:: The pre-compile binaries are sometimes difficult to keep up to date, so for more recent versions of SHARPpy, you may want to look into the next section, which is about installing the program via package managers. 
+
 Installing using package managers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -59,7 +61,15 @@ install the required packages manually.  These instructions assume that you have
 *Required Python Packages/Libraries:*
 
 * NumPy
-* PySide
+* qtpy
+
+Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
+
+.. prompt:: bash
+
+    conda install -c conda-forge pyside2
+
+* PySide2
 * requests
 * python-dateutil
 
@@ -67,7 +77,8 @@ Since SHARPpy requires these packages, you will need to install them.  If you ch
 
 .. prompt:: bash
 
-    conda install -c conda-forge pyside=1.2.4 requests python-dateutil
+    conda install -c conda-forge requests python-dateutil
+>>>>>>> andover
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 

@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 import sharppy.sharptab.utils as utils
 import sharppy.databases.inset_data as inset_data
@@ -11,7 +11,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundVROT', 'plotVROT']
 
-class backgroundVROT(QtGui.QFrame):
+class backgroundVROT(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''
