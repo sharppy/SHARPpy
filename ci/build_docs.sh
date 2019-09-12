@@ -8,9 +8,9 @@ echo "Installing sphinx, etc. to build the documentation ..."
 cd "$TRAVIS_BUILD_DIR"
 
 # Swap out conda environments for one that supports building the documentation
-conda deactivate
+source deactivate
 conda env create -f ci/docs_env.yml
-conda activate docs-env
+source activate docs-env
 
 echo "Adding the SSH key ..."
 cd ci/
