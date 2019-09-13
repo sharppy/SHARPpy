@@ -66,10 +66,9 @@ __Required Python Packages/Libraries:__
 
 Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
 
-* NumPy
 * qtpy
 * NumPy v1.15
-* PySide2
+* PySide2 v5.13
 * requests
 * python-dateutil
 
