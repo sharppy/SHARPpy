@@ -90,7 +90,9 @@ steps:
     pip install -e .
     sudo pytest -v --junitxml=junit/test-results.xml
     sudo mv examples/data/14061619.png examples/data/14061619_mac.png
-    pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    cd runsharp
+    pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    cd ..
     #sudo chmod 777 dist/SHARPpy.app
     #cd runsharp
     #ls -lh dist
@@ -137,7 +139,7 @@ steps:
 # Zipping MacOS .app
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: dist/SHARPpy.app
+    rootFolderOrFile: runsharp/dist/SHARPpy.app
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/SHARPpy-osx-64.zip'
   displayName: "Zipping macOS .app"

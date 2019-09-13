@@ -94,7 +94,6 @@ echo "ADDING FILES"
 echo "**************************************************************************************"
 echo "Step 6: Pushing documentation to Github Pages."
 echo "**************************************************************************************"
-echo -e “Host *\n\tStrictHostKeyChecking no\n” >> ~/.ssh/config
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 git push $SSH_REPO gh-pages --force
 
