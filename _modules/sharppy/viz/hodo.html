@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.hodo &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  <title>sharppy.viz.hodo &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.50.g22e3563.dirty
+                0+untagged.85.gb812657.dirty
               </div>
             
           
@@ -160,21 +160,22 @@
             
   <h1>Source code for sharppy.viz.hodo</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
 <span class="kn">from</span> <span class="nn">sharppy.viz.draggable</span> <span class="k">import</span> <span class="n">Draggable</span>
 <span class="kn">from</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">import</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">create_profile</span>
 <span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundHodo&#39;</span><span class="p">,</span> <span class="s1">&#39;plotHodo&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="backgroundHodo"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.hodo.backgroundHodo">[docs]</a><span class="k">class</span> <span class="nc">backgroundHodo</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="backgroundHodo"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.hodo.backgroundHodo">[docs]</a><span class="k">class</span> <span class="nc">backgroundHodo</span><span class="p">(</span><span class="n">QFrame</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Handles the plotting of the backgroun frame onto</span>
-<span class="sd">    a QPixmap. Inherits from the QtGui.QFrame object.</span>
+<span class="sd">    a QPixmap. Inherits from the QtWidgets.QFrame object.</span>
 <span class="sd">    Unlike most plotting classes in SHARPPy, this class</span>
 <span class="sd">    will not call the function to draw the background.</span>
 <span class="sd">    This is so that the background can be redrawn when </span>
@@ -548,7 +549,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">customContextMenuRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showCursorMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">popupmenu</span><span class="o">=</span><span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;Cursor Type:&quot;</span><span class="p">)</span>
-        <span class="n">ag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ag</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">readout_hght</span> <span class="o">=</span> <span class="o">-</span><span class="mf">999.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">readout_visible</span> <span class="o">=</span> <span class="kc">False</span>
@@ -569,7 +570,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">popupmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">popupmenu</span><span class="o">.</span><span class="n">addSeparator</span><span class="p">()</span>
-        <span class="n">ag2</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ag2</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">norm</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">norm</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Normal&quot;</span><span class="p">)</span>

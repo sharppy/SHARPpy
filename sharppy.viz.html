@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz package &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  <title>sharppy.viz package &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.50.g22e3563.dirty
+                0+untagged.85.gb812657.dirty
               </div>
             
           
@@ -173,7 +173,7 @@ add in new ProfileCollections.</p>
 <span class="target" id="module-sharppy.viz.SPCWindow"></span><dl class="class">
 <dt id="sharppy.viz.SPCWindow.SPCWidget">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.SPCWindow.</code><code class="sig-name descname">SPCWidget</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p>This will create the full SPC window, handle the organization
 of the insets, and handle all click/key events and features.</p>
 <dl class="method">
@@ -193,7 +193,7 @@ of the insets, and handle all click/key events and features.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.SPCWindow.SPCWidget.closeEvent">
-<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.closeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QCloseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWidget.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.closeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -276,7 +276,7 @@ This gets initially called by __init__
 
 <dl class="attribute">
 <dt id="sharppy.viz.SPCWindow.SPCWidget.paths_cfg">
-<code class="sig-name descname">paths_cfg</code><em class="property"> = {('paths', 'save_img'): '/home/travis', ('paths', 'save_txt'): '/home/travis'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.paths_cfg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paths_cfg</code><em class="property"> = {('paths', 'save_img'): '/Users/travis', ('paths', 'save_txt'): '/Users/travis'}</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.paths_cfg" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -326,7 +326,7 @@ This gets initially called by __init__
 
 <dl class="attribute">
 <dt id="sharppy.viz.SPCWindow.SPCWidget.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -374,7 +374,7 @@ This gets initially called by __init__
 <dl class="class">
 <dt id="sharppy.viz.SPCWindow.SPCWindow">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.SPCWindow.</code><code class="sig-name descname">SPCWindow</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QMainWindow</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QMainWindow</span></code></p>
 <dl class="method">
 <dt id="sharppy.viz.SPCWindow.SPCWindow.addProfileCollection">
 <code class="sig-name descname">addProfileCollection</code><span class="sig-paren">(</span><em class="sig-param">prof_col</em>, <em class="sig-param">focus=True</em>, <em class="sig-param">check_integrity=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.addProfileCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.addProfileCollection" title="Permalink to this definition">¶</a></dt>
@@ -382,7 +382,7 @@ This gets initially called by __init__
 
 <dl class="method">
 <dt id="sharppy.viz.SPCWindow.SPCWindow.closeEvent">
-<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QCloseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -392,7 +392,7 @@ This gets initially called by __init__
 
 <dl class="attribute">
 <dt id="sharppy.viz.SPCWindow.SPCWindow.closed">
-<code class="sig-name descname">closed</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">closed</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.closed" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -422,7 +422,7 @@ This gets initially called by __init__
 
 <dl class="method">
 <dt id="sharppy.viz.SPCWindow.SPCWindow.keyPressEvent">
-<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QKeyEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/SPCWindow.html#SPCWindow.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.keyPressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -447,7 +447,7 @@ This gets initially called by __init__
 
 <dl class="attribute">
 <dt id="sharppy.viz.SPCWindow.SPCWindow.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.SPCWindow.SPCWindow.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -469,7 +469,7 @@ This gets initially called by __init__
 <span class="target" id="module-sharppy.viz.advection"></span><dl class="class">
 <dt id="sharppy.viz.advection.backgroundAdvection">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.advection.</code><code class="sig-name descname">backgroundAdvection</code><a class="reference internal" href="_modules/sharppy/viz/advection.html#backgroundAdvection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.advection.backgroundAdvection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.advection.backgroundAdvection.adv_to_pix">
@@ -514,7 +514,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.advection.backgroundAdvection.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.advection.backgroundAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.advection.backgroundAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -561,7 +561,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.advection.plotAdvection.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.advection.plotAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.advection.plotAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -573,7 +573,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.analogues"></span><dl class="class">
 <dt id="sharppy.viz.analogues.backgroundAnalogues">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.analogues.</code><code class="sig-name descname">backgroundAnalogues</code><a class="reference internal" href="_modules/sharppy/viz/analogues.html#backgroundAnalogues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.backgroundAnalogues" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the background frame for the
 SARS window.</p>
 <dl class="method">
@@ -605,7 +605,7 @@ and is not rendered visible in this function.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.analogues.backgroundAnalogues.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.backgroundAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.backgroundAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -644,7 +644,7 @@ supercell matches.</p></li>
 
 <dl class="method">
 <dt id="sharppy.viz.analogues.plotAnalogues.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -700,12 +700,12 @@ matches onto the QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.analogues.plotAnalogues.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.analogues.plotAnalogues.updatematch">
-<code class="sig-name descname">updatematch</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.updatematch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updatematch</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.analogues.plotAnalogues.updatematch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the non-background plotting
 of the SARS window. This inherits a
 backgroundAnalogues Object that
@@ -755,7 +755,7 @@ Primarily used in the skew.py and hodo.py files to handle the
 click and drag feature of the sounding data.</p>
 <span class="target" id="module-sharppy.viz.draggable"></span><dl class="class">
 <dt id="sharppy.viz.draggable.Draggable">
-<em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.draggable.</code><code class="sig-name descname">Draggable</code><span class="sig-paren">(</span><em class="sig-param">x_obj</em>, <em class="sig-param">y_obj</em>, <em class="sig-param">background</em>, <em class="sig-param">cutoff=5</em>, <em class="sig-param">lock_dim=None</em>, <em class="sig-param">line_color=PySide.QtGui.QColor.fromRgbF(1.000000</em>, <em class="sig-param">1.000000</em>, <em class="sig-param">1.000000</em>, <em class="sig-param">1.000000)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/draggable.html#Draggable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.draggable.Draggable" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.draggable.</code><code class="sig-name descname">Draggable</code><span class="sig-paren">(</span><em class="sig-param">x_obj</em>, <em class="sig-param">y_obj</em>, <em class="sig-param">background</em>, <em class="sig-param">cutoff=5</em>, <em class="sig-param">lock_dim=None</em>, <em class="sig-param">line_color=PySide2.QtGui.QColor.fromRgbF(1.000000</em>, <em class="sig-param">1.000000</em>, <em class="sig-param">1.000000</em>, <em class="sig-param">1.000000)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/draggable.html#Draggable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.draggable.Draggable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The Draggable class implements low-level clicking and dragging on widgets.</p>
 <dl class="method">
@@ -839,7 +839,7 @@ y_obj:  y coordinate(s) in pixesl of the new object</p>
 <span class="target" id="module-sharppy.viz.ensemble"></span><dl class="class">
 <dt id="sharppy.viz.ensemble.backgroundENS">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.ensemble.</code><code class="sig-name descname">backgroundENS</code><a class="reference internal" href="_modules/sharppy/viz/ensemble.html#backgroundENS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ensemble.backgroundENS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.ensemble.backgroundENS.draw_frame">
@@ -872,7 +872,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.ensemble.backgroundENS.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ensemble.backgroundENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ensemble.backgroundENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -912,7 +912,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.ensemble.plotENS.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ensemble.html#plotENS.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ensemble.plotENS.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ensemble.html#plotENS.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ensemble.plotENS.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -954,7 +954,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.ensemble.plotENS.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ensemble.plotENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ensemble.plotENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -966,7 +966,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.fire"></span><dl class="class">
 <dt id="sharppy.viz.fire.backgroundFire">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.fire.</code><code class="sig-name descname">backgroundFire</code><a class="reference internal" href="_modules/sharppy/viz/fire.html#backgroundFire"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.fire.backgroundFire" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the background frame.</p>
 <dl class="method">
 <dt id="sharppy.viz.fire.backgroundFire.draw_frame">
@@ -993,7 +993,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.fire.backgroundFire.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.fire.backgroundFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.fire.backgroundFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1059,7 +1059,7 @@ Haines Index elevations</p>
 
 <dl class="method">
 <dt id="sharppy.viz.fire.plotFire.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/fire.html#plotFire.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.fire.plotFire.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/fire.html#plotFire.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.fire.plotFire.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1086,7 +1086,7 @@ Haines Index elevations</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.fire.plotFire.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.fire.plotFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.fire.plotFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1098,7 +1098,7 @@ Haines Index elevations</p>
 <span class="target" id="module-sharppy.viz.generic"></span><dl class="class">
 <dt id="sharppy.viz.generic.backgroundGeneric">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.generic.</code><code class="sig-name descname">backgroundGeneric</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/generic.html#backgroundGeneric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>A generic class for drawing the background of a widget.</p>
 <dl class="method">
 <dt id="sharppy.viz.generic.backgroundGeneric.draw_frame">
@@ -1220,7 +1220,7 @@ to re-generate the necessary variables.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.generic.backgroundGeneric.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.generic.backgroundGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1324,7 +1324,7 @@ to draw on the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.generic.plotGeneric.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.generic.plotGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.generic.plotGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1336,9 +1336,9 @@ to draw on the frame.</p>
 <span class="target" id="module-sharppy.viz.hodo"></span><dl class="class">
 <dt id="sharppy.viz.hodo.backgroundHodo">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.hodo.</code><code class="sig-name descname">backgroundHodo</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#backgroundHodo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles the plotting of the backgroun frame onto
-a QPixmap. Inherits from the QtGui.QFrame object.
+a QPixmap. Inherits from the QtWidgets.QFrame object.
 Unlike most plotting classes in SHARPPy, this class
 will not call the function to draw the background.
 This is so that the background can be redrawn when
@@ -1445,7 +1445,7 @@ QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.backgroundHodo.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.backgroundHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1576,17 +1576,17 @@ class that plots the background frame onto a QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.modified">
-<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.modified" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.modified_vector">
-<code class="sig-name descname">modified_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.modified_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.modified_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1615,7 +1615,7 @@ Used to set the storm motion vector.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.hodo.plotHodo.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1642,12 +1642,12 @@ Used to set the storm motion vector.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.reset">
-<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.reset_vector">
-<code class="sig-name descname">reset_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.reset_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.reset_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1723,12 +1723,12 @@ Used to set the storm motion vector.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.hodo.plotHodo.toggle_vector">
-<code class="sig-name descname">toggle_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.toggle_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">toggle_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.hodo.plotHodo.toggle_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1756,7 +1756,7 @@ Used to set the storm motion vector.</p>
 <span class="target" id="module-sharppy.viz.kinematics"></span><dl class="class">
 <dt id="sharppy.viz.kinematics.backgroundKinematics">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.kinematics.</code><code class="sig-name descname">backgroundKinematics</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/kinematics.html#backgroundKinematics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.kinematics.backgroundKinematics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the background frame.</p>
 <dl class="method">
 <dt id="sharppy.viz.kinematics.backgroundKinematics.draw_frame">
@@ -1783,7 +1783,7 @@ Used to set the storm motion vector.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.kinematics.backgroundKinematics.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.kinematics.backgroundKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.kinematics.backgroundKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1813,7 +1813,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.kinematics.plotKinematics.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/kinematics.html#plotKinematics.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.kinematics.plotKinematics.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/kinematics.html#plotKinematics.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.kinematics.plotKinematics.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1845,7 +1845,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.kinematics.plotKinematics.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.kinematics.plotKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.kinematics.plotKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1857,10 +1857,10 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.map"></span><dl class="class">
 <dt id="sharppy.viz.map.MapWidget">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.map.</code><code class="sig-name descname">MapWidget</code><span class="sig-paren">(</span><em class="sig-param">data_source</em>, <em class="sig-param">init_time</em>, <em class="sig-param">async_object</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <dl class="attribute">
 <dt id="sharppy.viz.map.MapWidget.clicked">
-<code class="sig-name descname">clicked</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.map.MapWidget.clicked" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clicked</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.map.MapWidget.clicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1900,32 +1900,32 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.keyPressEvent">
-<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QKeyEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.keyPressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.mouseMoveEvent">
-<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1935,7 +1935,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.resizeEvent">
-<code class="sig-name descname">resizeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.resizeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resizeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QResizeEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1960,12 +1960,12 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.map.MapWidget.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.map.MapWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.map.MapWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.map.MapWidget.wheelEvent">
-<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QWheelEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.map.MapWidget.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1976,7 +1976,7 @@ in the frame.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="attribute">
 <dt id="sharppy.viz.map.Mapper.data_dir">
-<code class="sig-name descname">data_dir</code><em class="property"> = '/home/travis/build/sharppy/SHARPpy/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.map.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data_dir</code><em class="property"> = '/Users/travis/build/sharppy/SHARPpy/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.map.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2038,7 +2038,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.preferences"></span><dl class="class">
 <dt id="sharppy.viz.preferences.ColorPreview">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.preferences.</code><code class="sig-name descname">ColorPreview</code><span class="sig-paren">(</span><em class="sig-param">styles</em>, <em class="sig-param">default='standard'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#ColorPreview"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <dl class="method">
 <dt id="sharppy.viz.preferences.ColorPreview.changeImage">
 <code class="sig-name descname">changeImage</code><span class="sig-paren">(</span><em class="sig-param">img_index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#ColorPreview.changeImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview.changeImage" title="Permalink to this definition">¶</a></dt>
@@ -2046,12 +2046,12 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.preferences.ColorPreview.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#ColorPreview.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#ColorPreview.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.preferences.ColorPreview.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.ColorPreview.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2059,7 +2059,7 @@ in the frame.</p>
 <dl class="class">
 <dt id="sharppy.viz.preferences.ColorSwatch">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.preferences.</code><code class="sig-name descname">ColorSwatch</code><span class="sig-paren">(</span><em class="sig-param">color</em>, <em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#ColorSwatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.ColorSwatch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p>A color swatch widget for displaying and selecting colors.</p>
 <dl class="method">
 <dt id="sharppy.viz.preferences.ColorSwatch.enterEvent">
@@ -2106,7 +2106,7 @@ new_color:  A QColor containing the new color.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.preferences.ColorSwatch.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.ColorSwatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.ColorSwatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2114,7 +2114,7 @@ new_color:  A QColor containing the new color.</p>
 <dl class="class">
 <dt id="sharppy.viz.preferences.PrefDialog">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.preferences.</code><code class="sig-name descname">PrefDialog</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/preferences.html#PrefDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.preferences.PrefDialog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p>The preferences dialog box for SHARPpy.</p>
 <dl class="method">
 <dt id="sharppy.viz.preferences.PrefDialog.applyChanges">
@@ -2137,7 +2137,7 @@ config: A Config object containing the configuration.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.preferences.PrefDialog.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.PrefDialog.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.preferences.PrefDialog.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2149,7 +2149,7 @@ config: A Config object containing the configuration.</p>
 <span class="target" id="module-sharppy.viz.ship"></span><dl class="class">
 <dt id="sharppy.viz.ship.backgroundSHIP">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.ship.</code><code class="sig-name descname">backgroundSHIP</code><a class="reference internal" href="_modules/sharppy/viz/ship.html#backgroundSHIP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ship.backgroundSHIP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.ship.backgroundSHIP.draw_frame">
@@ -2182,7 +2182,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.ship.backgroundSHIP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ship.backgroundSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ship.backgroundSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2207,7 +2207,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.ship.plotSHIP.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ship.html#plotSHIP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ship.plotSHIP.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ship.html#plotSHIP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.ship.plotSHIP.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2239,7 +2239,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.ship.plotSHIP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ship.plotSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.ship.plotSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2251,7 +2251,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.skew"></span><dl class="class">
 <dt id="sharppy.viz.skew.backgroundSkewT">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.skew.</code><code class="sig-name descname">backgroundSkewT</code><span class="sig-paren">(</span><em class="sig-param">plot_omega=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#backgroundSkewT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <dl class="method">
 <dt id="sharppy.viz.skew.backgroundSkewT.draw_dry_adiabat">
 <code class="sig-name descname">draw_dry_adiabat</code><span class="sig-paren">(</span><em class="sig-param">theta</em>, <em class="sig-param">qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#backgroundSkewT.draw_dry_adiabat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT.draw_dry_adiabat" title="Permalink to this definition">¶</a></dt>
@@ -2331,7 +2331,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.backgroundSkewT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2343,7 +2343,7 @@ to an X pixel.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.backgroundSkewT.wheelEvent">
-<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#backgroundSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QWheelEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#backgroundSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.backgroundSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2366,17 +2366,17 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.closeEvent">
-<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.closeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QCloseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.closeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.cursor_move">
-<code class="sig-name descname">cursor_move</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.cursor_move" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cursor_move</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.cursor_move" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.cursor_toggle">
-<code class="sig-name descname">cursor_toggle</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.cursor_toggle" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cursor_toggle</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.cursor_toggle" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2397,7 +2397,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.drawTrace">
-<code class="sig-name descname">drawTrace</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">color</em>, <em class="sig-param">qp</em>, <em class="sig-param">width=3</em>, <em class="sig-param">style=PySide.QtCore.Qt.PenStyle.SolidLine</em>, <em class="sig-param">p=None</em>, <em class="sig-param">stdev=None</em>, <em class="sig-param">label=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.drawTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.drawTrace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">drawTrace</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">color</em>, <em class="sig-param">qp</em>, <em class="sig-param">width=3</em>, <em class="sig-param">style=PySide2.QtCore.Qt.PenStyle.SolidLine</em>, <em class="sig-param">p=None</em>, <em class="sig-param">stdev=None</em>, <em class="sig-param">label=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.drawTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.drawTrace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw an environmental trace.</p>
 </dd></dl>
 
@@ -2471,7 +2471,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.modified">
-<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.modified" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2481,17 +2481,17 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.mouseMoveEvent">
-<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2501,12 +2501,12 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.parcel">
-<code class="sig-name descname">parcel</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.parcel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parcel</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.parcel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2517,7 +2517,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.reset">
-<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2583,7 +2583,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.skew.plotSkewT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2593,7 +2593,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.skew.plotSkewT.wheelEvent">
-<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QWheelEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.skew.plotSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2605,7 +2605,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.slinky"></span><dl class="class">
 <dt id="sharppy.viz.slinky.backgroundSlinky">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.slinky.</code><code class="sig-name descname">backgroundSlinky</code><a class="reference internal" href="_modules/sharppy/viz/slinky.html#backgroundSlinky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.slinky.backgroundSlinky" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Storm Slinky.
 Draws onto a QPixmap.</p>
 <dl class="method">
@@ -2655,7 +2655,7 @@ Draws onto a QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.slinky.backgroundSlinky.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.slinky.backgroundSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.slinky.backgroundSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2764,7 +2764,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.slinky.plotSlinky.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.slinky.plotSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2776,7 +2776,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.speed"></span><dl class="class">
 <dt id="sharppy.viz.speed.backgroundSpeed">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.speed.</code><code class="sig-name descname">backgroundSpeed</code><a class="reference internal" href="_modules/sharppy/viz/speed.html#backgroundSpeed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.speed.backgroundSpeed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the plot background.</p>
 <dl class="method">
 <dt id="sharppy.viz.speed.backgroundSpeed.draw_frame">
@@ -2822,7 +2822,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.speed.backgroundSpeed.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.speed.backgroundSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.speed.backgroundSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2847,7 +2847,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.speed.plotSpeed.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/speed.html#plotSpeed.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.speed.plotSpeed.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/speed.html#plotSpeed.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.speed.plotSpeed.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2874,7 +2874,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.speed.plotSpeed.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.speed.plotSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.speed.plotSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -2886,7 +2886,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.srwinds"></span><dl class="class">
 <dt id="sharppy.viz.srwinds.backgroundWinds">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.srwinds.</code><code class="sig-name descname">backgroundWinds</code><a class="reference internal" href="_modules/sharppy/viz/srwinds.html#backgroundWinds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles the plotting of the frame boarders and ticks.
 Draws the frame onto a QPixmap.</p>
 <dl class="method">
@@ -2970,7 +2970,7 @@ Draws the frame onto a QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.srwinds.backgroundWinds.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.srwinds.backgroundWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3048,7 +3048,7 @@ QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.srwinds.plotWinds.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.srwinds.plotWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.srwinds.plotWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3060,7 +3060,7 @@ QPixmap.</p>
 <span class="target" id="module-sharppy.viz.stp"></span><dl class="class">
 <dt id="sharppy.viz.stp.backgroundSTP">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.stp.</code><code class="sig-name descname">backgroundSTP</code><a class="reference internal" href="_modules/sharppy/viz/stp.html#backgroundSTP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stp.backgroundSTP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the STP plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.stp.backgroundSTP.draw_frame">
@@ -3088,7 +3088,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.stp.backgroundSTP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stp.backgroundSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stp.backgroundSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3143,7 +3143,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.stp.plotSTP.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stp.html#plotSTP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stp.plotSTP.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stp.html#plotSTP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stp.plotSTP.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3175,7 +3175,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.stp.plotSTP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stp.plotSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stp.plotSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3197,7 +3197,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.stpef"></span><dl class="class">
 <dt id="sharppy.viz.stpef.backgroundSTPEF">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.stpef.</code><code class="sig-name descname">backgroundSTPEF</code><a class="reference internal" href="_modules/sharppy/viz/stpef.html#backgroundSTPEF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stpef.backgroundSTPEF" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.stpef.backgroundSTPEF.draw_frame">
@@ -3235,7 +3235,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.stpef.backgroundSTPEF.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stpef.backgroundSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stpef.backgroundSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3265,7 +3265,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.stpef.plotSTPEF.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stpef.html#plotSTPEF.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stpef.plotSTPEF.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stpef.html#plotSTPEF.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.stpef.plotSTPEF.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3297,7 +3297,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.stpef.plotSTPEF.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stpef.plotSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.stpef.plotSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3309,9 +3309,9 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.thermo"></span><dl class="class">
 <dt id="sharppy.viz.thermo.backgroundText">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.thermo.</code><code class="sig-name descname">backgroundText</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#backgroundText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.backgroundText" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the background frame onto a QPixmap.
-Inherits a QtGui.QFrame Object.</p>
+Inherits a QtWidgets.QFrame Object.</p>
 <dl class="method">
 <dt id="sharppy.viz.thermo.backgroundText.draw_frame">
 <code class="sig-name descname">draw_frame</code><span class="sig-paren">(</span><em class="sig-param">qp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#backgroundText.draw_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.backgroundText.draw_frame" title="Permalink to this definition">¶</a></dt>
@@ -3341,7 +3341,7 @@ the QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.thermo.backgroundText.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.backgroundText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.backgroundText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3392,12 +3392,12 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.thermo.plotText.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.thermo.plotText.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thermo.plotText.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3451,12 +3451,12 @@ This is where the actual data gets plotted/drawn.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.thermo.plotText.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.plotText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.plotText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.thermo.plotText.updatepcl">
-<code class="sig-name descname">updatepcl</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.plotText.updatepcl" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updatepcl</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.thermo.plotText.updatepcl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles plotting the indices in the frame.
 Inherits a backgroundText Object that contains
 a QPixmap with the frame drawn on it. All drawing
@@ -3473,10 +3473,10 @@ gets rendered by the paintEvent function.</p>
 <span class="target" id="module-sharppy.viz.thetae"></span><dl class="class">
 <dt id="sharppy.viz.thetae.backgroundThetae">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.thetae.</code><code class="sig-name descname">backgroundThetae</code><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot.
 Draws the background on a QPixmap.</p>
-<p>Inherits a QtGui.QFrame Object</p>
+<p>Inherits a QtWidgets.QFrame Object</p>
 <dl class="method">
 <dt id="sharppy.viz.thetae.backgroundThetae.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thetae.html#backgroundThetae.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.clear" title="Permalink to this definition">¶</a></dt>
@@ -3560,7 +3560,7 @@ the QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.thetae.backgroundThetae.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thetae.backgroundThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3634,7 +3634,7 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.thetae.plotThetae.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thetae.plotThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.thetae.plotThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3646,7 +3646,7 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 <span class="target" id="module-sharppy.viz.vrot"></span><dl class="class">
 <dt id="sharppy.viz.vrot.backgroundVROT">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.vrot.</code><code class="sig-name descname">backgroundVROT</code><a class="reference internal" href="_modules/sharppy/viz/vrot.html#backgroundVROT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.backgroundVROT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the Theta-E plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.vrot.backgroundVROT.draw_frame">
@@ -3684,7 +3684,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.vrot.backgroundVROT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.vrot.backgroundVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.vrot.backgroundVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3718,7 +3718,7 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.vrot.plotVROT.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3729,7 +3729,7 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.vrot.plotVROT.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3756,7 +3756,7 @@ plots the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.vrot.plotVROT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.vrot.plotVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3768,7 +3768,7 @@ plots the frame.</p>
 <span class="target" id="module-sharppy.viz.watch"></span><dl class="class">
 <dt id="sharppy.viz.watch.backgroundWatch">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.watch.</code><code class="sig-name descname">backgroundWatch</code><a class="reference internal" href="_modules/sharppy/viz/watch.html#backgroundWatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.watch.backgroundWatch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Draw the background frame and lines for the watch plot frame</p>
 <dl class="method">
 <dt id="sharppy.viz.watch.backgroundWatch.draw_frame">
@@ -3795,7 +3795,7 @@ qp: QtGui.QPainter object</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.watch.backgroundWatch.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.watch.backgroundWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.watch.backgroundWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3847,7 +3847,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.watch.plotWatch.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.watch.plotWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.watch.plotWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3859,7 +3859,7 @@ in the frame.</p>
 <span class="target" id="module-sharppy.viz.winter"></span><dl class="class">
 <dt id="sharppy.viz.winter.backgroundWinter">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.winter.</code><code class="sig-name descname">backgroundWinter</code><a class="reference internal" href="_modules/sharppy/viz/winter.html#backgroundWinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.winter.backgroundWinter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QFrame</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFrame</span></code></p>
 <p>Handles drawing the background frame.</p>
 <dl class="method">
 <dt id="sharppy.viz.winter.backgroundWinter.draw_frame">
@@ -3886,7 +3886,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.winter.backgroundWinter.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.winter.backgroundWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.winter.backgroundWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3936,7 +3936,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.winter.plotWinter.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/winter.html#plotWinter.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.winter.plotWinter.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/winter.html#plotWinter.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.winter.plotWinter.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3963,7 +3963,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.winter.plotWinter.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.winter.plotWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.winter.plotWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -3989,17 +3989,17 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.closeEvent">
-<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.closeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">closeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QCloseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.closeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.closeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.cursor_move">
-<code class="sig-name descname">cursor_move</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.cursor_move" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cursor_move</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.cursor_move" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.cursor_toggle">
-<code class="sig-name descname">cursor_toggle</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.cursor_toggle" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cursor_toggle</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.cursor_toggle" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4020,7 +4020,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.drawTrace">
-<code class="sig-name descname">drawTrace</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">color</em>, <em class="sig-param">qp</em>, <em class="sig-param">width=3</em>, <em class="sig-param">style=PySide.QtCore.Qt.PenStyle.SolidLine</em>, <em class="sig-param">p=None</em>, <em class="sig-param">stdev=None</em>, <em class="sig-param">label=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.drawTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.drawTrace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">drawTrace</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">color</em>, <em class="sig-param">qp</em>, <em class="sig-param">width=3</em>, <em class="sig-param">style=PySide2.QtCore.Qt.PenStyle.SolidLine</em>, <em class="sig-param">p=None</em>, <em class="sig-param">stdev=None</em>, <em class="sig-param">label=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.drawTrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.drawTrace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw an environmental trace.</p>
 </dd></dl>
 
@@ -4094,7 +4094,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.modified">
-<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.modified" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4104,17 +4104,17 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.mouseMoveEvent">
-<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4124,12 +4124,12 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.parcel">
-<code class="sig-name descname">parcel</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.parcel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parcel</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.parcel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4140,7 +4140,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.reset">
-<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4206,7 +4206,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSkewT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSkewT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4216,7 +4216,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSkewT.wheelEvent">
-<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QWheelEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/skew.html#plotSkewT.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSkewT.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4322,17 +4322,17 @@ class that plots the background frame onto a QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.modified">
-<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.modified" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.modified_vector">
-<code class="sig-name descname">modified_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.modified_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">modified_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.modified_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4361,7 +4361,7 @@ Used to set the storm motion vector.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotHodo.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/hodo.html#plotHodo.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotHodo.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4388,12 +4388,12 @@ Used to set the storm motion vector.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.reset">
-<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.reset" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.reset_vector">
-<code class="sig-name descname">reset_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.reset_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.reset_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4469,12 +4469,12 @@ Used to set the storm motion vector.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotHodo.toggle_vector">
-<code class="sig-name descname">toggle_vector</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.toggle_vector" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">toggle_vector</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotHodo.toggle_vector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4541,12 +4541,12 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotText.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.plotText.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/thermo.html#plotText.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotText.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4600,12 +4600,12 @@ This is where the actual data gets plotted/drawn.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotText.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotText.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotText.updatepcl">
-<code class="sig-name descname">updatepcl</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotText.updatepcl" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updatepcl</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotText.updatepcl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles plotting the indices in the frame.
 Inherits a backgroundText Object that contains
 a QPixmap with the frame drawn on it. All drawing
@@ -4673,7 +4673,7 @@ to the QPixmap inherited by the backgroundThetae class.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotThetae.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotThetae.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4751,7 +4751,7 @@ QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotWinds.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWinds.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4776,7 +4776,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSpeed.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/speed.html#plotSpeed.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSpeed.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/speed.html#plotSpeed.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSpeed.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4803,7 +4803,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSpeed.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSpeed.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4833,7 +4833,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotKinematics.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/kinematics.html#plotKinematics.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotKinematics.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/kinematics.html#plotKinematics.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotKinematics.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4865,7 +4865,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotKinematics.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotKinematics.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -4904,7 +4904,7 @@ supercell matches.</p></li>
 
 <dl class="method">
 <dt id="sharppy.viz.plotAnalogues.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotAnalogues.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/analogues.html#plotAnalogues.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotAnalogues.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4960,12 +4960,12 @@ matches onto the QPixmap.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotAnalogues.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAnalogues.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotAnalogues.updatematch">
-<code class="sig-name descname">updatematch</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAnalogues.updatematch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updatematch</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAnalogues.updatematch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles the non-background plotting
 of the SARS window. This inherits a
 backgroundAnalogues Object that
@@ -5025,7 +5025,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotWatch.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWatch.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5127,7 +5127,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSlinky.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSlinky.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5174,7 +5174,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotAdvection.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotAdvection.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5224,7 +5224,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSTP.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stp.html#plotSTP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSTP.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stp.html#plotSTP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSTP.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5256,7 +5256,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSTP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSTP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5316,7 +5316,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotWinter.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/winter.html#plotWinter.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotWinter.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/winter.html#plotWinter.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotWinter.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5343,7 +5343,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotWinter.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotWinter.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5409,7 +5409,7 @@ Haines Index elevations</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotFire.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/fire.html#plotFire.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotFire.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/fire.html#plotFire.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotFire.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5436,7 +5436,7 @@ Haines Index elevations</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotFire.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotFire.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5461,7 +5461,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSHIP.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ship.html#plotSHIP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSHIP.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ship.html#plotSHIP.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSHIP.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5493,7 +5493,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSHIP.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSHIP.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5518,7 +5518,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotSTPEF.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stpef.html#plotSTPEF.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSTPEF.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/stpef.html#plotSTPEF.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotSTPEF.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5550,7 +5550,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotSTPEF.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotSTPEF.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5573,7 +5573,7 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotVROT.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotVROT.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotVROT.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5584,7 +5584,7 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotVROT.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotVROT.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/vrot.html#plotVROT.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotVROT.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5611,7 +5611,7 @@ plots the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotVROT.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotVROT.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5622,7 +5622,7 @@ plots the frame.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="attribute">
 <dt id="sharppy.viz.Mapper.data_dir">
-<code class="sig-name descname">data_dir</code><em class="property"> = '/home/travis/build/sharppy/SHARPpy/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">data_dir</code><em class="property"> = '/Users/travis/build/sharppy/SHARPpy/sharppy/databases/shapefiles'</em><a class="headerlink" href="#sharppy.viz.Mapper.data_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5680,10 +5680,10 @@ plots the frame.</p>
 <dl class="class">
 <dt id="sharppy.viz.MapWidget">
 <em class="property">class </em><code class="sig-prename descclassname">sharppy.viz.</code><code class="sig-name descname">MapWidget</code><span class="sig-paren">(</span><em class="sig-param">data_source</em>, <em class="sig-param">init_time</em>, <em class="sig-param">async_object</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtGui.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <dl class="attribute">
 <dt id="sharppy.viz.MapWidget.clicked">
-<code class="sig-name descname">clicked</code><em class="property"> = &lt;PySide.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.MapWidget.clicked" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">clicked</code><em class="property"> = &lt;PySide2.QtCore.Signal object&gt;</em><a class="headerlink" href="#sharppy.viz.MapWidget.clicked" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5723,32 +5723,32 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.keyPressEvent">
-<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.keyPressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">keyPressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QKeyEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.keyPressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.keyPressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.mouseDoubleClickEvent">
-<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseDoubleClickEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseDoubleClickEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseDoubleClickEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.mouseMoveEvent">
-<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseMoveEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseMoveEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseMoveEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.mousePressEvent">
-<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mousePressEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mousePressEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mousePressEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mousePressEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.mouseReleaseEvent">
-<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">mouseReleaseEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QMouseEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.mouseReleaseEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.mouseReleaseEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5758,7 +5758,7 @@ plots the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.resizeEvent">
-<code class="sig-name descname">resizeEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.resizeEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">resizeEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QResizeEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.resizeEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.resizeEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5783,12 +5783,12 @@ plots the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.MapWidget.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.MapWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.MapWidget.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="sharppy.viz.MapWidget.wheelEvent">
-<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.wheelEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">wheelEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">event: PySide2.QtGui.QWheelEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/map.html#MapWidget.wheelEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.MapWidget.wheelEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5864,7 +5864,7 @@ to draw on the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotGeneric.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotGeneric.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -5894,7 +5894,7 @@ in the frame.</p>
 
 <dl class="method">
 <dt id="sharppy.viz.plotENS.paintEvent">
-<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ensemble.html#plotENS.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotENS.paintEvent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">paintEvent</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">arg__1: PySide2.QtGui.QPaintEvent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sharppy/viz/ensemble.html#plotENS.paintEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sharppy.viz.plotENS.paintEvent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5936,7 +5936,7 @@ in the frame.</p>
 
 <dl class="attribute">
 <dt id="sharppy.viz.plotENS.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#sharppy.viz.plotENS.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

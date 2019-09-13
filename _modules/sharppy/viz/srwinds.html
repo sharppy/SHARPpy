@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.srwinds &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  <title>sharppy.viz.srwinds &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.50.g22e3563.dirty
+                0+untagged.85.gb812657.dirty
               </div>
             
           
@@ -160,7 +160,7 @@
             
   <h1>Source code for sharppy.viz.srwinds</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.utils</span> <span class="k">as</span> <span class="nn">utils</span>
 <span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
@@ -170,7 +170,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundWinds&#39;</span><span class="p">,</span> <span class="s1">&#39;plotWinds&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="backgroundWinds"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.srwinds.backgroundWinds">[docs]</a><span class="k">class</span> <span class="nc">backgroundWinds</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="backgroundWinds"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.srwinds.backgroundWinds">[docs]</a><span class="k">class</span> <span class="nc">backgroundWinds</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QFrame</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Handles the plotting of the frame boarders and ticks.</span>
 <span class="sd">    Draws the frame onto a QPixmap.</span>

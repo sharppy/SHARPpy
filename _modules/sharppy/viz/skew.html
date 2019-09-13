@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.skew &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  <title>sharppy.viz.skew &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.50.g22e3563.dirty
+                0+untagged.85.gb812657.dirty
               </div>
             
           
@@ -165,10 +165,11 @@
 <span class="kn">from</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">import</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">create_profile</span>
 <span class="kn">from</span> <span class="nn">sharppy.viz.draggable</span> <span class="k">import</span> <span class="n">Draggable</span>
 <span class="kn">from</span> <span class="nn">sharppy.viz.barbs</span> <span class="k">import</span> <span class="n">drawBarb</span>
-<span class="kn">from</span> <span class="nn">PySide</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
-<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">PySide.QtOpenGL</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtOpenGL</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">utils.utils</span> <span class="k">import</span> <span class="n">total_seconds</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -176,7 +177,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundSkewT&#39;</span><span class="p">,</span> <span class="s1">&#39;plotSkewT&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="backgroundSkewT"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.skew.backgroundSkewT">[docs]</a><span class="k">class</span> <span class="nc">backgroundSkewT</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="backgroundSkewT"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.skew.backgroundSkewT">[docs]</a><span class="k">class</span> <span class="nc">backgroundSkewT</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_omega</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">backgroundSkewT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_omega</span> <span class="o">=</span> <span class="n">plot_omega</span>
@@ -213,7 +214,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fsize</span> <span class="o">=</span> <span class="mi">7</span>
             <span class="n">fsizet</span> <span class="o">=</span> <span class="mi">14</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">title_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsizet</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.003</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title_font</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFont</span><span class="p">(</span><span class="s1">&#39;Helvetica&#39;</span><span class="p">,</span> <span class="n">fsizet</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.006</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title_metrics</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QFontMetrics</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">title_font</span> <span class="p">)</span>
         <span class="c1">#self.title_font.setBold(True)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">title_metrics</span><span class="o">.</span><span class="n">xHeight</span><span class="p">()</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hgt</span> <span class="o">*</span> <span class="mf">0.003</span><span class="p">)</span>
@@ -626,7 +627,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parcelmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">pcl4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parcelmenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">popupmenu</span><span class="o">=</span><span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;Cursor Type:&quot;</span><span class="p">)</span>
-        <span class="n">ag</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ag</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QActionGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">nocurs</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">nocurs</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;No Cursor&quot;</span><span class="p">)</span>

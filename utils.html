@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>utils package &mdash; SHARPpy 0+untagged.50.g22e3563.dirty documentation</title>
+  <title>utils package &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.50.g22e3563.dirty
+                0+untagged.85.gb812657.dirty
               </div>
             
           
@@ -170,7 +170,7 @@
 <dl class="class">
 <dt id="utils.async.AsyncThreads">
 <em class="property">class </em><code class="sig-prename descclassname">utils.async.</code><code class="sig-name descname">AsyncThreads</code><span class="sig-paren">(</span><em class="sig-param">max_threads</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async.AsyncThreads" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>AsyncThreads: A class to generate threads for whenever something can’t run in the main process.</p>
 <dl class="method">
 <dt id="utils.async.AsyncThreads.clearQueue">
@@ -215,7 +215,7 @@ background [optional]: Boolean specifying whether to run in the background. Back
 
 <dl class="attribute">
 <dt id="utils.async.AsyncThreads.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -226,7 +226,7 @@ background [optional]: Boolean specifying whether to run in the background. Back
 <dl class="class">
 <dt id="utils.async_threads.AsyncThreads">
 <em class="property">class </em><code class="sig-prename descclassname">utils.async_threads.</code><code class="sig-name descname">AsyncThreads</code><span class="sig-paren">(</span><em class="sig-param">max_threads</em>, <em class="sig-param">debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/async_threads.html#AsyncThreads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.async_threads.AsyncThreads" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>AsyncThreads: A class to generate threads for whenever something can’t run in the main process.</p>
 <dl class="method">
 <dt id="utils.async_threads.AsyncThreads.clearQueue">
@@ -271,7 +271,7 @@ background [optional]: Boolean specifying whether to run in the background. Back
 
 <dl class="attribute">
 <dt id="utils.async_threads.AsyncThreads.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async_threads.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.async_threads.AsyncThreads.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -282,7 +282,7 @@ background [optional]: Boolean specifying whether to run in the background. Back
 <dl class="class">
 <dt id="utils.config.Config">
 <em class="property">class </em><code class="sig-prename descclassname">utils.config.</code><code class="sig-name descname">Config</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.config.Config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>The Config class keeps track of the configuration in a QObject, so that it
 can be passed via signals and slots.</p>
 <dl class="method">
@@ -297,7 +297,7 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 
 <dl class="attribute">
 <dt id="utils.config.Config.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.config.Config.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.config.Config.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -315,12 +315,6 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 <dt id="utils.frozenutils.Process">
 <em class="property">class </em><code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">Process</code><span class="sig-paren">(</span><em class="sig-param">group=None</em>, <em class="sig-param">target=None</em>, <em class="sig-param">name=None</em>, <em class="sig-param">args=()</em>, <em class="sig-param">kwargs={}</em>, <em class="sig-param">*</em>, <em class="sig-param">daemon=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/frozenutils.html#Process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.frozenutils.Process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.context.Process</span></code></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="utils.frozenutils.Queue">
-<code class="sig-prename descclassname">utils.frozenutils.</code><code class="sig-name descname">Queue</code><span class="sig-paren">(</span><em class="sig-param">maxsize=0</em><span class="sig-paren">)</span><a class="headerlink" href="#utils.frozenutils.Queue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a queue object</p>
 </dd></dl>
 
 <dl class="function">
@@ -344,7 +338,7 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 <dl class="class">
 <dt id="utils.progress.progress">
 <em class="property">class </em><code class="sig-prename descclassname">utils.progress.</code><code class="sig-name descname">progress</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide.QtCore.QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <dl class="method">
 <dt id="utils.progress.progress.doasync">
 <code class="sig-name descname">doasync</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/progress.html#progress.doasync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.progress.progress.doasync" title="Permalink to this definition">¶</a></dt>
@@ -352,7 +346,7 @@ cfg_dict:   A dictionary of configuration items. Keys are (section, field) tuple
 
 <dl class="attribute">
 <dt id="utils.progress.progress.staticMetaObject">
-<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.progress.progress.staticMetaObject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">staticMetaObject</code><em class="property"> = &lt;PySide2.QtCore.QMetaObject object&gt;</em><a class="headerlink" href="#utils.progress.progress.staticMetaObject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
