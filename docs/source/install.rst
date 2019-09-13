@@ -101,15 +101,17 @@ We tend to name each version of SHARPpy after a famous tornado (e.g., Xenia).  R
 tend to have another name (such as andover).  You can download those using the `checkout` command.  For example:
 
 .. prompt:: bash
+
     git checkout andover
 
-Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory and type this command in to install SHARPpy:
+Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory.
+If you want to use setuptools, type this command in to install SHARPpy:
 
 .. prompt:: bash
 
     python setup.py install
 
-If you have pip, it may be installed via this command:
+If you have pip, it can also be installed via this command:
 
 .. prompt:: bash
     
