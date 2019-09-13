@@ -69,6 +69,7 @@ SHA=`git rev-parse --verify HEAD`
 
 cd ../..
 pwd
+
 # Clone the existing gh-pages for this repo into out/
 # Create a new empty branch if gh-pages doesn't exist yet (should only happen on first deply)
 git clone $REPO out
@@ -77,7 +78,9 @@ ls -l
 pwd
 git checkout gh-pages || git checkout --orphan gh-pages
 cd ..
+
 pwd
+
 rm -rf out/**/*
 cp -r build/html/* out/
 rm -rf out/.gitignore
@@ -91,7 +94,8 @@ echo "ADDING FILES"
 echo "**************************************************************************************"
 echo "Step 6: Pushing documentation to Github Pages."
 echo "**************************************************************************************"
+‘echo -e “Host *\n\tStrictHostKeyChecking no\n” >> ~/.ssh/config’
 git commit -m "Deploy to GitHub Pages: ${SHA}"
-git push $SSH_REPO gh-pages
+git push $SSH_REPO gh-pages --force
 
 exit 0
