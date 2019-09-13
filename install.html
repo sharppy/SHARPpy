@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation Guide &mdash; SHARPpy 0+untagged.85.gb812657.dirty documentation</title>
+  <title>Installation Guide &mdash; SHARPpy 0+untagged.81.gb333bf6.dirty documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0+untagged.85.gb812657.dirty
+                0+untagged.81.gb333bf6.dirty
               </div>
             
           
@@ -242,9 +242,11 @@ that allows the managers of the SHARPpy project to “pull” your contributions
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git branch</span>
 </pre></div></div><p>We tend to name each version of SHARPpy after a famous tornado (e.g., Xenia).  Releases will be under the “master” branch, while development versions will
 tend to have another name (such as andover).  You can download those using the <cite>checkout</cite> command.  For example:</p>
-<p>Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory and type this command in to install SHARPpy:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git checkout andover</span>
+</pre></div></div><p>Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory.
+If you want to use setuptools, type this command in to install SHARPpy:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">python setup.py install</span>
-</pre></div></div><p>If you have pip, it may be installed via this command:</p>
+</pre></div></div><p>If you have pip, it can also be installed via this command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip install -e .</span>
 </pre></div></div><p>After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 The GUI can be launched similar to the method described above in the “Installing from conda or pip” section.</p>
