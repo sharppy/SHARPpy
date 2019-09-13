@@ -1,7 +1,5 @@
 # -*- mode: python -*-
 import sys
-sys.path.append('../')
-
 import glob
 import sharppy
 from sharppy._version import get_versions
@@ -20,7 +18,7 @@ del sharppy
 import sharppy
 
 a = Analysis(['SHARPpy.py'],
-             pathex=[r'C:\Users\Tim\SHARPpy\runsharp'],
+             pathex=[r'D:\a\1\s\runsharp', r'D:\a\1\s'],
              hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
              hookspath=None,
              runtime_hooks=None)

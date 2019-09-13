@@ -1,8 +1,6 @@
 # -*- mode: python -*-
 # Compile using `pyinstaller SHARPpy-osx.spec --onefile --noconsole`
 import sys
-sys.path.append('../')
-
 import glob
 import sharppy
 from sharppy._version import get_versions
@@ -22,11 +20,12 @@ import sharppy
 
 # Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
-             pathex=['/Users/blumberg/SHARPpy/runsharp'],
+             pathex=['/Users/vsts/agent/2.155.1/work/1/s/runsharp', '/Users/vsts/agent/2.155.1/work/1/s'],
              hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
              hookspath=None,
              runtime_hooks=None)
-
+print(a.binaries)
+stop
 a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
 
 a.datas += [("sharppy/databases/PW-mean-inches.txt", os.path.join(os.path.dirname(sharppy.__file__), "databases/PW-mean-inches.txt"), "DATA")]
