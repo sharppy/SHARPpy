@@ -1,11 +1,8 @@
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
-import qtpy
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-#QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-#QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 from sharppy.viz.map import MapWidget
 import argparse
 import traceback
