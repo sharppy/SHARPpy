@@ -97,7 +97,7 @@ Other branches (including development ones not called master) can be listed usin
     
     git branch
 
-We tend to name each version of SHARPpy after a famous tornado (e.g., Xenia).  Releases will be under the "master" branch, while development versions will
+We tend to name each version of SHARPpy after the locations where significant tornados have struck (e.g., Xenia, El Reno).  Releases will be under the "master" branch, while development versions will
 tend to have another name (such as andover).  You can download those using the `checkout` command.  For example:
 
 .. prompt:: bash
