@@ -366,6 +366,8 @@ def _available_iem(model, dt=None):
         return []
     if model == 'rap' and dt < datetime(2012,5,1): # No RAP data prior to this date
         return []
+    if model == 'hrrr' and dt < datetime(2019,8,24):
+        return []
 
     if model == 'ruc' or model == 'rap':
         if dt.year == 2012 and dt.month == 5 and dt.day == 1: # Need to truncate the times since there was a switchover from RUC to RAP on this day.
@@ -379,6 +381,14 @@ def _available_iem(model, dt=None):
 
     if model == 'gfs' or model == 'nam' or model == 'nam4km':
         start = 0; end = 24; inc = 6
+
+    if model == 'hrrr':
+        if dt.year == 2019 and dt.month == 8 and dt.day == 24:
+            start = 1
+        else:
+            start = 0
+        end = 24
+        inc = 1
 
     return [datetime(dt.year, dt.month, dt.day, h, 0, 0) for h in np.arange(start,end,inc)]
 
@@ -451,7 +461,7 @@ for model in [ 'gfs', 'nam', 'rap', 'hrrr', '4km nam', 'sref' ]:
     availableat['psu'][model] = (lambda m: lambda dt: _availableat_psu(m, dt))(model)
 
 # Set the available and available-at-time functions for the IEM data.
-for model in [ 'gfs', 'nam', 'rap', 'ruc', 'nam nest' ]:
+for model in [ 'gfs', 'nam', 'rap', 'ruc', 'nam nest','hrrr' ]:
     available['iem'][model] = (lambda m: lambda dt=None: _available_iem(m, dt=dt))(model)
     availableat['iem'][model] = (lambda m: lambda dt: _availableat_iem(m, dt))(model)
 
