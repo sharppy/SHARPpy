@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.sharptab.profile &mdash; SHARPpy 0+untagged.82.g29d2ae0.dirty documentation</title>
+  <title>sharppy.sharptab.profile &mdash; SHARPpy 0+untagged.105.gcb73446.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.82.g29d2ae0.dirty
+                0+untagged.105.gcb73446.dirty
               </div>
             
           
@@ -362,7 +362,7 @@
         <span class="c1">#print(now, self.date)</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
         <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%TITLE%</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1">#snd_file.write(&quot;%s   %s\n Saved by user: %s on %s UTC\n&quot; % (snd_loc, self.date.strftime(&quot;%y%m%d/%H%M&quot;), user, now.strftime(&#39;%Y%m%d/%H%M&#39;)))</span>
+        <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">   </span><span class="si">%s</span><span class="se">\n</span><span class="s2"> Saved by user: </span><span class="si">%s</span><span class="s2"> on </span><span class="si">%s</span><span class="s2"> UTC</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">snd_loc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%y%m</span><span class="si">%d</span><span class="s2">/%H%M&quot;</span><span class="p">),</span> <span class="n">user</span><span class="p">,</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">/%H%M&#39;</span><span class="p">)))</span>
         <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;-------------------------------------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">snd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;%RAW%</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
