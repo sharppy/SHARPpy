@@ -57,10 +57,10 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           name='SHARPpy',
-          debug=False,
+          debug=True,
           strip=None,
           upx=True,
-          console=False )
+          console=True )
 
 app = BUNDLE(exe,
              name='SHARPpy.app',

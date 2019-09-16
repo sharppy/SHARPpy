@@ -521,7 +521,7 @@ class MapWidget(QWidget):
             if self.transform.mapRect(sp.boundingRect()).intersects(window_rect):
                 qp.drawPath(sp)
 
-        qp.setPen(QtGui.QPen(QtCore.Qt.white))
+        qp.setPen(QtGui.QPen(QtCore.Qt.white, self.scale))
         for cp in self._coast_path:
             if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                 qp.drawPath(cp)

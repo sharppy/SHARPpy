@@ -20,6 +20,12 @@ matrix:
     language: generic
     env:
       - PYTHON_VERSION="3.6" BUILD_DOCS="NO" NUMPY_VERSION=1.15 COVERALLS="YES" DISPLAY_AVAIL="YES"
+
+addons:
+  ssh_known_hosts: 
+    - github.com
+    - 140.82.113.4
+
 before_install:
 - source ci/install.sh
 install:

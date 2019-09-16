@@ -32,11 +32,8 @@ def compare_versions(data):
     # Checks to see if the publication date of the most recent Github Release
     # is less than the current version's date.
     ver = get_sharppy_ver()
-    print(data, ver)
-    print(ver['date'], data['published_at'])
     ver_date = parser.parse(ver['date'])
     latest_date = parser.parse(data['published_at'])
-#    print(ver_date, latest_date)
     return isLatest(ver_date, latest_date)
 
 def isLatest(cur, github):

@@ -51,7 +51,7 @@ def hght(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.hght[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.hght[::-1])
 
 def omeg(prof, p):
     '''
@@ -73,7 +73,7 @@ def omeg(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.omeg[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.omeg[::-1])
 
 def temp(prof, p):
     '''
@@ -95,7 +95,7 @@ def temp(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.tmpc[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.tmpc[::-1])
 
 def thetae(prof, p):
     '''
@@ -117,7 +117,7 @@ def thetae(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.thetae[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.thetae[::-1])
 
 def mixratio(prof, p):
     '''
@@ -139,7 +139,7 @@ def mixratio(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.wvmr[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.wvmr[::-1])
 
 
 def theta(prof, p):
@@ -162,7 +162,7 @@ def theta(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.theta[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.theta[::-1])
 
 def wetbulb(prof, p):
     '''
@@ -184,7 +184,7 @@ def wetbulb(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.wetbulb[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.wetbulb[::-1])
 
 def dwpt(prof, p):
     '''
@@ -207,7 +207,7 @@ def dwpt(prof, p):
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.dwpc[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.dwpc[::-1])
 
 
 def vtmp(prof, p):
@@ -227,7 +227,7 @@ def vtmp(prof, p):
     Virtual tmperature (C) at the given pressure : number, numpy array
 
     '''
-    return generic_interp_pres(np.log10(p), prof.logp[::-1], prof.vtmp[::-1])
+    return generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.vtmp[::-1])
 
 
 def components(prof, p):
@@ -252,8 +252,8 @@ def components(prof, p):
     # this requirement.
     if prof.wdir.count() == 0:
         return ma.masked, ma.masked
-    U = generic_interp_pres(np.log10(p), prof.logp[::-1], prof.u[::-1])
-    V = generic_interp_pres(np.log10(p), prof.logp[::-1], prof.v[::-1])
+    U = generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.u[::-1])
+    V = generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.v[::-1])
     return U, V
 
 

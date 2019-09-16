@@ -62,10 +62,10 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           name='SHARPpy.exe',
-          debug=False,
+          debug=True,
           strip=None,
           upx=True,
-          console=False, icon='icons\\SHARPpy.ico')
+          console=True, icon='icons\\SHARPpy.ico')
 
 # Revert the _version.py file to its original version using git
 import subprocess
