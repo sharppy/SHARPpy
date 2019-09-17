@@ -6,7 +6,7 @@ channels:
 dependencies:
   - python=3
   - numpy=1.15.*
-  - pyside2=5.13.*
+  #- pyside2=5.13.*
   - sphinx
   - pytest
   - qtpy
@@ -21,3 +21,4 @@ dependencies:
   - pip:
     - sphinx-prompt
     - pydocstyle
+    - PySide2
