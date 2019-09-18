@@ -32,6 +32,7 @@ import qtpy
 import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+os.mkdir(HOME_DIR)
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
