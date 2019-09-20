@@ -81,7 +81,6 @@ __version__ = get_versions()['version']
 ver = get_versions()
 del get_versions
 
-print(datasources.__file__)
 logging.info('Started logging output for SHARPpy')
 logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
