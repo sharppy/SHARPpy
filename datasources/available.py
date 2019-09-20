@@ -4,6 +4,7 @@ try:
 except ImportError:
     from urllib.request import urlopen
 
+import certifi
 import re
 import numpy as np
 from datetime import datetime, timedelta
@@ -20,7 +21,7 @@ def _download_goes():
     global goes_time, goes_text
     now = datetime.utcnow()
     if goes_time is None or goes_time < now - cache_len:
-        url_obj = urlopen(goes_base_url)
+        url_obj = urlopen(goes_base_url, cafile=certifi.where())
         goes_text = url_obj.read().decode('utf-8')
         goes_time = now
 
@@ -59,7 +60,7 @@ def _availableat_goes(dt):
             An array that contains all of the three letter station identfiers.
     '''
     recent_url = "%s%s/available.txt" % (goes_base_url, dt.strftime('%Y%m%d%H'))
-    text = urlopen(recent_url).read().decode('utf-8')
+    text = urlopen(recent_url, cafile=certifi.where()).read().decode('utf-8')
     matches = re.findall("(.+).txt", text)
     return matches
 
@@ -75,7 +76,7 @@ def _download_sharp():
     global sharp_time, sharp_text
     now = datetime.utcnow()
     if sharp_time is None or sharp_time < now - cache_len:
-        url_obj = urlopen(sharp_base_url)
+        url_obj = urlopen(sharp_base_url, cafile=certifi.where())
         sharp_text = url_obj.read().decode('utf-8')
         sharp_time = now
 
@@ -90,7 +91,7 @@ def _download_sharp_archive(dt):
     except:
         dt = dt
     if sharp_archive_time is None or sharp_archive_time < now - cache_len:
-        url_obj = urlopen(dt.strftime(base_url))
+        url_obj = urlopen(dt.strftime(base_url), cafile=certifi.where())
         sharp_archive_text = url_obj.read().decode('utf-8')
         sharp_time = now
     return sharp_archive_text, dt
@@ -135,7 +136,7 @@ def _availableat_sharp(dt):
     #text = urlopen(recent_url).read().decode('utf-8')
     #matches = re.findall("a href=\"(.+).txt\"", text)
     recent_url = 'http://sharp.weather.ou.edu/soundings/archive/%Y/%m/%d/%H/'
-    text = urlopen(dt.strftime(recent_url)).read().decode('utf-8')
+    text = urlopen(dt.strftime(recent_url), cafile=certifi.where()).read().decode('utf-8')
     matches = re.findall("a href=\"(.+).txt\"", text)
     return matches
 
@@ -148,7 +149,7 @@ def _download_spc():
     global spc_time, spc_text
     now = datetime.utcnow()
     if spc_time is None or spc_time < now - cache_len:
-        url_obj = urlopen(spc_base_url)
+        url_obj = urlopen(spc_base_url, cafile=certifi.where())
         spc_text = url_obj.read().decode('utf-8')
 
         spc_time = now
@@ -187,7 +188,7 @@ def _availableat_spc(dt):
             An array that contains all of the three letter station identfiers.
     '''
     recent_url = "%s%s/" % (spc_base_url, dt.strftime('%y%m%d%H_OBS'))
-    text = urlopen(recent_url).read().decode('utf-8')
+    text = urlopen(recent_url, cafile=certifi.where()).read().decode('utf-8')
     matches = re.findall("show_soundings\(\"([\w]{3}|[\d]{5})\"\)", text)
     return matches
 
@@ -216,7 +217,7 @@ def _download_psu():
     global psu_time, psu_text
     now = datetime.utcnow()
     if psu_time is None or psu_time < now - cache_len:
-        url_obj = urlopen(psu_base_url)
+        url_obj = urlopen(psu_base_url, cafile=certifi.where())
         psu_text = url_obj.read().decode('utf-8')
 
         psu_time = now
@@ -242,7 +243,7 @@ def _availableat_psu(model, dt):
 
     cycle = dt.hour
     url = "%s%s/%02d/" % (psu_base_url, model.upper(), cycle)
-    url_obj = urlopen(url)
+    url_obj = urlopen(url, cafile=certifi.where())
     text = url_obj.read().decode('utf-8')
 
     stns = re.findall("%s_(.+)\.buf" % _repl[model], text)
@@ -295,7 +296,7 @@ def _download_iem():
     global iem_time, iem_text
     now = datetime.utcnow()
     if iem_time is None or iem_time < now - cache_len:
-        iem_obj = urlopen(iem_base_url)
+        iem_obj = urlopen(iem_base_url, cafile=certifi.where())
         psu_text = url_obj.read().decode('utf-8')
         iem_time = now
 
@@ -320,7 +321,7 @@ def _availableat_iem(model, dt):
 
     cycle = dt.hour
     url = dt.strftime(iem_base_url).replace("MODEL", model.lower())
-    url_obj = urlopen(url)
+    url_obj = urlopen(url, cafile=certifi.where())
     text = url_obj.read().decode('utf-8')
 
     stns = re.findall("%s_(.+)\.buf\">" % _repl[model], text)
@@ -398,14 +399,14 @@ pecan_base_url = 'http://weather.ou.edu/~map/real_time_data/PECAN/'
 #http://weather.ou.edu/~map/real_time_data/PECAN/2015061112/soundings/TOP_2015061113.txt
 
 def _available_oupecan(**kwargs):
-    text = urlopen(pecan_base_url).read().decode('utf-8')
+    text = urlopen(pecan_base_url, cafile=certifi.where()).read().decode('utf-8')
     matches = sorted(list(set(re.findall("([\d]{10})", text))))
     return [ datetime.strptime(m, "%Y%m%d%H") for m in matches ]
 
 def _availableat_oupecan(dt):
     dt_string = datetime.strftime(dt, '%Y%m%d%H')
     url = "%s%s/soundings/" % (pecan_base_url, dt_string)
-    url_obj = urlopen(url)
+    url_obj = urlopen(url, cafile=certifi.where())
     text = url_obj.read().decode('utf-8')
     dt_string = datetime.strftime(dt, '%Y%m%d%H')
     stns = re.findall("([\w]{3})_%s.txt" % dt_string, text)
@@ -415,7 +416,7 @@ def _availableat_oupecan(dt):
 ncarens_base_url = 'http://sharp.weather.ou.edu/soundings/ncarens/'
 
 def _available_ncarens(dt=None):
-    text = urlopen(ncarens_base_url).read().decode('utf-8')
+    text = urlopen(ncarens_base_url, cafile=certifi.where()).read().decode('utf-8')
 
     matches = sorted(list(set(re.findall("([\d]{8}_[\d]{2})", text))))
     return [ datetime.strptime(m, '%Y%m%d_%H') for m in matches ]
@@ -423,7 +424,7 @@ def _available_ncarens(dt=None):
 def _availableat_ncarens(dt):
     dt_string = datetime.strftime(dt, '%Y%m%d_%H')
     url = "%s%s/" % (ncarens_base_url, dt_string)
-    url_obj = urlopen(url)
+    url_obj = urlopen(url, cafile=certifi.where())
     text = url_obj.read().decode('utf-8')
 
     stns = re.findall("(N[\w]{2}.[\w]{2}W.[\w]{2,3}.[\w]{2}).txt", text)
@@ -469,9 +470,9 @@ for model in [ 'gfs', 'nam', 'rap', 'ruc', 'nam nest','hrrr' ]:
 if __name__ == "__main__":
     
     dt = datetime.utcnow()
-    dt = available['sharp']['observed'](dt)
+    dt = available['spc']['observed'](dt)
     print(dt)
-    print(availableat['sharp']['observed'](dt[-1]))
+    print(availableat['spc']['observed'](dt[-1]))
     ##stop
     dt = datetime(2015,1,1,0,0,0)
     print(dt)

@@ -10,7 +10,8 @@ except ImportError:
     from urllib.request import urlopen
     from urllib.error import URLError
     from urllib.parse import quote, urlparse, urlunsplit
-   
+
+import certifi 
 import platform, subprocess, re
 import imp
 import socket
@@ -67,7 +68,7 @@ def loadDataSources(ds_dir=HOME_DIR):
 
 def _pingURL(hostname, timeout=1):
     try:
-        urlopen(hostname, timeout=timeout)
+        urlopen(hostname, timeout=timeout, cafile=certifi.where())
     except URLError:
         return False
     except socket.timeout as e:

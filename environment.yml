@@ -17,9 +17,9 @@ dependencies:
   - python-dateutil 
   - pyinstaller
   - setuptools
+  - certifi
   - pip
   - pip:
     - sphinx-prompt
     - pydocstyle
     - PySide2
-    - certifi
