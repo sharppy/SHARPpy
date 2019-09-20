@@ -87,7 +87,7 @@
         </outlet>
     </datasource>
     <datasource name="Observed" ensemble="false" observed="true">
-        <outlet name="SPC" url="http://www.spc.noaa.gov/exper/soundings/{date}{cycle}_OBS/{srcid}.txt" format="spc" >
+        <outlet name="SPC" url="https://www.spc.noaa.gov/exper/soundings/{date}{cycle}_OBS/{srcid}.txt" format="spc" >
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="12" archive="168" start="-" end="-"/>
             <points csv="spc_ua.csv" />
         </outlet>
