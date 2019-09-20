@@ -255,7 +255,8 @@ class Outlet(object):
 
                 self._is_available = True
 
-            except URLError:
+            except URLError as err:
+                logger.exception(err) 
                 stns_avail = []
                 self._is_available = False
         logging.debug("_is_available: "+ str(self._is_available))
@@ -279,7 +280,8 @@ class Outlet(object):
                 if len(times) == 1:
                     times = self.getArchivedCycles(start=times[0], max_cycles=max_cycles)
                 self._is_available = True
-            except URLError:
+            except URLError as err:
+                logger.exception(err)
                 custom_failed = True
                 self._is_available = False
      

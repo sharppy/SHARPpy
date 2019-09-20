@@ -32,7 +32,8 @@ import qtpy
 import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
-os.mkdir(HOME_DIR)
+if not os.path.isdir(HOME_DIR):
+    os.mkdir(HOME_DIR)
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -80,6 +81,7 @@ __version__ = get_versions()['version']
 ver = get_versions()
 del get_versions
 
+print(datasources.__file__)
 logging.info('Started logging output for SHARPpy')
 logging.info('SHARPpy version: ' + str(__version__))
 logging.info('numpy version: ' + str(np.__version__))
