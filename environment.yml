@@ -18,10 +18,8 @@ dependencies:
   - pyinstaller
   - setuptools
   - pip
-  - openssl
-  - cryptography
-  - certifi
   - pip:
     - sphinx-prompt
     - pydocstyle
     - PySide2
+    - certifi
