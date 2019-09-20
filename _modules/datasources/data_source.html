@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datasources.data_source &mdash; SHARPpy 0+untagged.95.g8d9ef9a.dirty documentation</title>
+  <title>datasources.data_source &mdash; SHARPpy 0+untagged.94.gca27e98.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.95.g8d9ef9a.dirty
+                0+untagged.94.gca27e98.dirty
               </div>
             
           
@@ -171,7 +171,8 @@
     <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
     <span class="kn">from</span> <span class="nn">urllib.error</span> <span class="k">import</span> <span class="n">URLError</span>
     <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">quote</span><span class="p">,</span> <span class="n">urlparse</span><span class="p">,</span> <span class="n">urlunsplit</span>
-   
+
+<span class="kn">import</span> <span class="nn">certifi</span> 
 <span class="kn">import</span> <span class="nn">platform</span><span class="o">,</span> <span class="nn">subprocess</span><span class="o">,</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">imp</span>
 <span class="kn">import</span> <span class="nn">socket</span>
@@ -228,7 +229,7 @@
 
 <span class="k">def</span> <span class="nf">_pingURL</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">urlopen</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="n">urlopen</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">cafile</span><span class="o">=</span><span class="n">certifi</span><span class="o">.</span><span class="n">where</span><span class="p">())</span>
     <span class="k">except</span> <span class="n">URLError</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">timeout</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
