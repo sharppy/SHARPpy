@@ -21,4 +21,4 @@ dependencies:
   - pip:
     - sphinx-prompt
     - pydocstyle
-    - PySide2
+    - PySide2==5.12
