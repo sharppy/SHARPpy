@@ -40,6 +40,7 @@ primarily tested using this distribution.
 
 .. prompt:: bash
 
+    conda config --add channels conda-forge
     conda install -c sharppy sharppy
 
 From pip
