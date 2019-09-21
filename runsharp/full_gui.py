@@ -32,8 +32,16 @@ import qtpy
 import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
 if not os.path.isdir(HOME_DIR):
     os.mkdir(HOME_DIR)
+
+if os.path.exists(LOG_FILE):
+    log_file_size = os.path.getsize(LOG_FILE)
+    MAX_FILE_SIZE = 1024 * 1024 
+    if log_file_size > MAX_FILE_SIZE:
+        # Delete the log file as it's grown too large
+        os.remove(LOG_FILE)
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -47,7 +55,7 @@ UNDERLINE = '\033[4m'
 # Start the logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
-                    filename=HOME_DIR + '/sharppy.log',
+                    filename=LOG_FILE,
                     filemode='w')
 console = logging.StreamHandler()
 # set a format which is simpler for console use
@@ -71,11 +79,13 @@ else:
 if frozenutils.isFrozen():
     if not os.path.exists(HOME_DIR):
         os.makedirs(HOME_DIR)
-
+    BINARY_VERSION = True
     outfile = open(os.path.join(HOME_DIR, 'sharppy-out.txt'), 'w')
-
+    console.setLevel(logging.DEBUG)
     sys.stdout = outfile
     sys.stderr = outfile
+else
+    BINARY_VERSION = False
 
 __version__ = get_versions()['version']
 ver = get_versions()
@@ -87,10 +97,13 @@ logging.info('numpy version: ' + str(np.__version__))
 logging.info('qtpy version: ' + str(qtpy.__version__))
 logging.info("Python version: " + str(platform.python_version()))
 logging.info("Qt version: " + str(qtpy.QtCore.__version__))
-
+logging.info("OS version: " + str(platform.platform()))
 # from sharppy._version import __version__#, __version_name__
 
-__version_name__ = ''
+if BINARY_VERSION:
+    logging.info("This is a binary version of SHARPpy.")
+
+__version_name__ = 'Andover'
 try:
     from netCDF4 import Dataset
     has_nc = True
@@ -871,7 +884,7 @@ class Main(QMainWindow):
         self.raise_()
         import time
         time.sleep(3)
-        QPixmap.grabWidget(self).save('./screenshot.png', 'png')
+        self.grab().save('./screenshot.png', 'png')
 
     def createMenuBar(self):
         """
