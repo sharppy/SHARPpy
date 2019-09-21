@@ -8,7 +8,7 @@ try:
     from urllib2 import urlopen
 except ImportError:
     from urllib.request import urlopen
-
+import certifi
 from datetime import datetime
 import glob
 import os
@@ -81,7 +81,7 @@ class Decoder(object):
         # I can figure out a cleaner way to make sure the file (either local or URL)
         # gets opened.
         try:
-            f = urlopen(self._file_name)
+            f = urlopen(self._file_name, cafile=certifi.where())
         except (ValueError, IOError):
             try:
                 fname = self._file_name[7:] if self._file_name.startswith('file://') else self._file_name
