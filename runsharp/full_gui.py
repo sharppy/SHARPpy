@@ -84,7 +84,7 @@ if frozenutils.isFrozen():
     console.setLevel(logging.DEBUG)
     sys.stdout = outfile
     sys.stderr = outfile
-else
+else:
     BINARY_VERSION = False
 
 __version__ = get_versions()['version']
