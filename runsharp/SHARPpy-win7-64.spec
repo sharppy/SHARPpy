@@ -65,7 +65,7 @@ exe = EXE(pyz,
           debug=True,
           strip=None,
           upx=True,
-          console=True, icon='icons\\SHARPpy.ico')
+          console=False, icon='icons\\SHARPpy.ico')
 
 # Revert the _version.py file to its original version using git
 import subprocess
