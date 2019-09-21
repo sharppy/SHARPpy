@@ -109,7 +109,7 @@ try:
     has_nc = True
 except ImportError:
     has_nc = False
-    print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
+    logging.info("No netCDF4 Python install detected.")
 
 
 def versioning_info(include_sharppy=False):
