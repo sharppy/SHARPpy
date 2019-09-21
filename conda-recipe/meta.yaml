@@ -24,12 +24,14 @@ requirements:
   build:
    - setuptools
    - python>=3.6
+   - qtpy
    - pyside2>=5.12.*
    - pip
   run:
    - python>=3.6
    - numpy={{ os.environ.get('NUMPY_VERSION', '1.15') }} 
    - pyside2>=5.12.*
+   - qtpy
    - requests
    - python-dateutil
    - certifi
