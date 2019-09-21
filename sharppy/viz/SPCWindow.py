@@ -231,8 +231,7 @@ class SPCWidget(QWidget):
 
     def pixmapToFile(self, file_name):
         fmt = file_name.split(".")[-1].upper()
-        pixmap = QPixmap.grabWidget(self)
-        pixmap.save(file_name, fmt, 100)
+        self.grab().save(file_name, fmt, 100)
 
     def savetext(self):
         logging.debug("Save the data to the disk.")
