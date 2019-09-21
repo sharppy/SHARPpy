@@ -106,12 +106,14 @@ the user can use modifier ``--debug`` to turn on logging:
 
     sharppy --debug
 
-Logs are stored within the ``~/.sharppy`` folder.  Versioning info may also be output from the :command:`sharppy` commmand:
+Log files are stored within the ``~/.sharppy`` folder as the ``sharppy.log`` file.  
+Versioning info may also be output from the :command:`sharppy` commmand:
 
 .. prompt:: bash
 
     sharppy --version
 
 Versioning is also output when the About box is launched by the user from the program.  These 
-tools may be used when debugging the code and `submitting bug reports to Github <https://github.com/sharppy/SHARPpy/issues>`_:
+tools may be used when debugging the code and `submitting bug reports to Github <https://github.com/sharppy/SHARPpy/issues>`_:  
+Please submit log files and versioning information when submitting issues.
 

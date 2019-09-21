@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Change Log &mdash; SHARPpy 0+untagged.86.g87a419c.dirty documentation</title>
+  <title>Change Log &mdash; SHARPpy 0+untagged.79.g7eb7be0.dirty documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0+untagged.86.g87a419c.dirty
+                0+untagged.79.g7eb7be0.dirty
               </div>
             
           
@@ -174,50 +174,19 @@
 <h2>SHARPpy v1.4.0 “Andover” Release<a class="headerlink" href="#sharppy-v1-4-0-andover-release" title="Permalink to this headline">¶</a></h2>
 <p>NEW FEATURES</p>
 <ul class="simple">
-<li><dl class="simple">
-<dt>User preferences</dt><dd><ul>
-<li><p>Change units for wind, surface temperature and dewpoint</p></li>
-<li><p>Choice of three color schemes: standard (the usual white-on-black), inverted (black-on-white), and protanopia (white-on-black, but with colorblind-friendly colors)</p></li>
-</ul>
-</dd>
-</dl>
-</li>
+<li><p>User preferences</p></li>
 <li><p>Python 3 support</p></li>
-<li><dl class="simple">
-<dt>Hodograph improvements</dt><dd><ul>
 <li><p>Can now click and drag the storm-motion vectors, updating all the other insets</p></li>
 <li><p>Double click to change which storm motion vector is used for storm-relative calculations</p></li>
 <li><p>New readout on the hodograph, coupled to the readout on the Skew-T</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>Improvements for southern-hemisphere users</dt><dd><ul>
-<li><p>Wind barbs are flipped</p></li>
-<li><p>Left-mover vector is used by default</p></li>
+<li><p>Improvements for southern-hemisphere users</p></li>
 <li><p>Storm motion vector is chosen if the SPC-formatted sounding file specifies the latitude and longitude of the input sounding (southern-hemisphere uses the left-mover, northern the right-mover).</p></li>
 <li><p>Left-mover vector is used in all other storm-motion dependent functions (e.g., STP insets, SARS).</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>New data sources for international and U.S. users</dt><dd><ul>
 <li><p>Realtime and historical U.S. and international soundings from 1946-now are accessible through the Picker. Soundings include the latitude and longitude.</p></li>
 <li><p>IEM BUFKIT sounding archive (data back to 2010 from RUC, NAM, GFS, RAP)</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>New documentation and API accessible through Github pages</dt><dd><ul>
+<li><p>New documentation and API accessible through Github pages</p></li>
 <li><p>Improved documentation online (no longer in README)</p></li>
 <li><p>Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
 <li><p>Readout cursor can be configured to output other variables (e.g., potential temperature, theta-E)</p></li>
 <li><p>Ability to modify surface by changing the surface temperature or dewpoint (mixed layer optional)</p></li>
 <li><p>Up/down buttons on keyboard can now be used to flip through the ensemble members plotted in the SHARPpy GUI.</p></li>
