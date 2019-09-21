@@ -6,15 +6,15 @@ QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 from sharppy.viz.map import MapWidget
 import argparse
 import traceback
-from utils.config import Config
+from sutils.config import Config
 from os.path import expanduser
 import cProfile
 from functools import wraps, partial
 import datetime as date
 
-from utils.progress import progress
-from utils.async_threads import AsyncThreads
-from utils.ver_updates import check_latest
+from sutils.progress import progress
+from sutils.async_threads import AsyncThreads
+from sutils.ver_updates import check_latest
 from datasources import data_source
 from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.io.decoder import getDecoders
@@ -26,7 +26,7 @@ import sys
 import os
 import numpy as np
 import warnings
-import utils.frozenutils as frozenutils
+import sutils.frozenutils as frozenutils
 import logging
 import qtpy
 import platform

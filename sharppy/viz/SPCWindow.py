@@ -11,7 +11,7 @@ from qtpy.QtWidgets import *
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab as tab
 import sharppy.io as io
-from utils.config import Config
+from sutils.config import Config
 from datetime import datetime, timedelta
 import numpy as np
 import platform

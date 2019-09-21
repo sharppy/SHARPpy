@@ -20,7 +20,7 @@ import traceback
 
 import sharppy.io.decoder as decoder
 from sharppy.io.csv import loadCSV
-import utils.frozenutils as frozenutils
+import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 

@@ -9,7 +9,7 @@ from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from qtpy.QtOpenGL import *
-from utils.utils import total_seconds
+from sutils.utils import total_seconds
 import logging
 
 from datetime import datetime, timedelta
