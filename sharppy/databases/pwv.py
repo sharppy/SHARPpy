@@ -4,6 +4,7 @@ from sharppy.io.csv import loadCSV
 from datetime import datetime
 import numpy as np
 import os
+import logging
 
 ## written by Greg Blumberg - CIMMS
 ## and
@@ -193,7 +194,8 @@ class PWDatabase(object):
                 self._pwv_mn['lon'] = stns[stn_idx]['lon']
                 self._pwv_st['lat'] = stns[stn_idx]['lat']
                 self._pwv_st['lon'] = stns[stn_idx]['lon']
-            except IndexError:
+            except IndexError as e:
+                logging.exception(e)
                 pass
 
     def getStddev(self, stddev, loc, month=None):

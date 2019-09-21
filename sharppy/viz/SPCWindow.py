@@ -322,7 +322,8 @@ class SPCWidget(QWidget):
 
         try:
             self.pc_idx = self.prof_ids.index(prof_id)
-        except ValueError:
+        except ValueError as e:
+            logging.exception(e)
             print("Hmmm, that profile doesn't exist to be focused ...")
             return
 
@@ -338,7 +339,8 @@ class SPCWidget(QWidget):
         logging.debug("Removing Profile Collection from SPCWindow.")
         try:
             pc_idx = self.prof_ids.index(prof_id)
-        except ValueError:
+        except ValueError as e:
+            logging.exception(e)
             print("Hmmm, that profile doesn't exist to be removed ...")
             return
 
@@ -881,6 +883,7 @@ class SPCWindow(QMainWindow):
         try:
             self.spc_widget.addProfileCollection(prof_col, menu_name, focus=focus)
         except Exception as exc:
+            logging.exception(exc)
             print("OOPS:", exc)
             ### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).
             if len(self.menu_items) == 1:
@@ -894,6 +897,7 @@ class SPCWindow(QMainWindow):
         try:
             prof.checkDataIntegrity()
         except Exception as e:
+            logging.exception(e)
             msgBox = QMessageBox()
             msgBox.setText("SHARPpy has detected that the data you are attempting to load may have errors.")
             msgBox.setInformativeText("Do you want to still try and load the data?")

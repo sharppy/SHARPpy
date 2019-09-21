@@ -5,7 +5,7 @@ try:
     import Queue
 except ImportError:
     import queue as Queue
-
+import logging
 import hashlib
 from datetime import datetime
 import traceback
@@ -121,6 +121,7 @@ class AsyncThreads(QObject):
                 try:
                     ret_val = func(*args, **kwargs)
                 except Exception as e:
+                    logging.exception(e)
                     if self.debug:
                         print(traceback.format_exc())
                     ret_val = e
