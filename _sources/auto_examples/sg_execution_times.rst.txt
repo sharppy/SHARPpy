@@ -5,8 +5,8 @@
 
 Computation times
 =================
-**02:04.347** total execution time for **auto_examples** files:
+**02:04.547** total execution time for **auto_examples** files:
 
-- **01:58.039**: :ref:`sphx_glr_auto_examples_plot_ci_uncertainty.py` (``plot_ci_uncertainty.py``)
-- **00:05.407**: :ref:`sphx_glr_auto_examples_plot_sounding.py` (``plot_sounding.py``)
-- **00:00.900**: :ref:`sphx_glr_auto_examples_plot_sars.py` (``plot_sars.py``)
+- **01:58.262**: :ref:`sphx_glr_auto_examples_plot_ci_uncertainty.py` (``plot_ci_uncertainty.py``)
+- **00:05.376**: :ref:`sphx_glr_auto_examples_plot_sounding.py` (``plot_sounding.py``)
+- **00:00.909**: :ref:`sphx_glr_auto_examples_plot_sars.py` (``plot_sars.py``)
