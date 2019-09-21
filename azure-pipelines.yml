@@ -55,7 +55,12 @@ steps:
 #    createCustomEnvironment: true
 
 - script: conda env create --quiet --file environment.yml
-  displayName: Create Anaconda environment
+  displayName: Create Anaconda environment (*nix)
+  condition: or( eq( variables['Agent.OS'], 'Darwin' ), eq( variables['Agent.OS'], 'Linux' ))
+
+- script: conda env create --quiet --file env-win-binary.yml
+  displayName: Create Anaconda environment (Windows)
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
 
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
 - script: which python & which pip & which pyinstaller & conda list

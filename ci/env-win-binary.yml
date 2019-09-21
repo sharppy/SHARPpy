@@ -6,7 +6,6 @@ channels:
 dependencies:
   - python=3
   - numpy=1.15.*
-  #- pyside2=5.12.*
   - sphinx
   - pytest
   - qtpy
