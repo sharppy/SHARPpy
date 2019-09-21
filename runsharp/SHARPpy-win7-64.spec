@@ -36,12 +36,14 @@ sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\supercell\\") + "*")
 shapefiles = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\shapefiles\\") + "*")
 datasources = glob.glob("..\\datasources\\" + "*")
+rc_files = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "../rc/") + "*.png") 
 
 for hail in sars_hail:
     a.datas += [("sharppy\\databases\\sars\\hail\\" + hail.split("\\")[-1], hail, "DATA")]
 for supr in sars_supr:
     a.datas += [("sharppy\\databases\\sars\\supercell\\" + supr.split("\\")[-1], supr, "DATA")]
-
+for rc in rc_files:
+    a.datas += [("rc/" + rc.split("/")[-1], rc, "DATA")]
 for sf in shapefiles:
     a.datas += [("sharppy\\databases\\shapefiles\\" + sf.split("\\")[-1], sf, "DATA")]
 
