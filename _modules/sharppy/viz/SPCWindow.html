@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.SPCWindow &mdash; SHARPpy 0+untagged.92.g5a66959.dirty documentation</title>
+  <title>sharppy.viz.SPCWindow &mdash; SHARPpy 0+untagged.86.g87a419c.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.92.g5a66959.dirty
+                0+untagged.86.g87a419c.dirty
               </div>
             
           
@@ -392,8 +392,7 @@
 
 <div class="viewcode-block" id="SPCWidget.pixmapToFile"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.SPCWindow.SPCWidget.pixmapToFile">[docs]</a>    <span class="k">def</span> <span class="nf">pixmapToFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-        <span class="n">pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="o">.</span><span class="n">grabWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">pixmap</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grab</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SPCWidget.savetext"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.SPCWindow.SPCWidget.savetext">[docs]</a>    <span class="k">def</span> <span class="nf">savetext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Save the data to the disk.&quot;</span><span class="p">)</span>
@@ -483,7 +482,8 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">prof_id</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hmmm, that profile doesn&#39;t exist to be focused ...&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
@@ -499,7 +499,8 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing Profile Collection from SPCWindow.&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">pc_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prof_ids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">prof_id</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hmmm, that profile doesn&#39;t exist to be removed ...&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
@@ -1042,6 +1043,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">spc_widget</span><span class="o">.</span><span class="n">addProfileCollection</span><span class="p">(</span><span class="n">prof_col</span><span class="p">,</span> <span class="n">menu_name</span><span class="p">,</span> <span class="n">focus</span><span class="o">=</span><span class="n">focus</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OOPS:&quot;</span><span class="p">,</span> <span class="n">exc</span><span class="p">)</span>
             <span class="c1">### TODO: This may be a good place to output a copy of the offending data (useful for debugging observed data).</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menu_items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1055,6 +1057,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">prof</span><span class="o">.</span><span class="n">checkDataIntegrity</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">msgBox</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">()</span>
             <span class="n">msgBox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;SHARPpy has detected that the data you are attempting to load may have errors.&quot;</span><span class="p">)</span>
             <span class="n">msgBox</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s2">&quot;Do you want to still try and load the data?&quot;</span><span class="p">)</span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.skew &mdash; SHARPpy 0+untagged.92.g5a66959.dirty documentation</title>
+  <title>sharppy.viz.skew &mdash; SHARPpy 0+untagged.86.g87a419c.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.92.g5a66959.dirty
+                0+untagged.86.g87a419c.dirty
               </div>
             
           
@@ -1138,8 +1138,9 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">drawTrace</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">dewp_color</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">pres</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">drawBarbs</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#666666&quot;</span><span class="p">)</span>
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t draw wind barbs in skew.py&quot;</span><span class="p">)</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">bg_color_idx</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">prof_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof_collections</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc_idx</span> <span class="ow">and</span> <span class="p">(</span><span class="n">prof_col</span><span class="o">.</span><span class="n">getCurrentDate</span><span class="p">()</span> <span class="o">==</span> <span class="n">cur_dt</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_observed</span><span class="p">):</span>
@@ -1151,7 +1152,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">drawTrace</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">dwpc</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">pres</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">drawBarbs</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">qp</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t draw wind barbs in skew.py&quot;</span><span class="p">)</span>
                 <span class="n">bg_color_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">bg_color_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">background_colors</span><span class="p">)</span>
 
@@ -1201,7 +1203,8 @@
         <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">drawBarbs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prof</span><span class="p">,</span> <span class="n">qp</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t draw wind barbs in skew.py&quot;</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">qp</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
 

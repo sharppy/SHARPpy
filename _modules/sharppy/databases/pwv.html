@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.databases.pwv &mdash; SHARPpy 0+untagged.92.g5a66959.dirty documentation</title>
+  <title>sharppy.databases.pwv &mdash; SHARPpy 0+untagged.86.g87a419c.dirty documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0+untagged.92.g5a66959.dirty
+                0+untagged.86.g87a419c.dirty
               </div>
             
           
@@ -165,6 +165,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="c1">## written by Greg Blumberg - CIMMS</span>
 <span class="c1">## and</span>
@@ -354,7 +355,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_mn</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_st</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stns</span><span class="p">[</span><span class="n">stn_idx</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">pass</span>
 
 <div class="viewcode-block" id="PWDatabase.getStddev"><a class="viewcode-back" href="../../../sharppy.databases.html#sharppy.databases.pwv.PWDatabase.getStddev">[docs]</a>    <span class="k">def</span> <span class="nf">getStddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stddev</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
