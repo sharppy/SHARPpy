@@ -7,24 +7,18 @@ SHARPpy v1.4.0 "Andover" Release
 NEW FEATURES
 
 * User preferences
-    * Change units for wind, surface temperature and dewpoint
-    * Choice of three color schemes: standard (the usual white-on-black), inverted (black-on-white), and protanopia (white-on-black, but with colorblind-friendly colors)
 * Python 3 support
-* Hodograph improvements
-    * Can now click and drag the storm-motion vectors, updating all the other insets
-    * Double click to change which storm motion vector is used for storm-relative calculations
-    * New readout on the hodograph, coupled to the readout on the Skew-T
+* Can now click and drag the storm-motion vectors, updating all the other insets
+* Double click to change which storm motion vector is used for storm-relative calculations
+* New readout on the hodograph, coupled to the readout on the Skew-T
 * Improvements for southern-hemisphere users
-    * Wind barbs are flipped
-    * Left-mover vector is used by default
-    * Storm motion vector is chosen if the SPC-formatted sounding file specifies the latitude and longitude of the input sounding (southern-hemisphere uses the left-mover, northern the right-mover).
-    * Left-mover vector is used in all other storm-motion dependent functions (e.g., STP insets, SARS).
-* New data sources for international and U.S. users
-    * Realtime and historical U.S. and international soundings from 1946-now are accessible through the Picker. Soundings include the latitude and longitude.
-    * IEM BUFKIT sounding archive (data back to 2010 from RUC, NAM, GFS, RAP)
+* Storm motion vector is chosen if the SPC-formatted sounding file specifies the latitude and longitude of the input sounding (southern-hemisphere uses the left-mover, northern the right-mover).
+* Left-mover vector is used in all other storm-motion dependent functions (e.g., STP insets, SARS).
+* Realtime and historical U.S. and international soundings from 1946-now are accessible through the Picker. Soundings include the latitude and longitude.
+* IEM BUFKIT sounding archive (data back to 2010 from RUC, NAM, GFS, RAP)
 * New documentation and API accessible through Github pages
-    * Improved documentation online (no longer in README)
-    * Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.
+* Improved documentation online (no longer in README)
+* Documentation and sphinx-generated API is pushed to Github Pages with each tagged release.
 * Readout cursor can be configured to output other variables (e.g., potential temperature, theta-E)
 * Ability to modify surface by changing the surface temperature or dewpoint (mixed layer optional) 
 * Up/down buttons on keyboard can now be used to flip through the ensemble members plotted in the SHARPpy GUI.
