@@ -125,6 +125,7 @@ class crasher(object):
                 data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
+                logging.exception(e)
                 print("Exception:", e)
                 # HERE IS WHERE YOU CAN CATCH A DATAQUALITYEXCEPTION
                 if frozenutils.isFrozen():
@@ -294,9 +295,9 @@ class Picker(QWidget):
             [t.strftime(Picker.run_format) for t in filt_times])
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
-        except ValueError:
+        except ValueError as e:
             logging.error("Run dropdown is missing its times ... ?")
-
+            logging.exception(e)
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
@@ -508,6 +509,7 @@ class Picker(QWidget):
                         self.run = [t for t in times if t.hour in synoptic_times and t.day == self.cal_date.day(
                         ) and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
                     except Exception as e:
+                        logging.exception(e)
                         self.run = times[-1]
                 else:
                     self.run = times[-1]
@@ -589,8 +591,9 @@ class Picker(QWidget):
                 while True:
                     try:
                         self.skewApp(ntry=n_tries)
-                    except data_source.DataSourceError:
+                    except data_source.DataSourceError as e1:
                         # We've run out of data sources. Uh-oh.
+                        logging.exception(e1)
                         if self.skew is not None:
                             self.skew.closeIfEmpty()
                         raise IOError(
@@ -599,6 +602,7 @@ class Picker(QWidget):
                         if debug:
                             print(traceback.format_exc())
                         n_tries += 1
+                        logging.exception(e)
                     else:
                         break
 
@@ -779,7 +783,8 @@ class Picker(QWidget):
             try:
                 dec = deccls(filename)
                 break
-            except:
+            except Exception as e:
+                logging.exception(e)
                 dec = None
                 continue
 
@@ -1094,7 +1099,8 @@ def search_and_plotDB(model, station, datetime, close=True, output='./'):
     main_win.picker.disp_name = main_win.picker.loc['icao']
     try:
         main_win.picker.skewApp()
-    except data_source.DataSourceError:
+    except data_source.DataSourceError as e:
+        logging.exception(e)
         print(FAIL + "Couldn't find data for the requested time and location." + ENDC)
         return main_win
 
