@@ -19,7 +19,7 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'D:\a\1\s\runsharp', r'D:\a\1\s'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi'],
              hookspath=None,
              runtime_hooks=None)
 
@@ -64,10 +64,10 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           name='SHARPpy.exe',
-          debug=False,
+          debug=True,
           strip=None,
           upx=True,
-          console=False, icon='icons\\SHARPpy.ico')
+          console=True, icon='icons\\SHARPpy.ico')
 
 # Revert the _version.py file to its original version using git
 import subprocess
