@@ -21,7 +21,7 @@ import sharppy
 # Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
              pathex=['/Users/vsts/agent/2.155.1/work/1/s/runsharp', '/Users/vsts/agent/2.155.1/work/1/s', '/Users/blumberg/SHARPpy/runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
              hookspath=None,
              runtime_hooks=None)
 a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
