@@ -119,6 +119,7 @@ steps:
 - script: |
     call activate devel
     python ci/screen.py
+    python -c "import ssl; print(ssl.__file__)"
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
     pip install -e .
     pytest -v --junitxml=junit/test-results.xml
