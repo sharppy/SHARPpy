@@ -23,11 +23,17 @@ from sharppy.io.csv import loadCSV
 import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
+if not os.path.exists(HOME_DIR):
+    os.makedirs(HOME_DIR)
 
 if frozenutils.isFrozen():
     from . import available
 else:
     avail_loc = os.path.join(HOME_DIR, 'available.py')
+    if not os.path.exists(avail_loc):
+        pkg_avail_loc = os.path.join(os.path.dirname(__file__), 'available.py')
+        shutil.copy(pkg_avail_loc, avail_loc)
+
     available = imp.load_source('available', avail_loc)
 
 # TAS: Comment this file and available.py
@@ -40,13 +46,15 @@ def loadDataSources(ds_dir=HOME_DIR):
     Load the data source information from the XML files. 
     Returns a dictionary associating data source names to DataSource objects.
     """
-    if frozenutils.isFrozen():
-        if not os.path.exists(ds_dir):
-            os.makedirs(ds_dir)
-
-        frozen_path = frozenutils.frozenPath()
-        files = glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.xml')) +  \
-                glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.csv'))
+    files = glob.glob(os.path.join(ds_dir, '*.xml'))
+    if len(files) == 0:     
+        if frozenutils.isFrozen():
+            frozen_path = frozenutils.frozenPath()
+            files = glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.xml')) +  \
+                    glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.csv'))
+        else:
+            pkg_path = os.path.dirname(__file__)
+            files = glob.glob(os.path.join(pkg_path, '*.xml')) + glob.glob(os.path.join(pkg_path, '*.csv'))
 
         for file_name in files:
             shutil.copy(file_name, ds_dir)
