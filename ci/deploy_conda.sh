@@ -21,7 +21,8 @@ export CONDA_BLD_PATH=~/conda-bld
 
 # Build the conda recipe
 echo "Build the conda recipe"
-conda build conda-recipe/
+conda build conda-recipe/ --python=3.6
+conda build conda-recipe/ --python=3.7
 
 # Convert the conda package to support other operating systems
 echo "Convert the recipe to other OSes"
