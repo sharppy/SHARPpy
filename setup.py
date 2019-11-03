@@ -26,7 +26,7 @@ keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
 packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'sutils', 'datasources', 'sharppy.plot', 'runsharp']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
-                     "databases/shapefiles/*", "../rc/*"],}
+                     "databases/shapefiles/*", "../rc/*", "../datasources/*.xml", "../datsources/*.csv", "*.csv", "*.xml"],}
 include_package_data = True
 
 #install_requires = []
