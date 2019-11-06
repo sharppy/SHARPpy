@@ -23,7 +23,7 @@ build:
 requirements:
   build:
    - setuptools
-   - python>=3.6
+   - python
    - qtpy
    - pyside2>=5.12.*
    - pip
