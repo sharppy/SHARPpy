@@ -28,7 +28,7 @@ requirements:
    - pyside2>=5.12.*
    - pip
   run:
-   - python>=3.6
+   - python
    - numpy={{ os.environ.get('NUMPY_VERSION', '1.15') }} 
    - pyside2>=5.12.*
    - qtpy
