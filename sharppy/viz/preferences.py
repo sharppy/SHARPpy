@@ -7,6 +7,12 @@ from collections import OrderedDict
 import numpy as np
 
 import os
+import sys
+
+def resource_path():
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, "rc")
+    return os.path.join(os.path.dirname(__file__), "..", "..", "rc")
 
 class ColorSwatch(QWidget):
     """
@@ -83,7 +89,7 @@ class ColorPreview(QWidget):
 
     def __init__(self, styles, default='standard', **kwargs):
         super(ColorPreview, self).__init__(**kwargs)
-        self._img_path = os.path.join(os.path.dirname(__file__), "..", "..", "rc")
+        self._img_path =  resource_path() #os.path.join(os.path.dirname(__file__), "..", "..", "rc")
         self._styles = [ s.lower() for s in styles ]
         self.changeImage(self._styles.index(default))
 
