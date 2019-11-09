@@ -5,7 +5,7 @@ trigger:
       - andover
   tags:
     include:
-      - *
+      - v*
 # Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
