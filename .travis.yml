@@ -60,7 +60,7 @@ deploy:
    script: bash ci/deploy_conda.sh
    on:
      repo: sharppy/SHARPpy
-     tags: false
+     tags: true
      branch: andover
      condition: "$BUILD_CONDA = YES"
 # Deploy docs to Github Pages
@@ -68,7 +68,7 @@ deploy:
    script: bash ci/build_docs.sh
    on:
      repo: sharppy/SHARPpy
-     tags: false
+     tags: true
      branch: andover
      condition: "$BUILD_DOCS = YES"
 # Deploy the code to PyPI
@@ -81,6 +81,6 @@ deploy:
    on:
      repo: sharppy/SHARPpy
      tags: true
-     branch: andover-off
+     branch: andover
      condition: "$BUILD_CONDA = YES"
 
