@@ -81,6 +81,6 @@ deploy:
    on:
      repo: sharppy/SHARPpy
      tags: true
-     branch: andover
+     branch: andover-off
      condition: "$BUILD_CONDA = YES"
 
