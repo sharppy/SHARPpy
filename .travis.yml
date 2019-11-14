@@ -68,7 +68,7 @@ deploy:
    script: bash ci/build_docs.sh
    on:
      repo: sharppy/SHARPpy
-     tags: true
+     tags: false
      branch: andover
      condition: "$BUILD_DOCS = YES"
 # Deploy the code to PyPI
@@ -82,5 +82,5 @@ deploy:
      repo: sharppy/SHARPpy
      tags: true
      branch: andover-off
-     condition: "$BUILD_CONDA = YES"
+     condition: "$BUILD_CONDA = YESS"
 
