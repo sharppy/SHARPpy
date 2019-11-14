@@ -64,7 +64,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           name='SHARPpy.exe',
-          debug=True,
+          debug=False,
           strip=None,
           upx=True,
           console=False, icon='icons\\SHARPpy.ico')
