@@ -13,6 +13,9 @@ SHARPpy can be installed from one of these three places:
 
 Binary executables are available for Windows (64 bit) and macOS 10.6+ (Snow Leopard and later; 64 bit only).
 
+**If you are upgrading your version of SHARPpy, you may need to delete your ~/.sharppy folder as 
+the files in that directory may be incompatable with the new version of SHARPpy.**
+
 Installing a pre-compiled binary
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
