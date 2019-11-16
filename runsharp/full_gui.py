@@ -882,9 +882,9 @@ class Main(QMainWindow):
 
         self.show()
         self.raise_()
-        import time
-        time.sleep(3)
-        self.grab().save('./screenshot.png', 'png')
+        #import time
+        #time.sleep(3)
+        #self.grab().save('./screenshot.png', 'png')
 
     def createMenuBar(self):
         """
