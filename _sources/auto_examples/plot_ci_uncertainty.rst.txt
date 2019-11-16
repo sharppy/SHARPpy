@@ -39,8 +39,6 @@ __ link_
       x = np.log10(w * p / (622. + w))
     /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
       return 1000. / (np.power((theta / t),(1./ROCP)))
-    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/ma/core.py:4005: RuntimeWarning: invalid value encountered in equal
-      check = compare(sdata, odata)
     Probablisitic SBCAPE (25,50,75th percentiles): [5439.75317916 5767.89686073 6114.83594903]
 
 
@@ -218,7 +216,7 @@ __ link_
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  7.935 seconds)
+   **Total running time of the script:** ( 2 minutes  7.705 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_ci_uncertainty.py:
