@@ -161,24 +161,24 @@
   <h1>Source code for sharppy.viz.skew</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">import</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">create_profile</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz.draggable</span> <span class="k">import</span> <span class="n">Draggable</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz.barbs</span> <span class="k">import</span> <span class="n">drawBarb</span>
-<span class="kn">from</span> <span class="nn">qtpy</span> <span class="k">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtOpenGL</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">sutils.utils</span> <span class="k">import</span> <span class="n">total_seconds</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.profile</span> <span class="kn">import</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">create_profile</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz.draggable</span> <span class="kn">import</span> <span class="n">Draggable</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz.barbs</span> <span class="kn">import</span> <span class="n">drawBarb</span>
+<span class="kn">from</span> <span class="nn">qtpy</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtOpenGL</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sutils.utils</span> <span class="kn">import</span> <span class="n">total_seconds</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;backgroundSkewT&#39;</span><span class="p">,</span> <span class="s1">&#39;plotSkewT&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="backgroundSkewT"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.skew.backgroundSkewT">[docs]</a><span class="k">class</span> <span class="nc">backgroundSkewT</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_omega</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_omega</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">backgroundSkewT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_omega</span> <span class="o">=</span> <span class="n">plot_omega</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initUI</span><span class="p">()</span>
@@ -505,7 +505,7 @@
     <span class="n">parcel</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">Parcel</span><span class="p">)</span>
     <span class="n">reset</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing plotSkewT.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bg_color&#39;</span><span class="p">,</span> <span class="s1">&#39;#000000&#39;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fg_color</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fg_color&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">))</span>
@@ -1660,7 +1660,7 @@
 
 <span class="k">class</span> <span class="nc">SfcModifyDialog</span><span class="p">(</span><span class="n">QDialog</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Construct the preferences dialog box.</span>
 <span class="sd">        config: A Config object containing the user&#39;s configuration.</span>

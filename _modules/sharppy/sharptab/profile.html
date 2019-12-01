@@ -160,16 +160,16 @@
             
   <h1>Source code for sharppy.sharptab.profile</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39; Create the Sounding (Profile) Object &#39;&#39;&#39;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">winds</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">watch_type</span><span class="p">,</span> <span class="n">fire</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="kn">import</span> <span class="n">utils</span><span class="p">,</span> <span class="n">winds</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">watch_type</span><span class="p">,</span> <span class="n">fire</span>
 <span class="kn">import</span> <span class="nn">sharppy.io.qc_tools</span> <span class="k">as</span> <span class="nn">qc_tools</span>
-<span class="kn">from</span> <span class="nn">sharppy.databases.sars</span> <span class="k">import</span> <span class="n">hail</span><span class="p">,</span> <span class="n">supercell</span>
-<span class="kn">from</span> <span class="nn">sharppy.databases.pwv</span> <span class="k">import</span> <span class="n">pwv_climo</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="k">import</span> <span class="n">MISSING</span>
+<span class="kn">from</span> <span class="nn">sharppy.databases.sars</span> <span class="kn">import</span> <span class="n">hail</span><span class="p">,</span> <span class="n">supercell</span>
+<span class="kn">from</span> <span class="nn">sharppy.databases.pwv</span> <span class="kn">import</span> <span class="n">pwv_climo</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab.constants</span> <span class="kn">import</span> <span class="n">MISSING</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -256,7 +256,7 @@
         <span class="k">return</span> <span class="n">ConvectiveProfile</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Profile"><a class="viewcode-back" href="../../../sharppy.sharptab.html#sharppy.sharptab.profile.Profile">[docs]</a><span class="k">class</span> <span class="nc">Profile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1">## set the missing variable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">missing</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="n">MISSING</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;profile&#39;</span><span class="p">)</span>
@@ -398,7 +398,7 @@
 <span class="sd">        </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create the sounding data object</span>
 <span class="sd">        </span>
@@ -653,7 +653,7 @@
 <span class="sd">    This class inherits from the Profile object.</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Create the sounding data object</span>
 <span class="sd">        </span>

@@ -237,15 +237,15 @@ SVR Probability: 0.9090909090909091
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span> <span class="c1"># Silence the warnings from SHARPpy</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">sharppy.plot.skew</span> <span class="k">as</span> <span class="nn">skew</span>
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="k">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
-<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="k">import</span> <span class="n">LineCollection</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">ScalarFormatter</span><span class="p">,</span> <span class="n">MultipleLocator</span>
+<span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">LineCollection</span>
 <span class="kn">import</span> <span class="nn">matplotlib.transforms</span> <span class="k">as</span> <span class="nn">transforms</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">gridspec</span>
-<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="k">import</span> <span class="n">winds</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">profile</span>
-<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="k">import</span> <span class="n">SPCDecoder</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">gridspec</span>
+<span class="kn">from</span> <span class="nn">sharppy.sharptab</span> <span class="kn">import</span> <span class="n">winds</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">thermo</span><span class="p">,</span> <span class="n">interp</span><span class="p">,</span> <span class="n">profile</span>
+<span class="kn">from</span> <span class="nn">sharppy.io.spc_decoder</span> <span class="kn">import</span> <span class="n">SPCDecoder</span>
 
 <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 
@@ -442,7 +442,7 @@ SVR Probability: 0.9090909090909091
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  5.644 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  5.531 seconds)</p>
 <div class="sphx-glr-footer class sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-sounding-py">
 <div class="sphx-glr-download docutils container">
 <p><a class="reference download internal" download="" href="../_downloads/deaab23834e541c8908d720a58a880c4/plot_sounding.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_sounding.py</span></code></a></p>

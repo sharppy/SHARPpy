@@ -164,20 +164,20 @@
 
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.prof_collection</span> <span class="k">as</span> <span class="nn">prof_collection</span>
-<span class="kn">from</span> <span class="nn">.decoder</span> <span class="k">import</span> <span class="n">Decoder</span>
-<span class="kn">from</span> <span class="nn">sutils.utils</span> <span class="k">import</span> <span class="n">is_py3</span>
+<span class="kn">from</span> <span class="nn">.decoder</span> <span class="kn">import</span> <span class="n">Decoder</span>
+<span class="kn">from</span> <span class="nn">sutils.utils</span> <span class="kn">import</span> <span class="n">is_py3</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+    <span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 
 <span class="n">__fmtname__</span> <span class="o">=</span> <span class="s2">&quot;spc&quot;</span>
 <span class="n">__classname__</span> <span class="o">=</span> <span class="s2">&quot;SPCDecoder&quot;</span>
 
 <div class="viewcode-block" id="SPCDecoder"><a class="viewcode-back" href="../../../sharppy.io.html#sharppy.io.spc_decoder.SPCDecoder">[docs]</a><span class="k">class</span> <span class="nc">SPCDecoder</span><span class="p">(</span><span class="n">Decoder</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SPCDecoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

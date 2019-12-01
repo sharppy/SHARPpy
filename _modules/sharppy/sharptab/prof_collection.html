@@ -160,11 +160,11 @@
             
   <h1>Source code for sharppy.sharptab.prof_collection</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.interp</span> <span class="k">as</span> <span class="nn">interp</span>
-<span class="kn">from</span> <span class="nn">sutils.frozenutils</span> <span class="k">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">from</span> <span class="nn">sutils.frozenutils</span> <span class="kn">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Queue</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -176,7 +176,7 @@
 <span class="sd">    ProfCollection: A class to keep track of profiles from a single data source. Handles time switching, ensemble member switching,</span>
 <span class="sd">        and modifications to profiles.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profiles</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">ConvectiveProfile</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">profiles</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">ConvectiveProfile</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the collection.</span>
 <span class="sd">        profiles:   A dictionary of lists of profiles.  The keys of the dictionary are the ensemble member names, the</span>

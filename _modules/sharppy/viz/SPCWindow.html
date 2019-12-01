@@ -162,26 +162,26 @@
 <span></span><span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;keltonhalbert, wblumberg&#39;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="k">import</span> <span class="n">plotSkewT</span><span class="p">,</span> <span class="n">plotHodo</span><span class="p">,</span> <span class="n">plotText</span><span class="p">,</span> <span class="n">plotAnalogues</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="k">import</span> <span class="n">plotThetae</span><span class="p">,</span> <span class="n">plotWinds</span><span class="p">,</span> <span class="n">plotSpeed</span><span class="p">,</span> <span class="n">plotKinematics</span> <span class="c1">#, plotGeneric</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="k">import</span> <span class="n">plotSlinky</span><span class="p">,</span> <span class="n">plotWatch</span><span class="p">,</span> <span class="n">plotAdvection</span><span class="p">,</span> <span class="n">plotSTP</span><span class="p">,</span> <span class="n">plotWinter</span>
-<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="k">import</span> <span class="n">plotSHIP</span><span class="p">,</span> <span class="n">plotSTPEF</span><span class="p">,</span> <span class="n">plotFire</span><span class="p">,</span> <span class="n">plotVROT</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="kn">import</span> <span class="n">plotSkewT</span><span class="p">,</span> <span class="n">plotHodo</span><span class="p">,</span> <span class="n">plotText</span><span class="p">,</span> <span class="n">plotAnalogues</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="kn">import</span> <span class="n">plotThetae</span><span class="p">,</span> <span class="n">plotWinds</span><span class="p">,</span> <span class="n">plotSpeed</span><span class="p">,</span> <span class="n">plotKinematics</span> <span class="c1">#, plotGeneric</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="kn">import</span> <span class="n">plotSlinky</span><span class="p">,</span> <span class="n">plotWatch</span><span class="p">,</span> <span class="n">plotAdvection</span><span class="p">,</span> <span class="n">plotSTP</span><span class="p">,</span> <span class="n">plotWinter</span>
+<span class="kn">from</span> <span class="nn">sharppy.viz</span> <span class="kn">import</span> <span class="n">plotSHIP</span><span class="p">,</span> <span class="n">plotSTPEF</span><span class="p">,</span> <span class="n">plotFire</span><span class="p">,</span> <span class="n">plotVROT</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">qtpy.QtWidgets</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab.profile</span> <span class="k">as</span> <span class="nn">profile</span>
 <span class="kn">import</span> <span class="nn">sharppy.sharptab</span> <span class="k">as</span> <span class="nn">tab</span>
 <span class="kn">import</span> <span class="nn">sharppy.io</span> <span class="k">as</span> <span class="nn">io</span>
-<span class="kn">from</span> <span class="nn">sutils.config</span> <span class="k">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">sutils.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">platform</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">expanduser</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">expanduser</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="c1">#from sharppy._sharppy_version import __version__, __version_name__</span>
-<span class="kn">from</span> <span class="nn">sharppy._version</span> <span class="k">import</span> <span class="n">get_versions</span>
+<span class="kn">from</span> <span class="nn">sharppy._version</span> <span class="kn">import</span> <span class="n">get_versions</span>
 <span class="n">__codename__</span> <span class="o">=</span> <span class="s2">&quot;Andover&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
 <span class="k">del</span> <span class="n">get_versions</span>
@@ -234,7 +234,7 @@
         <span class="p">(</span><span class="s1">&#39;paths&#39;</span><span class="p">,</span> <span class="s1">&#39;save_txt&#39;</span><span class="p">):</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">SPCWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -912,7 +912,7 @@
 <div class="viewcode-block" id="SPCWindow"><a class="viewcode-back" href="../../../sharppy.viz.html#sharppy.viz.SPCWindow.SPCWindow">[docs]</a><span class="k">class</span> <span class="nc">SPCWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
     <span class="n">closed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SPCWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initialize SPCWindow...&quot;</span><span class="p">)</span>
