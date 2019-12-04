@@ -3,9 +3,9 @@ trigger:
   branches:
     include:
       - andover
-#  tags:
-#    include:
-#      - v*
+  tags:
+    include:
+      - v*
 # Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
@@ -176,6 +176,7 @@ steps:
     isDraft: true # Optional
     isPreRelease: true # Optional
     addChangeLog: true # Optional
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
 
 # Copy GUI screenshots to the artifacts directory
 - task: CopyFiles@2

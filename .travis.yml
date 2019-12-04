@@ -11,15 +11,15 @@ matrix:
   - os: linux
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.15 DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.17 DISPLAY_AVAIL="YES"
   - os: osx
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_DOCS="YES" NUMPY_VERSION=1.15
+      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_DOCS="YES" NUMPY_VERSION=1.17
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="NO" NUMPY_VERSION=1.15 COVERALLS="YES" DISPLAY_AVAIL="YES"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="NO" NUMPY_VERSION=1.17 COVERALLS="YES" DISPLAY_AVAIL="YES"
 
 addons:
   ssh_known_hosts: 
@@ -60,7 +60,7 @@ deploy:
    script: bash ci/deploy_conda.sh
    on:
      repo: sharppy/SHARPpy
-     tags: false
+     tags: true
      branch: andover
      condition: "$BUILD_CONDA = YES"
 # Deploy docs to Github Pages
@@ -82,5 +82,5 @@ deploy:
      repo: sharppy/SHARPpy
      tags: true
      branch: andover-off
-     condition: "$BUILD_CONDA = YES"
+     condition: "$BUILD_CONDA = YESS"
 
