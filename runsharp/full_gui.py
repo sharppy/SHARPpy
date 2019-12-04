@@ -1,3 +1,5 @@
+import os
+os.environ['QT_API'] = 'pyside2' # Force PySide2 to be used in QtPy
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
