@@ -39,6 +39,1366 @@ __ link_
       x = np.log10(w * p / (622. + w))
     /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
       return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:459: RuntimeWarning: invalid value encountered in log10
+      x = np.log10(w * p / (622. + w))
+    /Users/travis/build/sharppy/SHARPpy/sharppy/sharptab/thermo.py:86: RuntimeWarning: divide by zero encountered in true_divide
+      return 1000. / (np.power((theta / t),(1./ROCP)))
+    /Users/travis/miniconda/envs/devel/envs/docs-env/lib/python3.7/site-packages/numpy/lib/function_base.py:1308: UserWarning: Warning: converting a masked element to nan.
+      return interp_func(x, xp, fp, left, right)
     Probablisitic SBCAPE (25,50,75th percentiles): [5439.75317916 5767.89686073 6114.83594903]
 
 
@@ -217,7 +1577,7 @@ __ link_
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 2 minutes  15.003 seconds)
+   **Total running time of the script:** ( 2 minutes  10.850 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_ci_uncertainty.py:
