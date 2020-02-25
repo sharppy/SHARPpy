@@ -38,7 +38,7 @@ From conda
 ----------
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
-We recommend you download the *Python 3.6* version of the Anaconda Python distribution.  SHARPpy is
+We recommend you download the *Python 3.6 or 3.7* version of the Anaconda Python distribution.  SHARPpy is
 primarily tested using this distribution.
 
 .. prompt:: bash
@@ -49,10 +49,11 @@ primarily tested using this distribution.
 From pip
 --------
 
-If you hate snakes, you may want to use :command:`pip` instead: 
+Currently, we are have difficulties deploying to PyPI and therefore do not recommend downloading SHARPpy from pip.
 
-.. prompt:: bash
-
+..
+  If you hate snakes, you may want to use :command:`pip` instead: 
+  .. prompt:: bash
     pip install sharppy
 
 Installing the code from source
