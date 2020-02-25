@@ -23,13 +23,13 @@ build:
 requirements:
   build:
    - setuptools
-   - python
+   - python>=3.6
    - qtpy
    - pyside2>=5.12.*
    - pip
   run:
-   - python
-   - numpy={{ os.environ.get('NUMPY_VERSION', '1.15') }} 
+   - python>=3.6
+   - numpy={{ os.environ.get('NUMPY_VERSION', '1.17.*') }} 
    - pyside2>=5.12.*
    - qtpy
    - requests
