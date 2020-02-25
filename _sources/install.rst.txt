@@ -41,11 +41,12 @@ The Anaconda Python Distribution can be downloaded here: https://store.continuum
 We recommend you download the *Python 3.6 or 3.7* version of the Anaconda Python distribution.  SHARPpy is
 primarily tested using this distribution.
 
-To avoid compatability issues with other Python packages, we strongly recommend install SHARPpy into its own Anaconda environment:
+To avoid compatability issues with other Python packages, we **strongly recommend** you install SHARPpy into its own Anaconda environment:
 
 .. prompt:: bash
+
     conda create -n sharppy-env -c sharppy -c conda-forge sharppy
-    conda  activate sharppy-env
+    conda activate sharppy-env
 
 Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:
 
@@ -118,13 +119,8 @@ tend to have another name (such as andover).  You can download those using the `
     git checkout andover
 
 Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory.
-If you want to use setuptools, type this command in to install SHARPpy:
-
-.. prompt:: bash
-
-    python setup.py install
-
-If you have pip, it can also be installed via this command:
+The package can be installed via this command, which will allow you to edit the source code you downloaded and test it without
+needing to reinstall the program each time:
 
 .. prompt:: bash
     

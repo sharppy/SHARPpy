@@ -203,13 +203,15 @@ Integration software with each update we make to the primary code base:</p>
 <p>The Anaconda Python Distribution can be downloaded here: <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">https://store.continuum.io/cshop/anaconda/</a>
 We recommend you download the <em>Python 3.6 or 3.7</em> version of the Anaconda Python distribution.  SHARPpy is
 primarily tested using this distribution.</p>
-<p>To avoid compatability issues with other Python packages, we strongly recommend install SHARPpy into its own Anaconda environment:</p>
-<p>Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:</p>
+<p>To avoid compatability issues with other Python packages, we <strong>strongly recommend</strong> you install SHARPpy into its own Anaconda environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
 }
-</style><span class="prompt1">conda config --add channels conda-forge</span>
+</style><span class="prompt1">conda create -n sharppy-env -c sharppy -c conda-forge sharppy</span>
+<span class="prompt1">conda activate sharppy-env</span>
+</pre></div></div><p>Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">conda config --add channels conda-forge</span>
 <span class="prompt1">conda install -c sharppy sharppy</span>
 </pre></div></div></div>
 <div class="section" id="from-pip">
@@ -248,9 +250,8 @@ that allows the managers of the SHARPpy project to “pull” your contributions
 tend to have another name (such as andover).  You can download those using the <cite>checkout</cite> command.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">git checkout andover</span>
 </pre></div></div><p>Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory.
-If you want to use setuptools, type this command in to install SHARPpy:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">python setup.py install</span>
-</pre></div></div><p>If you have pip, it can also be installed via this command:</p>
+The package can be installed via this command, which will allow you to edit the source code you downloaded and test it without
+needing to reinstall the program each time:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">pip install -e .</span>
 </pre></div></div><p>After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 The GUI can be launched similar to the method described above in the “Installing from conda or pip” section.</p>
