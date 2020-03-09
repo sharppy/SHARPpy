@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000520/2100F000    vpc 
+  VPC 000520/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.1 C/km
 850-500mb   27 C	6.2 C/km
+
+----- Note -----
+Old Title:  RUC 000520/2100F000    vpc 
+

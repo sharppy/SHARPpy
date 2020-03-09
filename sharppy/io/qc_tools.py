@@ -4,6 +4,10 @@ from sharppy.sharptab import thermo
 __all__ = ['raiseError', 'numMasked', 'isPRESValid', 'isHGHTValid', 'isWSPDValid']
 __all__ += ['isDWPCValid', 'isTMPCValid']
 
+# Data quality exception error
+class DataQualityException(Exception):
+    pass
+
 def raiseError(string, errorType):
     '''
         raiseError
@@ -12,12 +16,16 @@ def raiseError(string, errorType):
 
         Parameters
         ----------
-        string: the string to be #printed out to the user.
-        errorType: the type of exception.
+        string : str
+            the string to be printed out to the user when the exception is thrown
+
+        errorType : Exception
+            the type of exception.
 
         Returns
         -------
         None
+
     '''
     raise Exception(errorType, string)
 
@@ -30,12 +38,16 @@ def numMasked(arr):
 
         Parameters
         ----------
-        arr: a masked Numpy array
+        arr : masked numpy array
+            The maksed numpy array
 
         Returns
         -------
-        the number of unmasked array elements
-        the length of the unmasked array
+        count : number
+            the number of unmasked array elements
+        length : number
+            the length of the unmasked array
+
     '''
     return arr.count(), arr.shape[0]
 
@@ -49,16 +61,18 @@ def areProfileArrayLengthEqual(prof):
 
         Parameters
         ----------
-        prof: a Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
         None
+
     '''
 
     if not (len(prof.pres) == len(prof.hght) == len(prof.tmpc) == len(prof.dwpc) ==\
             len(prof.wdir) == len(prof.wspd) == len(prof.u) == len(prof.v) == len(prof.omeg)):
-        raiseError("Arrays passed to the Profile object have unequal lengths.", AssertionError)
+        raiseError("Arrays passed to the Profile object have unequal lengths.", DataQualityException)
  
 def isPRESValid(pres):
     '''
@@ -68,17 +82,21 @@ def isPRESValid(pres):
         values are within the pres array that is passed to the 
         Profile object
 
+        True If:
+            1.) pressure array length is > 1
+            2.) pressure array is not filled with masked values
+            3.) if the pressure array is decreasing with the index
+                and there are no repeat values.
+
         Parameters
         ----------
-        pres: the pressure array (mb)
+        pres : array
+            pressure array (mb)
 
         Returns
         -------
-        True/False: True If:
-                        1.) pressure array length is > 1
-                        2.) pressure array is not filled with masked values 
-                        3.) if the pressure array is decreasing with the index
-                            and there are no repeat values.
+        value : bool
+
     '''
     idx_diff = np.ma.diff(pres)
     neg_pres = np.ma.where(pres <= 0)[0]
@@ -96,17 +114,21 @@ def isHGHTValid(hght):
         values are within the hght array that is passed to the 
         Profile object
 
+        True/False: True If:
+             1.) height array length is > 0
+             2.) height array is not filled with masked values
+             3.) if the height array is increasing with the index
+                 and there are no repeat values.
+
         Parameters
         ----------
-        hght: the height array (m)
+        hght : array
+            height array (m)
 
         Returns
         -------
-        True/False: True If:
-                        1.) height array length is > 0
-                        2.) height array is not filled with masked values 
-                        3.) if the height array is increasing with the index
-                            and there are no repeat values.
+        value : bool
+
     '''
     num_ok, total = numMasked(hght)
 
@@ -130,14 +152,17 @@ def isWDIRValid(wdir):
         values are within the wdir array that is passed to the 
         Profile object
 
+        True if the wind direction array is > 0 in size and
+        if the wind directions are between 0 and 360.
+
         Parameters
         ----------
-        wdir: the wind direction array (degrees)
+        wdir : array
+            wind direction array (degrees)
 
         Returns
         -------
-        True/False: True if the wind direction array is > 0 in size and
-                    if the wind directions are between 0 and 360.
+        value : bool
     '''
     idx = np.ma.where((wdir > 360) | (wdir < 0))[0]
     if len(idx) == 0:

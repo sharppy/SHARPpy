@@ -1,11 +1,11 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
 
 __all__ = ['backgroundAdvection', 'plotAdvection']
-class backgroundAdvection(QtGui.QFrame):
+class backgroundAdvection(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''
@@ -29,7 +29,8 @@ class backgroundAdvection(QtGui.QFrame):
         self.adv_max = 13.; self.adv_min = -13.
         self.adv_min = 0
 
-        fsize = 8
+        self.font_ratio = 0.12
+        fsize = round(self.size().width() * self.font_ratio) + 3
         self.label_font = QtGui.QFont('Helvetica', fsize)
         self.label_metrics = QtGui.QFontMetrics(self.label_font)
         self.os_mod = 0
@@ -39,7 +40,7 @@ class backgroundAdvection(QtGui.QFrame):
             self.label_metrics = QtGui.QFontMetrics(self.label_font)
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -61,10 +62,10 @@ class backgroundAdvection(QtGui.QFrame):
         self.draw_frame(qp)
         ## draw the vertical ticks for wind speed
         self.draw_centerline(qp)
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setFont(self.label_font)
         qp.setPen(pen)
-        qp.drawText(2,2,self.brx - 2,8*3, QtCore.Qt.AlignLeft | QtCore.Qt.TextWordWrap, 'Inf. Temp. Adv. (C/hr)')
+        qp.drawText(2,2,self.brx - 2,8*5, QtCore.Qt.AlignLeft | QtCore.Qt.TextWordWrap, 'Inf. Temp. Adv. (C/hr)')
         qp.end()
 
     def draw_frame(self, qp):
@@ -73,7 +74,7 @@ class backgroundAdvection(QtGui.QFrame):
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## draw the borders in white
         qp.drawLine(self.tlx, self.tly, self.brx, self.tly)
@@ -82,7 +83,7 @@ class backgroundAdvection(QtGui.QFrame):
         qp.drawLine(self.tlx, self.bry, self.tlx, self.tly)
 
     def draw_centerline(self, qp):
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.DashLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
         qp.drawLine(self.adv_to_pix(0), self.pres_to_pix(self.pmax), self.adv_to_pix(0), self.pres_to_pix(self.pmin))
 
@@ -116,6 +117,9 @@ class plotAdvection(backgroundAdvection):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
         super(plotAdvection, self).__init__()
         self.prof = None
 
@@ -128,6 +132,15 @@ class plotAdvection(backgroundAdvection):
         self.clearData()
         self.plotBackground()
         self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.update()
 
     def resizeEvent(self, e):
         '''
@@ -156,13 +169,14 @@ class plotAdvection(backgroundAdvection):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self, qp):
         if self.prof is None:
             return
-
-        for i in xrange(len(self.inf_temp_adv)):
+        if self.prof.wdir.count() == 0:
+            return
+        for i in range(len(self.inf_temp_adv)):
             ptop = self.pressure_bounds[i][0]
             pbot = self.pressure_bounds[i][1]
             inf_temp_adv = self.inf_temp_adv[i]
@@ -183,7 +197,7 @@ class plotAdvection(backgroundAdvection):
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(-8)
                 else:
-                    color = QtGui.QColor("#FFFFFF")
+                    color = self.fg_color
                     pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
                     qp.setPen(pen)
                     label_loc = self.adv_to_pix(8) - label_width
@@ -194,3 +208,10 @@ class plotAdvection(backgroundAdvection):
                 qp.drawLine(pix_adv, pix_ptop, self.adv_to_pix(0), pix_ptop)
                 qp.drawLine(self.adv_to_pix(0), pix_ptop, self.adv_to_pix(0), pix_pbot)
         return
+
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotAdvection()
+    tester.show()    
+    app_frame.exec_()

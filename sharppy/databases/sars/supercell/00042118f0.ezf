@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000421/1800F000    ezf 
+  EZF 000421/1800     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          10.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.6 C/km
 850-500mb   28 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 000421/1800F000    ezf 
+

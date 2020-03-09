@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000905/2300F000    gtf 
+  GTF 000905/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          7.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.4 C/km
 850-500mb   32 C	7.6 C/km
+
+----- Note -----
+Old Title:  RUC 000905/2300F000    gtf 
+

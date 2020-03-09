@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990809/2300F000    mkt 
+  MKT 990809/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          16.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.7 C/km
 850-500mb   30 C	7.0 C/km
+
+----- Note -----
+Old Title:  RUC 990809/2300F000    mkt 
+

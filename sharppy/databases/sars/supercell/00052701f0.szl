@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000527/0100F000    szl 
+  SZL 000527/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          13.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.7 C/km
 850-500mb   28 C	6.6 C/km
+
+----- Note -----
+Old Title:  RUC 000527/0100F000    szl 
+

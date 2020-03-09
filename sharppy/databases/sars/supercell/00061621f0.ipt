@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000616/2100F000    ipt 
+  IPT 000616/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          16.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   14 C 	5.6 C/km
 850-500mb   27 C	6.3 C/km
+
+----- Note -----
+Old Title:  RUC 000616/2100F000    ipt 
+

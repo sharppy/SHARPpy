@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990712/0200F000    aia 
+  AIA 990712/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          9.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	8.0 C/km
 850-500mb   35 C	8.1 C/km
+
+----- Note -----
+Old Title:  RUC 990712/0200F000    aia 
+

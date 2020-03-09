@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990928/2300F000    laf 
+  LAF 990928/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.9 C/km
 850-500mb   27 C	6.2 C/km
+
+----- Note -----
+Old Title:  RUC 990928/2300F000    laf 
+

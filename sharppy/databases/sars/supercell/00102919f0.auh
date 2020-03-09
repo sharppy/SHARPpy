@@ -1,5 +1,5 @@
 %TITLE%
- RUC 001029/1900F000    auh 
+  AUH 001029/1900     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          8.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.1 C/km
 850-500mb   26 C	6.3 C/km
+
+----- Note -----
+Old Title:  RUC 001029/1900F000    auh 
+

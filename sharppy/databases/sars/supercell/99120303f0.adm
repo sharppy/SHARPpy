@@ -1,5 +1,5 @@
 %TITLE%
- RUC 991203/0300F000    adm 
+  ADM 991203/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          9.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.5 C/km
 850-500mb   35 C	8.4 C/km
+
+----- Note -----
+Old Title:  RUC 991203/0300F000    adm 
+

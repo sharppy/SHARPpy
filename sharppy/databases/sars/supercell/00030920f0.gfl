@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000309/2000F000    gfl 
+  GFL 000309/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          7.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	8.1 C/km
 850-500mb   32 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 000309/2000F000    gfl 
+

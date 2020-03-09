@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000720/2200F000    ako 
+  AKO 000720/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          13.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   37 C	8.5 C/km
+
+----- Note -----
+Old Title:  RUC 000720/2200F000    ako 
+

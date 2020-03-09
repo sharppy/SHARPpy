@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000223/0300F000    dlf 
+  DLF 000223/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          8.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.8 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000223/0300F000    dlf 
+

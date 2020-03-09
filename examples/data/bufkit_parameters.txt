@@ -1,0 +1,89 @@
+
+      ***  Bufkit File Parameter Definitions  ***
+
+        Compiled at Penn State - February 2, 2017
+
+References:
+
+http://www.nws.noaa.gov/tg/ftpncep.php
+http://www.unidata.ucar.edu/software/gempak/man/parm/apxA.html
+http://www.unidata.ucar.edu/software/gempak/man/parm/sfparm.html
+http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/gfs.v13.0.4/parm/bufr_gfs3_class1.tbl
+http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/nam.v3.1.25/parm/nam_bufr.tbl
+http://www.nco.ncep.noaa.gov/pmb/codes/nwprod/rap.v3.0.9/parm/rap_bufr.tbl
+http://www.unidata.ucar.edu/software/gempak/man/prog/namsnd.html
+
+
+Sounding parameters
+
+STID - Station ID (alphanumeric)
+STNM - 6-digit station Number
+TIME - Valid time (UTC) in YYMMDD/HHMM numeric format
+SLAT - Latitude (decimal degrees)
+SLON - Longitude (decimal degrees)
+SELV - Station elevation (m)
+STIM - Forecast hour
+
+SHOW - Showalter Index
+LIFT - Lifted Index
+SWET - SWET Index
+KINX - K Index
+LCLP - Pressure at the LCL (hPa)
+PWAT - Precipitable water (mm)
+TOTL - Total Totals Index
+CAPE - CAPE (Convective Available Potential Energy)
+LCLT - Temperature at the LCL (K)
+CINS - CINS (Convective Inhibition)
+EQLV - Equilibrium level (hPa)
+LFCT - Level of free convection (hPa)
+BRCH - Bulk Richardson number
+
+PRES - Pressure (hPa)
+TMPC - Temperature (C)
+TMWC - Wet bulb temperature (C)
+DWPC - Dewpoint (C)
+THTE - Equivalent potential temperature (K)
+DRCT - Wind direction (degrees)
+SKNT - Wind speed (knots)
+OMEG - Vertical velocity (Pa/s)
+CFRL - Fractional cloud coverage (percent)
+HGHT - Height of pressure level (m)
+
+
+Surface parameters (near end of file):
+
+STN  - 6-digit station number
+YYMMDD/HHMM - Valid time (UTC) in numeric format
+PMSL - Mean sea level pressure (hPa)
+PRES - Station pressure (hPa)
+SKTC - Skin temperature (C)
+STC1 - Layer 1 soil temperature (K)
+SNFL - 1-hour accumulated snowfall (Kg/m**2)
+WTNS - Soil moisture availability (percent)
+P01M - 1-hour total precipitation (mm)
+C01M - 1-hour convective precipitation (mm)
+STC2 - Layer 2 soil temperature (K)
+LCLD - Low cloud coverage (percent)
+MCLD - Middle cloud coverage (percent)
+HCLD - High cloud coverage (percent)
+SNRA - Snow ratio from explicit cloud scheme (percent)
+UWND - 10-meter U wind component (m/s)
+VWND - 10-meter V wind component (m/s)
+R01M - 1-hour accumulated surface runoff (mm)
+BFGR - 1-hour accumulated baseflow-groundwater runoff (mm)
+T2MS - 2-meter temperature (C)
+Q2MS - 2-meter specific humidity
+WXTS - Snow precipitation type (1=Snow)
+WXTP - Ice pellets precipitation type (1=Ice pellets)
+WXTZ - Freezing rain precipitation type (1=Freezing rain)
+WXTR - Rain precipitation type (1=Rain)
+USTM - U-component of storm motion (m/s)
+VSTM - V-component of storm motion (m/s)
+HLCY - Storm relative helicity (m**2/s**2)
+SLLH - 1-hour surface evaporation (mm)
+WSYM - Weather type symbol number
+CDBP - Pressure at the base of cloud (hPa)
+VSBK - Visibility (km)
+TD2M - 2-meter dewpoint (C)
+
+Obtained from: http://www.meteo.psu.edu/bufkit/bufkit_parameters.txt

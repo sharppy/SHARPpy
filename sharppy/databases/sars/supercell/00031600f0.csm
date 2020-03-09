@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000316/0000F000    csm 
+  CSM 000316/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          8.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.6 C/km
 850-500mb   32 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 000316/0000F000    csm 
+

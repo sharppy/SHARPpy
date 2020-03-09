@@ -9,6 +9,8 @@ import sharppy.io.qc_tools as qc_tools
 from sharppy.databases.sars import hail, supercell
 from sharppy.databases.pwv import pwv_climo
 from sharppy.sharptab.constants import MISSING
+import logging
+import warnings
 
 def create_profile(**kwargs):
     '''
@@ -23,56 +25,56 @@ def create_profile(**kwargs):
 
     Parameters
     ----------
-    Optional Keywords
-
-    missing : number (default: sharppy.sharptab.constants.MISSING)
-    The value of the missing flag used in the Profile objects
-
-    profile : string (default: 'default')
-    The text identifier for the Profile to be generated. Valid options
-    include ('default' | 'convective'). Default will construct a basic
-    Profile, and convective will construct a ConvectiveProfile used for
-    the SPC style GUI.
-
     Mandatory Keywords
 
     pres : array_like
-    The pressure values (Hectopascals)
+        The pressure values (Hectopascals)
     hght : array_like
-    The corresponding height values (Meters)
+        The corresponding height values (Meters)
     tmpc : array_like
-    The corresponding temperature values (Celsius)
+        The corresponding temperature values (Celsius)
     dwpc : array_like
-    The corresponding dewpoint temperature values (Celsius)
+        The corresponding dewpoint temperature values (Celsius)
 
     Optional Keyword Pairs (must use one or the other)
 
     wdir : array_like
-    The direction from which the wind is blowing in
-    meteorological degrees
+        The direction from which the wind is blowing in meteorological degrees
     wspd : array_like
-    The speed of the wind
+        The speed of the wind (kts)
 
     OR
 
     u : array_like
-    The U-component of the direction from which the wind
-    is blowing
+        The U-component of the direction from which the wind is blowing. (kts)
 
     v : array_like
-    The V-component of the direction from which the wind
-    is blowing.
+        The V-component of the direction from which the wind is blowing. (kts)
+
+    Optional Keywords
+
+    missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+        The value of the missing flag used in the Profile objects
+
+    profile : string, optional (default: 'default')
+        The text identifier for the Profile to be generated. Valid options
+        include ('default' | 'basic' | 'convective'). Default will construct a basic
+        Profile, and convective will construct a ConvectiveProfile used for
+        the SPC style GUI. 
+
+    omeg: array_like
+        The corresponding vertical velocity values (Pa/s)
 
     Returns
     -------
 
     Profile : a basic Profile object
-    This is the most basic and default object.
+        This is the most basic and default object.
 
     OR
 
     ConvectiveProfile : a child of Profile
-    This is the class used for the SPC GUI.
+        This is the class used for the SPC GUI.
 
 
     '''
@@ -98,6 +100,7 @@ class Profile(object):
         self.missing = kwargs.get('missing', MISSING)
         self.profile = kwargs.get('profile')
         self.latitude = kwargs.get('latitude', ma.masked)
+        self.strictQC = kwargs.get('strictQC', False)
 
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
@@ -105,20 +108,38 @@ class Profile(object):
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
 
-        if 'wdir' in kwargs:
+        assert self.pres.ndim == 1 and self.hght.ndim == 1 and self.tmpc.ndim == 1 and self.dwpc.ndim == 1,\
+               "The dimensions of the pres, hght, tmpc, and dwpc arrays passed to the Profile object constructor are not all one dimensional."
+
+        assert len(self.pres) > 1 and len(self.hght) > 1 and len(self.tmpc) > 1 and len(self.dwpc) > 1,\
+               "The length of the pres, hght, tmpc, and dwpc arrays passed to Profile object constructor must all have a length greater than 1."
+
+        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
+                "The pres, hght, tmpc, or dwpc arrays passed to the Profile object constructor must all have the same length."
+
+        if np.ma.max(self.pres) <= 100:
+            warnings.warn("The pressure values passed to the profile object are below 100 mb.  This may cause some the SHARPpy routines not to behave as expected.") 
+
+        if 'wdir' in kwargs and 'wspd' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
-
+            assert len(self.wdir) == len(self.wspd) == len(self.pres), "The wdir and wspd arrays passed to the Profile constructor must have the same length as the pres array."
+            assert self.wdir.ndim == 1 and self.wspd.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
+            #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
 
         ## did the user provide the wind in u,v form?
-        elif 'u' in kwargs:
+        elif 'u' in kwargs and 'v' in kwargs:
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
-
+            assert len(self.u) == len(self.v) == len(self.pres), "The u and v arrays passed to the Profile constructor must have the same length as the pres array."
+            assert self.u.ndim == 1 and self.v.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
+            #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
             self.wspd = None
+        else:
+            warnings.warn("No wind data (wdir/wspd or u/v) passed to the Profile object constructor.  This may cause some of the SHARPpy routines to not behave as expected.")
 
         ## check if any standard deviation data was supplied
         if 'tmp_stdev' in kwargs:
@@ -131,6 +152,9 @@ class Profile(object):
         if kwargs.get('omeg', None) is not None:
             ## get the omega data and turn into arrays
             self.omeg = ma.asanyarray(kwargs.get('omeg'))
+            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
+            assert self.omeg.ndim == 1, "omeg array is not one dimensional."
+            assert len(self.omeg) > 1, "omeg array length must have a length greater than 1."
         else:
             self.omeg = None
 
@@ -138,19 +162,33 @@ class Profile(object):
         self.location = kwargs.get('location', None)
         self.date = kwargs.get('date', None)
 
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
     @classmethod
-    def copy(cls, prof, **kwargs):
+    def copy(cls, prof, strictQC=False, **kwargs):
         '''
             Copies a profile object.
-        '''            
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude' ])
-        if 'u' in kwargs or 'v' in kwargs:
-            new_kwargs.update({'u':prof.u, 'v':prof.v})
-        else:   
-            new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+        ''' 
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC', 'missing' ])
 
+        if prof.u is not None and prof.v is not None:
+            new_kwargs.update({'u':prof.u, 'v':prof.v})
+        else:
+            new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
+        
+        new_kwargs.update({'strictQC':strictQC})
+
+        # Create a new profile object using the old profile object data cls is the Class type (e.g., ConvectiveProfile)
         new_kwargs.update(kwargs)
-        return cls(**new_kwargs)
+        new_prof = cls(**new_kwargs)
+
+        if hasattr(prof, 'srwind'):
+            rmu, rmv, lmu, lmv = prof.srwind
+            new_prof.set_srright(rmu, rmv)
+            new_prof.set_srleft(lmu, lmv)
+
+        return new_prof
 
     def toFile(self, file_name):
         snd_file = open(file_name, 'w')
@@ -160,13 +198,14 @@ class Profile(object):
         snd_loc = (" " * (4 - len(self.location))) + self.location
 
         now = datetime.utcnow()
+        #print(now, self.date)
         user = getpass.getuser()
         snd_file.write("%TITLE%\n")
         snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")
-        for idx in xrange(self.pres.shape[0]):
+        for idx in range(self.pres.shape[0]):
             str = ""
             for col in ['pres', 'hght', 'tmpc', 'dwpc', 'wdir', 'wspd']:
                 str += "%8.2f,  " % qc(self.__dict__[col][idx])
@@ -174,6 +213,19 @@ class Profile(object):
             snd_file.write(str[:-3] + "\n")
         snd_file.write("%END%\n")
         snd_file.close()
+
+    def checkDataIntegrity(self):
+        if not qc_tools.isHGHTValid(self.hght):
+            qc_tools.raiseError("Invalid height data.  Data has repeat height values or height does not increase as pressure decreases.", qc_tools.DataQualityException)
+        if not qc_tools.isTMPCValid(self.tmpc):
+            qc_tools.raiseError("Invalid temperature data. Profile contains a temperature value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isDWPCValid(self.dwpc):
+            qc_tools.raiseError("Invalid dewpoint data. Profile contains a dewpoint value < -273.15 Celsius.", qc_tools.DataQualityException)
+        if not qc_tools.isWSPDValid(self.wspd):
+            qc_tools.raiseError("Invalid wind speed data. Profile contains a wind speed value < 0 knots.", qc_tools.DataQualityException)
+        if not qc_tools.isWDIRValid(self.wdir):
+            qc_tools.raiseError("Invalid wind direction data. Profile contains a wind direction < 0 degrees or >= 360 degrees.", qc_tools.DataQualityException)
+
 
 class BasicProfile(Profile):
     '''
@@ -193,43 +245,43 @@ class BasicProfile(Profile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
         The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
             
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing (kts)
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing. (kts)
             
         Optional Keywords
         missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+            The value of the missing flag
 
         location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
         
         strictQC : boolean
-        A flag that indicates whether or not the strict quality control
-        routines should be run on the profile upon construction.
+            A flag that indicates whether or not the strict quality control
+            routines should be run on the profile upon construction.
 
         Returns
         -------
@@ -238,14 +290,10 @@ class BasicProfile(Profile):
         '''
         super(BasicProfile, self).__init__(**kwargs)
 
-        strictQC = kwargs.get('strictQC', True)
-
-        assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
-                "Length of pres, hght, tmpc, or dwpc arrays passed to constructor are not the same."
+        self.strictQC = kwargs.get('strictQC', True)
 
         ## did the user provide the wind in vector form?
         if self.wdir is not None:
-            assert len(self.wdir) == len(self.wspd) == len(self.pres), "Length of wdir and wspd arrays passed to constructor are not the same length as the pres array."
             self.wdir[self.wdir == self.missing] = ma.masked
             self.wspd[self.wspd == self.missing] = ma.masked
             self.wdir[self.wspd.mask] = ma.masked
@@ -254,7 +302,6 @@ class BasicProfile(Profile):
 
         ## did the user provide the wind in u,v form?
         elif self.u is not None:
-            assert len(self.u) == len(self.v) == len(self.pres), "Length of u and v arrays passed to constructor are not the same length as the pres array."
             self.u[self.u == self.missing] = ma.masked
             self.v[self.v == self.missing] = ma.masked
             self.u[self.v.mask] = ma.masked
@@ -270,7 +317,6 @@ class BasicProfile(Profile):
 
         if self.omeg is not None:
             ## get the omega data and turn into arrays
-            assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
             self.omeg[self.omeg == self.missing] = ma.masked
         else:
             self.omeg = ma.masked_all(len(self.hght))
@@ -284,20 +330,6 @@ class BasicProfile(Profile):
         self.tmpc[self.tmpc == self.missing] = ma.masked
         self.dwpc[self.dwpc == self.missing] = ma.masked
 
-        #if not qc_tools.isPRESValid(self.pres):
-        ##    qc_tools.raiseError("Incorrect order of pressure array (or repeat values) or pressure array is of length <= 1.", ValueError)
-        if not qc_tools.isHGHTValid(self.hght) and strictQC:
-            qc_tools.raiseError("Incorrect order of height (or repeat values) array or height array is of length <= 1.", ValueError)
-        if not qc_tools.isTMPCValid(self.tmpc):
-            qc_tools.raiseError("Invalid temperature array. Array contains a value < -273.15 Celsius.", ValueError)
-        if not qc_tools.isDWPCValid(self.dwpc):
-            qc_tools.raiseError("Invalid dewpoint array. Array contains a value < -273.15 Celsius.", ValueError)
-        if not qc_tools.isWSPDValid(self.wspd) and strictQC:
-            qc_tools.raiseError("Invalid wind speed array. Array contains a value < 0 knots.", ValueError)
-        if not qc_tools.isWDIRValid(self.wdir) and strictQC:
-            qc_tools.raiseError("Invalid wind direction array. Array contains a value < 0 degrees or value > 360 degrees.", ValueError)     
-
-
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
         idx = np.ma.where(self.pres > 0)[0]
@@ -306,10 +338,20 @@ class BasicProfile(Profile):
         ## get the index of the top and bottom of the profile
         self.sfc = self.get_sfc()
         self.top = self.get_top()
+
+        if self.strictQC is True:
+            self.checkDataIntegrity()
+
         ## generate the wetbulb profile
         self.wetbulb = self.get_wetbulb_profile()
         ## generate theta-e profile
         self.thetae = self.get_thetae_profile()
+        ## generate theta profile
+        self.theta = self.get_theta_profile()
+        ## generate water vapor mixing ratio profile
+        self.wvmr = self.get_wvmr_profile()
+        ## generate rh profile
+        self.relh = self.get_rh_profile()
 
     def get_sfc(self):
         '''
@@ -343,6 +385,26 @@ class BasicProfile(Profile):
             Index of the surface
             '''
         return np.where(~self.tmpc.mask)[0].max()
+     
+    def get_wvmr_profile(self):
+        '''
+            Function to calculate the water vapor mixing ratio profile.
+            
+            Parameters
+            ----------
+            None
+            
+            Returns
+            -------
+            Array of water vapor mixing ratio profile
+            '''
+        
+        #wvmr = ma.empty(self.pres.shape[0])
+        #for i in range(len(self.v)):
+        wvmr = thermo.mixratio( self.pres, self.dwpc )
+        wvmr[wvmr == self.missing] = ma.masked
+        wvmr.set_fill_value(self.missing)
+        return wvmr
     
     def get_wetbulb_profile(self):
         '''
@@ -403,6 +465,23 @@ class BasicProfile(Profile):
         thetae.set_fill_value(self.missing)
         return thetae
 
+    def get_rh_profile(self):
+        '''
+        Function to calculate the relative humidity profile
+        
+        Parameters
+        ----------
+        None
+    
+        Returns
+        -------
+        Array of the relative humidity profile
+        '''
+
+        rh = thermo.relh(self.pres, self.tmpc, self.dwpc)
+        rh[rh == self.missing] = ma.masked
+        rh.set_fill_value(self.missing)
+        return rh
 
 
 class ConvectiveProfile(BasicProfile):
@@ -421,42 +500,41 @@ class ConvectiveProfile(BasicProfile):
         ----------
         Mandatory Keywords
         pres : array_like
-        The pressure values (Hectopaschals)
+            The pressure values (Hectopaschals)
         hght : array_like
-        The corresponding height values (Meters)
+            The corresponding height values (Meters)
         tmpc : array_like
-        The corresponding temperature values (Celsius)
+            The corresponding temperature values (Celsius)
         dwpc : array_like
-        The corresponding dewpoint temperature values (Celsius)
+            The corresponding dewpoint temperature values (Celsius)
             
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
-        The direction from which the wind is blowing in
-        meteorological degrees
+            The direction from which the wind is blowing in
+            meteorological degrees
         wspd : array_like
-        The speed of the wind
+            The speed of the wind (kts)
         
         OR
             
         u : array_like
-        The U-component of the direction from which the wind
-        is blowing
+            The U-component of the direction from which the wind
+            is blowing
             
         v : array_like
-        The V-component of the direction from which the wind
-        is blowing.
+            The V-component of the direction from which the wind
+            is blowing.
             
-        Optional Keywords
-        missing : number (default: sharppy.sharptab.constants.MISSING)
-        The value of the missing flag
+        missing : number, optional (default: sharppy.sharptab.constants.MISSING)
+            The value of the missing flag
 
-        location : string (default: None)
-        The 3 character station identifier or 4 character
-        WMO station ID for radiosonde locations. Used for
-        the PWV database.
+        location : string, optional (default: None)
+            The 3 character station identifier or 4 character
+            WMO station ID for radiosonde locations. Used for
+            the PWV database.
 
-        omeg : array_like
-        List of the vertical velocity in pressure coordinates with height (Pascals/second)
+        omeg : array_like, optional
+            List of the vertical velocity in pressure coordinates with height (Pascals/second)
             
         Returns
         -------
@@ -464,39 +542,75 @@ class ConvectiveProfile(BasicProfile):
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
+        assert np.ma.max(self.pres) > 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
+
+        self.user_srwind = None
 
         # Generate the fire weather paramters
+        logging.debug("Calling get_fire().")
+        dt = datetime.now()
         self.get_fire()
+        logging.debug("get_fire() took: " + str((datetime.now() - dt)))
 
         # Generate the winter inset/precipitation types
+        logging.debug("Calling get_precip().")
+        dt = datetime.now()
         self.get_precip()
-        
+        logging.debug("get_precip() took: " + str((datetime.now() - dt)))
+
         ## generate various parcels
+        logging.debug("Calling get_parcels().")
+        dt = datetime.now()
         self.get_parcels()
+        logging.debug("get_parcels() took: " + str((datetime.now() - dt)))
 
         ## calculate thermodynamic window indices
+        logging.debug("Calling get_thermo().")
+        dt = datetime.now()
         self.get_thermo()
+        logging.debug("get_thermo() took: " + str((datetime.now() - dt)))
 
         ## generate wind indices
+        logging.debug("Calling get_kinematics().")
+        dt = datetime.now()
         self.get_kinematics()
+        logging.debug("get_kinematics() took: " + str((datetime.now() - dt)))
 
         ## get SCP, STP(cin), STP(fixed), SHIP
+        logging.debug("Calling get_severe().")
+        dt = datetime.now()
         self.get_severe()
+        logging.debug("get_severe() took: " + str((datetime.now() - dt)))
 
         ## calculate the SARS database matches
+        logging.debug("Calling get_sars().")
+        dt = datetime.now()
         self.get_sars()
+        logging.debug("get_sars() took: " + str((datetime.now() - dt)))
 
         ## get the precipitable water climatology
+        logging.debug("Calling get_PWV_loc().")
+        dt = datetime.now()
         self.get_PWV_loc()
+        logging.debug("get_PWV_loc() took: " + str((datetime.now() - dt)))
 
         ## get the parcel trajectory
+        logging.debug("Calling get_traj().")
+        dt = datetime.now()
         self.get_traj()
+        logging.debug("get_traj() took: " + str((datetime.now() - dt)))
 
         ## miscellaneous indices I didn't know where to put
+        logging.debug("Calling get_indices().")
+        dt = datetime.now()
         self.get_indices()
+        logging.debug("get_indices() took: " + str((datetime.now() - dt)))
 
         ## get the possible watch type
+        logging.debug("Calling get_watch().")
+        dt = datetime.now()
         self.get_watch()
+        logging.debug("get_watch() took: " + str((datetime.now() - dt)))
 
     def get_fire(self):
         '''
@@ -513,16 +627,20 @@ class ConvectiveProfile(BasicProfile):
         None
         '''
         self.fosberg = fire.fosberg(self)
+        self.haines_hght = fire.haines_height(self)
+        self.haines_low = fire.haines_low(self)
+        self.haines_mid = fire.haines_mid(self)
+        self.haines_high = fire.haines_high(self)
         self.ppbl_top = params.pbl_top(self)
         self.sfc_rh = thermo.relh(self.pres[self.sfc], self.tmpc[self.sfc], self.dwpc[self.sfc])
         pres_sfc = self.pres[self.sfc]
         pres_1km = interp.pres(self, interp.to_msl(self, 1000.))
-        pbl_h = interp.to_agl(self, interp.hght(self, self.ppbl_top))
+        self.pbl_h = interp.to_agl(self, interp.hght(self, self.ppbl_top))
         self.rh01km = params.mean_relh(self, pbot=pres_sfc, ptop=pres_1km)
         self.pblrh = params.mean_relh(self, pbot=pres_sfc, ptop=self.ppbl_top)
         self.meanwind01km = winds.mean_wind(self, pbot=pres_sfc, ptop=pres_1km)
         self.meanwindpbl = winds.mean_wind(self, pbot=pres_sfc, ptop=self.ppbl_top)
-        self.pblmaxwind = winds.max_wind(self, lower=0, upper=pbl_h)
+        self.pblmaxwind = winds.max_wind(self, lower=0, upper=self.pbl_h)
         #self.pblmaxwind = [np.ma.masked, np.ma.masked]
         mulplvals = params.DefineParcel(self, flag=3, pres=500)
         mupcl = params.cape(self, lplvals=mulplvals)
@@ -580,14 +698,10 @@ class ConvectiveProfile(BasicProfile):
         self.sfcpcl : Surface Based Parcel
         self.mlpcl : Mixed Layer Parcel
         self.fcstpcl : Forecast Surface Parcel
-        self.ebottom : The bottom pressure level of
-            the effective inflow layer
-        self.etop : the top pressure level of
-            the effective inflow layer
-        self.ebotm : The bottom, meters (agl), of the
-            effective inflow layer
-        self.etopm : The top, meters (agl), of the
-            effective inflow layer
+        self.ebottom : The bottom pressure level of the effective inflow layer
+        self.etop : the top pressure level of the effective inflow layer
+        self.ebotm : The bottom, meters (agl), of the effective inflow layer
+        self.etopm : The top, meters (agl), of the effective inflow layer
     
         Parameters
         ----------
@@ -667,19 +781,30 @@ class ConvectiveProfile(BasicProfile):
         ## parameters that depend on the presence of an effective inflow layer
         if self.etop is ma.masked or self.ebottom is ma.masked:
             self.etopm = ma.masked; self.ebotm = ma.masked
-            self.srwind = winds.non_parcel_bunkers_motion( self )
+            self.bunkers = winds.non_parcel_bunkers_motion( self )
+            if self.user_srwind is None:
+                self.user_srwind = self.bunkers
+            self.srwind = self.user_srwind
             self.eff_shear = [MISSING, MISSING]
             self.ebwd = [MISSING, MISSING, MISSING]
             self.ebwspd = MISSING
             self.mean_eff = [MISSING, MISSING, MISSING]
             self.mean_ebw = [MISSING, MISSING, MISSING]
-            self.srw_eff = [MISSING, MISSING, MISSING]
-            self.srw_ebw = [MISSING, MISSING, MISSING]
+
+            self.right_srw_eff = [MISSING, MISSING, MISSING]
+            self.right_srw_ebw = [MISSING, MISSING, MISSING]
             self.right_esrh = [ma.masked, ma.masked, ma.masked]
+            self.right_critical_angle = ma.masked
+
+            self.left_srw_eff = [MISSING, MISSING, MISSING]
+            self.left_srw_ebw = [MISSING, MISSING, MISSING]
             self.left_esrh = [ma.masked, ma.masked, ma.masked]
-            self.critical_angle = ma.masked
+            self.left_critical_angle = ma.masked
         else:
-            self.srwind = params.bunkers_storm_motion(self, mupcl=self.mupcl, pbot=self.ebottom)
+            self.bunkers = params.bunkers_storm_motion(self, mupcl=self.mupcl, pbot=self.ebottom)
+            if self.user_srwind is None:
+                self.user_srwind = self.bunkers
+            self.srwind = self.user_srwind
             depth = ( self.mupcl.elhght - self.ebotm ) / 2
             elh = interp.pres(self, interp.to_msl(self, self.ebotm + depth))
             ## calculate mean wind
@@ -689,28 +814,63 @@ class ConvectiveProfile(BasicProfile):
             self.eff_shear = winds.wind_shear(self, pbot=self.ebottom, ptop=self.etop)
             self.ebwd = winds.wind_shear(self, pbot=self.ebottom, ptop=elh)
             self.ebwspd = utils.mag( self.ebwd[0], self.ebwd[1] )
-            ## calculate the mean sr wind
-            self.srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[0], stv=self.srwind[1] )
-            self.srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[0], stv=self.srwind[1] )
+            ## calculate quantities relative to the right-mover vector
+            self.right_srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[0], stv=self.srwind[1] )
+            self.right_srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[0], stv=self.srwind[1] )
             self.right_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[0], stv=self.srwind[1])
+            self.right_critical_angle = winds.critical_angle(self, stu=self.srwind[0], stv=self.srwind[1])
+            ## calculate quantities relative to the left-mover vector
+            self.left_srw_eff = winds.sr_wind(self, pbot=self.ebottom, ptop=self.etop, stu=self.srwind[2], stv=self.srwind[3] )
+            self.left_srw_ebw = winds.sr_wind(self, pbot=self.ebottom, ptop=elh, stu=self.srwind[2], stv=self.srwind[3] )
             self.left_esrh = winds.helicity(self, self.ebotm, self.etopm, stu=self.srwind[2], stv=self.srwind[3])
-            self.critical_angle = winds.critical_angle(self, stu=self.srwind[0], stv=self.srwind[1])
-        ## calculate mean srw
-        self.srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] ))
-        self.srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] ))
+            self.left_critical_angle = winds.critical_angle(self, stu=self.srwind[2], stv=self.srwind[3])
+
+        ## calculate quantities relative to the right-mover vector
+        self.right_srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[0], stv=self.srwind[1] ))
+        self.right_srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[0], stv=self.srwind[1] ))
         # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
-        self.srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
-        self.srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])
-        self.srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[0], stv=self.srwind[1])
+
+        ## calculate quantities relative to the left-mover vector
+        self.left_srw_1km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p1km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_3km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p3km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_6km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p6km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_8km = utils.comp2vec(*winds.sr_wind(self, pbot=sfc, ptop=p8km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_4_5km = utils.comp2vec(*winds.sr_wind(self, pbot=p4km, ptop=p5km, stu=self.srwind[2], stv=self.srwind[3] ))
+        self.left_srw_lcl_el = utils.comp2vec(*winds.sr_wind(self, pbot=self.mupcl.lclpres, ptop=self.mupcl.elpres, stu=self.srwind[2], stv=self.srwind[3] ))
+        # This is for the red, blue, and purple bars that appear on the SR Winds vs. Height plot
+        self.left_srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[2], stv=self.srwind[3])
         
         ## calculate upshear and downshear
         self.upshear_downshear = winds.mbe_vectors(self)
-        self.srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
-        self.srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
+        self.right_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[0], stv=self.srwind[1])
+        self.left_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[2], stv=self.srwind[3])
+        self.left_srh3km = winds.helicity(self, 0, 3000., stu=self.srwind[2], stv=self.srwind[3])
+
+        self.srw_eff = self.right_srw_eff
+        self.srw_ebw = self.right_srw_ebw
+        self.esrh = self.right_esrh
+        self.critical_angle = self.right_critical_angle
+        self.srw_1km = self.right_srw_1km
+        self.srw_3km = self.right_srw_3km
+        self.srw_6km = self.right_srw_6km
+        self.srw_8km = self.right_srw_8km
+        self.srw_4_5km = self.right_srw_4_5km
+        self.srw_lcl_el = self.right_srw_lcl_el
+        self.srw_0_2km = self.right_srw_0_2km
+        self.srw_4_6km = self.right_srw_4_6km
+        self.srw_9_11km = self.right_srw_9_11km
+        self.srh1km = self.right_srh1km
+        self.srh3km = self.right_srh3km
 
     def get_thermo(self):
         '''
@@ -754,6 +914,8 @@ class ConvectiveProfile(BasicProfile):
         self.lapserate_850_500 = params.lapse_rate( self, 850., 500., pres=True )
         ## 700-500mb lapse rate
         self.lapserate_700_500 = params.lapse_rate( self, 700., 500., pres=True )
+        ## 2-6 km max lapse rate
+        self.max_lapse_rate_2_6 = params.max_lapse_rate( self )
         ## convective temperature
         self.convT = thermo.ctof( params.convective_temp( self ) )
         ## sounding forecast surface temperature
@@ -777,8 +939,10 @@ class ConvectiveProfile(BasicProfile):
 
         Returns nothing, but sets the following variables:
 
-        self.stp_fixed - fixed layer significant tornado parameter
-        self.stp_cin - effective layer significant tornado parameter
+        self.right_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_fixed - fixed layer significant tornado parameter (computed with SRH relative to the left-mover vector)
+        self.right_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the right-mover vector)
+        self.left_stp_cin - effective layer significant tornado parameter (computed with SRH relative to the left-mover vector)
         self.right_scp - right moving supercell composite parameter
         self.left_scp - left moving supercell composite parameter
 
@@ -791,15 +955,41 @@ class ConvectiveProfile(BasicProfile):
         None
         '''
         wspd = utils.mag(self.sfc_6km_shear[0], self.sfc_6km_shear[1])
-        self.stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.srh1km[0], utils.KTS2MS(wspd))
+        self.right_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.right_srh1km[0], utils.KTS2MS(wspd))
+        self.left_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.left_srh1km[0], utils.KTS2MS(wspd))
+        self.sherbe = params.sherb(self, effective=True)
+        
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
-            self.stp_cin = 0.0
+            self.right_stp_cin = 0.0; self.left_stp_cin = 0.0
         else:
             self.right_scp = params.scp( self.mupcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd))
             self.left_scp = params.scp( self.mupcl.bplus, self.left_esrh[0], utils.KTS2MS(self.ebwspd))
-            self.stp_cin = params.stp_cin(self.mlpcl.bplus, self.right_esrh[0], utils.KTS2MS(self.ebwspd),
+
+            right_esrh = self.right_esrh[0]
+            left_esrh = self.left_esrh[0]
+
+            if self.latitude < 0:
+                right_esrh = -right_esrh
+                left_esrh = -left_esrh
+
+            self.right_stp_cin = params.stp_cin(self.mlpcl.bplus, right_esrh, utils.KTS2MS(self.ebwspd),
                 self.mlpcl.lclhght, self.mlpcl.bminus)
+            self.left_stp_cin = params.stp_cin(self.mlpcl.bplus, left_esrh, utils.KTS2MS(self.ebwspd),
+                self.mlpcl.lclhght, self.mlpcl.bminus)
+
+            if self.latitude < 0:
+                self.right_stp_cin = -self.right_stp_cin
+                self.left_stp_cin = -self.left_stp_cin
+
+        if self.latitude < 0:
+            self.stp_fixed = self.left_stp_fixed
+            self.stp_cin = self.left_stp_cin
+            self.scp = self.left_scp
+        else:
+            self.stp_fixed = self.right_stp_fixed
+            self.stp_cin = self.right_stp_cin
+            self.scp = self.right_scp
 
     def get_sars(self):
         '''
@@ -827,8 +1017,10 @@ class ConvectiveProfile(BasicProfile):
         sfc_9km_shear = utils.KTS2MS( utils.mag( self.sfc_9km_shear[0], self.sfc_9km_shear[1]) )
         h500t = interp.temp(self, 500.)
         lapse_rate = params.lapse_rate( self, 700., 500., pres=True )
-        srh3km = self.srh3km[0]
-        srh1km = self.srh1km[0]
+        right_srh3km = self.right_srh3km[0]
+        right_srh1km = self.right_srh1km[0]
+        left_srh3km = self.left_srh3km[0]
+        left_srh1km = self.left_srh1km[0]
         mucape = self.mupcl.bplus
         mlcape = self.mlpcl.bplus
         mllcl = self.mlpcl.lclhght
@@ -838,15 +1030,38 @@ class ConvectiveProfile(BasicProfile):
         self.hail_database = 'sars_hail.txt'
         self.supercell_database = 'sars_supercell.txt'
         try:
-            self.matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
-                sfc_9km_shear, sfc_3km_shear, srh3km)
+            self.right_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
+                sfc_9km_shear, sfc_3km_shear, right_srh3km)
         except:
-            self.matches = ([], [], 0, 0, 0)
+            self.right_matches = ([], [], 0, 0, 0)
+
         try:
-            self.supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, utils.MS2KTS(sfc_6km_shear), srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), srh3km)
+            self.left_matches = hail(self.hail_database, mumr, mucape, h500t, lapse_rate, sfc_6km_shear,
+                sfc_9km_shear, sfc_3km_shear, -left_srh3km)
+        except:
+            self.left_matches = ([], [], 0, 0, 0)
+
+        try:
+            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
+                utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+                right_srh3km)
+        except:
+            self.right_supercell_matches = ([], [], 0, 0, 0)
+
+        try:
+            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
+                utils.MS2KTS(sfc_6km_shear), -left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+                -left_srh3km)
         except Exception as e:
-            self.supercell_matches = ([], [], 0, 0, 0)
-                
+            self.left_supercell_matches = ([], [], 0, 0, 0)
+
+        if self.latitude < 0:
+            self.supercell_matches = self.left_supercell_matches
+            self.matches = self.left_matches
+        else:
+            self.supercell_matches = self.right_supercell_matches
+            self.matches = self.right_matches
+
     def get_watch(self):
         '''
         Function to get the possible watch type.
@@ -854,7 +1069,6 @@ class ConvectiveProfile(BasicProfile):
         variables:
         
         self.watch_type - possible watch type
-        self.watch_type_color - the color of type severity
         
         Parameters
         ----------
@@ -864,9 +1078,16 @@ class ConvectiveProfile(BasicProfile):
         -------
         None
         '''
-        watch_types = watch_type.possible_watch(self)
-        self.watch_type = watch_types[0][0]
-        self.watch_type_color = watch_types[1][0]
+        watch_types = watch_type.possible_watch(self, use_left=False)
+        self.right_watch_type = watch_types[0]
+
+        watch_types = watch_type.possible_watch(self, use_left=True)
+        self.left_watch_type = watch_types[0]
+
+        if self.latitude < 0:
+            self.watch_type = self.left_watch_type
+        else:
+            self.watch_type = self.right_watch_type
 
     def get_traj(self):
         '''
@@ -907,7 +1128,7 @@ class ConvectiveProfile(BasicProfile):
         -------
         None
         '''
-        self.pwv_flag = pwv_climo(self, self.location, month=None)
+        self.pwv_flag = pwv_climo(self, self.location, month=int(self.date.strftime('%m')))
 
     def get_indices(self):
         '''
@@ -930,3 +1151,57 @@ class ConvectiveProfile(BasicProfile):
         self.dcape, self.dpcl_ttrace, self.dpcl_ptrace = params.dcape(self)
         self.drush = thermo.ctof(self.dpcl_ttrace[-1])
         self.mburst = params.mburst(self)
+
+    def set_srleft(self, lm_u, lm_v):
+        '''
+        Sets the u and v values of the left mover supercell storm motion vector.       
+ 
+        Parameters
+        ----------
+        lm_u : number
+            Left mover u-component of the storm motion vector
+        lm_v : number
+            Left mover v-component of the storm motion vector
+
+        Returns
+        -------
+        None
+        '''
+        self.user_srwind = self.user_srwind[:2] + (lm_u, lm_v)
+        self.get_kinematics()
+        self.get_severe()
+
+    def set_srright(self, rm_u, rm_v):
+        '''
+        Sets the u and v values of the right mover supercell storm motion vector.       
+ 
+        Parameters
+        ----------
+        rm_u : number
+            Right mover u-component of the storm motion vector
+        rm_v : number
+            Right mover v-component of the storm motion vector
+
+        Returns
+        -------
+        None
+        '''      
+        self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
+        self.get_kinematics()
+        self.get_severe()
+
+    def reset_srm(self):
+        '''
+        Resets the storm motion vector to those found by the Bunkers algorithm
+ 
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        '''
+        self.user_srwind = self.bunkers
+        self.get_kinematics()
+        self.get_severe()

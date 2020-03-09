@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990808/2200F000    2wx 
+  2WX 990808/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          10.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.3 C/km
 850-500mb   38 C	8.6 C/km
+
+----- Note -----
+Old Title:  RUC 990808/2200F000    2wx 
+

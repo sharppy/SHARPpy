@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
@@ -10,7 +10,7 @@ from sharppy.sharptab.constants import *
 
 __all__ = ['backgroundSTPEF', 'plotSTPEF']
 
-class backgroundSTPEF(QtGui.QFrame):
+class backgroundSTPEF(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Theta-E plot frame
     '''
@@ -28,10 +28,12 @@ class backgroundSTPEF(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
+        font_ratio = 0.0512
         if self.physicalDpiX() > 75:
-            fsize = 10
+            fsize = round(font_ratio * self.size().height())
         else:
-            fsize = 11
+            fsize = round(font_ratio * self.size().height() + 1)
+        self.fsize = fsize 
         self.plot_font = QtGui.QFont('Helvetica', fsize + 1)
         self.box_font = QtGui.QFont('Helvetica', fsize)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
@@ -39,14 +41,14 @@ class backgroundSTPEF(QtGui.QFrame):
         self.plot_height = self.plot_metrics.xHeight() + 5
         self.box_height = self.box_metrics.xHeight() + 5
         self.lpad = 0.; self.rpad = 0.
-        self.tpad = 25.; self.bpad = 15.
+        self.tpad = 5+ 2*self.plot_height; self.bpad = self.plot_height + 5
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
         self.probmax = 70.; self.probmin = 0.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -87,14 +89,14 @@ class backgroundSTPEF(QtGui.QFrame):
         EF3_color = "#FF0000"
         EF4_color = "#FF00FF"
 
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
         rect1 = QtCore.QRectF(1.5, 2, self.brx, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Conditional Tornado Probs based on STPC')
 
-        qp.setFont(QtGui.QFont('Helvetica', 9))
+        qp.setFont(QtGui.QFont('Helvetica', self.fsize-1))
         color = QtGui.QColor(EF1_color)
         pen = QtGui.QPen(color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
@@ -125,14 +127,14 @@ class backgroundSTPEF(QtGui.QFrame):
 
         pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        ytick_fontsize = 10
+        ytick_fontsize = self.fsize
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         efstp_inset_data = inset_data.condSTPData()
         texts = efstp_inset_data['ytexts']
         spacing = self.bry / 10.
         y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in xrange(len(y_ticks)):
+        for i in range(len(y_ticks)):
             pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
             try:
@@ -145,7 +147,7 @@ class backgroundSTPEF(QtGui.QFrame):
             ypos = spacing*(i+1) - (spacing/4.)
             ypos = self.prob_to_pix(int(texts[i])) - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
 
@@ -155,14 +157,14 @@ class backgroundSTPEF(QtGui.QFrame):
         texts = efstp_inset_data['xticks']
         
         # Draw the x tick marks
-        qp.setFont(QtGui.QFont('Helvetica', 8))
-        for i in xrange(np.asarray(texts).shape[0]):
+        qp.setFont(QtGui.QFont('Helvetica', self.fsize - 2))
+        for i in range(np.asarray(texts).shape[0]):
             color = QtGui.QColor('#000000')
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i], self.prob_to_pix(-2), width, 4)
+            rect = QtCore.QRectF(center[i], self.bry + self.bpad/2, width, 4)
             # Change to a white pen to draw the text below the box and whisker plot
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
         
@@ -171,7 +173,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF1_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF2+ stuff
@@ -179,7 +181,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF2_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF3+ stuff
@@ -187,7 +189,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF3_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
         # Draw the EF4+ stuff
@@ -195,7 +197,7 @@ class backgroundSTPEF(QtGui.QFrame):
         color = QtGui.QColor(EF4_color)
         pen = QtGui.QPen(color, 3, QtCore.Qt.SolidLine)
         qp.setPen(pen)        
-        for i in xrange(1, np.asarray(texts).shape[0], 1):
+        for i in range(1, np.asarray(texts).shape[0], 1):
             qp.drawLine(center[i-1] + width/2, self.prob_to_pix(ef1[i-1]), center[i] + width/2, self.prob_to_pix(ef1[i]))
 
 
@@ -238,12 +240,49 @@ class plotSTPEF(backgroundSTPEF):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+
+        self.use_left = False
+
         super(plotSTPEF, self).__init__()
         self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
-        self.stpc = prof.stp_cin
+
+        if self.use_left:
+            self.stpc = prof.left_stp_cin
+        else:
+            self.stpc = prof.right_stp_cin
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            if self.use_left:
+                self.stpc = self.prof.left_stp_cin
+            else:
+                self.stpc = self.prof.right_stp_cin
+
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.stpc = self.prof.left_stp_cin
+        else:
+            self.stpc = self.prof.right_stp_cin
 
         self.clearData()
         self.plotBackground()
@@ -270,7 +309,7 @@ class plotSTPEF(backgroundSTPEF):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def plotData(self):
         '''
@@ -289,9 +328,14 @@ class plotSTPEF(backgroundSTPEF):
         qp.setRenderHint(qp.Antialiasing)
         qp.setRenderHint(qp.TextAntialiasing)
         stpc_pix = self.stpc_to_pix(self.stpc)
-        pen = QtGui.QPen(QtGui.QColor("#FFFFFF"), 1.5, QtCore.Qt.DotLine)
+        pen = QtGui.QPen(self.fg_color, 1.5, QtCore.Qt.DotLine)
         qp.setPen(pen)
         qp.drawLine(stpc_pix, self.prob_to_pix(0), stpc_pix, self.prob_to_pix(70))
         qp.end()
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSTPEF()
+    tester.show()    
+    app_frame.exec_()
 

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010516/2300F000    bie 
+  BIE 010516/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          13.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.5 C/km
 850-500mb   35 C	8.2 C/km
+
+----- Note -----
+Old Title:  RUC 010516/2300F000    bie 
+

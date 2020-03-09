@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990701/0300F000    gck 
+  GCK 990701/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          15.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.4 C/km
 850-500mb   30 C	6.8 C/km
+
+----- Note -----
+Old Title:  RUC 990701/0300F000    gck 
+

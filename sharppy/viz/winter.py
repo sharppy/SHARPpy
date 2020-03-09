@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
@@ -9,7 +9,7 @@ import platform
 
 __all__ = ['backgroundWinter', 'plotWinter']
 
-class backgroundWinter(QtGui.QFrame):
+class backgroundWinter(QtWidgets.QFrame):
     '''
     Handles drawing the background frame.
     '''
@@ -27,26 +27,29 @@ class backgroundWinter(QtGui.QFrame):
             "  border-color: #3399CC;}")
         self.lpad = 5; self.rpad = 5
         self.tpad = 3; self.bpad = 3
-        if self.physicalDpiX() > 75:
-            fsize = 8
-        else:
-            fsize = 10
-        self.label_font = QtGui.QFont('Helvetica', fsize)
-        self.label_metrics = QtGui.QFontMetrics( self.label_font )
-
         self.os_mod = 0
-        if platform.system() == "Windows":
-            self.os_mod = self.label_metrics.descent()
-
-        self.label_height = self.label_metrics.xHeight() + self.tpad
-        self.ylast = self.label_height
         self.barby = 0
         self.wid = self.size().width()
         self.hgt = self.size().height()
         self.tlx = self.rpad; self.tly = self.tpad
         self.brx = self.wid; self.bry = self.hgt
+
+        if self.physicalDpiX() > 75:
+            fsize = 8
+        else:
+            fsize = 10
+        self.font_ratio = 0.0512
+        self.label_font = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio))
+        self.label_metrics = QtGui.QFontMetrics( self.label_font )
+
+        if platform.system() == "Windows":
+            self.os_mod = self.label_metrics.descent()
+
+        self.label_height = self.label_metrics.xHeight() + self.tpad
+        self.ylast = self.label_height
+ 
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def draw_frame(self, qp):
@@ -54,7 +57,7 @@ class backgroundWinter(QtGui.QFrame):
         Draws the background frame and the text headers for indices.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.yellow, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.dgz_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         ## make the initial x value relative to the width of the frame
@@ -64,7 +67,7 @@ class backgroundWinter(QtGui.QFrame):
         rect1 = QtCore.QRect(0, self.tpad, self.wid, self.label_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, '*** DENDRITIC GROWTH ZONE (-12 TO -17 C) ***')
         self.oprh_y1 = 2*self.label_height+self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         sep = 5
         y1 = 3 * self.label_height + self.tpad + sep + self.os_mod
@@ -147,6 +150,10 @@ class plotWinter(backgroundWinter):
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+        self.dgz_color = QtGui.QColor('#ffff00')
+
         super(plotWinter, self).__init__()
         self.prof = None
 
@@ -195,6 +202,17 @@ class plotWinter(backgroundWinter):
         self.plotData()
         self.update()
 
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.dgz_color = QtGui.QColor(prefs['winter_dgz_color'])
+
+        if update_gui:
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
     def resizeEvent(self, e):
         '''
         Handles when the window is resized.
@@ -215,7 +233,7 @@ class plotWinter(backgroundWinter):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -247,7 +265,7 @@ class plotWinter(backgroundWinter):
         if self.oprh < -.1 and tab.utils.QC(self.oprh) and self.dgz_meanomeg != -99990.0:
             pen = QtGui.QPen(QtCore.Qt.red, 1, QtCore.Qt.SolidLine)
         else:
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(0, self.oprh_y1, self.wid, self.label_height)
@@ -257,20 +275,20 @@ class plotWinter(backgroundWinter):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + tab.utils.FLOAT2STR(self.oprh,2))
 
     def drawPrecipType(self, qp):
-        big = QtGui.QFont('Helvetica', 15, bold=True)
+        big = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) + 5, bold=True)
         big_metrics = QtGui.QFontMetrics( big )
         height = big_metrics.xHeight() + self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(big)
         rect1 = QtCore.QRect(0, self.precip_type_y1, self.wid, height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.precip_type)
 
     def drawPrecipTypeTemp(self, qp):
-        small = QtGui.QFont('Helvetica', 9, bold=False)
+        small = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) -1 , bold=False)
         small_metrics = QtGui.QFontMetrics( small )
         height = small_metrics.xHeight() + self.tpad
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(small)
         rect1 = QtCore.QRect(0, self.ptype_tmpf_y1, self.wid, height)
@@ -313,7 +331,7 @@ class plotWinter(backgroundWinter):
             y1 += self.label_height + sep + self.os_mod
 
     def drawDGZLayer(self, qp):
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         sep = 5
@@ -346,7 +364,7 @@ class plotWinter(backgroundWinter):
         ---------
         qp: QtGui.QPainter object
         '''
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.label_font)
         rect1 = QtCore.QRect(self.lpad, self.init_phase_y1,  self.wid/10, self.label_height)
@@ -356,3 +374,9 @@ class plotWinter(backgroundWinter):
         else:
             string = "Initial Phase:  No Precipitation layers found."
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, string)
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotWinter()
+    tester.show()    
+    app_frame.exec_()

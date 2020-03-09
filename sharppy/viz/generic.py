@@ -5,12 +5,12 @@ __all__ = ['backgroundGeneric', 'plotGeneric']
 import numpy as np
 from sharppy.sharptab.constants import *
 import sharppy.sharptab as tab
-from PySide import QtGui, QtCore
-from PySide.QtGui import *
-from PySide.QtCore import *
-from PySide.QtOpenGL import *
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtGui import *
+from qtpy.QtCore import *
+from qtpy.QtOpenGL import *
 
-class backgroundGeneric(QtGui.QFrame):
+class backgroundGeneric(QtWidgets.QFrame):
     """
     A generic class for drawing the background of a widget.
     """
@@ -351,7 +351,7 @@ class plotGeneric(backgroundGeneric):
         ## start the path at the first data value
         path.moveTo(self.x_to_pix(x[0]), self.y_to_pix(y[0]))
         ## now we need to loop through the array
-        for i in xrange( 1, y.shape[0] ):
+        for i in range( 1, y.shape[0] ):
             ## make sure we are plotting in our minimum and maximum bounds
             if y[i] > self.ymin and y[i] < self.ymax:
                 xp = x[i]; yp = y[i]
@@ -366,3 +366,9 @@ class plotGeneric(backgroundGeneric):
                 continue
         qp.drawPath(path)
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotGeneric()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990501/2200F000    maf 
+  MAF 990501/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          12.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.8 C/km
 850-500mb   29 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 990501/2200F000    maf 
+

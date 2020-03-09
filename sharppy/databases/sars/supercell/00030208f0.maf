@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000302/0800F000    maf 
+  MAF 000302/0800     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          11.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   23 C 	8.8 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000302/0800F000    maf 
+

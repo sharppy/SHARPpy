@@ -1,14 +1,24 @@
 
+from __future__ import division
+
 import numpy as np
 
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
-from decoder import Decoder
+from .decoder import Decoder
 
 from datetime import datetime
 
 __fmtname__ = "bufkit"
 __classname__ = "BufDecoder"
+
+def _prettify_member_name(mem_name):
+    abbrvs = ['BMJ', 'ARW', 'NMB', 'KF']
+    mem_name = mem_name.title()
+    for abbrv in abbrvs:
+        mem_name = mem_name.replace(abbrv.title(), abbrv)    
+    return mem_name
+
 
 class BufDecoder(Decoder):
     def __init__(self, file_name):
@@ -27,11 +37,17 @@ class BufDecoder(Decoder):
 
         for n, mem_txt in enumerate(members):
             mem_name, mem_profs, mem_dates = self._parseMember(mem_txt)
+            if "mean" in mem_name.lower():
+                mem_name = "Mean"
+                mean_member = mem_name
+
+            mem_name = _prettify_member_name(mem_name)
+
             profiles[mem_name] = mem_profs
             dates = mem_dates
 
-            if mean_member is None:
-                mean_member = mem_name
+        if mean_member is None:
+            mean_member = list(profiles.keys())[0]
 
         prof_coll = prof_collection.ProfCollection(profiles, dates)
         prof_coll.setHighlightedMember(mean_member)
@@ -90,7 +106,7 @@ class BufDecoder(Decoder):
         # Parse out the profiles
         for i in range(len(data_idxs)):
             data_stuff = data[data_idxs[i][0]: data_idxs[i][1]]
-            profile_length = len(data[data_idxs[i][0]: data_idxs[i][1]])/2
+            profile_length = len(data[data_idxs[i][0]: data_idxs[i][1]])//2
 
             hght = np.zeros((profile_length,), dtype=float)
             pres = np.zeros((profile_length,), dtype=float)
@@ -102,15 +118,15 @@ class BufDecoder(Decoder):
 
             for j in np.arange(0, profile_length * 2, 2):
                 if len(data_stuff[j+1].split()) == 1:
-                    hght[j / 2] = float(data_stuff[j+1].split()[0])
+                    hght[j // 2] = float(data_stuff[j+1].split()[0])
                 else:
-                    hght[j / 2] = float(data_stuff[j+1].split()[1])
-                tmpc[j / 2] = float(data_stuff[j].split()[1])
-                dwpc[j / 2] = float(data_stuff[j].split()[3])
-                pres[j / 2] = float(data_stuff[j].split()[0])
-                wspd[j / 2] = float(data_stuff[j].split()[6])
-                wdir[j / 2] = float(data_stuff[j].split()[5])
-                omeg[j / 2] = float(data_stuff[j].split()[7])
+                    hght[j // 2] = float(data_stuff[j+1].split()[1])
+                tmpc[j // 2] = float(data_stuff[j].split()[1])
+                dwpc[j // 2] = float(data_stuff[j].split()[3])
+                pres[j // 2] = float(data_stuff[j].split()[0])
+                wspd[j // 2] = float(data_stuff[j].split()[6])
+                wdir[j // 2] = float(data_stuff[j].split()[5])
+                omeg[j // 2] = float(data_stuff[j].split()[7])
 
             prof = profile.create_profile(profile='raw', pres=pres, hght=hght, tmpc=tmpc, dwpc=dwpc, 
                 wdir=wdir, wspd=wspd, omeg=omeg, location=station, date=dates[i], latitude=slat)

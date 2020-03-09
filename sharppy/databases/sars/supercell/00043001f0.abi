@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000430/0100F000    abi 
+  ABI 000430/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          11.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.4 C/km
 850-500mb   34 C	7.8 C/km
+
+----- Note -----
+Old Title:  RUC 000430/0100F000    abi 
+

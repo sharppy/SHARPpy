@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000725/0100F000    hon 
+  HON 000725/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          13.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.3 C/km
 850-500mb   33 C	7.6 C/km
+
+----- Note -----
+Old Title:  RUC 000725/0100F000    hon 
+

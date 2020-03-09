@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990606/1900F000    dvl 
+  DVL 990606/1900     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          13.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.2 C/km
 850-500mb   35 C	8.3 C/km
+
+----- Note -----
+Old Title:  RUC 990606/1900F000    dvl 
+

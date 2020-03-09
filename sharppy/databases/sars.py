@@ -25,13 +25,13 @@ def supercell(database_fn, mlcape, mllcl, h5temp, lr, shr, srh, shr3k, shr9k, sr
     and there is a tighter criteria for quality matches that are supposed to
     be similar to the given sounding.
     
-    The loose matches are based on the mixed layer cape (mlcape), mixex layer
+    The loose matches are based on the mixed layer cape (mlcape), mixed layer
     lcl (mllcl), 0-1km shear (shr), 0-1km storm relative helicity (srh), 500mb
     temperature (h5temp), and the 700-500mb lapse rate (lr).
     
     The ranges for the loose matches are set as such:
         mlcape: +/- 1300 J/kg
-        mllcl: +/- 50 m
+        mllcl: +/- 500 m
         shr: +/- 14 kts
         srh < 50 m^2/s^2: +/- 100 m^2/s^2
         srh >= 50 m^2/s^2: +/- 100% m^2/s^2
@@ -78,7 +78,7 @@ def supercell(database_fn, mlcape, mllcl, h5temp, lr, shr, srh, shr3k, shr9k, sr
     '''
     # Open and read the file
     database_fn = os.path.join( os.path.dirname( __file__ ), database_fn)
-    supercell_database = np.loadtxt(database_fn, skiprows=1, dtype=str, comments="%%%%")
+    supercell_database = np.loadtxt(database_fn, skiprows=1, dtype=bytes, comments="%%%%")
 
     # Set range citeria for matching soundings
     # MLCAPE ranges
@@ -165,9 +165,12 @@ def supercell(database_fn, mlcape, mllcl, h5temp, lr, shr, srh, shr3k, shr9k, sr
     quality_match_soundings = supercell_database[:,0][quality_match_idx]
     quality_match_tortype = np.asarray(supercell_database[:,1][quality_match_idx], dtype='|S7')
 
-    np.place(quality_match_tortype, quality_match_tortype=='2', 'SIGTOR')
-    np.place(quality_match_tortype, quality_match_tortype=='1', 'WEAKTOR')
-    np.place(quality_match_tortype, quality_match_tortype=='0', 'NONTOR')
+    np.place(quality_match_tortype, quality_match_tortype==b'2', 'SIGTOR')
+    np.place(quality_match_tortype, quality_match_tortype==b'1', 'WEAKTOR')
+    np.place(quality_match_tortype, quality_match_tortype==b'0', 'NONTOR')
+
+    quality_match_soundings = np.array([ qms.decode('utf-8') for qms in quality_match_soundings ])
+    quality_match_tortype = np.array([ qmt.decode('utf-8') for qmt in quality_match_tortype ])
 
     return quality_match_soundings, quality_match_tortype, len(loose_match_idx), num_matches, tor_prob
 
@@ -242,7 +245,7 @@ def hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
     '''
     ## open the file in the current directory with the name database_fn
     database_fn = os.path.join( os.path.dirname( __file__ ), database_fn )
-    hail_database = np.loadtxt(database_fn, skiprows=1, dtype=str)
+    hail_database = np.loadtxt(database_fn, skiprows=1, dtype=bytes)
 
     #Set range criteria for matching sounding
     # MU Mixing Ratio Ranges
@@ -338,8 +341,25 @@ def hail(database_fn, mumr, mucape, h5_temp, lr, shr6, shr9, shr3, srh):
     quality_match_dates = quality_match_dates[:max_quality_matches]
     quality_match_sizes = quality_match_sizes[:max_quality_matches]
 
+    quality_match_dates = np.array([ qmd.decode('utf-8') for qmd in quality_match_dates ])
+
     return quality_match_dates, quality_match_sizes, num_loose_matches, num_sig_reports, prob_sig_hail
 
+
+def get_sars_dir(match_type):
+    """
+    Returns the directory where the raw SARS files are.
+    
+    Parameters
+    ----------
+    match_type : str
+        'supercell' or 'hail'
+    Returns
+    -------
+    string
+
+    """
+    return os.path.join(os.path.dirname(__file__), "sars/" + match_type.lower() + "/")
 
 ## written by Kelton Halbert
 def getSounding(match_string, match_type, profile="default"):
@@ -358,7 +378,7 @@ def getSounding(match_string, match_type, profile="default"):
     #if (match_type.lower() != "supercell") or (match_type.lower() != "hail"):
     #    raise Exception("InvalidSARSType", match_type.lower() + " is an invalid SARS type.")
     ## get the directory with the data
-    data_dir = os.path.join(os.path.dirname(__file__), "sars/" + match_type.lower() + "/")
+    data_dir = get_sars_dir(match_type)
 
     match_date, match_loc = match_string.split(".")
     files = os.listdir(data_dir)

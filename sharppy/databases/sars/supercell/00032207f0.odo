@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000322/0700F000    odo 
+  ODO 000322/0700     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          11.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.3 C/km
 850-500mb   31 C	7.4 C/km
+
+----- Note -----
+Old Title:  RUC 000322/0700F000    odo 
+

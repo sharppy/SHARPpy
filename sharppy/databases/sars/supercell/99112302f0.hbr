@@ -1,5 +1,5 @@
 %TITLE%
- RUC 991123/0200F000    hbr 
+  HBR 991123/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          8.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.7 C/km
 850-500mb   29 C	7.0 C/km
+
+----- Note -----
+Old Title:  RUC 991123/0200F000    hbr 
+

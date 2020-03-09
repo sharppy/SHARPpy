@@ -1,6 +1,14 @@
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import sharppy.sharptab.profile as profile
-import urllib
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
+
 import time as gmtime
 import datetime
 import sys
@@ -11,7 +19,7 @@ import numpy as np
 ## a string that can be used for the SPC url.
 
 
-if sys.argv[1] == "SARS":
+if len(sys.argv) > 1 and sys.argv[1] == "SARS":
 	url = open("/Users/keltonhalbert/Downloads/snd/supercell/violent/" + sys.argv[2])
 	data = np.array(url.read().split('\n'))
 	title_idx = np.where( data == '%TITLE%')[0][0]
@@ -24,7 +32,7 @@ if sys.argv[1] == "SARS":
 	prof = profile.create_profile( profile='convective', pres=p, hght=h, tmpc=T, dwpc=Td,
 				wdir=wdir, wspd=wspd, location=sys.argv[1])
 
-elif sys.argv[1] != "test":
+elif len(sys.argv) > 1 and sys.argv[1] != "test":
     gmtime = datetime.datetime.utcnow()
     t_str = str( gmtime )
     year = t_str[2:4]
@@ -51,7 +59,7 @@ elif sys.argv[1] != "test":
     obstring2 = year + month + day + hour
 
         
-    url = urllib.urlopen('http://www.spc.noaa.gov/exper/soundings/LATEST/' + str( sys.argv[1] ).upper() + '.txt')
+    url = urlopen('http://www.spc.noaa.gov/exper/soundings/LATEST/' + str( sys.argv[1] ).upper() + '.txt')
     data = np.array(url.read().split('\n'))
     title_idx = np.where( data == '%TITLE%')[0][0]
     start_idx = np.where( data == '%RAW%' )[0] + 1

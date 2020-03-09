@@ -1,17 +1,19 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import sharppy.databases.sars as sars
 import platform
+
+from datetime import datetime
 
 ## routine written by Kelton Halbert
 ## keltonhalbert@ou.edu
 
 __all__ = ['backgroundAnalogues', 'plotAnalogues']
 
-class backgroundAnalogues(QtGui.QFrame):
+class backgroundAnalogues(QtWidgets.QFrame):
     '''
     Handles drawing the background frame for the
     SARS window.
@@ -19,7 +21,7 @@ class backgroundAnalogues(QtGui.QFrame):
     def __init__(self):
         ''' Calls the initUI function to initialize
             the background frame. Inherits from the
-            QtGui.QFrame Object.
+            QtWidgets.QFrame Object.
         '''
         super(backgroundAnalogues, self).__init__()
         self.initUI()
@@ -38,7 +40,7 @@ class backgroundAnalogues(QtGui.QFrame):
             "  border-style: solid;"
             "  border-color: #3399CC;}")
         ## Set the padding constants
-        self.lpad = 5; self.rpad = 5
+        self.lpad = 3; self.rpad = 5
         self.tpad = 5; self.bpad = 5
 
 
@@ -92,7 +94,7 @@ class backgroundAnalogues(QtGui.QFrame):
 
         ## The widget will be drawn on a QPixmap
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         ## plot the background
         self.plotBackground()
     
@@ -101,16 +103,17 @@ class backgroundAnalogues(QtGui.QFrame):
         Draws the background frame and the text headers.
         '''
         ## initialize a white pen with thickness 1 and a solid line
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         
         ## make the initial x value relative to the width of the frame
         x1 = self.brx / 6
+        self.ylast = self.tpad
 
         ## use the larger title font to plot the title, and then
         ## add to self.ylast the height of the font + padding
         qp.setFont(self.title_font)
-        rect0 = QtCore.QRect(0, self.tpad, self.brx, self.title_height)
+        rect0 = QtCore.QRect(0, self.ylast, self.brx, self.title_height)
         qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'SARS - Sounding Analogue System')
         self.ylast += (self.title_height + self.tpad)
@@ -178,18 +181,28 @@ class plotAnalogues(backgroundAnalogues):
         Parameters
         ----------
         prof: a Profile object
+        self.view.setDataSource(self.data_sources[self.model], self.run)
         
         '''
         ## get the surfce based, most unstable, and mixed layer
         ## parcels to use for indices, as well as the sounding
         ## profile itself.
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+        self.use_left = False
         super(plotAnalogues, self).__init__()
         self.prof = None 
 
     def setProf(self, prof):
         self.prof = prof
-        self.hail_matches = prof.matches
-        self.sup_matches = prof.supercell_matches
+
+        if self.use_left:
+            self.hail_matches = prof.left_matches
+            self.sup_matches = prof.left_supercell_matches
+        else:
+            self.hail_matches = prof.right_matches
+            self.sup_matches = prof.right_supercell_matches
+
         self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
         self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
 
@@ -198,6 +211,47 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        if update_gui:
+            if self.use_left:
+                self.hail_matches = self.prof.left_matches
+                self.sup_matches = self.prof.left_supercell_matches
+            else:
+                self.hail_matches = self.prof.right_matches
+                self.sup_matches = self.prof.right_supercell_matches
+
+            self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+            self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
+
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.hail_matches = self.prof.left_matches
+            self.sup_matches = self.prof.left_supercell_matches
+        else:
+            self.hail_matches = self.prof.right_matches
+            self.sup_matches = self.prof.right_supercell_matches
+
+        self.ybounds_hail = np.empty((len(self.hail_matches[0]),2))
+        self.ybounds_sup = np.empty((len(self.sup_matches[0]),2))
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
 
     def resizeEvent(self, e):
         '''
@@ -235,7 +289,7 @@ class plotAnalogues(backgroundAnalogues):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
 
     def plotData(self):
         '''
@@ -279,7 +333,7 @@ class plotAnalogues(backgroundAnalogues):
             place = 1
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
-            place2 = (self.lpad, (self.brx/2.) - x1 * 3./4.)
+            place2 = (self.lpad, (self.brx/2.) - x1 * 3./4. + 2)
             self.ybounds = self.ybounds_sup
         else:
             self.matches = self.hail_matches
@@ -290,13 +344,13 @@ class plotAnalogues(backgroundAnalogues):
             place = 4
             ## the quality match date [0] and the type/size
             ## [1] palcement are set in this tuple.
-            place2 = (x1*3+10, x1*5.5-5)
+            place2 = (x1*3+7, x1*5.5-5)
             self.ybounds = self.ybounds_hail
 
         ## if there are no matches, leave the function to prevent crashing
-        pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
-        if self.matches[0] == []:
-            pen.setColor(QtCore.Qt.white)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
+        if self.matches[0].size == 0:
+            pen.setColor(self.fg_color)
             qp.setPen(pen)
             qp.setFont(self.match_font)
             ## draw the text 2/5 from the top
@@ -326,7 +380,7 @@ class plotAnalogues(backgroundAnalogues):
                     pen.setColor(QtCore.Qt.magenta)
                     qp.setPen(pen)
                 else:
-                    pen.setColor(QtCore.Qt.white)
+                    pen.setColor(self.fg_color)
                     qp.setPen(pen)
                 ## draw the text
                 rect0 = QtCore.QRect(x1*place, self.ylast, x1, self.match_height)
@@ -344,7 +398,7 @@ class plotAnalogues(backgroundAnalogues):
             
             ## if there are no quality matches, let the gui know
             if len(self.matches[0]) == 0:
-                pen.setColor(QtCore.Qt.white)
+                pen.setColor(self.fg_color)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## draw the text 2/5 from the top
@@ -353,7 +407,7 @@ class plotAnalogues(backgroundAnalogues):
                     'No Quality Matches')
             ## if there are more than 0 quality matches...
             else:
-                pen.setColor(QtCore.Qt.white)
+                pen.setColor(self.fg_color)
                 qp.setPen(pen)
                 qp.setFont(self.match_font)
                 ## start the vertical sum at the reference point
@@ -362,6 +416,9 @@ class plotAnalogues(backgroundAnalogues):
                 ## loop through each of the matches
                 i = 0
                 for m in self.matches[0]:
+                    mdate, mloc = m.split(".")
+                    mdate = datetime.strptime(mdate, "%y%m%d%H").strftime("%d %b %y %HZ")
+                    match_str = "%s (%s)" % (mdate, mloc)
                     ## these are the rectangles that matches will plot inside of
                     rect3 = QtCore.QRect(place2[0], self.ylast, x1, self.match_height)
                     rect4 = QtCore.QRect(place2[1], self.ylast, x1, self.match_height)
@@ -389,7 +446,7 @@ class plotAnalogues(backgroundAnalogues):
                             pen.setColor(QtGui.QColor(LBLUE))
                             qp.setPen(pen)
                     ## draw the text
-                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, m )
+                    qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, match_str )
                     qp.drawText(rect4, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, size_str )
                     ## is there is a selected match, draw the bounds
                     if self.selectRect is not None:
@@ -421,6 +478,7 @@ class plotAnalogues(backgroundAnalogues):
             for i, bound in enumerate(self.ybounds_sup):
                 if bound[0] < pos.y() and bound[1] > pos.y():
                     filematch = sars.getSounding(self.sup_matches[0][i], "supercell")
+                    print(filematch)
                     self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
@@ -434,6 +492,7 @@ class plotAnalogues(backgroundAnalogues):
             for i, bound in enumerate(self.ybounds_hail):
                 if bound[0] < pos.y() and bound[1] > pos.y():
                     filematch = sars.getSounding(self.hail_matches[0][i], "hail")
+                    print(filematch)
                     self.updatematch.emit(filematch)
                     ## set the rectangle used for showing
                     ## a selected match
@@ -445,6 +504,7 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        #logging.debug("Calling plotAnaloges.parentWidget().setFocus()")
         self.parentWidget().setFocus()
 
     def setSelection(self, filematch):
@@ -452,12 +512,16 @@ class plotAnalogues(backgroundAnalogues):
             Load in the SARS analog you've clicked.
         """
         match_name = os.path.basename(filematch)
-        if match_name in self.sup_matches[0]:
-            idx = np.where(self.sup_matches[0] == match_name)[0][0]
+#        print("\n\nSETSELECION:", match_name, filematch, self.sup_matches[0], self.hail_matches[0])
+        sup_matches = [sars.getSounding(f, 'supercell').split('/')[-1] for f in self.sup_matches[0]] 
+        hail_matches = [sars.getSounding(f, 'hail').split('/')[-1] for f in self.hail_matches[0]]
+#        print(sup_matches, hail_matches) 
+        if match_name in sup_matches:
+            idx = np.where(np.asarray(sup_matches, dtype=str) == match_name)[0][0]
             lbx = 0.
             ybounds = self.ybounds_sup
-        if match_name in self.hail_matches[0]:
-            idx = np.where(self.hail_matches[0] == match_name)[0][0]
+        if match_name in hail_matches:
+            idx = np.where(np.asarray(hail_matches, dtype=str) == match_name)[0][0]
             lbx = self.brx / 2.
             ybounds = self.ybounds_hail
 
@@ -467,6 +531,7 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        self.parentWidget().setFocus()
 
     def clearSelection(self):
         self.selectRect = None
@@ -475,4 +540,15 @@ class plotAnalogues(backgroundAnalogues):
         self.plotBackground()
         self.plotData()
         self.update()
+        #print(self.parent, self.parentWidget())
+        #self.setParent(self.parent)
         self.parentWidget().setFocus()
+
+
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    #tester = plotText(['sfcpcl', 'mlpcl', 'mupcl'])
+    tester = plotAnalogues()
+    #tester.setProf()
+    tester.show()        
+    app_frame.exec_()

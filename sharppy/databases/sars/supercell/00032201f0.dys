@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000322/0100F000    dys 
+  DYS 000322/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          9.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.4 C/km
 850-500mb   26 C	6.2 C/km
+
+----- Note -----
+Old Title:  RUC 000322/0100F000    dys 
+

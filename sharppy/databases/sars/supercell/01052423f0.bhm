@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010524/2300F000    bhm 
+  BHM 010524/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          10.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.9 C/km
 850-500mb   29 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 010524/2300F000    bhm 
+

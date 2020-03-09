@@ -1,7 +1,10 @@
 from sharppy.sharptab import params
+from sharppy.io.csv import loadCSV
+
 from datetime import datetime
 import numpy as np
 import os
+import logging
 
 ## written by Greg Blumberg - CIMMS
 ## and
@@ -137,14 +140,14 @@ def pwv_climo(prof, station, month=None):
     # Calculate the PWV up to 300 mb so it's consistent with the PWV Climo
     pwv_300 = params.precip_water(prof, pbot=None, ptop=300)
     # pwv_300 needs to be in inches (if it isn't already)
-
     # Load in the PWV mean and standard deviations
     pwv_means = get_mean_pwv(station)
     pwv_stds = get_stdev_pwv(station)
     if pwv_means is np.ma.masked:
         return 0
     elif pwv_means is None:
-	return 0
+        return 0
+
     month_mean = float(pwv_means[month-1])
     month_std = float(pwv_stds[month-1])
 
@@ -176,3 +179,45 @@ def pwv_climo(prof, station, month=None):
 
     return flag
 
+class PWDatabase(object):
+    def __init__(self, data_path=os.path.dirname(__file__)):
+        self._pwv_mn_fields, self._pwv_mn = loadCSV(os.path.join(data_path, 'PW-mean-inches.txt'))
+        self._pwv_st_fields, self._pwv_st = loadCSV(os.path.join(data_path, 'PW-stdev-inches.txt'))
+        stn_fields, stns = loadCSV(os.path.join(os.path.dirname(__file__), '..', '..', 'datasources', 'spc_ua.csv'))
+
+        stn_ids = [ stn['icao'] for stn in stns ]
+        for idx in range(len(self._pwv_mn)):
+            try:
+                stn_idx = stn_ids.index(self._pwv_mn['SITE'])
+
+                self._pwv_mn['lat'] = stns[stn_idx]['lat']
+                self._pwv_mn['lon'] = stns[stn_idx]['lon']
+                self._pwv_st['lat'] = stns[stn_idx]['lat']
+                self._pwv_st['lon'] = stns[stn_idx]['lon']
+            except IndexError as e:
+                logging.exception(e)
+                pass
+
+    def getStddev(self, stddev, loc, month=None):
+        pass
+
+    def getClimo(self, loc, month=None):
+        pass
+
+    def _triangleInterp(self, lat, lon, pt_lats, pt_lons, pt_vals, tris):
+        tri_lats = pt_lats[tris].T
+        tri_lons = pt_lons[tris].T
+        tri_areas = 0.5 * (-tri_lats[1] * tri_lons[2] + tri_lats[0] * (tri_lons[2] - tri_lons[1]) + tri_lons[0] * (tri_lats[1] - tri_lats[2]) + tri_lons[1] * tri_lats[2])
+        s = 1. / (2. * tri_areas) * (tri_lats[0] * tri_lons[2] - tri_lons[0] * tri_lats[2] + (tri_lats[2] - tri_lats[0]) * lon + (tri_lons[0] - tri_lons[2]) * lat)
+        t = 1. / (2. * tri_areas) * (tri_lons[0] * tri_lats[1] - tri_lats[0] * tri_lons[1] + (tri_lats[0] - tri_lats[1]) * lon + (tri_lons[1] - tri_lons[0]) * lat)
+
+        tris_select = np.where((s >= 0) & (t >= 0) & (1 - s - t >= 0))[0]
+
+        if len(tris_select) == 0:
+            val = None
+        else:
+            tri = tris_select[0]
+            tri_vals = pt_vals[tris[tri]]
+            val = s[tri] * tri_vals[1] + t[tri] * tri_vals[2] + (1 - s[tri] - t[tri]) * tri_vals[0]
+
+        return val

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000720/0000F000    bvx 
+  BVX 000720/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          17.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.9 C/km
 850-500mb   32 C	7.3 C/km
+
+----- Note -----
+Old Title:  RUC 000720/0000F000    bvx 
+

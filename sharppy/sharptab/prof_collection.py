@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.interp as interp
-from utils.frozenutils import Process, Queue
+from sutils.frozenutils import Process, Queue
 import platform
 import numpy as np
 
@@ -28,7 +28,7 @@ class ProfCollection(object):
         self._dates = dates
         self._meta = kwargs
         self._target_type = target_type
-        self._highlight = profiles.keys()[0]
+        self._highlight = kwargs.get('highlight', list(profiles.keys())[0])
         self._prof_idx = 0
         self._analog_date = None
 
@@ -47,11 +47,29 @@ class ProfCollection(object):
         Subset the profile collection over time.
         idxs:   The time indices to include in the subsetted collection.
         """
-        profiles = dict( (mem, [ prof[idx] for idx in idxs ]) for mem, prof in self._profs.iteritems() )
+        def extract_profile_indexes(prof):
+            prof_indexed = []
+            for idx in idxs:
+                try:
+                    prof_indexed.append(prof[idx])
+                except IndexError:
+                    pass
+
+            return prof_indexed
+
+        profiles = dict( (mem, extract_profile_indexes(prof)) for mem, prof in self._profs.items() )
         dates = [ self._dates[idx] for idx in idxs ]
         return ProfCollection(profiles, dates, highlight=self._highlight, **self._meta)
 
     def _backgroundCopy(self, member, max_procs=2):
+        """
+        Copies the profile objects in the background while the user can continue to do things.
+        This upgrades the project object types from Profile to ConvectiveProfile via the
+        _target_type variable.
+        
+        member:     the key indicating a specific member
+        max_procs:  max number of processors to perform this action
+        """
         pipe = Queue(max_procs)
 
         for idx, prof in enumerate(self._profs[member]):
@@ -73,12 +91,14 @@ class ProfCollection(object):
                 self._procs = []
         return
 
-    def setAsync(self, async):
+    def setAsync(self, async_obj):
         """
         Start an asynchronous process to load objects of type 'target_type' in the background.
+        Used to upgrade the Profile objects to ConvectiveProfile objects in the background
+
         async:  An AsyncThreads instance.
         """
-        self._async = async
+        self._async = async_obj
         self._async.post(self._backgroundCopy, None, self._highlight)
 
     def cancelCopy(self):
@@ -119,6 +139,8 @@ class ProfCollection(object):
             return
 
         cur_prof = self._profs[self._highlight][self._prof_idx]
+        # If the currently selected profile is not of the target_type (e.g., ConvectiveProfile), then
+        # then upgrade it via the copy function.
         if type(cur_prof) != self._target_type:
             self._profs[self._highlight][self._prof_idx] = self._target_type.copy(cur_prof)
         return self._profs[self._highlight][self._prof_idx]
@@ -130,16 +152,19 @@ class ProfCollection(object):
         if not self.hasCurrentProf():
             return {}
 
-        for mem, profs in self._profs.iteritems():
+        for mem, profs in self._profs.items():
             # Copy the profiles on the fly
-            cur_prof = profs[self._prof_idx]
+            try:
+                cur_prof = profs[self._prof_idx]
+            except IndexError:
+                continue
+            else:
+                if mem == self._highlight and type(cur_prof) != self._target_type:
+                    self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
+                elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
+                    self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
 
-            if mem == self._highlight and type(cur_prof) != self._target_type:
-                self._profs[mem][self._prof_idx] = self._target_type.copy(cur_prof)
-            elif type(cur_prof) not in [ profile.BasicProfile, self._target_type ]:
-                self._profs[mem][self._prof_idx] = profile.BasicProfile.copy(cur_prof)
-
-        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.iteritems() ) 
+        profs = dict( (mem, profs[self._prof_idx]) for mem, profs in self._profs.items() if len(profs) > self._prof_idx ) 
         return profs
 
     def getAnalogDate(self):
@@ -168,7 +193,7 @@ class ProfCollection(object):
         """
         Returns True if this collection has multiple ensemble members. Otherwise, returns False.
         """
-        return len(self._profs.keys()) > 1
+        return len(list(self._profs.keys())) > 1
 
     def hasCurrentProf(self):
         """
@@ -194,6 +219,12 @@ class ProfCollection(object):
         """
         self._highlight = member_name
 
+    def getHighlightedMemberName(self):
+        """
+        Gets the name of the member that is currently highlighted.
+        """
+        return self._highlight
+
     def setCurrentDate(self, cur_dt):
         """
         Sets the current date to be 'cur_dt'.
@@ -202,7 +233,7 @@ class ProfCollection(object):
         try:
             self._prof_idx = self._dates.index(cur_dt)
         except ValueError:
-            self._prof_idx = -1
+            pass
 
     def setAnalogToDate(self, analog_to_date):
         """
@@ -237,15 +268,22 @@ class ProfCollection(object):
         mem_names = sorted(self._profs.keys())
         high_idx = mem_names.index(self._highlight)
         length = len(mem_names)
+        
+        def doAdvance(adv_idx):
+            if direction > 0 and adv_idx == length - 1:
+                adv_idx = 0
+            elif direction < 0 and adv_idx == 0:
+                adv_idx = length - 1
+            else:
+                adv_idx = adv_idx + direction
+            return adv_idx
 
-        if direction > 0 and high_idx == length - 1:
-            adv_idx = 0
-        if direction < 0 and high_idx == 0:
-            adv_idx = length - 1
-        else:
-            adv_idx = high_idx + direction
-
-        self._highlight = mem_names[adv_idx]
+        adv_idx = doAdvance(high_idx)
+        highlight = mem_names[adv_idx]
+        while len(self._profs[highlight]) <= self._prof_idx:
+            adv_idx = doAdvance(adv_idx)
+            highlight = mem_names[adv_idx]
+        self._highlight = highlight
 
     def defineUserParcel(self, parcel):
         """
@@ -260,6 +298,9 @@ class ProfCollection(object):
         Modify the profile at the current time.
         idx:    The vertical index to modify
         **kwargs:   The variables to modify ('tmpc', 'dwpc', 'u', or 'v')
+        
+        TODO: Allow modification of layers.  Could be that idx is -999 for layer
+              and kwargs passes information about the layers to be modified.
         """
         if self.isEnsemble():
             raise ValueError("Can't modify ensemble profiles")
@@ -272,12 +313,17 @@ class ProfCollection(object):
 
         cls = type(prof)
         # Copy the variables to be modified
-        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.iterkeys() )
-
-        # Do the modification
-        for var, val in kwargs.iteritems():
-            prof_vars[var][idx] = val
+        prof_vars = dict( (k, prof.__dict__[k].copy()) for k in kwargs.keys() if k != 'idx_range')
         
+        if idx != -999:
+            # Do the modification
+            for var, val in kwargs.items():
+                prof_vars[var][idx] = val
+        else:
+            idx = kwargs.get('idx_range')
+            for key in prof_vars.keys():
+                prof_vars[key] = kwargs.get(key)
+ 
         # Make a copy of the profile object with the newly modified variables inserted.
         self._profs[self._highlight][self._prof_idx] = cls.copy(prof, **prof_vars)
 
@@ -287,6 +333,15 @@ class ProfCollection(object):
 
         if 'u' in kwargs or 'v' in kwargs or 'wdir' in kwargs or 'wspd' in kwargs:
             self._mod_wind[self._prof_idx] = True
+
+    def modifyStormMotion(self, deviant, vec_u, vec_v):
+        if deviant == 'left':
+            self._profs[self._highlight][self._prof_idx].set_srleft(vec_u, vec_v)
+        elif deviant == 'right':
+            self._profs[self._highlight][self._prof_idx].set_srright(vec_u, vec_v)
+
+    def resetStormMotion(self):
+        self._profs[self._highlight][self._prof_idx].reset_srm()
 
     def interp(self, dp=-25):
         """

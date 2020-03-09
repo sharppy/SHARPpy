@@ -2,8 +2,8 @@
 import os.path
 import subprocess
 release = True
-__version__ = '1.3.0'
-__version_name__ = "Xenia"
+__version__ = '1.4.0'
+__version_name__ = "Andover"
 
 _repository_path = os.path.split(__file__)[0]
 _git_file_path = os.path.join(_repository_path, '__git_version__.py')
@@ -100,7 +100,7 @@ def get_version():
     version = __version__
     if not release:
         try:
-            import __git_version__
+            from . import __git_version__
             version += __git_version__.rev
         except ImportError:
             version += get_git_revision()

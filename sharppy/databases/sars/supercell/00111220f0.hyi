@@ -1,5 +1,5 @@
 %TITLE%
- RUC 001112/2000F000    hyi 
+  HYI 001112/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.0 C/km
 850-500mb   28 C	6.5 C/km
+
+----- Note -----
+Old Title:  RUC 001112/2000F000    hyi 
+

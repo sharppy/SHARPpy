@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010417/0200F000    sjt 
+  SJT 010417/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          12.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.0 C/km
 850-500mb   30 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 010417/0200F000    sjt 
+

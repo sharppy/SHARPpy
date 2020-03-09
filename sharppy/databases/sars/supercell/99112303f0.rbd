@@ -1,5 +1,5 @@
 %TITLE%
- RUC 991123/0300F000    rbd 
+  RBD 991123/0300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          13.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.4 C/km
 850-500mb   29 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 991123/0300F000    rbd 
+

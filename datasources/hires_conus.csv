@@ -1,0 +1,1229 @@
+icao,iata,synop,name,state,country,lat,lon,elev,priority,srcid
+K1V4,1V4,72614,St. Johnsbury,VT,US,44.42,-72.02,210,7,1v4
+,,99405,Lake Worth,FL,US,26.7,-80.96,5,8,2is
+,,,3j2,,,31.0,-79.0,0,7,3j2
+K4BL,4BL,72472,Blanding,UT,US,37.62,-109.47,1840,7,4bl
+K4BQ,4BQ,72667,Broadus,MT,US,45.44,-105.4,922,9,4bq
+K4HV,4HV,72473,Hanksville,UT,US,38.38,-110.72,1314,7,4hv
+KOMK,OMK,72789,Omak,WA,US,48.42,-119.53,382,7,4om
+K6R0,6R0,,Slidell,LA,US,30.33,-89.82,8,8,6ro
+KSPD,SPD,,Springfield,CO,US,37.28,-102.61,1335,7,8v7
+,,,95e,,,33.8,-106.64,1474,7,95e
+K9B6,9B6,,Sewel Ridge,ME,US,43.0,-68.0,150,8,9b6
+,,,abl,,,34.1,-86.1,304,7,abl
+KADM,ADM,,Ardmore,OK,US,34.303,-97.02,232,4,adm
+,,,afa,,,48.0,-65.0,0,7,afa
+KAGR,AGR,74796,Avon Park,FL,US,27.65,-81.3333333333,20,8,agr
+KANW,ANW,,Ainsworth,NE,US,42.6,-99.9,777,8,aih
+KAJO,AJO,,Corona,CA,US,33.898,-117.602,163,8,ajo
+KAKO,AKO,,Akron/Washington,CO,US,40.1743,-103.215,1421,4,ako
+,,,alta,,,40.55,-111.57,2246,7,alta
+KANJ,ANJ,72734,Sault Ste Marie,MI,US,46.485,-84.366,218,0,anj
+,,,appl,,,42.99,-70.62,0,7,appl
+KAPX,APX,72634,Gaylord/Alpena/WFO,MI,US,44.9,-84.7166666667,446,8,apx
+KAQQ,AQQ,,Apalachicola,FL,US,29.7333333333,-85.0333333333,5,8,aqq
+,,,ath,,,42.3,-102.4,1188,7,ath
+,,,atl1,,,37.2,-74.8,0,7,atl1
+,,,atl2,,,36.05,-74.25,0,7,atl2
+,,,atl3,,,32.8,-77.2,0,7,atl3
+,,,atl4,,,38.6,-73.75,0,7,atl4
+K56N,56N,,Sandy Hook CGS,NJ,US,40.42,-73.98,1,8,atlh
+KAWH,AWH,,Wildhorse Reservoir,NV,US,41.67,-115.79,1902,7,awh
+,,,b015,,,42.75,-124.86,0,7,b015
+,,,b#1,,,34.9,-73.0,0,7,b#1
+,,,b#2,,,32.3,-75.2,0,7,b#2
+,,,b#3,,,29.3,-77.4,0,7,b#3
+,,,b40,,,33.05,-114.24,362,7,b40
+,,,b41,,,31.52,-110.31,1526,7,b41
+,,,b42,,,32.05,-107.86,1326,7,b42
+,,,b43,,,30.44,-104.32,1501,7,b43
+,,,b44,,,28.38,-110.33,315,7,b44
+,,,b45,,,26.52,-98.79,104,7,b45
+,,,b46,,,28.7,-96.01,2,7,b46
+,,,b47,,,29.83,-91.59,1,7,b47
+,,,b48,,,25.19,-80.67,1,7,b48
+,,,b#4,,,28.9,-78.5,0,7,b#4
+,,,b#5,,,25.9,-89.7,0,7,b#5
+,,,b#6,,,25.9,-93.6,0,7,b#6
+,,,b#7,,,25.9,-85.9,0,7,b#7
+,,,b#8,,,27.9,-95.0,0,7,b#8
+,,,b#9,,,27.0,-96.5,0,7,b#9
+KBAB,BAB,,Marysville/Beale AFB,CA,US,39.14,-121.44,34,6,bab
+,,,b#a,,,40.5,-69.4,0,7,b#a
+KBAX,BAX,,Bad Axe,MI,US,43.79,-82.99,234,7,bax
+,,,b#b,,,41.1,-66.6,0,7,b#b
+KBBD,BBD,,Brady,TX,US,31.179,-99.324,557,8,bbd
+,,,b#d,,,42.5,-130.5,0,7,b#d
+,,,Bridgeport,CA,US,38.3,-119.16,2321,9,bdg
+,,,bds,,,33.64,-102.95,1184,7,bds
+,,,b#f,,,46.1,-131.0,0,7,b#f
+,,,South Bakersfield,CA,US,35.24,-119.03,151,6,bfl
+,,,b#g,,,40.9,-137.5,0,7,b#g
+KREJ,REJ,72661,Redig,SD,US,45.27,-103.54,922,8,bh1
+,,,bh2,,,44.79,-104.73,1215,7,bh2
+KSPF,SPF,,Spearfish,SD,US,44.46,-103.85,1210,7,bh3
+,,,bh4,,,43.35,-104.69,1340,7,bh4
+,,,bh5,,,43.53,-103.65,1461,7,bh5
+,,,b#h,,,39.2,-124.0,0,7,b#h
+UTSB,BHK,38683,Bukhara,UZ,UZ,39.72,64.62,226,6,bhk
+KBID,BID,,Block Island,RI,US,41.18,-71.58,33,7,bid
+KBIV,BIV,,Holland/Tulip City,MI,US,42.75,-86.1,208,7,biv
+,,,b#j,,,46.2,-124.2,0,7,b#j
+,,,b#k,,,40.4,-124.5,0,7,b#k
+,,,bky,,,34.86,-91.27,54,7,bky
+KBLU,BLU,,Blue Canyon,CA,US,39.29,-120.7,1609,7,blu
+,,,b#m,,,23.4,-162.3,0,7,b#m
+KEET,EET,72230,Alabaster,AL,US,33.1666666667,-86.7666666667,197,8,bmx
+KOHX,OHX,,Nashville/WFO,TN,US,36.25,-86.57,180,7,bna
+,,,b#n,,,17.2,-157.8,0,7,b#n
+KBNY,BNY,,Burney,CA,US,40.89,-121.67,957,7,bny
+,,,b#o,,,19.3,-160.8,0,7,b#o
+K92Q,92Q,,Bodega Bay,CA,US,38.32,-123.07,12,8,bod
+,,,bon,,,48.64,-116.39,1099,7,bon
+,,,b#p,,,17.4,-152.5,0,7,b#p
+KBPK,BPK,,Mountain Home/Baxter Co Regnl,AR,US,36.37,-92.47,280,7,bpk
+,,,b#q,,,40.3,-73.2,0,7,b#q
+,,,Chattahooche NF,GA,US,34.8,-48.05,908,9,bra
+,,,b#s,,,36.6,-74.8,0,7,b#s
+,,,b#t,,,32.56,-79.09,0,7,b#t
+,,,b#u,,,32.43,-119.52,0,7,b#u
+,,,b#v,,,40.68,-72.07,0,7,b#v
+,,,b#w,,,38.54,-74.69,0,7,b#w
+,,,b#x,,,40.35,-73.75,0,7,b#x
+,,,c01,,,37.2,-118.8,2936,7,c01
+,,,c02,,,47.61,-103.26,762,7,c02
+,,,c03,,,37.8,-97.01,390,7,c03
+,,,c04,,,34.59,-94.3,380,7,c04
+,,,c06,,,37.9,-95.2,337,7,c06
+,,,c07,,,38.5,-101.5,1036,7,c07
+,,,c08,,,37.4,-105.2,3199,7,c08
+,,,c09,,,35.96,-105.33,2522,7,c09
+KPVW,PVW,,Plainview,TX,US,34.2,-101.7,1024,7,c10
+,,,c11,,,33.6,-99.3,404,7,c11
+,,,c12,,,33.7,-97.4,343,7,c12
+,,,c13,,,37.1,-92.3,456,7,c13
+,,,c14,,,41.0,-107.0,2504,7,c14
+,,,c18,,,47.0,-112.5,1483,7,c18
+,,,c19,,,49.0,-114.0,1558,7,c19
+,,,c22,,,47.5,-99.0,461,7,c22
+,,,c23,,,46.2,-97.5,358,7,c23
+,,,c25,,,40.8,-84.2,238,7,c25
+,,,c27,,,38.0,-80.0,881,7,c27
+,,,c28,,,34.5,-82.5,244,7,c28
+,,,c32,,,37.35,-99.35,652,7,c32
+,,,c33,,,35.3,-98.9,457,7,c33
+,,,c34,,,35.5,-97.0,305,7,c34
+,,,c35,,,34.98,-94.69,143,9,c35
+,,,c36,,,36.6,-101.6,996,7,c36
+,,,c7h,,,38.5,-70.7,0,7,c7h
+,,,cai,,,37.3,-88.9,116,7,cai
+,,,can,,,42.05,-73.2,426,7,can
+KCBE,CBE,,Cumberland,MD,US,39.615,-78.761,236,7,cbe
+KGWX,GWX,,Columbus AFB,MS,US,33.9,-88.33,169,8,cbn
+,,,ccl,,,37.15,-120.28,64,7,ccl
+KCCR,CCR,,Concord/Buchanan Fld,CA,US,37.98,-122.05,11,7,ccr
+,,,cfc,,,39.03,-120.95,616,7,cfc
+,,,Lake Bella,MN,US,43.5,-95.6,2339,8,che
+,,,chrl,,,53.63,-106.2,582,7,chrl
+KRZR,RZR,,Cleveland,TN,US,35.2,-84.8,254,7,cld
+,,,East Cleveland,OH,US,41.5,-81.6,213,8,cle
+,,,cln,,,31.71,-89.41,55,7,cln
+,,,cnd,,,36.94,-85.33,251,7,cnd
+,,,cnlk,,,53.99,-105.12,599,7,cnlk
+KGLY,GLY,,Clinton,MO,US,38.35,-93.77,238,8,cnn
+,,,coa,,,36.15,-120.32,369,7,coa
+,,,col1,,,45.68,-121.27,61,7,col1
+,,,col2,,,45.72,-121.56,61,7,col2
+,,,col3,,,45.68,-120.82,61,7,col3
+,,,col4,,,45.72,-120.21,122,7,col4
+KCQV,CQV,,Colville Muni,WA,US,48.55,-117.89,572,7,cqv
+KCIN,CIN,,Carroll,IA,US,42.04,-94.79,379,8,crl
+KCSQ,CSQ,,Creston,IA,US,41.02,-94.37,394,8,csq
+KCTY,CTY,72212,Cross City,FL,US,29.62,-83.1,13,6,cty
+,,,cvd,,,38.77,-122.97,404,7,cvd
+MMCV,CVM,76491,Cuidad Victoria,,MX,23.72,-98.97,238,6,cvm
+KCVS,CVS,,Clovis/Cannon AFB,NM,US,34.39,-103.32,1309,4,cvs
+CWLB,WLB,71931,Lac La Biche,AB,CA,54.78,-112.02,567,7,cwlb
+CWLO,WLO,71853,Shilo,MB,CA,49.79,-99.65,373,7,cwlo
+CYLW,YLW,71203,Kelowna,BC,CA,49.95,-119.4,456,1,cwlw
+CWMW,WMW,71722,Maniwaki,QB,CA,46.39,-75.96,170,8,cwmw
+CWOS,WOS,71399,Shelborne,NS,CA,43.73,-65.25,30,8,cwos
+CWQG,WQG,71151,Valcartier,QB,CA,46.91,-71.5,168,8,cwqg
+CWSA,WSA,71600,Sable Island,NS,CA,43.94,-60.02,4,5,cwsa
+CWSE,WSE,71119,Edmonton/Stony Plain,AB,CA,53.5333333333,-114.083333333,766,8,cwse
+CWZB,WZB,71197,Port Aux Basques,NF,CA,47.58,-59.17,40,7,cwzb
+CWZC,,,Moosonee,ON,CA,51.2833333333,-80.6,11,8,cwzc
+CWZV,WZV,71107,Cape Saint James,BC,CA,51.94,-131.02,92,7,cwzv
+CYAH,YAH,71823,La Grande Iv,QB,CA,53.76,-73.67,306,5,cyah
+CYAW,YAW,71601,Halifax,NS,CA,44.64,-63.5,51,6,cyaw
+CYBU,YBU,71130,Nipawin,SK,CA,53.34,-104.0,374,7,cybu
+CYCG,YCG,71884,Castlegar,BC,CA,49.3,-117.63,495,6,cycg
+CYCX,YCX,71701,Gagetown,NB,CA,45.84,-66.43,51,6,cycx
+CYDF,YDF,71809,Deer Lake,NF,CA,49.23,-57.4,22,6,cydf
+CYEG,YEG,71123,Edmonton Intl,AB,CA,53.33,-113.58,723,6,cyeg
+CYFO,YFO,,Flin Flon,MB,CA,54.69,-101.69,304,7,cyfo
+CYGQ,YGQ,71834,Geraldton,ON,CA,49.79,-86.93,351,6,cygq
+CYHM,YHM,71263,Hamilton Airport,ON,CA,43.17,-79.94,238,6,cyhm
+CYHZ,YHZ,71395,Halifax Intl,NS,CA,44.89,-63.52,145,0,cyhz
+CYJT,YJT,71815,Stephenville,NF,CA,48.54,-58.55,26,5,cyjt
+CYKF,YKF,71368,Waterloo Well,ON,CA,43.47,-80.39,317,6,cykf
+CYLH,,71697,Lansdowne House,ON,CA,52.2,-87.9333333333,254,7,cylh
+CYLJ,YLJ,71125,Meadow Lake,SK,CA,54.14,-108.52,480,7,cylj
+CYMO,YMO,71836,Moosonee,ON,CA,51.289,-80.614,10,5,cymo
+CYMT,YMT,71822,Chibougamau-Chapais,QB,CA,49.78,-74.53,387,6,cymt
+CYMX,YMX,71626,Montreal/Mirabel,QB,CA,45.69,-74.04,82,1,cymx
+CYOW,YOW,71628,Ottawa Intl,ON,CA,45.33,-75.67,114,2,cyow
+CYPA,YPA,71869,Prince Albert,SK,CA,53.23,-105.67,428,6,cypa
+CYPE,YPE,71068,Peace River,AB,CA,56.23,-117.45,571,6,cype
+CYPL,YPL,71845,Pickle Lake,ON,CA,51.48,-90.2,373,5,cypl
+CYPQ,YPQ,,Peterborough,ON,CA,44.23,-78.37,191,6,cypq
+CYQA,YQA,71630,Muskoka,ON,CA,44.98,-79.3,282,6,cyqa
+CYQD,YQD,71867,The Pas,MB,CA,53.98,-101.1,271,5,cyqd
+CYQG,YQG,71538,Windsor,ON,CA,42.28,-82.97,190,6,cyqg
+CYQI,YQI,71603,Yarmouth,NS,CA,43.84,-66.08,43,5,cyqi
+CYQK,YQK,71850,Kenora,ON,CA,49.79,-94.37,411,6,cyqk
+CYQM,YQM,71705,Moncton,NB,CA,46.12,-64.68,71,6,cyqm
+CYQQ,YQQ,71893,Comox,BC,CA,49.73,-124.9,24,6,cyqq
+CYQR,YQR,71863,Regina,SK,CA,50.44,-104.67,577,0,cyqr
+CYQT,YQT,71749,Thunder Bay,ON,CA,48.38,-89.32,199,0,cyqt
+CYQX,YQX,71803,Gander Intl,NF,CA,48.96,-54.57,151,6,cyqx
+CYQY,YQY,71707,Sydney,NS,CA,46.18,-60.05,62,6,cyqy
+CYSJ,YSJ,71609,Saint John,NB,CA,45.33,-65.88,109,6,cysj
+CYTH,YTH,71079,Thompson,MB,CA,55.8,-97.87,218,6,cyth
+CYTL,YTL,71848,Big Trout Lake,ON,CA,53.83,-89.87,224,6,cytl
+CYTS,YTS,71739,Timmins,ON,CA,48.58,-81.38,295,6,cyts
+CYUL,YUL,71627,Montreal/Dorval,QB,CA,45.47,-73.75,36,0,cyul
+CYVO,YVO,71725,Val D'Or,QB,CA,48.05,-77.78,337,6,cyvo
+CYVR,YVR,71892,Vancouver Intl,BC,CA,49.19,-123.18,2,6,cyvr
+CYVV,YVV,71633,Wiarton,ON,CA,44.76,-81.1,222,6,cyvv
+CYWA,YWA,71625,Petawawa,ON,CA,45.96,-77.31,130,6,cywa
+CYWG,YWG,71852,Winnipeg,MB,CA,49.93,-97.23,239,0,cywg
+CYXC,YXC,71880,Cranbrook,BC,CA,49.62,-115.78,939,6,cyxc
+CYXE,YXE,71866,Saskatoon,SK,CA,52.18,-106.7,504,5,cyxe
+CYXH,YXH,71872,Medicine Hat,AB,CA,50.03,-110.72,716,6,cyxh
+CYXS,YXS,71908,Prince George,BC,CA,53.89,-122.68,691,0,cyxs
+CYXU,YXU,71623,London,ON,CA,43.04,-81.15,278,6,cyxu
+CYXX,YXX,71108,Abbotsford,BC,CA,49.04,-122.37,58,6,cyxx
+CYXZ,YXZ,71738,Wawa,ON,CA,47.98,-84.78,287,6,cyxz
+CYYB,YYB,71731,North Bay,ON,CA,46.38,-79.42,371,6,cyyb
+CYYC,YYC,71877,Calgary Intl,AB,CA,51.12,-114.02,1084,0,cyyc
+CYYG,YYG,71706,Charlottetown,PE,CA,46.29,-63.13,54,6,cyyg
+CYYJ,YYJ,71799,Victoria Intl,BC,CA,48.66,-123.43,19,6,cyyj
+CYYL,YYL,71078,Lynn Lake,MB,CA,56.88,-101.08,357,6,cyyl
+CYYZ,YYZ,71624,Toronto Intl,ON,CA,43.69,-79.63,173,3,cyyz
+CYZT,YZT,71109,Port Hardy,BC,CA,50.69,-127.37,22,0,cyzt
+CYZV,YZV,71811,Sept Iles,QB,CA,50.23,-66.27,55,5,cyzv
+CYZX,YZX,71397,Greenwood,NS,CA,44.98,-64.92,28,6,cyzx
+,,,czc,,,38.6,-123.24,192,7,czc
+KD07,D07,,Faith Muni,SD,US,45.04,-102.02,784,7,d07
+KDNR,DNR,72469,Denver/Stapleton,CO,US,39.75,-104.87,1611,7,den
+KDOV,DOV,,Dover AFB,DE,US,39.14,-75.47,9,6,dov
+KDPG,DPG,74003,Dugway Proving Ground,UT,US,40.21,-112.93,1326,3,dpg
+,,,dsc,,,35.34,-116.88,961,7,dsc
+,,,Santo Domingo Este,,DO,18.47,-69.88,14,8,dsd
+KDTX,DTX,72632,Detroit/WFO,MI,US,42.71,-83.47,327,8,dtx
+KDVN,DVN,74455,Davenport,IA,US,41.62,-90.58,230,3,dvn
+KDYS,DYS,69019,Abilene/Dyess AFB,TX,US,32.44,-99.85,545,6,dys
+KE28,E28,74733,White Sands Space Harbor,NM,US,32.94,-106.41,1192,8,e28
+KE74,E74,,Safford,AZ,US,32.83,-109.68,900,8,e74
+KEAX,EAX,,Pleasant Hill/WFO,MO,US,38.8166666667,-94.2666666667,303,8,eax
+KEDW,EDW,72381,Edwards AFB,CA,US,34.91,-117.87,702,3,edw
+,,,emf,,,34.41,-117.37,1129,7,emf
+,,76256,Empalme,,MX,27.95,-110.766666667,12,8,emp
+KEND,END,,Enid/Vance AFB,OK,US,36.34,-97.9,398,4,end
+,,,eon,,,42.46,-74.99,504,7,eon
+,,,estc,,,47.46,-69.22,264,7,estc
+KEGC,EGC,,Everglades City,FL,US,25.89,-81.32,2,7,evr
+KEVW,EVW,,Evanston-Uninta Co Burns Field,WY,US,41.27,-111.03,2177,7,evw
+KFCS,FCS,72468,Fort Carson,CO,US,38.69,-104.77,1789,6,fcs
+KFDR,FDR,,Frederick Muni,OK,US,34.35,-98.98,386,5,fdr
+KFFC,FFC,72215,Peachtree City,GA,US,33.35,-84.56,262,1,ffc
+KFHU,FHU,72273,Fort Huachuca,AZ,US,31.58,-110.33,1438,6,fhu
+KFLG,FLG,72375,Flagstaff/Pullim,AZ,US,35.14,-111.67,2134,2,flg
+KFLP,FLP,,Flippin,AR,US,36.29,-92.59,219,7,flp
+KFNB,FNB,,Falls City/Brnnr,NE,US,40.08,-95.58,300,7,fnb
+,,,Fort Peck,MT,US,48.31,-105.09,634,7,fpk
+,,,fps7,,,33.49,-77.59,0,7,fps7
+KFRI,FRI,72455,Junction City,KS,US,39.055,-96.765,325,6,fri
+,,,fro,,,43.35,-120.86,1327,7,fro
+,,,frs,,,38.6,-123.24,192,7,frs
+KFSI,FSI,72355,Fort Sill,OK,US,34.66,-98.4,362,7,fsi
+KFST,FST,,Fort Stockton,TX,US,30.93,-102.82,883,6,fstk
+,,,ftsr,,,34.38,-104.23,1231,7,ftsr
+KFWD,FWD,72249,Fort Worth,TX,US,32.8166666667,-97.2833333333,196,8,fwd
+,,,fzp,,,34.84,-118.94,1350,7,fzp
+,,,g001,,,47.5,-121.1,1453,7,g001
+,,,g003,,,44.5,-122.7,244,7,g003
+,,,g004,,,44.0,-115.0,2705,7,g004
+,,,g005,,,46.9,-121.3,1639,7,g005
+,,,g007,,,44.1,-120.5,1178,7,g007
+,,,g009,,,42.7,-121.4,1524,7,g009
+,,,g010,,,32.42,-110.73,2414,7,g010
+KLMN,,74646,Lamont/ARM Facility,OK,US,36.61,-97.49,307,8,g011
+KPYX,PYX,,Perryton,TX,US,36.5,-100.8,893,8,g#1
+,,,g#2,,,30.3,-101.7,726,7,g#2
+,,,g#3,,,27.7,-102.5,1247,7,g#3
+,,,g#4,,,30.5,-99.1,504,7,g#4
+,,,g#5,,,28.4,-98.7,98,7,g#5
+,,,g#6,,,26.3,-98.8,53,7,g#6
+,,,g#7,,,24.4,-97.4,0,7,g#7
+,,,g#8,,,25.9,-95.3,0,7,g#8
+,,,g#9,,,24.5,-94.4,0,7,g#9
+,,,g#a,,,23.3,-95.6,0,7,g#a
+,,,g#d,,,23.3,-91.6,0,7,g#d
+KGDP,GDP,72262,Guadalupe Mtns Np,TX,US,31.83,-104.8,1692,7,gdp
+KGDV,GDV,,Glendive,MT,US,47.14,-104.8,749,6,gdv
+,,,g#e,,,23.7,-88.7,0,7,g#e
+,,,g#f,,,23.0,-85.0,0,7,g#f
+,,,g#g,,,23.5,-98.0,77,7,g#g
+,,,glry,,,37.07,-121.12,98,7,glry
+,,,gmx1,,,29.2,-87.25,0,7,gmx1
+,,,gnb,,,44.92,-80.42,176,7,gnb
+KGNC,GNC,,Seminole,TX,US,32.675,-102.653,1010,7,gnc
+,,,grun,,,37.27,-82.1,320,7,grun
+KGTB,GTB,74370,Fort Drum,NY,US,44.05,-75.74,207,6,gtb
+,,,gtp,,,43.9,-110.0,2704,7,gtp
+,,,gvh,,,31.69,-87.81,90,7,gvh
+KGVL,GVL,,Gainesville,GA,US,34.26,-83.83,386,7,gvl
+,,,gvs,,,40.72,-85.93,278,7,gvs
+,,,gvy,,,39.17,-121.11,689,7,gvy
+KGYX,GYX,74389,Gray,ME,US,43.9,-70.25,125,8,gyx
+KHGR,HGR,,Hagerstown,MD,US,39.71,-77.73,224,7,hgr
+KHLD,HLD,,Hiland,WY,US,43.09,-107.32,1846,9,hld
+KHMM,HMM,,Hamilton/Ravalli Co,MT,US,46.25,-114.15,1110,9,hmm
+KHMN,HMN,74732,Holloman AFB,NM,US,32.86,-106.1,1248,4,hmn
+KHNR,HNR,,Harlan Muni,IA,US,41.584,-95.34,375,8,hnr
+KGRK,GRK,,Granger,TX,US,30.72,-97.38,182,8,hoo
+KHSI,HSI,,Hastings,NE,US,40.61,-98.43,591,7,hsi
+KHYR,HYR,,Hayward,WI,US,46.025,-91.444,370,6,hyr
+KIGM,IGM,72370,Kingman,AZ,US,35.28,-113.95,1032,7,igm
+KIJD,IJD,,Willimantic,CT,US,41.75,-72.18,75,7,ijd
+KILN,ILN,72426,Wilmington,OH,US,39.43,-83.8,322,3,iln
+,,,ils,,,28.88,-118.3,6,7,ils
+KILX,ILX,74560,Lincoln,IL,US,40.15,-89.3333333333,177,8,ilx
+KIMT,IMT,,Iron Mountain-Kingsford,MI,US,45.81,-88.11,349,7,imt
+KINF,INF,,Inverness,FL,US,28.78,-82.31,20,8,inv
+,,,ipx,,,44.42,-111.37,1917,7,ipx
+KISQ,ISQ,,Manistique/Schoolcraft Co,MI,US,45.97,-86.17,209,7,isq
+,,,jack,,,45.64,-70.26,354,7,jack
+KJAY,JAY,,Jay Peak,VT,US,44.94,-72.51,572,8,jayv
+KJCT,JCT,74740,Junction,TX,US,30.5,-99.77,522,6,jct
+KJDN,JDN,,Jordan,MT,US,47.33,-106.93,801,7,jdn
+KJHN,JHN,,Johnson City,KS,US,37.5833333333,-101.733333333,1013,8,jhn
+,,,joes,,,45.37,-117.31,1726,7,joes
+,,,jpb,,,44.27,-67.25,0,7,jpb
+KJWG,JWG,,Watonga,OK,US,35.86,-98.42,472,7,jwg
+K2G4,2G4,,Oakland,MD,US,39.58,-79.339,894,8,k2g4
+K36U,36U,,Heber,UT,US,40.48,-111.43,1718,8,k36u
+K3LF,3LF,,Litchfield,IL,US,39.163,-89.675,210,8,k3lf
+K40B,40B,,Clayton Lake,ME,US,46.62,-69.52,314,8,k40b
+K48I,48I,,Sutton,WV,US,38.687,-80.652,397,8,k48i
+,,,k4s3,,,45.37,-117.31,1726,7,k4s3
+K5J0,5J0,,John Day State,OR,US,44.3833333333,-118.966666667,1127,8,k5j0
+K9V9,9V9,72653,Chamberlain,SD,US,43.8,-99.32,519,7,k9v9
+KAAT,AAT,,Alturas Muni,CA,US,41.491,-120.564,1331,7,kaat
+KABE,ABE,72517,Allentown-Bethlehem,PA,US,40.66,-75.43,114,6,kabe
+KABI,ABI,72266,Abilene,TX,US,32.43,-99.68,548,4,kabi
+KABQ,ABQ,72365,Albuquerque,NM,US,35.05,-106.62,1618,0,kabq
+KABR,ABR,72659,Aberdeen Rgnl,SD,US,45.46,-98.43,397,3,kabr
+KABY,ABY,72216,Albany Muni,GA,US,31.54,-84.18,58,6,kaby
+KACK,ACK,72506,Nantucket Memorial,MA,US,41.26,-70.07,16,2,kack
+KACT,ACT,72256,Waco-Madison Coo,TX,US,31.62,-97.22,151,6,kact
+KACV,ACV,,Arcata/Eureka,CA,US,40.99,-124.1,67,6,kacv
+KACY,ACY,72407,Atlantic City Intl,NJ,US,39.46,-74.57,23,4,kacy
+KAFJ,AFJ,,Washington,PA,US,40.14,-80.29,361,7,kafj
+KAGC,AGC,,Pittsburgh/Allegheny Co,PA,US,40.35,-79.93,389,6,kagc
+KAGS,AGS,72218,Augusta,GA,US,33.38,-81.97,44,4,kags
+KAHN,AHN,72311,Athens Muni,GA,US,33.96,-83.32,244,4,kahn
+KAIA,AIA,,Alliance Muni,NE,US,42.05,-102.8,1196,7,kaia
+KALB,ALB,72518,Albany,NY,US,42.76,-73.8,92,3,kalb
+KALI,ALI,,Alice Intl,TX,US,27.74,-98.04,53,6,kali
+KALO,ALO,72548,Waterloo Muni,IA,US,42.55,-92.4,264,4,kalo
+KALS,ALS,72462,Alamosa Muni,CO,US,37.46,-105.87,2299,6,kals
+KALW,ALW,72788,Walla Walla Regnl,WA,US,46.09,-118.29,363,6,kalw
+KAMA,AMA,72363,Amarillo Intl,TX,US,35.23,-101.7,1093,3,kama
+KANB,ANB,,Anniston,AL,US,33.59,-85.85,183,6,kanb
+KAND,AND,,Anderson County,SC,US,34.49,-82.71,239,6,kand
+KAOO,AOO,,Altoona,PA,US,40.3,-78.32,455,6,kaoo
+KAPA,APA,,Denver/Centennial,CO,US,39.5599,-104.848,1775,4,kapa
+KAPN,APN,72639,Alpena,MI,US,45.08,-83.57,210,4,kapn
+KAQP,AQP,,Appleton Muni,MN,US,45.23,-96.0,311,7,kaqp
+KARA,ARA,,New Iberia/Acadiana Regnl,LA,US,30.03,-91.88,18,7,kara
+KART,ART,,Watertown Intl,NY,US,44.01,-76.02,100,6,kart
+KASE,ASE,,Aspen,CO,US,39.22,-106.87,2354,4,kase
+KAST,AST,72791,Astoria,OR,US,46.16,-123.88,3,4,kast
+KATL,ATL,72219,Atlanta Intl,GA,US,33.66,-84.42,296,0,katl
+KATY,ATY,,Watertown Muni,SD,US,44.92,-97.16,532,6,katy
+KAUG,AUG,,Augusta,ME,US,44.32,-69.8,109,4,kaug
+KAUS,AUS,72254,Austin/Bergstrom Intl,TX,US,30.183,-97.68,166,3,kaus
+KAUW,AUW,72646,Wausau,WI,US,44.93,-89.62,362,6,kauw
+KAVL,AVL,72315,Asheville Rgnl,NC,US,35.44,-82.55,670,4,kavl
+KAVP,AVP,72513,Wilkes-Barre/Scranton,PA,US,41.33,-75.73,291,6,kavp
+KAXN,AXN,,Alexandria,MN,US,45.87,-95.41,433,3,kaxn
+KAYS,AYS,72213,Waycross,GA,US,31.25,-82.4,46,7,kays
+KAZO,AZO,,Kalamazoo Intl A,MI,US,42.24,-85.55,272,6,kazo
+KBAF,BAF,,Westfield,MA,US,42.16,-72.72,83,6,kbaf
+KBCE,BCE,,Bryce Canyon,UT,US,37.71,-112.16,2312,6,kbce
+KBDE,BDE,,Baudette,MN,US,48.73,-94.6,329,7,kbde
+KBDL,BDL,72508,Windsor Locks,CT,US,41.94,-72.68,60,6,kbdl
+KBDR,BDR,72504,Bridgeport,CT,US,41.18,-73.13,7,3,kbdr
+KBED,BED,74490,Bedford/Laurence G Hanscom,MA,US,42.47,-71.29,50,2,kbed
+KBFD,BFD,,Bradford Rgnl,PA,US,41.8,-78.64,647,6,kbfd
+KBFF,BFF,72566,Scottsbluff,NE,US,41.88,-103.6,1203,6,kbff
+KBFI,BFI,,Seattle/Boeing Field,WA,US,47.53,-122.3,4,1,kbfi
+KBFL,BFL,72384,Bakersfield,CA,US,35.43,-119.05,151,6,kbfl
+KBFM,BFM,,Mobile Downtown,AL,US,30.64,-88.07,20,7,kbfm
+KBGM,BGM,72515,Binghamton,NY,US,42.23,-75.98,490,3,kbgm
+KBGR,BGR,72607,Bangor Intl,ME,US,44.81,-68.83,57,3,kbgr
+KBHB,BHB,,Bar Harbor,ME,US,44.46,-68.37,26,7,kbhb
+KBHM,BHM,72228,Birmingham Intl,AL,US,33.56,-86.75,197,4,kbhm
+KBIH,BIH,72480,Bishop,CA,US,37.37,-118.37,1253,6,kbih
+KBIL,BIL,72677,Billings,MT,US,45.8,-108.53,1091,6,kbil
+KBIS,BIS,72764,Bismarck Muni,ND,US,46.78,-100.75,505,0,kbis
+KBJC,BJC,,Broomfield,CO,US,39.909,-105.117,1724,1,kbjc
+KBJI,BJI,72755,Bemidji Muni,MN,US,47.51,-94.93,420,6,kbji
+KBKE,BKE,,Baker,OR,US,44.84,-117.82,1024,6,kbke
+KBKW,BKW,72412,Beckley,WV,US,37.79,-81.12,764,6,kbkw
+KBLF,BLF,,Bluefield,WV,US,37.3,-81.22,873,6,kblf
+KBLH,BLH,,Blythe,CA,US,33.62,-114.72,119,6,kblh
+KBLI,BLI,,Bellingham Intl,WA,US,48.79,-122.54,50,6,kbli
+KBMI,BMI,,Bloomington/Normal,IL,US,40.48,-88.93,267,7,kbmi
+KBML,BML,72616,Berlin Muni,NH,US,44.59,-71.18,345,7,kbml
+KBNA,BNA,72327,Nashville Metro,TN,US,36.12,-86.68,210,2,kbna
+KBNO,BNO,72683,Burns Muni,OR,US,43.58,-118.95,1264,6,kbno
+,,,kbnv,,,40.2,-113.3,1331,7,kbnv
+KBOI,BOI,72681,Boise,ID,US,43.58,-116.22,875,0,kboi
+KBOS,BOS,72509,Boston/Logan Intl,MA,US,42.38,-71.03,6,0,kbos
+KBPI,BPI,72671,Big Piney,WY,US,42.58,-110.1,2117,6,kbpi
+KBPT,BPT,72241,Beaumont/Port Arthur,TX,US,29.95,-94.02,5,6,kbpt
+KBQK,BQK,,Brunswick,GA,US,31.15,-81.47,8,7,kbqk
+KBRD,BRD,,Brainerd,MN,US,46.4,-94.13,372,4,kbrd
+KBRL,BRL,,Burlington,IA,US,40.79,-91.12,211,6,kbrl
+KBRO,BRO,72250,Brownsville Intl,TX,US,25.9,-97.43,7,0,kbro
+KBTL,BTL,,Battle Creek,MI,US,42.3,-85.25,290,6,kbtl
+KBTM,BTM,,Butte/Silver Bow,MT,US,45.96,-112.5,1688,6,kbtm
+KBTR,BTR,,Baton Rouge,LA,US,30.54,-91.15,21,4,kbtr
+KBTV,BTV,72617,Burlington Intl,VT,US,44.48,-73.15,105,3,kbtv
+KBUF,BUF,72528,Buffalo Intl,NY,US,42.94,-78.73,211,0,kbuf
+KBUR,BUR,72288,Burbank-Glendale-Pasadena,CA,US,34.2,-118.36,217,6,kbur
+KBVI,BVI,,Beaver County,PA,US,40.76,-80.33,382,6,kbvi
+KBVX,BVX,,Batesville,AR,US,35.73,-91.65,141,7,kbvx
+KBVY,BVY,,Beverly Muni,MA,US,42.58,-70.92,28,7,kbvy
+KBWG,BWG,,Bowling Green,KY,US,36.96,-86.42,168,4,kbwg
+KBWI,BWI,72406,Baltimore/Washington Intl,MD,US,39.19,-76.67,59,3,kbwi
+KBYI,BYI,,Burley,ID,US,42.54,-113.77,1264,6,kbyi
+KBZN,BZN,,Bozeman,MT,US,45.79,-111.15,1361,4,kbzn
+KCAD,CAD,,Cadillac,MI,US,44.29,-85.42,398,7,kcad
+KCAE,CAE,72310,Columbia,SC,US,33.96,-81.12,70,3,kcae
+KCAK,CAK,72521,Akron-Canton Rgnl,OH,US,40.93,-81.43,377,6,kcak
+KCAR,CAR,72712,Caribou,ME,US,46.88,-68.02,191,0,kcar
+KCDC,CDC,,Cedar City Rgnl,UT,US,37.7,-113.1,1714,4,kcdc
+KCDR,CDR,,Chadron,NE,US,42.84,-103.08,1010,6,kcdr
+KCDS,CDS,,Childress Muni,TX,US,34.4275,-100.284,594,3,kcds
+KCEC,CEC,,Crescent City,CA,US,41.79,-124.24,17,6,kcec
+KCEF,CEF,74491,Chicopee,MA,US,42.21,-72.53,75,7,kcef
+KCGI,CGI,,Cape Girardeau,MO,US,37.23,-89.58,102,6,kcgi
+KCGX,CGX,,Chicago/Meigs,IL,US,41.88,-87.62,181,7,kcgx
+KCHA,CHA,72324,Chattanooga,TN,US,35.04,-85.2,210,4,kcha
+KCHH,CHH,74494,Chatham,MA,US,41.68,-69.97,16,8,kchh
+KCHO,CHO,,Charlottesville,VA,US,38.14,-78.45,192,6,kcho
+KCHS,CHS,72208,Charleston AFB,SC,US,32.91,-80.03,13,1,kchs
+KCIC,CIC,72497,Chico,CA,US,39.79,-121.85,73,7,kcic
+KCID,CID,72545,Cedar Rapids Muni,IA,US,41.89,-91.7,264,4,kcid
+KCIU,CIU,,Chippewa,MI,US,46.26,-84.47,244,7,kciu
+KCKB,CKB,,Clarksburg/Benedum,WV,US,39.29,-80.23,360,4,kckb
+KCKL,CKL,,Centreville,AL,US,32.91,-87.25,140,8,kckl
+KCLE,CLE,72524,Cleveland/Hopkins,OH,US,41.43,-81.87,233,3,kcle
+KCLL,CLL,,College Station,TX,US,30.58,-96.37,96,4,kcll
+KCLM,CLM,,Port Angeles,WA,US,48.12,-123.5,85,6,kclm
+KCLT,CLT,72314,Charlotte/Douglas Intl,NC,US,35.21,-80.94,220,4,kclt
+KCMH,CMH,72428,Port Columbus Intl,OH,US,40.01,-82.88,247,4,kcmh
+KCMI,CMI,,Champaign/Urbana,IL,US,40.04,-88.28,228,6,kcmi
+KCMX,CMX,72744,Houghton,MI,US,47.18,-88.5,326,6,kcmx
+KCNK,CNK,72458,Concordia,KS,US,39.55,-97.65,447,7,kcnk
+KCNM,CNM,,Carlsbad,NM,US,32.34,-104.27,985,6,kcnm
+KCNU,CNU,,Chanute,KS,US,37.68,-95.48,297,6,kcnu
+KCOD,COD,72670,Cody Muni,WY,US,44.53,-109.02,1553,3,kcod
+KCOE,COE,,Coeur d'Alene,ID,US,47.78,-116.82,707,4,kcoe
+KCON,CON,72605,Concord Muni,NH,US,43.21,-71.5,103,6,kcon
+KCOS,COS,72466,Colorado Springs,CO,US,38.83,-104.72,1856,3,kcos
+KCOU,COU,72445,Columbia Rgnl,MO,US,38.83,-92.22,271,4,kcou
+KCPR,CPR,72569,Casper,WY,US,42.93,-106.47,1621,6,kcpr
+KCRE,CRE,,North Myrtle Beach,SC,US,33.81,-78.72,10,6,kcre
+KCRP,CRP,72251,Corpus Christi Intl,TX,US,27.77,-97.5,14,2,kcrp
+KCRQ,CRQ,,Carlsbad,CA,US,33.14,-117.28,99,6,kcrq
+KCRW,CRW,72414,Charleston,WV,US,38.38,-81.6,309,6,kcrw
+KCSG,CSG,,Columbus,GA,US,32.53,-84.93,135,6,kcsg
+KCSM,CSM,,Clinton/Clinton-Sherman,OK,US,35.36,-99.2,588,7,kcsm
+KCSV,CSV,,Crossville,TN,US,35.96,-85.08,570,6,kcsv
+KCTB,CTB,,Cut Bank,MT,US,48.61,-112.37,1175,4,kctb
+KCVG,CVG,72421,Cincinnati,OH,US,39.05,-84.67,269,0,kcvg
+KCXO,CXO,,Conroe/Montgomery Co,TX,US,30.36,-95.41,75,8,kcxo
+KCYS,CYS,72564,Cheyenne/Warren,WY,US,41.16,-104.82,1868,3,kcys
+KDAB,DAB,,Daytona Beach,FL,US,29.18,-81.05,9,3,kdab
+,,,kdaf,,,44.06,-90.04,279,7,kdaf
+KDAG,DAG,,Daggett,CA,US,34.88,-116.78,587,6,kdag
+KDAL,DAL,72258,Dallas/Love,TX,US,32.86,-96.85,158,1,kdal
+KDAN,DAN,,Danville,VA,US,36.58,-79.33,175,6,kdan
+KDAY,DAY,72429,Dayton Intl,OH,US,39.91,-84.2,305,4,kday
+KDBQ,DBQ,72547,Dubuque Muni,IA,US,42.41,-90.7,326,4,kdbq
+KDCA,DCA,72405,Washington/National,VA,US,38.86,-77.03,18,1,kdca
+KDDC,DDC,72451,Dodge City,KS,US,37.78,-99.97,789,0,kddc
+KDEC,DEC,,Decatur,IL,US,39.84,-88.87,207,4,kdec
+KDEN,DEN,72565,Denver Intl,CO,US,39.8466,-104.656,1640,0,kden
+KDET,DET,,Detroit City,MI,US,42.43,-83.02,190,3,kdet
+KDFW,DFW,72259,Dallas/Ft Worth,TX,US,32.91,-97.03,174,0,kdfw
+KDHN,DHN,,Dothan,AL,US,31.32,-85.45,113,6,kdhn
+KDHT,DHT,,Dalhart,TX,US,36.03,-102.55,1217,6,kdht
+KDIK,DIK,,Dickinson,ND,US,46.79,-102.8,788,6,kdik
+KDLH,DLH,72745,Duluth Intl,MN,US,46.84,-92.18,435,2,kdlh
+KDLS,DLS,,The Dalles,OR,US,45.62,-121.15,71,3,kdls
+KDMN,DMN,,Deming,NM,US,32.26,-107.7,1311,6,kdmn
+KDPA,DPA,,Chicago/DuPage,IL,US,41.93,-88.25,231,6,kdpa
+KDRA,DRA,72387,Mercury,NV,US,36.62,-116.02,1006,5,kdra
+KDRO,DRO,,Dur-La Plata,CO,US,37.16,-107.75,2035,4,kdro
+KDRT,DRT,72261,Del Rio Intl,TX,US,29.38,-100.92,313,2,kdrt
+KDSM,DSM,72546,Des Moines Intl,IA,US,41.54,-93.65,295,2,kdsm
+KDTW,DTW,72537,Detroit Metro,MI,US,42.23,-83.33,195,1,kdtw
+KDUG,DUG,,Douglas,AZ,US,31.45,-109.6,1265,6,kdug
+KDUJ,DUJ,,Dubois,PA,US,41.19,-78.9,554,6,kduj
+KEAT,EAT,,Wenatchee,WA,US,47.41,-120.2,377,6,keat
+KEAU,EAU,,Eau Claire,WI,US,44.88,-91.48,276,4,keau
+KECG,ECG,,Elizabeth City/Muni,NC,US,36.26,-76.18,11,6,kecg
+KEED,EED,72380,Needles,CA,US,34.78,-114.62,302,6,keed
+KEET,EET,,Alabaster/Shelby Co,AL,US,33.18,-86.78,173,3,keet
+KEGE,EGE,,Eagle,CO,US,39.66,-106.92,1993,6,kege
+KEKN,EKN,72417,Elkins,WV,US,38.89,-79.85,603,4,kekn
+KEKO,EKO,,Elko,NV,US,40.84,-115.78,1547,3,keko
+KELD,ELD,,El Dorado,AR,US,33.23,-92.8,81,6,keld
+KELM,ELM,,Elmira,NY,US,42.18,-76.9,302,6,kelm
+KELN,ELN,,Ellensburg/Bowers Field,WA,US,47.03,-120.53,519,7,keln
+KELO,ELO,,Ely,MN,US,47.91,-91.82,443,7,kelo
+KELP,ELP,72270,El Paso Intl,TX,US,31.8,-106.4,1197,2,kelp
+KELY,ELY,72486,Ely,NV,US,39.29,-114.85,1906,3,kely
+KEMP,EMP,,Emporia,KS,US,38.34,-96.2,367,7,kemp
+KENV,ENV,72581,Wendover AFB,UT,US,40.73,-114.03,1292,4,kenv
+KENW,ENW,,Kenosha,WI,US,42.59,-87.94,219,7,kenw
+KEPH,EPH,,Ephrata,WA,US,47.33,-119.52,383,6,keph
+K47B,47B,,Eastport,ME,US,44.92,-67.0,23,8,kepo
+K5T6,5T6,72364,Santa Teresa,NM,US,31.87,-106.7,1251,8,kepz
+KERI,ERI,72526,Erie Intl,PA,US,42.08,-80.18,222,4,keri
+KERY,ERY,,Newberry,MI,US,46.31,-85.46,265,7,kery
+KESC,ESC,72648,Escanaba,MI,US,45.73,-87.08,187,7,kesc
+KESF,ESF,,Alexandria,LA,US,31.4,-92.3,28,6,kesf
+KEUG,EUG,72693,Eugene,OR,US,44.12,-123.22,114,1,keug
+KEVV,EVV,72432,Evansville,IN,US,38.05,-87.53,117,4,kevv
+KEWB,EWB,,New Bedford,MA,US,41.69,-70.97,23,7,kewb
+KEWN,EWN,,New Bern,NC,US,35.09,-77.05,3,6,kewn
+KEWR,EWR,72502,Newark Intl,NJ,US,40.71,-74.17,7,2,kewr
+KEYW,EYW,72201,Key West Intl,FL,US,24.55,-81.75,5,2,keyw
+KFAM,FAM,,Farmington Rgnl,MO,US,37.76,-90.43,288,6,kfam
+KFAR,FAR,72753,Fargo/Hector Field,ND,US,46.91,-96.8,277,1,kfar
+KFAT,FAT,72389,Fresno,CA,US,36.78,-119.72,104,2,kfat
+KFAY,FAY,,Fayetteville Rgnl,NC,US,34.99,-78.88,55,4,kfay
+KFDY,FDY,,Findlay,OH,US,41.03,-83.67,247,6,kfdy
+KFKL,FKL,,Franklin,PA,US,41.39,-79.87,469,6,kfkl
+KFLG,FLG,72375,Flagstaff,AZ,US,35.14,-111.67,2134,2,kflg
+KFLL,FLL,,Fort Lauderdale/Hollywood Intl,FL,US,26.07,-80.15,3,6,kfll
+KFLO,FLO,,Florence Rgnl,SC,US,34.19,-79.72,44,6,kflo
+KFMH,FMH,,Falmouth,MA,US,41.659,-70.522,40,7,kfmh
+KFMN,FMN,,Farmington,NM,US,36.76,-108.23,1685,6,kfmn
+KFMY,FMY,,Ft. Myers/Page,FL,US,26.58,-81.87,4,6,kfmy
+KFNT,FNT,72637,Flint,MI,US,42.98,-83.73,233,4,kfnt
+KFOD,FOD,72549,Fort Dodge,IA,US,42.55,-94.18,355,6,kfod
+KFOE,FOE,,Topeka/Forbes,KS,US,38.96,-95.67,320,6,kfoe
+KFPR,FPR,,Fort Pierce,FL,US,27.5,-80.37,13,7,kfpr
+KFRM,FRM,,Fairmont,MN,US,43.66,-94.42,354,6,kfrm
+KFSD,FSD,72651,Sioux Falls,SD,US,43.59,-96.74,436,2,kfsd
+KFSM,FSM,72344,Fort Smith Muni,AR,US,35.34,-94.37,140,3,kfsm
+KFTW,FTW,,Ft Worth/Meacham,TX,US,32.83,-97.35,214,2,kftw
+KFTY,FTY,,Atlanta/Fulton Co-Brown Field,GA,US,33.78,-84.52,263,3,kfty
+KFVE,FVE,,Frenchville,ME,US,47.29,-68.32,301,7,kfve
+KFVX,FVX,,Farmville,VA,US,37.35,-78.43,125,7,kfvx
+KFWA,FWA,72533,Fort Wayne,IN,US,41.01,-85.2,248,3,kfwa
+KFXE,FXE,,Fort Lauderdale Executive,FL,US,26.2,-80.17,6,7,kfxe
+KFYV,FYV,,Fayetteville,AR,US,36.01,-94.17,379,4,kfyv
+KGAG,GAG,,Gage,OK,US,36.3,-99.77,668,6,kgag
+KGCC,GCC,72665,Gillette,WY,US,44.36,-105.53,1320,6,kgcc
+KGCK,GCK,,Garden City,KS,US,37.94,-100.72,877,4,kgck
+KGCN,GCN,72378,Grand Canyon,AZ,US,35.96,-112.15,2016,4,kgcn
+KGEG,GEG,72785,Spokane Intl,WA,US,47.64,-117.53,735,1,kgeg
+KGFK,GFK,,Grand Forks Intl,ND,US,47.96,-97.18,258,2,kgfk
+KGFL,GFL,,Glens Falls,NY,US,43.36,-73.62,103,6,kgfl
+KGGG,GGG,72247,Longview,TX,US,32.38,-94.71,107,4,kggg
+KGGW,GGW,72768,Glasgow Intl,MT,US,48.21,-106.63,694,2,kggw
+KGJT,GJT,72476,Grand Junction,CO,US,39.12,-108.53,1475,2,kgjt
+K2G6,2G6,,Meadville,PA,US,41.63,-80.21,386,8,kgkl
+KGLD,GLD,72465,Goodland,KS,US,39.38,-101.7,1113,3,kgld
+KGLH,GLH,,Greenville,MS,US,33.48,-90.98,45,6,kglh
+KGLS,GLS,72242,Galveston,TX,US,29.27,-94.87,6,6,kgls
+KGMU,GMU,,Greenville Downtown,SC,US,34.85,-82.35,315,5,kgmu
+KGNR,GNR,72619,Greenville Muni,ME,US,45.462,-69.595,427,7,kgnr
+KGNV,GNV,,Gainesville,FL,US,29.68,-82.27,45,4,kgnv
+KGON,GON,,Groton-New London,CT,US,41.33,-72.05,3,7,kgon
+KGPI,GPI,,Kalispell,MT,US,48.3,-114.27,908,6,kgpi
+KGPT,GPT,,Gulfport-Biloxi Rgnl,MS,US,30.4,-89.07,14,6,kgpt
+KGRB,GRB,72645,Green Bay,WI,US,44.48,-88.13,208,3,kgrb
+KGRI,GRI,72552,Grand Island,NE,US,40.98,-98.32,561,6,kgri
+KGRK,GRK,,Fort Hood/R Gray,TX,US,31.07,-97.83,309,5,kgrk
+KGRR,GRR,72635,Grand Rapids Intl,MI,US,42.89,-85.52,237,3,kgrr
+KGSB,GSB,,Seymour-Johnson,NC,US,35.34,-77.97,33,6,kgsb
+KGSO,GSO,72317,Greensboro-High Point,NC,US,36.01,-79.95,275,3,kgso
+KGSP,GSP,72312,Greenville-Spartanburg,SC,US,34.91,-82.22,287,3,kgsp
+KGTF,GTF,72775,Great Falls,MT,US,47.48,-111.35,1119,0,kgtf
+KGUC,GUC,,Gunnison,CO,US,38.55,-106.92,2339,6,kguc
+KGUP,GUP,,Gallup,NM,US,35.53,-108.78,1971,6,kgup
+KGUY,GUY,,Guymon Muni,OK,US,36.69,-101.51,948,7,kguy
+KGWO,GWO,,Greenwood,MS,US,33.51,-90.08,44,4,kgwo
+KGXA,GXA,,Palmdale,CA,US,34.5666666667,-117.666666667,923,8,kgxa
+KGYY,GYY,,Gary,IN,US,41.62,-87.42,180,4,kgyy
+KGZH,GZH,,Evergreen,AL,US,31.42,-87.04,78,7,kgzh
+KHAT,HAT,72302,Cape Hatteras,NC,US,35.28,-75.55,3,8,khat
+KHBG,HBG,,Hattiesburg/Bobby L Chain Muni,MS,US,31.265,-89.253,44,7,khbg
+KHBR,HBR,,Hobart,OK,US,35.01,-99.05,473,6,khbr
+KHDN,HDN,72571,Hayden,CO,US,40.51,-107.25,2012,6,khdn
+KHFD,HFD,,Hartford,CT,US,41.73,-72.65,4,4,khfd
+KHIB,HIB,,Hibbing,MN,US,47.39,-92.85,412,3,khib
+KHIE,HIE,,Whitefield,NH,US,44.36,-71.53,318,7,khie
+KHIO,HIO,,Hillsboro,OR,US,45.54,-122.95,68,6,khio
+KHKY,HKY,,Hickory,NC,US,35.76,-81.38,354,6,khky
+KHLG,HLG,,Wheeling,WV,US,40.17,-80.65,372,6,khlg
+KHLN,HLN,72772,Helena Rgnl,MT,US,46.61,-112.0,1182,4,khln
+KHOB,HOB,,Hobbs,NM,US,32.69,-103.2,1115,6,khob
+KHON,HON,72654,Huron Rgnl,SD,US,44.39,-98.22,390,6,khon
+KHOT,HOT,,Hot Springs,AR,US,34.48,-93.1,162,6,khot
+KHOU,HOU,,Houston/Hobby,TX,US,29.65,-95.28,36,3,khou
+KHPN,HPN,,White Plains,NY,US,41.08,-73.72,121,6,khpn
+KHQM,HQM,,Hoquiam,WA,US,46.98,-123.97,7,4,khqm
+KHRL,HRL,,Harlingen,TX,US,26.23,-97.67,10,6,khrl
+KHRO,HRO,,Harrison,AR,US,36.28,-93.15,417,6,khro
+KHSV,HSV,72323,Huntsville,AL,US,34.66,-86.77,191,4,khsv
+KHTH,HTH,,Hawthorne,NV,US,38.55,-118.63,1285,8,khth
+KHTS,HTS,72425,Huntington,WV,US,38.38,-82.55,254,3,khts
+KHUF,HUF,72437,Terre Haute,IN,US,39.46,-87.3,179,6,khuf
+KHUL,HUL,,Houlton,ME,US,46.14,-67.78,150,2,khul
+KHUT,HUT,,Hutchinson,KS,US,38.08,-97.87,467,6,khut
+KHVN,HVN,,New Haven/Tweed,CT,US,41.28,-72.88,4,7,khvn
+KHVR,HVR,72777,Havre,MT,US,48.55,-109.77,787,3,khvr
+KHXD,HXD,,Hilton Head Is,SC,US,32.22,-80.7,6,7,khxd
+KHYA,HYA,,Hyannis,MA,US,41.68,-70.28,22,6,khya
+KHYS,HYS,,Hays,KS,US,38.86,-99.27,609,4,khys
+KIAD,IAD,72403,Washington/Dulles,VA,US,38.96,-77.45,93,0,kiad
+KIAG,IAG,,Niagara Falls,NY,US,43.11,-78.95,182,4,kiag
+KIAH,IAH,72243,Houston Bush Intl,TX,US,29.97,-95.35,36,2,kiah
+KICT,ICT,72450,Wichita,KS,US,37.66,-97.43,407,3,kict
+KIDA,IDA,,Idaho Falls/Fang,ID,US,43.53,-112.07,1453,6,kida
+KIDI,IDI,,Indiana/Stewart,PA,US,40.63,-79.1,429,7,kidi
+KILG,ILG,,Wilmington,DE,US,39.68,-75.6,28,4,kilg
+KILM,ILM,,Wilmington,NC,US,34.28,-77.92,9,0,kilm
+KIMM,IMM,,Immokalee,FL,US,26.4333333333,-81.4,12,8,kimm
+KIND,IND,72438,Indianapolis Intl,IN,US,39.73,-86.27,241,2,kind
+KINK,INK,,Wink,TX,US,31.79,-103.2,855,6,kink
+KINL,INL,72747,International Falls,MN,US,48.58,-93.38,360,1,kinl
+KINT,INT,72319,Winston-Salem,NC,US,36.13,-80.22,291,4,kint
+KINW,INW,72374,Winslow,AZ,US,35.03,-110.73,1490,4,kinw
+KIPL,IPL,,Imperial,CA,US,32.84,-115.57,-17,6,kipl
+KIPT,IPT,72514,Williamsport,PA,US,41.26,-76.92,164,6,kipt
+KISM,ISM,,Orlando/Kissimmee Muni,FL,US,28.29,-81.437,25,7,kism
+KISN,ISN,72767,Williston,ND,US,48.16,-103.6,579,6,kisn
+KISO,ISO,,Kinston,NC,US,35.331,-77.609,29,7,kiso
+KISP,ISP,,Islip,NY,US,40.8,-73.1,43,4,kisp
+KITH,ITH,,Ithaca,NY,US,42.48,-76.47,335,6,kith
+KIWD,IWD,,Ironwood,MI,US,46.54,-90.13,375,7,kiwd
+KIXA,IXA,,Roanoke Rapids,NC,US,36.33,-77.635,44,8,kixa
+KJAC,JAC,,Jackson,WY,US,43.61,-110.73,1961,6,kjac
+KJAN,JAN,72235,Jackson,MS,US,32.33,-90.08,91,3,kjan
+KJAX,JAX,72206,Jacksonville Intl,FL,US,30.4941,-81.6879,10,0,kjax
+KJBR,JBR,,Jonesboro Muni,AR,US,35.83,-90.65,79,6,kjbr
+KJFK,JFK,74486,New York/Kennedy Intl,NY,US,40.66,-73.78,9,1,kjfk
+KJHW,JHW,,Jamestown,NY,US,42.16,-79.25,525,6,kjhw
+KJKL,JKL,,Jackson,KY,US,37.58,-83.32,416,5,kjkl
+KJLN,JLN,,Joplin,MO,US,37.152,-94.495,299,6,kjln
+KJMR,JMR,,Mora Muni,MN,US,45.89,-93.27,309,7,kjmr
+KJMS,JMS,,Jamestown,ND,US,46.93,-98.68,455,6,kjms
+KJST,JST,,Johnstown,PA,US,40.33,-78.83,694,6,kjst
+KJXN,JXN,,Jackson,MI,US,42.27,-84.47,305,6,kjxn
+,,,kkl,,,40.2,-92.6,272,7,kkl
+KLAF,LAF,,Lafayette/Purdue,IN,US,40.43,-86.93,182,4,klaf
+KLAN,LAN,72539,Lansing,MI,US,42.78,-84.6,264,4,klan
+KLAR,LAR,,Laramie,WY,US,41.33,-105.68,2216,6,klar
+KLAS,LAS,72386,Las Vegas/McCarran,NV,US,36.09,-115.17,636,2,klas
+KLAX,LAX,72295,Los Angeles Intl,CA,US,33.94,-118.4,46,0,klax
+KLBB,LBB,72267,Lubbock Intl,TX,US,33.6658,-101.823,993,0,klbb
+KLBE,LBE,,Latrobe,PA,US,40.29,-79.4,361,6,klbe
+KLBF,LBF,72562,North Platte,NE,US,41.14,-100.68,847,3,klbf
+KLBX,LBX,,Angleton-Lk Jackson/Brazoria Co,TX,US,29.12,-95.47,6,7,klbx
+,,,klcb,,,29.22,-114.28,701,7,klcb
+KLCH,LCH,72240,Lake Charles Muni,LA,US,30.12,-93.22,4,3,klch
+KLCK,LCK,,Rickenbacker AFB,OH,US,39.83,-82.93,227,7,klck
+KLDM,LDM,,Ludington,MI,US,43.96,-86.41,197,7,kldm
+KDLN,DLN,,Dillon,MT,US,45.25,-112.55,1597,6,kldn
+KLEB,LEB,72611,Lebanon Muni,NH,US,43.63,-72.3,171,6,kleb
+KLEE,LEE,,Leesburg Muni,FL,US,28.82,-81.81,23,7,klee
+KLEW,LEW,,Auburn-Lewiston,ME,US,44.05,-70.29,88,7,klew
+KLEX,LEX,72422,Lexington,KY,US,38.05,-84.6,300,4,klex
+KLFK,LFK,,Lufkin,TX,US,31.23,-94.75,88,6,klfk
+KLFT,LFT,,Lafayette Rgnl,LA,US,30.2,-91.99,11,6,klft
+KLGA,LGA,72503,New York/La Guardia,NY,US,40.78,-73.88,11,1,klga
+KLGB,LGB,72297,Long Beach,CA,US,33.83,-118.15,10,6,klgb
+PALG,KLG,,Kalskag,AK,US,61.54,-160.34,17,7,klg
+KLGU,LGU,,Logan-Cache,UT,US,41.79,-111.85,1355,6,klgu
+KLIT,LIT,,Little Rock/Adams,AR,US,34.73,-92.23,79,0,klit
+KLKN,LKN,72582,Elko/WFO,NV,US,40.8666666667,-115.716666667,1608,8,klkn
+KLMT,LMT,,Klamath Falls,OR,US,42.16,-121.73,1246,6,klmt
+KLND,LND,72576,Lander,WY,US,42.83,-108.73,1694,6,klnd
+KLNK,LNK,72551,Lincoln Muni,NE,US,40.86,-96.75,364,3,klnk
+KLNS,LNS,,Lancaster,PA,US,40.12,-76.3,125,7,klns
+KLOL,LOL,72580,Lovelock,NV,US,40.08,-118.55,1189,6,klol
+KLOZ,LOZ,72329,London,KY,US,37.09,-84.04,362,6,kloz
+KLRD,LRD,72252,Laredo Intl,TX,US,27.54,-99.47,155,3,klrd
+KLRU,LRU,,Las Cruces,NM,US,32.289,-106.922,1358,7,klru
+KLSE,LSE,72643,La Crosse Muni,WI,US,43.88,-91.25,199,6,klse
+KLUK,LUK,,Cincinnati/Lunken,OH,US,39.1,-84.42,155,1,kluk
+KLVS,LVS,,Las Vegas,NM,US,35.66,-105.15,2091,3,klvs
+KLWB,LWB,,Lewisburg,WV,US,37.88,-80.4,702,6,klwb
+KLWM,LWM,,Lawrence,MA,US,42.73,-71.12,54,7,klwm
+KLWS,LWS,72783,Lewiston,ID,US,46.39,-117.02,438,6,klws
+KLWT,LWT,,Lewiston,MT,US,47.05,-109.45,1270,6,klwt
+KLYH,LYH,72410,Lynchburg,VA,US,37.34,-79.2,295,6,klyh
+KLZK,LZK,72340,North Little Rock,AR,US,34.84,-92.25,173,8,klzk
+KMAF,MAF,72265,Midland Rgnl,TX,US,31.933,-102.2,874,5,kmaf
+KMBL,MBL,,Manistee/Blacker,MI,US,44.28,-86.25,189,7,kmbl
+KMBS,MBS,,Saginaw,MI,US,43.53,-84.08,202,6,kmbs
+KMCB,MCB,,McComb,MS,US,31.18,-90.47,124,6,kmcb
+KMCE,MCE,,Merced Muni,CA,US,37.29,-120.52,47,6,kmce
+KMCI,MCI,72446,Kansas City Intl,MO,US,39.33,-94.72,320,0,kmci
+KMCN,MCN,72217,Macon,GA,US,32.71,-83.65,109,3,kmcn
+KMCO,MCO,72205,Orlando Jetport,FL,US,28.43,-81.32,29,2,kmco
+KMCW,MCW,,Mason City,IA,US,43.16,-93.33,369,6,kmcw
+KIMS,IMS,,Madison,IN,US,38.83,-85.42,266,8,kmdn
+KMDT,MDT,,Harrisburg-Middletown,PA,US,40.21,-76.77,95,6,kmdt
+KMDW,MDW,72534,Chicago/Midway,IL,US,41.79,-87.75,188,1,kmdw
+KMEI,MEI,72234,Meridian,MS,US,32.34,-88.75,89,6,kmei
+KMEM,MEM,72334,Memphis Intl,TN,US,35.04,-89.98,86,2,kmem
+KMFD,MFD,,Mansfield,OH,US,40.83,-82.52,395,6,kmfd
+KMFE,MFE,,McAllen,TX,US,26.18,-98.24,38,6,kmfe
+KMFR,MFR,72597,Medford,OR,US,42.38,-122.87,396,0,kmfr
+KMGM,MGM,72226,Montgomery,AL,US,32.3,-86.4,63,4,kmgm
+KMGW,MGW,,Morgantown,WV,US,39.64,-79.92,378,3,kmgw
+KMHE,MHE,,Mitchell Muni,SD,US,43.77,-98.04,397,7,kmhe
+KMHK,MHK,,Manhattan,KS,US,39.16,-96.67,317,4,kmhk
+KMHR,MHR,,Sacramento Mather Ap,CA,US,38.5553,-121.297,29,7,kmhr
+KMHT,MHT,,Manchester,NH,US,42.94,-71.43,81,6,kmht
+KMHV,MHV,,Mojave,CA,US,35.059,-118.151,849,7,kmhv
+KMHX,MHX,72305,Morehead/Newport,NC,US,34.7666666667,-76.8666666667,9,8,kmhx
+KMIA,MIA,,Miami Intl,FL,US,25.82,-80.28,3,0,kmia
+KMIB,MIB,,Minot AFB,ND,US,48.43,-101.35,508,6,kmib
+KMIV,MIV,,Millville Muni,NJ,US,39.37,-75.07,23,6,kmiv
+KMKC,MKC,,Kansas City Downtown,MO,US,39.12,-94.6,227,1,kmkc
+KMKE,MKE,,Milwaukee/Mitchell,WI,US,42.96,-87.9,206,3,kmke
+KMKG,MKG,72636,Muskegon County,MI,US,43.18,-86.27,191,4,kmkg
+KMKL,MKL,,Jackson,TN,US,35.61,-88.92,128,6,kmkl
+KMKX,MKX,72640,Milwaukee/WFO,WI,US,42.9666666667,-88.55,292,8,kmkx
+KMLB,MLB,72204,Melbourne,FL,US,28.11,-80.63,11,4,kmlb
+KMLC,MLC,,McAlester,OK,US,34.89,-95.78,232,6,kmlc
+KMLI,MLI,72544,Moline/Quad City,IL,US,41.46,-90.52,184,6,kmli
+KMLS,MLS,74230,Miles City,MT,US,46.44,-105.87,801,4,kmls
+KMLT,MLT,,Millinocket,ME,US,45.66,-68.68,123,6,kmlt
+KMLU,MLU,,Monroe Regnl,LA,US,32.51,-92.04,29,6,kmlu
+KMMU,MMU,,Morristown Muni,NJ,US,40.799,-74.415,57,7,kmmu
+KMNM,MNM,,Menominee,MI,US,45.12,-87.63,191,7,kmnm
+KMOB,MOB,72223,Mobile/Bates Field,AL,US,30.68,-88.25,63,3,kmob
+KMOP,MOP,,Mount Pleasant Muni,MI,US,43.62,-84.74,230,7,kmop
+KMOT,MOT,,Minot Intl,ND,US,48.28,-101.28,519,6,kmot
+KMPV,MPV,,Montpelier,VT,US,44.21,-72.57,343,4,kmpv
+KMQT,MQT,72743,Marquette,MI,US,46.54,-87.57,430,4,kmqt
+KMRB,MRB,,Martinsburg,WV,US,39.41,-77.98,164,4,kmrb
+KMRY,MRY,,Monterey Peninsula,CA,US,36.59,-121.84,66,2,kmry
+KMSL,MSL,,Muscle Shoals,AL,US,34.75,-87.61,164,6,kmsl
+KMSN,MSN,72641,Madison,WI,US,43.14,-89.33,261,4,kmsn
+KMSO,MSO,72773,Missoula,MT,US,46.93,-114.08,975,3,kmso
+KMSP,MSP,72658,Minneapolis-St. Paul Intl,MN,US,44.89,-93.22,265,0,kmsp
+KMSS,MSS,,Massena,NY,US,44.94,-74.85,66,6,kmss
+KMSV,MSV,,Monticello/Sllvn,NY,US,41.71,-74.8,428,7,kmsv
+KMSY,MSY,72231,New Orleans Intl,LA,US,29.98,-90.25,5,0,kmsy
+KMTH,MTH,,Marathon Airport,FL,US,24.74,-81.05,2,7,kmth
+KMTJ,MTJ,,Montrose,CO,US,38.51,-107.88,1750,6,kmtj
+KMTN,MTN,,Middle River,MD,US,39.34,-76.42,7,6,kmtn
+KMVL,MVL,,Morrisville,VT,US,44.53,-72.61,234,7,kmvl
+KMWH,MWH,,Moses Lake,WA,US,47.21,-119.32,362,6,kmwh
+KMYR,MYR,74791,Myrtle Beach AFB,SC,US,33.69,-78.93,8,6,kmyr
+KNEW,NEW,,New Orleans/Lakefront,LA,US,30.04,-90.03,3,1,knew
+KNSI,NSI,72291,San Nicolas Island,CA,US,33.26,-119.45,154,7,knsi
+KOAJ,OAJ,,Jacksonville/Ellis,NC,US,34.83,-77.62,29,7,koaj
+KOAK,OAK,72493,Oakland Intl,CA,US,37.7,-122.22,26,1,koak
+KOFK,OFK,72556,Norfolk,NE,US,41.98,-97.43,470,6,kofk
+KOGB,OGB,,Orangeburg,SC,US,33.47,-80.85,59,7,kogb
+KOGD,OGD,72575,Ogden,UT,US,41.2,-112.01,1353,1,kogd
+KOKC,OKC,72353,Oklahoma City/Will Rogers,OK,US,35.41,-97.6,390,2,kokc
+KOLM,OLM,72792,Olympia,WA,US,46.98,-122.9,58,6,kolm
+KOMA,OMA,72550,Omaha/Eppley Field,NE,US,41.3,-95.9,312,2,koma
+KONT,ONT,,Ontario Intl,CA,US,34.06,-117.6,274,1,kont
+KOPF,OPF,,Miami/Opa Locka,FL,US,25.91,-80.28,16,1,kopf
+KOQU,OQU,,N. Kingston,RI,US,41.61,-71.42,6,7,koqu
+KORD,ORD,72530,Chicago/O'Hare,IL,US,41.98,-87.9,200,0,kord
+KORE,ORE,,Orange,MA,US,42.58,-72.28,164,7,kore
+KORF,ORF,72308,Norfolk Rgnl,VA,US,36.9,-76.2,14,3,korf
+KORH,ORH,,Worcester,MA,US,42.28,-71.87,304,6,korh
+KOSH,OSH,,Oshkosh,WI,US,44.01,-88.57,248,6,kosh
+KOTH,OTH,72691,North Bend,OR,US,43.43,-124.25,4,6,koth
+KOTM,OTM,,Ottumwa,IA,US,41.11,-92.45,256,6,kotm
+KOTX,OTX,72786,Spokane/WFO,WA,US,47.68,-117.63,727,8,kotx
+KP11,P11,72758,Devils Lake,ND,US,48.11,-98.87,443,7,kp11
+KP38,P38,72487,Caliente,NV,US,37.62,-114.52,1333,8,kp38
+KP59,P59,,Copper Harbor,MI,US,47.45,-87.9,190,7,kp59
+KPAE,PAE,,Everett,WA,US,47.91,-122.28,180,6,kpae
+KPAH,PAH,72435,Paducah,KY,US,37.07,-88.77,119,3,kpah
+KPBF,PBF,,Pine Bluff,AR,US,34.18,-91.93,62,6,kpbf
+KPBG,PBG,,Plattsburgh Intl Ap,NY,US,44.651,-73.468,72,8,kpbg
+KPBI,PBI,72203,West Palm Beach,FL,US,26.68,-80.12,6,3,kpbi
+KPDK,PDK,,Atlanta/Dekalb-Peachtree,GA,US,33.88,-84.3,302,7,kpdk
+KPDT,PDT,72688,Pendleton Muni,OR,US,45.69,-118.85,462,2,kpdt
+KPDX,PDX,72698,Portland Intl,OR,US,45.61,-122.6,7,2,kpdx
+KPEQ,PEQ,,Pecos,TX,US,31.382,-103.511,797,8,kpeq
+KPFN,PFN,,Panama City,FL,US,30.2,-85.6833333333,12,8,kpfn
+KPGA,PGA,72371,Page Muni,AZ,US,36.94,-111.45,1307,3,kpga
+KPGV,PGV,,Pitt-Greenville,NC,US,35.63,-77.4,8,7,kpgv
+KPHD,PHD,,New Philadelphia/Harry Clever,OH,US,40.47,-81.42,272,7,kphd
+KPHF,PHF,,Patrick Henry,VA,US,37.14,-76.5,12,6,kphf
+KPHL,PHL,72408,Philadelphia Intl,PA,US,39.89,-75.25,18,3,kphl
+KPHN,PHN,,St. Clair County,MI,US,42.92,-82.53,198,7,kphn
+KPHX,PHX,72278,Phoenix/Sky Harbor,AZ,US,33.44,-112.02,336,0,kphx
+KPIA,PIA,72532,Peoria Rgnl,IL,US,40.66,-89.68,205,4,kpia
+KPIB,PIB,,Pine Belt Rgnl,MS,US,31.47,-89.33,91,6,kpib
+KPIE,PIE,,St. Petersburg/Clearwater Intl,FL,US,27.91,-82.69,4,6,kpie
+KPIH,PIH,72578,Pocatello Muni,ID,US,42.93,-112.6,1359,3,kpih
+KPIR,PIR,,Pierre,SD,US,44.39,-100.28,526,3,kpir
+KPIT,PIT,72520,Pittsburgh Intl,PA,US,40.51,-80.22,357,2,kpit
+KPKB,PKB,72427,Parkersburg,WV,US,39.36,-81.43,262,6,kpkb
+KPLN,PLN,,Pellston,MI,US,45.58,-84.8,217,6,kpln
+KPMD,PMD,72382,Palmdale,CA,US,34.63,-118.08,780,6,kpmd
+KPNA,PNA,,Pinedale,WY,US,42.795,-109.807,2160,8,kpna
+KPNC,PNC,,Ponca City,OK,US,36.73,-97.1,308,6,kpnc
+KPNE,PNE,,N Philadelphia,PA,US,40.09,-75.02,28,4,kpne
+KPNS,PNS,72222,Pensacola,FL,US,30.47,-87.2,38,6,kpns
+KPOB,POB,72303,Pope AFB,NC,US,35.18,-79.02,66,6,kpob
+KPOE,POE,72239,Fort Polk (Army),LA,US,31.05,-93.18,101,4,kpoe
+KPOU,POU,,Poughkeepsie,NY,US,41.64,-73.88,46,4,kpou
+KPQI,PQI,72713,Presque Isle,ME,US,46.69,-68.05,146,6,kpqi
+KPRB,PRB,,Paso Robles,CA,US,35.68,-120.63,245,6,kprb
+KPRC,PRC,,Prescott,AZ,US,34.65,-112.42,1524,3,kprc
+KPSC,PSC,,Pasco,WA,US,46.27,-119.12,121,6,kpsc
+KPSF,PSF,,Pittsfield Muni,MA,US,42.43,-73.29,355,7,kpsf
+KPSM,PSM,,Portsmouth,NH,US,43.09,-70.82,31,6,kpsm
+KPSP,PSP,,Palm Springs,CA,US,33.84,-116.5,135,3,kpsp
+KPTK,PTK,,Pontiac,MI,US,42.67,-83.42,299,2,kptk
+KPUB,PUB,72464,Pueblo,CO,US,38.29,-104.52,1420,3,kpub
+KPUW,PUW,,Pullman,WA,US,46.76,-117.12,773,7,kpuw
+KPVD,PVD,72507,Providence,RI,US,41.73,-71.43,16,3,kpvd
+KPVU,PVU,,Provo,UT,US,40.23,-111.72,1369,6,kpvu
+KPWM,PWM,72606,Portland Intl,ME,US,43.66,-70.32,15,3,kpwm
+KPYM,PYM,,Plymouth,MA,US,41.91,-70.73,43,7,kpym
+KRAD,RAD,,Warroad,MN,US,48.94,-95.34,327,7,krad
+KRAP,RAP,,Rapid City,SD,US,44.056,-103.054,965,2,krap
+KRBG,RBG,72690,Roseburg,OR,US,43.23,-123.37,154,7,krbg
+KRBL,RBL,72591,Red Bluff Muni,CA,US,40.15,-122.25,104,6,krbl
+KRCX,RCX,,Ladysmith,WI,US,45.497,-91.0,377,8,krcx
+KRCZ,RCZ,,Rockingham,NC,US,34.891,-79.759,109,7,krcz
+KRDD,RDD,72592,Redding Muni,CA,US,40.51,-122.3,155,3,krdd
+KRDG,RDG,,Reading,PA,US,40.38,-75.97,109,6,krdg
+KRDM,RDM,,Redmond,OR,US,44.28,-121.15,938,6,krdm
+KRDU,RDU,72306,Raleigh-Durham,NC,US,35.88,-78.78,130,2,krdu
+KREV,REV,72489,Reno/WFO,NV,US,39.5666666667,-119.8,1516,8,krev
+KRFD,RFD,72543,Rockford,IL,US,42.21,-89.1,221,4,krfd
+KRIC,RIC,72401,Richmond,VA,US,37.51,-77.31,50,4,kric
+KRIW,RIW,72672,Riverton,WY,US,43.05,-108.45,1697,2,kriw
+KRKD,RKD,,Rockland,ME,US,44.08,-69.12,17,7,krkd
+KRKS,RKS,72574,Rock Springs,WY,US,41.61,-109.07,2060,6,krks
+KRNH,RNH,,New Richmond Muni,WI,US,45.148,-92.538,304,7,krnh
+KRNK,RNK,72318,Roanoke/Blacksburg,VA,US,37.2,-80.4,648,8,krnk
+KRNO,RNO,72488,Reno/Cannon Intl,NV,US,39.51,-119.78,1342,2,krno
+KRNT,RNT,,Renton Muni,WA,US,47.5,-122.22,21,7,krnt
+KROA,ROA,72411,Roanoke Muni,VA,US,37.33,-79.97,362,3,kroa
+KROC,ROC,72529,Rochester,NY,US,43.12,-77.67,178,6,kroc
+KROW,ROW,72268,Roswell,NM,US,33.31,-104.51,1112,4,krow
+KRQB,RQB,,Big Rapids,MI,US,43.72,-85.5,302,7,krqb
+KRSL,RSL,,Russell Muni,KS,US,38.87,-98.81,567,6,krsl
+KRST,RST,72644,Rochester,MN,US,43.904,-92.492,403,6,krst
+KRSW,RSW,,Ft. Myers/SW Florida Intl,FL,US,26.54,-81.76,10,6,krsw
+KRUM,RUM,72618,Rumford,ME,US,44.54,-70.53,207,8,krum
+KRWF,RWF,,Redwood Falls,MN,US,44.55,-95.08,311,6,krwf
+KRWI,RWI,,Rocky Mt. Wilson,NC,US,35.86,-77.88,47,6,krwi
+KRWL,RWL,,Rawlins,WY,US,41.8,-107.2,2077,6,krwl
+KSAC,SAC,,Sacramento Executive,CA,US,38.52,-121.5,11,2,ksac
+KSAF,SAF,,Santa Fe,NM,US,35.62,-106.08,1930,1,ksaf
+KSAN,SAN,72290,San Diego/Lindbergh,CA,US,32.73,-117.17,12,2,ksan
+KSAT,SAT,72253,San Antonio Intl,TX,US,29.54,-98.47,243,0,ksat
+KSAV,SAV,72207,Savannah Muni,GA,US,32.14,-81.2,14,4,ksav
+KSBA,SBA,,Santa Barbara,CA,US,34.44,-119.83,3,6,ksba
+KSBM,SBM,99433,Sheboygan,WI,US,43.78,-87.85,232,7,ksbm
+KSBN,SBN,72535,South Bend,IN,US,41.71,-86.32,237,4,ksbn
+KSBP,SBP,,San Luis Obispo,CA,US,35.24,-120.64,59,6,ksbp
+KSBY,SBY,,Salisbury,MD,US,38.34,-75.5,19,4,ksby
+KSCH,SCH,,Schenectady,NY,US,42.86,-73.93,115,7,ksch
+KSCK,SCK,72492,Stockton,CA,US,37.91,-121.25,10,6,ksck
+KSDF,SDF,72423,Louisville/Standiford,KY,US,38.19,-85.73,146,6,ksdf
+KSDM,SDM,,San Diego/Brown Field,CA,US,32.58,-116.98,159,7,ksdm
+KSDY,SDY,,Sidney/Richland,MT,US,47.73,-104.18,605,6,ksdy
+KSEA,SEA,72793,Seattle-Tacoma Intl,WA,US,47.44,-122.31,136,0,ksea
+KSEP,SEP,72260,Stephenville,TX,US,32.215,-98.178,402,7,ksep
+KSFF,SFF,,Spokane/Felts Field,WA,US,47.68,-117.32,609,6,ksff
+KSFM,SFM,,Sanford,ME,US,43.4,-70.7,74,7,ksfm
+KSFO,SFO,72494,San Francisco Intl,CA,US,37.62,-122.36,3,0,ksfo
+KSGF,SGF,72440,Springfield Muni,MO,US,37.23,-93.4,390,5,ksgf
+KSGU,SGU,,Saint George,UT,US,37.09,-113.6,896,6,ksgu
+KSHR,SHR,72666,Sheridan Co.,WY,US,44.78,-106.97,1202,1,kshr
+KSHV,SHV,72248,Shreveport Rgnl,LA,US,32.45,-93.83,83,3,kshv
+KSJC,SJC,74505,San Jose Intl,CA,US,37.37,-121.93,24,6,ksjc
+KSJT,SJT,72263,San Angelo,TX,US,31.38,-100.5,576,5,ksjt
+KSLC,SLC,72572,Salt Lake City I,UT,US,40.79,-111.97,1286,0,kslc
+KSLE,SLE,72694,Salem,OR,US,44.93,-123.02,59,2,ksle
+KSLK,SLK,,Saranac Lake,NY,US,44.39,-74.21,498,6,kslk
+KSLN,SLN,,Salina,KS,US,38.8,-97.65,385,6,ksln
+KSMF,SMF,,Sacramento Intl,CA,US,38.7,-121.6,6,6,ksmf
+KSMX,SMX,72394,Santa Maria,CA,US,34.91,-120.45,74,6,ksmx
+KSNA,SNA,,Santa Ana,CA,US,33.68,-117.87,16,6,ksna
+KSNS,SNS,,Salinas Muni,CA,US,36.66,-121.61,30,6,ksns
+KSPI,SPI,72439,Springfield,IL,US,39.86,-89.67,181,6,kspi
+KSPS,SPS,72351,Wichita Falls/Sheppard AFB,TX,US,33.98,-98.48,308,4,ksps
+KSRQ,SRQ,,Sarasota/Bradenton Intl,FL,US,27.4,-82.55,18,6,ksrq
+KSSC,SSC,74790,Shaw AFB/Sumter,SC,US,33.98,-80.47,74,6,kssc
+KSSI,SSI,,Brunswick,GA,US,31.15,-81.38,6,6,kssi
+KSTJ,STJ,72449,St. Joseph,MO,US,39.77,-94.91,247,4,kstj
+KSTL,STL,72434,St. Louis Lambert,MO,US,38.76,-90.37,171,0,kstl
+KSTS,STS,,Santa Rosa,CA,US,38.51,-122.81,39,6,ksts
+KSUN,SUN,,Hailey,ID,US,43.504,-114.296,1620,6,ksun
+KSUS,SUS,,St Louis/Spirit,MO,US,38.66,-90.63,141,3,ksus
+KSUX,SUX,72557,Sioux City Muni,IA,US,42.41,-96.38,338,3,ksux
+KSVE,SVE,72584,Susanville,CA,US,40.39,-120.57,1263,7,ksve
+KSWF,SWF,,Stewart,NY,US,41.51,-74.1,150,6,kswf
+KSYR,SYR,72519,Syracuse,NY,US,43.12,-76.12,127,3,ksyr
+KTCC,TCC,,Tucumcari,NM,US,35.19,-103.6,1235,6,ktcc
+KTCL,TCL,,Tuscaloosa Muni,AL,US,33.22,-87.61,49,6,ktcl
+KTCS,TCS,72271,Truth Or Consequences,NM,US,33.23,-107.27,1469,6,ktcs
+KTEB,TEB,,Teterboro,NJ,US,40.86,-74.05,7,6,kteb
+KTIW,TIW,,Tacoma Narrows,WA,US,47.27,-122.58,89,7,ktiw
+KTLH,TLH,72214,Tallahassee Rgnl,FL,US,30.4,-84.35,19,3,ktlh
+KTMB,TMB,,Miami/Kendall-Tamiami,FL,US,25.65,-80.43,2,7,ktmb
+KTOL,TOL,72536,Toledo Express,OH,US,41.61,-83.8,210,6,ktol
+KTOP,TOP,72456,Topeka/Billard Muni,KS,US,39.08,-95.62,268,3,ktop
+KTPA,TPA,72211,Tampa Intl Airport,FL,US,27.97,-82.53,11,3,ktpa
+KTPH,TPH,72485,Tonopah,NV,US,38.08,-117.08,1652,0,ktph
+KTRI,TRI,,Tri-City/Bristol,TN,US,36.48,-82.4,474,4,ktri
+KTRK,TRK,,Truckee-Tahoe,CA,US,39.32,-120.14,1798,6,ktrk
+KTRM,TRM,,Thermal,CA,US,33.64,-116.17,-35,6,ktrm
+,,,ktt,,,40.86,-79.54,363,7,ktt
+KTTD,TTD,,Portland/Troutdale,OR,US,45.55,-122.4,14,6,kttd
+KTTN,TTN,,Trenton,NJ,US,40.28,-74.81,59,7,kttn
+KTUL,TUL,72356,Tulsa Intl,OK,US,36.21,-95.9,207,3,ktul
+KTUP,TUP,72332,Tupelo,MS,US,34.28,-88.77,105,4,ktup
+KTUS,TUS,,Tucson Intl,AZ,US,32.12,-110.93,776,2,ktus
+KTVC,TVC,,Traverse City,MI,US,44.73,-85.58,190,6,ktvc
+KTVL,TVL,,South Lake Tahoe,CA,US,38.91,-120.0,1924,6,ktvl
+KTWF,TWF,,Twin Falls,ID,US,42.48,-114.48,1266,6,ktwf
+KTXK,TXK,,Texarkana Muni,AR,US,33.46,-94.0,111,6,ktxk
+KTYR,TYR,,Tyler,TX,US,32.35,-95.4,165,4,ktyr
+KTYS,TYS,72326,Knoxville Muni,TN,US,35.81,-83.98,302,4,ktys
+KUCA,UCA,,Utica,NY,US,43.15,-75.3833333333,228,4,kuca
+KUIN,UIN,,Quincy,IL,US,39.94,-91.2,234,6,kuin
+KUKI,UKI,,Ukiah,CA,US,39.14,-123.2,187,6,kuki
+KUNI,UNI,,Athens/Albany,OH,US,39.212,-82.229,193,8,kuni
+KUNV,UNV,,State College,PA,US,40.86,-77.83,378,3,kunv
+KUTS,UTS,,Huntsville,TX,US,30.74,-95.59,104,7,kuts
+KVCT,VCT,72255,Victoria Rgnl,TX,US,28.86,-96.92,31,6,kvct
+KVEL,VEL,,Vernal,UT,US,40.44,-109.51,1604,6,kvel
+KVLD,VLD,,Valdosta,GA,US,30.79,-83.28,62,6,kvld
+KVNY,VNY,,Van Nuys,CA,US,34.21,-118.49,245,6,kvny
+KVQQ,VQQ,,Jacksonville/Cecil Fld NAS,FL,US,30.219,-81.877,25,7,kvqq
+KVRB,VRB,,Vero Beach,FL,US,27.65,-80.42,10,4,kvrb
+KWJF,WJF,,Lancaster,CA,US,34.73,-118.22,715,6,kwjf
+KWMC,WMC,72583,Winnemucca Muni,NV,US,40.91,-117.8,1310,3,kwmc
+KWRL,WRL,,Worland Muni,WY,US,43.98,-107.97,1271,6,kwrl
+KWWR,WWR,,West Woodward,OK,US,36.44,-99.52,667,7,kwwr
+KWYS,WYS,,W Yellowstone,MT,US,44.6884,-111.118,2025,8,kwys
+KY22,Y22,72669,Lemmon,SD,US,45.9166666667,-102.166666667,781,7,ky22
+KY26,Y26,,Mobridge,SD,US,45.54,-100.43,508,8,ky26
+KYKM,YKM,72781,Yakima,WA,US,46.56,-120.53,324,3,kykm
+KYKN,YKN,,Yankton,SD,US,42.92,-97.38,398,7,kykn
+KYNG,YNG,72525,Youngstown Muni,OH,US,41.27,-80.67,360,6,kyng
+KYUM,YUM,72280,Yuma Intl Airport,AZ,US,32.66,-114.6,63,3,kyum
+KZZV,ZZV,,Zanesville,OH,US,39.96,-81.9,268,6,kzzv
+KLAA,LAA,72463,Lamar,CO,US,38.07,-102.68,1119,4,laa
+MMLP,LAP,,La Paz Intl,,MX,24.07,-110.37,21,1,lap
+KLBT,LBT,,Lumberton Muni,NC,US,34.61,-79.06,37,7,lbt
+,,,lby,,,48.39,-115.55,579,7,lby
+,,,ldl,,,39.1,-106.2,3535,7,ldl
+,,,le1,,,41.68,-82.4,174,7,le1
+,,,le2,,,42.47,-81.22,174,7,le2
+,,,le3,,,42.74,-79.35,174,7,le3
+,,,lh1,,,45.35,-82.84,177,7,lh1
+,,,lh2,,,44.28,-82.42,177,7,lh2
+,,,lhs,,,35.62,-119.69,80,7,lhs
+KLHX,LHX,,La Junta,CO,US,38.05,-103.52,1277,7,lhx
+KLIC,LIC,,Limon,CO,US,39.2734,-103.667,1630,4,lic
+,,,lin,,,35.62,-87.85,188,7,lin
+,,,liso,,,41.1,-72.89,0,7,liso
+KLLQ,LLQ,,Monticello Muni/Ellis Field,AR,US,33.64,-91.75,83,7,llq
+,,,lm1,,,45.33,-86.42,177,7,lm1
+,,,lm2,,,42.67,-87.02,177,7,lm2
+,,,lo1,,,43.62,-77.41,75,7,lo1
+,,,lo2,,,43.4,-79.45,75,7,lo2
+KLOR,LOR,,Ft. Rucker,AL,US,31.356,-85.751,74,7,lor
+,,,ls1,,,48.06,-87.78,183,7,ls1
+,,,ls2,,,47.56,-86.55,183,7,ls2
+,,,ls3,,,47.32,-89.87,183,7,ls3
+KLSF,LSF,72225,Fort Benning,GA,US,32.34,-85.0,71,6,lsf
+,,,lsy,,,36.24,-119.12,90,7,lsy
+,,,lus,,,42.76,-104.45,1578,7,lus
+KP61,P61,,Tofte,MN,US,47.63,-90.92,411,7,lut
+KLVM,LVM,,Livingston,MT,US,45.71,-110.43,1418,6,lvm
+,,,lw1,,,34.9,-98.1,397,7,lw1
+KLWA,LWA,,South Haven Area Rgnl,MI,US,42.351,-86.256,203,8,lwa
+KMIW,MIW,,Marshalltown,IA,US,42.07,-92.87,296,7,mar
+,,,Franklin,AL,US,32.54,-85.79,157,8,max
+KMBY,MBY,,Moberly,MO,US,39.464,-92.427,264,8,mby
+CWTA,WTA,71612,McTavish,QB,CA,45.5,-73.57,36,7,mcgl
+,,,mch,,,35.43,-86.06,337,7,mch
+,,,mcr,,,32.08,-82.96,75,7,mcr
+MDPP,,78457,Puerto Plata Intl,,DO,19.75,-70.55,5,6,mdpp
+MDSD,,78485,Caucedo/De Las Amer,,DO,18.43,-69.67,18,6,mdsd
+MDST,,78460,Santiago Intl,,DO,19.47,-70.7,184,6,mdst
+KMHS,MHS,72595,Mount Shasta,CA,US,41.33,-122.32,1078,7,mhs
+KMIE,MIE,,Muncie,IN,US,40.242,-85.396,285,7,mie
+KMLD,MLD,,Malad City,ID,US,42.18,-112.32,1373,6,mld
+MMCL,CUL,76412,Culiacan,,MX,24.82,-107.4,39,6,mmcl
+MMCN,CEN,,Ciudad Obregon Intl,MX,MX,27.39,-109.83,43,6,mmcn
+MMCS,CJS,,Cuidad Juarez Intl,,MX,31.63,-106.43,1171,6,mmcs
+MMCU,CUU,76225,Chihuahua Intl,,MX,28.7,-105.97,1372,1,mmcu
+MMCV,CVM,76491,Cuidad Victoria,,MX,23.72,-98.97,238,6,mmcv
+MMDO,DGO,76423,Durango,,MX,24.13,-104.53,1857,1,mmdo
+MMGM,GYM,,Guaymas Intl,,MX,27.97,-110.93,20,5,mmgm
+MMHO,HMO,76160,Hermosillo Intl,,MX,29.07,-110.97,184,6,mmho
+MMLP,LAP,,La Paz Intl,,MX,24.07,-110.37,21,1,mmlp
+MMMA,MAM,,Matamoros Intl,,MX,25.77,-97.53,8,6,mmma
+MMML,MXL,,Mexicali Intl,,MX,32.66,-115.49,22,6,mmml
+MMMY,MTY,,Monterrey/Gen Maria,,MX,25.78,-100.1,387,6,mmmy
+MMMZ,MZT,,Mazatlan/Gen Buelna,,MX,23.17,-106.27,10,5,mmmz
+MMNL,NLD,,Nuevo Laredo Intl,,MX,27.43,-99.57,148,6,mmnl
+MMRX,REX,,Reynosa Intl,,MX,26.02,-98.23,39,6,mmrx
+MMSD,SJD,,San Jose Del Cabo,,MX,23.15,-109.7,109,6,mmsd
+MMTC,TRC,76382,Torreon,,MX,25.53,-103.45,1124,5,mmtc
+MMTJ,TIJ,,Tijuana Intl,,MX,32.55,-116.97,152,6,mmtj
+MMZC,ZCL,,Zacatecas,,MX,22.9,-102.68,2177,4,mmzc
+KMOR,MOR,,Morristown,TN,US,36.1833333333,-83.3666666667,400,8,mor
+,,,mpi,,,37.52,-120.06,560,7,mpi
+KMPX,MPX,72649,Chanhassen,MN,US,44.85,-93.5666666667,288,8,mpx
+KMRF,MRF,72264,Marfa Muni,TX,US,30.38,-104.02,1481,6,mrf
+,,,mrp,,,48.35,-113.28,1768,7,mrp
+KMOX,MOX,,Morris Muni,MN,US,45.5,-95.9,335,7,mrs
+,,,mrys,,,47.21,-55.1,56,7,mrys
+MTCH,,78409,Cap-Haitien,,HT,19.75,-72.1833333333,2,5,mtch
+MMMY,MTY,,Monterrey/Gen Maria,,MX,25.78,-100.1,387,6,mty
+MUBA,,78268,Baracoa Oriente,,CU,20.35,-74.5,9,7,muba
+MUBY,,,Bayamo,,CU,20.4,-76.6166666667,64,7,muby
+MUCA,,78346,Venezuela/Ciego,,CU,22.0333333333,-78.7833333333,101,6,muca
+MUCL,,,Cayo Largo Del Sur,,CU,21.63,-81.55,5,7,mucl
+MUCM,,78255,Camaguey,,CU,21.416,-77.85,122,6,mucm
+MUCU,,78264,Santiago De Cuba,Oriente,CU,19.966,-75.85,76,6,mucu
+MUGM,,78367,Guantanamo Bay,CU,CU,19.906,-75.207,17,6,mugm
+MUGT,,78267,Guantanamo,,CU,20.0833333333,-75.15,8,7,mugt
+MUHA,,78224,Havana/Jose Martinez,,CU,22.98,-82.4,64,0,muha
+MUMO,,,Moa,,CU,20.65,-74.92,5,7,mumo
+MUMZ,,78256,Manzanillo,,CU,20.2833333333,-77.1,60,7,mumz
+MUNG,,78221,Nueva Gerona,Isla De Pinos,CU,21.83,-82.783,23,7,mung
+MUVR,,78229,Varadero,,CU,23.13,-81.28,65,6,muvr
+MUVT,,78357,Las Tumas,,CU,20.95,-76.95,106,7,muvt
+MYBS,,78070,Alice Town,Bimini,BS,25.73,-79.3,3,7,mybs
+MYEG,,78092,George Town,Exuma,BS,23.5,-75.766,3,7,myeg
+MYGF,,78062,Freeport Intl,,BS,26.55,-78.7,2,3,mygf
+MYGW,,78061,West End,Grand Bahama,BS,26.7,-78.966,4,7,mygw
+KMYL,MYL,,Mccall,ID,US,44.89,-116.1,1533,6,myl
+MYNN,,78073,Nassau Intl,,BS,25.05,-77.47,3,3,mynn
+MMMZ,MZT,,Mazatlan/Gen Buelna,,MX,23.17,-106.27,10,5,mzt
+,,,ngx,,,31.4,-114.49,0,7,ngx
+KNHK,NHK,72404,Patuxent River N,MD,US,38.29,-76.4,12,6,nhk
+KNID,NID,74612,China Lake NAWS,CA,US,35.686,-117.692,696,4,nid
+KNKX,NKX,72293,Miramar NAS,CA,US,32.88,-117.15,146,5,nkx
+KNTD,NTD,72391,Pt. Mugu NAS,CA,US,34.12,-119.12,4,6,ntd
+,,,nw4,,,47.0,-138.0,0,7,nw4
+,,,nw5,,,43.6,-135.5,0,7,nw5
+,,,nw6,,,39.7,-133.3,0,7,nw6
+,,,nw7,,,48.5,-129.5,0,7,nw7
+,,,nw8,,,44.6,-127.5,0,7,nw8
+,,,nw9,,,50.5,-141.38,0,7,nw9
+,,,nwa,,,40.5,-126.98,0,7,nwa
+,,,nxd,,,37.6,-120.24,392,7,nxd
+MMOX,OAX,76775,Oaxaca/Xoxocotlan,,MX,16.97,-96.73,1528,6,oax
+KODX,ODX,,Ord/Sharp,NE,US,41.62,-98.95,631,7,odx
+KOGS,OGS,,Ogdensburg,NY,US,44.69,-75.4,91,7,ogs
+KOQT,OQT,,Oak Ridge,TN,US,35.96,-84.29,334,7,o#k
+KOEL,OEL,,Oakley,KS,US,39.16,-100.89,938,9,okl
+KOKX,OKX,72501,Brookhaven/Upton,NY,US,40.8666666667,-72.8666666667,26,8,okx
+KONP,ONP,72695,Newport Muni,OR,US,44.58,-124.05,48,6,onp
+,,,opa1,,,42.37,-67.78,0,7,opa1
+,,,opa2,,,39.33,-72.05,0,7,opa2
+,,,opa3,,,39.31,-65.75,0,7,opa3
+,,,opa4,,,37.27,-70.03,0,7,opa4
+,,,opa5,,,36.36,-74.61,0,7,opa5
+,,,opa6,,,35.54,-73.75,0,7,opa6
+,,,opa7,,,34.89,-70.77,0,7,opa7
+,,,opa8,,,33.82,-76.07,0,7,opa8
+,,,opa9,,,32.75,-72.31,0,7,opa9
+,,,opp1,,,48.09,-130.43,0,7,opp1
+,,,opp2,,,48.11,-126.68,0,7,opp2
+,,,opp3,,,45.27,-129.77,0,7,opp3
+,,,opp4,,,45.28,-125.66,0,7,opp4
+,,,opp5,,,41.8,-129.92,0,7,opp5
+,,,opp6,,,41.89,-125.75,0,7,opp6
+,,,opp7,,,39.23,-125.59,0,7,opp7
+,,,opp8,,,36.36,-125.34,0,7,opp8
+,,,opp9,,,33.29,-125.02,0,7,opp9
+,,,oppa,,,34.56,-122.3,0,7,oppa
+,,,oppb,,,30.94,-121.54,0,7,oppb
+,,,oppc,,,29.65,-116.97,0,7,oppc
+KOSC,OSC,,Wurtsmith AFB,MI,US,44.46,-83.4,193,7,osc
+KOUN,OUN,72357,Norman,OK,US,35.246,-97.472,357,3,oun
+,WDL,74341,Wood Lake Profiler,MN,US,44.67,-95.45,319,8,p#3
+,BLR,74357,Blue River Profiler,WI,US,43.22,-90.53,226,8,p#4
+KP53,P53,,Munising,MI,US,46.412,-86.651,187,7,p53
+,MBW,74431,Medicine Bow Profiler,WY,US,41.9,-106.19,1997,8,p#5
+KP68,P68,,Eureka,NV,US,39.604,-116.005,1809,9,p68
+,RWD,74433,McCook Profiler,NE,US,40.09,-100.65,800,8,p#6
+,MRR,74437,Merriman Profiler,NE,US,42.91,-101.69,991,8,p#7
+,FBY,74440,Fairbury Profiler,NE,US,40.1,-97.34,433,8,p#8
+,NLG,74445,Neligh Profiler,NE,US,42.21,-97.79,524,8,p#9
+,SLA,74449,Slater Profiler,IA,US,41.9,-93.7,315,8,p#a
+,WLC,74466,Wolcott Profiler,IN,US,40.81,-87.05,212,8,p#b
+,GDA,74530,Granada Profiler,CO,US,37.77,-102.18,1155,8,p#c
+,PLT,74533,Platteville Profiler,CO,US,40.18,-104.72,1524,8,p#d
+KHVL,HVL,74541,Haviland Profiler,KS,US,37.65,-99.09,648,8,p#e
+,,,pesc,,,37.1,-122.28,0,7,pesc
+,NDS,74542,Neodesha Profiler,KS,US,37.38,-95.63,255,8,p#f
+,,,pfd,,,36.87,-119.28,622,7,pfd
+,HBR,74546,Hillsboro Profiler,KS,US,38.31,-97.3,447,8,p#g
+,CNW,74550,Conway Profiler,MO,US,37.52,-92.7,390,8,p#h
+PHJH,JHM,,Lahaina/West Maui,HI,US,21.02,-156.63,78,6,phjh
+PHKO,KOA,,Kailua Kona,HI,US,19.65,-156.0,27,6,phko
+PHLI,LIH,91165,Lihue,HI,US,21.98,-159.35,45,5,phli
+PHMK,MKK,91186,Kaunakakai Molokai,HI,US,21.15,-157.1,141,6,phmk
+PHNA,NAX,,Barbers Pt NAS,HI,US,21.3166666667,-158.066666667,15,8,phna
+PHNL,HNL,91182,Honolulu Intl,HI,US,21.35,-157.93,4,6,phnl
+PHNY,LNY,,Lanai,HI,US,20.78,-156.95,399,6,phny
+PHOG,OGG,91190,Kahului Airport,HI,US,20.9,-156.43,12,6,phog
+KPHP,PHP,,Philip,SD,US,44.05,-101.6,672,7,php
+PHTO,ITO,91285,Hilo,HI,US,19.72,-155.07,12,5,phto
+,LTH,74551,Lathrop Profiler,MO,US,39.58,-94.19,297,8,p#i
+,,,Thomas,WV,US,39.17,-79.52,956,9,pie
+KPIH,PIH,72578,Pocatello Muni,ID,US,42.93,-112.6,1359,3,pih
+,WNC,74556,Winchester Profiler,IL,US,39.66,-90.48,170,8,p#j
+,,,pla,,,47.78,-120.75,1143,7,pla
+,WSM,74629,White Sands Profiler,NM,US,32.41,-106.35,1224,8,p#l
+,AZC,74630,Aztec Profiler,NM,US,36.84,-107.91,1902,8,p#m
+,,,pmh,,,38.83,-82.8,186,7,pmh
+,VCI,74640,Vici Profiler,OK,US,36.07,-99.22,648,8,p#n
+,LMN,74647,Lamont Profiler,OK,US,36.69,-97.48,306,8,p#o
+K87Q,87Q,72390,Punta Piedras,CA,US,35.66,-121.28,11,7,ppb
+,,,p#p,,,35.68,-95.86,219,7,p#p
+,PRC,74649,Purcell Profiler,OK,US,34.98,-97.52,331,8,p#q
+,BLM,74662,Bloomfield Profiler,MO,US,36.88,-89.97,130,8,p#r
+KPRC,PRC,,Prescott/Ernest A Love Fld,AZ,US,34.65,-112.42,1524,3,prc
+KPRX,PRX,,Paris,TX,US,33.64,-95.45,167,7,prx
+,TCU,74731,Tucumcari Profiler,NM,US,35.08,-103.61,1241,8,p#s
+,,,Ferris Mountain,WY,US,42.2,-107.2,2133,8,psr
+,,,ptba,,,37.82,-122.47,0,7,ptba
+,JTN,74735,Jayton Profiler,TX,US,33.02,-100.98,707,8,p#t
+KPUB,PUB,72464,Pueblo Memorial,CO,US,38.29,-104.52,1420,3,pub
+KPSN,PSN,,Palestine Muni,TX,US,31.78,-95.71,119,7,p#u
+KPUC,PUC,72470,Price/Carbon Co,UT,US,39.62,-110.75,2091,7,puc
+KDQU,DQU,74752,DeQueen Profiler,AR,US,34.11,-94.29,195,8,p#v
+,WNF,74753,Winnfield Profiler,LA,US,31.9,-92.78,93,8,p#w
+KPWD,PWD,,Plentywood,MT,US,48.7833333333,-104.516666667,686,8,pwd
+,,,pwn,,,46.78,-91.19,285,7,pwn
+,OKO,74769,Okolona Profiler,MS,US,34.09,-88.86,125,8,p#x
+,,,raws,,,45.76,-97.49,527,7,raws
+,,,rck,,,42.55,-119.6,1595,7,rck
+KREO,REO,,Rome,OR,US,42.58,-117.89,1235,6,reo
+,,,rep,,,48.6,-118.69,1226,7,rep
+KRHI,RHI,,Rhinelander/Oneida Co,WI,US,45.63,-89.47,485,6,rhi
+KRME,RME,,Rome,NY,US,43.234,-75.407,154,7,rme
+KROD,ROD,,Rosewood Vor,OH,US,40.2833333333,-84.0333333333,360,8,rod
+,,,rou,,,41.48,-121.5,1537,7,rou
+KRSL,RSL,,Russell Muni,KS,US,38.87,-98.81,567,6,rsl
+KRUE,RUE,,Russellville Rgnl,AR,US,35.26,-93.09,115,7,rue
+KRUT,RUT,,Rutland,VT,US,43.54,-72.95,240,7,rut
+KNBK,NBK,,New Brunswick,NJ,US,40.5,-74.45,11,8,rutg
+,,,rvd,,,47.28,-121.92,389,7,rvd
+,,,s#1,,,50.0,-135.0,0,7,s#1
+,,,s#2,,,38.51,-128.94,0,7,s#2
+,,,s#3,,,34.0,-126.0,0,7,s#3
+,,,s#4,,,29.5,-123.0,0,7,s#4
+,,,s#5,,,25.0,-120.0,0,7,s#5
+,,,s#6,,,25.0,-115.0,0,7,s#6
+,,,s#7,,,28.0,-87.0,0,7,s#7
+K5R0,5R0,,East Addition B3,TX,US,28.2,-93.7,0,8,s#8
+,,,s#9,,,28.5,-92.3,0,7,s#9
+,,,s#a,,,27.9,-91.0,0,7,s#a
+,,,sanq,,,37.94,-122.5,1,7,sanq
+KSAT,SAT,72253,San Antonio Intl,TX,US,29.54,-98.47,243,0,sat
+KSAW,SAW,,K I Sawyer AFB,MI,US,46.36,-87.4,372,8,saw
+,,,s#b,,,28.0,-89.0,0,7,s#b
+,,,s#c,,,28.0,-85.0,0,7,s#c
+,,,sef,,,37.7,-123.0,25,7,sef
+,,,shs,,,38.52,-121.29,23,7,shs
+KSJN,SJN,,St. Johns,AZ,US,34.52,-109.38,1745,6,sjn
+KSLB,SLB,,Storm Lake,IA,US,42.6,-95.23,454,8,slb
+KSLO,SLO,,Salem,IL,US,38.65,-88.97,175,7,slo
+,,,smb,,,41.34,-123.49,863,7,smb
+KSMN,SMN,72686,Salmon,ID,US,45.12,-113.88,1233,6,smn
+KSMP,SMP,,Stampede Pass,WA,US,47.29,-121.33,1208,3,smp
+KSNY,SNY,72561,Sidney Muni,NE,US,41.11,-102.98,1307,6,sny
+KSOA,SOA,,Sonora,TX,US,30.586,-100.649,652,7,soa
+KO22,O22,,Columbia,CA,US,38.02,-120.36,714,7,son
+KSOW,SOW,,Show Low,AZ,US,34.265,-110.006,1954,6,sow
+K2F1,2F1,,Shamrock,TX,US,35.22,-100.22,691,8,srk
+,,,sta,,,40.75,-122.46,579,7,sta
+KSTC,STC,72655,St. Cloud,MN,US,45.55,-94.07,314,3,stc
+,,,stdm,,,47.18,-87.22,183,7,stdm
+KSTF,STF,,Starkville,MS,US,33.49,-88.84,83,8,stv
+KTCM,TCM,74206,Mcchord AFB/Tcma,WA,US,47.09,-122.42,83,6,swy
+KLMO,,,Longmont/Table Mountain,CO,US,40.13,-105.24,1689,8,tbl
+,,,tbm,,,36.67,-118.46,3166,7,tbm
+KTBW,TBW,72210,Tampa Bay Area/WFO,FL,US,27.7,-82.4,12,8,tbw
+KTNB,TNB,,Boone,NC,US,36.199,-81.651,911,7,tnb
+,,,tnf,,,39.16,-120.83,989,7,tnf
+,,,tpk,,,35.86,-121.31,381,7,tpk
+,,,trav,,,38.06,-121.77,-2,7,trav
+KTUL,TUL,72356,Tulsa Intl,OK,US,36.21,-95.9,207,3,tul
+KTVR,TVR,,La/Vicksburg,MS,US,32.35,-91.03,26,7,tvr
+TXKF,,78016,Bermuda NAS,,BM,32.37,-64.68,6,1,txkf
+KU24,U24,72479,Delta,UT,US,39.34,-112.59,1414,7,u24
+KU28,U28,72477,Green River,UT,US,39.01,-110.15,1241,7,u28
+KLHW,LHW,72209,Ft. Stewart,GA,US,31.9,-81.63,27,7,u#9
+KUIL,UIL,72797,Quillayute State,WA,US,47.96,-124.55,54,2,uil
+KUVA,UVA,,Uvalde,TX,US,29.211,-99.744,287,7,uva
+KVAD,VAD,74781,Valdosta/Moody AFB,GA,US,30.97,-83.2,71,6,vad
+,,,vanc,,,45.59,-67.4,149,7,vanc
+KVBG,VBG,72393,Vandenberg AFB,CA,US,34.75,-120.57,112,3,vbg
+,,,v#l,,,42.86,-100.41,792,7,v#l
+KVPS,VPS,72221,Eglin AFB,FL,US,30.48,-86.53,26,6,vps
+KVSF,VSF,,Springfield St,VT,US,43.34,-72.52,175,7,vsf
+KDMW,DMW,,Westminster,MD,US,39.61,-77.01,244,8,w54
+KWAL,WAL,72402,Wallops Island,VA,US,37.94,-75.47,14,5,wal
+,,,wck,,,40.96,-123.7,695,7,wck
+KO54,O54,,Wvrvl/Trinty Apt,CA,US,40.77,-122.97,1046,8,wev
+CWHI,WHI,71249,Three Hills,AB,CA,51.71,-113.22,907,7,whi
+,,,win,,,48.52,-120.21,1195,7,win
+,,,wja,,,52.88,-118.07,1093,7,wja
+CWLM,WLM,71200,Victoria (Auto8),BC,CA,48.42,-123.32,70,7,wlm
+,,,w#n,,,37.48,-96.93,381,7,w#n
+,,,woo,,,38.88,-78.52,251,7,woo
+,,,wpt,,,46.82,-124.03,28,7,wpt
+KWRB,WRB,,Robins AFB,GA,US,32.64,-83.6,90,6,wrb
+KACQ,ACQ,,Waseca Muni,MN,US,44.1,-93.5,348,8,wsc
+,,,wsd,,,32.24,-106.22,1207,7,wsd
+,,,wtby,,,41.51,-72.99,137,7,wtby
+KXMR,XMR,74794,Cocoa Beach,FL,US,28.468,-80.567,3,8,xmr
+KHPX,HPX,,Hopkinton,KY,US,36.74,-87.29,186,8,xrw
+,,,yob,,,40.32,-122.99,1133,7,yob
+CYQL,YQL,71874,Lethbridge,AB,CA,49.64,-112.8,929,6,yql
+,,,ysv,,,37.75,-118.56,2218,7,ysv

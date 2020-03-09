@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010501/0100F000    sln 
+  SLN 010501/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          10.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	8.0 C/km
 850-500mb   34 C	8.0 C/km
+
+----- Note -----
+Old Title:  RUC 010501/0100F000    sln 
+

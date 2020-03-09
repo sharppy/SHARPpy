@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990919/2000F000    cgz 
+  CGZ 990919/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          11.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.4 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 990919/2000F000    cgz 
+

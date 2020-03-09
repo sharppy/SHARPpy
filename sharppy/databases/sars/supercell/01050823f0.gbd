@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010508/2300F000    gbd 
+  GBD 010508/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          8.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.4 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 010508/2300F000    gbd 
+

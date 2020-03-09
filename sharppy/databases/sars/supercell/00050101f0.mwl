@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000501/0100F000    mwl 
+  MWL 000501/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          12.9 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.2 C/km
 850-500mb   31 C	7.3 C/km
+
+----- Note -----
+Old Title:  RUC 000501/0100F000    mwl 
+

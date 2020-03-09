@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990527/0000F000    ink 
+  INK 990527/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          10.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.3 C/km
 850-500mb   36 C	8.3 C/km
+
+----- Note -----
+Old Title:  RUC 990527/0000F000    ink 
+
