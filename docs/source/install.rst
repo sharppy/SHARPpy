@@ -32,7 +32,7 @@ Installing a pre-compiled binary *should* be as simple as downloading the .zip f
 Installing using package managers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SHARPpy is also available for download through the :command:`conda` package manager.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
+SHARPpy is also available for download through the :command:`conda` package manager.  This package manager will also take care of downloading the correct dependencies SHARPpy needs to run.  They are accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
 
 From conda
 ----------
@@ -51,8 +51,7 @@ To avoid compatability issues with other Python packages, we **strongly recommen
 
 
 .. Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:
-
-..  prompt:: bash
+   prompt:: bash
 
     conda config --add channels conda-forge
     conda install -c sharppy sharppy
@@ -129,4 +128,4 @@ needing to reinstall the program each time:
     pip install -e .
 
 After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
-The GUI can be launched similar to the method described above in the "Installing from conda or pip" section.
+The GUI can be launched similar to the method described above in the "Installing from conda" section.
