@@ -2,14 +2,13 @@
 
 ###### Sounding/Hodograph Analysis and Research Program in Python
 
-[![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=andover)](https://travis-ci.org/sharppy)
-[![Build status](https://ci.appveyor.com/api/projects/status/f7ahm2l5cdyibswc/branch/andover?svg=true)](https://ci.appveyor.com/project/sharppy/sharppy/branch/andover)
-[![Build Status](https://dev.azure.com/sharppy/SHARPpy/_apis/build/status/sharppy.SHARPpy?branchName=andover)](https://dev.azure.com/sharppy/SHARPpy/_build/latest?definitionId=1?branchName=andover)
-[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/downloads.svg)](https://anaconda.org/sharppy/sharppy)
-[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/license.svg)](https://anaconda.org/sharppy/sharppy)
+[![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=master)](https://travis-ci.org/sharppy)
+[![Build Status](https://dev.azure.com/sharppy/SHARPpy/_apis/build/status/sharppy.SHARPpy?branchNammasterr)](https://dev.azure.com/sharppy/SHARPpy/_build/latest?definitionId=1?branchName=master)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/sharppy/badges/downloads.svg)](https://anaconda.org/conda-forge/sharppy)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/sharppy/badges/license.svg)](https://anaconda.org/conda-forge/sharppy)
 [![](https://img.shields.io/github/downloads/sharppy/SHARPpy/total.svg?style=popout)](https://github.com/sharppy/SHARPpy/releases)
-[![Coverage Status](https://coveralls.io/repos/github/sharppy/SHARPpy/badge.svg?branch=andover)](https://coveralls.io/github/sharppy/SHARPpy?branch=andover)
-[![Anaconda-Server Badge](https://anaconda.org/sharppy/sharppy/badges/platforms.svg)](https://anaconda.org/sharppy/sharppy)
+[![Coverage Status](https://coveralls.io/repos/github/sharppy/SHARPpy/badge.svg?branch=master)](https://coveralls.io/github/sharppy/SHARPpy?branch=master)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/sharppy/badges/platforms.svg)](https://anaconda.org/conda-forge/sharppy)
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
@@ -52,13 +51,9 @@ SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all thes
 
 If you would like to run SHARPpy from a binary (if you don't want to do scripting), look for the most recent release here: https://github.com/sharppy/SHARPpy/releases
 
-For those wishing to run both the GUI and do scripting, we recommend you install the _Python 3_ Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from `conda` or `pip` by using either:
+For those wishing to run both the GUI and do scripting, we recommend you install the _Python 3_ Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from `conda` by using:
 
-    conda install -c sharppy sharppy
-
- or
-    
-    pip install sharppy
+    conda install -c conda-forge sharppy
 
 The Anaconda Python Distribution can be downloaded here: https://www.anaconda.com/download/
 
@@ -114,7 +109,7 @@ Known Issues:
 SHARPpy is currently managed by the following co-developers (in no particular order):
 - Patrick Marsh (SPC)
 - Kelton Halbert (UW-Madison)
-- Greg Blumberg (OU/CIMMS)
+- Greg Blumberg (NASA GSFC)
 - Tim Supinie (OU School of Meteorology)
 
 
