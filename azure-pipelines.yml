@@ -2,7 +2,7 @@
 trigger:
   branches:
     include:
-      - andover
+      - master
   tags:
     include:
       - v*
