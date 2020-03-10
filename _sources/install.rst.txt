@@ -8,10 +8,10 @@ SHARPpy code can be installed on *Windows, macOS, and Linux*, as all these platf
 SHARPpy can be installed from one of these three places: 
 
 * a pre-compiled binary executable
-* a Python package manager (:command:`pip` and :command:`conda`)
+* a Python package manager (:command:`conda`)
 * from source (downloaded from Github).  
 
-Binary executables are available for Windows (64 bit) and macOS 10.6+ (Snow Leopard and later; 64 bit only).
+Binary executables are available for Windows and macOS (64 bit).
 
 **If you are upgrading your version of SHARPpy, you may need to delete your ~/.sharppy folder as 
 the files in that directory may be incompatable with the new version of SHARPpy.**
@@ -25,45 +25,47 @@ Integration software with each update we make to the primary code base:
 
 https://github.com/sharppy/SHARPpy/releases/
 
-Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.  If your computer is older and you're unsure whether it has a 32- or 64-bit operating system, you can check on Windows 7 by clicking Start, right-clicking on Computer, and selecting Properties.  All recent versions of OS X (10.6 and newer) should be 64-bit.
+Installing a pre-compiled binary *should* be as simple as downloading the .zip file and extracting it to the location of your choice.  The zip files are named for the operating system and number of bits.  Most recently-built computers (probably post-2010 or so) should have 64-bit operating systems installed.
 
 .. note:: The pre-compile binaries are sometimes difficult to keep up to date, so for more recent versions of SHARPpy, you may want to look into the next section, which is about installing the program via package managers. 
 
 Installing using package managers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-SHARPpy is also available for download through the :command:`conda` and :command:`pip` package managers.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
+SHARPpy is also available for download through the :command:`conda` package manager.  Both package managers will also take care of downloading the correct dependencies SHARPpy needs to run.  These package managers may be accessible through the command line interface of your operating system.  You may be interested in this route should you want to do scripting with the SHARPpy package and also work with the GUI.
 
 From conda
 ----------
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
 We recommend you download the *Python 3.6 or 3.7* version of the Anaconda Python distribution.  SHARPpy is
-primarily tested using this distribution.
+primarily tested using this distribution.  SHARPpy is available on the conda-forge channel.
 
-To avoid compatability issues with other Python packages, we **strongly recommend** you install SHARPpy into its own Anaconda environment:
+To avoid compatability issues with other Python packages, we **strongly recommend** you install SHARPpy into its own Anaconda environment
 
 .. prompt:: bash
 
-    conda create -n sharppy-env -c sharppy -c conda-forge sharppy
+    conda create -n sharppy-env
     conda activate sharppy-env
+    conda install -c conda-forge sharppy
 
-Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:
 
-.. prompt:: bash
+.. Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:
+
+..  prompt:: bash
 
     conda config --add channels conda-forge
     conda install -c sharppy sharppy
 
-From pip
---------
+.. From pip
+   --------
 
-Currently, we are have difficulties deploying to PyPI and therefore do not recommend downloading SHARPpy from pip.
+   Currently, we are have difficulties deploying to PyPI and therefore do not recommend downloading SHARPpy from pip.
 
-..
-  If you hate snakes, you may want to use :command:`pip` instead: 
-  .. prompt:: bash
-    pip install sharppy
+   ..
+   If you hate snakes, you may want to use :command:`pip` instead: 
+   .. prompt:: bash
+   pip install sharppy
 
 Installing the code from source
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
