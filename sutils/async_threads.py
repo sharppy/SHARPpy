@@ -5,11 +5,10 @@ try:
     import Queue
 except ImportError:
     import queue as Queue
-
+import logging
 import hashlib
 from datetime import datetime
 import traceback
-import logging
 
 class AsyncThreads(QObject):
     """
@@ -36,7 +35,6 @@ class AsyncThreads(QObject):
         *args, **kwargs: Arguments to func()
         """
         thd_id = self._genThreadId()
-        logging.debug("Function being posted by Async: " + str(func) + ' ' + str(args))
 
         background = kwargs.get('background', False)
         if 'background' in kwargs:
@@ -123,6 +121,7 @@ class AsyncThreads(QObject):
                 try:
                     ret_val = func(*args, **kwargs)
                 except Exception as e:
+                    logging.exception(e)
                     if self.debug:
                         print(traceback.format_exc())
                     ret_val = e

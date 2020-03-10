@@ -495,7 +495,7 @@ class MapWidget(QWidget):
         self.transform = qp.transform()
         window_rect = QtCore.QRect(0, 0, self.width(), self.height())
 
-        qp.setPen(QtGui.QPen(QtGui.QColor('#333333'))) #, self.scale, QtCore.Qt.DashLine
+        qp.setPen(QtGui.QPen(QtGui.QColor('#333333'), self.scale)) #, self.scale, QtCore.Qt.DashLine
         qp.drawPath(self._grid_path)
 
         # Modify the scale thresholds according to the ratio of the area of the plot to the default area
@@ -511,17 +511,17 @@ class MapWidget(QWidget):
             comp = max_comp * min(max((zero_scale - self.scale) / (zero_scale - full_scale), 0), 1)
             color = '#' + ("{0:02x}".format(int(round(comp)))) * 3
 
-            qp.setPen(QtGui.QPen(QtGui.QColor(color)))
+            qp.setPen(QtGui.QPen(QtGui.QColor(color), self.scale))
             for cp in self._county_path:
                 if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                     qp.drawPath(cp)
 
-        qp.setPen(QtGui.QPen(QtGui.QColor('#999999')))
+        qp.setPen(QtGui.QPen(QtGui.QColor('#999999'), self.scale))
         for sp in self._state_path:
             if self.transform.mapRect(sp.boundingRect()).intersects(window_rect):
                 qp.drawPath(sp)
 
-        qp.setPen(QtGui.QPen(QtCore.Qt.white))
+        qp.setPen(QtGui.QPen(QtCore.Qt.white, self.scale))
         for cp in self._coast_path:
             if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                 qp.drawPath(cp)
@@ -549,13 +549,13 @@ class MapWidget(QWidget):
                 clicked_id = stn_id
             else:
                if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
-                    qp.setPen(QtGui.QPen(color))
+                    qp.setPen(QtGui.QPen(color, self.scale))
                     qp.setBrush(QtGui.QBrush(color))
                     qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
         
         color = selected_color
         if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
-            qp.setPen(QtGui.QPen(color))
+            qp.setPen(QtGui.QPen(color, self.scale))
             qp.setBrush(QtGui.QBrush(color))
             qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
 

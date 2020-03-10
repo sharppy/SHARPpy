@@ -9,7 +9,7 @@ from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
 from qtpy.QtOpenGL import *
-from utils.utils import total_seconds
+from sutils.utils import total_seconds
 import logging
 
 from datetime import datetime, timedelta
@@ -977,8 +977,9 @@ class plotSkewT(backgroundSkewT):
                     self.drawTrace(profile.dwpc, dewp_color, qp, p=profile.pres, width=1)
                     try:
                         self.drawBarbs(profile, qp, color="#666666")
-                    except:
+                    except Exception as e:
                         logging.debug("Couldn't draw wind barbs in skew.py")
+                        logging.exception(e)
         bg_color_idx = 0
         for idx, prof_col in enumerate(self.prof_collections):
             if idx != self.pc_idx and (prof_col.getCurrentDate() == cur_dt or self.all_observed):
@@ -990,7 +991,8 @@ class plotSkewT(backgroundSkewT):
                 self.drawTrace(profile.dwpc, color, qp, p=profile.pres)
                 try:
                     self.drawBarbs(profile, qp, color=color)
-                except:
+                except Exception as e:
+                    logging.exception(e)
                     logging.debug("Couldn't draw wind barbs in skew.py")
                 bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
 
@@ -1040,7 +1042,8 @@ class plotSkewT(backgroundSkewT):
         qp.setRenderHint(qp.Antialiasing, False)
         try:
             self.drawBarbs(self.prof, qp)
-        except:
+        except Exception as e:
+            logging.exception(e)
             logging.debug("Couldn't draw wind barbs in skew.py")
         qp.setRenderHint(qp.Antialiasing)
 

@@ -13,6 +13,9 @@ SHARPpy can be installed from one of these three places:
 
 Binary executables are available for Windows (64 bit) and macOS 10.6+ (Snow Leopard and later; 64 bit only).
 
+**If you are upgrading your version of SHARPpy, you may need to delete your ~/.sharppy folder as 
+the files in that directory may be incompatable with the new version of SHARPpy.**
+
 Installing a pre-compiled binary
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -35,20 +38,31 @@ From conda
 ----------
 
 The Anaconda Python Distribution can be downloaded here: https://store.continuum.io/cshop/anaconda/
-We recommend you download the *Python 3.6* version of the Anaconda Python distribution.  SHARPpy is
+We recommend you download the *Python 3.6 or 3.7* version of the Anaconda Python distribution.  SHARPpy is
 primarily tested using this distribution.
+
+To avoid compatability issues with other Python packages, we **strongly recommend** you install SHARPpy into its own Anaconda environment:
 
 .. prompt:: bash
 
+    conda create -n sharppy-env -c sharppy -c conda-forge sharppy
+    conda activate sharppy-env
+
+Otherwise, you can try to install SHARPpy directly into your current Anaconda environment:
+
+.. prompt:: bash
+
+    conda config --add channels conda-forge
     conda install -c sharppy sharppy
 
 From pip
 --------
 
-If you hate snakes, you may want to use :command:`pip` instead: 
+Currently, we are have difficulties deploying to PyPI and therefore do not recommend downloading SHARPpy from pip.
 
-.. prompt:: bash
-
+..
+  If you hate snakes, you may want to use :command:`pip` instead: 
+  .. prompt:: bash
     pip install sharppy
 
 Installing the code from source
@@ -65,20 +79,15 @@ install the required packages manually.  These instructions assume that you have
 
 Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
 
-.. prompt:: bash
-
-    conda install -c conda-forge pyside2
-
-* PySide2
+* PySide 2
 * requests
 * python-dateutil
 
-Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
+Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide 2, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in macOS/Linux and Command Prompt in Windows) and typing:
 
 .. prompt:: bash
 
-    conda install -c conda-forge requests python-dateutil
->>>>>>> andover
+    conda install -c conda-forge pyside2=5.12.* requests python-dateutil
 
 After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
 
@@ -96,11 +105,26 @@ If you follow the route of cloning SHARPpy, you can update to the most recent SH
 
     git pull origin master
 
-Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory and type this command in to install SHARPpy:
+Other branches (including development ones not called master) can be listed using the `git branch` command:
+
+.. prompt:: bash
+    
+    git branch
+
+We tend to name each version of SHARPpy after the locations where significant tornados have struck (e.g., Xenia, El Reno).  Releases will be under the "master" branch, while development versions will
+tend to have another name (such as andover).  You can download those using the `checkout` command.  For example:
 
 .. prompt:: bash
 
-    python setup.py install
+    git checkout andover
+
+Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory.
+The package can be installed via this command, which will allow you to edit the source code you downloaded and test it without
+needing to reinstall the program each time:
+
+.. prompt:: bash
+    
+    pip install -e .
 
 After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
 The GUI can be launched similar to the method described above in the "Installing from conda or pip" section.

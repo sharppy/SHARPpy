@@ -1,23 +1,22 @@
+import os
+os.environ['QT_API'] = 'pyside2' # Force PySide2 to be used in QtPy
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
-import qtpy
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-#QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-#QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 from sharppy.viz.map import MapWidget
 import argparse
 import traceback
-from utils.config import Config
+from sutils.config import Config
 from os.path import expanduser
 import cProfile
 from functools import wraps, partial
 import datetime as date
 
-from utils.progress import progress
-from utils.async_threads import AsyncThreads
-from utils.ver_updates import check_latest
+from sutils.progress import progress
+from sutils.async_threads import AsyncThreads
+from sutils.ver_updates import check_latest
 from datasources import data_source
 from sharppy.io.arw_decoder import ARWDecoder
 from sharppy.io.decoder import getDecoders
@@ -29,12 +28,22 @@ import sys
 import os
 import numpy as np
 import warnings
-import utils.frozenutils as frozenutils
+import sutils.frozenutils as frozenutils
 import logging
 import qtpy
 import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
+if not os.path.isdir(HOME_DIR):
+    os.mkdir(HOME_DIR)
+
+if os.path.exists(LOG_FILE):
+    log_file_size = os.path.getsize(LOG_FILE)
+    MAX_FILE_SIZE = 1024 * 1024 
+    if log_file_size > MAX_FILE_SIZE:
+        # Delete the log file as it's grown too large
+        os.remove(LOG_FILE)
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -48,7 +57,7 @@ UNDERLINE = '\033[4m'
 # Start the logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(pathname)s %(funcName)s Line #: %(lineno)d %(levelname)-8s %(message)s',
-                    filename=HOME_DIR + '/sharppy.log',
+                    filename=LOG_FILE,
                     filemode='w')
 console = logging.StreamHandler()
 # set a format which is simpler for console use
@@ -72,11 +81,13 @@ else:
 if frozenutils.isFrozen():
     if not os.path.exists(HOME_DIR):
         os.makedirs(HOME_DIR)
-
+    BINARY_VERSION = True
     outfile = open(os.path.join(HOME_DIR, 'sharppy-out.txt'), 'w')
-
+    console.setLevel(logging.DEBUG)
     sys.stdout = outfile
     sys.stderr = outfile
+else:
+    BINARY_VERSION = False
 
 __version__ = get_versions()['version']
 ver = get_versions()
@@ -88,16 +99,19 @@ logging.info('numpy version: ' + str(np.__version__))
 logging.info('qtpy version: ' + str(qtpy.__version__))
 logging.info("Python version: " + str(platform.python_version()))
 logging.info("Qt version: " + str(qtpy.QtCore.__version__))
-
+logging.info("OS version: " + str(platform.platform()))
 # from sharppy._version import __version__#, __version_name__
 
-__version_name__ = ''
+if BINARY_VERSION:
+    logging.info("This is a binary version of SHARPpy.")
+
+__version_name__ = 'Andover'
 try:
     from netCDF4 import Dataset
     has_nc = True
 except ImportError:
     has_nc = False
-    print("No netCDF4 Python install detected. Will not be able to open netCDF files on the local disk.")
+    logging.info("No netCDF4 Python install detected.")
 
 
 def versioning_info(include_sharppy=False):
@@ -126,6 +140,7 @@ class crasher(object):
                 data = "SHARPpy v%s %s\n" % (__version__, __version_name__) + \
                        "Crash time: %s\n" % str(date.datetime.now()) + \
                        traceback.format_exc()
+                logging.exception(e)
                 print("Exception:", e)
                 # HERE IS WHERE YOU CAN CATCH A DATAQUALITYEXCEPTION
                 if frozenutils.isFrozen():
@@ -295,9 +310,9 @@ class Picker(QWidget):
             [t.strftime(Picker.run_format) for t in filt_times])
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
-        except ValueError:
+        except ValueError as e:
             logging.error("Run dropdown is missing its times ... ?")
-
+            logging.exception(e)
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
@@ -509,6 +524,7 @@ class Picker(QWidget):
                         self.run = [t for t in times if t.hour in synoptic_times and t.day == self.cal_date.day(
                         ) and t.month == self.cal_date.month() and t.year == self.cal_date.year()][-1]
                     except Exception as e:
+                        logging.exception(e)
                         self.run = times[-1]
                 else:
                     self.run = times[-1]
@@ -590,8 +606,9 @@ class Picker(QWidget):
                 while True:
                     try:
                         self.skewApp(ntry=n_tries)
-                    except data_source.DataSourceError:
+                    except data_source.DataSourceError as e1:
                         # We've run out of data sources. Uh-oh.
+                        logging.exception(e1)
                         if self.skew is not None:
                             self.skew.closeIfEmpty()
                         raise IOError(
@@ -600,6 +617,7 @@ class Picker(QWidget):
                         if debug:
                             print(traceback.format_exc())
                         n_tries += 1
+                        logging.exception(e)
                     else:
                         break
 
@@ -780,7 +798,8 @@ class Picker(QWidget):
             try:
                 dec = deccls(filename)
                 break
-            except:
+            except Exception as e:
+                logging.exception(e)
                 dec = None
                 continue
 
@@ -865,9 +884,9 @@ class Main(QMainWindow):
 
         self.show()
         self.raise_()
-        import time
-        time.sleep(3)
-        QPixmap.grabWidget(self).save('./screenshot.png', 'png')
+        #import time
+        #time.sleep(3)
+        #self.grab().save('./screenshot.png', 'png')
 
     def createMenuBar(self):
         """
@@ -1095,7 +1114,8 @@ def search_and_plotDB(model, station, datetime, close=True, output='./'):
     main_win.picker.disp_name = main_win.picker.loc['icao']
     try:
         main_win.picker.skewApp()
-    except data_source.DataSourceError:
+    except data_source.DataSourceError as e:
+        logging.exception(e)
         print(FAIL + "Couldn't find data for the requested time and location." + ENDC)
         return main_win
 

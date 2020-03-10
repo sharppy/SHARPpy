@@ -1,7 +1,5 @@
 # -*- mode: python -*-
 import sys
-sys.path.append('../')
-
 import glob
 import sharppy
 from sharppy._version import get_versions
@@ -20,8 +18,8 @@ del sharppy
 import sharppy
 
 a = Analysis(['SHARPpy.py'],
-             pathex=[r'C:\Users\Tim\SHARPpy\runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
+             pathex=[r'D:\a\1\s\runsharp', r'D:\a\1\s'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi'],
              hookspath=None,
              runtime_hooks=None)
 
@@ -38,12 +36,14 @@ sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\supercell\\") + "*")
 shapefiles = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\shapefiles\\") + "*")
 datasources = glob.glob("..\\datasources\\" + "*")
+rc_files = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "../rc/") + "*.png") 
 
 for hail in sars_hail:
     a.datas += [("sharppy\\databases\\sars\\hail\\" + hail.split("\\")[-1], hail, "DATA")]
 for supr in sars_supr:
     a.datas += [("sharppy\\databases\\sars\\supercell\\" + supr.split("\\")[-1], supr, "DATA")]
-
+for rc in rc_files:
+    a.datas += [("rc/" + rc.split("/")[-1], rc, "DATA")]
 for sf in shapefiles:
     a.datas += [("sharppy\\databases\\shapefiles\\" + sf.split("\\")[-1], sf, "DATA")]
 

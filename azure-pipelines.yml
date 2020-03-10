@@ -1,7 +1,11 @@
 # MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
 trigger:
-- andover
-
+  branches:
+    include:
+      - andover
+  tags:
+    include:
+      - v*
 # Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
@@ -55,7 +59,12 @@ steps:
 #    createCustomEnvironment: true
 
 - script: conda env create --quiet --file environment.yml
-  displayName: Create Anaconda environment
+  displayName: Create Anaconda environment (*nix)
+  condition: or( eq( variables['Agent.OS'], 'Darwin' ), eq( variables['Agent.OS'], 'Linux' ))
+
+- script: conda env create --quiet --file ci/env-win-binary.yml
+  displayName: Create Anaconda environment (Windows)
+  condition: eq( variables['Agent.OS'], 'Windows_NT')
 
 # Output the conda environment packages and which python and pip is being used (for diagnostic purposes)
 - script: which python & which pip & which pyinstaller & conda list
@@ -71,7 +80,7 @@ steps:
     xdpyinfo | grep dimensions # Check display dimensions
     python ci/screen.py # Check display dimensions as seen by PySide
     pytest -v --junitxml=junit/test-results.xml
-    #mv examples/data/14061619.png examples/data/14061619_linux.png
+    mv examples/data/14061619.png examples/data/14061619_linux.png
   displayName: "Installing code and running tests (Linux)"
   condition: eq( variables['Agent.OS'], 'Linux')
 
@@ -89,11 +98,13 @@ steps:
     python ci/screen.py # Check display dimensions as seen by PySide
     pip install -e .
     sudo pytest -v --junitxml=junit/test-results.xml
-    #sudo mv examples/data/14061619.png examples/data/14061619_mac.png
-    pyinstaller runsharp/SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
-    #sudo chmod 777 dist/SHARPpy.app
+    sudo mv examples/data/14061619.png examples/data/14061619_mac.png
     cd runsharp
-    ls -lh dist
+    pyinstaller SHARPpy-osx.spec --noconsole --onefile --log-level DEBUG
+    cd ..
+    #sudo chmod 777 dist/SHARPpy.app
+    #cd runsharp
+    #ls -lh dist
   displayName: "Installing code and running tests (macOS)"
   condition: eq( variables['Agent.OS'], 'Darwin')
 
@@ -108,10 +119,11 @@ steps:
 - script: |
     call activate devel
     python ci/screen.py
+    python -c "import ssl; print(ssl.__file__)"
     #SET PYTHONPATH=%PYTHONPATH%;%CD%
     pip install -e .
     pytest -v --junitxml=junit/test-results.xml
-    #move examples\\data\\14061619.png examples\\data\\14061619_win.png
+    move examples\\data\\14061619.png examples\\data\\14061619_win.png
     cd runsharp
     pyinstaller SHARPpy-win7-64.spec --log-level DEBUG
     cd ..
@@ -164,6 +176,7 @@ steps:
     isDraft: true # Optional
     isPreRelease: true # Optional
     addChangeLog: true # Optional
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
 
 # Copy GUI screenshots to the artifacts directory
 - task: CopyFiles@2

@@ -108,8 +108,11 @@ class Profile(object):
         self.tmpc = ma.asanyarray(kwargs.get('tmpc'), dtype=float)
         self.dwpc = ma.asanyarray(kwargs.get('dwpc'), dtype=float)
 
+        assert self.pres.ndim == 1 and self.hght.ndim == 1 and self.tmpc.ndim == 1 and self.dwpc.ndim == 1,\
+               "The dimensions of the pres, hght, tmpc, and dwpc arrays passed to the Profile object constructor are not all one dimensional."
+
         assert len(self.pres) > 1 and len(self.hght) > 1 and len(self.tmpc) > 1 and len(self.dwpc) > 1,\
-               "The length of the data arrays passed to Profile object constructor must all have a length greater than 1."
+               "The length of the pres, hght, tmpc, and dwpc arrays passed to Profile object constructor must all have a length greater than 1."
 
         assert len(self.pres) == len(self.hght) == len(self.tmpc) == len(self.dwpc),\
                 "The pres, hght, tmpc, or dwpc arrays passed to the Profile object constructor must all have the same length."
@@ -121,6 +124,7 @@ class Profile(object):
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
             assert len(self.wdir) == len(self.wspd) == len(self.pres), "The wdir and wspd arrays passed to the Profile constructor must have the same length as the pres array."
+            assert self.wdir.ndim == 1 and self.wspd.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
             #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
@@ -130,7 +134,7 @@ class Profile(object):
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
             assert len(self.u) == len(self.v) == len(self.pres), "The u and v arrays passed to the Profile constructor must have the same length as the pres array."
-
+            assert self.u.ndim == 1 and self.v.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
             #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
             self.wspd = None
@@ -149,6 +153,8 @@ class Profile(object):
             ## get the omega data and turn into arrays
             self.omeg = ma.asanyarray(kwargs.get('omeg'))
             assert len(self.omeg) == len(self.pres), "Length of omeg array passed to constructor is not the same length as the pres array."
+            assert self.omeg.ndim == 1, "omeg array is not one dimensional."
+            assert len(self.omeg) > 1, "omeg array length must have a length greater than 1."
         else:
             self.omeg = None
 
@@ -195,7 +201,7 @@ class Profile(object):
         #print(now, self.date)
         user = getpass.getuser()
         snd_file.write("%TITLE%\n")
-        #snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
+        snd_file.write("%s   %s\n Saved by user: %s on %s UTC\n" % (snd_loc, self.date.strftime("%y%m%d/%H%M"), user, now.strftime('%Y%m%d/%H%M')))
         snd_file.write("   LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD\n")
         snd_file.write("-------------------------------------------------------------------\n")
         snd_file.write("%RAW%\n")

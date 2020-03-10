@@ -4,7 +4,7 @@ import numpy as np
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from .decoder import Decoder
-from utils.utils import is_py3
+from sutils.utils import is_py3
 
 try:
     from StringIO import StringIO

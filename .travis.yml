@@ -11,15 +11,22 @@ matrix:
   - os: linux
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.15 DISPLAY_AVAIL="NO"
+      - PYTHON_VERSION="3.6" BUILD_CONDA="YES" NUMPY_VERSION=1.17 DISPLAY_AVAIL="YES"
   - os: osx
     language: generic
     env: 
-      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_BINARY="YES" NUMPY_VERSION=1.15
+      - PYTHON_VERSION="3.6" DISPLAY_AVAIL="NO" BUILD_DOCS="YES" NUMPY_VERSION=1.17
   - os: linux
     language: generic
     env:
-      - PYTHON_VERSION="3.6" BUILD_DOCS="YES" NUMPY_VERSION=1.15 COVERALLS="YES" DISPLAY_AVAIL="NO"
+      - PYTHON_VERSION="3.6" BUILD_DOCS="NO" NUMPY_VERSION=1.17 COVERALLS="YES" DISPLAY_AVAIL="YES"
+
+addons:
+  ssh_known_hosts: 
+    - github.com
+    - 140.82.113.4
+
+>>>>>>> 94bac24129ca14d9699db507646ff87d0c669f2c
 before_install:
 - source ci/install.sh
 install:
@@ -31,30 +38,30 @@ after_success:
 # Deploy test information to coveralls
 - if [[ "$COVERALLS" == "YES" ]] ; then coveralls || echo "Coveralls upload failed" ;fi
 # Build the binary if it's a new tag.
-- if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
+#- if [[ -n "$TRAVIS_TAG" ]]; then source ci/make_binary.sh; fi
 before_deploy:
 - ls
 - pwd
-- if [ "$BUILD_BINARY" == "YES" ] && [ -n "$TRAVIS_TAG" ]; then cd dist; zip -r SHARPpy-osx.zip SHARPpy.app; cd ..; fi
+#- if [ "$BUILD_BINARY" == "YES" ] && [ -n "$TRAVIS_TAG" ]; then cd dist; zip -r SHARPpy-osx.zip SHARPpy.app; cd ..; fi
 # Ship the binaries to Github and PyPI and conda
 deploy:
 # Deploy the binaries to Github Releases
- - provider: releases
-   api_key:
-     secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
-   file_glob: true
-   file: dist/SHARPpy*.zip
-   skip_cleanup: true
-   on:
-     repo: sharppy/SHARPpy
-     tags: true
-     branch: andover
+# - provider: releases
+#   api_key:
+#     secure: upm1CAgyi6Qv+KaHAo/v3mDyaXYSFs+vm0qS1D7IUDapGIhOTfqDgOpS71bFAnM9w+FRc7S3foxmymsHZsK97LVOEqHNibBtSmELVzhv2VHoCfAUnHaOzCi/z4DHx3QKn2ALLymFfG4O7XzSC7urHue9/h9DWy51srokafP3QOnI6sWHkWGOOOv0i13MDzv2RxMza7+PT69bQ2vFk2ujwAthanDySeXyf2kJ7WYj1cuEBfASBs+diVUSqk7FxJO7OQhyLCCn5bSS3Otvg9tkHL8H7WU6JoGHLBoUPDUxCl0KePgie6hZvaJFAlhcJfmSA4NsTQfunFnbHa2rPFPUTLO6RgEbtD0Th85VORmmEeJ8O+GmvZIRBZUiMxPAbb1DXPwI6XtgoFhNiV5rkut4JtL3BgRmAfIdAsvBfNbozgRpHAOpoiIzx/8wan+o73h6K1y+qfQwxBw+cJAL3n0A2M3x7/mpALLf3JLD8E5KKLbp/kedPIF2vKXZ92h85H9AkMopHqLHQGj86M0qHbQyMp6OHR2ivG2K9qqtzAaUNglQrUaQOHeaBZ8ZT7+mhpdhaN1w5fmuYPRchVzyNbM3DtdiUfAGc6adZPUaUktbiIpLigjwS6BO4FALngrI9+M+kk8qHv/zukOiGawzueCDUGc79G/8LI7Q1EKkiqyI+3E=
+#   file_glob: true
+#   file: dist/SHARPpy*.zip
+#   skip_cleanup: true
+#   on:
+#     repo: sharppy/SHARPpy
+#     tags: true
+#     branch: andover
 # Deploy code to conda
  - provider: script
    script: bash ci/deploy_conda.sh
    on:
      repo: sharppy/SHARPpy
-     tags: false
+     tags: true
      branch: andover
      condition: "$BUILD_CONDA = YES"
 # Deploy docs to Github Pages
@@ -76,5 +83,5 @@ deploy:
      repo: sharppy/SHARPpy
      tags: true
      branch: andover-off
-     condition: "$BUILD_CONDA = YES"
+     condition: "$BUILD_CONDA = YESS"
 

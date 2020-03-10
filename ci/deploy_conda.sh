@@ -20,29 +20,40 @@ conda config --set anaconda_upload no
 export CONDA_BLD_PATH=~/conda-bld
 
 # Build the conda recipe
-echo "Build the conda recipe"
-conda build conda-recipe/
+echo "Build the conda recipe for Python 3.6"
+conda build --python 36 conda-recipe/
 
 # Convert the conda package to support other operating systems
-echo "Convert the recipe to other OSes"
-ls $CONDA_BLD_PATH
-echo "Coverting to Windows 32"
-conda convert -q -p win-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
-echo "Coverting to Windows 64"
-conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
-echo "Coverting to Linux 32"
-conda convert -q -p linux-32 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
-echo "Coverting to Linux 64"
-conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
-echo "Coverting to OS X 64"
-conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*.tar.bz2
+echo "*** Coverting to Windows 64 ***"
+conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py36*.tar.bz2
+#echo "*** Coverting to Linux 64 ***"
+#conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py36*.tar.bz2
+echo "*** Coverting to OS X 64 ***"
+conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py36*.tar.bz2
+echo "*** LIST PACKAGES ***"
 ls $CONDA_BLD_PATH
 
-echo "ENDING BUILD CONDA SCRIPT EARLY BECAUSE TESTING"
-exit 0
+echo "Uploading Python 3.6 packages to anaconda.org"
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy $CONDA_BLD_PATH/*/*py36*.tar.bz2 --force
 
-echo "Which anaconda"
-which anaconda
+echo "Build the conda recipe for Python 3.7"
+conda build --python 37 conda-recipe/
+echo "*** Coverting to Windows 64 ***"
+conda convert -q -p win-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py37*.tar.bz2
+#echo "*** Coverting to Linux 64 ***"
+#conda convert -q -p linux-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py37*.tar.bz2
+echo "*** Coverting to OS X 64 ***"
+conda convert -q -p osx-64 -o $CONDA_BLD_PATH $CONDA_BLD_PATH/$OS/*py37*.tar.bz2
+
+echo "*** LIST PACKAGES ***"
+ls $CONDA_BLD_PATH
+
+echo "Uploading Python 3.7 packages to anaconda.org"
+anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy $CONDA_BLD_PATH/*/*py37*.tar.bz2 --force
+
+
+#echo "ENDING BUILD CONDA SCRIPT EARLY BECAUSE TESTING"
+#exit 0
+
 # Upload to the conda package manager
-anaconda -t $CONDA_UPLOAD_TOKEN upload -u sharppy $CONDA_BLD_PATH/*/*.tar.bz2 --force
 #rm -rf ~/conda-bld
