@@ -26,7 +26,6 @@ addons:
     - github.com
     - 140.82.113.4
 
->>>>>>> 94bac24129ca14d9699db507646ff87d0c669f2c
 before_install:
 - source ci/install.sh
 install:
@@ -62,15 +61,15 @@ deploy:
    on:
      repo: sharppy/SHARPpy
      tags: true
-     branch: andover
+     branch: master
      condition: "$BUILD_CONDA = YES"
 # Deploy docs to Github Pages
  - provider: script
    script: bash ci/build_docs.sh
    on:
      repo: sharppy/SHARPpy
-     tags: false
-     branch: andover
+     tags: true
+     branch: master
      condition: "$BUILD_DOCS = YES"
 # Deploy the code to PyPI
  - provider: pypi
