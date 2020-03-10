@@ -68,7 +68,7 @@ deploy:
    script: bash ci/build_docs.sh
    on:
      repo: sharppy/SHARPpy
-     tags: true
+     tags: false
      branch: master
      condition: "$BUILD_DOCS = YES"
 # Deploy the code to PyPI
