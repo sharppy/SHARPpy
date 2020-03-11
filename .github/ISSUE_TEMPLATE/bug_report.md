@@ -34,9 +34,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Versioning Information (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - SHARPpy Version: [e.g. 22]
+ - Device: [e.g. MacBook Pro 2011]
+ - OS: [e.g. macOS Mojave 1.14.4]
+ - SHARPpy Version: [e.g. v1.3.0]
  - Dependency Versions: [e.g. NumPy, PySide2]:
  - Screen dimensions [e.g. 4k, HD, 1920x800]: 
  - SHARPpy distribution type [e.g., git, conda, binary]: 
