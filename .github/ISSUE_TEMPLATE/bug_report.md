@@ -12,6 +12,7 @@ Before submitting an issue to Github about SHARPpy, please follow the below chec
 - [ ] No other issues either open or closed describe what I'm reporting.
 - [ ] I have checked to see if my issue has been resolved in a new version of SHARPpy.
 - [ ] I have filled out the below information in as much detail as possible using dates, numbers, directions, pictures, etc.
+- [ ] I have checked the SHARPpy documentation to make sure I'm doing things correctly, and my problem doesn't exist between my monitor and chair.
 - [ ] I have attached the log and config files from the ~/.sharppy folder.  If no log files exist, I have run the program in debug mode (e.g., sharppy --debug).
 
 The management team for SHARPpy is a small team of volunteers.  Being as thorough as possible with your issue submission will help us help you!
