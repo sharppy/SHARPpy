@@ -14,6 +14,8 @@ Before submitting an issue to Github about SHARPpy, please follow the below chec
 - [ ] I have filled out the below information in as much detail as possible using dates, numbers, directions, pictures, etc.
 - [ ] I have attached the log and config files from the ~/.sharppy folder.  If no log files exist, I have run the program in debug mode (e.g., sharppy --debug).
 
+The management team for SHARPpy is a small team of volunteers.  Being as thorough as possible with your issue submission will help us help you!
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
