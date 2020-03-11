@@ -19,7 +19,7 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'D:\a\1\s\runsharp', r'D:\a\1\s'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn'],
              hookspath=None,
              runtime_hooks=None)
 

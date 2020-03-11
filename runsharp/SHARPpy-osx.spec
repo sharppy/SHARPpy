@@ -24,7 +24,7 @@ runsharp_path = os.path.dirname(sharppy.__file__) + '/../runsharp/'
 # Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
              pathex=[runsharp_path, '/Users/blumberg/SHARPpy/runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'pkg_resources.py2_warn'],
              hookspath=None,
              runtime_hooks=None)
 a.binaries = [x for x in a.binaries if not x[0].startswith("scipy")]
