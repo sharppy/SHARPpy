@@ -9,7 +9,7 @@ All rights reserved.
 Copyright (c) 2012, MetPy Developers.
 All rights reserved.
 
-Copyright (c) 2020, Kelton Halbert, Greg Blumberg & Tim Supinie. 
+Copyright (c) 2019, Kelton Halbert, Greg Blumberg & Tim Supinie. 
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
