@@ -1302,7 +1302,7 @@ class plotHodo(backgroundHodo):
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
         penwidth = width
-        seg_bnds = [0., 3000., 6000., 9000., 12000.]
+        seg_bnds = np.maximum([0., 3000., 6000., 9000., 12000.], z.min())
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
