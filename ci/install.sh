@@ -1,17 +1,20 @@
 #!/bin/bash
 echo $PYTHON_VERSION
+which python
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
+    echo "OSX OS"
     if [[ "$PYTHON_VERSION" == "2.7" ]]; then
-        curl https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
+        curl https://repo.anaconda.com/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -o miniconda.sh;
     else
-        curl https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
+        curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o miniconda.sh;
     fi 
-  else 
+else 
+    echo "NON OSX OS"
     if [[ "$PYTHON_VERSION" == "2.7" ]]; then 
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh; 
+        wget https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh; 
     else 
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; 
   fi
 fi
 
