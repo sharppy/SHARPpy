@@ -1045,12 +1045,12 @@ class plotHodo(backgroundHodo):
         pen.setStyle(QtCore.Qt.SolidLine)
         qp.setPen(pen)
 
-        try:
-            mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
-            half_length = (8./2.)
-            qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
-        except:
+        if not tab.utils.QC(self.mean_lcl_el[0]) or not tab.utils.QC(self.mean_lcl_el[1]):
             return
+
+        mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
+        half_length = (8./2.)
+        qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
         # This probably needs to be checked. 
 
         color = self.bg_color
@@ -1302,7 +1302,7 @@ class plotHodo(backgroundHodo):
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
         penwidth = width
-        seg_bnds = [0., 3000., 6000., 9000., 12000.]
+        seg_bnds = np.maximum([0., 3000., 6000., 9000., 12000.], z.min())
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
 
