@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0b1 documentation</title>
+  <title>sharppy.viz.hodo &mdash; SHARPpy 1.4.0 documentation</title>
   
 
   
@@ -34,6 +34,8 @@
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/gallery.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-binder.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/gallery-dataframe.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.4.0b1
+                1.4.0
               </div>
             
           
@@ -1206,12 +1208,12 @@
         <span class="n">pen</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SolidLine</span><span class="p">)</span>
         <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">mean_u</span><span class="p">,</span> <span class="n">mean_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uv_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">half_length</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8.</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
-            <span class="n">qp</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">mean_u</span><span class="o">-</span><span class="n">half_length</span><span class="p">,</span> <span class="n">mean_v</span><span class="o">+</span><span class="n">half_length</span> <span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">tab</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">QC</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
             <span class="k">return</span>
+
+        <span class="n">mean_u</span><span class="p">,</span> <span class="n">mean_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uv_to_pix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_lcl_el</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">half_length</span> <span class="o">=</span> <span class="p">(</span><span class="mf">8.</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="n">qp</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">mean_u</span><span class="o">-</span><span class="n">half_length</span><span class="p">,</span> <span class="n">mean_v</span><span class="o">+</span><span class="n">half_length</span> <span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
         <span class="c1"># This probably needs to be checked. </span>
 
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bg_color</span>
@@ -1463,7 +1465,7 @@
         <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uv_to_pix</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="c1">## define the colors for the different hodograph heights</span>
         <span class="n">penwidth</span> <span class="o">=</span> <span class="n">width</span>
-        <span class="n">seg_bnds</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">3000.</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">,</span> <span class="mf">9000.</span><span class="p">,</span> <span class="mf">12000.</span><span class="p">]</span>
+        <span class="n">seg_bnds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">3000.</span><span class="p">,</span> <span class="mf">6000.</span><span class="p">,</span> <span class="mf">9000.</span><span class="p">,</span> <span class="mf">12000.</span><span class="p">],</span> <span class="n">z</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
         <span class="n">seg_x</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tab</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">generic_interp_hght</span><span class="p">(</span><span class="n">bnd</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="n">seg_bnds</span> <span class="k">if</span> <span class="n">bnd</span> <span class="o">&lt;=</span> <span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="p">]</span>
         <span class="n">seg_y</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tab</span><span class="o">.</span><span class="n">interp</span><span class="o">.</span><span class="n">generic_interp_hght</span><span class="p">(</span><span class="n">bnd</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">yy</span><span class="p">)</span> <span class="k">for</span> <span class="n">bnd</span> <span class="ow">in</span> <span class="n">seg_bnds</span> <span class="k">if</span> <span class="n">bnd</span> <span class="o">&lt;=</span> <span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="p">]</span>
 
