@@ -803,11 +803,15 @@ class Picker(QWidget):
             self.skew.setFocus()
             self.skew.raise_()
 
-            # JTS - Retrieve the cloud top pressure and fraction values from the CSV.
-            self.ctf_low = self.loc['ctf_low']
-            self.ctf_high = self.loc['ctf_high']
-            self.ctp_low = self.loc['ctp_low']
-            self.ctp_high = self.loc['ctp_high']
+            try:
+                # JTS - Retrieve the cloud top pressure and fraction values from the CSV.
+                self.ctf_low = self.loc['ctf_low']
+                self.ctf_high = self.loc['ctf_high']
+                self.ctp_low = self.loc['ctp_low']
+                self.ctp_high = self.loc['ctp_high']
+            except:
+                # Ignore these csv headers if non-NUCAPS data source
+                pass
         return self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high
 
     def keyPressEvent(self, e):
