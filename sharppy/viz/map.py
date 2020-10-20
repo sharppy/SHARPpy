@@ -391,8 +391,21 @@ class MapWidget(QWidget):
 
             # JTS - The QC flag (priority header) only applies to NUCAPS profiles.  Ignore other data sources.
             try:
-                if self.cur_source.getName() == "Nucaps NOAA 20" or self.cur_source.getName() == "Nucaps Suomi-NPP" \
-                    or self.cur_source.getName() == "Nucaps Metop A" or self.cur_source.getName() == "Nucaps Metop B" or self.cur_source.getName() == "Nucaps Metop C":
+                if self.cur_source.getName() == "Nucaps NOAA 20 Alaska" \
+                    or  self.cur_source.getName() == "Nucaps NOAA 20 Caribbean" \
+                    or self.cur_source.getName() == "Nucaps NOAA 20 Conus" \
+                    or self.cur_source.getName() == "Nucaps Suomi-NPP Alaska" \
+                    or self.cur_source.getName() == "Nucaps Suomi-NPP Caribbean" \
+                    or self.cur_source.getName() == "Nucaps Suomi-NPP Conus" \
+                    or self.cur_source.getName() == "Nucaps Metop A Alaska" \
+                    or self.cur_source.getName() == "Nucaps Metop A Caribbean" \
+                    or self.cur_source.getName() == "Nucaps Metop A Conus" \
+                    or self.cur_source.getName() == "Nucaps Metop B Alaska" \
+                    or self.cur_source.getName() == "Nucaps Metop B Caribbean" \
+                    or self.cur_source.getName() == "Nucaps Metop B Conus" \
+                    or self.cur_source.getName() == "Nucaps Metop C Alaska" \
+                    or self.cur_source.getName() == "Nucaps Metop C Caribbean" \
+                    or self.cur_source.getName() == "Nucaps Metop C Conus":
                     self.stn_qc_flags = [ p['priority'] for p in self.points ]
             except:
                 pass
@@ -544,8 +557,21 @@ class MapWidget(QWidget):
         size = 3 * self.scale
 
         # JTS - condition for NUCAPS data sources 8/17/20
-        if self.cur_source.getName() == "Nucaps NOAA 20" or self.cur_source.getName() == "Nucaps Suomi-NPP" \
-            or self.cur_source.getName() == "Nucaps Metop A" or self.cur_source.getName() == "Nucaps Metop B" or self.cur_source.getName() == "Nucaps Metop C":
+        if self.cur_source.getName() == "Nucaps NOAA 20 Alaska" \
+            or  self.cur_source.getName() == "Nucaps NOAA 20 Caribbean" \
+            or self.cur_source.getName() == "Nucaps NOAA 20 Conus" \
+            or self.cur_source.getName() == "Nucaps Suomi-NPP Alaska" \
+            or self.cur_source.getName() == "Nucaps Suomi-NPP Caribbean" \
+            or self.cur_source.getName() == "Nucaps Suomi-NPP Conus" \
+            or self.cur_source.getName() == "Nucaps Metop A Alaska" \
+            or self.cur_source.getName() == "Nucaps Metop A Caribbean" \
+            or self.cur_source.getName() == "Nucaps Metop A Conus" \
+            or self.cur_source.getName() == "Nucaps Metop B Alaska" \
+            or self.cur_source.getName() == "Nucaps Metop B Caribbean" \
+            or self.cur_source.getName() == "Nucaps Metop B Conus" \
+            or self.cur_source.getName() == "Nucaps Metop C Alaska" \
+            or self.cur_source.getName() == "Nucaps Metop C Caribbean" \
+            or self.cur_source.getName() == "Nucaps Metop C Conus":
             unselected_color_nucaps = QtCore.Qt.red
             selected_color_nucaps = QtCore.Qt.green
 

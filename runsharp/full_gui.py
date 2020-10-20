@@ -239,12 +239,6 @@ class Picker(QWidget):
         self.has_connection = any(urls.values())
         self.strictQC = True
 
-        # JTS
-        self.ctf_low = None
-        self.ctf_high = None
-        self.ctp_low = None
-        self.ctp_high = None
-
         # initialize the UI
         self.__initUI()
 
@@ -452,8 +446,21 @@ class Picker(QWidget):
         self.select_flag = False
 
         # JTS - Remove the forecast times under the "Select Forecast Time" section for NUCAPS.
-        if self.model == "Nucaps NOAA 20" or self.model == "Nucaps Suomi-NPP" or self.model == "Nucaps Aqua" \
-            or self.model == "Nucaps Metop A" or self.model == "Nucaps Metop B" or self.model == "Nucaps Metop C":
+        if self.model == "Nucaps NOAA 20 Alaska" \
+            or self.model == "Nucaps NOAA 20 Caribbean" \
+            or self.model == "Nucaps NOAA 20 Conus" \
+            or self.model == "Nucaps Suomi-NPP Alaska" \
+            or self.model == "Nucaps Suomi-NPP Caribbean" \
+            or self.model == "Nucaps Suomi-NPP Conus" \
+            or self.model == "Nucaps Metop A Alaska" \
+            or self.model == "Nucaps Metop A Caribbean" \
+            or self.model == "Nucaps Metop A Conus" \
+            or self.model == "Nucaps Metop B Alaska" \
+            or self.model == "Nucaps Metop B Caribbean" \
+            or self.model == "Nucaps Metop B Conus" \
+            or self.model == "Nucaps Metop C Alaska" \
+            or self.model == "Nucaps Metop C Caribbean" \
+            or self.model == "Nucaps Metop C Conus":
             self.date_label.setDisabled(True)
             self.all_profs.setDisabled(True)
             self.profile_list.clear()
@@ -560,8 +567,21 @@ class Picker(QWidget):
                 self.run_dropdown.setEnabled(False)
 
             # JTS - Remove the model/obs cycle times from the run dropdown menu for NUCAPS.
-            if self.model == "Nucaps NOAA 20" or self.model == "Nucaps Suomi-NPP" or self.model == "Nucaps Aqua" \
-                or self.model == "Nucaps Metop A" or self.model == "Nucaps Metop B" or self.model == "Nucaps Metop C":
+            if self.model == "Nucaps NOAA 20 Alaska" \
+                or self.model == "Nucaps NOAA 20 Caribbean" \
+                or self.model == "Nucaps NOAA 20 Conus" \
+                or self.model == "Nucaps Suomi-NPP Alaska" \
+                or self.model == "Nucaps Suomi-NPP Caribbean" \
+                or self.model == "Nucaps Suomi-NPP Conus" \
+                or self.model == "Nucaps Metop A Alaska" \
+                or self.model == "Nucaps Metop A Caribbean" \
+                or self.model == "Nucaps Metop A Conus" \
+                or self.model == "Nucaps Metop B Alaska" \
+                or self.model == "Nucaps Metop B Caribbean" \
+                or self.model == "Nucaps Metop B Conus" \
+                or self.model == "Nucaps Metop C Alaska" \
+                or self.model == "Nucaps Metop C Caribbean" \
+                or self.model == "Nucaps Metop C Conus":
                 self.run_dropdown.clear()
                 self.run_dropdown.setDisabled(True)
 
@@ -702,6 +722,35 @@ class Picker(QWidget):
         :return:
         """
 
+        # JTS - Retrieve the cloud top pressure and fraction values from the CSV.
+        if self.model == "Nucaps NOAA 20 Alaska" \
+            or self.model == "Nucaps NOAA 20 Caribbean" \
+            or self.model == "Nucaps NOAA 20 Conus" \
+            or self.model == "Nucaps Suomi-NPP Alaska" \
+            or self.model == "Nucaps Suomi-NPP Caribbean" \
+            or self.model == "Nucaps Suomi-NPP Conus" \
+            or self.model == "Nucaps Metop A Alaska" \
+            or self.model == "Nucaps Metop A Caribbean" \
+            or self.model == "Nucaps Metop A Conus" \
+            or self.model == "Nucaps Metop B Alaska" \
+            or self.model == "Nucaps Metop B Caribbean" \
+            or self.model == "Nucaps Metop B Conus" \
+            or self.model == "Nucaps Metop C Alaska" \
+            or self.model == "Nucaps Metop C Caribbean" \
+            or self.model == "Nucaps Metop C Conus":
+            self.ctf_low = self.loc['ctf_low']
+            self.ctf_high = self.loc['ctf_high']
+            self.ctp_low = self.loc['ctp_low']
+            self.ctp_high = self.loc['ctp_high']
+        else:
+            # Ignore these csv headers if non-NUCAPS data source
+            self.ctf_low = None
+            self.ctf_high = None
+            self.ctp_low = None
+            self.ctp_high = None
+
+        # print(f'ctf_low: {self.ctf_low}, ctf_high: {self.ctf_high}, ctp_low: {self.ctp_low}, ctp_high: {self.ctp_high}')
+
         logging.debug("Calling full_gui.skewApp")
 
         failure = False
@@ -791,6 +840,8 @@ class Picker(QWidget):
 
             raise exc
 
+        return self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high
+
     def skewAppClosed(self):
         """
         Handles the user closing the SPC window.
@@ -802,17 +853,6 @@ class Picker(QWidget):
             self.skew.activateWindow()
             self.skew.setFocus()
             self.skew.raise_()
-
-            try:
-                # JTS - Retrieve the cloud top pressure and fraction values from the CSV.
-                self.ctf_low = self.loc['ctf_low']
-                self.ctf_high = self.loc['ctf_high']
-                self.ctp_low = self.loc['ctp_low']
-                self.ctp_high = self.loc['ctp_high']
-            except:
-                # Ignore these csv headers if non-NUCAPS data source
-                pass
-        return self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high
 
     def keyPressEvent(self, e):
         if e.key() == 61 or e.key() == 45:
