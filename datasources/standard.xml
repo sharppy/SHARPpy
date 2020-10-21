@@ -126,7 +126,7 @@
             <points csv="npp_caribbean.csv" />
         </outlet>
     </datasource>
-    <datasource name="Nucaps Suomi-NPP Alaska" ensemble="false" observed="true">
+    <datasource name="Nucaps Suomi-NPP Conus" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/npp/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="npp_conus.csv" />
@@ -186,3 +186,4 @@
             <points csv="m03_conus.csv" />
         </outlet>
     </datasource-->
+</sourcelist>
