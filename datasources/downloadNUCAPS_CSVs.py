@@ -4,16 +4,13 @@ import urllib.request as request
 import numpy as np
 import glob
 import os
-import requests
-from bs4 import BeautifulSoup
-import re
 
 # Define the home directory where the .csv files will be stored.
 HIDDEN_DSDIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
-PROGRAM_DSDIR = os.path.abspath(os.curdir)
+SHARPPY_DIR = os.path.abspath(os.curdir)
 
-# Download CSVs for all satellites and regions to PROGRAM_DSDIR.
-def downloadCSV():
+# Download CSVs for all satellites and regions to SHARPPY_DIR.
+def downloadCSVs():
     # Download Alaska, Caribbean and CONUS CSVs for NOAA-20.
     with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/j01/csv/j01_alaska.csv')) as r:
         with open('j01_alaska.csv', 'wb') as f:
@@ -79,26 +76,29 @@ def downloadCSV():
     #     with open('m03_conus.csv', 'wb') as f:
     #         shutil.copyfileobj(r, f)
 
-## MAIN ##
-downloadCSV()
+def copyCSVs():
+    # Copy CSVs from SHARPPY_DIR to HIDDEN_DSDIR
+    j01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "j01*.csv"))
+    for j01csv in j01CSVs:
+        j01_filename = j01csv.split('/')[-1]
+        shutil.move(j01csv, f'{HIDDEN_DSDIR}/{j01_filename}')
 
-# Copy CSVs from PROGRAM_DSDIR to HIDDEN_DSDIR
-j01CSVs = glob.glob(os.path.join(PROGRAM_DSDIR, "j01*.csv"))
-for j01csv in j01CSVs:
-    shutil.copy(j01csv, os.path.join(HIDDEN_DSDIR, os.path.basename(j01csv)))
+    nppCSVs = glob.glob(os.path.join(SHARPPY_DIR, "npp*.csv"))
+    for nppcsv in nppCSVs:
+        npp_filename = nppcsv.split('/')[-1]
+        shutil.move(nppcsv, f'{HIDDEN_DSDIR}/{npp_filename}')
 
-nppCSVs = glob.glob(os.path.join(PROGRAM_DSDIR, "npp*.csv"))
-for nppcsv in nppCSVs:
-    shutil.copy(nppcsv, os.path.join(HIDDEN_DSDIR, os.path.basename(nppcsv)))
-
-# m01CSVs = glob.glob(os.path.join(PROGRAM_DSDIR, "m01*.csv"))
-# for m01csv in m01CSVs:
-#     shutil.copy(m01csv, os.path.join(HIDDEN_DSDIR, os.path.basename(m01csv)))
-#
-# m02CSVs = glob.glob(os.path.join(PROGRAM_DSDIR, "m02*.csv"))
-# for m02csv in m02CSVs:
-#     shutil.copy(m02csv, os.path.join(HIDDEN_DSDIR, os.path.basename(m02csv)))
-#
-# m03CSVs = glob.glob(os.path.join(PROGRAM_DSDIR, "m03*.csv"))
-# for m03csv in m03CSVs:
-#     shutil.copy(m03csv, os.path.join(HIDDEN_DSDIR, os.path.basename(m03csv)))
+    # m01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m01*.csv"))
+    # for m01csv in m01CSVs:
+    #     m01_filename = m01csv.split('/')[-1]
+    #     shutil.move(m01csv, f'{HIDDEN_DSDIR}/{m01_filename}')
+    #
+    # m02CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m02*.csv"))
+    # for m02csv in m02CSVs:
+    #     m02_filename = m02csv.split('/')[-1]
+    #     shutil.move(m02csv, f'{HIDDEN_DSDIR}/{m02_filename}')
+    #
+    # m03CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m03*.csv"))
+    # for m03csv in m03CSVs:
+    #     m03_filename = m03csv.split('/')[-1]
+    #     shutil.move(m03csv, f'{HIDDEN_DSDIR}/{m03_filename}')

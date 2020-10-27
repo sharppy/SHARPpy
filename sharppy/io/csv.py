@@ -1,3 +1,15 @@
+# JTS
+import shutil
+from contextlib import closing
+import urllib.request as request
+import numpy as np
+import glob
+import os
+from datasources.downloadNUCAPS_CSVs import *
+
+# Download the NUCAPS CSVs before SharpPy tries loading them.
+downloadCSVs()
+copyCSVs()
 
 def loadCSV(csv_file_name):
     csv = []
