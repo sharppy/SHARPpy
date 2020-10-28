@@ -218,7 +218,6 @@ class Picker(QWidget):
         Construct the main picker widget: a means for interactively selecting
         which sounding profile(s) to view.
         """
-
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
@@ -721,35 +720,39 @@ class Picker(QWidget):
         and magical funtimes.
         :return:
         """
-
-        # JTS - Retrieve the cloud top pressure and fraction values from the CSV.
-        if self.model == "Nucaps NOAA 20 Alaska" \
-            or self.model == "Nucaps NOAA 20 Caribbean" \
-            or self.model == "Nucaps NOAA 20 Conus" \
-            or self.model == "Nucaps Suomi-NPP Alaska" \
-            or self.model == "Nucaps Suomi-NPP Caribbean" \
-            or self.model == "Nucaps Suomi-NPP Conus" \
-            or self.model == "Nucaps Metop A Alaska" \
-            or self.model == "Nucaps Metop A Caribbean" \
-            or self.model == "Nucaps Metop A Conus" \
-            or self.model == "Nucaps Metop B Alaska" \
-            or self.model == "Nucaps Metop B Caribbean" \
-            or self.model == "Nucaps Metop B Conus" \
-            or self.model == "Nucaps Metop C Alaska" \
-            or self.model == "Nucaps Metop C Caribbean" \
-            or self.model == "Nucaps Metop C Conus":
-            self.ctf_low = self.loc['ctf_low']
-            self.ctf_high = self.loc['ctf_high']
-            self.ctp_low = self.loc['ctp_low']
-            self.ctp_high = self.loc['ctp_high']
-        else:
-            # Ignore these csv headers if non-NUCAPS data source
-            self.ctf_low = None
-            self.ctf_high = None
-            self.ctp_low = None
-            self.ctp_high = None
-
-        # print(f'ctf_low: {self.ctf_low}, ctf_high: {self.ctf_high}, ctp_low: {self.ctp_low}, ctp_high: {self.ctp_high}')
+        # JTS
+        # global ctf_low
+        # global ctf_high
+        # global ctp_low
+        # global ctp_high
+        #
+        # if self.model == "Nucaps NOAA 20 Alaska" \
+        #     or self.model == "Nucaps NOAA 20 Caribbean" \
+        #     or self.model == "Nucaps NOAA 20 Conus" \
+        #     or self.model == "Nucaps Suomi-NPP Alaska" \
+        #     or self.model == "Nucaps Suomi-NPP Caribbean" \
+        #     or self.model == "Nucaps Suomi-NPP Conus" \
+        #     or self.model == "Nucaps Metop A Alaska" \
+        #     or self.model == "Nucaps Metop A Caribbean" \
+        #     or self.model == "Nucaps Metop A Conus" \
+        #     or self.model == "Nucaps Metop B Alaska" \
+        #     or self.model == "Nucaps Metop B Caribbean" \
+        #     or self.model == "Nucaps Metop B Conus" \
+        #     or self.model == "Nucaps Metop C Alaska" \
+        #     or self.model == "Nucaps Metop C Caribbean" \
+        #     or self.model == "Nucaps Metop C Conus":
+        #     ctf_low = self.loc['ctf_low']
+        #     ctf_high = self.loc['ctf_high']
+        #     ctp_low = self.loc['ctp_low']
+        #     ctp_high = self.loc['ctp_high']
+        # else:
+        #     # Ignore these csv headers if non-NUCAPS data source
+        #     ctf_low = None
+        #     ctf_high = None
+        #     ctp_low = None
+        #     ctp_high = None
+        #
+        # print(f'ctf_low: {ctf_low}, ctf_high: {ctf_high}, ctp_low: {ctp_low}, ctp_high: {ctp_high}')
 
         logging.debug("Calling full_gui.skewApp")
 
@@ -839,8 +842,6 @@ class Picker(QWidget):
             print("There was an exception:", exc)
 
             raise exc
-
-        return self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high
 
     def skewAppClosed(self):
         """

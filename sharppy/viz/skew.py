@@ -499,12 +499,6 @@ class plotSkewT(backgroundSkewT):
         reset.triggered.connect(lambda: self.reset.emit(['tmpc', 'dwpc']))
         self.popupmenu.addAction(reset)
 
-        # JTS - Execute skewApp
-        print('Skew-T Launched')
-        # self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high = self.picker.skewApp()
-        # self.ctf_low, self.ctf_high, self.ctp_low, self.ctp_high = self.Picker(self.config)
-        # print(f'ctf_low: {self.ctf_low}, ctf_high: {self.ctf_high}, ctp_low: {self.ctp_low}, ctp_high: {self.ctp_high}')
-
     def getStyleSheet(self, color, fsize=11):
         rgb_string = self.bg_color.name()
         readout_stylesheet = "QLabel {" + \
@@ -1251,22 +1245,21 @@ class plotSkewT(backgroundSkewT):
     #     qp.setFont(self.hght_font)
     #
     #     # Plot CTP_Low
-    #     if tab.utils.QC(self.ctp_low):
-    #         y = self.originy + self.pres_to_pix(self.ctp_low) / self.scale
+    #     if tab.utils.QC(ctp_low):
+    #         y = self.originy + self.pres_to_pix(ctp_low) / self.scale
     #         pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
     #         qp.setPen(pen)
     #         qp.drawLine(x[0], y, x[1], y)
     #         rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
-    #         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.ctf_low + "%")
+    #         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + ctf_low + "%")
     #     # Plot CTP_High
-    #     if tab.utils.QC(self.ctp_high):
-    #         y = self.originy + self.pres_to_pix(self.ctp_high) / self.scale
+    #     if tab.utils.QC(ctp_high):
+    #         y = self.originy + self.pres_to_pix(ctp_high) / self.scale
     #         pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
     #         qp.setPen(pen)
     #         qp.drawLine(x[0], y, x[1], y)
     #         rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
-    #         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.ctf_high + "%")
-
+    #         qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + ctf_high + "%")
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49
