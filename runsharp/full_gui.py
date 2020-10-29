@@ -25,6 +25,7 @@ from sharppy.viz.preferences import PrefDialog
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy._version import get_versions
 import sys
+import glob as glob
 import os
 import numpy as np
 import warnings
@@ -721,38 +722,53 @@ class Picker(QWidget):
         :return:
         """
         # JTS
-        # global ctf_low
-        # global ctf_high
-        # global ctp_low
-        # global ctp_high
-        #
-        # if self.model == "Nucaps NOAA 20 Alaska" \
-        #     or self.model == "Nucaps NOAA 20 Caribbean" \
-        #     or self.model == "Nucaps NOAA 20 Conus" \
-        #     or self.model == "Nucaps Suomi-NPP Alaska" \
-        #     or self.model == "Nucaps Suomi-NPP Caribbean" \
-        #     or self.model == "Nucaps Suomi-NPP Conus" \
-        #     or self.model == "Nucaps Metop A Alaska" \
-        #     or self.model == "Nucaps Metop A Caribbean" \
-        #     or self.model == "Nucaps Metop A Conus" \
-        #     or self.model == "Nucaps Metop B Alaska" \
-        #     or self.model == "Nucaps Metop B Caribbean" \
-        #     or self.model == "Nucaps Metop B Conus" \
-        #     or self.model == "Nucaps Metop C Alaska" \
-        #     or self.model == "Nucaps Metop C Caribbean" \
-        #     or self.model == "Nucaps Metop C Conus":
-        #     ctf_low = self.loc['ctf_low']
-        #     ctf_high = self.loc['ctf_high']
-        #     ctp_low = self.loc['ctp_low']
-        #     ctp_high = self.loc['ctp_high']
-        # else:
-        #     # Ignore these csv headers if non-NUCAPS data source
-        #     ctf_low = None
-        #     ctf_high = None
-        #     ctp_low = None
-        #     ctp_high = None
-        #
-        # print(f'ctf_low: {ctf_low}, ctf_high: {ctf_high}, ctp_low: {ctp_low}, ctp_high: {ctp_high}')
+        srcid = self.loc['srcid']
+        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+
+        # Retrieve cloud top pressure/fraction values.
+        if self.model == "Nucaps NOAA 20 Alaska" \
+            or self.model == "Nucaps NOAA 20 Caribbean" \
+            or self.model == "Nucaps NOAA 20 Conus" \
+            or self.model == "Nucaps Suomi-NPP Alaska" \
+            or self.model == "Nucaps Suomi-NPP Caribbean" \
+            or self.model == "Nucaps Suomi-NPP Conus" \
+            or self.model == "Nucaps Metop A Alaska" \
+            or self.model == "Nucaps Metop A Caribbean" \
+            or self.model == "Nucaps Metop A Conus" \
+            or self.model == "Nucaps Metop B Alaska" \
+            or self.model == "Nucaps Metop B Caribbean" \
+            or self.model == "Nucaps Metop B Conus" \
+            or self.model == "Nucaps Metop C Alaska" \
+            or self.model == "Nucaps Metop C Caribbean" \
+            or self.model == "Nucaps Metop C Conus":
+            ctf_low = self.loc['ctf_low']
+            ctf_high = self.loc['ctf_high']
+            ctp_low = self.loc['ctp_low']
+            ctp_high = self.loc['ctp_high']
+
+            # Create temporary text file that will store the above values.
+            cloudValues = []
+            cloudValues.append(f'{srcid} {ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+
+            file = open(pathCloudFile, "w")
+            for line in cloudValues:
+                file.write(f'{line}\n')
+            file.close()
+        else:
+            # Ignore these csv headers if non-NUCAPS data source
+            ctf_low = -99999
+            ctf_high = -99999
+            ctp_low = 3000
+            ctp_high = 3000
+
+            # Create temporary text file that will store the above values.
+            cloudValues = []
+            cloudValues.append(f'{srcid} {ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+
+            file = open(pathCloudFile, "w")
+            for line in cloudValues:
+                file.write(f'{line}\n')
+            file.close()
 
         logging.debug("Calling full_gui.skewApp")
 
@@ -848,6 +864,12 @@ class Picker(QWidget):
         Handles the user closing the SPC window.
         """
         self.skew = None
+
+        # JTS - Remove all temporary cloudTopValues text files when the SPC window is closed.
+        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+        isExistCloudFile = os.path.exists(pathCloudFile)
+        if isExistCloudFile==True:
+            os.remove(pathCloudFile)
 
     def focusSkewApp(self):
         if self.skew is not None:
