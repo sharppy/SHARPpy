@@ -26,7 +26,6 @@ from sharppy.viz.SPCWindow import SPCWindow
 from sharppy._version import get_versions
 import sys
 import glob as glob
-import os
 import numpy as np
 import warnings
 import sutils.frozenutils as frozenutils
@@ -722,7 +721,7 @@ class Picker(QWidget):
         :return:
         """
         # JTS
-        srcid = self.loc['srcid']
+        print(f'full_gui.py -> New profile retrieved from the internet.')
         pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
 
         # Retrieve cloud top pressure/fraction values.
@@ -748,7 +747,7 @@ class Picker(QWidget):
 
             # Create temporary text file that will store the above values.
             cloudValues = []
-            cloudValues.append(f'{srcid} {ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
 
             file = open(pathCloudFile, "w")
             for line in cloudValues:
@@ -763,7 +762,7 @@ class Picker(QWidget):
 
             # Create temporary text file that will store the above values.
             cloudValues = []
-            cloudValues.append(f'{srcid} {ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
 
             file = open(pathCloudFile, "w")
             for line in cloudValues:
@@ -905,7 +904,6 @@ class Picker(QWidget):
         logging.debug('Get the profiles from the decoded file.')
         profs = dec.getProfiles()
         stn_id = dec.getStnId()
-
         return profs, stn_id
 
     def hasConnection(self):

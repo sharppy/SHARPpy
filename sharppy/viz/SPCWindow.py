@@ -985,7 +985,6 @@ class SPCWindow(QMainWindow):
             return "%s (%s)" % (pc_loc, pc_model)
         else:
             # Keep the default cycle time for the non-NUCAPS data.
-            pass
             return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
 
     def interpProf(self):

@@ -12,7 +12,7 @@ from qtpy.QtOpenGL import *
 from sutils.utils import total_seconds
 import logging
 from datetime import datetime, timedelta
-from runsharp.full_gui import *
+import os
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
 
@@ -1246,36 +1246,25 @@ class plotSkewT(backgroundSkewT):
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         qp.setFont(self.hght_font)
 
-        # Retrieve cloud top pressure/fraction from temporary text file.
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
-        file = open(pathCloudFile)
-        line = file.readlines()
+        print(f'skew.py -> cloud top values replotting...')
 
-        # Remove the list surrounding the values.
-        line = line[0]
-
-        # Split the string on whitespace.
-        ctf_low = line.split(' ')[1]
-        ctf_high = line.split(' ')[2]
-        ctp_low = line.split(' ')[3]
-        ctp_high = line.split(' ')[4]
-
-        # Plot CTP_Low
-        if tab.utils.QC(int(ctp_low)):
-            y = self.originy + self.pres_to_pix(int(ctp_low)) / self.scale
-            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
-            qp.setPen(pen)
-            qp.drawLine(x[0], y, x[1], y)
-            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
-            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(ctf_low) + "%")
         # Plot CTP_High
-        if tab.utils.QC(int(ctp_high)):
-            y = self.originy + self.pres_to_pix(int(ctp_high)) / self.scale
+        if tab.utils.QC(self.pcl.ctp_high):
+            y = self.originy + self.pres_to_pix(self.pcl.ctp_high) / self.scale
             pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
-            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(ctf_high) + "%")
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_high + "%")
+        # Plot CTP_Low
+        if tab.utils.QC(self.pcl.ctp_low):
+            y = self.originy + self.pres_to_pix(self.pcl.ctp_low) / self.scale
+            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_low + "%")
+
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49
