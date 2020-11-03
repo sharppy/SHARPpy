@@ -653,6 +653,11 @@ class Picker(QWidget):
                             self.skew.closeIfEmpty()
                         raise IOError(
                             "No outlet found with the requested profile!")
+                        # JTS - Cleanup: remove pathCloudFile if profile doesn't load for any reason.
+                        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+                        isExistCloudFile = os.path.exists(pathCloudFile)
+                        if isExistCloudFile==True:
+                            os.remove(pathCloudFile)
                     except Exception as e:
                         if debug:
                             print(traceback.format_exc())
@@ -721,7 +726,6 @@ class Picker(QWidget):
         :return:
         """
         # JTS
-        print(f'full_gui.py -> New profile retrieved from the internet.')
         pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
 
         # Retrieve cloud top pressure/fraction values.
@@ -863,12 +867,6 @@ class Picker(QWidget):
         Handles the user closing the SPC window.
         """
         self.skew = None
-
-        # JTS - Remove all temporary cloudTopValues text files when the SPC window is closed.
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
-        isExistCloudFile = os.path.exists(pathCloudFile)
-        if isExistCloudFile==True:
-            os.remove(pathCloudFile)
 
     def focusSkewApp(self):
         if self.skew is not None:

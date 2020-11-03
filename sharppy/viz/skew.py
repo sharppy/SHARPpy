@@ -14,9 +14,9 @@ import logging
 from datetime import datetime, timedelta
 import os
 
-HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
-
 __all__ = ['backgroundSkewT', 'plotSkewT']
+
+HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
 
 class backgroundSkewT(QWidget):
     clicked = QtCore.Signal(dict)
@@ -1058,6 +1058,12 @@ class plotSkewT(backgroundSkewT):
 
         qp.end()
 
+        # JTS - Cleanup: remove pathCloudFile after everything draws in the SPC window.
+        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+        isExistCloudFile = os.path.exists(pathCloudFile)
+        if isExistCloudFile==True:
+            os.remove(pathCloudFile)
+
     def drawBarbs(self, prof, qp, color=None):
         logging.debug("Drawing the wind barbs on the Skew-T.")
         if color is None:
@@ -1240,13 +1246,11 @@ class plotSkewT(backgroundSkewT):
                 continue
 
     def draw_cloud_top_pressure_levels(self, qp): # JTS added 9/1/20
-        logging.debug("Drawing the cloud top pressure layers (CTP_Low, CTP_High).")
+        logging.debug("Drawing the cloud top pressure layers.")
         qp.setClipping(True)
         xbounds = [20,24]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         qp.setFont(self.hght_font)
-
-        print(f'skew.py -> cloud top values replotting...')
 
         # Plot CTP_High
         if tab.utils.QC(self.pcl.ctp_high):

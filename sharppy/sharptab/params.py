@@ -366,30 +366,32 @@ class Parcel(object):
         self.cappres = ma.masked # Cap strength pressure (mb)
         self.bmin = ma.masked # Buoyancy minimum in profile (C)
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
-        for kw in kwargs: setattr(self, kw, kwargs.get(kw))
-
-        # JTS
         self.ctf_low = ma.masked # Cloud top fraction: Low level (%)
         self.ctf_high = ma.masked # Cloud top fraction: High level (%)
         self.ctp_low = ma.masked # Cloud top pressure: Low level (mb)
         self.ctp_high = ma.masked # Cloud top pressure: High level (mb)
+        for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
-        # Find cloud top pressure/fraction from temporary text file.
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
-        file = open(pathCloudFile)
-        line = file.readlines()
+        # JTS - Find cloud top pressure/fraction from temporary text file.
+        try:
+            # This block gets executed only when new profiles are loaded to the SPC window.
+            pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+            file = open(pathCloudFile)
+            line = file.readlines()
 
-        # Remove the list surrounding the values.
-        line = line[0]
+            # Remove the list surrounding the values.
+            line = line[0]
 
-        # Assign local cloud top values to the parcel profile object.
-        self.ctf_low = str(line.split(' ')[0])
-        self.ctf_high = str(line.split(' ')[1])
-        self.ctp_low = int(line.split(' ')[2])
-        self.ctp_high = int(line.split(' ')[3])
-
-        print(f'params.py -> Old profile collection object loaded from cache')
-
+            # Assign local cloud top values to the parcel profile object.
+            self.ctf_low = str(line.split(' ')[0])
+            self.ctf_high = str(line.split(' ')[1])
+            self.ctp_low = int(line.split(' ')[2])
+            self.ctp_high = int(line.split(' ')[3])
+        except:
+            # This block gets executed only when Interpolate Focused Profile is selected in the SPC window.
+            # Smoothing the profile could theoretically cause NUCAPS-derived cloud top fraction to be at a different height.
+            # Thus not displayed.
+            pass
 
 def hgz(prof):
     '''
