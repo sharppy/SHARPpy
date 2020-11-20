@@ -33,7 +33,7 @@
 # Turning off Test Script for now  
 #test_script:
 #  - sharppy examples/data/14061619.OAX
-  - pytest -v
+#  - pytest -v
 
 #after_test:
 #  - "conda list"
