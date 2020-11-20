@@ -1,11 +1,11 @@
 # MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
-trigger:
+#trigger:
   #branches:
   #  include:
   #    - master
-  tags:
-    include:
-      - v*
+  #tags:
+  #  include:
+  #    - v*
 # Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
