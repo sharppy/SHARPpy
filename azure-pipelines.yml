@@ -167,7 +167,7 @@ steps:
     action: 'edit' # Options: create, edit, discard
     target: '$(build.sourceVersion)' # Required when action == create || action == edit
     tagSource: 'manual' # Required when action == create. Options: auto, manual
-    tag: azure-tes # Required when action == edit || action == discard || tagSource == manual
+    tag: azure-te # Required when action == edit || action == discard || tagSource == manual
     title: # Optional
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
