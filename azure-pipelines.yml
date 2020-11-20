@@ -1,8 +1,8 @@
 # MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
 trigger:
-  branches:
-    include:
-      - master
+  #branches:
+  #  include:
+  #    - master
   tags:
     include:
       - v*
