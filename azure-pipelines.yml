@@ -1,8 +1,8 @@
 # MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
 trigger:
-  branches:
-    include:
-      - master
+  #branches:
+  #  include:
+  #    - master
   tags:
     include:
       - v*
@@ -162,7 +162,7 @@ steps:
 # Deploy to Github Releases
 - task: GithubRelease@0
   inputs:
-    gitHubConnection: releases
+    gitHubConnection: sharppy
     repositoryName: sharppy/SHARPpy
     action: 'edit' # Options: create, edit, discard
     target: '$(build.sourceVersion)' # Required when action == create || action == edit
