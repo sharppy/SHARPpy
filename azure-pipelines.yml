@@ -1,11 +1,11 @@
 # MUST CHANGE TRIGGER SO BUILDS HAPPEN ON OTHER BRANCHES AND PULL REQUESTS
-trigger:
-  branches:
-    include:
-      - master
-  tags:
-    include:
-      - v*
+#trigger:
+  #branches:
+  #  include:
+  #    - master
+  #tags:
+  #  include:
+  #    - v*
 # Setup build strategy (listing the various VMs and configurations we'll use)
 strategy:
   matrix:
@@ -162,12 +162,12 @@ steps:
 # Deploy to Github Releases
 - task: GithubRelease@0
   inputs:
-    gitHubConnection: releases
+    gitHubConnection: wblumberg
     repositoryName: sharppy/SHARPpy
     action: 'edit' # Options: create, edit, discard
     target: '$(build.sourceVersion)' # Required when action == create || action == edit
     tagSource: 'manual' # Required when action == create. Options: auto, manual
-    tag: azure-test # Required when action == edit || action == discard || tagSource == manual
+    tag: azure-t # Required when action == edit || action == discard || tagSource == manual
     title: # Optional
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
