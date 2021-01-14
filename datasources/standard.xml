@@ -4,7 +4,7 @@
         <outlet name="PSU" url="ftp://ftp.meteo.psu.edu/pub/bufkit/GFS/{cycle}/gfs3_{srcid}.buf" format="bufkit" >
             <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24" start="-" end="-"/>
             <points csv="gfs.csv" />
-        </outlet> 
+        </outlet>
         <outlet name="IEM" url="http://mtarchive.geol.iastate.edu/{year}/{month}/{day}/bufkit/{cycle}/gfs/gfs3_{srcid}.buf" format="bufkit" >
             <time first="0" range="120" delta="1" offset="0" delay="4" cycle="6" archive="24" start="2010/12/30" end="now"/>
             <points csv="gfs.csv" />
@@ -96,4 +96,94 @@
             <points csv="sharp.csv" />
         </outlet>
     </datasource>
+    <datasource name="Nucaps NOAA 20 Alaska" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/j01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="j01_alaska.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="Nucaps NOAA 20 Caribbean" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/j01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="j01_caribbean.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="Nucaps NOAA 20 Conus" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/j01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="j01_conus.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="Nucaps Suomi-NPP Alaska" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/npp/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="npp_alaska.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="Nucaps Suomi-NPP Caribbean" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/npp/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="npp_caribbean.csv" />
+        </outlet>
+    </datasource>
+    <datasource name="Nucaps Suomi-NPP Conus" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/npp/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="npp_conus.csv" />
+        </outlet>
+    </datasource>
+    <!--datasource name="Nucaps Metop A Alaska" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m01_alaska.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop A Caribbean" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m01_caribbean.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop A Conus" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m01/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m01_conus.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop B Alaska" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m02/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m02_alaska.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop B Caribbean" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m02/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m02_caribbean.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop B Conus" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m02/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m02_conus.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop C Alaska" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m03/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m03_alaska.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop C Caribbean" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m03/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m03_caribbean.csv" />
+        </outlet>
+    </datasource-->
+    <!--datasource name="Nucaps Metop C Conus" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m03/txt/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m03_conus.csv" />
+        </outlet>
+    </datasource-->
 </sourcelist>

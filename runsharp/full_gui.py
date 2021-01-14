@@ -25,7 +25,7 @@ from sharppy.viz.preferences import PrefDialog
 from sharppy.viz.SPCWindow import SPCWindow
 from sharppy._version import get_versions
 import sys
-import os
+import glob as glob
 import numpy as np
 import warnings
 import sutils.frozenutils as frozenutils
@@ -40,7 +40,7 @@ if not os.path.isdir(HOME_DIR):
 
 if os.path.exists(LOG_FILE):
     log_file_size = os.path.getsize(LOG_FILE)
-    MAX_FILE_SIZE = 1024 * 1024 
+    MAX_FILE_SIZE = 1024 * 1024
     if log_file_size > MAX_FILE_SIZE:
         # Delete the log file as it's grown too large
         os.remove(LOG_FILE)
@@ -121,7 +121,7 @@ def versioning_info(include_sharppy=False):
     txt += "Numpy version: " + str(np.__version__) + '\n'
     txt += "Python version: " + str(platform.python_version()) + '\n'
     txt += "PySide/Qt version: " + str(qtpy.QtCore.__version__)
-    return txt 
+    return txt
 
 class crasher(object):
     def __init__(self, **kwargs):
@@ -191,7 +191,7 @@ class Calendar(QCalendarWidget):
             color = QColor('#808080')
             color.setAlphaF(0.5)
             painter.fillRect(rect, color)
- 
+
     def setLatestAvailable(self, dt_avail):
         qdate_avail = QDate(dt_avail.year, dt_avail.month, dt_avail.day)
         #self.setMaximumDate(qdate_avail)
@@ -218,7 +218,6 @@ class Picker(QWidget):
         Construct the main picker widget: a means for interactively selecting
         which sounding profile(s) to view.
         """
-
         super(Picker, self).__init__(**kwargs)
         self.data_sources = data_source.loadDataSources()
         self.config = config
@@ -313,6 +312,7 @@ class Picker(QWidget):
         except ValueError as e:
             logging.error("Run dropdown is missing its times ... ?")
             logging.exception(e)
+
         # connect the click actions to functions that do stuff
         self.model_dropdown.activated.connect(self.get_model)
         self.map_dropdown.activated.connect(self.get_map)
@@ -444,6 +444,27 @@ class Picker(QWidget):
         self.all_profs.setText("Select All")
         self.select_flag = False
 
+        # JTS - Remove the forecast times under the "Select Forecast Time" section for NUCAPS.
+        if self.model == "Nucaps NOAA 20 Alaska" \
+            or self.model == "Nucaps NOAA 20 Caribbean" \
+            or self.model == "Nucaps NOAA 20 Conus" \
+            or self.model == "Nucaps Suomi-NPP Alaska" \
+            or self.model == "Nucaps Suomi-NPP Caribbean" \
+            or self.model == "Nucaps Suomi-NPP Conus" \
+            or self.model == "Nucaps Metop A Alaska" \
+            or self.model == "Nucaps Metop A Caribbean" \
+            or self.model == "Nucaps Metop A Conus" \
+            or self.model == "Nucaps Metop B Alaska" \
+            or self.model == "Nucaps Metop B Caribbean" \
+            or self.model == "Nucaps Metop B Conus" \
+            or self.model == "Nucaps Metop C Alaska" \
+            or self.model == "Nucaps Metop C Caribbean" \
+            or self.model == "Nucaps Metop C Conus":
+            self.date_label.setDisabled(True)
+            self.all_profs.setDisabled(True)
+            self.profile_list.clear()
+            self.profile_list.addItem("Current Data")
+
     def update_datasource_dropdown(self, selected="Observed"):
         """
         Updates the dropdown menu that contains the available
@@ -475,7 +496,7 @@ class Picker(QWidget):
             url = self.data_sources[self.model].getURLList(
                 outlet="Local")[0].replace("file://", "")
 
-            def getTimes(): 
+            def getTimes():
                 return self.data_sources[self.model].getAvailableTimes(url)
         else:
             def getTimes():
@@ -544,6 +565,24 @@ class Picker(QWidget):
                 self.run_dropdown.update()
                 self.run_dropdown.setEnabled(False)
 
+            # JTS - Remove the model/obs cycle times from the run dropdown menu for NUCAPS.
+            if self.model == "Nucaps NOAA 20 Alaska" \
+                or self.model == "Nucaps NOAA 20 Caribbean" \
+                or self.model == "Nucaps NOAA 20 Conus" \
+                or self.model == "Nucaps Suomi-NPP Alaska" \
+                or self.model == "Nucaps Suomi-NPP Caribbean" \
+                or self.model == "Nucaps Suomi-NPP Conus" \
+                or self.model == "Nucaps Metop A Alaska" \
+                or self.model == "Nucaps Metop A Caribbean" \
+                or self.model == "Nucaps Metop A Conus" \
+                or self.model == "Nucaps Metop B Alaska" \
+                or self.model == "Nucaps Metop B Caribbean" \
+                or self.model == "Nucaps Metop B Conus" \
+                or self.model == "Nucaps Metop C Alaska" \
+                or self.model == "Nucaps Metop C Caribbean" \
+                or self.model == "Nucaps Metop C Conus":
+                self.run_dropdown.clear()
+                self.run_dropdown.setDisabled(True)
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
@@ -555,6 +594,7 @@ class Picker(QWidget):
         Change the text of the button based on the user click.
         """
         logging.debug("Calling full_gui.map_link")
+
         if point is None:
             self.loc = None
             self.disp_name = None
@@ -613,6 +653,11 @@ class Picker(QWidget):
                             self.skew.closeIfEmpty()
                         raise IOError(
                             "No outlet found with the requested profile!")
+                        # JTS - Cleanup: remove pathCloudFile if profile doesn't load for any reason.
+                        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+                        isExistCloudFile = os.path.exists(pathCloudFile)
+                        if isExistCloudFile==True:
+                            os.remove(pathCloudFile)
                     except Exception as e:
                         if debug:
                             print(traceback.format_exc())
@@ -680,6 +725,53 @@ class Picker(QWidget):
         and magical funtimes.
         :return:
         """
+        # JTS
+        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+
+        # Retrieve cloud top pressure/fraction values.
+        if self.model == "Nucaps NOAA 20 Alaska" \
+            or self.model == "Nucaps NOAA 20 Caribbean" \
+            or self.model == "Nucaps NOAA 20 Conus" \
+            or self.model == "Nucaps Suomi-NPP Alaska" \
+            or self.model == "Nucaps Suomi-NPP Caribbean" \
+            or self.model == "Nucaps Suomi-NPP Conus" \
+            or self.model == "Nucaps Metop A Alaska" \
+            or self.model == "Nucaps Metop A Caribbean" \
+            or self.model == "Nucaps Metop A Conus" \
+            or self.model == "Nucaps Metop B Alaska" \
+            or self.model == "Nucaps Metop B Caribbean" \
+            or self.model == "Nucaps Metop B Conus" \
+            or self.model == "Nucaps Metop C Alaska" \
+            or self.model == "Nucaps Metop C Caribbean" \
+            or self.model == "Nucaps Metop C Conus":
+            ctf_low = self.loc['ctf_low']
+            ctf_high = self.loc['ctf_high']
+            ctp_low = self.loc['ctp_low']
+            ctp_high = self.loc['ctp_high']
+
+            # Create temporary text file that will store the above values.
+            cloudValues = []
+            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+
+            file = open(pathCloudFile, "w")
+            for line in cloudValues:
+                file.write(f'{line}\n')
+            file.close()
+        else:
+            # Ignore these csv headers if non-NUCAPS data source
+            ctf_low = -99999
+            ctf_high = -99999
+            ctp_low = 3000
+            ctp_high = 3000
+
+            # Create temporary text file that will store the above values.
+            cloudValues = []
+            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+
+            file = open(pathCloudFile, "w")
+            for line in cloudValues:
+                file.write(f'{line}\n')
+            file.close()
 
         logging.debug("Calling full_gui.skewApp")
 
@@ -810,7 +902,6 @@ class Picker(QWidget):
         logging.debug('Get the profiles from the decoded file.')
         profs = dec.getProfiles()
         stn_id = dec.getStnId()
-
         return profs, stn_id
 
     def hasConnection(self):
@@ -1033,7 +1124,7 @@ class Main(QMainWindow):
         txt += "\n\nContribute: https://github.com/sharppy/SHARPpy/"
         msgBox.setText(txt)
         msgBox.exec_()
-        
+
         if msgBox.clickedButton() == documentationButton:
             QDesktopServices.openUrl(QUrl('http://sharppy.github.io/SHARPpy/'))
         elif msgBox.clickedButton() == githubButton:
@@ -1120,7 +1211,7 @@ def search_and_plotDB(model, station, datetime, close=True, output='./'):
         return main_win
 
     string = OKGREEN + "Creating image for station %s using data source %s at time %s ..." + ENDC
-    print( string % (station, model, datetime.strftime('%Y%m%d/%H%M')))  
+    print( string % (station, model, datetime.strftime('%Y%m%d/%H%M')))
     main_win.picker.skew.spc_widget.pixmapToFile(output + datetime.strftime('%Y%m%d.%H%M_' + model + '.png'))
     if close:
         main_win.picker.skew.close()
@@ -1136,14 +1227,14 @@ def test(fn):
     win.close()
 
 def parseArgs():
-    desc = """This binary launches the SHARPpy Picker and GUI from the command line.  When 
-           run from the command line without arguments, this binary simply launches the Picker 
-           and loads in the various datasets within the user's ~/.sharppy directory.  When the 
+    desc = """This binary launches the SHARPpy Picker and GUI from the command line.  When
+           run from the command line without arguments, this binary simply launches the Picker
+           and loads in the various datasets within the user's ~/.sharppy directory.  When the
            --debug flag is set, the GUI is run in debug mode.
 
-           When a set of files are passed as a command line argument, the program will 
+           When a set of files are passed as a command line argument, the program will
            generate images of the SHARPpy GUI for each sounding.  Soundings can be overlaid
-           on top of one another if the collect flag is set.  In addition, data from the 
+           on top of one another if the collect flag is set.  In addition, data from the
            datasources can be plotted using the datasource, station, and datetime arguments."""
     data_sources = [key for key in data_source.loadDataSources().keys()]
     ep = "Available Datasources: " + ', '.join(data_sources)
@@ -1161,21 +1252,21 @@ def parseArgs():
     #                help="do not close the GUI after viewing the image")
     group = ap.add_argument_group("datasource access arguments")
 
-    group.add_argument('--datasource', dest='ds', type=str, 
+    group.add_argument('--datasource', dest='ds', type=str,
                     help="the name of the datasource to search")
     group.add_argument('--station', dest='stn', type=str,
                     help="the name of the station to plot (ICAO, IATA)")
-    group.add_argument('--datetime', dest='dt', type=str, 
+    group.add_argument('--datetime', dest='dt', type=str,
                     help="the date/time of the data to plot (YYYYMMDD/HH)")
     ap.add_argument('--output', dest='output', type=str,
                     help="the output directory to store the images", default='./')
-    args = ap.parse_args() 
+    args = ap.parse_args()
 
     # Print out versioning information and quit
     if args.version is True:
         ap.exit(0, versioning_info(True) + '\n')
-    
-    # Catch invalid data source 
+
+    # Catch invalid data source
     if args.ds is not None and args.ds not in data_sources:
         txt = FAIL + "Invalid data source passed to the program.  Exiting." + ENDC
         ap.error(txt)
@@ -1192,7 +1283,7 @@ def parseArgs():
 
 def main():
     args = parseArgs()
- 
+
     # Create an application
     #app = QApplication([])
     #app.setAttribute(Qt.AA_EnableHighDpiScaling)
@@ -1215,10 +1306,10 @@ def main():
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
     if latest[0] is False:
-        newerRelease(latest)    
+        newerRelease(latest)
 
     if args.dt is not None and args.ds is not None and args.stn is not None:
-        dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")   
+        dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")
         win = search_and_plotDB(args.ds, args.stn, dt, args.output)
         win.close()
     elif args.file_names != []:

@@ -5,21 +5,22 @@ import numpy as np
 import numpy.ma as ma
 from sharppy.sharptab import interp, utils, thermo, winds
 from sharppy.sharptab.constants import *
+import os
 
 '''
     This file contains various functions to perform the calculation of various convection indices.
     Because of this, parcel lifting routines are also found in this file.
 
-    Functions denoted with a (*) in the docstring refer to functions that were added to the SHARPpy package that 
-    were not ported from the Storm Prediction Center.  They have been included as they have been used by the 
-    community in an effort to expand SHARPpy to support the many parameters used in atmospheric science. 
-    
+    Functions denoted with a (*) in the docstring refer to functions that were added to the SHARPpy package that
+    were not ported from the Storm Prediction Center.  They have been included as they have been used by the
+    community in an effort to expand SHARPpy to support the many parameters used in atmospheric science.
+
     While the logic for these functions are based in the scientific literature, validation
     of the output from these functions is occasionally difficult to perform.  Although we have made an effort
-    to resolve code issues when they arise, values from these functions may be erronious and may require additional 
+    to resolve code issues when they arise, values from these functions may be erronious and may require additional
     inspection by the user.  We appreciate any contributions by the meteorological community that can
     help better validate these SHARPpy functions!
-    
+
 '''
 
 __all__ = ['DefineParcel', 'Parcel', 'inferred_temp_advection']
@@ -31,16 +32,17 @@ __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_sev
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
 __all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp', 'integrate_parcel']
 
+HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
 
 class DefineParcel(object):
     '''
         Create a parcel from a supplied profile object.
-        
+
         Parameters
         ----------
         prof : profile object
             Profile object
-        
+
         Optional Keywords
             flag : int (default = 1)
             Parcel Selection
@@ -51,7 +53,7 @@ class DefineParcel(object):
         4 - Mean Mixed Layer Parcel
         5 - User Defined Parcel
         6 - Mean Effective Layer Parcel
-        
+
         Optional Keywords (Depending on Parcel Selected)
         Parcel (flag) == 1: Observed Surface Parcel
             None
@@ -84,7 +86,7 @@ class DefineParcel(object):
         ecinh : number (default = -250)
             The maximum amount of CINH allowed for a parcel to be
             considered as part of the inflow layer
-        
+
         '''
     def __init__(self, prof, flag, **kwargs):
         self.flag = flag
@@ -109,36 +111,36 @@ class DefineParcel(object):
         else:
             self.presval = kwargs.get('pres', prof.gSndg[prof.sfc])
             self.__sfc(prof)
-    
-    
+
+
     def __sfc(self, prof):
         '''
             Create a parcel using surface conditions
-            
+
             '''
         self.desc = 'Surface Parcel'
         self.pres = prof.pres[prof.sfc]
         self.tmpc = prof.tmpc[prof.sfc]
         self.dwpc = prof.dwpc[prof.sfc]
-    
-    
+
+
     def __fcst(self, prof, **kwargs):
         '''
             Create a parcel using forecast conditions.
-            
+
             '''
         self.desc = 'Forecast Surface Parcel'
         self.tmpc = max_temp(prof)
         self.pres = prof.pres[prof.sfc]
         pbot = self.pres; ptop = self.pres - 100.
         self.dwpc = thermo.temp_at_mixrat(mean_mixratio(prof, pbot, ptop, exact=True), self.pres)
-    
-    
+
+
     def __mu(self, prof, **kwargs):
         '''
             Create the most unstable parcel within the lowest XXX hPa, where
             XXX is supplied. Default XXX is 400 hPa.
-            
+
             '''
         self.desc = 'Most Unstable Parcel in Lowest %.2f hPa' % self.presval
         pbot = prof.pres[prof.sfc]
@@ -146,15 +148,15 @@ class DefineParcel(object):
         self.pres = most_unstable_level(prof, pbot=pbot, ptop=ptop)
         self.tmpc = interp.temp(prof, self.pres)
         self.dwpc = interp.dwpt(prof, self.pres)
-    
-    
+
+
     def __ml(self, prof, **kwargs):
         '''
             Create a mixed-layer parcel with mixing within the lowest XXX hPa,
             where XXX is supplied. Default is 100 hPa.
 
             If
-            
+
             '''
         self.desc = '%.2f hPa Mixed Layer Parcel' % self.presval
         pbot = kwargs.get('pbot', prof.pres[prof.sfc])
@@ -164,23 +166,23 @@ class DefineParcel(object):
         self.tmpc = thermo.theta(1000., mtheta, self.pres)
         mmr = mean_mixratio(prof, pbot, ptop, exact=True)
         self.dwpc = thermo.temp_at_mixrat(mmr, self.pres)
-    
-    
+
+
     def __user(self, prof, **kwargs):
         '''
             Create a user defined parcel.
-            
+
             '''
         self.desc = '%.2f hPa Parcel' % self.presval
         self.pres = self.presval
         self.tmpc = kwargs.get('tmpc', interp.temp(prof, self.pres))
         self.dwpc = kwargs.get('dwpc', interp.dwpt(prof, self.pres))
-    
-    
+
+
     def __effective(self, prof, **kwargs):
         '''
             Create the mean-effective layer parcel.
-            
+
             '''
         ecape = kwargs.get('ecape', 100)
         ecinh = kwargs.get('ecinh', -250)
@@ -206,7 +208,7 @@ class DefineParcel(object):
 class Parcel(object):
     '''
         Initialize the parcel variables
-        
+
         Parameters
         ----------
         pbot : number
@@ -310,6 +312,14 @@ class Parcel(object):
             Buoyancy minimum (C)
         bminpres : number
             Pressure at the buoyancy minimum (mb)
+        ctf_low : number
+            Cloud top fraction: Low level (%)
+        ctf_high : number
+            Cloud top fraction: High level (%)
+        ctp_low : number
+            Cloud top pressure: Low level (mb)
+        ctp_high : number
+            Cloud top pressure - High level (mb)
         '''
     def __init__(self, **kwargs):
         self.pres = ma.masked # Parcel beginning pressure (mb)
@@ -343,7 +353,7 @@ class Parcel(object):
         self.hghtm30c = ma.masked # Height value at -30 C (m AGL)
         self.wm10c = ma.masked # w velocity at -10 C ?
         self.wm20c = ma.masked # w velocity at -20 C ?
-        self.wm30c = ma.masked # Wet bulb at -30 C ? 
+        self.wm30c = ma.masked # Wet bulb at -30 C ?
         self.li5 = ma.masked # Lifted Index at 500 mb (C)
         self.li3 = ma.masked # Lifted Index at 300 mb (C)
         self.brnshear = ma.masked # Bulk Richardson Number Shear
@@ -356,13 +366,38 @@ class Parcel(object):
         self.cappres = ma.masked # Cap strength pressure (mb)
         self.bmin = ma.masked # Buoyancy minimum in profile (C)
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
+        self.ctf_low = ma.masked # Cloud top fraction: Low level (%)
+        self.ctf_high = ma.masked # Cloud top fraction: High level (%)
+        self.ctp_low = ma.masked # Cloud top pressure: Low level (mb)
+        self.ctp_high = ma.masked # Cloud top pressure: High level (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
+
+        # JTS - Find cloud top pressure/fraction from temporary text file.
+        try:
+            # This block gets executed only when new profiles are loaded to the SPC window.
+            pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+            file = open(pathCloudFile)
+            line = file.readlines()
+
+            # Remove the list surrounding the values.
+            line = line[0]
+
+            # Assign local cloud top values to the parcel profile object.
+            self.ctf_low = str(line.split(' ')[0])
+            self.ctf_high = str(line.split(' ')[1])
+            self.ctp_low = int(line.split(' ')[2])
+            self.ctp_high = int(line.split(' ')[3])
+        except:
+            # This block gets executed only when Interpolate Focused Profile is selected in the SPC window.
+            # Smoothing the profile could theoretically cause NUCAPS-derived cloud top fraction to be at a different height.
+            # Thus not displayed.
+            pass
 
 def hgz(prof):
     '''
         Hail Growth Zone Levels
-    
-        This function finds the pressure levels for the dendritic 
+
+        This function finds the pressure levels for the dendritic
         growth zone (from -10 C to -30 C).  If either temperature cannot be found,
         it is set to be the surface pressure.
 
@@ -370,12 +405,12 @@ def hgz(prof):
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         pbot : number
             Pressure of the bottom level (mb)
-        ptop : number 
+        ptop : number
             Pressure of the top level (mb)
     '''
 
@@ -393,8 +428,8 @@ def hgz(prof):
 def dgz(prof):
     '''
         Dendritic Growth Zone Levels
-    
-        This function finds the pressure levels for the dendritic 
+
+        This function finds the pressure levels for the dendritic
         growth zone (from -12 C to -17 C).  If either temperature cannot be found,
         it is set to be the surface pressure.
 
@@ -402,7 +437,7 @@ def dgz(prof):
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         pbot : number
@@ -514,7 +549,7 @@ def ship(prof, **kwargs):
             significant hail parameter (unitless)
 
     '''
-      
+
     mupcl = kwargs.get('mupcl', None)
     sfc6shr = kwargs.get('sfc6shr', None)
     frz_lvl = kwargs.get('frz_lvl', None)
@@ -546,10 +581,10 @@ def ship(prof, **kwargs):
             sfc = prof.pres[prof.sfc]
             p6km = interp.pres(prof, interp.to_msl(prof, 6000.))
             sfc_6km_shear = winds.wind_shear(prof, pbot=sfc, ptop=p6km)
-    
+
     sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
-    
+
     if shr06 > 27:
         shr06 = 27.
     elif shr06 < 7:
@@ -564,16 +599,16 @@ def ship(prof, **kwargs):
         h5_temp = -5.5
 
     ship = -1. * (mucape * mumr * lr75 * h5_temp * shr06) / 42000000.
-    
+
     if mucape < 1300:
         ship = ship*(mucape/1300.)
-    
+
     if lr75 < 5.8:
         ship = ship*(lr75/5.8)
 
     if frz_lvl < 2400:
         ship = ship * (frz_lvl/2400.)
-    
+
     return ship
 
 def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
@@ -613,7 +648,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
     '''
     cape_term = mlcape / 1500.
     eshr_term = esrh / 150.
-    
+
     if ebwd < 12.5:
         ebwd_term = 0.
     elif ebwd > 30.:
@@ -643,7 +678,7 @@ def stp_cin(mlcape, esrh, ebwd, mllcl, mlcinh):
 def stp_fixed(sbcape, sblcl, srh01, bwd6):
     '''
         Significant Tornado Parameter (fixed layer)
-   
+
         Formulated using the methodology in [2]_.  Used to detect environments where significant tornadoes
         are possible within the United States.
 
@@ -665,7 +700,7 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
         stp_fixed : number
             signifcant tornado parameter (fixed-layer)
     '''
-    
+
     # Calculate SBLCL term
     if sblcl < 1000.: # less than 1000. meters
         lcl_term = 1.0
@@ -679,14 +714,14 @@ def stp_fixed(sbcape, sblcl, srh01, bwd6):
         bwd6 = 30
     elif bwd6 < 12.5:
         bwd6 = 0.0
-    
+
     bwd6_term = bwd6 / 20.
 
     cape_term = sbcape / 1500.
     srh_term = srh01 / 150.
 
     stp_fixed = cape_term * lcl_term * srh_term * bwd6_term
-   
+
     return stp_fixed
 
 
@@ -713,14 +748,14 @@ def scp(mucape, srh, ebwd):
         -------
         scp : number
             supercell composite parameter
-    
+
     '''
 
     if ebwd > 20:
         ebwd = 20.
     elif ebwd < 10:
         ebwd = 0.
-     
+
     muCAPE_term = mucape / 1000.
     esrh_term = srh / 50.
     ebwd_term = ebwd / 20.
@@ -731,17 +766,17 @@ def scp(mucape, srh, ebwd):
 def k_index(prof):
     '''
         Calculates the K-Index from a profile object
-        
+
         Parameters
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         k_index : number
             K-Index
-        
+
         '''
     t8 = interp.temp(prof, 850.)
     t7 = interp.temp(prof, 700.)
@@ -754,17 +789,17 @@ def k_index(prof):
 def t_totals(prof):
     '''
         Calculates the Total Totals Index from a profile object
-        
+
         Parameters
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         t_totals : number
             Total Totals Index
-        
+
         '''
     return c_totals(prof) + v_totals(prof)
 
@@ -772,17 +807,17 @@ def t_totals(prof):
 def c_totals(prof):
     '''
         Calculates the Cross Totals Index from a profile object
-        
+
         Parameters
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         c_totals : number
             Cross Totals Index
-        
+
         '''
     return interp.dwpt(prof, 850.) - interp.temp(prof, 500.)
 
@@ -790,17 +825,17 @@ def c_totals(prof):
 def v_totals(prof):
     '''
         Calculates the Vertical Totals Index from a profile object
-        
+
         Parameters
         ----------
         prof : profile object
             Profile Object
-        
+
         Returns
         -------
         v_totals : number
             Vertical Totals Index
-        
+
         '''
     return interp.temp(prof, 850.) - interp.temp(prof, 500.)
 
@@ -810,7 +845,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         Calculates the precipitable water from a profile object within the
         specified layer. The default layer (lower=-1 & upper=-1) is defined to
         be surface to 400 hPa.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -824,7 +859,7 @@ def precip_water(prof, pbot=None, ptop=400, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         pwat : number,
@@ -890,7 +925,7 @@ def inferred_temp_adv(prof, dp=-100, lat=35):
         return ma.masked, ma.masked
 
     omega = (2. * np.pi) / (86164.)
-       
+
     pres_idx = np.where(prof.pres >= 100.)[0]
     pressures = np.arange(prof.pres[prof.get_sfc()], prof.pres[pres_idx][-1], dp, dtype=type(prof.pres[prof.get_sfc()])) # Units: mb
     temps = thermo.ctok(interp.temp(prof, pressures))
@@ -918,30 +953,30 @@ def inferred_temp_adv(prof, dp=-100, lat=35):
         thght = heights[i] # Units: meters
         bottom_wdir = dirs[i-1] # Meteorological degrees (degrees from north)
         top_wdir = dirs[i] # same units as top_wdir
-        
+
         # Calculate the average temperature
         avg_temp = (ttemp + btemp) * 2.
-        
+
         # Calculate the mean wind between the two levels (this is assumed to be geostrophic)
         mean_u, mean_v = winds.mean_wind(prof, pbot=bottom_pres, ptop=top_pres)
         mean_wdir, mean_wspd = utils.comp2vec(mean_u, mean_v) # Wind speed is in knots here
         mean_wspd = utils.KTS2MS(mean_wspd) # Convert this geostrophic wind speed to m/s
-        
+
         # Here we calculate the change in wind direction with height (thanks to Andrew Mackenzie for help with this)
         # The sign of d_theta will dictate whether or not it is warm or cold advection
         mod = 180 - bottom_wdir
         top_wdir = top_wdir + mod
-        
+
         if top_wdir < 0:
             top_wdir = top_wdir + 360
         elif top_wdir >= 360:
             top_wdir = top_wdir - 360
         d_theta = top_wdir - 180.
-        
+
         # Here we calculate t_adv (which is -V_g * del(T) or the local change in temperature term)
         # K/s  s * rad/m * deg   m^2/s^2          K        degrees / m
         t_adv = multiplier * np.power(mean_wspd,2) * avg_temp * (d_theta / (thght - bhght)) # Units: Kelvin / seconds
-        
+
         # Append the pressure bounds so the person knows the pressure
         pressure_bounds[i-1, :] = bottom_pres, top_pres
         temp_adv[i-1] = t_adv*60.*60. # Converts Kelvin/seconds to Kelvin/hour (or Celsius/hour)
@@ -953,7 +988,7 @@ def temp_lvl(prof, temp, wetbulb=False):
     '''
         Calculates the level (hPa) of the first occurrence of the specified
         temperature.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -966,7 +1001,7 @@ def temp_lvl(prof, temp, wetbulb=False):
         Returns
         -------
         First Level of the temperature (hPa) : number
-        
+
         '''
     if wetbulb is False:
         profile = prof.tmpc
@@ -1003,19 +1038,19 @@ def max_temp(prof, mixlayer=100):
     '''
         Calculates a maximum temperature forecast based on the depth of the mixing
         layer and low-level temperatures
-        
+
         Parameters
         ----------
         prof : profile object
             Profile Object
         mixlayer : number (optional; default = 100)
             Top of layer over which to "mix" (hPa)
-        
+
         Returns
         -------
         mtemp : number
             Forecast Maximum Temperature
-        
+
         '''
     mixlayer = prof.pres[prof.sfc] - mixlayer
     temp = thermo.ctok(interp.temp(prof, mixlayer)) + 2
@@ -1026,7 +1061,7 @@ def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Calculates the mean relative humidity from a profile object within the
         specified layer.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1040,11 +1075,11 @@ def mean_relh(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Mean Relative Humidity : number
-        
+
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
     if not ptop: ptop = prof.pres[prof.sfc] - 100.
@@ -1071,7 +1106,7 @@ def mean_omega(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Calculates the mean omega from a profile object within the
         specified layer.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1085,13 +1120,13 @@ def mean_omega(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Mean Omega : number
-        
+
         '''
-    if hasattr(prof, 'omeg'): 
+    if hasattr(prof, 'omeg'):
         if prof.omeg.all() is np.ma.masked:
             return prof.missing
     else:
@@ -1124,7 +1159,7 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Calculates the mean mixing ratio from a profile object within the
         specified layer.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1138,11 +1173,11 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Mean Mixing Ratio : number
-        
+
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
     if not ptop: ptop = prof.pres[prof.sfc] - 100.
@@ -1160,7 +1195,7 @@ def mean_mixratio(prof, pbot=None, ptop=None, dp=-1, exact=False):
         totp = p.sum() / 2.
         num = float(len(dwpt)) / 2.
         w = thermo.mixratio(totp/num, totd/num)
-    
+
     else:
         dp = -1
         p = np.arange(pbot, ptop+dp, dp, dtype=type(pbot))
@@ -1172,7 +1207,7 @@ def mean_thetae(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Calculates the mean theta-e from a profile object within the
         specified layer.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1186,11 +1221,11 @@ def mean_thetae(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Mean Theta-E : number
-        
+
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
     if not ptop: ptop = prof.pres[prof.sfc] - 100.
@@ -1225,7 +1260,7 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Calculates the mean theta from a profile object within the
         specified layer.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1239,11 +1274,11 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Mean Theta : number
-        
+
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
     if not ptop: ptop = prof.pres[prof.sfc] - 100.
@@ -1272,7 +1307,7 @@ def mean_theta(prof, pbot=None, ptop=None, dp=-1, exact=False):
 def lapse_rate(prof, lower, upper, pres=True):
     '''
         Calculates the lapse rate (C/km) from a profile object
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1284,13 +1319,13 @@ def lapse_rate(prof, lower, upper, pres=True):
         pres : bool (optional; default = True)
             Flag to determine if lower/upper are pressure [True]
             or height [False]
-        
+
         Returns
         -------
         lapse rate (C/km) : number
         '''
     if pres:
-        if (prof.pres[-1] > upper): return ma.masked 
+        if (prof.pres[-1] > upper): return ma.masked
         p1 = lower
         p2 = upper
         z1 = interp.hght(prof, lower)
@@ -1320,7 +1355,7 @@ def max_lapse_rate(prof, lower=2000, upper=6000, interval=250, depth=2000):
             Interval to assess the lapse rate at (m)
         depth : number
             Depth of the layer to assess the lapse rate over (m)
- 
+
         Returns
         -------
         max lapse rate (C/km) : float
@@ -1334,12 +1369,12 @@ def max_lapse_rate(prof, lower=2000, upper=6000, interval=250, depth=2000):
     top_pres = interp.pres(prof, top_levels)
     all_lapse_rates = (interp.vtmp(prof, top_pres) - interp.vtmp(prof, bottom_pres)) * -1000.
     max_lapse_rate_idx = np.ma.argmax(all_lapse_rates)
-    return all_lapse_rates[max_lapse_rate_idx]/depth, bottom_pres[max_lapse_rate_idx], top_pres[max_lapse_rate_idx] 
+    return all_lapse_rates[max_lapse_rate_idx]/depth, bottom_pres[max_lapse_rate_idx], top_pres[max_lapse_rate_idx]
 
 def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
     '''
         Finds the most unstable level between the lower and upper levels.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1353,11 +1388,11 @@ def most_unstable_level(prof, pbot=None, ptop=None, dp=-1, exact=False):
         exact : bool (optional; default = False)
             Switch to choose between using the exact data (slower) or using
             interpolated sounding at 'dp' pressure levels (faster)
-        
+
         Returns
         -------
         Pressure level of most unstable level (hPa) : number
-        
+
         '''
     if not pbot: pbot = prof.pres[prof.sfc]
     if not ptop: ptop = prof.pres[prof.sfc] - 400
@@ -1397,17 +1432,17 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         trajectory of a parcel that is lifted to its LFC, then given a 5 m/s
         nudge upwards, and then left to accelerate up to the EL.  (Based on a description
         in the AWIPS 2 Online Training.)
-        
+
         This parcel is assumed to be moving horizontally via the storm motion vector, which
         if not supplied is taken to be the Bunkers Right Mover storm motion vector.
         As the parcel accelerates upwards, it is advected by the storm relative winds.
         The environmental winds are assumed to be steady-state.
-        
+
         This simulates the path a parcel in a storm updraft would take using pure parcel theory.
-        
-        .. important:: 
+
+        .. important::
             The code for this function was not directly ported from SPC.
- 
+
         Parameters
         ----------
         prof : profile object
@@ -1418,7 +1453,7 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
             U-component of the storm motion vector (kts)
         smv: number, optional
             V-component of the storm motion vector (kts)
-        
+
         Returns
         -------
         pos_vector : list
@@ -1426,26 +1461,26 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         theta : number
             the tilt of the updraft measured by the angle of the updraft with respect to the horizon (degrees)
         '''
-    
+
     t_parcel = parcel.ttrace # temperature
     p_parcel = parcel.ptrace # mb
     elhght = parcel.elhght # meter
-    
+
     y_0 = 0 # meter
     x_0 = 0 # meter
     z_0 = parcel.lfchght # meter
     p_0 = parcel.lfcpres # meter
-    
+
     g = 9.8 # m/s**2
     t_0 = 0 # seconds
     w_0 = 5 # m/s (the initial parcel nudge)
     u_0 = 0 # m/s
     v_0 = 0 # m/s (initial parcel location, which is storm motion relative)
-    
+
     delta_t = 25 # the trajectory increment
     pos_vector = [(x_0,y_0,z_0)]
     speed_vector = [(u_0, v_0, w_0)]
-    
+
     if smu==None or smv==None:
         smu = prof.srwind[0] # Expected to be in knots
         smv = prof.srwind[1] # Is expected to be in knots
@@ -1459,25 +1494,25 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
 
     while z_0 < elhght:
         t_1 = delta_t + t_0 # the time step increment
-        
+
         # Compute the vertical acceleration
         env_tempv = interp.vtmp(prof, p_0) + 273.15
         pcl_tempv = interp.generic_interp_pres(np.log10(p_0), np.log10(p_parcel.copy())[::-1], t_parcel[::-1]) + 273.15
         accel = g * ((pcl_tempv - env_tempv) / env_tempv)
-        
+
         # Compute the vertical displacement
         z_1 = (.5 * accel * np.power(t_1 - t_0, 2)) + (w_0 * (t_1 - t_0)) + z_0
         w_1 = accel * (t_1 - t_0) + w_0
-        
+
         # Compute the parcel-relative winds
         u, v = interp.components(prof, p_0)
         u_0 = utils.KTS2MS(u - smu)
         v_0 = utils.KTS2MS(v - smv)
-        
+
         # Compute the horizontal displacements
         x_1 = u_0 * (t_1 - t_0) + x_0
         y_1 = v_0 * (t_1 - t_0) + y_0
-        
+
         pos_vector.append((x_1, y_1, z_1))
         speed_vector.append((u_0, v_0, w_1))
 
@@ -1487,21 +1522,21 @@ def parcelTraj(prof, parcel, smu=None, smv=None):
         x_0 = x_1
         t_0 = t_1
         p_0 = interp.pres(prof, interp.to_msl(prof, z_1))
-        
+
         # Update parcel vertical velocity
         w_0 = w_1
-    
+
     # Compute the angle tilt of the updraft
     r = np.sqrt(np.power(pos_vector[-1][0], 2) + np.power(pos_vector[-1][1], 2))
     theta = np.degrees(np.arctan2(pos_vector[-1][2],r))
     return pos_vector, theta
 
 def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwargs):
-    '''        
+    '''
         Lifts the specified parcel, calculates various levels and parameters from
-        the profile object. Only B+/B- are calculated based on the specified layer. 
-        
-        This is a convenience function for effective_inflow_layer and convective_temp, 
+        the profile object. Only B+/B- are calculated based on the specified layer.
+
+        This is a convenience function for effective_inflow_layer and convective_temp,
         as well as any function that needs to lift a parcel in an iterative process.
         This function is a stripped back version of the parcelx function, that only
         handles bplus and bminus. The intention is to reduce the computation time in
@@ -1510,11 +1545,11 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
         This method of creating a stripped down parcelx function for CAPE/CIN calculations
         was developed by Greg Blumberg and Kelton Halbert and later implemented in
         SPC's version of SHARP to speed up their program.
-        
+
         For full parcel objects, use the parcelx function.
-        
+
         !! All calculations use the virtual temperature correction unless noted. !!
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1539,18 +1574,18 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
             flag values
         lplvals : lifting parcel layer object (optional)
             Contains the necessary parameters to describe a lifting parcel
-        
+
         Returns
         -------
         pcl : parcel object
             Parcel Object
-    
+
     '''
     flag = kwargs.get('flag', 5)
     pcl = Parcel(pbot=pbot, ptop=ptop)
     pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
     if prof.pres.compressed().shape[0] < 1: return pcl
-    
+
     # Variables
     pres = kwargs.get('pres', pcl.lplvals.pres)
     tmpc = kwargs.get('tmpc', pcl.lplvals.tmpc)
@@ -1561,7 +1596,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
     totp = 0.
     totn = 0.
     cinh_old = 0.
-    
+
     # See if default layer is specified
     if not pbot:
         pbot = prof.pres[prof.sfc]
@@ -1571,7 +1606,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
         ptop = prof.pres[prof.pres.shape[0]-1]
         pcl.tlayer = ptop
         pcl.ptop = ptop
-    
+
     # Make sure this is a valid layer
     if pbot > pres:
         pbot = pres
@@ -1584,20 +1619,20 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
     pe1 = pbot
     h1 = interp.hght(prof, pe1)
     tp1 = thermo.virtemp(pres, tmpc, dwpc)
-    
+
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
     if np.ma.is_masked(pe2) or not utils.QC(pe2) or np.isnan(pe2):
         return pcl
     blupper = pe2
-    
+
     # Calculate lifted parcel theta for use in iterative CINH loop below
     # RECALL: lifted parcel theta is CONSTANT from LPL to LCL
     theta_parcel = thermo.theta(pe2, tp2, 1000.)
-    
+
     # Environmental theta and mixing ratio at LPL
     blmr = thermo.mixratio(pres, dwpc)
-    
+
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
@@ -1612,28 +1647,28 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
     lyre = G * (tdef[:-1]+tdef[1:]) / 2 * (hh[1:]-hh[:-1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
-   
+
     # TODO: Because this function is used often to search for parcels that meet a certain
     #       CAPE/CIN threshold, we can add a few statments here and there in the code
     #       that checks to see if these thresholds are met and if they are, return a flag.
     #       We don't need to call wetlift() anymore than we need to.  This is one location
     #       where we can do this.  If the CIN is too large, return here...don't have to worry
     #       about ever entering the loop!
- 
+
     # Move the bottom layer to the top of the boundary layer
     if pbot > pe2:
         pbot = pe2
         pcl.blayer = pbot
 
     if pbot < prof.pres[-1]:
-        # Check for the case where the LCL is above the 
+        # Check for the case where the LCL is above the
         # upper boundary of the data (e.g. a dropsonde)
         return pcl
-    
+
     # Find lowest observation in layer
     lptr = ma.where(pbot > prof.pres)[0].min()
     uptr = ma.where(ptop < prof.pres)[0].max()
-    
+
     # START WITH INTERPOLATED BOTTOM LAYER
     # Begin moist ascent from lifted parcel LCL (pe2, tp2)
     pe1 = pbot
@@ -1645,7 +1680,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
     if new_lifter:
         env_temp = prof.vtmp[lptr:]
         try:
-            keep = ~env_temp.mask * np.ones(env_temp.shape, dtype=bool) 
+            keep = ~env_temp.mask * np.ones(env_temp.shape, dtype=bool)
         except AttributeError:
             keep = np.ones(env_temp.shape, dtype=bool)
 
@@ -1682,7 +1717,7 @@ def cape(prof, pbot=None, ptop=None, dp=-1, new_lifter=False, trunc=False, **kwa
             tdef1 = (thermo.virtemp(pe1, tp1, tp1) - te1) / thermo.ctok(te1)
             tdef2 = (thermo.virtemp(pe2, tp2, tp2) - te2) / thermo.ctok(te2)
             lyre = G * (tdef1 + tdef2) / 2. * (h2 - h1)
-            
+
             # Add layer energy to total positive if lyre > 0
             if lyre > 0: totp += lyre
             # Add layer energy to total negative if lyre < 0, only up to EL
@@ -1739,9 +1774,9 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         the profile object. B+/B- are calculated based on the specified layer.
         Such parameters include CAPE, CIN, LCL height, LFC height, buoyancy minimum,
         EL height, MPL height.
-        
+
         !! All calculations use the virtual temperature correction unless noted. !!
-        
+
         Parameters
         ----------
         prof : profile object
@@ -1766,17 +1801,17 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             flag values
         lplvals : lifting parcel layer object (optional)
             Contains the necessary parameters to describe a lifting parcel
-        
+
         Returns
         -------
             Parcel Object
-        
+
         '''
     flag = kwargs.get('flag', 5)
     pcl = Parcel(pbot=pbot, ptop=ptop)
     pcl.lplvals = kwargs.get('lplvals', DefineParcel(prof, flag))
     if prof.pres.compressed().shape[0] < 1: return pcl
-    
+
     # Variables
     pres = kwargs.get('pres', pcl.lplvals.pres)
     tmpc = kwargs.get('tmpc', pcl.lplvals.tmpc)
@@ -1792,7 +1827,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     totn = 0.
     tote = 0.
     cinh_old = 0.
-    
+
     # See if default layer is specified
     if not pbot:
         pbot = prof.pres[prof.sfc]
@@ -1816,7 +1851,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     tp1 = thermo.virtemp(pres, tmpc, dwpc)
     ttrace = [tp1]
     ptrace = [pe1]
-    
+
     # Lift parcel and return LCL pres (hPa) and LCL temp (C)
     pe2, tp2 = thermo.drylift(pres, tmpc, dwpc)
     if type(pe2) == type(ma.masked) or np.isnan(pe2):
@@ -1829,15 +1864,15 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.lclhght = interp.to_agl(prof, h2)
     ptrace.append(pe2)
     ttrace.append(thermo.virtemp(pe2, tp2, tp2))
-    
+
     # Calculate lifted parcel theta for use in iterative CINH loop below
     # RECALL: lifted parcel theta is CONSTANT from LPL to LCL
     theta_parcel = thermo.theta(pe2, tp2, 1000.)
-    
+
     # Environmental theta and mixing ratio at LPL
     bltheta = thermo.theta(pres, interp.temp(prof, pres), 1000.)
     blmr = thermo.mixratio(pres, dwpc)
-    
+
     # ACCUMULATED CINH IN THE MIXING LAYER BELOW THE LCL
     # This will be done in 'dp' increments and will use the virtual
     # temperature correction where possible
@@ -1854,12 +1889,12 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     lyre = G * (tdef[tidx1]+tdef[tidx2]) / 2 * (hh[tidx2]-hh[tidx1])
     totn = lyre[lyre < 0].sum()
     if not totn: totn = 0.
-    
+
     # Move the bottom layer to the top of the boundary layer
     if pbot > pe2:
         pbot = pe2
         pcl.blayer = pbot
-    
+
     # Calculate height of various temperature levels
     p0c = temp_lvl(prof, 0.)
     pm10c = temp_lvl(prof, -10.)
@@ -1879,14 +1914,14 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm30c = hgtm30c
 
     if pbot < prof.pres[-1]:
-        # Check for the case where the LCL is above the 
+        # Check for the case where the LCL is above the
         # upper boundary of the data (e.g. a dropsonde)
         return pcl
 
     # Find lowest observation in layer
     lptr = ma.where(pbot >= prof.pres)[0].min()
     uptr = ma.where(ptop <= prof.pres)[0].max()
-    
+
     # START WITH INTERPOLATED BOTTOM LAYER
     # Begin moist ascent from lifted parcel LCL (pe2, tp2)
     pe1 = pbot
@@ -1922,25 +1957,25 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
         # Add layer energy to total negative if lyre < 0, only up to EL
         else:
             if pe2 > 500.: totn += lyre
-        
+
         # Check for Max LI
         mli = thermo.virtemp(pe2, tp2, tp2) - te2
         if  mli > li_max:
             li_max = mli
             li_maxpres = pe2
-        
+
         # Check for Max Cap Strength
         mcap = te2 - mli
         if mcap > cap_strength:
             cap_strength = mcap
             cap_strengthpres = pe2
-        
+
         tote += lyre
         pelast = pe1
         pe1 = pe2
         te1 = te2
         tp1 = tp2
-        
+
         # Is this the top of the specified layer
         if i >= uptr and not utils.QC(pcl.bplus):
             pe3 = pe1
@@ -1966,7 +2001,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             else:
                 if pe2 > 500.: pcl.bminus += lyrf
             if pcl.bplus == 0: pcl.bminus = 0.
-        
+
         # Is this the freezing level
         if te2 < 0. and not utils.QC(pcl.bfzl):
             pe3 = pelast
@@ -1987,7 +2022,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     thermo.ctok(te2)
                 lyrf = G * (tdef3 + tdef2) / 2. * (hgt0c - h3)
                 if lyrf > 0: pcl.bfzl += lyrf
-        
+
         # Is this the -10C level
         if te2 < -10. and not utils.QC(pcl.wm10c):
             pe3 = pelast
@@ -2008,7 +2043,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     thermo.ctok(te2)
                 lyrf = G * (tdef3 + tdef2) / 2. * (hgtm10c - h3)
                 if lyrf > 0: pcl.wm10c += lyrf
-        
+
         # Is this the -20C level
         if te2 < -20. and not utils.QC(pcl.wm20c):
             pe3 = pelast
@@ -2029,7 +2064,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     thermo.ctok(te2)
                 lyrf = G * (tdef3 + tdef2) / 2. * (hgtm20c - h3)
                 if lyrf > 0: pcl.wm20c += lyrf
-        
+
         # Is this the -30C level
         if te2 < -30. and not utils.QC(pcl.wm30c):
             pe3 = pelast
@@ -2050,7 +2085,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     thermo.ctok(te2)
                 lyrf = G * (tdef3 + tdef2) / 2. * (hgtm30c - h3)
                 if lyrf > 0: pcl.wm30c += lyrf
-        
+
         # Is this the 3km level
         if pcl.lclhght < 3000.:
             if interp.to_agl(prof, h1) <=3000. and interp.to_agl(prof, h2) >= 3000. and not utils.QC(pcl.b3km):
@@ -2073,7 +2108,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b3km += lyrf
         else: pcl.b3km = 0.
-        
+
         # Is this the 6km level
         if pcl.lclhght < 6000.:
             if interp.to_agl(prof, h1) <=6000. and interp.to_agl(prof, h2) >= 6000. and not utils.QC(pcl.b6km):
@@ -2096,7 +2131,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                     lyrf = G * (tdef3 + tdef2) / 2. * (h4 - h3)
                     if lyrf > 0: pcl.b6km += lyrf
         else: pcl.b6km = 0.
-        
+
         h1 = h2
 
         # LFC Possibility
@@ -2148,7 +2183,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             pcl.mplpres = ma.masked
             pcl.limax = -li_max
             pcl.limaxpres = li_maxpres
-        
+
         # MPL Possibility
         if tote < 0. and not utils.QC(pcl.mplpres) and utils.QC(pcl.elpres):
             pe3 = pelast
@@ -2173,26 +2208,26 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
                 pe3 = pe2
             pcl.mplpres = pe2
             pcl.mplhght = interp.to_agl(prof, interp.hght(prof, pe2))
-        
+
         # 500 hPa Lifted Index
         if prof.pres[i] <= 500. and not utils.QC(pcl.li5):
             a = interp.vtmp(prof, 500.)
             b = thermo.wetlift(pe1, tp1, 500.)
             pcl.li5 = a - thermo.virtemp(500, b, b)
-        
+
         # 300 hPa Lifted Index
         if prof.pres[i] <= 300. and not utils.QC(pcl.li3):
             a = interp.vtmp(prof, 300.)
             b = thermo.wetlift(pe1, tp1, 300.)
             pcl.li3 = a - thermo.virtemp(300, b, b)
-    
+
 #    pcl.bminus = cinh_old
 
     if not utils.QC(pcl.bplus): pcl.bplus = totp
-    
+
     # Calculate BRN if available
     bulk_rich(prof, pcl)
-    
+
     # Save params
     if np.floor(pcl.bplus) == 0: pcl.bminus = 0.
     pcl.ptrace = ma.concatenate((ptrace, ptraces))
@@ -2212,18 +2247,18 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
 def bulk_rich(prof, pcl):
     '''
         Calculates the Bulk Richardson Number for a given parcel.
-        
+
         Parameters
         ----------
         prof : profile object
             Profile object
         pcl : parcel object
             Parcel object
-        
+
         Returns
         -------
         Bulk Richardson Number : number
-        
+
         '''
 
     # Make sure parcel is initialized
@@ -2241,22 +2276,22 @@ def bulk_rich(prof, pcl):
         if utils.QC(pbot): pbot = prof.pres[prof.sfc]
         h1 = interp.hght(prof, pbot)
         ptop = interp.pres(prof, h1+6000.)
-    
+
     if not utils.QC(pbot) or not utils.QC(ptop):
         pcl.brnshear = ma.masked
         pcl.brn = ma.masked
         pcl.brnu = ma.masked
         pcl.brnv = ma.masked
         return pcl
-    
+
     # Calculate the lowest 500m mean wind
     p = interp.pres(prof, interp.hght(prof, pbot)+500.)
     #print(p, pbot)
     mnlu, mnlv = winds.mean_wind(prof, pbot, p)
-    
+
     # Calculate the 6000m mean wind
     mnuu, mnuv = winds.mean_wind(prof, pbot, ptop)
-    
+
     # Make sure CAPE and Shear are available
     if not utils.QC(pcl.bplus) or not utils.QC(mnlu) or not utils.QC(mnuu):
         pcl.brnshear = ma.masked
@@ -2264,7 +2299,7 @@ def bulk_rich(prof, pcl):
         pcl.brnv = ma.masked
         pcl.brn = ma.masked
         return pcl
-    
+
     # Calculate shear between levels
     dx = mnuu - mnlu
     dy = mnuv - mnlv
@@ -2322,7 +2357,7 @@ def effective_inflow_layer(prof, ecape=100, ecinh=-250, **kwargs):
                     pbot = prof.pres[i]
                     break
 
-            if not utils.QC(pbot): 
+            if not utils.QC(pbot):
                 return ma.masked, ma.masked
 
             bptr = i
@@ -2463,7 +2498,7 @@ def bunkers_storm_motion(prof, **kwargs):
         lstv = mnv + vchg
     else:
         rstu, rstv, lstu, lstv = winds.non_parcel_bunkers_motion(prof)
-    
+
     return rstu, rstv, lstu, lstv
 
 
@@ -2472,7 +2507,7 @@ def convective_temp(prof, **kwargs):
         Computes the convective temperature, assuming no change in the moisture
         profile. Parcels are iteratively lifted until only mincinh is left as a
         cap. The first guess is the observed surface temperature.
-        
+
         Parameters
         ----------
         prof : profile object
@@ -2485,18 +2520,18 @@ def convective_temp(prof, **kwargs):
             Temperature of parcel to lift (C)
         dwpc : number (optional)
             Dew Point of parcel to lift (C)
-        
+
         Returns
         -------
         Convective Temperature (C) : number
-        
+
         '''
     mincinh = kwargs.get('mincinh', 0.)
     mmr = mean_mixratio(prof)
     pres = kwargs.get('pres', prof.pres[prof.sfc])
     tmpc = kwargs.get('tmpc', prof.tmpc[prof.sfc])
     dwpc = kwargs.get('dwpc', thermo.temp_at_mixrat(mmr, pres))
-    
+
     # Do a quick search to fine whether to continue. If you need to heat
     # up more than 25C, don't compute.
     pcl = cape(prof, flag=5, pres=pres, tmpc=tmpc+25., dwpc=dwpc, trunc=True)
@@ -2517,7 +2552,7 @@ def tei(prof):
         Theta-E Index (TEI)
         TEI is the difference between the surface theta-e and the minimum theta-e value
         in the lowest 400 mb AGL
-       
+
         Note: This is the definition of TEI on the SPC help page,
         but these calculations do not match up with the TEI values on the SPC Online Soundings.
         The TEI values online are more consistent with the max Theta-E
@@ -2527,17 +2562,17 @@ def tei(prof):
         ----------
         prof : profile object
             Profile object
-        
+
         Returns
         -------
         tei : number
             Theta-E Index
         '''
-    
+
     sfc_theta = prof.thetae[prof.sfc]
     sfc_pres = prof.pres[prof.sfc]
     top_pres = sfc_pres - 400.
-    
+
     layer_idxs = ma.where(prof.pres >= top_pres)[0]
     min_thetae = ma.min(prof.thetae[layer_idxs])
     max_thetae = ma.max(prof.thetae[layer_idxs])
@@ -2547,13 +2582,13 @@ def tei(prof):
     return tei
 
 def esp(prof, **kwargs):
-    
+
     '''
         Enhanced Stretching Potential (ESP)
         This composite parameter identifies areas where low-level buoyancy
         and steep low-level lapse rates are co-located, which may
         favor low-level vortex stretching and tornado potential.
-       
+
         REQUIRES: 0-3 km MLCAPE (from MLPCL)
 
         Parameters
@@ -2567,7 +2602,7 @@ def esp(prof, **kwargs):
         -------
         ESP Index : number
         '''
-     
+
     mlpcl = kwargs.get('mlpcl', None)
     if not mlpcl:
         try:
@@ -2575,12 +2610,12 @@ def esp(prof, **kwargs):
         except:
             mlpcl = parcelx(prof, flag=4)
     mlcape = mlpcl.b3km
-    
+
     lr03 = prof.lapserate_3km # C/km
     if lr03 < 7. or mlpcl.bplus < 250.:
         return 0
     esp = (mlcape / 50.) * ((lr03 - 7.0) / (1.0))
-    
+
     return esp
 
 def sherb(prof, **kwargs):
@@ -2588,7 +2623,7 @@ def sherb(prof, **kwargs):
         Severe Hazards In Environments with Reduced Buoyancy (SHERB) Parameter (*)
 
         A composite parameter designed to assist forecasters in the High-Shear
-        Low CAPE (HSLC) environment.  This allows better discrimination 
+        Low CAPE (HSLC) environment.  This allows better discrimination
         between significant severe and non-severe convection in HSLC enviroments.
 
         It can detect significant tornadoes and significant winds.  Values above
@@ -2653,10 +2688,10 @@ def sherb(prof, **kwargs):
                     mupcl = cape(prof, lplvals=mulplvals)
                 else:
                     mupcl = prof.mupcl
-           
+
                 # Calculate the effective inflow layer
                 ebottom, etop = effective_inflow_layer( prof, mupcl=mupcl )
-            
+
             if ebottom is np.masked or etop is np.masked:
                 # If the inflow layer doesn't exist, return missing
                 return prof.missing
@@ -2682,7 +2717,7 @@ def mmp(prof, **kwargs):
         MCS Maintenance Probability (MMP)
         The probability that a mature MCS will maintain peak intensity
         for the next hour.
-        
+
         This equation was developed using proximity soundings and a regression equation
         Uses MUCAPE, 3-8 km lapse rate, maximum bulk shear, 3-12 km mean wind speed.  Derived
         in [4]_.
@@ -2701,14 +2736,14 @@ def mmp(prof, **kwargs):
             Profile object
         mupcl : parcel object, optional
             Most-Unstable Parcel object
-        
+
         Returns
         -------
         MMP index (%): number
-        
+
 
         """
-    
+
     mupcl = kwargs.get('mupcl', None)
     if not mupcl:
         try:
@@ -2750,9 +2785,9 @@ def mmp(prof, **kwargs):
     a_2 = -1.16 # K**-1 * km
     a_3 = -6.17*10**-4 # J**-1 * kg
     a_4 = -0.17 # m**-1 * s
-    
+
     mmp = 1. / (1. + np.exp(a_0 + (a_1 * max_bulk_shear) + (a_2 * lr38) + (a_3 * mucape) + (a_4 * mean_wind_3t12)))
-    
+
     return mmp
 
 def wndg(prof, **kwargs):
@@ -2763,7 +2798,7 @@ def wndg(prof, **kwargs):
         where large CAPE, steep low-level lapse rates,
         enhanced flow in the low-mid levels, and minimal convective
         inhibition are co-located.
-        
+
         WNDG values > 1 favor an enhanced risk for scattered damaging
         outflow gusts with multicell thunderstorm clusters, primarily
         during the afternoon in the summer.
@@ -2780,7 +2815,7 @@ def wndg(prof, **kwargs):
         WNDG Index : number
 
         '''
-    
+
     mlpcl = kwargs.get('mlpcl', None)
     if not mlpcl:
         try:
@@ -2796,14 +2831,14 @@ def wndg(prof, **kwargs):
     mean_wind = winds.mean_wind(prof, pbot=bot, ptop=top) # needs to be in m/s
     mean_wind = utils.KTS2MS(utils.mag(mean_wind[0], mean_wind[1]))
     mlcin = mlpcl.bminus # J/kg
-    
+
     if lr03 < 7:
         lr03 = 0.
-    
+
     if mlcin < -50:
         mlcin = -50.
     wndg = (mlcape / 2000.) * (lr03 / 9.) * (mean_wind / 15.) * ((50. + mlcin)/40.)
-    
+
     return wndg
 
 
@@ -2823,7 +2858,7 @@ def sig_severe(prof, **kwargs):
         -------
         significant severe parameter (m3/s3) : number
     '''
-     
+
     mlpcl = kwargs.get('mlpcl', None)
     sfc6shr = kwargs.get('sfc6shr', None)
     if not mlpcl:
@@ -2844,18 +2879,18 @@ def sig_severe(prof, **kwargs):
 
     sfc_6km_shear = utils.mag(sfc_6km_shear[0], sfc_6km_shear[1])
     shr06 = utils.KTS2MS(sfc_6km_shear)
-    
+
     sigsevere = mlcape * shr06
     return sigsevere
 
 def dcape(prof):
     '''
         Downdraft CAPE (DCAPE)
-        
+
         Adapted from John Hart's (SPC) DCAPE code in NSHARP donated by Rich Thompson (SPC)
 
         Calculates the downdraft CAPE value using the downdraft parcel source found in the lowest
-        400 mb of the sounding.  This downdraft parcel is found by identifying the minimum 100 mb layer 
+        400 mb of the sounding.  This downdraft parcel is found by identifying the minimum 100 mb layer
         averaged Theta-E.
 
         Afterwards, this parcel is lowered to the surface moist adiabatically (w/o virtual temperature
@@ -2867,7 +2902,7 @@ def dcape(prof):
         ----------
         prof : profile object
             Profile object
-        
+
         Returns
         -------
         dcape : number
@@ -2877,7 +2912,7 @@ def dcape(prof):
         ptrace : array
             downdraft parcel trace pressure (mb)
         '''
-    
+
     sfc_pres = prof.pres[prof.sfc]
     prof_thetae = prof.thetae
     prof_wetbulb = prof.wetbulb
@@ -2904,7 +2939,7 @@ def dcape(prof):
     upper = minp
     uptr = np.where(pres >= upper)[0]
     uptr = uptr[-1]
-    
+
     # Define parcel starting point
     tp1 = thermo.wetbulb(upper, interp.temp(prof, upper), interp.dwpt(prof, upper))
     pe1 = upper
@@ -2914,7 +2949,7 @@ def dcape(prof):
     lyre = 0
 
     # To keep track of the parcel trace from the downdraft
-    ttrace = [tp1] 
+    ttrace = [tp1]
     ptrace = [upper]
 
     # Lower the parcel to the surface moist adiabatically and compute
@@ -2980,7 +3015,7 @@ def precip_eff(prof, **kwargs):
         precip_efficency (inches) : number
 
     '''
-    
+
     pw = kwargs.get('pwat', None)
     pbot = kwargs.get('pbot', 1000)
     ptop = kwargs.get('ptop', 700)
@@ -2999,7 +3034,7 @@ def pbl_top(prof):
         Planetary Boundary Layer Depth
         Adapted from NSHARP code donated by Rich Thompson (SPC)
 
-        Calculates the planetary boundary layer depth by calculating the 
+        Calculates the planetary boundary layer depth by calculating the
         virtual potential temperature of the surface parcel + .5 K, and then searching
         for the location above the surface where the virtual potential temperature of the profile
         is greater than the surface virtual potential temperature.
@@ -3088,7 +3123,7 @@ def mburst(prof):
         The values can be interpreted in the following manner: 3-4 infers a "slight chance" of a microburst;
         5-8 infers a "chance" of a microburst; >= 9 infers that microbursts are "likely".
         These values can also be viewed as conditional upon the existence of a storm.
-	
+
 	    This code was updated on 9/11/2018 - TT was being used in the function instead of VT.
 	    The original SPC code was checked to confirm this was the problem.
 	    This error was not identified during the testing phase for some reason.
@@ -3260,7 +3295,7 @@ def sweat(prof):
         4. 500 mb wind speed
         5. Direction of wind at 500
         6. Direction of wind at 850
-	
+
 	    Formulation taken from Notes on Analysis and Severe-Storm Forecasting Procedures of the Air Force Global Weather Central, 1972 by RC Miller.
 
         .. warning::
@@ -3343,9 +3378,9 @@ def thetae_diff(prof):
 
 def bore_lift(prof, hbot=0., htop=3000., pbot=None, ptop=None):
     """
-    Lift all parcels in the layer. Calculate and return the difference between 
-    the liften parcel level height and the LFC height. 
-    
+    Lift all parcels in the layer. Calculate and return the difference between
+    the liften parcel level height and the LFC height.
+
     hbot: bottom of layer in meters (AGL)
     htop: top of layer in meters(AGL)
 
@@ -3353,9 +3388,9 @@ def bore_lift(prof, hbot=0., htop=3000., pbot=None, ptop=None):
 
     pbot: bottom of layer (in hPa)
     ptop: top of layer  (in hPa)
-    
+
     """
-    
+
     pres = prof.pres; hght = prof.hght
     tmpc = prof.tmpc; dwpc = prof.dwpc
     mask = ~prof.pres.mask * ~prof.hght.mask * ~prof.tmpc.mask * ~prof.dwpc.mask
@@ -3378,6 +3413,6 @@ def bore_lift(prof, hbot=0., htop=3000., pbot=None, ptop=None):
        lpl = DefineParcel(prof, 5, pres=pres[idx])
        pcl = parcelx(prof, pres=pres[idx], tmpc=tmpc[idx], dwpc=dwpc[idx], pbot=pres[idx])
        delta_lfc[i] = pcl.lfchght - hght[idx]
-       i += 1   
+       i += 1
 
     return np.ma.masked_invalid(delta_lfc)

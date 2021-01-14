@@ -11,12 +11,16 @@ from qtpy.QtWidgets import *
 from qtpy.QtOpenGL import *
 from sutils.utils import total_seconds
 import logging
-
 from datetime import datetime, timedelta
+import os
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
+HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
+
 class backgroundSkewT(QWidget):
+    clicked = QtCore.Signal(dict)
+
     def __init__(self, plot_omega=False):
         super(backgroundSkewT, self).__init__()
         self.plot_omega = plot_omega
@@ -48,7 +52,7 @@ class backgroundSkewT(QWidget):
         self.scale = 1.
         #self.bg_color=QColor('#000000')
         if self.physicalDpiX() > 75:
-            fsize = 6 
+            fsize = 6
             fsizet = 10
         else:
             fsize = 7
@@ -71,7 +75,7 @@ class backgroundSkewT(QWidget):
         self.saveBitMap = None
         self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
-    
+
     def plotBackground(self):
         logging.debug("Calling backgroundSkewT.plotBackground")
         qp = QtGui.QPainter()
@@ -110,7 +114,7 @@ class backgroundSkewT(QWidget):
 
         '''
         self.initUI()
-    
+
     def wheelEvent(self, e):
         centerx, centery = e.x(), e.y()
 
@@ -336,7 +340,6 @@ class backgroundSkewT(QWidget):
 
 
 
-
 class plotSkewT(backgroundSkewT):
     modified = Signal(int, dict)
     cursor_toggle = Signal(bool)
@@ -353,7 +356,7 @@ class plotSkewT(backgroundSkewT):
         self.adiab_color = QtGui.QColor(kwargs.get('adiab_color', '#333333'))
         self.mixr_color = QtGui.QColor(kwargs.get('mixr_color', '#006600'))
         self.readout_vars = [kwargs.get('readout_br', 'dwpc'), kwargs.get('readout_tr', 'temp')]
-        
+
         self.alert_colors = [
             QtGui.QColor('#775000'),
             QtGui.QColor('#996600'),
@@ -485,13 +488,13 @@ class plotSkewT(backgroundSkewT):
 
         self.popupmenu.addSeparator()
         self.popupmenu.addMenu(self.parcelmenu)
-        
+
         modify_sfc = QAction(self)
         modify_sfc.setText("Modify Surface")
         modify_sfc.setCheckable(False)
         modify_sfc.triggered.connect(self.modifySfc)
         self.popupmenu.addAction(modify_sfc)
-        
+
         self.popupmenu.addSeparator()
         reset = QAction(self)
         reset.setText("Reset Skew-T")
@@ -619,7 +622,7 @@ class plotSkewT(backgroundSkewT):
 
     def setPBLLevel(self, flag):
         self.plotpbl = flag
-        
+
         self.clearData()
         self.plotData()
         self.update()
@@ -709,7 +712,7 @@ class plotSkewT(backgroundSkewT):
             trans_x = (rls_x - self.originx) * self.scale
             trans_y = (rls_y - self.originy) * self.scale
             tmpc = self.pix_to_tmpc(trans_x, trans_y)
-            
+
             # Example: 4 {'tmpc': 10.790866472309446} (changed the 4th point of the tmpc profile to the temperature value set in tmpc)
             # So, if we want to modify an entire layer of the sounding, we'll have to get creative.
             #print(drag_idx, {prof_name: tmpc})
@@ -747,7 +750,7 @@ class plotSkewT(backgroundSkewT):
         box = SfcModifyDialog(self.sfc_units, None)
         box.exec_()
         result = box.result()
-        
+
         if result == QDialog.Rejected:
             return
 
@@ -757,9 +760,9 @@ class plotSkewT(backgroundSkewT):
                 Returns: temperature in C
             '''
             return tab.thermo.ktoc(theta / np.power(1000./p, tab.constants.ROCP))
-        
+
         temp = box.getTemp()
-        dwpt = box.getDewPoint() 
+        dwpt = box.getDewPoint()
         if box.getMix():
             theta = tab.thermo.ctok(tab.thermo.theta(self.prof.pres[self.prof.sfc], float(temp)))
             theta_copy = self.prof.theta.copy()
@@ -773,10 +776,10 @@ class plotSkewT(backgroundSkewT):
             dwpt[idx] = tab.thermo.temp_at_mixrat(np.repeat(mixrat, len(idx)), self.prof.pres[idx])
             self.modified.emit(-999, {'tmpc': temp, 'idx_range':idx, 'dwpc': dwpt})
         else:
-            self.modified.emit(self.prof.sfc, {'tmpc': temp, 'dwpc': dwpt})        
+            self.modified.emit(self.prof.sfc, {'tmpc': temp, 'dwpc': dwpt})
 
     def getReadoutVal(self, var):
-        if var == 'tmpc':  
+        if var == 'tmpc':
             val = tab.interp.temp(self.prof, self.readout_pres)
             var_id = 'T='
             unit = 'C'
@@ -816,14 +819,14 @@ class plotSkewT(backgroundSkewT):
             try:
                 val = tab.interp.omeg(self.prof, self.readout_pres) * 36 # to convert to mb/hr (multiply by 10 to get to microbars/s which is default acis value
             except:
-                val = '--' 
+                val = '--'
             var_id = u"\u03C9" + '='
             unit = "mb/hr"
             color = self.el_mkr_color.name()
             round_val = 1
         ss = self.getStyleSheet(color)
         text = var_id + tab.utils.FLOAT2STR(val, round_val) + ' ' + unit
-        
+
         return ss, text
 
     def updateReadout(self):
@@ -833,10 +836,10 @@ class plotSkewT(backgroundSkewT):
         self.hghtReadout.setFixedWidth(65)
         self.tmpcReadout.setFixedWidth(65)
         self.dwpcReadout.setFixedWidth(65)
-      
+
         ss, text = self.getReadoutVal(self.readout_vars[0])
         self.tmpcReadout.setStyleSheet(ss)
-        self.tmpcReadout.setText(text) 
+        self.tmpcReadout.setText(text)
         ss, text = self.getReadoutVal(self.readout_vars[1])
         self.dwpcReadout.setStyleSheet(ss)
         self.dwpcReadout.setText(text)
@@ -878,7 +881,7 @@ class plotSkewT(backgroundSkewT):
         self.presReadout.hide()
         self.hghtReadout.hide()
         self.tmpcReadout.hide()
-        self.dwpcReadout.hide()      
+        self.dwpcReadout.hide()
         self.rubberBand.hide()
         self.cursor_toggle.emit(False)
         self.clearData()
@@ -927,7 +930,7 @@ class plotSkewT(backgroundSkewT):
         qp.begin(self)
         qp.drawPixmap(0, 0, self.plotBitMap)
         qp.end()
-    
+
     def clearData(self):
         '''
         Handles the clearing of the pixmap
@@ -1010,18 +1013,18 @@ class plotSkewT(backgroundSkewT):
             self.drawTrace(tmpc, self.dgz_color, qp, p=pres, label=False)
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
-            
+
             # DRAW WBZ and FRZ but only if they exist
             wbz_plevel = tab.params.temp_lvl(self.prof, 0, wetbulb=True)
             frz_plevel = tab.params.temp_lvl(self.prof, 0)
-            
+
             self.draw_sig_levels(qp, plevel=self.prof.dgz_pbot, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=self.prof.dgz_ptop, color=QtGui.QColor("#F5D800"))
             self.draw_sig_levels(qp, plevel=wbz_plevel, color=QtGui.QColor(self.dewp_color), var_id="WBZ=")
             self.draw_sig_levels(qp, plevel=frz_plevel, color=QtGui.QColor('#FFA500'), var_id="FRZ=")
 
         else:
-            # DRAW THE MAX LAPSE RATE 
+            # DRAW THE MAX LAPSE RATE
             self.draw_max_lapse_rate_layer(qp)
             self.draw_temp_levels(qp)
 
@@ -1034,11 +1037,13 @@ class plotSkewT(backgroundSkewT):
             self.dpcl_ptrace = self.prof.dpcl_ptrace
             self.drawVirtualParcelTrace(self.pcl.ttrace, self.pcl.ptrace, qp)
             self.drawVirtualParcelTrace(self.dpcl_ttrace, self.dpcl_ptrace, qp, color=QtGui.QColor("#FF00FF"))
-        
+
         if self.plotpbl:
             self.draw_pbl_level(qp)
-        
+
         self.draw_parcel_levels(qp)
+        self.draw_cloud_top_pressure_levels(qp) # JTS
+
         qp.setRenderHint(qp.Antialiasing, False)
         try:
             self.drawBarbs(self.prof, qp)
@@ -1052,6 +1057,12 @@ class plotSkewT(backgroundSkewT):
             self.draw_omega_profile(qp)
 
         qp.end()
+
+        # JTS - Cleanup: remove pathCloudFile after everything draws in the SPC window.
+        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+        isExistCloudFile = os.path.exists(pathCloudFile)
+        if isExistCloudFile==True:
+            os.remove(pathCloudFile)
 
     def drawBarbs(self, prof, qp, color=None):
         logging.debug("Drawing the wind barbs on the Skew-T.")
@@ -1133,7 +1144,7 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.setFont(self.hght_font)
         offset = 10
-        txt_offset = 15 
+        txt_offset = 15
         sfc = tab.interp.hght( self.prof, self.prof.pres[self.prof.sfc] )
         p1 = tab.interp.pres(self.prof, h+sfc)
         if np.isnan(p1) == False:
@@ -1160,9 +1171,9 @@ class plotSkewT(backgroundSkewT):
         qp.setPen(pen)
         qp.drawLine(x[0], y, x[1], y)
         left_bnd = self.tmpc_to_pix([20,36],[1000,1000])
-        rect1 = QtCore.QRectF(left_bnd[0], y-3, left_bnd[1] - left_bnd[0], 4) 
+        rect1 = QtCore.QRectF(left_bnd[0], y-3, left_bnd[1] - left_bnd[0], 4)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, var_id + tab.utils.INT2STR(z) + '\'')
-         
+
     def draw_pbl_level(self, qp):
         logging.debug("Drawing the PBL top marker.")
         if self.prof is not None:
@@ -1175,7 +1186,7 @@ class plotSkewT(backgroundSkewT):
                 pen = QtGui.QPen(QtCore.Qt.gray, 2, QtCore.Qt.SolidLine)
                 qp.setPen(pen)
                 qp.drawLine(x[0], y, x[1], y)
-                rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
+                rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
                 qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "PBL")
 
     def draw_parcel_levels(self, qp):
@@ -1186,7 +1197,7 @@ class plotSkewT(backgroundSkewT):
         lclp = self.pcl.lclpres
         lfcp = self.pcl.lfcpres
         elp = self.pcl.elpres
-        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']] 
+        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']]
         qp.setFont(self.hght_font)
 
         # Plot LCL
@@ -1195,7 +1206,7 @@ class plotSkewT(backgroundSkewT):
             pen = QtGui.QPen(self.lcl_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
-            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4) 
+            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LCL")
         # Plot LFC
         if tab.utils.QC(lfcp):
@@ -1203,7 +1214,7 @@ class plotSkewT(backgroundSkewT):
             pen = QtGui.QPen(self.lfc_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
-            rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
             qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "LFC")
         # Plot EL
         if tab.utils.QC(elp) and elp != lclp:
@@ -1211,7 +1222,7 @@ class plotSkewT(backgroundSkewT):
             pen = QtGui.QPen(self.el_mkr_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
-            rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4) 
+            rect3 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
             qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "EL")
 
     def draw_temp_levels(self, qp):
@@ -1219,7 +1230,7 @@ class plotSkewT(backgroundSkewT):
             return
         xbounds = [37,41]
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
-        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']] 
+        lvls = [[self.pcl.p0c,self.pcl.hght0c, '0 C'], [self.pcl.pm20c, self.pcl.hghtm20c, '-20 C'],[self.pcl.pm30c, self.pcl.hghtm30c, '-30 C']]
 
         qp.setClipping(True)
         for p, h, t in lvls:
@@ -1229,10 +1240,35 @@ class plotSkewT(backgroundSkewT):
                     pen = QtGui.QPen(self.sig_temp_level_color, 2, QtCore.Qt.SolidLine)
                     qp.setPen(pen)
                     qp.drawLine(x[0], y, x[1], y)
-                    rect3 = QtCore.QRectF(x[0], y-12, x[1] - x[0], 4) 
+                    rect3 = QtCore.QRectF(x[0], y-12, x[1] - x[0], 4)
                     qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, t + '=' + tab.utils.INT2STR(tab.utils.M2FT(h)) + '\'')
             except:
                 continue
+
+    def draw_cloud_top_pressure_levels(self, qp): # JTS added 9/1/20
+        logging.debug("Drawing the cloud top pressure layers.")
+        qp.setClipping(True)
+        xbounds = [20,24]
+        x = self.tmpc_to_pix(xbounds, [1000.,1000.])
+        qp.setFont(self.hght_font)
+
+        # Plot CTP_High
+        if tab.utils.QC(self.pcl.ctp_high):
+            y = self.originy + self.pres_to_pix(self.pcl.ctp_high) / self.scale
+            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_high + "%")
+        # Plot CTP_Low
+        if tab.utils.QC(self.pcl.ctp_low):
+            y = self.originy + self.pres_to_pix(self.pcl.ctp_low) / self.scale
+            pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
+            qp.setPen(pen)
+            qp.drawLine(x[0], y, x[1], y)
+            rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_low + "%")
+
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49
@@ -1241,9 +1277,9 @@ class plotSkewT(backgroundSkewT):
         x1_10 = self.tmpc_to_pix(plus10_bound, 1000)
         x1_0 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
         if omeg > 0:
-            return ((x1_0 - x1_10)/(0.-10.)) * omeg + x1_0    
+            return ((x1_0 - x1_10)/(0.-10.)) * omeg + x1_0
         elif omeg < 0:
-            return ((x1_0 - x1_m10)/(0.+10.)) * omeg + x1_0 
+            return ((x1_0 - x1_m10)/(0.+10.)) * omeg + x1_0
         else:
             return x1_0
 
@@ -1269,11 +1305,11 @@ class plotSkewT(backgroundSkewT):
         y1 = self.pres_to_pix(1000)
         y2 = self.pres_to_pix(111)
         qp.drawLine(x1, y1, x1, y2)
-        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4) 
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")  
-        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4) 
-        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")               
-        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4) 
+        rect3 = QtCore.QRectF(x1_10, y2 - 18, x1_m10 - x1_10, 4)
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "OMEGA")
+        rect3 = QtCore.QRectF(x1_m10-3, y2 - 7, 5, 4)
+        qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "-10")
+        rect3 = QtCore.QRectF(x1_10-3, y2 - 7, 5, 4)
         qp.drawText(rect3, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "+10")
 
         x1 = self.tmpc_to_pix((plus10_bound + minus10_bound)/2., 1000)
@@ -1288,7 +1324,7 @@ class plotSkewT(backgroundSkewT):
                 pen = QtGui.QPen(QtGui.QColor("#FF6666"), 1.5, QtCore.Qt.SolidLine)
             else:
                 pen = QtGui.QPen(QtCore.Qt.magenta, 1, QtCore.Qt.SolidLine)
-            qp.setPen(pen)                
+            qp.setPen(pen)
             x2 = self.omeg_to_pix(self.prof.omeg[i]*10.)
             qp.drawLine(x1, pres_y, x2, pres_y)
 
@@ -1319,7 +1355,7 @@ class plotSkewT(backgroundSkewT):
                 color = self.alert_colors[4]
             elif self.prof.max_lapse_rate_2_6[0] >= 6:
                 # BROWN
-                color = self.alert_colors[1] 
+                color = self.alert_colors[1]
             else:
                 color = self.alert_colors[0]
 
@@ -1389,9 +1425,9 @@ class plotSkewT(backgroundSkewT):
            # qp.drawText(x1-2*len, y1-text_offset, 40, 40,
            #     QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
            #     text_bot)
-   
 
- 
+
+
     def drawVirtualParcelTrace(self, ttrace, ptrace, qp, width=1, color=None):
         '''
         Draw a parcel trace.
@@ -1500,7 +1536,7 @@ class plotSkewT(backgroundSkewT):
 class SfcModifyDialog(QDialog):
 
     def __init__(self, units, parent=None):
-        """ 
+        """
         Construct the preferences dialog box.
         config: A Config object containing the user's configuration.
         """
@@ -1509,7 +1545,7 @@ class SfcModifyDialog(QDialog):
         self.__initUI()
 
     def __initUI(self):
-        """ 
+        """
         Set up the user interface [private method].
         """
         self.setWindowTitle("Modify Surface")
@@ -1545,21 +1581,21 @@ class SfcModifyDialog(QDialog):
         main_layout.addLayout(button_layout)
         self.setLayout(main_layout)
 
-        self.new_temp.textChanged.connect(self.validateText)   
-        self.new_dwpt.textChanged.connect(self.validateText)   
+        self.new_temp.textChanged.connect(self.validateText)
+        self.new_dwpt.textChanged.connect(self.validateText)
 
     def validateText(self):
         if self.new_temp.hasAcceptableInput() and self.new_dwpt.hasAcceptableInput() and self.getTemp() >= self.getDewPoint():
             self.accept_button.setEnabled(True)
         else:
             self.accept_button.setEnabled(False)
- 
+
     def getTemp(self):
         if self.unit == "C":
             return float(self.new_temp.text())
         else:
             return tab.thermo.ftoc(float(self.new_temp.text()))
- 
+
     def getDewPoint(self):
         if self.unit == "C":
             return float(self.new_dwpt.text())
@@ -1572,12 +1608,12 @@ class SfcModifyDialog(QDialog):
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-    app_frame = QtGui.QApplication([])        
+    app_frame = QtGui.QApplication([])
     title = "Window"
     width = 800
     height = 600
     #qp = QPainter()
     tester = plotSkewT()
-    tester.show()        
+    tester.show()
     # run the main Qt event loop
     app_frame.exec_()

@@ -378,7 +378,7 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         logging.debug("Calling SPCWidget.updateProfs")
-        
+
         prof_col = self.prof_collections[self.pc_idx]
         self.default_prof = prof_col.getHighlightedProf()
 
@@ -476,7 +476,7 @@ class SPCWidget(QWidget):
         sheet = self.styleSheet()
         sheet = _modifySheet(sheet, 'background-color', bg_hex)
         self.setStyleSheet(sheet)
-        
+
         sheet = self.ur.styleSheet()
         sheet = _modifySheet(sheet, 'background-color', bg_hex)
         sheet = _modifySheet(sheet, 'border-color', fg_hex)
@@ -579,7 +579,7 @@ class SPCWidget(QWidget):
         if self.left_inset == "WINTER" or self.right_inset == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
- 
+
         ## Do a check for setting the pbl
         if self.left_inset == "FIRE" or self.right_inset == "FIRE":
             self.sound.setPBLLevel(True)
@@ -698,12 +698,12 @@ class SPCWidget(QWidget):
             if self.left_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
                 self.dgz = False
- 
+
             if self.left_inset == "FIRE" and self.pbl:
                 self.sound.setPBLLevel(False)
                 self.pbl = False
-            
-            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to
             #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
@@ -725,7 +725,7 @@ class SPCWidget(QWidget):
                 self.sound.setPBLLevel(False)
                 self.pbl = False
 
-            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to
             #   delete something you want to remove from the layout.
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
@@ -744,7 +744,7 @@ class SPCWidget(QWidget):
         if a.data() == "FIRE":
             self.sound.setPBLLevel(True)
             self.pbl = True
- 
+
         self.setFocus()
         self.update()
 
@@ -774,7 +774,7 @@ class SPCWindow(QMainWindow):
 
         bg_hex = self.spc_widget.config['preferences', 'bg_color']
         self.setStyleSheet("QMainWindow { background-color: " + bg_hex + "; }")
-        
+
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
             self.setGeometry(10,30,1180,800)
@@ -866,7 +866,7 @@ class SPCWindow(QMainWindow):
         if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):
             self.spc_widget.setProfileCollection(menu_name)
             return
-            
+
         if not prof_col.getMeta('observed'):
             self.allobserved.setDisabled(True)
             self.allobserved.setChecked(False)
@@ -965,7 +965,27 @@ class SPCWindow(QMainWindow):
         pc_date = prof_col.getMeta('run').strftime("%d/%H%MZ")
         pc_model = prof_col.getMeta('model')
 
-        return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+        # JTS - Remove cycle time from NUCAPS menu item.
+        if pc_model == "Nucaps NOAA 20 Alaska" \
+            or pc_model == "Nucaps NOAA 20 Caribbean" \
+            or pc_model == "Nucaps NOAA 20 Conus" \
+            or pc_model == "Nucaps Suomi-NPP Alaska" \
+            or pc_model == "Nucaps Suomi-NPP Caribbean" \
+            or pc_model == "Nucaps Suomi-NPP Conus" \
+            or pc_model == "Nucaps Metop A Alaska" \
+            or pc_model == "Nucaps Metop A Caribbean" \
+            or pc_model == "Nucaps Metop A Conus" \
+            or pc_model == "Nucaps Metop B Alaska" \
+            or pc_model == "Nucaps Metop B Caribbean" \
+            or pc_model == "Nucaps Metop B Conus" \
+            or pc_model == "Nucaps Metop C Alaska" \
+            or pc_model == "Nucaps Metop C Caribbean" \
+            or pc_model == "Nucaps Metop C Conus":
+            pc_date = ''
+            return "%s (%s)" % (pc_loc, pc_model)
+        else:
+            # Keep the default cycle time for the non-NUCAPS data.
+            return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
 
     def interpProf(self):
         self.setInterpolated(True)
@@ -995,7 +1015,7 @@ class SPCWindow(QMainWindow):
             self.picker_window.raise_()
 
 if __name__ == '__main__':
-    app_frame = QApplication([])    
+    app_frame = QApplication([])
     tester = SPCWindow()
-    tester.show()    
+    tester.show()
     app_frame.exec_()
