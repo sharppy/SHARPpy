@@ -77,28 +77,44 @@ def downloadCSVs():
     #         shutil.copyfileobj(r, f)
 
 def copyCSVs():
+    # Remove old CSVs from HIDDEN_DSDIR before moving new CSVs to that directory.
+    j01CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "j01*.csv"))
+    nppCSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "npp*.csv"))
+    m01CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m01*.csv"))
+    m02CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m02*.csv"))
+    m03CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m03*.csv"))
+
+    [os.remove(j01CSV_OLD) for j01CSV_OLD in j01CSVs_OLD]
+    [os.remove(nppCSV_OLD) for nppCSV_OLD in nppCSVs_OLD]
+    [os.remove(m01CSV_OLD) for m01CSV_OLD in m01CSVs_OLD]
+    [os.remove(m02CSV_OLD) for m02CSV_OLD in m02CSVs_OLD]
+    [os.remove(m03CSV_OLD) for m03CSV_OLD in m03CSVs_OLD]
+
+
+#######################################
+#######################################
+
     # Copy CSVs from SHARPPY_DIR to HIDDEN_DSDIR
     j01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "j01*.csv"))
     for j01csv in j01CSVs:
-        j01_filename = j01csv.split('/')[-1]
-        shutil.move(j01csv, f'{HIDDEN_DSDIR}/{j01_filename}')
+        shutil.move(j01csv, HIDDEN_DSDIR)
+
 
     nppCSVs = glob.glob(os.path.join(SHARPPY_DIR, "npp*.csv"))
     for nppcsv in nppCSVs:
-        npp_filename = nppcsv.split('/')[-1]
-        shutil.move(nppcsv, f'{HIDDEN_DSDIR}/{npp_filename}')
+        shutil.move(nppcsv, HIDDEN_DSDIR)
+
 
     # m01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m01*.csv"))
     # for m01csv in m01CSVs:
-    #     m01_filename = m01csv.split('/')[-1]
-    #     shutil.move(m01csv, f'{HIDDEN_DSDIR}/{m01_filename}')
+    #     shutil.move(m01csv, HIDDEN_DSDIR)
+    #
     #
     # m02CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m02*.csv"))
     # for m02csv in m02CSVs:
-    #     m02_filename = m02csv.split('/')[-1]
-    #     shutil.move(m02csv, f'{HIDDEN_DSDIR}/{m02_filename}')
+    #     shutil.move(m02csv, HIDDEN_DSDIR)
+    #
     #
     # m03CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m03*.csv"))
     # for m03csv in m03CSVs:
-    #     m03_filename = m03csv.split('/')[-1]
-    #     shutil.move(m03csv, f'{HIDDEN_DSDIR}/{m03_filename}')
+    #     shutil.move(m03csv, HIDDEN_DSDIR)
