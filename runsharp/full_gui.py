@@ -445,21 +445,21 @@ class Picker(QWidget):
         self.select_flag = False
 
         # JTS - Remove the forecast times under the "Select Forecast Time" section for NUCAPS.
-        if self.model == "Nucaps NOAA 20 Alaska" \
-            or self.model == "Nucaps NOAA 20 Caribbean" \
-            or self.model == "Nucaps NOAA 20 Conus" \
-            or self.model == "Nucaps Suomi-NPP Alaska" \
-            or self.model == "Nucaps Suomi-NPP Caribbean" \
-            or self.model == "Nucaps Suomi-NPP Conus" \
-            or self.model == "Nucaps Metop A Alaska" \
-            or self.model == "Nucaps Metop A Caribbean" \
-            or self.model == "Nucaps Metop A Conus" \
-            or self.model == "Nucaps Metop B Alaska" \
-            or self.model == "Nucaps Metop B Caribbean" \
-            or self.model == "Nucaps Metop B Conus" \
-            or self.model == "Nucaps Metop C Alaska" \
-            or self.model == "Nucaps Metop C Caribbean" \
-            or self.model == "Nucaps Metop C Conus":
+        if self.model == "NUCAPS NOAA-20 CONUS" \
+            or self.model == "NUCAPS Suomi-NPP CONUS" \
+            or self.model == "NUCAPS Metop-A CONUS" \
+            or self.model == "NUCAPS Metop-B CONUS" \
+            or self.model == "NUCAPS Metop-C CONUS" \
+            or self.model == "NUCAPS NOAA-20 Caribbean" \
+            or self.model == "NUCAPS Suomi-NPP Caribbean" \
+            or self.model == "NUCAPS Metop-A Caribbean" \
+            or self.model == "NUCAPS Metop-B Caribbean" \
+            or self.model == "NUCAPS Metop-C Caribbean" \
+            or self.model == "NUCAPS NOAA-20 Alaska" \
+            or self.model == "NUCAPS Suomi-NPP Alaska" \
+            or self.model == "NUCAPS Metop-A Alaska" \
+            or self.model == "NUCAPS Metop-B Alaska" \
+            or self.model == "NUCAPS Metop-C Alaska":
             self.date_label.setDisabled(True)
             self.all_profs.setDisabled(True)
             self.profile_list.clear()
@@ -566,21 +566,21 @@ class Picker(QWidget):
                 self.run_dropdown.setEnabled(False)
 
             # JTS - Remove the model/obs cycle times from the run dropdown menu for NUCAPS.
-            if self.model == "Nucaps NOAA 20 Alaska" \
-                or self.model == "Nucaps NOAA 20 Caribbean" \
-                or self.model == "Nucaps NOAA 20 Conus" \
-                or self.model == "Nucaps Suomi-NPP Alaska" \
-                or self.model == "Nucaps Suomi-NPP Caribbean" \
-                or self.model == "Nucaps Suomi-NPP Conus" \
-                or self.model == "Nucaps Metop A Alaska" \
-                or self.model == "Nucaps Metop A Caribbean" \
-                or self.model == "Nucaps Metop A Conus" \
-                or self.model == "Nucaps Metop B Alaska" \
-                or self.model == "Nucaps Metop B Caribbean" \
-                or self.model == "Nucaps Metop B Conus" \
-                or self.model == "Nucaps Metop C Alaska" \
-                or self.model == "Nucaps Metop C Caribbean" \
-                or self.model == "Nucaps Metop C Conus":
+            if self.model == "NUCAPS NOAA-20 CONUS" \
+                or self.model == "NUCAPS Suomi-NPP CONUS" \
+                or self.model == "NUCAPS Metop-A CONUS" \
+                or self.model == "NUCAPS Metop-B CONUS" \
+                or self.model == "NUCAPS Metop-C CONUS" \
+                or self.model == "NUCAPS NOAA-20 Caribbean" \
+                or self.model == "NUCAPS Suomi-NPP Caribbean" \
+                or self.model == "NUCAPS Metop-A Caribbean" \
+                or self.model == "NUCAPS Metop-B Caribbean" \
+                or self.model == "NUCAPS Metop-C Caribbean" \
+                or self.model == "NUCAPS NOAA-20 Alaska" \
+                or self.model == "NUCAPS Suomi-NPP Alaska" \
+                or self.model == "NUCAPS Metop-A Alaska" \
+                or self.model == "NUCAPS Metop-B Alaska" \
+                or self.model == "NUCAPS Metop-C Alaska":
                 self.run_dropdown.clear()
                 self.run_dropdown.setDisabled(True)
 
@@ -729,21 +729,21 @@ class Picker(QWidget):
         pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
 
         # Retrieve cloud top pressure/fraction values.
-        if self.model == "Nucaps NOAA 20 Alaska" \
-            or self.model == "Nucaps NOAA 20 Caribbean" \
-            or self.model == "Nucaps NOAA 20 Conus" \
-            or self.model == "Nucaps Suomi-NPP Alaska" \
-            or self.model == "Nucaps Suomi-NPP Caribbean" \
-            or self.model == "Nucaps Suomi-NPP Conus" \
-            or self.model == "Nucaps Metop A Alaska" \
-            or self.model == "Nucaps Metop A Caribbean" \
-            or self.model == "Nucaps Metop A Conus" \
-            or self.model == "Nucaps Metop B Alaska" \
-            or self.model == "Nucaps Metop B Caribbean" \
-            or self.model == "Nucaps Metop B Conus" \
-            or self.model == "Nucaps Metop C Alaska" \
-            or self.model == "Nucaps Metop C Caribbean" \
-            or self.model == "Nucaps Metop C Conus":
+        if self.model == "NUCAPS NOAA-20 CONUS" \
+            or self.model == "NUCAPS Suomi-NPP CONUS" \
+            or self.model == "NUCAPS Metop-A CONUS" \
+            or self.model == "NUCAPS Metop-B CONUS" \
+            or self.model == "NUCAPS Metop-C CONUS" \
+            or self.model == "NUCAPS NOAA-20 Caribbean" \
+            or self.model == "NUCAPS Suomi-NPP Caribbean" \
+            or self.model == "NUCAPS Metop-A Caribbean" \
+            or self.model == "NUCAPS Metop-B Caribbean" \
+            or self.model == "NUCAPS Metop-C Caribbean" \
+            or self.model == "NUCAPS NOAA-20 Alaska" \
+            or self.model == "NUCAPS Suomi-NPP Alaska" \
+            or self.model == "NUCAPS Metop-A Alaska" \
+            or self.model == "NUCAPS Metop-B Alaska" \
+            or self.model == "NUCAPS Metop-C Alaska":
             ctf_low = self.loc['ctf_low']
             ctf_high = self.loc['ctf_high']
             ctp_low = self.loc['ctp_low']

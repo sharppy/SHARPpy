@@ -78,17 +78,38 @@ def downloadCSVs():
 
 def copyCSVs():
     # Remove old CSVs from HIDDEN_DSDIR before moving new CSVs to that directory.
-    j01CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "j01*.csv"))
-    nppCSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "npp*.csv"))
-    m01CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m01*.csv"))
-    m02CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m02*.csv"))
-    m03CSVs_OLD = glob.glob(os.path.join(HIDDEN_DSDIR, "m03*.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "j01_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "j01_alaska.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "npp_alaska.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m01_alaska.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m02_alaska.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m03_alaska.csv"))
 
-    [os.remove(j01CSV_OLD) for j01CSV_OLD in j01CSVs_OLD]
-    [os.remove(nppCSV_OLD) for nppCSV_OLD in nppCSVs_OLD]
-    [os.remove(m01CSV_OLD) for m01CSV_OLD in m01CSVs_OLD]
-    [os.remove(m02CSV_OLD) for m02CSV_OLD in m02CSVs_OLD]
-    [os.remove(m03CSV_OLD) for m03CSV_OLD in m03CSVs_OLD]
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "j01_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "j01_caribbean.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "npp_caribbean.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m01_caribbean.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m02_caribbean.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m03_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m03_caribbean.csv"))
+
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "j01_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "j01_conus.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "npp_conus.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m01_conus.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m02_conus.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "m03_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "m03_conus.csv"))
 
 
 #######################################
