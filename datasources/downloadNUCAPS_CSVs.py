@@ -10,7 +10,7 @@ HIDDEN_DSDIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 SHARPPY_DIR = os.path.abspath(os.curdir)
 
 # Download CSVs for all satellites and regions to SHARPPY_DIR.
-def downloadCSVs():
+def downloadNewCSVs():
     # Download Alaska, Caribbean and CONUS CSVs for NOAA-20.
     with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/j01/csv/j01_alaska.csv')) as r:
         with open('j01_alaska.csv', 'wb') as f:
@@ -76,7 +76,7 @@ def downloadCSVs():
     #     with open('m03_conus.csv', 'wb') as f:
     #         shutil.copyfileobj(r, f)
 
-def copyCSVs():
+def removeOldCSVs():
     # Remove old CSVs from HIDDEN_DSDIR before moving new CSVs to that directory.
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "j01_alaska.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "j01_alaska.csv"))
@@ -111,30 +111,23 @@ def copyCSVs():
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m03_conus.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "m03_conus.csv"))
 
-
-#######################################
-#######################################
-
-    # Copy CSVs from SHARPPY_DIR to HIDDEN_DSDIR
+def moveNewCSVs():
+    # Move CSVs from SHARPPY_DIR to HIDDEN_DSDIR
     j01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "j01*.csv"))
     for j01csv in j01CSVs:
         shutil.move(j01csv, HIDDEN_DSDIR)
-
 
     nppCSVs = glob.glob(os.path.join(SHARPPY_DIR, "npp*.csv"))
     for nppcsv in nppCSVs:
         shutil.move(nppcsv, HIDDEN_DSDIR)
 
-
     # m01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m01*.csv"))
     # for m01csv in m01CSVs:
     #     shutil.move(m01csv, HIDDEN_DSDIR)
     #
-    #
     # m02CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m02*.csv"))
     # for m02csv in m02CSVs:
     #     shutil.move(m02csv, HIDDEN_DSDIR)
-    #
     #
     # m03CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m03*.csv"))
     # for m03csv in m03CSVs:

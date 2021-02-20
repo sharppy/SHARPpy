@@ -33,6 +33,8 @@ import logging
 import qtpy
 import platform
 
+from datasources.downloadNUCAPS_CSVs import *
+
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
 if not os.path.isdir(HOME_DIR):
@@ -444,7 +446,7 @@ class Picker(QWidget):
         self.all_profs.setText("Select All")
         self.select_flag = False
 
-        # JTS - Remove the forecast times under the "Select Forecast Time" section for NUCAPS.
+        # JTS - Remove forecast times from the "Select Forecast Time" section for NUCAPS.
         if self.model == "NUCAPS NOAA-20 CONUS" \
             or self.model == "NUCAPS Suomi-NPP CONUS" \
             or self.model == "NUCAPS Metop-A CONUS" \
@@ -461,7 +463,6 @@ class Picker(QWidget):
             or self.model == "NUCAPS Metop-B Alaska" \
             or self.model == "NUCAPS Metop-C Alaska":
             self.date_label.setDisabled(True)
-            self.all_profs.setDisabled(True)
             self.profile_list.clear()
             self.profile_list.addItem("Current Data")
 
@@ -503,6 +504,7 @@ class Picker(QWidget):
                 return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
         self.cal_date = self.cal.selectedDate()
+
         # Function to update the times.
         def update(times):
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
@@ -583,6 +585,7 @@ class Picker(QWidget):
                 or self.model == "NUCAPS Metop-C Alaska":
                 self.run_dropdown.clear()
                 self.run_dropdown.setDisabled(True)
+
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
@@ -674,6 +677,33 @@ class Picker(QWidget):
         self.model = self.model_dropdown.currentText()
 
         self.update_from_cal(None, updated_model=True)
+
+        # JTS - Disable calendar when NUCAPS is chosen; reenable when non-NUCAPS is selected.
+        if self.model == "NUCAPS NOAA-20 CONUS" \
+            or self.model == "NUCAPS Suomi-NPP CONUS" \
+            or self.model == "NUCAPS Metop-A CONUS" \
+            or self.model == "NUCAPS Metop-B CONUS" \
+            or self.model == "NUCAPS Metop-C CONUS" \
+            or self.model == "NUCAPS NOAA-20 Caribbean" \
+            or self.model == "NUCAPS Suomi-NPP Caribbean" \
+            or self.model == "NUCAPS Metop-A Caribbean" \
+            or self.model == "NUCAPS Metop-B Caribbean" \
+            or self.model == "NUCAPS Metop-C Caribbean" \
+            or self.model == "NUCAPS NOAA-20 Alaska" \
+            or self.model == "NUCAPS Suomi-NPP Alaska" \
+            or self.model == "NUCAPS Metop-A Alaska" \
+            or self.model == "NUCAPS Metop-B Alaska" \
+            or self.model == "NUCAPS Metop-C Alaska":
+
+            self.run_label.setDisabled(True)
+            self.cal.setDisabled(True)
+
+            downloadNewCSVs()
+            removeOldCSVs()
+            moveNewCSVs()
+        else:
+            self.run_label.setEnabled(True)
+            self.cal.setEnabled(True)
 
     def get_run(self, index):
         """
