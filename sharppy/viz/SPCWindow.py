@@ -966,21 +966,21 @@ class SPCWindow(QMainWindow):
         pc_model = prof_col.getMeta('model')
 
         # JTS - Remove cycle time from NUCAPS menu item.
-        if pc_model == "NUCAPS NOAA-20 Alaska" \
-            or pc_model == "NUCAPS NOAA-20 Caribbean" \
-            or pc_model == "NUCAPS NOAA-20 CONUS" \
-            or pc_model == "NUCAPS Suomi-NPP Alaska" \
-            or pc_model == "NUCAPS Suomi-NPP Caribbean" \
-            or pc_model == "NUCAPS Suomi-NPP CONUS" \
-            or pc_model == "NUCAPS Metop-A Alaska" \
-            or pc_model == "NUCAPS Metop-A Caribbean" \
-            or pc_model == "NUCAPS Metop-A CONUS" \
-            or pc_model == "NUCAPS Metop-B Alaska" \
-            or pc_model == "NUCAPS Metop-B Caribbean" \
-            or pc_model == "NUCAPS Metop-B CONUS" \
-            or pc_model == "NUCAPS Metop-C Alaska" \
-            or pc_model == "NUCAPS Metop-C Caribbean" \
-            or pc_model == "NUCAPS Metop-C CONUS":
+        if pc_model == "NUCAPS Alaska NOAA-20" \
+            or pc_model == "NUCAPS Caribbean NOAA-20" \
+            or pc_model == "NUCAPS CONUS NOAA-20" \
+            or pc_model == "NUCAPS Alaska Suomi-NPP" \
+            or pc_model == "NUCAPS Caribbean Suomi-NPP" \
+            or pc_model == "NUCAPS CONUS Suomi-NPP" \
+            or pc_model == "NUCAPS Alaska Metop-A" \
+            or pc_model == "NUCAPS Caribbean Metop-A" \
+            or pc_model == "NUCAPS CONUS Metop-A" \
+            or pc_model == "NUCAPS Alaska Metop-B" \
+            or pc_model == "NUCAPS Caribbean Metop-B" \
+            or pc_model == "NUCAPS CONUS Metop-B" \
+            or pc_model == "NUCAPS Alaska Metop-C" \
+            or pc_model == "NUCAPS Caribbean Metop-C" \
+            or pc_model == "NUCAPS CONUS Metop-C":
             pc_date = ''
             return "%s (%s)" % (pc_loc, pc_model)
         else:
