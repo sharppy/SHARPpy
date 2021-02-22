@@ -1,3 +1,10 @@
+from datasources.downloadNUCAPS_CSVs import *
+
+# JTS - Download the NUCAPS CSVs initially
+downloadNewCSVs()
+removeOldCSVs()
+moveNewCSVs()
+
 def loadCSV(csv_file_name):
     csv = []
     csv_file = open(csv_file_name, 'r')
