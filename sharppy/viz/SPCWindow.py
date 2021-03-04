@@ -972,6 +972,9 @@ class SPCWindow(QMainWindow):
             or pc_model == "NUCAPS Alaska Suomi-NPP" \
             or pc_model == "NUCAPS Caribbean Suomi-NPP" \
             or pc_model == "NUCAPS CONUS Suomi-NPP" \
+            or pc_model == "NUCAPS Alaska Aqua" \
+            or pc_model == "NUCAPS Caribbean Aqua" \
+            or pc_model == "NUCAPS CONUS Aqua" \
             or pc_model == "NUCAPS Alaska Metop-A" \
             or pc_model == "NUCAPS Caribbean Metop-A" \
             or pc_model == "NUCAPS CONUS Metop-A" \

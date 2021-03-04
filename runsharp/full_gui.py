@@ -449,16 +449,19 @@ class Picker(QWidget):
         # JTS - Remove forecast times from the "Select Forecast Time" section for NUCAPS.
         if self.model == "NUCAPS CONUS NOAA-20" \
             or self.model == "NUCAPS CONUS Suomi-NPP" \
+            or self.model == "NUCAPS CONUS Aqua" \
             or self.model == "NUCAPS CONUS Metop-A" \
             or self.model == "NUCAPS CONUS Metop-B" \
             or self.model == "NUCAPS CONUS Metop-C" \
             or self.model == "NUCAPS Caribbean NOAA-20" \
             or self.model == "NUCAPS Caribbean Suomi-NPP" \
+            or self.model == "NUCAPS Caribbean Aqua" \
             or self.model == "NUCAPS Caribbean Metop-A" \
             or self.model == "NUCAPS Caribbean Metop-B" \
             or self.model == "NUCAPS Caribbean Metop-C" \
             or self.model == "NUCAPS Alaska NOAA-20" \
             or self.model == "NUCAPS Alaska Suomi-NPP" \
+            or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
             or self.model == "NUCAPS Alaska Metop-C":
@@ -572,16 +575,19 @@ class Picker(QWidget):
             # JTS - Remove the model/obs cycle times from the run dropdown menu for NUCAPS.
             if self.model == "NUCAPS CONUS NOAA-20" \
                 or self.model == "NUCAPS CONUS Suomi-NPP" \
+                or self.model == "NUCAPS CONUS Aqua" \
                 or self.model == "NUCAPS CONUS Metop-A" \
                 or self.model == "NUCAPS CONUS Metop-B" \
                 or self.model == "NUCAPS CONUS Metop-C" \
                 or self.model == "NUCAPS Caribbean NOAA-20" \
                 or self.model == "NUCAPS Caribbean Suomi-NPP" \
+                or self.model == "NUCAPS Caribbean Aqua" \
                 or self.model == "NUCAPS Caribbean Metop-A" \
                 or self.model == "NUCAPS Caribbean Metop-B" \
                 or self.model == "NUCAPS Caribbean Metop-C" \
                 or self.model == "NUCAPS Alaska NOAA-20" \
                 or self.model == "NUCAPS Alaska Suomi-NPP" \
+                or self.model == "NUCAPS Alaska Aqua" \
                 or self.model == "NUCAPS Alaska Metop-A" \
                 or self.model == "NUCAPS Alaska Metop-B" \
                 or self.model == "NUCAPS Alaska Metop-C":
@@ -683,16 +689,19 @@ class Picker(QWidget):
         # JTS - Disable calendar when NUCAPS is chosen; reenable when non-NUCAPS is selected.
         if self.model == "NUCAPS CONUS NOAA-20" \
             or self.model == "NUCAPS CONUS Suomi-NPP" \
+            or self.model == "NUCAPS CONUS Aqua" \
             or self.model == "NUCAPS CONUS Metop-A" \
             or self.model == "NUCAPS CONUS Metop-B" \
             or self.model == "NUCAPS CONUS Metop-C" \
             or self.model == "NUCAPS Caribbean NOAA-20" \
             or self.model == "NUCAPS Caribbean Suomi-NPP" \
+            or self.model == "NUCAPS Caribbean Aqua" \
             or self.model == "NUCAPS Caribbean Metop-A" \
             or self.model == "NUCAPS Caribbean Metop-B" \
             or self.model == "NUCAPS Caribbean Metop-C" \
             or self.model == "NUCAPS Alaska NOAA-20" \
             or self.model == "NUCAPS Alaska Suomi-NPP" \
+            or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
             or self.model == "NUCAPS Alaska Metop-C":
@@ -764,16 +773,19 @@ class Picker(QWidget):
         # Retrieve cloud top pressure/fraction values.
         if self.model == "NUCAPS CONUS NOAA-20" \
             or self.model == "NUCAPS CONUS Suomi-NPP" \
+            or self.model == "NUCAPS CONUS Aqua" \
             or self.model == "NUCAPS CONUS Metop-A" \
             or self.model == "NUCAPS CONUS Metop-B" \
             or self.model == "NUCAPS CONUS Metop-C" \
             or self.model == "NUCAPS Caribbean NOAA-20" \
             or self.model == "NUCAPS Caribbean Suomi-NPP" \
+            or self.model == "NUCAPS Caribbean Aqua" \
             or self.model == "NUCAPS Caribbean Metop-A" \
             or self.model == "NUCAPS Caribbean Metop-B" \
             or self.model == "NUCAPS Caribbean Metop-C" \
             or self.model == "NUCAPS Alaska NOAA-20" \
             or self.model == "NUCAPS Alaska Suomi-NPP" \
+            or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
             or self.model == "NUCAPS Alaska Metop-C":

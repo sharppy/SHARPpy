@@ -37,6 +37,19 @@ def downloadNewCSVs():
         with open('npp_conus.csv', 'wb') as f:
             shutil.copyfileobj(r, f)
 
+    # # Download Alaska, Caribbean and CONUS CSVs for Aqua.
+    # with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/aq0/csv/aq0_alaska.csv')) as r:
+    #     with open('aq0_alaska.csv', 'wb') as f:
+    #         shutil.copyfileobj(r, f)
+    #
+    # with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/aq0/csv/aq0_caribbean.csv')) as r:
+    #     with open('aq0_caribbean.csv', 'wb') as f:
+    #         shutil.copyfileobj(r, f)
+    #
+    # with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/aq0/csv/aq0_conus.csv')) as r:
+    #     with open('aq0_conus.csv', 'wb') as f:
+    #         shutil.copyfileobj(r, f)
+
     # # Download Alaska, Caribbean and CONUS CSVs for Metop-A.
     # with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m01/csv/m01_alaska.csv')) as r:
     #     with open('m01_alaska.csv', 'wb') as f:
@@ -82,6 +95,8 @@ def removeOldCSVs():
         os.remove(os.path.join(HIDDEN_DSDIR, "j01_alaska.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_alaska.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "npp_alaska.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "aq0_alaska.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "aq0_alaska.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_alaska.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "m01_alaska.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_alaska.csv")):
@@ -93,6 +108,8 @@ def removeOldCSVs():
         os.remove(os.path.join(HIDDEN_DSDIR, "j01_caribbean.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_caribbean.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "npp_caribbean.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "aq0_caribbean.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "aq0_caribbean.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_caribbean.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "m01_caribbean.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_caribbean.csv")):
@@ -104,6 +121,8 @@ def removeOldCSVs():
         os.remove(os.path.join(HIDDEN_DSDIR, "j01_conus.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "npp_conus.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "npp_conus.csv"))
+    if os.path.exists(os.path.join(HIDDEN_DSDIR, "aq0_conus.csv")):
+        os.remove(os.path.join(HIDDEN_DSDIR, "aq0_conus.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m01_conus.csv")):
         os.remove(os.path.join(HIDDEN_DSDIR, "m01_conus.csv"))
     if os.path.exists(os.path.join(HIDDEN_DSDIR, "m02_conus.csv")):
@@ -120,6 +139,10 @@ def moveNewCSVs():
     nppCSVs = glob.glob(os.path.join(SHARPPY_DIR, "npp*.csv"))
     for nppcsv in nppCSVs:
         shutil.move(nppcsv, HIDDEN_DSDIR)
+
+    # aq0CSVs = glob.glob(os.path.join(SHARPPY_DIR, "aq0*.csv"))
+    # for aq0csv in aq0CSVs:
+    #     shutil.move(aq0csv, HIDDEN_DSDIR)
 
     # m01CSVs = glob.glob(os.path.join(SHARPPY_DIR, "m01*.csv"))
     # for m01csv in m01CSVs:

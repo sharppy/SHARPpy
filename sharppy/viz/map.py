@@ -397,6 +397,9 @@ class MapWidget(QWidget):
                     or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
                     or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
                     or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
                     or self.cur_source.getName() == "NUCAPS Alaska Metop-A" \
                     or self.cur_source.getName() == "NUCAPS Caribbean Metop-A" \
                     or self.cur_source.getName() == "NUCAPS CONUS Metop-A" \
@@ -563,6 +566,9 @@ class MapWidget(QWidget):
             or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
             or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
             or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+            or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+            or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+            or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
             or self.cur_source.getName() == "NUCAPS Alaska Metop-A" \
             or self.cur_source.getName() == "NUCAPS Caribbean Metop-A" \
             or self.cur_source.getName() == "NUCAPS CONUS Metop-A" \
