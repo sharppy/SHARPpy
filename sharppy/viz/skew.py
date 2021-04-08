@@ -1059,7 +1059,7 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
         # JTS - Cleanup: remove pathCloudFile after everything draws in the SPC window.
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
         isExistCloudFile = os.path.exists(pathCloudFile)
         if isExistCloudFile==True:
             os.remove(pathCloudFile)

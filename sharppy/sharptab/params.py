@@ -375,7 +375,7 @@ class Parcel(object):
         # JTS - Find cloud top pressure/fraction from temporary text file.
         try:
             # This block gets executed only when new profiles are loaded to the SPC window.
-            pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+            pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
             file = open(pathCloudFile)
             line = file.readlines()
 

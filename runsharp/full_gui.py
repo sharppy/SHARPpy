@@ -665,7 +665,7 @@ class Picker(QWidget):
                         raise IOError(
                             "No outlet found with the requested profile!")
                         # JTS - Cleanup: remove pathCloudFile if profile doesn't load for any reason.
-                        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+                        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
                         isExistCloudFile = os.path.exists(pathCloudFile)
                         if isExistCloudFile==True:
                             os.remove(pathCloudFile)
@@ -768,7 +768,7 @@ class Picker(QWidget):
         :return:
         """
         # JTS
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
+        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
 
         # Retrieve cloud top pressure/fraction values.
         if self.model == "NUCAPS CONUS NOAA-20" \
