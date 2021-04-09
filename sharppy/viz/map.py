@@ -414,23 +414,63 @@ class MapWidget(QWidget):
                 pass
 
             self.stn_names = []
-            for p in self.points:
-                if p['icao'] != "":
-                    id_str = " (%s)" % p['icao']
-                else:
-                    id_str = ""
-                if p['state'] != "":
-                    pol_str = ", %s" % p['state']
-                elif p['country'] != "":
-                    pol_str = ", %s" % p['country']
-                else:
-                    pol_str = ""
 
-                nm = p['name']
-                if id_str == "" and pol_str == "":
+            # JTS - Text that displays when hovering mouse over point will change,
+            # depending on whether data source is NUCAPS or not.
+            for p in self.points:
+                if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Metop-A" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Metop-A" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Metop-A" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Metop-B" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Metop-B" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Metop-B" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Metop-C" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Metop-C" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Metop-C":
+
+                    if p['lat'] != "":
+                        lat_str = " (%s," % p['lat']
+                    else:
+                        lat_str = ""
+
+                    if p['lon'] != "":
+                        lon_str = " %s)" % p['lon']
+                    else:
+                        lon_str = ""
+
+                    nm = p['name']
                     nm = nm.upper()
-                name = "%s%s%s" % (nm, pol_str, id_str)
-                self.stn_names.append(name)
+                    name = "%s%s%s" % (nm, lat_str, lon_str)
+                    self.stn_names.append(name)
+
+                else:
+
+                    if p['icao'] != "":
+                        id_str = " (%s)" % p['icao']
+                    else:
+                        id_str = ""
+
+                    if p['state'] != "":
+                        pol_str = ", %s" % p['state']
+                    elif p['country'] != "":
+                        pol_str = ", %s" % p['country']
+                    else:
+                        pol_str = ""
+
+                    nm = p['name']
+                    if id_str == "" and pol_str == "":
+                        nm = nm.upper()
+                    name = "%s%s%s" % (nm, pol_str, id_str)
+                    self.stn_names.append(name)
 
             self._hideLoading()
 
