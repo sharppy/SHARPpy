@@ -1350,8 +1350,8 @@ def main():
         logging.info("This is the most recent version of SHARPpy.")
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
-    if latest[0] is False:
-        newerRelease(latest)
+    # if latest[0] is False:
+    #     newerRelease(latest)
 
     if args.dt is not None and args.ds is not None and args.stn is not None:
         dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")
