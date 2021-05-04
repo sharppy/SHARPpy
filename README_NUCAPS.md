@@ -19,8 +19,8 @@ SHARPpy is a collection of open source sounding and hodograph analysis routines,
 **Table of Contents**
 
 - [Install Pre-requisites](#install-pre-requisites)
-- [Install the NUCAPS test branch in SHARPpy](#installing-sharppy)
-- [Running SHARPpy from the Command Line](#running-sharppy)
+- [Install the NUCAPS test branch in SHARPpy](#install-the-nucaps-test-branch-in-sharppy)
+- [Running SHARPpy from the Command Line](#running-sharppy-from-the-command-line)
 - [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
@@ -44,19 +44,19 @@ You can now install the beta version of SHARPpy which contains NUCAPS satellite 
 git clone https://github.com/Jeff-Szkodzinski/SHARPpy.git
 ```
 
-Change your directory to where you have downloaded SHARPpy (e.g. /home/<user>/SHARPpy).
+Change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
 
 ```bash
 cd /home/<user>/SHARPpy
 ```
 
-Next, we to create an isolated Anaconda environment just for running SHARPpy with all the necessary libraries (using conda env create <options>; it may take several minutes to install the libraries). If you are interested, you can open the environment.yml file to see which libraries are used.
+Next, we to create an isolated Anaconda environment just for running SHARPpy with all the necessary libraries (using conda env create {options}; it may take several minutes to install the libraries). If you are interested, you can open the environment.yml file to see which libraries are used.
 
 ```bash
 conda env create -f environment.yml
 ```
 
-After creating the environment, we need to switch to this new environment (via conda activate <env_name>) which we have named devel.
+After creating the environment, we need to switch to this new environment (via conda activate {env_name}) which we have named devel.
 
 ```bash
 conda activate devel
