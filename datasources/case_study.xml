@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<sourcelist>
+    <datasource name="NUCAPS Case Study NOAA-20" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/j01/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="j01_case_study.csv" />
+        </outlet>
+    </datasource>
+    <!-- <datasource name="NUCAPS Case Study Suomi-NPP" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/npp/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="npp_case_study.csv" />
+        </outlet>
+    </datasource> -->
+    <!-- <datasource name="NUCAPS Case Study Aqua" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/aq0/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="aq0_case_study.csv" />
+        </outlet>
+    </datasource> -->
+    <!-- <datasource name="NUCAPS Case Study Metop-A" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/m01/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m01_case_study.csv" />
+        </outlet>
+    </datasource> -->
+    <!-- <datasource name="NUCAPS Case Study Metop-B" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/m02/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m02_case_study.csv" />
+        </outlet>
+    </datasource> -->
+    <!-- <datasource name="NUCAPS Case Study Metop-C" ensemble="false" observed="true">
+        <outlet name="STC" url="file:///c:/Users/jeffs/.sharppy/datasources/m03/{srcid}.txt" format="spc" >
+            <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
+            <points csv="m03_case_study.csv" />
+        </outlet>
+    </datasource> -->
+</sourcelist>

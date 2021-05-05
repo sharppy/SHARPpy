@@ -967,23 +967,28 @@ class SPCWindow(QMainWindow):
 
         # JTS - Remove cycle time from NUCAPS menu item.
         if pc_model == "NUCAPS Alaska NOAA-20" \
-            or pc_model == "NUCAPS Caribbean NOAA-20" \
-            or pc_model == "NUCAPS CONUS NOAA-20" \
             or pc_model == "NUCAPS Alaska Suomi-NPP" \
-            or pc_model == "NUCAPS Caribbean Suomi-NPP" \
-            or pc_model == "NUCAPS CONUS Suomi-NPP" \
             or pc_model == "NUCAPS Alaska Aqua" \
-            or pc_model == "NUCAPS Caribbean Aqua" \
-            or pc_model == "NUCAPS CONUS Aqua" \
             or pc_model == "NUCAPS Alaska Metop-A" \
-            or pc_model == "NUCAPS Caribbean Metop-A" \
-            or pc_model == "NUCAPS CONUS Metop-A" \
             or pc_model == "NUCAPS Alaska Metop-B" \
-            or pc_model == "NUCAPS Caribbean Metop-B" \
-            or pc_model == "NUCAPS CONUS Metop-B" \
             or pc_model == "NUCAPS Alaska Metop-C" \
+            or pc_model == "NUCAPS Caribbean NOAA-20" \
+            or pc_model == "NUCAPS Caribbean Suomi-NPP" \
+            or pc_model == "NUCAPS Caribbean Metop-A" \
+            or pc_model == "NUCAPS Caribbean Metop-B" \
             or pc_model == "NUCAPS Caribbean Metop-C" \
-            or pc_model == "NUCAPS CONUS Metop-C":
+            or pc_model == "NUCAPS CONUS NOAA-20" \
+            or pc_model == "NUCAPS CONUS Suomi-NPP" \
+            or pc_model == "NUCAPS CONUS Aqua" \
+            or pc_model == "NUCAPS CONUS Metop-A" \
+            or pc_model == "NUCAPS CONUS Metop-B" \
+            or pc_model == "NUCAPS CONUS Metop-C" \
+            or pc_model == "NUCAPS Case Study NOAA-20" \
+            or pc_model == "NUCAPS Case Study Suomi-NPP" \
+            or pc_model == "NUCAPS Case Study Aqua" \
+            or pc_model == "NUCAPS Case Study Metop-A" \
+            or pc_model == "NUCAPS Case Study Metop-B" \
+            or pc_model == "NUCAPS Case Study Metop-C":
             pc_date = ''
             return "%s (%s)" % (pc_loc, pc_model)
         else:

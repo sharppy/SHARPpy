@@ -464,7 +464,13 @@ class Picker(QWidget):
             or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
-            or self.model == "NUCAPS Alaska Metop-C":
+            or self.model == "NUCAPS Alaska Metop-C" \
+            or self.model == "NUCAPS Case Study NOAA-20" \
+            or self.model == "NUCAPS Case Study Suomi-NPP" \
+            or self.model == "NUCAPS Case Study Aqua" \
+            or self.model == "NUCAPS Case Study Metop-A" \
+            or self.model == "NUCAPS Case Study Metop-B" \
+            or self.model == "NUCAPS Case Study Metop-C":
             self.date_label.setDisabled(True)
             self.profile_list.clear()
             self.profile_list.addItem("")
@@ -590,7 +596,13 @@ class Picker(QWidget):
                 or self.model == "NUCAPS Alaska Aqua" \
                 or self.model == "NUCAPS Alaska Metop-A" \
                 or self.model == "NUCAPS Alaska Metop-B" \
-                or self.model == "NUCAPS Alaska Metop-C":
+                or self.model == "NUCAPS Alaska Metop-C" \
+                or self.model == "NUCAPS Case Study NOAA-20" \
+                or self.model == "NUCAPS Case Study Suomi-NPP" \
+                or self.model == "NUCAPS Case Study Aqua" \
+                or self.model == "NUCAPS Case Study Metop-A" \
+                or self.model == "NUCAPS Case Study Metop-B" \
+                or self.model == "NUCAPS Case Study Metop-C":
                 self.run_dropdown.clear()
                 self.run_dropdown.setDisabled(True)
 
@@ -704,7 +716,13 @@ class Picker(QWidget):
             or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
-            or self.model == "NUCAPS Alaska Metop-C":
+            or self.model == "NUCAPS Alaska Metop-C" \
+            or self.model == "NUCAPS Case Study NOAA-20" \
+            or self.model == "NUCAPS Case Study Suomi-NPP" \
+            or self.model == "NUCAPS Case Study Aqua" \
+            or self.model == "NUCAPS Case Study Metop-A" \
+            or self.model == "NUCAPS Case Study Metop-B" \
+            or self.model == "NUCAPS Case Study Metop-C":
 
             self.run_label.setDisabled(True)
             self.cal.setDisabled(True)
@@ -788,7 +806,13 @@ class Picker(QWidget):
             or self.model == "NUCAPS Alaska Aqua" \
             or self.model == "NUCAPS Alaska Metop-A" \
             or self.model == "NUCAPS Alaska Metop-B" \
-            or self.model == "NUCAPS Alaska Metop-C":
+            or self.model == "NUCAPS Alaska Metop-C" \
+            or self.model == "NUCAPS Case Study NOAA-20" \
+            or self.model == "NUCAPS Case Study Suomi-NPP" \
+            or self.model == "NUCAPS Case Study Aqua" \
+            or self.model == "NUCAPS Case Study Metop-A" \
+            or self.model == "NUCAPS Case Study Metop-B" \
+            or self.model == "NUCAPS Case Study Metop-C":
             ctf_low = self.loc['ctf_low']
             ctf_high = self.loc['ctf_high']
             ctp_low = self.loc['ctp_low']
