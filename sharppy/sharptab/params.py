@@ -1930,7 +1930,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
             li_maxpres = pe2
         
         # Check for Max Cap Strength
-        mcap = te2 - mli
+        mcap = -mli
         if mcap > cap_strength:
             cap_strength = mcap
             cap_strengthpres = pe2
