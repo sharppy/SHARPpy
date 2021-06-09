@@ -867,9 +867,10 @@ class SPCWindow(QMainWindow):
             self.spc_widget.setProfileCollection(menu_name)
             return
 
-        if not prof_col.getMeta('observed'):
-            self.allobserved.setDisabled(True)
-            self.allobserved.setChecked(False)
+        # JTS - keep "collect observed" option active, regardless of profile type.
+        # if not prof_col.getMeta('observed'):
+        #     self.allobserved.setDisabled(True)
+        #     self.allobserved.setChecked(False)
 
         self.createProfileMenu(prof_col)
 
