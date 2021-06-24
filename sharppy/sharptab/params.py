@@ -372,27 +372,6 @@ class Parcel(object):
         self.ctp_high = ma.masked # Cloud top pressure: High level (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
-        # JTS - Find cloud top pressure/fraction from temporary text file.
-        try:
-            # This block gets executed only when new profiles are loaded to the SPC window.
-            pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
-            file = open(pathCloudFile)
-            line = file.readlines()
-
-            # Remove the list surrounding the values.
-            line = line[0]
-
-            # Assign local cloud top values to the parcel profile object.
-            self.ctf_low = str(line.split(' ')[0])
-            self.ctf_high = str(line.split(' ')[1])
-            self.ctp_low = int(line.split(' ')[2])
-            self.ctp_high = int(line.split(' ')[3])
-        except:
-            # This block gets executed only when Interpolate Focused Profile is selected in the SPC window.
-            # Smoothing the profile could theoretically cause NUCAPS-derived cloud top fraction to be at a different height.
-            # Thus not displayed.
-            pass
-
 def hgz(prof):
     '''
         Hail Growth Zone Levels
@@ -1912,6 +1891,24 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm10c = hgtm10c
     pcl.hghtm20c = hgtm20c
     pcl.hghtm30c = hgtm30c
+
+    # JTS - Find cloud top pressure/fraction from temporary text file.
+    try:
+        # This block gets executed only when new profiles are loaded to the SPC window.
+        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
+        file = open(pathCloudFile)
+        line = file.readlines()
+
+        # Remove the list surrounding the values.
+        line = line[0]
+
+        # Assign local cloud top values to the parcel profile object.
+        pcl.ctf_low = str(line.split(' ')[0])
+        pcl.ctf_high = str(line.split(' ')[1])
+        pcl.ctp_low = int(line.split(' ')[2])
+        pcl.ctp_high = int(line.split(' ')[3])
+    except:
+        pass
 
     if pbot < prof.pres[-1]:
         # Check for the case where the LCL is above the
