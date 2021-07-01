@@ -102,12 +102,12 @@
             <points csv="j01_conus.csv" />
         </outlet>
     </datasource>
-    <datasource name="NUCAPS CONUS Suomi-NPP" ensemble="false" observed="true">
+    <!-- <datasource name="NUCAPS CONUS Suomi-NPP" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/npp/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="npp_conus.csv" />
         </outlet>
-    </datasource>
+    </datasource> -->
     <datasource name="NUCAPS CONUS Aqua" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/aq0/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
@@ -138,12 +138,12 @@
             <points csv="j01_caribbean.csv" />
         </outlet>
     </datasource>
-    <datasource name="NUCAPS Caribbean Suomi-NPP" ensemble="false" observed="true">
+    <!-- <datasource name="NUCAPS Caribbean Suomi-NPP" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/npp/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="npp_caribbean.csv" />
         </outlet>
-    </datasource>
+    </datasource> -->
     <!-- <datasource name="NUCAPS Caribbean Aqua" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/aq0/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
@@ -174,12 +174,12 @@
             <points csv="j01_alaska.csv" />
         </outlet>
     </datasource>
-    <datasource name="NUCAPS Alaska Suomi-NPP" ensemble="false" observed="true">
+    <!-- <datasource name="NUCAPS Alaska Suomi-NPP" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/npp/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>
             <points csv="npp_alaska.csv" />
         </outlet>
-    </datasource>
+    </datasource> -->
     <!-- <datasource name="NUCAPS Alaska Aqua" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/aq0/txt/{srcid}.txt" format="spc" >
             <time first="0" range="48" delta="1" offset="6" delay="4" cycle="12" archive="24" start="-" end="-"/>

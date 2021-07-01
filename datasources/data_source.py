@@ -20,7 +20,7 @@ import traceback
 
 import sharppy.io.decoder as decoder
 from sharppy.io.csv import loadCSV
-from datasources.downloadNUCAPS_CSVs import *
+from datasources.downloadNUCAPS_CSVs import * # JTS
 import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
@@ -51,9 +51,9 @@ def loadDataSources(ds_dir=HOME_DIR):
     downloadAlaska_NOAA20()
     downloadCaribbean_NOAA20()
     downloadCONUS_NOAA20()
-    downloadAlaska_SNPP()
-    downloadCaribbean_SNPP()
-    downloadCONUS_SNPP()
+    # downloadAlaska_SNPP()
+    # downloadCaribbean_SNPP()
+    # downloadCONUS_SNPP()
     # downloadAlaska_Aqua()
     # downloadCaribbean_Aqua()
     downloadCONUS_Aqua()
