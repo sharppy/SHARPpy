@@ -62,7 +62,7 @@ class ColorSwatch(QWidget):
         """
         Mouse press event handler (opens a dialog to select a new color for the swatch).
         """
-        color_choice = QColorDialog.getColor(self.getColor()) 
+        color_choice = QColorDialog.getColor(self.getColor())
         if color_choice.isValid():
             self.setColor(color_choice)
 
@@ -398,12 +398,12 @@ class PrefDialog(QDialog):
                           "Potential Temperature (K)": 'theta',\
                           "Water Vapor Mixing Ratio (g/kg)": 'wvmr',\
                           "Vertical Velocity (mb/hr)": 'omeg'}
-        for k in self.variables.keys():  
+        for k in self.variables.keys():
             self.combo1.addItem(k)
-            self.combo2.addItem(k) 
+            self.combo2.addItem(k)
 
-        idx1 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_tr'])[0]
-        idx2 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_br'])[0]
+        idx1 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_tr'])[0][0]
+        idx2 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_br'])[0][0]
         self.combo1.setCurrentIndex(idx1)
         self.combo2.setCurrentIndex(idx2)
 
@@ -444,10 +444,10 @@ class PrefDialog(QDialog):
 
         wind_units_box, self.wind_units = PrefDialog._createRadioSet("Wind Units", ["knots", "m/s"], default=self._config['preferences', 'wind_units'])
         layout.addWidget(wind_units_box)
-        
+
         pw_units_box, self.pw_units = PrefDialog._createRadioSet("Precipitable Water Vapor Units", ["in", "cm"], default=self._config['preferences', 'pw_units'])
         layout.addWidget(pw_units_box)
-        
+
         return misc_box
 
     @staticmethod
@@ -550,7 +550,7 @@ class PrefDialog(QDialog):
             ('preferences', 'readout_br'): 'dwpc',
             ('preferences', 'readout_tr'): 'tmpc'
         }
-        
+
         color_config = dict((('preferences', k), v) for k, v in PrefDialog._styles['standard'].items())
         pref_config.update(color_config)
 
