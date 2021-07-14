@@ -33,8 +33,6 @@ import logging
 import qtpy
 import platform
 
-from datasources.downloadNUCAPS_CSVs import * # JTS
-
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
 if not os.path.isdir(HOME_DIR):
@@ -450,27 +448,27 @@ class Picker(QWidget):
         if self.model == "NUCAPS CONUS NOAA-20" \
             or self.model == "NUCAPS CONUS Suomi-NPP" \
             or self.model == "NUCAPS CONUS Aqua" \
-            or self.model == "NUCAPS CONUS Metop-A" \
-            or self.model == "NUCAPS CONUS Metop-B" \
-            or self.model == "NUCAPS CONUS Metop-C" \
+            or self.model == "NUCAPS CONUS MetOp-A" \
+            or self.model == "NUCAPS CONUS MetOp-B" \
+            or self.model == "NUCAPS CONUS MetOp-C" \
             or self.model == "NUCAPS Caribbean NOAA-20" \
             or self.model == "NUCAPS Caribbean Suomi-NPP" \
             or self.model == "NUCAPS Caribbean Aqua" \
-            or self.model == "NUCAPS Caribbean Metop-A" \
-            or self.model == "NUCAPS Caribbean Metop-B" \
-            or self.model == "NUCAPS Caribbean Metop-C" \
+            or self.model == "NUCAPS Caribbean MetOp-A" \
+            or self.model == "NUCAPS Caribbean MetOp-B" \
+            or self.model == "NUCAPS Caribbean MetOp-C" \
             or self.model == "NUCAPS Alaska NOAA-20" \
             or self.model == "NUCAPS Alaska Suomi-NPP" \
             or self.model == "NUCAPS Alaska Aqua" \
-            or self.model == "NUCAPS Alaska Metop-A" \
-            or self.model == "NUCAPS Alaska Metop-B" \
-            or self.model == "NUCAPS Alaska Metop-C" \
+            or self.model == "NUCAPS Alaska MetOp-A" \
+            or self.model == "NUCAPS Alaska MetOp-B" \
+            or self.model == "NUCAPS Alaska MetOp-C" \
             or self.model == "NUCAPS Case Study NOAA-20" \
             or self.model == "NUCAPS Case Study Suomi-NPP" \
             or self.model == "NUCAPS Case Study Aqua" \
-            or self.model == "NUCAPS Case Study Metop-A" \
-            or self.model == "NUCAPS Case Study Metop-B" \
-            or self.model == "NUCAPS Case Study Metop-C":
+            or self.model == "NUCAPS Case Study MetOp-A" \
+            or self.model == "NUCAPS Case Study MetOp-B" \
+            or self.model == "NUCAPS Case Study MetOp-C":
             self.date_label.setDisabled(True)
             self.profile_list.clear()
             self.profile_list.addItem("")
@@ -582,27 +580,27 @@ class Picker(QWidget):
             if self.model == "NUCAPS CONUS NOAA-20" \
                 or self.model == "NUCAPS CONUS Suomi-NPP" \
                 or self.model == "NUCAPS CONUS Aqua" \
-                or self.model == "NUCAPS CONUS Metop-A" \
-                or self.model == "NUCAPS CONUS Metop-B" \
-                or self.model == "NUCAPS CONUS Metop-C" \
+                or self.model == "NUCAPS CONUS MetOp-A" \
+                or self.model == "NUCAPS CONUS MetOp-B" \
+                or self.model == "NUCAPS CONUS MetOp-C" \
                 or self.model == "NUCAPS Caribbean NOAA-20" \
                 or self.model == "NUCAPS Caribbean Suomi-NPP" \
                 or self.model == "NUCAPS Caribbean Aqua" \
-                or self.model == "NUCAPS Caribbean Metop-A" \
-                or self.model == "NUCAPS Caribbean Metop-B" \
-                or self.model == "NUCAPS Caribbean Metop-C" \
+                or self.model == "NUCAPS Caribbean MetOp-A" \
+                or self.model == "NUCAPS Caribbean MetOp-B" \
+                or self.model == "NUCAPS Caribbean MetOp-C" \
                 or self.model == "NUCAPS Alaska NOAA-20" \
                 or self.model == "NUCAPS Alaska Suomi-NPP" \
                 or self.model == "NUCAPS Alaska Aqua" \
-                or self.model == "NUCAPS Alaska Metop-A" \
-                or self.model == "NUCAPS Alaska Metop-B" \
-                or self.model == "NUCAPS Alaska Metop-C" \
+                or self.model == "NUCAPS Alaska MetOp-A" \
+                or self.model == "NUCAPS Alaska MetOp-B" \
+                or self.model == "NUCAPS Alaska MetOp-C" \
                 or self.model == "NUCAPS Case Study NOAA-20" \
                 or self.model == "NUCAPS Case Study Suomi-NPP" \
                 or self.model == "NUCAPS Case Study Aqua" \
-                or self.model == "NUCAPS Case Study Metop-A" \
-                or self.model == "NUCAPS Case Study Metop-B" \
-                or self.model == "NUCAPS Case Study Metop-C":
+                or self.model == "NUCAPS Case Study MetOp-A" \
+                or self.model == "NUCAPS Case Study MetOp-B" \
+                or self.model == "NUCAPS Case Study MetOp-C":
                 self.run_dropdown.clear()
                 self.run_dropdown.setDisabled(True)
 
@@ -700,94 +698,31 @@ class Picker(QWidget):
 
         # JTS - Disable calendar when NUCAPS is chosen; reenable when non-NUCAPS is selected.
         # Also download the associated CSV when the given data source is chosen.
-        if self.model == "NUCAPS CONUS NOAA-20":
-            downloadCONUS_NOAA20()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS CONUS Suomi-NPP":
-            downloadCONUS_SNPP()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS CONUS Aqua":
-            downloadCONUS_Aqua()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS CONUS Metop-A":
-            downloadCONUS_MetopA()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS CONUS Metop-B":
-            downloadCONUS_MetopB()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS CONUS Metop-C":
-            downloadCONUS_MetopC()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean NOAA-20":
-            downloadCaribbean_NOAA20()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean Suomi-NPP":
-            downloadCaribbean_SNPP()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean Aqua":
-            # downloadCaribbean_Aqua()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean Metop-A":
-            # downloadCaribbean_MetopA()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean Metop-B":
-            # downloadCaribbean_MetopB()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Caribbean Metop-C":
-            # downloadCaribbean_MetopC()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska NOAA-20":
-            downloadAlaska_NOAA20()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska Suomi-NPP":
-            downloadAlaska_SNPP()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska Aqua":
-            # downloadAlaska_Aqua()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska Metop-A":
-            # downloadAlaska_MetopA()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska Metop-B":
-            # downloadAlaska_MetopB()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Alaska Metop-C":
-            # downloadAlaska_MetopC()
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study NOAA-20":
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study Suomi-NPP":
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study Aqua":
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study Metop-A":
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study Metop-B":
-            self.run_label.setDisabled(True)
-            self.cal.setDisabled(True)
-        elif self.model == "NUCAPS Case Study Metop-C":
+        if self.model == "NUCAPS CONUS NOAA-20" \
+            or self.model == "NUCAPS CONUS Suomi-NPP" \
+            or self.model == "NUCAPS CONUS Aqua" \
+            or self.model == "NUCAPS CONUS MetOp-A" \
+            or self.model == "NUCAPS CONUS MetOp-B" \
+            or self.model == "NUCAPS CONUS MetOp-C" \
+            or self.model == "NUCAPS Caribbean NOAA-20" \
+            or self.model == "NUCAPS Caribbean Suomi-NPP" \
+            or self.model == "NUCAPS Caribbean Aqua" \
+            or self.model == "NUCAPS Caribbean MetOp-A" \
+            or self.model == "NUCAPS Caribbean MetOp-B" \
+            or self.model == "NUCAPS Caribbean MetOp-C" \
+            or self.model == "NUCAPS Alaska NOAA-20" \
+            or self.model == "NUCAPS Alaska Suomi-NPP" \
+            or self.model == "NUCAPS Alaska Aqua" \
+            or self.model == "NUCAPS Alaska MetOp-A" \
+            or self.model == "NUCAPS Alaska MetOp-B" \
+            or self.model == "NUCAPS Alaska MetOp-C" \
+            or self.model == "NUCAPS Case Study NOAA-20" \
+            or self.model == "NUCAPS Case Study Suomi-NPP" \
+            or self.model == "NUCAPS Case Study Aqua" \
+            or self.model == "NUCAPS Case Study MetOp-A" \
+            or self.model == "NUCAPS Case Study MetOp-B" \
+            or self.model == "NUCAPS Case Study MetOp-C":
+            self.data_sources = data_source.loadDataSources(os.path.join(HOME_DIR, 'datasources'))
             self.run_label.setDisabled(True)
             self.cal.setDisabled(True)
         else:
@@ -851,27 +786,27 @@ class Picker(QWidget):
         if self.model == "NUCAPS CONUS NOAA-20" \
             or self.model == "NUCAPS CONUS Suomi-NPP" \
             or self.model == "NUCAPS CONUS Aqua" \
-            or self.model == "NUCAPS CONUS Metop-A" \
-            or self.model == "NUCAPS CONUS Metop-B" \
-            or self.model == "NUCAPS CONUS Metop-C" \
+            or self.model == "NUCAPS CONUS MetOp-A" \
+            or self.model == "NUCAPS CONUS MetOp-B" \
+            or self.model == "NUCAPS CONUS MetOp-C" \
             or self.model == "NUCAPS Caribbean NOAA-20" \
             or self.model == "NUCAPS Caribbean Suomi-NPP" \
             or self.model == "NUCAPS Caribbean Aqua" \
-            or self.model == "NUCAPS Caribbean Metop-A" \
-            or self.model == "NUCAPS Caribbean Metop-B" \
-            or self.model == "NUCAPS Caribbean Metop-C" \
+            or self.model == "NUCAPS Caribbean MetOp-A" \
+            or self.model == "NUCAPS Caribbean MetOp-B" \
+            or self.model == "NUCAPS Caribbean MetOp-C" \
             or self.model == "NUCAPS Alaska NOAA-20" \
             or self.model == "NUCAPS Alaska Suomi-NPP" \
             or self.model == "NUCAPS Alaska Aqua" \
-            or self.model == "NUCAPS Alaska Metop-A" \
-            or self.model == "NUCAPS Alaska Metop-B" \
-            or self.model == "NUCAPS Alaska Metop-C" \
+            or self.model == "NUCAPS Alaska MetOp-A" \
+            or self.model == "NUCAPS Alaska MetOp-B" \
+            or self.model == "NUCAPS Alaska MetOp-C" \
             or self.model == "NUCAPS Case Study NOAA-20" \
             or self.model == "NUCAPS Case Study Suomi-NPP" \
             or self.model == "NUCAPS Case Study Aqua" \
-            or self.model == "NUCAPS Case Study Metop-A" \
-            or self.model == "NUCAPS Case Study Metop-B" \
-            or self.model == "NUCAPS Case Study Metop-C":
+            or self.model == "NUCAPS Case Study MetOp-A" \
+            or self.model == "NUCAPS Case Study MetOp-B" \
+            or self.model == "NUCAPS Case Study MetOp-C":
             ctf_low = self.loc['ctf_low']
             ctf_high = self.loc['ctf_high']
             ctp_low = self.loc['ctp_low']

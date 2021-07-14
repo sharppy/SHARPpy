@@ -6,7 +6,7 @@ import urllib.request as request
 HIDDEN_DSDIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 
 # Download CSVs for all satellite-regions to HIDDEN_DSDIR.
-def downloadAlaska_NOAA20():
+def downloadAlaska_NOAA_20():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/j01/csv/j01_alaska.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'j01_alaska.csv'), 'wb') as f:
@@ -14,7 +14,7 @@ def downloadAlaska_NOAA20():
     except:
         pass
 
-def downloadCaribbean_NOAA20():
+def downloadCaribbean_NOAA_20():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/j01/csv/j01_caribbean.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'j01_caribbean.csv'), 'wb') as f:
@@ -22,7 +22,7 @@ def downloadCaribbean_NOAA20():
     except:
         pass
 
-def downloadCONUS_NOAA20():
+def downloadCONUS_NOAA_20():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/j01/csv/j01_conus.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'j01_conus.csv'), 'wb') as f:
@@ -87,7 +87,7 @@ def downloadCONUS_Aqua():
 ##########################
 ##########################
 
-# def downloadAlaska_MetopA():
+# def downloadAlaska_MetOp_A():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m01/csv/m01_alaska.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm01_alaska.csv'), 'wb') as f:
@@ -95,7 +95,7 @@ def downloadCONUS_Aqua():
 #     except:
 #         pass
 #
-# def downloadCaribbean_MetopA():
+# def downloadCaribbean_MetOp_A():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m01/csv/m01_caribbean.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm01_caribbean.csv'), 'wb') as f:
@@ -103,7 +103,7 @@ def downloadCONUS_Aqua():
 #     except:
 #         pass
 
-def downloadCONUS_MetopA():
+def downloadCONUS_MetOp_A():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m01/csv/m01_conus.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'm01_conus.csv'), 'wb') as f:
@@ -114,7 +114,7 @@ def downloadCONUS_MetopA():
 ##########################
 ##########################
 
-# def downloadAlaska_MetopB():
+# def downloadAlaska_MetOp_B():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m02/csv/m02_alaska.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm02_alaska.csv'), 'wb') as f:
@@ -122,7 +122,7 @@ def downloadCONUS_MetopA():
 #     except:
 #         pass
 #
-# def downloadCaribbean_MetopB():
+# def downloadCaribbean_MetOp_B():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m02/csv/m02_caribbean.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm02_caribbean.csv'), 'wb') as f:
@@ -130,7 +130,7 @@ def downloadCONUS_MetopA():
 #     except:
 #         pass
 
-def downloadCONUS_MetopB():
+def downloadCONUS_MetOp_B():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m02/csv/m02_conus.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'm02_conus.csv'), 'wb') as f:
@@ -141,7 +141,7 @@ def downloadCONUS_MetopB():
 ##########################
 ##########################
 
-# def downloadAlaska_MetopC():
+# def downloadAlaska_MetOp_C():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/m03/csv/m03_alaska.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm03_alaska.csv'), 'wb') as f:
@@ -149,7 +149,7 @@ def downloadCONUS_MetopB():
 #     except:
 #         pass
 #
-# def downloadCaribbean_MetopC():
+# def downloadCaribbean_MetOp_C():
 #     try:
 #         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/m03/csv/m03_caribbean.csv')) as r:
 #             with open(os.path.join(HIDDEN_DSDIR, 'm03_caribbean.csv'), 'wb') as f:
@@ -157,7 +157,7 @@ def downloadCONUS_MetopB():
 #     except:
 #         pass
 
-def downloadCONUS_MetopC():
+def downloadCONUS_MetOp_C():
     try:
         with closing(request.urlopen(f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m03/csv/m03_conus.csv')) as r:
             with open(os.path.join(HIDDEN_DSDIR, 'm03_conus.csv'), 'wb') as f:

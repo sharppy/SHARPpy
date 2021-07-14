@@ -47,25 +47,26 @@ def loadDataSources(ds_dir=HOME_DIR):
     Load the data source information from the XML files.
     Returns a dictionary associating data source names to DataSource objects.
     """
-    # JTS - Download all the NUCAPS CSVs initially
-    downloadAlaska_NOAA20()
-    downloadCaribbean_NOAA20()
-    downloadCONUS_NOAA20()
+    # JTS - Download all NUCAPS csv files at program launch,
+    # and each time a data source is selected from the dropdown menu.
+    downloadAlaska_NOAA_20()
+    downloadCaribbean_NOAA_20()
+    downloadCONUS_NOAA_20()
     # downloadAlaska_SNPP()
     # downloadCaribbean_SNPP()
     # downloadCONUS_SNPP()
     # downloadAlaska_Aqua()
     # downloadCaribbean_Aqua()
     downloadCONUS_Aqua()
-    # downloadAlaska_MetopA()
-    # downloadCaribbean_MetopA()
-    downloadCONUS_MetopA()
-    # downloadAlaska_MetopB()
-    # downloadCaribbean_MetopB()
-    downloadCONUS_MetopB()
-    # downloadAlaska_MetopC()
-    # downloadCaribbean_MetopC()
-    downloadCONUS_MetopC()
+    # downloadAlaska_MetOp_A()
+    # downloadCaribbean_MetOp_A()
+    downloadCONUS_MetOp_A()
+    # downloadAlaska_MetOp_B()
+    # downloadCaribbean_MetOp_B()
+    downloadCONUS_MetOp_B()
+    # downloadAlaska_MetOp_C()
+    # downloadCaribbean_MetOp_C()
+    downloadCONUS_MetOp_C()
 
     files = glob.glob(os.path.join(ds_dir, '*.xml'))
     if len(files) == 0:
