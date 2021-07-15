@@ -34,7 +34,7 @@ class backgroundSkewT(QWidget):
         logging.debug("Initalizing the backgroundSkewT.")
 
         self.lpad = 30; self.rpad = 65
-        self.tpad = 20; self.bpad = 20
+        self.tpad = 25; self.bpad = 20
         self.tlx = self.rpad; self.tly = self.tpad
         self.wid = self.size().width() - self.rpad
         self.hgt = self.size().height() - self.bpad
@@ -60,7 +60,7 @@ class backgroundSkewT(QWidget):
         self.title_font = QtGui.QFont('Helvetica', fsizet + (self.hgt * 0.006))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         #self.title_font.setBold(True)
-        self.title_height = self.title_metrics.xHeight() + 5 + (self.hgt * 0.003)
+        self.title_height = self.title_metrics.xHeight() + 15 + (self.hgt * 0.003)
 
         self.label_font = QtGui.QFont('Helvetica', fsize + 2 + (self.hgt * 0.0045))
         self.environment_trace_font = QtGui.QFont('Helvetica', 11 + (self.hgt * 0.0045))
@@ -1132,7 +1132,8 @@ class plotSkewT(backgroundSkewT):
             pen = QtGui.QPen(QtGui.QColor(self.background_colors[bg_color_idx]), 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
 
-            rect0 = QtCore.QRect(self.width() - box_width, 2 + idx * self.title_height, box_width, self.title_height)
+            # rect0 = QtCore.QRect(self.width() - box_width, 25 + idx * self.title_height, box_width, self.title_height)
+            rect0 = QtCore.QRect(self.width() - box_width, 25 + idx * self.title_height, box_width, self.title_height)
             qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, title)
 
             bg_color_idx = (bg_color_idx + 1) % len(self.background_colors)
