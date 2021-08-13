@@ -20,7 +20,8 @@ import traceback
 
 import sharppy.io.decoder as decoder
 from sharppy.io.csv import loadCSV
-from datasources.downloadNUCAPS_CSVs import * # JTS
+from sharppy.io.csv import loadNUCAPS_CSV # JTS
+
 import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
@@ -47,26 +48,6 @@ def loadDataSources(ds_dir=HOME_DIR):
     Load the data source information from the XML files.
     Returns a dictionary associating data source names to DataSource objects.
     """
-    # JTS - Download all NUCAPS csv files at program launch,
-    # and each time a data source is selected from the dropdown menu.
-    downloadAlaska_NOAA_20()
-    downloadCaribbean_NOAA_20()
-    downloadCONUS_NOAA_20()
-    # downloadAlaska_SNPP()
-    # downloadCaribbean_SNPP()
-    # downloadCONUS_SNPP()
-    # downloadAlaska_Aqua()
-    # downloadCaribbean_Aqua()
-    # downloadCONUS_Aqua()
-    # downloadAlaska_MetOp_A()
-    # downloadCaribbean_MetOp_A()
-    # downloadCONUS_MetOp_A()
-    # downloadAlaska_MetOp_B()
-    # downloadCaribbean_MetOp_B()
-    downloadCONUS_MetOp_B()
-    # downloadAlaska_MetOp_C()
-    # downloadCaribbean_MetOp_C()
-    downloadCONUS_MetOp_C()
 
     files = glob.glob(os.path.join(ds_dir, '*.xml'))
     if len(files) == 0:
@@ -143,7 +124,30 @@ class Outlet(object):
         self._time = config.find('time')
         point_csv = config.find('points')
         #self.start, self.end = self.getTimeSpan()
-        self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+        if self._ds_name == 'NUCAPS CONUS NOAA-20':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/j01/csv/j01_conus.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS CONUS Aqua':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/aq0/csv/aq0_conus.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS CONUS MetOp-A':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m01/csv/m01_conus.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS CONUS MetOp-B':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m02/csv/m02_conus.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS CONUS MetOp-C':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m03/csv/m03_conus.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS Caribbean NOAA-20':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/j01/csv/j01_caribbean.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        elif self._ds_name == 'NUCAPS Alaska NOAA-20':
+            remote_csv = 'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/alaska/sharppy/j01/csv/j01_alaska.csv'
+            self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+        else:
+            self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+
         for idx in range(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
             self._points[idx]['lon'] = float(self._points[idx]['lon'])

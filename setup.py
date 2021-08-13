@@ -74,10 +74,6 @@ if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
 shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
-# JTS
-shutil.copy(os.path.join(SRC_DSDIR, "downloadNUCAPS_CSVs.py"),
-            os.path.join(HOME_DSDIR, "downloadNUCAPS_CSVs.py"))
-
 ver = versioneer.get_version()
 ver = ver.split('-')[0]
 if 'a' in ver:
