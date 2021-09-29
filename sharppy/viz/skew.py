@@ -17,6 +17,7 @@ import os
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
+cloud_file = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
 
 class backgroundSkewT(QWidget):
     clicked = QtCore.Signal(dict)
@@ -1059,10 +1060,8 @@ class plotSkewT(backgroundSkewT):
         qp.end()
 
         # JTS - Cleanup: remove pathCloudFile after everything draws in the SPC window.
-        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
-        isExistCloudFile = os.path.exists(pathCloudFile)
-        if isExistCloudFile==True:
-            os.remove(pathCloudFile)
+        if os.path.isfile(cloud_file):
+            os.remove(cloud_file)
 
     def drawBarbs(self, prof, qp, color=None):
         logging.debug("Drawing the wind barbs on the Skew-T.")

@@ -33,6 +33,7 @@ __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb'
 __all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp', 'integrate_parcel']
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
+cloud_file = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
 
 class DefineParcel(object):
     '''
@@ -1895,8 +1896,7 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     # JTS - Find cloud top pressure/fraction from temporary text file.
     try:
         # This block gets executed only when new profiles are loaded to the SPC window.
-        pathCloudFile = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
-        file = open(pathCloudFile)
+        file = open(cloud_file)
         line = file.readlines()
 
         # Remove the list surrounding the values.
