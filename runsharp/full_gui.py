@@ -828,6 +828,12 @@ class Picker(QWidget):
             ctp_low = self.loc['ctp_low']
             ctp_high = self.loc['ctp_high']
 
+            # NUCAPS skew-T won't launch if cloud top pressure=0.  Set variables to another default value.
+            if ctp_low == '0':
+                ctp_low = 3000
+            if ctp_high == '0':
+                ctp_high = 3000
+
             # Create temporary text file that will store the above values.
             cloudValues = []
             cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
