@@ -825,18 +825,19 @@ class Picker(QWidget):
         if self.model.startswith("NUCAPS"):
             ctf_low = self.loc['ctf_low']
             ctf_high = self.loc['ctf_high']
-            ctp_low = self.loc['ctp_low']
-            ctp_high = self.loc['ctp_high']
+            ctp_low = int(self.loc['ctp_low'])
+            ctp_high = int(self.loc['ctp_high'])
 
-            # NUCAPS skew-T won't launch if cloud top pressure=0.  Set variables to another default value.
-            if ctp_low == '0':
+            # NUCAPS skew-T won't launch if cloud top pressure < 100mb.
+            # Set variables to default value so it doesn't try to draw the CTP line out of bounds.
+            if ctp_low < 100:
                 ctp_low = 3000
-            if ctp_high == '0':
+            if ctp_high < 100:
                 ctp_high = 3000
 
             # Create temporary text file that will store the above values.
             cloudValues = []
-            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+            cloudValues.append(f'{ctf_low} {ctf_high} {str(ctp_low)} {str(ctp_high)}')
 
             file = open(cloud_file, "w")
             for line in cloudValues:
