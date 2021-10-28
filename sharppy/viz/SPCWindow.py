@@ -867,9 +867,10 @@ class SPCWindow(QMainWindow):
             self.spc_widget.setProfileCollection(menu_name)
             return
 
-        if not prof_col.getMeta('observed'):
-            self.allobserved.setDisabled(True)
-            self.allobserved.setChecked(False)
+        # JTS - keep "collect observed" option active, regardless of profile type.
+        # if not prof_col.getMeta('observed'):
+        #     self.allobserved.setDisabled(True)
+        #     self.allobserved.setChecked(False)
 
         self.createProfileMenu(prof_col)
 
@@ -966,21 +967,29 @@ class SPCWindow(QMainWindow):
         pc_model = prof_col.getMeta('model')
 
         # JTS - Remove cycle time from NUCAPS menu item.
-        if pc_model == "Nucaps NOAA 20 Alaska" \
-            or pc_model == "Nucaps NOAA 20 Caribbean" \
-            or pc_model == "Nucaps NOAA 20 Conus" \
-            or pc_model == "Nucaps Suomi-NPP Alaska" \
-            or pc_model == "Nucaps Suomi-NPP Caribbean" \
-            or pc_model == "Nucaps Suomi-NPP Conus" \
-            or pc_model == "Nucaps Metop A Alaska" \
-            or pc_model == "Nucaps Metop A Caribbean" \
-            or pc_model == "Nucaps Metop A Conus" \
-            or pc_model == "Nucaps Metop B Alaska" \
-            or pc_model == "Nucaps Metop B Caribbean" \
-            or pc_model == "Nucaps Metop B Conus" \
-            or pc_model == "Nucaps Metop C Alaska" \
-            or pc_model == "Nucaps Metop C Caribbean" \
-            or pc_model == "Nucaps Metop C Conus":
+        if pc_model == "NUCAPS Alaska NOAA-20" \
+            or pc_model == "NUCAPS Alaska Suomi-NPP" \
+            or pc_model == "NUCAPS Alaska Aqua" \
+            or pc_model == "NUCAPS Alaska MetOp-A" \
+            or pc_model == "NUCAPS Alaska MetOp-B" \
+            or pc_model == "NUCAPS Alaska MetOp-C" \
+            or pc_model == "NUCAPS Caribbean NOAA-20" \
+            or pc_model == "NUCAPS Caribbean Suomi-NPP" \
+            or pc_model == "NUCAPS Caribbean MetOp-A" \
+            or pc_model == "NUCAPS Caribbean MetOp-B" \
+            or pc_model == "NUCAPS Caribbean MetOp-C" \
+            or pc_model == "NUCAPS CONUS NOAA-20" \
+            or pc_model == "NUCAPS CONUS Suomi-NPP" \
+            or pc_model == "NUCAPS CONUS Aqua" \
+            or pc_model == "NUCAPS CONUS MetOp-A" \
+            or pc_model == "NUCAPS CONUS MetOp-B" \
+            or pc_model == "NUCAPS CONUS MetOp-C" \
+            or pc_model == "NUCAPS Case Study NOAA-20" \
+            or pc_model == "NUCAPS Case Study Suomi-NPP" \
+            or pc_model == "NUCAPS Case Study Aqua" \
+            or pc_model == "NUCAPS Case Study MetOp-A" \
+            or pc_model == "NUCAPS Case Study MetOp-B" \
+            or pc_model == "NUCAPS Case Study MetOp-C":
             pc_date = ''
             return "%s (%s)" % (pc_loc, pc_model)
         else:

@@ -391,43 +391,98 @@ class MapWidget(QWidget):
 
             # JTS - The QC flag (priority header) only applies to NUCAPS profiles.  Ignore other data sources.
             try:
-                if self.cur_source.getName() == "Nucaps NOAA 20 Alaska" \
-                    or  self.cur_source.getName() == "Nucaps NOAA 20 Caribbean" \
-                    or self.cur_source.getName() == "Nucaps NOAA 20 Conus" \
-                    or self.cur_source.getName() == "Nucaps Suomi-NPP Alaska" \
-                    or self.cur_source.getName() == "Nucaps Suomi-NPP Caribbean" \
-                    or self.cur_source.getName() == "Nucaps Suomi-NPP Conus" \
-                    or self.cur_source.getName() == "Nucaps Metop A Alaska" \
-                    or self.cur_source.getName() == "Nucaps Metop A Caribbean" \
-                    or self.cur_source.getName() == "Nucaps Metop A Conus" \
-                    or self.cur_source.getName() == "Nucaps Metop B Alaska" \
-                    or self.cur_source.getName() == "Nucaps Metop B Caribbean" \
-                    or self.cur_source.getName() == "Nucaps Metop B Conus" \
-                    or self.cur_source.getName() == "Nucaps Metop C Alaska" \
-                    or self.cur_source.getName() == "Nucaps Metop C Caribbean" \
-                    or self.cur_source.getName() == "Nucaps Metop C Conus":
+                if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
                     self.stn_qc_flags = [ p['priority'] for p in self.points ]
             except:
                 pass
 
             self.stn_names = []
-            for p in self.points:
-                if p['icao'] != "":
-                    id_str = " (%s)" % p['icao']
-                else:
-                    id_str = ""
-                if p['state'] != "":
-                    pol_str = ", %s" % p['state']
-                elif p['country'] != "":
-                    pol_str = ", %s" % p['country']
-                else:
-                    pol_str = ""
 
-                nm = p['name']
-                if id_str == "" and pol_str == "":
+            # JTS - Text that displays when hovering mouse over point will change,
+            # depending on whether data source is NUCAPS or not.
+            for p in self.points:
+                if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
+                    or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
+                    or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
+                    or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
+                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
+
+                    if p['lat'] != "":
+                        lat_str = " (%s," % p['lat']
+                    else:
+                        lat_str = ""
+
+                    if p['lon'] != "":
+                        lon_str = " %s)" % p['lon']
+                    else:
+                        lon_str = ""
+
+                    nm = p['name']
                     nm = nm.upper()
-                name = "%s%s%s" % (nm, pol_str, id_str)
-                self.stn_names.append(name)
+                    name = "%s%s%s" % (nm, lat_str, lon_str)
+                    self.stn_names.append(name)
+
+                else:
+
+                    if p['icao'] != "":
+                        id_str = " (%s)" % p['icao']
+                    else:
+                        id_str = ""
+
+                    if p['state'] != "":
+                        pol_str = ", %s" % p['state']
+                    elif p['country'] != "":
+                        pol_str = ", %s" % p['country']
+                    else:
+                        pol_str = ""
+
+                    nm = p['name']
+                    if id_str == "" and pol_str == "":
+                        nm = nm.upper()
+                    name = "%s%s%s" % (nm, pol_str, id_str)
+                    self.stn_names.append(name)
 
             self._hideLoading()
 
@@ -557,21 +612,30 @@ class MapWidget(QWidget):
         size = 3 * self.scale
 
         # JTS - condition for NUCAPS data sources 8/17/20
-        if self.cur_source.getName() == "Nucaps NOAA 20 Alaska" \
-            or  self.cur_source.getName() == "Nucaps NOAA 20 Caribbean" \
-            or self.cur_source.getName() == "Nucaps NOAA 20 Conus" \
-            or self.cur_source.getName() == "Nucaps Suomi-NPP Alaska" \
-            or self.cur_source.getName() == "Nucaps Suomi-NPP Caribbean" \
-            or self.cur_source.getName() == "Nucaps Suomi-NPP Conus" \
-            or self.cur_source.getName() == "Nucaps Metop A Alaska" \
-            or self.cur_source.getName() == "Nucaps Metop A Caribbean" \
-            or self.cur_source.getName() == "Nucaps Metop A Conus" \
-            or self.cur_source.getName() == "Nucaps Metop B Alaska" \
-            or self.cur_source.getName() == "Nucaps Metop B Caribbean" \
-            or self.cur_source.getName() == "Nucaps Metop B Conus" \
-            or self.cur_source.getName() == "Nucaps Metop C Alaska" \
-            or self.cur_source.getName() == "Nucaps Metop C Caribbean" \
-            or self.cur_source.getName() == "Nucaps Metop C Conus":
+        if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
+            or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
+            or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
+            or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
+            or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
+            or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
+            or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
+            or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
+            or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
+            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
+            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
+            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
+            or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
+            or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
+            or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
+            or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
+            or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
+            or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
+            or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
+            or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
+            or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
+            or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
+            or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
+            or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
             unselected_color_nucaps = QtCore.Qt.red
             selected_color_nucaps = QtCore.Qt.green
 

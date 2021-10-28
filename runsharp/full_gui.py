@@ -34,6 +34,8 @@ import qtpy
 import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
+NUCAPS_times_file = os.path.join(HOME_DIR, "datasources", "nucapsTimes.txt") # JTS
+cloud_file = os.path.join(HOME_DIR, "datasources", "cloudTopValues.txt")
 LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
 if not os.path.isdir(HOME_DIR):
     os.mkdir(HOME_DIR)
@@ -238,6 +240,9 @@ class Picker(QWidget):
         self.has_connection = any(urls.values())
         self.strictQC = True
 
+        # JTS - list all overpass times for the selected day
+        self.nucaps_daily_times = []
+
         # initialize the UI
         self.__initUI()
 
@@ -307,6 +312,7 @@ class Picker(QWidget):
         # Set up the run dropdown box and select the correct index
         self.run_dropdown = self.dropdown_menu(
             [t.strftime(Picker.run_format) for t in filt_times])
+
         try:
             self.run_dropdown.setCurrentIndex(filt_times.index(self.run))
         except ValueError as e:
@@ -444,27 +450,6 @@ class Picker(QWidget):
         self.all_profs.setText("Select All")
         self.select_flag = False
 
-        # JTS - Remove the forecast times under the "Select Forecast Time" section for NUCAPS.
-        if self.model == "Nucaps NOAA 20 Alaska" \
-            or self.model == "Nucaps NOAA 20 Caribbean" \
-            or self.model == "Nucaps NOAA 20 Conus" \
-            or self.model == "Nucaps Suomi-NPP Alaska" \
-            or self.model == "Nucaps Suomi-NPP Caribbean" \
-            or self.model == "Nucaps Suomi-NPP Conus" \
-            or self.model == "Nucaps Metop A Alaska" \
-            or self.model == "Nucaps Metop A Caribbean" \
-            or self.model == "Nucaps Metop A Conus" \
-            or self.model == "Nucaps Metop B Alaska" \
-            or self.model == "Nucaps Metop B Caribbean" \
-            or self.model == "Nucaps Metop B Conus" \
-            or self.model == "Nucaps Metop C Alaska" \
-            or self.model == "Nucaps Metop C Caribbean" \
-            or self.model == "Nucaps Metop C Conus":
-            self.date_label.setDisabled(True)
-            self.all_profs.setDisabled(True)
-            self.profile_list.clear()
-            self.profile_list.addItem("Current Data")
-
     def update_datasource_dropdown(self, selected="Observed"):
         """
         Updates the dropdown menu that contains the available
@@ -503,6 +488,7 @@ class Picker(QWidget):
                 return self.data_sources[self.model].getAvailableTimes(dt=self.cal_date)
 
         self.cal_date = self.cal.selectedDate()
+
         # Function to update the times.
         def update(times):
             self.run_dropdown.clear()  # Clear all of the items from the dropdown
@@ -527,8 +513,7 @@ class Picker(QWidget):
             filtered_times = []
             for i, data_time in enumerate(times):
                 if data_time.day == self.cal_date.day() and data_time.year == self.cal_date.year() and data_time.month == self.cal_date.month():
-                    self.run_dropdown.addItem(
-                        data_time.strftime(Picker.run_format))
+                    self.run_dropdown.addItem(data_time.strftime(Picker.run_format))
                     filtered_times.append(i)
 
             if len(filtered_times) > 0:
@@ -552,37 +537,87 @@ class Picker(QWidget):
             else:
                 self.run = date.datetime(1700, 1, 1, 0, 0, 0)
             self.run_dropdown.update()
+
             if len(filtered_times) > 0:
-                self.run_dropdown.setEnabled(True)
-                self.run_dropdown.setCurrentIndex(times.index(self.run))
+                # JTS -  Handle how real-time and off-line NUCAPS data is displayed.
+                if self.model == "NUCAPS Case Study NOAA-20" \
+                    or self.model == "NUCAPS Case Study Suomi-NPP" \
+                    or self.model == "NUCAPS Case Study Aqua" \
+                    or self.model == "NUCAPS Case Study MetOp-A" \
+                    or self.model == "NUCAPS Case Study MetOp-B" \
+                    or self.model == "NUCAPS Case Study MetOp-C":
+                    self.run_dropdown.clear()
+                    self.run_dropdown.addItem(self.tr("- Viewing archived data - "))
+                    self.run_dropdown.setCurrentIndex(0)
+                    self.run_dropdown.update()
+                    self.run_dropdown.setEnabled(False)
+                elif self.model == "NUCAPS CONUS NOAA-20" \
+                    or self.model == "NUCAPS CONUS Suomi-NPP" \
+                    or self.model == "NUCAPS CONUS Aqua" \
+                    or self.model == "NUCAPS CONUS MetOp-A" \
+                    or self.model == "NUCAPS CONUS MetOp-B" \
+                    or self.model == "NUCAPS CONUS MetOp-C" \
+                    or self.model == "NUCAPS Caribbean NOAA-20" \
+                    or self.model == "NUCAPS Caribbean Suomi-NPP" \
+                    or self.model == "NUCAPS Caribbean Aqua" \
+                    or self.model == "NUCAPS Caribbean MetOp-A" \
+                    or self.model == "NUCAPS Caribbean MetOp-B" \
+                    or self.model == "NUCAPS Caribbean MetOp-C" \
+                    or self.model == "NUCAPS Alaska NOAA-20" \
+                    or self.model == "NUCAPS Alaska Suomi-NPP" \
+                    or self.model == "NUCAPS Alaska Aqua" \
+                    or self.model == "NUCAPS Alaska MetOp-A" \
+                    or self.model == "NUCAPS Alaska MetOp-B" \
+                    or self.model == "NUCAPS Alaska MetOp-C":
+
+                    # Load the empty csv for days that have no data and refresh the map.
+                    self.data_sources = data_source.loadDataSources()
+                    self.run_dropdown.setCurrentIndex(times.index(self.run))
+                    self.run_dropdown.update()
+                    self.run_dropdown.setEnabled(True)
+
+                    # Re-acquire the list of available times for the newly-selected data source.
+                    self.nucaps_daily_times = times
+                else:
+                    self.run_dropdown.setCurrentIndex(times.index(self.run))
+                    self.run_dropdown.update()
+                    self.run_dropdown.setEnabled(True)
             elif len(filtered_times) == 0:
-                if self.model == "Observed":
+                if self.model == "Observed" \
+                    or self.model == "NUCAPS Case Study NOAA-20" \
+                    or self.model == "NUCAPS Case Study Suomi-NPP" \
+                    or self.model == "NUCAPS Case Study Aqua" \
+                    or self.model == "NUCAPS Case Study MetOp-A" \
+                    or self.model == "NUCAPS Case Study MetOp-B" \
+                    or self.model == "NUCAPS Case Study MetOp-C":
                     string = "obs"
+                elif self.model == "NUCAPS CONUS NOAA-20" \
+                    or self.model == "NUCAPS CONUS Suomi-NPP" \
+                    or self.model == "NUCAPS CONUS Aqua" \
+                    or self.model == "NUCAPS CONUS MetOp-A" \
+                    or self.model == "NUCAPS CONUS MetOp-B" \
+                    or self.model == "NUCAPS CONUS MetOp-C" \
+                    or self.model == "NUCAPS Caribbean NOAA-20" \
+                    or self.model == "NUCAPS Caribbean Suomi-NPP" \
+                    or self.model == "NUCAPS Caribbean Aqua" \
+                    or self.model == "NUCAPS Caribbean MetOp-A" \
+                    or self.model == "NUCAPS Caribbean MetOp-B" \
+                    or self.model == "NUCAPS Caribbean MetOp-C" \
+                    or self.model == "NUCAPS Alaska NOAA-20" \
+                    or self.model == "NUCAPS Alaska Suomi-NPP" \
+                    or self.model == "NUCAPS Alaska Aqua" \
+                    or self.model == "NUCAPS Alaska MetOp-A" \
+                    or self.model == "NUCAPS Alaska MetOp-B" \
+                    or self.model == "NUCAPS Alaska MetOp-C":
+                    # Load the empty csv for days that have no data and refresh the map.
+                    string = "obs"
+                    self.data_sources = data_source.loadDataSources()
                 else:
                     string = "runs"
                 self.run_dropdown.addItem(self.tr("- No " + string + " available - "))
                 self.run_dropdown.setCurrentIndex(0)
                 self.run_dropdown.update()
                 self.run_dropdown.setEnabled(False)
-
-            # JTS - Remove the model/obs cycle times from the run dropdown menu for NUCAPS.
-            if self.model == "Nucaps NOAA 20 Alaska" \
-                or self.model == "Nucaps NOAA 20 Caribbean" \
-                or self.model == "Nucaps NOAA 20 Conus" \
-                or self.model == "Nucaps Suomi-NPP Alaska" \
-                or self.model == "Nucaps Suomi-NPP Caribbean" \
-                or self.model == "Nucaps Suomi-NPP Conus" \
-                or self.model == "Nucaps Metop A Alaska" \
-                or self.model == "Nucaps Metop A Caribbean" \
-                or self.model == "Nucaps Metop A Conus" \
-                or self.model == "Nucaps Metop B Alaska" \
-                or self.model == "Nucaps Metop B Caribbean" \
-                or self.model == "Nucaps Metop B Conus" \
-                or self.model == "Nucaps Metop C Alaska" \
-                or self.model == "Nucaps Metop C Caribbean" \
-                or self.model == "Nucaps Metop C Conus":
-                self.run_dropdown.clear()
-                self.run_dropdown.setDisabled(True)
 
         # Post the getTimes to update.  This will re-write the list of times in the dropdown box that
         # match the date selected in the calendar.
@@ -606,7 +641,6 @@ class Picker(QWidget):
             self.button.setText(self.disp_name + ' | Generate Profiles')
             self.button.setEnabled(True)
             self.areal_lon, self.areal_y = point
-
         else:
             self.loc = point  # url.toString().split('/')[-1]
             if point['icao'] != "":
@@ -651,13 +685,7 @@ class Picker(QWidget):
                         logging.exception(e1)
                         if self.skew is not None:
                             self.skew.closeIfEmpty()
-                        raise IOError(
-                            "No outlet found with the requested profile!")
-                        # JTS - Cleanup: remove pathCloudFile if profile doesn't load for any reason.
-                        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
-                        isExistCloudFile = os.path.exists(pathCloudFile)
-                        if isExistCloudFile==True:
-                            os.remove(pathCloudFile)
+                        raise IOError("No outlet found with the requested profile!")
                     except Exception as e:
                         if debug:
                             print(traceback.format_exc())
@@ -671,19 +699,87 @@ class Picker(QWidget):
         Get the user's model selection
         """
         logging.debug("Calling full_gui.get_model")
+
         self.model = self.model_dropdown.currentText()
 
         self.update_from_cal(None, updated_model=True)
+        self.run_label.setEnabled(True)
+        self.cal.setEnabled(True)
 
     def get_run(self, index):
         """
         Get the user's run hour selection for the model
         """
         logging.debug("Calling full_gui.get_run")
-        self.run = date.datetime.strptime(
-            self.run_dropdown.currentText(), Picker.run_format)
-        self.view.setCurrentTime(self.run)
-        self.update_list()
+
+        # JTS - The region and satID strings will be used to construct the dynamic path to the csv files in data_source.py.
+        if self.model == "NUCAPS CONUS NOAA-20":
+            region = 'conus'
+            satID = 'j01'
+        elif self.model == "NUCAPS CONUS Aqua":
+            region = 'conus'
+            satID = 'aq0'
+        elif self.model == "NUCAPS CONUS MetOp-A":
+            region = 'conus'
+            satID = 'm01'
+        elif self.model == "NUCAPS CONUS MetOp-B":
+            region = 'conus'
+            satID = 'm02'
+        elif self.model == "NUCAPS CONUS MetOp-C":
+            region = 'conus'
+            satID = 'm03'
+        elif self.model == "NUCAPS Caribbean NOAA-20":
+            region = 'caribbean'
+            satID = 'j01'
+        elif self.model == "NUCAPS Alaska NOAA-20":
+            region = 'alaska'
+            satID = 'j01'
+
+        # Write the data source, region, satellite ID, year, month, day and time info to a temporary text file.
+        if self.model.startswith("NUCAPS"):
+            nucaps_year = self.cal_date.year()
+            nucaps_month = None
+            nucaps_day = None
+
+            if self.cal_date.month() < 10:
+                nucaps_month = f'0{self.cal_date.month()}'
+            else:
+                nucaps_month = self.cal_date.month()
+            if self.cal_date.day() < 10:
+                nucaps_day = f'0{self.cal_date.day()}'
+            else:
+                nucaps_day = self.cal_date.day()
+
+            nucaps_time = self.run_dropdown.currentText()[-8:-4]
+            selected_ds = self.model
+            overpass_string = self.run_dropdown.currentText()
+
+            nucapsTimesList = []
+            nucapsTimesList.append(f'{selected_ds},{region},{satID},{nucaps_year},{nucaps_month},{nucaps_day},{nucaps_time}')
+            file = open(NUCAPS_times_file, "w")
+            for line in nucapsTimesList:
+                file.write(f'{line}')
+            file.close()
+
+            # Hack to get the screen to refresh and display the points.
+            # Auto-update the map
+            self.update_from_cal(None, updated_model=False)
+
+            # Convert overpass_string to a datetime object.
+            self.run = date.datetime.strptime(overpass_string, Picker.run_format)
+
+            # Change the run_dropdown back to the user-selected overpass.
+            self.run_dropdown.setCurrentIndex(self.nucaps_daily_times.index(self.run))
+
+            self.view.setCurrentTime(self.run)
+
+            # Cleanup - remove temporary file once data source has been reloaded.
+            if os.path.isfile(NUCAPS_times_file):
+                os.remove(NUCAPS_times_file)
+        else:
+            self.run = date.datetime.strptime(self.run_dropdown.currentText(), Picker.run_format)
+            self.view.setCurrentTime(self.run)
+            self.update_list()
 
     def get_map(self):
         """
@@ -725,37 +821,27 @@ class Picker(QWidget):
         and magical funtimes.
         :return:
         """
-        # JTS
-        pathCloudFile = f'{HOME_DIR}/datasources/cloudTopValues.txt'
-
-        # Retrieve cloud top pressure/fraction values.
-        if self.model == "Nucaps NOAA 20 Alaska" \
-            or self.model == "Nucaps NOAA 20 Caribbean" \
-            or self.model == "Nucaps NOAA 20 Conus" \
-            or self.model == "Nucaps Suomi-NPP Alaska" \
-            or self.model == "Nucaps Suomi-NPP Caribbean" \
-            or self.model == "Nucaps Suomi-NPP Conus" \
-            or self.model == "Nucaps Metop A Alaska" \
-            or self.model == "Nucaps Metop A Caribbean" \
-            or self.model == "Nucaps Metop A Conus" \
-            or self.model == "Nucaps Metop B Alaska" \
-            or self.model == "Nucaps Metop B Caribbean" \
-            or self.model == "Nucaps Metop B Conus" \
-            or self.model == "Nucaps Metop C Alaska" \
-            or self.model == "Nucaps Metop C Caribbean" \
-            or self.model == "Nucaps Metop C Conus":
+        # JTS - Retrieve cloud top pressure/fraction values.
+        if self.model.startswith("NUCAPS"):
             ctf_low = self.loc['ctf_low']
             ctf_high = self.loc['ctf_high']
-            ctp_low = self.loc['ctp_low']
-            ctp_high = self.loc['ctp_high']
+            ctp_low = int(self.loc['ctp_low'])
+            ctp_high = int(self.loc['ctp_high'])
+
+            # NUCAPS skew-T won't launch if cloud top pressure < 100mb.
+            # Set variables to default value so it doesn't try to draw the CTP line out of bounds.
+            if ctp_low < 100:
+                ctp_low = 3000
+            if ctp_high < 100:
+                ctp_high = 3000
 
             # Create temporary text file that will store the above values.
             cloudValues = []
-            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
+            cloudValues.append(f'{ctf_low} {ctf_high} {str(ctp_low)} {str(ctp_high)}')
 
-            file = open(pathCloudFile, "w")
+            file = open(cloud_file, "w")
             for line in cloudValues:
-                file.write(f'{line}\n')
+                file.write(f'{line}')
             file.close()
         else:
             # Ignore these csv headers if non-NUCAPS data source
@@ -768,9 +854,9 @@ class Picker(QWidget):
             cloudValues = []
             cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
 
-            file = open(pathCloudFile, "w")
+            file = open(cloud_file, "w")
             for line in cloudValues:
-                file.write(f'{line}\n')
+                file.write(f'{line}')
             file.close()
 
         logging.debug("Calling full_gui.skewApp")
@@ -1154,6 +1240,13 @@ class Main(QMainWindow):
         """
         Handles close events (gets called when the window closes).
         """
+        # JTS - Cleanup; Remove nucapsTimes.txt and cloudTopValues.txt when main GUI closes.
+        if os.path.isfile(NUCAPS_times_file):
+            os.remove(NUCAPS_times_file)
+
+        if os.path.isfile(cloud_file):
+            os.remove(cloud_file)
+
         self.config.toFile()
 
 def newerRelease(latest):
@@ -1305,8 +1398,8 @@ def main():
         logging.info("This is the most recent version of SHARPpy.")
 
     # Alert the user that there's a newer version on Github (and by extension through CI also on pip and conda)
-    if latest[0] is False:
-        newerRelease(latest)
+    # if latest[0] is False:
+    #     newerRelease(latest)
 
     if args.dt is not None and args.ds is not None and args.stn is not None:
         dt = date.datetime.strptime(args.dt, "%Y%m%d/%H")
@@ -1323,5 +1416,4 @@ def main():
 if __name__ == '__main__':
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-#
     main()

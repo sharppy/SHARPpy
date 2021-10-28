@@ -1,15 +1,6 @@
-# JTS
-import shutil
-from contextlib import closing
 import urllib.request as request
-import numpy as np
-import glob
-import os
-from datasources.downloadNUCAPS_CSVs import *
-
-# Download the NUCAPS CSVs before SharpPy tries loading them.
-downloadCSVs()
-copyCSVs()
+from contextlib import closing
+import csv
 
 def loadCSV(csv_file_name):
     csv = []
@@ -22,6 +13,22 @@ def loadCSV(csv_file_name):
 
     csv_file.close()
     return csv_fields, csv
+
+def loadNUCAPS_CSV(remote_csv):
+    csv_dict = []
+
+    # Open the remote csv and define the csv reader object.
+    with closing(request.urlopen(remote_csv)) as response:
+        lines = [l.decode('utf-8') for l in response.readlines()]
+        csv_file = csv.reader(lines)
+
+        # Assign the headers to a list.
+        csv_fields = next(csv_file)
+
+        for line in csv_file:
+            line_dict = dict( (f, v) for f, v in zip(csv_fields, line))
+            csv_dict.append(line_dict)
+    return csv_fields, csv_dict
 
 if __name__ == '__main__':
     import sys
