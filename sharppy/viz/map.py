@@ -309,6 +309,7 @@ class MapWidget(QWidget):
         self.stn_lons = np.array([])
         self.stn_ids = []
         self.stn_names = []
+        self.stn_qc_flags = [] # JTS
 
         self.default_width, self.default_height = self.width(), self.height()
         self.setMinimumSize(self.width(), self.height())
@@ -389,83 +390,46 @@ class MapWidget(QWidget):
             self.stn_lons = np.array([ p['lon'] for p in self.points ])
             self.stn_ids = [ p['srcid'] for p in self.points ]
 
-            # JTS - The QC flag (priority header) only applies to NUCAPS profiles.  Ignore other data sources.
-            try:
-                if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
-                    self.stn_qc_flags = [ p['priority'] for p in self.points ]
-            except:
-                pass
+            # JTS - Extract QC flag (priority header) info for NUCAPS data.
+            if self.cur_source.getName().startswith("NUCAPS"):
+                self.stn_qc_flags = [ p['priority'] for p in self.points ]
 
             self.stn_names = []
 
-            # JTS - Text that displays when hovering mouse over point will change,
-            # depending on whether data source is NUCAPS or not.
+            # JTS - Text that displays when hovering mouse over profiles on the map.
             for p in self.points:
-                if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
-                    or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
-                    or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
-                    or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
-                    or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
-
+                if self.cur_source.getName().startswith("NUCAPS"):
+                    # Format the latitude string
                     if p['lat'] != "":
                         lat_str = " (%s," % p['lat']
                     else:
                         lat_str = ""
 
+                    # Format the longitude string
                     if p['lon'] != "":
                         lon_str = " %s)" % p['lon']
                     else:
                         lon_str = ""
 
-                    nm = p['name']
-                    nm = nm.upper()
-                    name = "%s%s%s" % (nm, lat_str, lon_str)
+                    # Format the string that will be displayed to the user.
+                    nm_before = p['name']
+                    date = nm_before.split('_')[0]
+                    time = nm_before.split('_')[1]
+                    footprint_number = nm_before.split('_')[2]
+                    satID = nm_before.split('_')[3]
+
+                    year = date[0:2]
+                    month = date[2:4]
+                    day = date[4:6]
+                    hour = time[0:2]
+                    minute = time[2:4]
+                    second = time[4:6]
+
+                    nm_after = f'{month}-{day}-{year}_{hour}:{minute}:{second}Z_{footprint_number}_{satID}'
+                    nm_after = nm_after.upper()
+                    name = "%s%s%s" % (nm_after, lat_str, lon_str)
                     self.stn_names.append(name)
-
                 else:
-
                     if p['icao'] != "":
                         id_str = " (%s)" % p['icao']
                     else:
@@ -611,31 +575,8 @@ class MapWidget(QWidget):
         lb_lat, ub_lat = self.mapper.getLatBounds()
         size = 3 * self.scale
 
-        # JTS - condition for NUCAPS data sources 8/17/20
-        if self.cur_source.getName() == "NUCAPS Alaska NOAA-20" \
-            or self.cur_source.getName() == "NUCAPS Alaska Suomi-NPP" \
-            or self.cur_source.getName() == "NUCAPS Alaska Aqua" \
-            or self.cur_source.getName() == "NUCAPS Alaska MetOp-A" \
-            or self.cur_source.getName() == "NUCAPS Alaska MetOp-B" \
-            or self.cur_source.getName() == "NUCAPS Alaska MetOp-C" \
-            or self.cur_source.getName() == "NUCAPS Caribbean NOAA-20" \
-            or self.cur_source.getName() == "NUCAPS Caribbean Suomi-NPP" \
-            or self.cur_source.getName() == "NUCAPS Caribbean Aqua" \
-            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-A" \
-            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-B" \
-            or self.cur_source.getName() == "NUCAPS Caribbean MetOp-C" \
-            or self.cur_source.getName() == "NUCAPS CONUS NOAA-20" \
-            or self.cur_source.getName() == "NUCAPS CONUS Suomi-NPP" \
-            or self.cur_source.getName() == "NUCAPS CONUS Aqua" \
-            or self.cur_source.getName() == "NUCAPS CONUS MetOp-A" \
-            or self.cur_source.getName() == "NUCAPS CONUS MetOp-B" \
-            or self.cur_source.getName() == "NUCAPS CONUS MetOp-C" \
-            or self.cur_source.getName() == "NUCAPS Case Study NOAA-20" \
-            or self.cur_source.getName() == "NUCAPS Case Study Suomi-NPP" \
-            or self.cur_source.getName() == "NUCAPS Case Study Aqua" \
-            or self.cur_source.getName() == "NUCAPS Case Study MetOp-A" \
-            or self.cur_source.getName() == "NUCAPS Case Study MetOp-B" \
-            or self.cur_source.getName() == "NUCAPS Case Study MetOp-C":
+        # JTS - Apply QC coloring to NUCAPS.
+        if self.cur_source.getName().startswith("NUCAPS"):
             unselected_color_nucaps = QtCore.Qt.red
             selected_color_nucaps = QtCore.Qt.green
 
@@ -667,7 +608,7 @@ class MapWidget(QWidget):
                 qp.setBrush(QtGui.QBrush(selected_color_nucaps))
                 qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
 
-        else: # JTS - condition for non-NUCAPS data sources 8/18/20
+        else: # JTS - Non-NUCAPS data will not have the QC coloring applied.
             unselected_color = QtCore.Qt.red
             selected_color = QtCore.Qt.green
 

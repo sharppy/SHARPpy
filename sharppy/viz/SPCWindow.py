@@ -307,7 +307,6 @@ class SPCWidget(QWidget):
             self.sound.setAllObserved(self.coll_observed, update_gui=False)
             self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
-
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
             if not prof_col.getMeta('observed'):
@@ -869,8 +868,8 @@ class SPCWindow(QMainWindow):
 
         # JTS - keep "collect observed" option active, regardless of profile type.
         # if not prof_col.getMeta('observed'):
-        #     self.allobserved.setDisabled(True)
-        #     self.allobserved.setChecked(False)
+            # self.allobserved.setDisabled(True)
+            # self.allobserved.setChecked(False)
 
         self.createProfileMenu(prof_col)
 
@@ -966,35 +965,22 @@ class SPCWindow(QMainWindow):
         pc_date = prof_col.getMeta('run').strftime("%d/%H%MZ")
         pc_model = prof_col.getMeta('model')
 
-        # JTS - Remove cycle time from NUCAPS menu item.
-        if pc_model == "NUCAPS Alaska NOAA-20" \
-            or pc_model == "NUCAPS Alaska Suomi-NPP" \
-            or pc_model == "NUCAPS Alaska Aqua" \
-            or pc_model == "NUCAPS Alaska MetOp-A" \
-            or pc_model == "NUCAPS Alaska MetOp-B" \
-            or pc_model == "NUCAPS Alaska MetOp-C" \
-            or pc_model == "NUCAPS Caribbean NOAA-20" \
-            or pc_model == "NUCAPS Caribbean Suomi-NPP" \
-            or pc_model == "NUCAPS Caribbean MetOp-A" \
-            or pc_model == "NUCAPS Caribbean MetOp-B" \
-            or pc_model == "NUCAPS Caribbean MetOp-C" \
-            or pc_model == "NUCAPS CONUS NOAA-20" \
-            or pc_model == "NUCAPS CONUS Suomi-NPP" \
-            or pc_model == "NUCAPS CONUS Aqua" \
-            or pc_model == "NUCAPS CONUS MetOp-A" \
-            or pc_model == "NUCAPS CONUS MetOp-B" \
-            or pc_model == "NUCAPS CONUS MetOp-C" \
-            or pc_model == "NUCAPS Case Study NOAA-20" \
+        # JTS - For NUCAPS case study data sources,
+        # construct pc_date string from pc_loc since obs times list is empty.
+        if pc_model == "NUCAPS Case Study NOAA-20" \
             or pc_model == "NUCAPS Case Study Suomi-NPP" \
             or pc_model == "NUCAPS Case Study Aqua" \
             or pc_model == "NUCAPS Case Study MetOp-A" \
             or pc_model == "NUCAPS Case Study MetOp-B" \
             or pc_model == "NUCAPS Case Study MetOp-C":
-            pc_date = ''
-            return "%s (%s)" % (pc_loc, pc_model)
-        else:
-            # Keep the default cycle time for the non-NUCAPS data.
-            return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
+            date = pc_loc.split('_')[0]
+            time = pc_loc.split('_')[1]
+            day = date[4:6]
+            hour = time[0:2]
+            minute = time[2:4]
+            pc_date = f'{day}/{hour}{minute}Z'
+
+        return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
 
     def interpProf(self):
         self.setInterpolated(True)

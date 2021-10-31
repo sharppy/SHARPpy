@@ -534,8 +534,10 @@ class plotSkewT(backgroundSkewT):
             date = prof_coll.getAnalogDate()
             plot_title = loc + '   ' + datetime.strftime(date, "%Y%m%d/%H%M")
             plot_title += "  (Analog" + modified_str + ")"
-        elif observed:
+        elif model == "Observed":
             plot_title += "  (Observed" + modified_str + ")"
+        elif model.startswith("NUCAPS"): # JTS
+            plot_title += "  (" + model + modified_str + ")"
         else:
             mem_string = ""
             if ensemble:
