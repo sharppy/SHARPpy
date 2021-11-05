@@ -58,9 +58,9 @@ def create_profile(**kwargs):
 
     profile : string, optional (default: 'default')
         The text identifier for the Profile to be generated. Valid options
-        include ('default' | 'basic' | 'convective'). Default will construct a basic
+        include ('default' | 'raw' | 'convective'). Default will construct a basic
         Profile, and convective will construct a ConvectiveProfile used for
-        the SPC style GUI. 
+        the SPC style GUI.
 
     omeg: array_like
         The corresponding vertical velocity values (Pa/s)
@@ -102,6 +102,12 @@ class Profile(object):
         self.latitude = kwargs.get('latitude', ma.masked)
         self.strictQC = kwargs.get('strictQC', False)
 
+        # JTS - Get the cloud top fraction/pressure values.
+        self.ctf_low = kwargs.get('ctf_low')
+        self.ctf_high = kwargs.get('ctf_high')
+        self.ctp_low = kwargs.get('ctp_low')
+        self.ctp_high = kwargs.get('ctp_high')
+
         ## get the data and turn them into arrays
         self.pres = ma.asanyarray(kwargs.get('pres'), dtype=float)
         self.hght = ma.asanyarray(kwargs.get('hght'), dtype=float)
@@ -118,24 +124,23 @@ class Profile(object):
                 "The pres, hght, tmpc, or dwpc arrays passed to the Profile object constructor must all have the same length."
 
         if np.ma.max(self.pres) <= 100:
-            warnings.warn("The pressure values passed to the profile object are below 100 mb.  This may cause some the SHARPpy routines not to behave as expected.") 
+            warnings.warn("The pressure values passed to the profile object are below 100 mb.  This may cause some the SHARPpy routines not to behave as expected.")
 
         if 'wdir' in kwargs and 'wspd' in kwargs:
             self.wdir = ma.asanyarray(kwargs.get('wdir'), dtype=float)
             self.wspd = ma.asanyarray(kwargs.get('wspd'), dtype=float)
             assert len(self.wdir) == len(self.wspd) == len(self.pres), "The wdir and wspd arrays passed to the Profile constructor must have the same length as the pres array."
             assert self.wdir.ndim == 1 and self.wspd.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
-            #self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
+            # self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
             self.u = None
             self.v = None
-
         ## did the user provide the wind in u,v form?
         elif 'u' in kwargs and 'v' in kwargs:
             self.u = ma.asanyarray(kwargs.get('u'), dtype=float)
             self.v = ma.asanyarray(kwargs.get('v'), dtype=float)
             assert len(self.u) == len(self.v) == len(self.pres), "The u and v arrays passed to the Profile constructor must have the same length as the pres array."
-            assert self.u.ndim == 1 and self.v.ndim == 1, "The wdir and wspd arrays passed to the Profile constructor are not one dimensional."
-            #self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
+            assert self.u.ndim == 1 and self.v.ndim == 1, "The u and v arrays passed to the Profile constructor are not one dimensional."
+            # self.wdir, self.wspd = utils.comp2vec(self.u, self.v)
             self.wdir = None
             self.wspd = None
         else:
@@ -169,14 +174,16 @@ class Profile(object):
     def copy(cls, prof, strictQC=False, **kwargs):
         '''
             Copies a profile object.
-        ''' 
-        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC', 'missing' ])
+        '''
+        # JTS - Add the cloud top variables to the keyword argument list.
+        new_kwargs = dict( (k, prof.__dict__[k]) for k in [ 'pres', 'hght', 'tmpc', 'dwpc', 'omeg', 'location', 'date', 'latitude', 'strictQC', 'missing', \
+                                                            'ctf_low', 'ctf_high', 'ctp_low', 'ctp_high'])
 
         if prof.u is not None and prof.v is not None:
             new_kwargs.update({'u':prof.u, 'v':prof.v})
         else:
             new_kwargs.update({'wspd':prof.wspd, 'wdir':prof.wdir})
-        
+
         new_kwargs.update({'strictQC':strictQC})
 
         # Create a new profile object using the old profile object data cls is the Class type (e.g., ConvectiveProfile)
@@ -229,18 +236,18 @@ class Profile(object):
 
 class BasicProfile(Profile):
     '''
-    The default data class for SHARPpy. 
+    The default data class for SHARPpy.
     All other data classes inherit from this class.
     This class holds the vertical data for pressure,
     height, temperature, dewpoint, and winds. This class
     has no indices computed.
-        
+
     '''
-    
+
     def __init__(self, **kwargs):
         '''
         Create the sounding data object
-        
+
         Parameters
         ----------
         Mandatory Keywords
@@ -252,24 +259,24 @@ class BasicProfile(Profile):
             The corresponding temperature values (Celsius)
         dwpc : array_like
         The corresponding dewpoint temperature values (Celsius)
-            
+
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
             The direction from which the wind is blowing in
             meteorological degrees
         wspd : array_like
             The speed of the wind (kts)
-            
+
         OR
-            
+
         u : array_like
             The U-component of the direction from which the wind
             is blowing (kts)
-            
+
         v : array_like
             The V-component of the direction from which the wind
             is blowing. (kts)
-            
+
         Optional Keywords
         missing : number (default: sharppy.sharptab.constants.MISSING)
             The value of the missing flag
@@ -278,7 +285,7 @@ class BasicProfile(Profile):
             The 3 character station identifier or 4 character
             WMO station ID for radiosonde locations. Used for
             the PWV database.
-        
+
         strictQC : boolean
             A flag that indicates whether or not the strict quality control
             routines should be run on the profile upon construction.
@@ -286,7 +293,7 @@ class BasicProfile(Profile):
         Returns
         -------
         prof: Profile object
-            
+
         '''
         super(BasicProfile, self).__init__(**kwargs)
 
@@ -299,7 +306,6 @@ class BasicProfile(Profile):
             self.wdir[self.wspd.mask] = ma.masked
             self.wspd[self.wdir.mask] = ma.masked
             self.u, self.v = utils.vec2comp(self.wdir, self.wspd)
-
         ## did the user provide the wind in u,v form?
         elif self.u is not None:
             self.u[self.u == self.missing] = ma.masked
@@ -323,7 +329,7 @@ class BasicProfile(Profile):
 
         # QC Checks on the arrays passed to the constructor.
         qc_tools.areProfileArrayLengthEqual(self)
-       
+
         ## mask the missing values
         self.pres[self.pres == self.missing] = ma.masked
         self.hght[self.hght == self.missing] = ma.masked
@@ -333,7 +339,7 @@ class BasicProfile(Profile):
         self.logp = np.log10(self.pres.copy())
         self.vtmp = thermo.virtemp( self.pres, self.tmpc, self.dwpc )
         idx = np.ma.where(self.pres > 0)[0]
-        self.vtmp[self.dwpc.mask[idx]] = self.tmpc[self.dwpc.mask[idx]] # Masking any virtual temperature 
+        self.vtmp[self.dwpc.mask[idx]] = self.tmpc[self.dwpc.mask[idx]] # Masking any virtual temperature
 
         ## get the index of the top and bottom of the profile
         self.sfc = self.get_sfc()
@@ -358,82 +364,82 @@ class BasicProfile(Profile):
             Convenience function to get the index of the surface. It is
             determined by finding the lowest level in which a temperature is
             reported.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Index of the surface
-            
+
             '''
         return np.where(~self.tmpc.mask)[0].min()
-    
+
     def get_top(self):
         '''
             Convenience function to get the index of the surface. It is
             determined by finding the lowest level in which a temperature is
             reported.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Index of the surface
             '''
         return np.where(~self.tmpc.mask)[0].max()
-     
+
     def get_wvmr_profile(self):
         '''
             Function to calculate the water vapor mixing ratio profile.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Array of water vapor mixing ratio profile
             '''
-        
+
         #wvmr = ma.empty(self.pres.shape[0])
         #for i in range(len(self.v)):
         wvmr = thermo.mixratio( self.pres, self.dwpc )
         wvmr[wvmr == self.missing] = ma.masked
         wvmr.set_fill_value(self.missing)
         return wvmr
-    
+
     def get_wetbulb_profile(self):
         '''
             Function to calculate the wetbulb profile.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Array of wet bulb profile
             '''
-        
+
         wetbulb = ma.empty(self.pres.shape[0])
         for i in range(len(self.v)):
             wetbulb[i] = thermo.wetbulb( self.pres[i], self.tmpc[i], self.dwpc[i] )
         wetbulb[wetbulb == self.missing] = ma.masked
         wetbulb.set_fill_value(self.missing)
         return wetbulb
-    
+
     def get_theta_profile(self):
         '''
             Function to calculate the theta profile.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Array of theta profile
@@ -445,15 +451,15 @@ class BasicProfile(Profile):
         theta.set_fill_value(self.missing)
         theta = thermo.ctok(theta)
         return theta
-    
+
     def get_thetae_profile(self):
         '''
             Function to calculate the theta-e profile.
-            
+
             Parameters
             ----------
             None
-            
+
             Returns
             -------
             Array of theta-e profile
@@ -468,11 +474,11 @@ class BasicProfile(Profile):
     def get_rh_profile(self):
         '''
         Function to calculate the relative humidity profile
-        
+
         Parameters
         ----------
         None
-    
+
         Returns
         -------
         Array of the relative humidity profile
@@ -488,14 +494,14 @@ class ConvectiveProfile(BasicProfile):
     '''
     The Convective data class for SHARPPy. This is the class used
     to generate the indices that are default for the SPC NSHARP display.
-    
+
     This class inherits from the Profile object.
 
     '''
     def __init__(self, **kwargs):
         '''
         Create the sounding data object
-        
+
         Parameters
         ----------
         Mandatory Keywords
@@ -507,24 +513,24 @@ class ConvectiveProfile(BasicProfile):
             The corresponding temperature values (Celsius)
         dwpc : array_like
             The corresponding dewpoint temperature values (Celsius)
-            
+
         Optional Keyword Pairs (must use one or the other)
         wdir : array_like
             The direction from which the wind is blowing in
             meteorological degrees
         wspd : array_like
             The speed of the wind (kts)
-        
+
         OR
-            
+
         u : array_like
             The U-component of the direction from which the wind
             is blowing
-            
+
         v : array_like
             The V-component of the direction from which the wind
             is blowing.
-            
+
         missing : number, optional (default: sharppy.sharptab.constants.MISSING)
             The value of the missing flag
 
@@ -535,14 +541,14 @@ class ConvectiveProfile(BasicProfile):
 
         omeg : array_like, optional
             List of the vertical velocity in pressure coordinates with height (Pascals/second)
-            
+
         Returns
         -------
         A profile object
         '''
         ## call the constructor for Profile
         super(ConvectiveProfile, self).__init__(**kwargs)
-        assert np.ma.max(self.pres) > 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb." 
+        assert np.ma.max(self.pres) > 100, "ConvectiveProfile objects require that the minimum pressure passed in the data array is greater than 100 mb."
 
         self.user_srwind = None
 
@@ -617,7 +623,7 @@ class ConvectiveProfile(BasicProfile):
         Function to generate different indices and information
         regarding any fire weather in the sounding.  This helps fill
         the data shown in the FIRE inset.
-    
+
         Parameters
         ----------
         None
@@ -665,7 +671,7 @@ class ConvectiveProfile(BasicProfile):
         self.tpos, self.tneg, self.ttop, self.tbot : positive and negative temperature layers in the sounding
         self.wpos, self.wneg, self.wtop, self.wbot : positive and negative wetbulb layers in the soundings
         self.precip_type : the best guess precipitation type
-    
+
         Parameters
         ----------
         None
@@ -702,7 +708,7 @@ class ConvectiveProfile(BasicProfile):
         self.etop : the top pressure level of the effective inflow layer
         self.ebotm : The bottom, meters (agl), of the effective inflow layer
         self.etopm : The top, meters (agl), of the effective inflow layer
-    
+
         Parameters
         ----------
         None
@@ -848,7 +854,7 @@ class ConvectiveProfile(BasicProfile):
         self.left_srw_0_2km = winds.sr_wind(self, pbot=sfc, ptop=interp.pres(self, interp.to_msl(self, 2000.)), stu=self.srwind[2], stv=self.srwind[3])
         self.left_srw_4_6km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 4000.)), ptop=p6km, stu=self.srwind[2], stv=self.srwind[3])
         self.left_srw_9_11km = winds.sr_wind(self, pbot=interp.pres(self, interp.to_msl(self, 9000.)), ptop=interp.pres(self, interp.to_msl(self, 11000.)), stu=self.srwind[2], stv=self.srwind[3])
-        
+
         ## calculate upshear and downshear
         self.upshear_downshear = winds.mbe_vectors(self)
         self.right_srh1km = winds.helicity(self, 0, 1000., stu=self.srwind[0], stv=self.srwind[1])
@@ -875,7 +881,7 @@ class ConvectiveProfile(BasicProfile):
     def get_thermo(self):
         '''
         Function to generate thermodynamic indices.
-        
+
         Function returns nothing, but sets the following
         variables:
 
@@ -895,7 +901,7 @@ class ConvectiveProfile(BasicProfile):
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -949,7 +955,7 @@ class ConvectiveProfile(BasicProfile):
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -958,7 +964,7 @@ class ConvectiveProfile(BasicProfile):
         self.right_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.right_srh1km[0], utils.KTS2MS(wspd))
         self.left_stp_fixed = params.stp_fixed(self.sfcpcl.bplus, self.sfcpcl.lclhght, self.left_srh1km[0], utils.KTS2MS(wspd))
         self.sherbe = params.sherb(self, effective=True)
-        
+
         if self.etop is np.ma.masked or self.ebottom is np.ma.masked:
             self.right_scp = 0.0; self.left_scp = 0.0
             self.right_stp_cin = 0.0; self.left_stp_cin = 0.0
@@ -997,13 +1003,13 @@ class ConvectiveProfile(BasicProfile):
         supercell databases. Requires calling get_kinematics()
         and get_parcels() first. Also calculates the significant
         hail parameter.
-        
+
         Function returns nothing, but sets the following variables:
 
         self.matches - the matches from SARS HAIL
         self.ship - significant hail parameter
         self.supercell_matches - the matches from SARS SUPERCELL
-        
+
         Parameters
         ----------
         None
@@ -1042,15 +1048,15 @@ class ConvectiveProfile(BasicProfile):
             self.left_matches = ([], [], 0, 0, 0)
 
         try:
-            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
-                utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+            self.right_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate,
+                utils.MS2KTS(sfc_6km_shear), right_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear),
                 right_srh3km)
         except:
             self.right_supercell_matches = ([], [], 0, 0, 0)
 
         try:
-            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate, 
-                utils.MS2KTS(sfc_6km_shear), -left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear), 
+            self.left_supercell_matches = supercell(self.supercell_database, mlcape, mllcl, h500t, lapse_rate,
+                utils.MS2KTS(sfc_6km_shear), -left_srh1km, utils.MS2KTS(sfc_3km_shear), utils.MS2KTS(sfc_9km_shear),
                 -left_srh3km)
         except Exception as e:
             self.left_supercell_matches = ([], [], 0, 0, 0)
@@ -1067,13 +1073,13 @@ class ConvectiveProfile(BasicProfile):
         Function to get the possible watch type.
         Function returns nothing, but sets the following
         variables:
-        
+
         self.watch_type - possible watch type
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -1096,16 +1102,16 @@ class ConvectiveProfile(BasicProfile):
 
         self.slinky_traj - the list containing the position vector for the updraft
         self.updraft_tilt - the updraft tilt (an angle) with respect to the horizon
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
         '''
-    
+
         parcel = self.mupcl
         slinky = params.parcelTraj(self, parcel)
         if slinky == None:
@@ -1119,11 +1125,11 @@ class ConvectiveProfile(BasicProfile):
         '''
         Function to compute the location of the current PWV with respect to
         it's sounding climatology from Bunkers.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -1132,13 +1138,13 @@ class ConvectiveProfile(BasicProfile):
 
     def get_indices(self):
         '''
-        Function to set any additional indices that are included in the 
+        Function to set any additional indices that are included in the
         thermo window.
-        
+
         Parameters
         ----------
         None
-        
+
         Returns
         -------
         None
@@ -1154,8 +1160,8 @@ class ConvectiveProfile(BasicProfile):
 
     def set_srleft(self, lm_u, lm_v):
         '''
-        Sets the u and v values of the left mover supercell storm motion vector.       
- 
+        Sets the u and v values of the left mover supercell storm motion vector.
+
         Parameters
         ----------
         lm_u : number
@@ -1173,8 +1179,8 @@ class ConvectiveProfile(BasicProfile):
 
     def set_srright(self, rm_u, rm_v):
         '''
-        Sets the u and v values of the right mover supercell storm motion vector.       
- 
+        Sets the u and v values of the right mover supercell storm motion vector.
+
         Parameters
         ----------
         rm_u : number
@@ -1185,15 +1191,15 @@ class ConvectiveProfile(BasicProfile):
         Returns
         -------
         None
-        '''      
-        self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:] 
+        '''
+        self.user_srwind = (rm_u, rm_v) + self.user_srwind[2:]
         self.get_kinematics()
         self.get_severe()
 
     def reset_srm(self):
         '''
         Resets the storm motion vector to those found by the Bunkers algorithm
- 
+
         Parameters
         ----------
         None

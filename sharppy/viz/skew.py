@@ -16,9 +16,6 @@ import os
 
 __all__ = ['backgroundSkewT', 'plotSkewT']
 
-HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
-cloud_file = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
-
 class backgroundSkewT(QWidget):
     clicked = QtCore.Signal(dict)
 
@@ -1045,7 +1042,9 @@ class plotSkewT(backgroundSkewT):
             self.draw_pbl_level(qp)
 
         self.draw_parcel_levels(qp)
-        self.draw_cloud_top_pressure_levels(qp) # JTS
+
+        # JTS - Draw cloud top pressure levels for NUCAPS.
+        self.draw_cloud_top_pressure_levels(qp)
 
         qp.setRenderHint(qp.Antialiasing, False)
         try:
@@ -1060,10 +1059,6 @@ class plotSkewT(backgroundSkewT):
             self.draw_omega_profile(qp)
 
         qp.end()
-
-        # JTS - Cleanup: remove pathCloudFile after everything draws in the SPC window.
-        if os.path.isfile(cloud_file):
-            os.remove(cloud_file)
 
     def drawBarbs(self, prof, qp, color=None):
         logging.debug("Drawing the wind barbs on the Skew-T.")
@@ -1247,7 +1242,8 @@ class plotSkewT(backgroundSkewT):
             except:
                 continue
 
-    def draw_cloud_top_pressure_levels(self, qp): # JTS added 9/1/20
+    # JTS - Plot cloud top fraction and pressure for NUCAPS.
+    def draw_cloud_top_pressure_levels(self, qp):
         logging.debug("Drawing the cloud top pressure layers.")
         qp.setClipping(True)
         xbounds = [20,24]
@@ -1261,7 +1257,7 @@ class plotSkewT(backgroundSkewT):
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
-            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_high + "%")
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(self.pcl.ctf_high) + "%")
         # Plot CTP_Low
         if tab.utils.QC(self.pcl.ctp_low):
             y = self.originy + self.pres_to_pix(self.pcl.ctp_low) / self.scale
@@ -1269,7 +1265,7 @@ class plotSkewT(backgroundSkewT):
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
-            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + self.pcl.ctf_low + "%")
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(self.pcl.ctf_low) + "%")
 
 
     def omeg_to_pix(self, omeg):

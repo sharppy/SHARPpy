@@ -26,13 +26,10 @@ import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
 NUCAPS_times_file = os.path.join(HOME_DIR, "nucapsTimes.txt") # JTS
-cloud_file = os.path.join(HOME_DIR, "datasources", "cloudTopValues.txt")
 
 # Cleanup; Remove nucapsTimes.txt and cloudTopValues.txt when main GUI opens.
 if os.path.isfile(NUCAPS_times_file):
     os.remove(NUCAPS_times_file)
-if os.path.isfile(cloud_file):
-    os.remove(cloud_file)
 
 if not os.path.exists(HOME_DIR):
     os.makedirs(HOME_DIR)

@@ -32,9 +32,6 @@ __all__ += ['convective_temp', 'esp', 'pbl_top', 'precip_eff', 'dcape', 'sig_sev
 __all__ += ['dgz', 'ship', 'stp_cin', 'stp_fixed', 'scp', 'mmp', 'wndg', 'sherb', 'tei', 'cape']
 __all__ += ['mburst', 'dcp', 'ehi', 'sweat', 'hgz', 'lhp', 'integrate_parcel']
 
-HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy") # JTS
-cloud_file = os.path.join(HOME_DIR, 'datasources', 'cloudTopValues.txt')
-
 class DefineParcel(object):
     '''
         Create a parcel from a supplied profile object.
@@ -367,6 +364,7 @@ class Parcel(object):
         self.cappres = ma.masked # Cap strength pressure (mb)
         self.bmin = ma.masked # Buoyancy minimum in profile (C)
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
+        # JTS
         self.ctf_low = ma.masked # Cloud top fraction: Low level (%)
         self.ctf_high = ma.masked # Cloud top fraction: High level (%)
         self.ctp_low = ma.masked # Cloud top pressure: Low level (mb)
@@ -1893,22 +1891,17 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm20c = hgtm20c
     pcl.hghtm30c = hgtm30c
 
-    # JTS - Find cloud top pressure/fraction from temporary text file.
-    try:
-        # This block gets executed only when new profiles are loaded to the SPC window.
-        file = open(cloud_file)
-        line = file.readlines()
-
-        # Remove the list surrounding the values.
-        line = line[0]
-
-        # Assign local cloud top values to the parcel profile object.
-        pcl.ctf_low = str(line.split(' ')[0])
-        pcl.ctf_high = str(line.split(' ')[1])
-        pcl.ctp_low = int(line.split(' ')[2])
-        pcl.ctp_high = int(line.split(' ')[3])
-    except:
-        pass
+    # JTS - Assign the cloud top values from the profile object to the parcel object.
+    if prof.ctf_low is not None:
+        pcl.ctf_low = prof.ctf_low
+        pcl.ctf_high = prof.ctf_high
+        pcl.ctp_low = prof.ctp_low
+        pcl.ctp_high = prof.ctp_high
+    else:
+        pcl.ctf_low = -99999
+        pcl.ctf_high = -99999
+        pcl.ctp_low = 3000
+        pcl.ctp_high = 3000
 
     if pbot < prof.pres[-1]:
         # Check for the case where the LCL is above the

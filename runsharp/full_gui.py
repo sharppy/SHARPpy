@@ -35,7 +35,6 @@ import platform
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy")
 NUCAPS_times_file = os.path.join(HOME_DIR, "datasources", "nucapsTimes.txt") # JTS
-cloud_file = os.path.join(HOME_DIR, "datasources", "cloudTopValues.txt")
 LOG_FILE = os.path.join(HOME_DIR, 'sharppy.log')
 if not os.path.isdir(HOME_DIR):
     os.mkdir(HOME_DIR)
@@ -821,44 +820,6 @@ class Picker(QWidget):
         and magical funtimes.
         :return:
         """
-        # JTS - Retrieve cloud top pressure/fraction values.
-        if self.model.startswith("NUCAPS"):
-            ctf_low = self.loc['ctf_low']
-            ctf_high = self.loc['ctf_high']
-            ctp_low = int(self.loc['ctp_low'])
-            ctp_high = int(self.loc['ctp_high'])
-
-            # NUCAPS skew-T won't launch if cloud top pressure < 100mb.
-            # Set variables to default value so it doesn't try to draw the CTP line out of bounds.
-            if ctp_low < 100:
-                ctp_low = 3000
-            if ctp_high < 100:
-                ctp_high = 3000
-
-            # Create temporary text file that will store the above values.
-            cloudValues = []
-            cloudValues.append(f'{ctf_low} {ctf_high} {str(ctp_low)} {str(ctp_high)}')
-
-            file = open(cloud_file, "w")
-            for line in cloudValues:
-                file.write(f'{line}')
-            file.close()
-        else:
-            # Ignore these csv headers if non-NUCAPS data source
-            ctf_low = -99999
-            ctf_high = -99999
-            ctp_low = 3000
-            ctp_high = 3000
-
-            # Create temporary text file that will store the above values.
-            cloudValues = []
-            cloudValues.append(f'{ctf_low} {ctf_high} {ctp_low} {ctp_high}')
-
-            file = open(cloud_file, "w")
-            for line in cloudValues:
-                file.write(f'{line}')
-            file.close()
-
         logging.debug("Calling full_gui.skewApp")
 
         failure = False
@@ -1240,12 +1201,9 @@ class Main(QMainWindow):
         """
         Handles close events (gets called when the window closes).
         """
-        # JTS - Cleanup; Remove nucapsTimes.txt and cloudTopValues.txt when main GUI closes.
+        # JTS - Cleanup; Remove nucapsTimes.txt when main GUI closes.
         if os.path.isfile(NUCAPS_times_file):
             os.remove(NUCAPS_times_file)
-
-        if os.path.isfile(cloud_file):
-            os.remove(cloud_file)
 
         self.config.toFile()
 
