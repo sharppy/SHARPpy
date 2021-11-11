@@ -1043,8 +1043,9 @@ class plotSkewT(backgroundSkewT):
 
         self.draw_parcel_levels(qp)
 
-        # JTS - Draw cloud top pressure levels for NUCAPS.
-        self.draw_cloud_top_pressure_levels(qp)
+        # JTS - Draw cloud top pressure levels for NUCAPS only.
+        if self.prof.ctf_low is not None:
+            self.draw_cloud_top_pressure_levels(qp)
 
         qp.setRenderHint(qp.Antialiasing, False)
         try:
@@ -1250,23 +1251,28 @@ class plotSkewT(backgroundSkewT):
         x = self.tmpc_to_pix(xbounds, [1000.,1000.])
         qp.setFont(self.hght_font)
 
+        # Assign profile collection variables for NUCAPS.
+        ctf_low = str(self.prof.ctf_low)
+        ctf_high = str(self.prof.ctf_high)
+        ctp_low = int(self.prof.ctp_low)
+        ctp_high = int(self.prof.ctp_high)
+
         # Plot CTP_High
-        if tab.utils.QC(self.pcl.ctp_high):
-            y = self.originy + self.pres_to_pix(self.pcl.ctp_high) / self.scale
+        if tab.utils.QC(ctp_high):
+            y = self.originy + self.pres_to_pix(ctp_high) / self.scale
             pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect2 = QtCore.QRectF(x[0], y-8, x[1] - x[0], 4)
-            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(self.pcl.ctf_high) + "%")
+            qp.drawText(rect2, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + ctf_high + "%")
         # Plot CTP_Low
-        if tab.utils.QC(self.pcl.ctp_low):
-            y = self.originy + self.pres_to_pix(self.pcl.ctp_low) / self.scale
+        if tab.utils.QC(ctp_low):
+            y = self.originy + self.pres_to_pix(ctp_low) / self.scale
             pen = QtGui.QPen(QtCore.Qt.yellow, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawLine(x[0], y, x[1], y)
             rect1 = QtCore.QRectF(x[0], y+6, x[1] - x[0], 4)
-            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + str(self.pcl.ctf_low) + "%")
-
+            qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "CTF = " + ctf_low + "%")
 
     def omeg_to_pix(self, omeg):
         plus10_bound = -49

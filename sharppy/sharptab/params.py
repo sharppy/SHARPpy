@@ -310,14 +310,6 @@ class Parcel(object):
             Buoyancy minimum (C)
         bminpres : number
             Pressure at the buoyancy minimum (mb)
-        ctf_low : number
-            Cloud top fraction: Low level (%)
-        ctf_high : number
-            Cloud top fraction: High level (%)
-        ctp_low : number
-            Cloud top pressure: Low level (mb)
-        ctp_high : number
-            Cloud top pressure - High level (mb)
         '''
     def __init__(self, **kwargs):
         self.pres = ma.masked # Parcel beginning pressure (mb)
@@ -364,11 +356,6 @@ class Parcel(object):
         self.cappres = ma.masked # Cap strength pressure (mb)
         self.bmin = ma.masked # Buoyancy minimum in profile (C)
         self.bminpres = ma.masked # Buoyancy minimum pressure (mb)
-        # JTS
-        self.ctf_low = ma.masked # Cloud top fraction: Low level (%)
-        self.ctf_high = ma.masked # Cloud top fraction: High level (%)
-        self.ctp_low = ma.masked # Cloud top pressure: Low level (mb)
-        self.ctp_high = ma.masked # Cloud top pressure: High level (mb)
         for kw in kwargs: setattr(self, kw, kwargs.get(kw))
 
 def hgz(prof):
@@ -1890,18 +1877,6 @@ def parcelx(prof, pbot=None, ptop=None, dp=-1, **kwargs):
     pcl.hghtm10c = hgtm10c
     pcl.hghtm20c = hgtm20c
     pcl.hghtm30c = hgtm30c
-
-    # JTS - Assign the cloud top values from the profile object to the parcel object.
-    if prof.ctf_low is not None:
-        pcl.ctf_low = prof.ctf_low
-        pcl.ctf_high = prof.ctf_high
-        pcl.ctp_low = prof.ctp_low
-        pcl.ctp_high = prof.ctp_high
-    else:
-        pcl.ctf_low = -99999
-        pcl.ctf_high = -99999
-        pcl.ctp_low = 3000
-        pcl.ctp_high = 3000
 
     if pbot < prof.pres[-1]:
         # Check for the case where the LCL is above the
