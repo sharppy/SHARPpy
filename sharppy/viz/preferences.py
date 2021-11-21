@@ -402,10 +402,10 @@ class PrefDialog(QDialog):
             self.combo1.addItem(k)
             self.combo2.addItem(k) 
 
-        idx1 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_tr'])[0]
-        idx2 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_br'])[0]
-        self.combo1.setCurrentIndex(idx1)
-        self.combo2.setCurrentIndex(idx2)
+        idxs1 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_tr'])[0]
+        idxs2 = np.where(np.asarray(list(self.variables.values())) == self._config['preferences', 'readout_br'])[0]
+        self.combo1.setCurrentIndex(idxs1[0])
+        self.combo2.setCurrentIndex(idxs2[0])
 
         return box
 
