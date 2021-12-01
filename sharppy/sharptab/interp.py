@@ -47,7 +47,7 @@ def hght(prof, p):
     Height (m) at the given pressure : number, numpy array
 
     '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -69,7 +69,7 @@ def omeg(prof, p):
     Omega (microbars/second) at the given pressure : number, numpy array
 
     '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -91,7 +91,7 @@ def temp(prof, p):
     Temperature (C) at the given pressure : number, numpy array
 
     '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -100,20 +100,20 @@ def temp(prof, p):
 def thetae(prof, p):
     '''
         Interpolates the given data to calculate theta-e at a given pressure
-        
+
         Parameters
         ----------
         prof : profile object
         Profile object
         p : number, numpy array
         Pressure (hPa) of the level for which temperature is desired
-        
+
         Returns
         -------
         Theta-E (C) at the given pressure : number, numpy array
-        
+
         '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -122,20 +122,20 @@ def thetae(prof, p):
 def mixratio(prof, p):
     '''
         Interpolates the given data to calculate water vapor mixing ratio at a given pressure
-        
+
         Parameters
         ----------
         prof : profile object
         Profile object
         p : number, numpy array
         Pressure (hPa) of the level for which mixing ratio is desired
-        
+
         Returns
         -------
         Water vapor mixing ratio (g/kg) at the given pressure : number, numpy array
-        
+
         '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -145,20 +145,20 @@ def mixratio(prof, p):
 def theta(prof, p):
     '''
         Interpolates the given data to calculate theta at a given pressure
-        
+
         Parameters
         ----------
         prof : profile object
         Profile object
         p : number, numpy array
         Pressure (hPa) of the level for which potential temperature is desired
-        
+
         Returns
         -------
         Theta (C) at the given pressure : number, numpy array
-        
+
         '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -167,20 +167,20 @@ def theta(prof, p):
 def wetbulb(prof, p):
     '''
         Interpolates the given data to calculate a wetbulb temperature at a given pressure
-        
+
         Parameters
         ----------
         prof : profile object
         Profile object
         p : number, numpy array
         Pressure (hPa) of the level for which wetbulb temperature is desired
-        
+
         Returns
         -------
         Wetbulb temperature (C) at the given pressure : number, numpy array
-        
+
         '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -203,7 +203,7 @@ def dwpt(prof, p):
     Dew point tmperature (C) at the given pressure : number, numpy array
 
     '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
@@ -246,12 +246,13 @@ def components(prof, p):
     -------
     U and V components at the given pressure (kts) : number, numpy array
     '''
-    # Note: numpy's interpoloation routine expects the interpoloation
+    # Note: numpy's interpolation routine expects the interpolation
     # routine to be in ascending order. Because pressure decreases in the
     # vertical, we must reverse the order of the two arrays to satisfy
     # this requirement.
     if prof.wdir.count() == 0:
-        return ma.masked, ma.masked
+        # JTS - Fixed a bug where clicking "Interpolate Focused Profile" throws an error for NUCAPS.
+        return ma.masked_where(ma.ones(np.shape(p)), p), ma.masked_where(ma.ones(np.shape(p)), p)
     U = generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.u[::-1])
     V = generic_interp_pres(ma.log10(p), prof.logp[::-1], prof.v[::-1])
     return U, V
@@ -336,29 +337,26 @@ def generic_interp_hght(h, hght, field, log=False):
 
     '''
     if field.count() == 0 or hght.count() == 0:
-        return ma.masked
+        return ma.masked_where(ma.ones(np.shape(h)), h) # JTS
+
     if ma.isMaskedArray(hght):
-        # Multiplying by ones ensures that the result is an array, not a single value ... which 
+        # Multiplying by ones ensures that the result is an array, not a single value ... which
         # happens sometimes ... >.<
-        not_masked1 = ~hght.mask * np.ones(hght.shape, dtype=bool) 
+        not_masked1 = ~hght.mask * np.ones(hght.shape, dtype=bool)
     else:
         not_masked1 = np.ones(hght.shape)
+
     if ma.isMaskedArray(field):
         not_masked2 = ~field.mask * np.ones(field.shape, dtype=bool)
     else:
         not_masked2 = np.ones(field.shape)
+
     not_masked = not_masked1 * not_masked2
 
-    field_intrp = np.interp(h, hght[not_masked], field[not_masked],
-                         left=ma.masked, right=ma.masked)
- 
+    field_intrp = np.interp(h, hght[not_masked], field[not_masked], left=ma.masked, right=ma.masked)
+
     if hasattr(h, 'shape') and h.shape == tuple():
         h = h[()]
-
-    if type(h) != type(ma.masked) and np.all(~np.isnan(h)):
-        # Bug fix for Numpy v1.10: returns nan on the boundary.
-        field_intrp = ma.where(np.isclose(h, hght[not_masked][0]), field[not_masked][0], field_intrp)
-        field_intrp = ma.where(np.isclose(h, hght[not_masked][-1]), field[not_masked][-1], field_intrp)
 
     # Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!
     field_intrp = ma.where(np.isnan(field_intrp), ma.masked, field_intrp)
@@ -393,29 +391,26 @@ def generic_interp_pres(p, pres, field):
 
     '''
     if field.count() == 0 or pres.count() == 0:
-        return ma.masked
+        return ma.masked_where(ma.ones(np.shape(p)), p) # JTS
+
     if ma.isMaskedArray(pres):
         not_masked1 = ~pres.mask * np.ones(pres.shape, dtype=bool)
     else:
         not_masked1 = np.ones(pres.shape, dtype=bool)
         not_masked1[:] = True
+
     if ma.isMaskedArray(field):
-        not_masked2 = ~field.mask * np.ones(pres.shape, dtype=bool)
+        not_masked2 = ~field.mask * np.ones(field.shape, dtype=bool)
     else:
         not_masked2 = np.ones(field.shape, dtype=bool)
         not_masked2[:] = True
+
     not_masked = not_masked1 * not_masked2
 
-    field_intrp = np.interp(p, pres[not_masked], field[not_masked], left=ma.masked,
-                 right=ma.masked)
+    field_intrp = np.interp(p, pres[not_masked], field[not_masked], left=ma.masked, right=ma.masked)
 
     if hasattr(p, 'shape') and p.shape == tuple():
         p = p[()]
-
-    if type(p) != type(ma.masked) and np.all(~np.isnan(p)):
-        # Bug fix for Numpy v1.10: returns nan on the boundary.
-        field_intrp = ma.where(np.isclose(p, pres[not_masked][0]), field[not_masked][0], field_intrp)
-        field_intrp = ma.where(np.isclose(p, pres[not_masked][-1]), field[not_masked][-1], field_intrp)
 
     # Another bug fix: np.interp() returns masked values as nan. We want ma.masked, dangit!
     field_intrp = ma.where(np.isnan(field_intrp), ma.masked, field_intrp)

@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.ma as ma
 from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.viz.draggable import Draggable
@@ -17,7 +18,7 @@ class backgroundHodo(QFrame):
     a QPixmap. Inherits from the QtWidgets.QFrame object.
     Unlike most plotting classes in SHARPPy, this class
     will not call the function to draw the background.
-    This is so that the background can be redrawn when 
+    This is so that the background can be redrawn when
     the hodograph gets centered on a vector.
     '''
     def __init__(self, **kwargs):
@@ -75,7 +76,7 @@ class backgroundHodo(QFrame):
         '''
         Center the hodograph in the window. It will either center it about
         the origin, about the mean wind vector, or the storm motion vector.
-        
+
         Parameters
         ----------
         point: A (u,v) vector that the hodograph is to be centered on.
@@ -101,11 +102,11 @@ class backgroundHodo(QFrame):
     def wheelEvent(self, e):
         '''
         Handeles the zooming of the hodograph window.
-        
+
         Parameters
         ----------
         e: an Event object
-        
+
         '''
         ## get the new scaling magnitude
         new_mag = self.hodomag - e.delta() / 5
@@ -140,7 +141,7 @@ class backgroundHodo(QFrame):
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
-        
+
         Parameters
         ----------
         e: an Event object
@@ -168,7 +169,7 @@ class backgroundHodo(QFrame):
     def draw_frame(self, qp):
         '''
         Draw frame around object.
-        
+
         Parameters
         ----------
         qp: QtGui.QPainter object
@@ -187,7 +188,7 @@ class backgroundHodo(QFrame):
     def draw_axes(self, qp):
         '''
         Draw the X, Y Axes.
-        
+
         Parameters
         ----------
         qp: QtGui.QPainter object
@@ -204,7 +205,7 @@ class backgroundHodo(QFrame):
     def draw_ring(self, spd, qp):
         '''
         Draw a range ring.
-        
+
         Parameters
         ----------
         spd: wind speed
@@ -213,7 +214,7 @@ class backgroundHodo(QFrame):
         '''
         ## set the ring color and get the u and v components of a
         ## 0 direction vector with speed spd.
-        color = self.isotach_color 
+        color = self.isotach_color
         uu, vv = tab.utils.vec2comp(0, spd)
         vv *= self.scale
         ## create a center point
@@ -256,7 +257,7 @@ class backgroundHodo(QFrame):
     def hodo_to_pix(self, ang, spd):
         '''
         Function to convert a (direction, speed) to (x, y) coordinates.
-        
+
         Parameters
         ----------
         ang: wind direction
@@ -271,7 +272,7 @@ class backgroundHodo(QFrame):
     def uv_to_pix(self, u, v):
         '''
         Function to convert (u, v) to (x, y) coordinates.
-        
+
         Parameters
         ----------
         u: the u wind component
@@ -290,12 +291,12 @@ class backgroundHodo(QFrame):
     def pix_to_uv(self, xx, yy):
         '''
         Function to convert (x,y) to (u,v) coordinates.
-        
+
         Parameters
         ----------
         xx: the x pixel value
         yy: the y pixel value
-        
+
         '''
         if self.wind_units == 'm/s':
             conv = tab.utils.MS2KTS
@@ -337,17 +338,17 @@ class plotHodo(backgroundHodo):
         self.all_observed = False
 
         self.colors = [
-            QtGui.QColor("#FF0000"), 
-            QtGui.QColor("#00FF00"), 
-            QtGui.QColor("#FFFF00"), 
-            QtGui.QColor("#00FFFF") 
+            QtGui.QColor("#FF0000"),
+            QtGui.QColor("#00FF00"),
+            QtGui.QColor("#FFFF00"),
+            QtGui.QColor("#00FFFF")
         ]
 
         self.ens_colors = [
-            QtGui.QColor("#880000"), 
-            QtGui.QColor("#008800"), 
-            QtGui.QColor("#888800"), 
-            QtGui.QColor("#008888") 
+            QtGui.QColor("#880000"),
+            QtGui.QColor("#008800"),
+            QtGui.QColor("#888800"),
+            QtGui.QColor("#008888")
         ]
 
         self.eff_inflow_color = QtGui.QColor("#00FFFF")
@@ -416,13 +417,13 @@ class plotHodo(backgroundHodo):
         norm.setCheckable(True)
         norm.setChecked(True)
         norm.triggered.connect(self.setNormalCenter)
-        a = ag2.addAction(norm)        
+        a = ag2.addAction(norm)
         self.popupmenu.addAction(a)
 
         sr = QAction(self)
         sr.setText("Storm Relative")
         sr.setCheckable(True)
-        sr.triggered.connect(self.setSRCenter)       
+        sr.triggered.connect(self.setSRCenter)
         a = ag2.addAction(sr)
         self.popupmenu.addAction(a)
 
@@ -434,7 +435,7 @@ class plotHodo(backgroundHodo):
         self.popupmenu.addAction(a)
 
         self.popupmenu.addSeparator()
-        
+
         reset = QAction(self)
         reset.setText("Reset Hodograph")
         reset.triggered.connect(lambda: self.reset.emit(['u', 'v']))
@@ -514,7 +515,7 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setNoCursor(self):
-        self.track_cursor = False 
+        self.track_cursor = False
         self.cursor_type = 'none'
         self.unsetCursor()
         self.clearData()
@@ -550,7 +551,12 @@ class plotHodo(backgroundHodo):
         self.parentWidget().setFocus()
 
     def setSRCenter(self):
-        rstu,rstv,lstu,lstv = self.srwind
+        # JTS - Fixed a bug where clicking "Storm Relative" throws an error for NUCAPS.
+        if ma.is_masked(self.srwind[0]) is True or ma.is_masked(self.srwind[1]) is True \
+            or ma.is_masked(self.srwind[2]) is True or ma.is_masked(self.srwind[3]) is True:
+            rstu,rstv,lstu,lstv = 0.,0.,0.,0.
+        else:
+            rstu,rstv,lstu,lstv = self.srwind
         self.centered = (rstu, rstv)
         self.center_loc = 'stormrelative'
         self.clearData()
@@ -597,7 +603,7 @@ class plotHodo(backgroundHodo):
             self.hodomag = 160.
             self.min_zoom = 40.
             self.max_zoom = 200.
-            conv = lambda s: s         
+            conv = lambda s: s
 
         self.scale = (self.brx - self.tlx) / self.hodomag
         max_uv = int(conv(np.hypot(*self.pix_to_uv(self.brx, self.bry))))
@@ -625,11 +631,11 @@ class plotHodo(backgroundHodo):
     def wheelEvent(self, e):
         '''
         Handles the zooming of the hodograph.
-        
+
         Parameters
         ----------
         e: an Event object
-        
+
         '''
         super(plotHodo, self).wheelEvent(e)
         self.updateDraggables()
@@ -638,11 +644,11 @@ class plotHodo(backgroundHodo):
         '''
         Handles when the mouse is pressed.
         Used to set the storm motion vector.
-        
+
         Parameters
         ----------
         e: an Event object
-        
+
         '''
         if self.prof is None:
             return
@@ -670,7 +676,7 @@ class plotHodo(backgroundHodo):
                 penwidth = 2
                 width = 300
                 hght = 14
-                # Plot the actual boundary 
+                # Plot the actual boundary
                 boundary_color = QtGui.QColor("#CC9900")
                 pen = QtGui.QPen(boundary_color, penwidth)
                 qp.begin(self.plotBitMap)
@@ -725,7 +731,7 @@ class plotHodo(backgroundHodo):
                 """
                 # Draw the descrete vs mixed/linear mode output only if there is an LCL-EL layer.
                 norm_Shear, mode_Shear, norm_Wind, norm_Mode = self.calculateStormMode()
- 
+
                 if tab.utils.QC(norm_Wind) and self.prof.mupcl.bplus != 0:
                     width = 80
                     qp = self.setBlackPen(qp)
@@ -735,7 +741,7 @@ class plotHodo(backgroundHodo):
                     pen = QtGui.QPen(color, penwidth)
                     qp.setPen(pen)
                     qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "...Storm Mode...")
-                    
+
                     width = 270
                     qp = self.setBlackPen(qp)
                     rect = QtCore.QRectF(3, self.bry-50, width, hght)
@@ -748,7 +754,7 @@ class plotHodo(backgroundHodo):
                     qp.setPen(pen)
                     qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, "From Cloud Layer Wind - Bndy Diff (" + tab.utils.INT2STR(norm_Wind) + " m/s): " + norm_Mode)
                     width = 200
-                    
+
                     qp = self.setBlackPen(qp)
                     rect = QtCore.QRectF(3, self.bry-65, width, hght)
                     qp.drawRect(rect)
@@ -768,7 +774,7 @@ class plotHodo(backgroundHodo):
                 self.plotBndy(self.bndy_dir)
                 self.clearData()
                 self.plotData()
-                self.update()               
+                self.update()
                 self.track_cursor = True
         elif self.cursor_type == 'none':
 
@@ -864,11 +870,11 @@ class plotHodo(backgroundHodo):
         '''
         Handles the tracking of the mouse to
         provide the dynamic readouts.
-        
+
         Parameters
         ----------
         e: an Event object
-        
+
         '''
         # TAS: Why are these necessary?
         if self.prof is None:
@@ -911,7 +917,7 @@ class plotHodo(backgroundHodo):
     def resizeEvent(self, e):
         '''
         Resize the plot based on adjusting the main window.
-        
+
         Parameters
         ----------
         e: an Event object
@@ -923,11 +929,11 @@ class plotHodo(backgroundHodo):
     def paintEvent(self, e):
         '''
         Handles painting the QPixmap onto the QWidget frame.
-        
+
         Parameters
         ----------
         e: an Event object
-        
+
         '''
 
         if self.prof:
@@ -952,7 +958,7 @@ class plotHodo(backgroundHodo):
                 readout = "%03d/%02d %s" % (wd_interp, ws_interp, units)
             else:
                 readout = "--/-- %s" % (self.wind_units)
- 
+
         super(plotHodo, self).paintEvent(e)
         qp = QtGui.QPainter()
         qp.begin(self)
@@ -971,15 +977,15 @@ class plotHodo(backgroundHodo):
             qp.drawText(text_rect, QtCore.Qt.AlignCenter, readout)
 
         qp.end()
-    
+
     def clearData(self):
         '''
         Clears/resets the base QPixmap.
         '''
         self.plotBitMap = self.backgroundBitMap.copy()
-        self.drag_hodo.setBackground(self.plotBitMap)    
-        self.drag_rm.setBackground(self.plotBitMap)    
-        self.drag_lm.setBackground(self.plotBitMap)    
+        self.drag_hodo.setBackground(self.plotBitMap)
+        self.drag_rm.setBackground(self.plotBitMap)
+        self.drag_lm.setBackground(self.plotBitMap)
 
     def plotData(self):
         '''
@@ -1030,15 +1036,15 @@ class plotHodo(backgroundHodo):
                 self.drawCriticalAngle(qp)
 
         qp.end()
-    
+
     def drawLCLtoEL_MW(self, qp):
         '''
         Draws the LCL to EL mean wind onto the hodo.
-        
+
         Parameters
         ----------
         qp: a QPainter object
-        
+
         '''
         penwidth = 2
         pen = QtGui.QPen(QtGui.QColor("#B8860B"), penwidth)
@@ -1051,17 +1057,17 @@ class plotHodo(backgroundHodo):
         mean_u, mean_v = self.uv_to_pix(self.mean_lcl_el[0],self.mean_lcl_el[1])
         half_length = (8./2.)
         qp.drawRect(mean_u-half_length, mean_v+half_length ,8,8)
-        # This probably needs to be checked. 
+        # This probably needs to be checked.
 
         color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         v_offset=5; h_offset = 1; width = 40; hght = 12;
-        
+
         mw_rect = QtCore.QRectF(mean_u+h_offset, mean_v+v_offset, width, hght)
         qp.drawRect(mw_rect)
-        
+
         pen = QtGui.QPen(QtGui.QColor("#B8860B"))
         qp.setPen(pen)
         qp.setFont(self.label_font)
@@ -1076,11 +1082,11 @@ class plotHodo(backgroundHodo):
     def drawCorfidi(self, qp):
         '''
         Draw the Corfidi upshear/downshear vectors
-        
+
         Parameters
         ----------
         qp: a QPainter object
-        
+
         '''
         penwidth = 1
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"), penwidth)
@@ -1101,7 +1107,7 @@ class plotHodo(backgroundHodo):
             qp.drawEllipse(center_dn, 3, 3)
         except:
             return
-    
+
         up_u, up_v = self.uv_to_pix(self.corfidi_up_u, self.corfidi_up_v)
         dn_u, dn_v = self.uv_to_pix(self.corfidi_dn_u, self.corfidi_dn_v)
         center_up = QtCore.QPointF(up_u, up_v)
@@ -1115,11 +1121,11 @@ class plotHodo(backgroundHodo):
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         v_offset=3; h_offset = 1; width = 60; hght = 10;
-        
+
         up_rect = QtCore.QRectF(up_u+h_offset, up_v+v_offset, width, hght)
         dn_rect = QtCore.QRectF(dn_u+h_offset, dn_v+v_offset, width, hght)
         qp.drawRect(up_rect)
-        qp.drawRect(dn_rect) 
+        qp.drawRect(dn_rect)
         ## now make the pen white and draw text using
         ## the invisible rectangles
         pen = QtGui.QPen(QtGui.QColor("#00BFFF"))
@@ -1142,11 +1148,11 @@ class plotHodo(backgroundHodo):
     def drawSMV(self, qp):
         '''
         Draws the storm motion vector.
-        
+
         Parameters
         ----------
         qp: QtGui.QPainter object
-        
+
         '''
         ## set a pen with white color, width 1, solid line.
         penwidth = 1
@@ -1204,7 +1210,7 @@ class plotHodo(backgroundHodo):
             else:
                 qp.drawLine(center_rm.x(), center_rm.y(), uubot, vvbot)
                 qp.drawLine(center_rm.x(), center_rm.y(), uutop, vvtop)
-                
+
         color = self.bg_color
         color.setAlpha(0)
         pen = QtGui.QPen(color, 0, QtCore.Qt.SolidLine)
@@ -1213,7 +1219,7 @@ class plotHodo(backgroundHodo):
         rm_rect = QtCore.QRectF(ruu+h_offset, rvv+v_offset, width, hght)
         lm_rect = QtCore.QRectF(luu+h_offset, lvv+v_offset, width, hght)
         qp.drawRect(rm_rect)
-        qp.drawRect(lm_rect) 
+        qp.drawRect(lm_rect)
         ## now make the pen white and draw text using
         ## the invisible rectangles
         pen = QtGui.QPen(self.fg_color)
@@ -1234,7 +1240,7 @@ class plotHodo(backgroundHodo):
     def drawCriticalAngle(self, qp):
         '''
         Plot the critical angle on the hodograph and show the value in the hodograph.
-        
+
         Parameters
         ----------
         qp : QtGui.QPainter object
@@ -1265,7 +1271,7 @@ class plotHodo(backgroundHodo):
             if tab.utils.QC(rstu) and tab.utils.QC(lstu):
                 qp = self.setBlackPen(qp)
                 rect = QtCore.QRectF(15, self.bry-36, 100, self.critical_height + 5)
-                qp.drawRect(rect)     
+                qp.drawRect(rect)
                 ca_text_color = self.crit_color
                 pen = QtGui.QPen(ca_text_color, 1.0, QtCore.Qt.SolidLine)
                 qp.setPen(pen)
@@ -1280,13 +1286,13 @@ class plotHodo(backgroundHodo):
     def draw_hodo(self, qp, prof, colors, width=2):
         '''
         Plot the Hodograph.
-        
+
         Parameters
         ----------
         qp: QtGui.QPainter object
 
         '''
-        ## check for masked daata
+        ## check for masked data
         try:
             mask = np.maximum(np.maximum(prof.u.mask, prof.v.mask), prof.hght.mask)
             z = tab.interp.to_agl(prof, prof.hght)[~mask]
@@ -1302,6 +1308,7 @@ class plotHodo(backgroundHodo):
         xx, yy = self.uv_to_pix(u, v)
         ## define the colors for the different hodograph heights
         penwidth = width
+
         seg_bnds = np.maximum([0., 3000., 6000., 9000., 12000.], z.min())
         seg_x = [ tab.interp.generic_interp_hght(bnd, z, xx) for bnd in seg_bnds if bnd <= z.max() ]
         seg_y = [ tab.interp.generic_interp_hght(bnd, z, yy) for bnd in seg_bnds if bnd <= z.max() ]
@@ -1333,7 +1340,7 @@ class plotHodo(backgroundHodo):
                 path.lineTo(xx[z_idx], yy[z_idx])
 
             qp.drawPath(path)
-         
+
 
     def draw_profile(self, qp, prof, color="#6666CC", width=2):
         '''
@@ -1344,20 +1351,21 @@ class plotHodo(backgroundHodo):
         qp: QtGui.QPainter object
 
         '''
-        ## check for masked daata
+        ## check for masked data
         try:
             mask = np.maximum(np.maximum(prof.u.mask, prof.v.mask), prof.hght.mask)
             z = tab.interp.to_agl(prof, prof.hght[~mask])
             u = prof.u[~mask]
             v = prof.v[~mask]
+            if mask.all(): return # JTS - Skip plotting step if arrays are masked.
         ## otherwise the data is fine
         except:
-            z = tab.interp.to_agl(prof, prof.hght )
+            z = tab.interp.to_agl(prof, prof.hght)
             u = prof.u
             v = prof.v
+
         ## convert the u and v values to x and y pixels
         xx, yy = self.uv_to_pix(u, v)
-
         penwidth = width
         pen = QtGui.QPen(QtGui.QColor(color), penwidth)
         pen.setStyle(QtCore.Qt.SolidLine)
@@ -1398,8 +1406,8 @@ class plotHodo(backgroundHodo):
 
 
 if __name__ == '__main__':
-    app_frame = QtGui.QApplication([])        
+    app_frame = QtGui.QApplication([])
     tester = plotHodo()
     #tester.setProf()
-    tester.show()        
+    tester.show()
     app_frame.exec_()
