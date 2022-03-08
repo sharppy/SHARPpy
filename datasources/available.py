@@ -201,7 +201,7 @@ def _available_nucaps_conus_aq0(dt=None):
 
 
 #################################
-# Retrieve the obs times for CONUS MetOp-A.
+# Retrieve the obs times for CONUS MetOp-B.
 def _download_nucaps_conus_m01():
     global nucaps_text
     nucaps_text = urlopen(nucaps_conus_m01_url, cafile=certifi.where()).read().decode('utf-8')
@@ -225,7 +225,7 @@ def _available_nucaps_conus_m01(dt=None):
 
 
 #################################
-# Retrieve the obs times for CONUS MetOp-B.
+# Retrieve the obs times for CONUS MetOp-A.
 def _download_nucaps_conus_m02():
     global nucaps_text
     nucaps_text = urlopen(nucaps_conus_m02_url, cafile=certifi.where()).read().decode('utf-8')
@@ -630,8 +630,8 @@ available = {
     'local': {'local wrf-arw': lambda filename:  _available_local(filename)},
     'stc': {'nucaps conus noaa-20': lambda dt=None: _available_nucaps_conus_j01(dt=dt), \
             'nucaps conus aqua': lambda dt=None: _available_nucaps_conus_aq0(dt=dt), \
-            'nucaps conus metop-a': lambda dt=None: _available_nucaps_conus_m01(dt=dt), \
-            'nucaps conus metop-b': lambda dt=None: _available_nucaps_conus_m02(dt=dt), \
+            'nucaps conus metop-b': lambda dt=None: _available_nucaps_conus_m01(dt=dt), \
+            'nucaps conus metop-a': lambda dt=None: _available_nucaps_conus_m02(dt=dt), \
             'nucaps conus metop-c': lambda dt=None: _available_nucaps_conus_m03(dt=dt), \
             'nucaps caribbean noaa-20': lambda dt=None: _available_nucaps_caribbean_j01(dt=dt), \
             'nucaps alaska noaa-20': lambda dt=None: _available_nucaps_alaska_j01(dt=dt)},

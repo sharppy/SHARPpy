@@ -720,10 +720,10 @@ class Picker(QWidget):
             satID = 'aq0'
         elif self.model == "NUCAPS CONUS MetOp-A":
             region = 'conus'
-            satID = 'm01'
+            satID = 'm02'
         elif self.model == "NUCAPS CONUS MetOp-B":
             region = 'conus'
-            satID = 'm02'
+            satID = 'm01'
         elif self.model == "NUCAPS CONUS MetOp-C":
             region = 'conus'
             satID = 'm03'

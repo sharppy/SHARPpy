@@ -103,7 +103,7 @@
         </outlet>
     </datasource>
     <datasource name="NUCAPS CONUS MetOp-B" ensemble="false" observed="true">
-        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m02/txt/{year}{month}{day}{cycle}/{srcid}.txt" format="nucaps" >
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/m01/txt/{year}{month}{day}{cycle}/{srcid}.txt" format="nucaps" >
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="1200" archive="2184" start="-" end="-"/>
             <points csv="nucaps_default.csv" />
         </outlet>
