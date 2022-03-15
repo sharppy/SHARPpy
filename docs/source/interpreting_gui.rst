@@ -184,4 +184,4 @@ Additional resources on NUCAPS in forecasting applications and SHARPPy:
 
 * Satellite Book Club presentation on `YouTube <https://www.youtube.com/watch?v=7G1qe3nrKSQ>`_.
 
-* `CIMSS Satellite Blog<https://cimss.ssec.wisc.edu/satellite-blog/?s=sharppy>`_ posts related to SHARPpy.
+* The `CIMSS Satellite Blog <https://cimss.ssec.wisc.edu/satellite-blog/?s=sharppy>`_ has several posts related to SHARPpy.
