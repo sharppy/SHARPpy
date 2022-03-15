@@ -171,16 +171,15 @@ The NOAA Unique Combined Atmospheric Processing System (NUCAPS) profiles are ava
 
 The dropdown menu lists NUCAPS from several satellites and regions. In the image above, we are selecting NUCAPS from NOAA-20 over CONUS ("NUCAPS CONUS NOAA-20"). Then, select your date the date and time (the default is the most recent overpass). On the picker screen, NUCAPS is displayed as green (use freely), yellow (use with caution) and red dots (not recommended for use) to indicate retrieval quality (for more information, see the `quick guide <https://weather.msfc.nasa.gov/nucaps/qg/NUCAPS-QF-quick-guide.pdf>`_). To view the profiles, click on a dot (which will change color to light green) and then click the "Generate Profile" button. The Skew-T display will appear.
 
-Interpretting NUCAPS on the Skew-T diagram is similar to RAOB and model data. You may notice that NUCAPS is smoother than other sounder products. This is because NUCAPS (1) has a lower vertical resolution, (2) is a volume observation that spans ~50 km at nadir, and (3) estimates the atmospheric state when clouds are removed. While comparable to RAOBS and models, it is important to understand NUCAPS retrievals are not performing the same measurement. To easily make comparisons, see the `interacting with multiple soundings`_ section. Also note that NUCAPS cannot retrieve wind fields.
+Interpretting NUCAPS on the Skew-T diagram is similar to RAOB and model data. You may notice that NUCAPS is smoother than other sounder products. This is because NUCAPS (1) has a lower vertical resolution, (2) is a volume observation that spans ~50 km at nadir, and (3) estimates the atmospheric state when clouds are removed. While comparable to RAOBS and models, it is important to understand NUCAPS retrievals are not performing the same measurement. To easily make comparisons, see the :ref:`interacting with multiple soundings <interacting with multiple soundings>` section. Also note that NUCAPS cannot retrieve wind fields.
 
 .. image:: tutorial_imgs/nucaps_profile.png
 
 NUCAPS also retrieves cloud top fraction (displayed as CTP = %) and pressure (displayed as a yellow line), which are indicated with red arrows on the example plot below. Significantly cloudy scenes may pass quality control but can still introduce errors to the retrieval, particularly for surface values. In addition to understanding retrieval confidence, the cloud products can be used to identify the cloud layer.
 
-
 Additional resources on NUCAPS in forecasting applications and SHARPPy:
 
-* A `Publication <https://doi.org/10.3390/rs12050886>`_ on NUCAPS in the Hazardous Weather Testbed
+* A `Esmaili et al., 2020 <https://doi.org/10.3390/rs12050886>`_ described how NUCAPS was used in the Hazardous Weather Testbed.
 
 * Satellite Book Club presentation on `YouTube <https://www.youtube.com/watch?v=7G1qe3nrKSQ>`_.
 
