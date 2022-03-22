@@ -16,7 +16,7 @@ The version of SHARPpy in this repository allows users to access [NUCAPS](https:
 
 ### Important links:
 * HTML Documentation: http://sharppy.github.io/SHARPpy/index.html
-* GitHub repository: https://github.com/NUCAPS/SHARPpy-NUCAPS
+* GitHub repository: https://github.com/NUCAPS/SHARPpy
 
 **Table of Contents**
 
@@ -45,7 +45,7 @@ Note: If you are installing Anaconda for **multiple users**, [ensure these addit
 You can now install the beta version of SHARPpy which contains NUCAPS satellite soundings. Open the command line for your operating system (see above) to perform these steps.
 
 ```bash
-git clone https://github.com/NUCAPS/SHARPpy-NUCAPS
+git clone https://github.com/NUCAPS/SHARPpy
 ```
 
 Change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
