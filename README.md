@@ -42,11 +42,19 @@ Note: If you are installing Anaconda for **multiple users**, [ensure these addit
 ## Install the NUCAPS test branch in SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-You can now install the beta version of SHARPpy which contains NUCAPS satellite soundings. Open the command line for your operating system (see above) to perform these steps.
+### Manual download
+
+You can manually download the coding by clicking the "Code" button at the top right of the repository, then select "Download Zip." Unzip the files in the directory that you want to permanently store them.
+
+### Download using Git
+
+If you have Git installed and are familiar with it, open the command line for your operating system (see above) to perform these steps.
 
 ```bash
 git clone https://github.com/NUCAPS/SHARPpy
 ```
+
+## Install SHARPpy
 
 Change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
 
