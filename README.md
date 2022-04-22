@@ -39,7 +39,7 @@ You will need run a few simple commands in a command line program:
 Note: If you are installing Anaconda for **multiple users**, [ensure these additional steps are met](https://docs.anaconda.com/anaconda/install/multi-user/), which includes checking the permissions using an administrator account.
 
 =======================================================================
-## Install the NUCAPS test branch in SHARPpy
+## Install NUCAPS-enabled SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
 ### Download options
@@ -98,7 +98,7 @@ If successful, a window will open which will give you access to soundings from N
 
 If you close the terminal window, you will have to repeat the following steps:
 
-1. Open the terminal
+1. Open the terminal (Unix/Linux) or Anaconda Prompt (Windows)
 2. Switch your environment to devel ("conda activate devel")
 3. Type sharppy and the window should launch.
 
