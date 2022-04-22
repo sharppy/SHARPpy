@@ -34,7 +34,7 @@ You will need Python 3 to run SHARPpy. For instructions, visit the following web
 
 You will need run a few simple commands in a command line program:
 * Linux/MacOS: Open the Terminal application.
-* Windows: Open the Anaconda Prompt applications.
+* Windows: Open the Anaconda Prompt application.
 
 Note: If you are installing Anaconda for **multiple users**, [ensure these additional steps are met](https://docs.anaconda.com/anaconda/install/multi-user/), which includes checking the permissions using an administrator account.
 
@@ -42,11 +42,13 @@ Note: If you are installing Anaconda for **multiple users**, [ensure these addit
 ## Install the NUCAPS test branch in SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-### Manual download
+### Download options
+
+### Option 1: Manual download (easy)
 
 You can manually download the coding by clicking the "Code" button at the top right of the repository, then select "Download Zip." Unzip the files in the directory that you want to permanently store them.
 
-### Download using Git
+### Option 2: Download using Git (intermediate)
 
 If you have Git installed and are familiar with it, open the command line for your operating system (see above) to perform these steps.
 
@@ -54,9 +56,9 @@ If you have Git installed and are familiar with it, open the command line for yo
 git clone https://github.com/NUCAPS/SHARPpy
 ```
 
-## Install SHARPpy
+### Install SHARPpy
 
-Change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
+Open the terminal (UNIX/Linux) or Anaconda Prompt (Windows) and change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
 
 ```bash
 cd /home/<user>/SHARPpy
@@ -82,9 +84,7 @@ python setup.py install
 
 Once the installation is complete, keep the terminal open and follow the steps in the next section to launch SHARPpy.
 
-=======================================================================
-## Running SHARPpy from the Command Line
-<sup>[[Return to Top]](#sharppy)</sup>
+### Running SHARPpy from the Command Line
 
 In the command line, type the command sharppy to launch the program.
 
@@ -93,6 +93,19 @@ sharppy
 ```
 
 If successful, a window will open which will give you access to soundings from NUCAPS, RAOBS, and select models.  For instructions on using SHARPpy, see the “Display NUCAPS in SHARPpy” quick guide.
+
+### How to run SHARPpy next time you log on
+
+If you close the terminal window, you will have to repeat the following steps:
+
+1. Open the terminal
+2. Switch your environment to devel ("conda activate devel")
+3. Type sharppy and the window should launch.
+
+```bash
+conda activate devel
+sharppy
+```
 
 =======================================================================
 ## SHARPpy Development Team
