@@ -114,7 +114,13 @@
             <points csv="nucaps_default.csv" />
         </outlet>
     </datasource>
-    <datasource name="NUCAPS Caribbean NOAA-20" ensemble="false" observed="true">
+    <datasource name="NUCAPS CONUS Aqua" ensemble="false" observed="true">
+        <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/conus/sharppy/aq0/txt/{year}{month}{day}{cycle}/{srcid}.txt" format="nucaps" >
+            <time first="0" range="0" delta="0" offset="0" delay="1" cycle="1200" archive="2184" start="-" end="-"/>
+            <points csv="nucaps_default.csv" />
+        </outlet>
+    </datasource>
+    <!-- <datasource name="NUCAPS Caribbean NOAA-20" ensemble="false" observed="true">
         <outlet name="STC" url="https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/caribbean/sharppy/j01/txt/{year}{month}{day}{cycle}/{srcid}.txt" format="nucaps" >
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="1200" archive="2184" start="-" end="-"/>
             <points csv="nucaps_default.csv" />
@@ -125,5 +131,5 @@
             <time first="0" range="0" delta="0" offset="0" delay="1" cycle="1200" archive="2184" start="-" end="-"/>
             <points csv="nucaps_default.csv" />
         </outlet>
-    </datasource>
+    </datasource> -->
 </sourcelist>
