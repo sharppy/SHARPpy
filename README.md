@@ -42,7 +42,15 @@ Note: If you are installing Anaconda for **multiple users**, [ensure these addit
 ## Install SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
+For those wishing to run both the GUI and do scripting, we recommend you install the Python 3 Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from conda by using:
+
+```bash
+conda install -c conda-forge sharppy
+```
+Skip to the 'Running SHARPpy from the Command Line' section.
+
 ### Download options
+If you aren't downloading from conda forge, you can download sharppy using the following options.
 
 ### Option 1: Manual download (easy)
 
