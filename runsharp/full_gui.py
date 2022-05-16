@@ -1,5 +1,6 @@
 import os
 os.environ['QT_API'] = 'pyside2' # Force PySide2 to be used in QtPy
+os.environ['QT_MAC_WANTS_LAYER'] = '1' ## MacOS compatability
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 from qtpy.QtWidgets import *
