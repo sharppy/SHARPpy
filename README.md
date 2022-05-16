@@ -39,7 +39,7 @@ You will need run a few simple commands in a command line program:
 Note: If you are installing Anaconda for **multiple users**, [ensure these additional steps are met](https://docs.anaconda.com/anaconda/install/multi-user/), which includes checking the permissions using an administrator account.
 
 =======================================================================
-## Install NUCAPS-enabled SHARPpy
+## Install SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
 ### Download options
@@ -53,7 +53,7 @@ You can manually download the coding by clicking the "Code" button at the top ri
 If you have Git installed and are familiar with it, open the command line for your operating system (see above) to perform these steps.
 
 ```bash
-git clone https://github.com/NUCAPS/SHARPpy
+git clone https://github.com/sharppy/SHARPpy
 ```
 
 ### Install SHARPpy
