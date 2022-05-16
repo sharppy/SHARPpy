@@ -16,12 +16,12 @@ The version of SHARPpy in this repository allows users to access [NUCAPS](https:
 
 ### Important links:
 * HTML Documentation: http://sharppy.github.io/SHARPpy/index.html
-* GitHub repository: https://github.com/NUCAPS/SHARPpy
+* GitHub repository: https://github.com/sharppy/SHARPpy
 
 **Table of Contents**
 
 - [Install Pre-requisites](#install-pre-requisites)
-- [Install the NUCAPS test branch in SHARPpy](#install-the-nucaps-test-branch-in-sharppy)
+- [Install SHARPpy](#install-sharppy)
 - [Running SHARPpy from the Command Line](#running-sharppy-from-the-command-line)
 - [SHARPpy Development Team](#sharppy-development-team)
 
@@ -84,7 +84,7 @@ After creating the environment, we need to switch to this new environment (via c
 conda activate devel
 ```
 
-Run setup.py to apply our NUCAPS updates to SHARPpy.
+Run setup.py to update SHARPpy.
 
 ```bash
 python setup.py install
