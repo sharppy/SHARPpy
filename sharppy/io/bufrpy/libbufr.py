@@ -1,5 +1,5 @@
-from util import slices, fxy2int, fxy, int2fxy
-from descriptors import ElementDescriptor, ReplicationDescriptor, OperatorDescriptor, LazySequenceDescriptor, DescriptorTable
+from .util import slices, fxy2int, fxy, int2fxy
+from .descriptors import ElementDescriptor, ReplicationDescriptor, OperatorDescriptor, LazySequenceDescriptor, DescriptorTable
 
 def read_tables(b_line_stream, d_line_stream=None):
     """

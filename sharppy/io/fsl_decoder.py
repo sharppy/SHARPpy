@@ -3,7 +3,7 @@ import numpy as np
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 import sharppy.sharptab.constants as constants
-from decoder import Decoder
+from .decoder import Decoder
 
 from datetime import datetime
 from re import split

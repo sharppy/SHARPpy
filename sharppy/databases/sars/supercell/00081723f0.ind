@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000817/2300F000    ind 
+  IND 000817/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          19.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.9 C/km
 850-500mb   31 C	7.2 C/km
+
+----- Note -----
+Old Title:  RUC 000817/2300F000    ind 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000725/0000F000    anw 
+  ANW 000725/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          14.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.3 C/km
 850-500mb   35 C	8.1 C/km
+
+----- Note -----
+Old Title:  RUC 000725/0000F000    anw 
+

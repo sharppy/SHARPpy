@@ -1,10 +1,10 @@
 import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
-from decoder import Decoder
+from .decoder import Decoder
 
-from bufrpy.bufrdec import decode_file
-from bufrpy.table import get_table
-from bufrpy.value import BufrValue
+from .bufrpy.bufrdec import decode_file
+from .bufrpy.table import get_table
+from .bufrpy.value import BufrValue
 from datetime import datetime, timedelta
 from calendar import timegm
 from io import BytesIO
@@ -47,7 +47,7 @@ class IMETBufrDecoder(Decoder):
         binary_bufr = self._downloadFile()
         bufr_start = 0
         bufr_length = len(binary_bufr)
-        while binary_bufr[bufr_start:bufr_start+4] != 'BUFR':
+        while binary_bufr[bufr_start:bufr_start+4].decode('ascii') != 'BUFR':
             bufr_start += 1
             if bufr_start > bufr_length - 4:
                 raise IOError('Not a BUFR file')

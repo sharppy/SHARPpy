@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990601/0000F000    sjt 
+  SJT 990601/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          10.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	7.9 C/km
 850-500mb   35 C	8.1 C/km
+
+----- Note -----
+Old Title:  RUC 990601/0000F000    sjt 
+

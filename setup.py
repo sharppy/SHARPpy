@@ -1,34 +1,46 @@
 import os, sys, shutil, glob, getpass, platform
 from setuptools import setup, find_packages
-
+import versioneer
 pkgname = "SHARPpy"
 
 
 ### GET VERSION INFORMATION ###
 setup_path = os.path.split(os.path.abspath(__file__))[0]
 sys.path.append(os.path.join(setup_path, pkgname.lower()))
-import _sharppy_version as version
-version.write_git_version()
-ver = version.get_version().split("+")[0]
+#import _sharppy_version as version
+#version.write_git_version()
+#ver = version.get_version().split("+")[0]
+
 sys.path.pop()
 
 
 ### ACTUAL SETUP VALUES ###
 name = pkgname
-version = ver
+#version = ver
 author = "Patrick Marsh, Kelton Halbert, Greg Blumberg, and Tim Supinie"
 author_email = "patrick.marsh@noaa.gov, keltonhalbert@ou.edu, wblumberg@ou.edu, tsupinie@ou.edu"
 description = "Sounding/Hodograph Analysis and Research Program for Python"
-long_description = ""
+long_description = "SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, cross-platform application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines."
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
-packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.sharptab', 'sharppy.viz', 'utils', 'datasources', 'sharppy.io.bufrpy', 'sharppy.sharpget']
+packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.io.bufrpy', 'sharppy.sharptab', 'sharppy.viz', 'sutils', 'datasources', 'sharppy.plot', 'runsharp']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
-                     "databases/shapefiles/*", 'io/bufrpy/*_table'],}
+                     "databases/shapefiles/*", "../rc/*", "../datasources/*.xml", "../datsources/*.csv", "*.csv", "*.xml", 'io/bufrpy/*_table'],}
 include_package_data = True
-classifiers = ["Development Status :: 4 - Beta"]
 
+#install_requires = []
+install_requires = ['python-dateutil', 'requests', 'numpy>=1.15', 'qtpy']
+# Because pip doesn't recognize it when PySide is installed by conda from conda-forge
+# Try to import PySide.  If it fails, add the PySide to the install_requires
+# Because of this, the conda meta.yaml will require PySide to build SHARPpy
+#try:
+#    import qtpy
+#    print("Success importing PySide")
+#except:
+#    install_requires.append("PySide2==5.12.*")    
+
+entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
 # Create some directory variables to shorten the lines.
 HOME_PATH = os.path.join(os.path.expanduser("~"), ".sharppy")
 HOME_DSDIR = os.path.join(HOME_PATH, "datasources")
@@ -63,9 +75,17 @@ shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
 
+ver = versioneer.get_version()
+ver = ver.split('-')[0]
+if 'a' in ver:
+    classifiers = ["Development Status :: 3 - Alpha"]
+elif 'b' in ver:
+    classifiers = ["Development Status :: 4 - Beta"]
+else:
+    classifiers = ["Development Status :: 5 - Production/Stable"]
+
 setup(
     name = name,
-    version = version,
     author = author,
     author_email = author_email,
     description = description,
@@ -76,5 +96,9 @@ setup(
     packages = packages,
     package_data = package_data,
     include_package_data = include_package_data,
-    classifiers = classifiers
+    classifiers = classifiers,
+    version=ver,
+    cmdclass=versioneer.get_cmdclass(),
+    install_requires=install_requires,
+    entry_points = entry_pts
 )

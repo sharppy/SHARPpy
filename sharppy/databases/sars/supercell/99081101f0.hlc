@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990811/0100F000    hlc 
+  HLC 990811/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          17.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.7 C/km
 850-500mb   33 C	7.4 C/km
+
+----- Note -----
+Old Title:  RUC 990811/0100F000    hlc 
+

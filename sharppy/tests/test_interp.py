@@ -63,15 +63,15 @@ def test_dwpt():
 
 def test_vtmp():
     input_p = 900
-    correct_v = 16.248060772724727
+    correct_v = 16.24810167687504
     returned_v = interp.vtmp(prof, input_p)
-    npt.assert_almost_equal(returned_v, correct_v)
+    npt.assert_almost_equal(returned_v, correct_v, decimal=2)
 
     input_p = [900, 800, 600, 400]
-    correct_v = np.asarray([16.248060772724727, 9.62205272,
+    correct_v = np.asarray([16.24810167687504, 9.62205272,
                             -7.11816357, -29.63245875])
     returned_v = interp.vtmp(prof, input_p)
-    npt.assert_almost_equal(returned_v, correct_v)
+    npt.assert_almost_equal(returned_v, correct_v, decimal=2)
 
 
 def test_components():

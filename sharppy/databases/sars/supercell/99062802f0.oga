@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990628/0200F000    oga 
+  OGA 990628/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          12.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   23 C 	8.8 C/km
 850-500mb   32 C	7.3 C/km
+
+----- Note -----
+Old Title:  RUC 990628/0200F000    oga 
+

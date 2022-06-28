@@ -1,4 +1,4 @@
-from util import int2fxy
+from .util import int2fxy
 from collections import namedtuple
 from abc import ABCMeta, abstractproperty
 try:

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990423/2200F000    loz 
+  LOZ 990423/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          12.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	6.9 C/km
 850-500mb   26 C	6.2 C/km
+
+----- Note -----
+Old Title:  RUC 990423/2200F000    loz 
+

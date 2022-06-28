@@ -1,5 +1,5 @@
 %TITLE%
- RUC 001014/2300F000    ink 
+  INK 001014/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          8.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.2 C/km
 850-500mb   35 C	8.1 C/km
+
+----- Note -----
+Old Title:  RUC 001014/2300F000    ink 
+

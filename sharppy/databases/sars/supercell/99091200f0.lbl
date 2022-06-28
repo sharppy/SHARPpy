@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990912/0000F000    lbl 
+  LBL 990912/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -65,3 +65,7 @@ Mean W:          11.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.8 C/km
 850-500mb   32 C	7.4 C/km
+
+----- Note -----
+Old Title:  RUC 990912/0000F000    lbl 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990605/2200F000    lrj 
+  LRJ 990605/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          15.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.2 C/km
 850-500mb   33 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 990605/2200F000    lrj 
+

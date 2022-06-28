@@ -1,5 +1,5 @@
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 from sharppy.sharptab.constants import *
 import platform
@@ -9,7 +9,7 @@ __all__ = ['backgroundSlinky', 'plotSlinky']
 ## Written by Greg Blumberg - CIMMS
 ## wblumberg@ou.edu
 
-class backgroundSlinky(QtGui.QFrame):
+class backgroundSlinky(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the Storm Slinky.
     Draws onto a QPixmap.
@@ -36,8 +36,9 @@ class backgroundSlinky(QtGui.QFrame):
             fsize = 7
         else:
             fsize = 9
-        self.title_font = QtGui.QFont('Helvetica', fsize)
-        self.plot_font = QtGui.QFont('Helvetica', fsize)
+        self.font_ratio = 0.0512
+        self.title_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio)+2)
+        self.plot_font = QtGui.QFont('Helvetica', round(self.size().height() * self.font_ratio))
         self.title_metrics = QtGui.QFontMetrics( self.title_font )
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.os_mod = 0
@@ -49,7 +50,7 @@ class backgroundSlinky(QtGui.QFrame):
         self.plot_height = self.plot_metrics.xHeight() + self.fpad
         ## initialize the QPixmap that the frame and data will be drawn on
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         ## plot the background
         self.plotBackground()  
 
@@ -78,7 +79,7 @@ class backgroundSlinky(QtGui.QFrame):
         
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
         
@@ -150,14 +151,28 @@ class plotSlinky(backgroundSlinky):
         prof: a Profile Object
         
         '''
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+        self.use_left = False
+
         super(plotSlinky, self).__init__()
         self.prof = None
         self.pcl = None
 
+        self.low_level_color = QtGui.QColor(RED)
+        self.mid_level_color = QtGui.QColor("#00FF00")
+        self.upper_level_color = QtGui.QColor(YELLOW)
+        self.trop_level_color = QtGui.QColor("#00FFFF")
+
     def setProf(self, prof):
         self.prof = prof
-        self.smu = self.prof.srwind[0]
-        self.smv = self.prof.srwind[1]
+
+        if self.use_left:
+            self.smu = self.prof.srwind[2]
+            self.smv = self.prof.srwind[3]
+        else:
+            self.smu = self.prof.srwind[0]
+            self.smv = self.prof.srwind[1]
 
         self.pcl = None
 
@@ -171,6 +186,48 @@ class plotSlinky(backgroundSlinky):
 
         if self.prof is not None:
             self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, pcl, self.smu, self.smv)
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+
+        self.low_level_color = QtGui.QColor(prefs['0_3_color'])
+        self.mid_level_color = QtGui.QColor(prefs['3_6_color'])
+        self.upper_level_color = QtGui.QColor(prefs['6_9_color'])
+        self.trop_level_color = QtGui.QColor(prefs['9_12_color'])
+
+        if update_gui:
+
+            if self.use_left:
+                self.smu = self.prof.srwind[2]
+                self.smv = self.prof.srwind[3]
+            else:
+                self.smu = self.prof.srwind[0]
+                self.smv = self.prof.srwind[1]
+
+            self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, self.pcl, self.smu, self.smv)
+
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.smu = self.prof.srwind[2]
+            self.smv = self.prof.srwind[3]
+        else:
+            self.smu = self.prof.srwind[0]
+            self.smv = self.prof.srwind[1]
+
+        self.slinky_traj, self.updraft_tilt = tab.params.parcelTraj(self.prof, self.pcl, self.smu, self.smv)
 
         self.clearData()
         self.plotBackground()
@@ -228,7 +285,7 @@ class plotSlinky(backgroundSlinky):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
    
     def plotSMV(self, qp):
         '''
@@ -240,7 +297,7 @@ class plotSlinky(backgroundSlinky):
         
         '''
         ## set the pen
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         ## scale the vector to be visible in the window
         if tab.utils.QC(self.smu) and tab.utils.QC(self.smv):
@@ -261,12 +318,12 @@ class plotSlinky(backgroundSlinky):
         
         '''
         ## initialize a pen
-        pen = QtGui.QPen(QtGui.QColor(WHITE), 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.title_font)
         ## draw the text
         rect0 = QtCore.QRect(self.brx-30, self.tly+2, 30, self.title_height)
-        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, str(round(self.updraft_tilt,0)) + ' deg  ')
+        qp.drawText(rect0, QtCore.Qt.TextDontClip | QtCore.Qt.AlignRight, tab.utils.INT2STR(self.updraft_tilt) + ' deg  ')
 
     def plotSlinky(self, qp):
         '''
@@ -277,13 +334,8 @@ class plotSlinky(backgroundSlinky):
         qp: a QtGui.QPainter object
         
         '''
-        ## set the various colors
-        low_level_color = QtGui.QColor(RED)
-        mid_level_color = QtGui.QColor("#00FF00")
-        upper_level_color = QtGui.QColor(YELLOW)
-        trop_level_color = QtGui.QColor("#00FFFF")
         ## set the pen
-        pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.trop_level_color, 1, QtCore.Qt.SolidLine)
         ## if there is no storm slinky, don't plot it!
         if self.slinky_traj is np.ma.masked:
             return
@@ -304,13 +356,13 @@ class plotSlinky(backgroundSlinky):
             if has_el and z == self.slinky_traj[-1][2]:
                 pen = QtGui.QPen(QtGui.QColor("#FF00FF"), 1, QtCore.Qt.SolidLine)
             elif z < 3000:
-                pen = QtGui.QPen(low_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.low_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 6000:
-                pen = QtGui.QPen(mid_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.mid_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 9000:
-                pen = QtGui.QPen(upper_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.upper_level_color, 1, QtCore.Qt.SolidLine)
             elif z < 12000:
-                pen = QtGui.QPen(trop_level_color, 1, QtCore.Qt.SolidLine)
+                pen = QtGui.QPen(self.trop_level_color, 1, QtCore.Qt.SolidLine)
             else:
                 continue
             ## draw the circle
@@ -319,3 +371,9 @@ class plotSlinky(backgroundSlinky):
             center = QtCore.QPointF(xx, yy)
             qp.drawEllipse(center, 5, 5)
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])    
+    tester = plotSlinky()
+    tester.setGeometry(100,100,121,138)
+    tester.show()    
+    app_frame.exec_()

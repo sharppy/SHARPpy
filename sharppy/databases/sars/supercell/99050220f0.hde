@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990502/2100F000    hde 
+  HDE 990502/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          8.6 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.1 C/km
 850-500mb   30 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 990502/2100F000    hde 
+

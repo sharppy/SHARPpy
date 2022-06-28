@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import sharppy.sharptab as tab
 import sharppy.databases.inset_data as inset_data
 from sharppy.sharptab.constants import *
@@ -11,7 +11,7 @@ import platform
 
 __all__ = ['backgroundSTP', 'plotSTP']
 
-class backgroundSTP(QtGui.QFrame):
+class backgroundSTP(QtWidgets.QFrame):
     '''
     Draw the background frame and lines for the STP plot frame
     '''
@@ -29,24 +29,14 @@ class backgroundSTP(QtGui.QFrame):
             "  border-width: 1px;"
             "  border-style: solid;"
             "  border-color: #3399CC;}")
-
-        self.lpad = 0.; self.rpad = 0.
-        self.tpad = 15.; self.bpad = 15.
-        self.wid = self.size().width() - self.rpad
-        self.hgt = self.size().height() - self.bpad
-        self.tlx = self.rpad; self.tly = self.tpad
-        self.brx = self.wid; self.bry = self.hgt
-        self.stpmax = 11.; self.stpmin = 0.
-
-        fsize1 = np.floor(.08 * self.hgt)
-        fsize2 = np.floor(.05 * self.hgt)
-        self.textpad = np.floor(.03 * self.hgt)
-
+        self.textpad = 5
+        self.font_ratio = 0.0512
+        fsize1 = round(self.size().height() * self.font_ratio) + 2
+        fsize2 = round(self.size().height() * self.font_ratio)
         self.plot_font = QtGui.QFont('Helvetica', fsize1 )
         self.box_font = QtGui.QFont('Helvetica', fsize2)
         self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
         self.box_metrics = QtGui.QFontMetrics(self.box_font)
-
         if platform.system() == "Windows":
             fsize1 -= self.plot_metrics.descent()
             fsize2 -= self.box_metrics.descent()
@@ -55,12 +45,19 @@ class backgroundSTP(QtGui.QFrame):
             self.box_font = QtGui.QFont('Helvetica', fsize2)
             self.plot_metrics = QtGui.QFontMetrics( self.plot_font )
             self.box_metrics = QtGui.QFontMetrics(self.box_font)
-
-        self.plot_height = self.plot_metrics.xHeight() + self.textpad
+        self.plot_height = self.plot_metrics.xHeight()# + self.textpad
         self.box_height = self.box_metrics.xHeight() + self.textpad
-		
+        self.tpad = self.plot_height + 15; 
+        self.bpad = self.plot_height + 2
+        self.lpad = 0.; self.rpad = 0.
+        self.wid = self.size().width() - self.rpad
+        self.hgt = self.size().height() - self.bpad
+        self.tlx = self.rpad; self.tly = self.tpad;
+        self.brx = self.wid; 
+        self.bry = self.hgt - self.bpad#+ round(self.font_ratio * self.hgt)
+        self.stpmax = 11.; self.stpmin = 0.
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
 
     def resizeEvent(self, e):
@@ -87,46 +84,48 @@ class backgroundSTP(QtGui.QFrame):
         qp: QtGui.QPainter object
         '''
         ## set a new pen to draw with
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setFont(self.plot_font)
-        rect1 = QtCore.QRectF(1.5,1.5, self.brx, self.plot_height)
+        # Left, top, width, height
+        rect1 = QtCore.QRectF(0,5, self.brx, self.plot_height)
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter,
             'Effective Layer STP (with CIN)')
 
         pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
         qp.setPen(pen)
-        spacing = self.bry / 12.
 
-        ytick_fontsize = 10
+        ytick_fontsize = round(self.font_ratio * self.hgt) + 1
         y_ticks_font = QtGui.QFont('Helvetica', ytick_fontsize)
         qp.setFont(y_ticks_font)
         stp_inset_data = inset_data.stpData()
         texts = stp_inset_data['stp_ytexts']
-        y_ticks = np.arange(self.tpad, self.bry+spacing, spacing)
-        for i in xrange(len(y_ticks)):
-            pen = QtGui.QPen(QtGui.QColor("#0080FF"), 1, QtCore.Qt.DashLine)
+        # Plot the y-tick labels for the box and whisker plots
+        for i in range(len(texts)):
+            pen = QtGui.QPen(self.line_color, 1, QtCore.Qt.DashLine)
             qp.setPen(pen)
-            qp.drawLine(self.tlx, y_ticks[i], self.brx, y_ticks[i])
-            color = QtGui.QColor('#000000')
+            tick_pxl = self.stp_to_pix(int(texts[i]))
+            qp.drawLine(self.tlx, tick_pxl, self.brx, tick_pxl)
+            color = QtGui.QColor(self.bg_color)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
-            ypos = spacing*(i+1) - (spacing/4.)
+            ypos = tick_pxl - ytick_fontsize/2
             rect = QtCore.QRect(self.tlx, ypos, 20, ytick_fontsize)
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
-
+        
+        # Draw the box and whisker plots and the x-tick labels
         ef = stp_inset_data['ef']
         width = self.brx / 14
         spacing = self.brx / 7
         center = np.arange(spacing, self.brx, spacing)
         texts = stp_inset_data['stp_xtexts']
         ef = self.stp_to_pix(ef)
-        qp.setFont(QtGui.QFont('Helvetica', 8))
-        for i in xrange(ef.shape[0]):
+        qp.setFont(QtGui.QFont('Helvetica', round(self.font_ratio * self.hgt)))
+        for i in range(ef.shape[0]):
             # Set green pen to draw box and whisker plots 
-            pen = QtGui.QPen(QtCore.Qt.green, 2, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.box_color, 2, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             # Draw lower whisker
             qp.drawLine(center[i], ef[i,0], center[i], ef[i,1])
@@ -140,14 +139,16 @@ class backgroundSTP(QtGui.QFrame):
             # Draw upper whisker
             qp.drawLine(center[i], ef[i,3], center[i], ef[i,4])
             # Set black transparent pen to draw a rectangle
-            color = QtGui.QColor('#000000')
+            color = QtGui.QColor(self.bg_color)
             color.setAlpha(0)
             pen = QtGui.QPen(color, 1, QtCore.Qt.SolidLine)
-            rect = QtCore.QRectF(center[i] - width/2., self.stp_to_pix(-.5), width, 4)
+            rect = QtCore.QRectF(center[i] - width/2., self.bry + round(self.bpad/2), width, self.bpad)
+
             # Change to a white pen to draw the text below the box and whisker plot
-            pen = QtGui.QPen(QtCore.Qt.white, 1, QtCore.Qt.SolidLine)
+            pen = QtGui.QPen(self.fg_color, 1, QtCore.Qt.SolidLine)
             qp.setPen(pen)
             qp.drawText(rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, texts[i])
+            #qp.drawText(rect, QtCore.Qt.AlignCenter, texts[i])
 
     def stp_to_pix(self, stp):
         scl1 = self.stpmax - self.stpmin
@@ -161,17 +162,46 @@ class plotSTP(backgroundSTP):
     plots the frame.
     '''
     def __init__(self):
+        self.bg_color = QtGui.QColor('#000000')
+        self.fg_color = QtGui.QColor('#ffffff')
+        self.box_color = QtGui.QColor('#00ff00')
+        self.line_color = QtGui.QColor('#0080ff')
+
+        self.alert_colors = [
+            QtGui.QColor('#775000'),
+            QtGui.QColor('#996600'),
+            QtGui.QColor('#ffffff'),
+            QtGui.QColor('#ffff00'),
+            QtGui.QColor('#ff0000'),
+            QtGui.QColor('#e700df'),
+        ]
+
+        self.use_left = False
+
         super(plotSTP, self).__init__()
         self.prof = None
 
     def setProf(self, prof):
         self.prof = prof
+
         self.mlcape = prof.mlpcl.bplus
         self.mllcl = prof.mlpcl.lclhght
-        self.esrh = prof.right_esrh[0]
         self.ebwd = prof.ebwspd
-        self.stpc = prof.stp_cin
-        self.stpf = prof.stp_fixed
+
+        if self.use_left:
+            self.esrh = prof.left_esrh[0]
+            self.stpc = prof.left_stp_cin
+            self.stpf = prof.left_stp_fixed
+        else:
+            self.esrh = prof.right_esrh[0]
+            self.stpc = prof.right_stp_cin
+            self.stpf = prof.right_stp_fixed
+
+        if self.prof.latitude < 0:
+            self.esrh = -self.esrh
+            self.stpc = -self.stpc
+            self.stpf = -self.stpf
+
         ## get the probabilities
         self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
         self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
@@ -185,203 +215,271 @@ class plotSTP(backgroundSTP):
         self.plotBackground()
         self.plotData()
         self.update()
-    
+
+    def setPreferences(self, update_gui=True, **prefs):
+        self.bg_color = QtGui.QColor(prefs['bg_color'])
+        self.fg_color = QtGui.QColor(prefs['fg_color'])
+        self.box_color = QtGui.QColor(prefs['stp_box_color'])
+        self.line_color = QtGui.QColor(prefs['stp_line_color'])
+
+        self.alert_colors = [
+            QtGui.QColor(prefs['alert_l1_color']),
+            QtGui.QColor(prefs['alert_l2_color']),
+            QtGui.QColor(prefs['alert_l3_color']),
+            QtGui.QColor(prefs['alert_l4_color']),
+            QtGui.QColor(prefs['alert_l5_color']),
+            QtGui.QColor(prefs['alert_l6_color']),
+        ]
+
+        if update_gui:
+            if self.use_left:
+                self.esrh = self.prof.left_esrh[0]
+                self.stpc = self.prof.left_stp_cin
+                self.stpf = self.prof.left_stp_fixed
+            else:
+                self.esrh = self.prof.right_esrh[0]
+                self.stpc = self.prof.right_stp_cin
+                self.stpf = self.prof.right_stp_fixed
+
+            if self.prof is not None and  self.prof.latitude < 0:
+                self.esrh = -self.esrh
+                self.stpc = -self.stpc
+                self.stpf = -self.stpf
+
+            self.cape_p, self.cape_c = self.cape_prob(self.mlcape)
+            self.lcl_p, self.lcl_c = self.lcl_prob(self.mllcl)
+            self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
+            self.ebwd_p, self.ebwd_c = self.ebwd_prob(self.ebwd)
+            self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
+            self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
+            self.clearData()
+            self.plotBackground()
+            self.plotData()
+            self.update()
+
+    def setDeviant(self, deviant):
+        self.use_left = deviant == 'left'
+
+        if self.use_left:
+            self.esrh = self.prof.left_esrh[0]
+            self.stpc = self.prof.left_stp_cin
+            self.stpf = self.prof.left_stp_fixed
+        else:
+            self.esrh = self.prof.right_esrh[0]
+            self.stpc = self.prof.right_stp_cin
+            self.stpf = self.prof.right_stp_fixed
+
+        if self.prof.latitude < 0:
+            self.esrh = -self.esrh
+            self.stpc = -self.stpc
+            self.stpf = -self.stpf
+
+        self.esrh_p, self.esrh_c = self.esrh_prob(self.esrh)
+        self.stpc_p, self.stpc_c = self.stpc_prob(self.stpc)
+        self.stpf_p, self.stpf_c = self.stpf_prob(self.stpf)
+
+        self.clearData()
+        self.plotBackground()
+        self.plotData()
+        self.update()
+
     def cape_prob(self, cape):
         if cape == 0.:
             prob = 0.00
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[0]
         elif cape  > 0. and cape < 250.:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif cape >= 250. and cape < 500.:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 500. and cape < 1000.:
             prob = .16
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 1000. and cape < 1500.:
             prob = .15
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 1500. and cape < 2000.:
             prob = .13
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 2000. and cape < 2500.:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif cape >= 2500. and cape < 3000.:
             prob = .18
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif cape >= 3000. and cape < 4000.:
             prob = .20
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif cape >= 4000.:
             prob = .16
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[3]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
     
     def lcl_prob(self, lcl):
         if lcl < 750.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif lcl >= 750. and lcl < 1000.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif lcl >= 1000. and lcl < 1250.:
             prob = .15
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2] 
         elif lcl >= 1250. and lcl < 1500.:
             prob = .10
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif lcl >= 1500. and lcl < 1750:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 1750. and lcl < 2000.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 2000. and lcl < 2500.:
             prob = .02
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif lcl >= 2500:
             prob = 0.0
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
     
     def esrh_prob(self, esrh):
         if esrh < 50.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif esrh >= 50. and esrh < 100.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif esrh >= 100. and esrh < 200.:
             prob = .08
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif esrh >= 200. and esrh < 300:
             prob = .14
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif esrh >= 300. and esrh < 400.:
             prob = .20
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif esrh >= 400. and esrh < 500.:
             prob = .27
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif esrh >= 500. and esrh < 600:
             prob = .38
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif esrh >= 600. and esrh < 700.:
             prob = .37
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif esrh >= 700:
             prob = .42
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
     
     def ebwd_prob(self, ebwd):
         if ebwd == 0.:
             prob = 0.0
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= .01 and ebwd < 20.:
             prob = .03
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 20. and ebwd < 30.:
             prob = .05
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 30. and ebwd < 40.:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif ebwd >= 40. and ebwd < 50.:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif ebwd >= 50. and ebwd < 60.:
             prob = .19
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif ebwd >= 60. and ebwd < 70.:
             prob = .27
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif ebwd >= 70. and ebwd < 80.:
             prob = .36
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif ebwd >= 80.:
             prob = .26
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
     def stpc_prob(self, stpc):
         if stpc < .1:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpc >= .1 and stpc < .50:
             prob = .08
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpc >= .5 and stpc < 1.0:
             prob = .12
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpc >= 1. and stpc < 2.:
             prob = .17
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif stpc >= 2. and stpc < 4.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpc >= 4. and stpc < 6.:
             prob = .32
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpc >= 6. and stpc < 8.:
             prob = .34
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpc >= 8. and stpc < 10.:
             prob = .55
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         elif stpc >= 10.:
             prob = .58
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
     def stpf_prob(self, stpf):
         if stpf < .1:
             prob = .05
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpf >= .1 and stpf < .5:
             prob = .06
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         elif stpf >= .5 and stpf < 1.:
             prob = .11
-            color = QtGui.QColor(LBROWN)
+            color = self.alert_colors[1]
         elif stpf >= 1. and stpf < 2.:
             prob = .17
-            color = QtGui.QColor(WHITE)
+            color = self.alert_colors[2]
         elif stpf >= 2. and stpf < 3.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpf >= 3. and stpf < 5.:
             prob = .25
-            color = QtGui.QColor(YELLOW)
+            color = self.alert_colors[3]
         elif stpf >= 5. and stpf < 7.:
             prob = .39
-            color = QtGui.QColor(RED)
+            color = self.alert_colors[4]
         elif stpf >= 7. and stpf < 9.:
             prob = .55
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         elif stpf >= 9.:
             prob = .59
-            color = QtGui.QColor(MAGENTA)
+            color = self.alert_colors[5]
         else:
             prob = np.ma.masked
-            color = QtGui.QColor(DBROWN)
+            color = self.alert_colors[0]
         return prob, color
 
 
@@ -405,7 +503,7 @@ class plotSTP(backgroundSTP):
         in the frame.
         '''
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
-        self.plotBitMap.fill(QtCore.Qt.black)
+        self.plotBitMap.fill(self.bg_color)
     
     def plotData(self):
         '''
@@ -450,13 +548,13 @@ class plotSTP(backgroundSTP):
             vspace += self.box_metrics.descent()
         bot_y = top_y + vspace * 8
         ## fill the box with a black background
-        brush = QtGui.QBrush(QtCore.Qt.SolidPattern)
-        pen = QtGui.QPen(QtCore.Qt.black, 0, QtCore.Qt.SolidLine)
+        brush = QtGui.QBrush(self.bg_color, QtCore.Qt.SolidPattern)
+        pen = QtGui.QPen(self.bg_color, 0, QtCore.Qt.SolidLine)
         qp.setPen(pen)
         qp.setBrush(brush)
         qp.drawRect(left_x, top_y, right_x - left_x, bot_y - top_y)
         ## draw the borders of the box
-        pen = QtGui.QPen(QtCore.Qt.white, 2, QtCore.Qt.SolidLine)
+        pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
         brush = QtGui.QBrush(QtCore.Qt.NoBrush)
         qp.setPen(pen)
         qp.setBrush(brush)
@@ -502,3 +600,10 @@ class plotSTP(backgroundSTP):
             y1 += vspace
         qp.end()
 
+if __name__ == '__main__':
+    app_frame = QtGui.QApplication([])        
+    tester = plotSTP()
+    tester.setGeometry(50,50,293,195)
+    #tester.plotBitMap.save('test.png', format='png')
+    tester.show()        
+    app_frame.exec_()

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990803/0100F000    lwt 
+  LWT 990803/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          8.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.8 C/km
 850-500mb   33 C	7.6 C/km
+
+----- Note -----
+Old Title:  RUC 990803/0100F000    lwt 
+

@@ -39,7 +39,7 @@ def shipData():
 def stpData():
     # FOR THE STP INSET BOX/WHISKER
     # From Thompson et al. 2012 WAF
-    stp_ytexts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', ' ']
+    stp_ytexts = ['11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0']
     stp_xtexts = ['EF4+', 'EF3', 'EF2', 'EF1', 'EF0', 'NONTOR']
     ef = [[1.2, 2.6, 5.3, 8.3, 11.0], #ef4
     [0.2, 1.0, 2.4, 4.5, 8.4], #ef3

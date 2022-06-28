@@ -1,4 +1,4 @@
-from libbufr import read_tables
+from .libbufr import read_tables
 from os.path import dirname, join
 from codecs import open as codec_open
 

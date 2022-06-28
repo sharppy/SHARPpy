@@ -6,11 +6,12 @@ block_cipher = None
 
 
 a = Analysis(['SHARPpy.py'],
-             pathex=[r'C:\Users\nickr\workspace\SHARPpy\runsharp'],
+             pathex=[r'F:\Development\SHARPpy\runsharp'],
              binaries=None,
              datas=[],
              hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', \
-                            'sharppy.io.buf_decoder', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six'],
+                            'sharppy.io.buf_decoder', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six', 'sharppy.io.pecan_decoder', 'sharppy.io.uwyo_decoder',
+                            'certifi', 'pkg_resources.py2_warn', 'qtpy', 'PySide2', 'PyQt'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -29,8 +30,8 @@ a.datas += [("sharppy\\databases\\sars_supercell.txt", os.path.join(os.path.dirn
 a.datas += [("sharppy\\io\\wmo_stations.txt", os.path.join(os.path.dirname(sharppy.__file__), "io\\wmo_stations.txt"), "DATA")]
 a.datas += [("icons\\SHARPpy_imet.png", "icons\\SHARPpy_imet.png", "DATA")]
 a.datas += [("icons\\SHARPget_imet.png", "icons\\SHARPget_imet.png", "DATA")]
-#a.datas += [("sharppy\\io\\bufrpy\\b_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\b_table"), "DATA")]
-#a.datas += [("sharppy\\io\\bufrpy\\d_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\d_table"), "DATA")]
+a.datas += [("sharppy\\io\\bufrpy\\b_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\b_table"), "DATA")]
+a.datas += [("sharppy\\io\\bufrpy\\d_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\d_table"), "DATA")]
 
 sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\hail\\") + "*")
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\supercell\\") + "*")
@@ -61,7 +62,7 @@ exe = EXE(pyz,
           name='SHARPpy',
           debug=False,
           strip=False,
-          upx=True,
+          upx=False,
           console=False,
           icon='icons\\SHARPpy_imet.ico' )
 coll = COLLECT(exe,

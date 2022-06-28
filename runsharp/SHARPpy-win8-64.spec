@@ -1,10 +1,21 @@
 # -*- mode: python -*-
 import glob
 import sharppy
+from sharppy._version import get_versions
+
+# Write the versions file using versioneer, because PyInstaller doesn't do this automatically
+ver = get_versions()
+ver = str(ver)
+ver_fname = os.path.dirname(sharppy.__file__) + '\\_version.py'
+ver_file = open(ver_fname, 'w')
+ver_file.write('def get_versions():\n')
+ver_file.write('    return ' + ver)
+ver_file.close()
+
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'C:\Users\Tim\SHARPpy\runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'datasources.available'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection'],
              hookspath=None,
              runtime_hooks=None)
 
@@ -53,3 +64,9 @@ exe = EXE(pyz,
           strip=None,
           upx=True,
           console=False, icon=None) #'radar.ico'
+
+
+# Revert the _version.py file to its original version using git
+import subprocess
+subprocess.Popen(['git', 'checkout', '--', ver_fname])
+

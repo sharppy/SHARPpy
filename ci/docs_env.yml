@@ -1,0 +1,19 @@
+name: docs-env
+channels:
+  - conda-forge
+  - conda-forge/label/testing
+  - anaconda
+dependencies:
+  - python=3
+  - numpy=1.15.*
+  - pyside2=5.13.*
+  - sphinx
+  - qtpy
+  - sphinx_rtd_theme
+  - sphinx-gallery
+  - requests
+  - python-dateutil 
+  - pip
+  - pip:
+    - sphinx-prompt
+    - pydocstyle

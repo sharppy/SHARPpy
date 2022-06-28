@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990601/2300F000    spi 
+  SPI 990601/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          14.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   18 C 	7.2 C/km
 850-500mb   32 C	7.5 C/km
+
+----- Note -----
+Old Title:  RUC 990601/2300F000    spi 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990606/2000F000    hco 
+  HCO 990606/2000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          14.4 g/Kg
 ----- Lapse Rates -----
 700-500mb   21 C 	8.1 C/km
 850-500mb   35 C	8.2 C/km
+
+----- Note -----
+Old Title:  RUC 990606/2000F000    hco 
+

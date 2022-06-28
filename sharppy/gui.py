@@ -1,13 +1,13 @@
 import sys
 import numpy as np
-from PySide import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 from sharppy.viz import plotSkewT, plotHodo, plotText, plotAnalogues
 from sharppy.viz import plotThetae, plotWinds, plotSpeed, plotKinematics
 from sharppy.viz import plotSlinky, plotWatch, plotAdvection, plotSTP
 from sharppy.viz import plotGeneric
 from sharppy.sharptab.constants import *
 from sharppy.sounding import prof, plot_title
-from sharppy._sharppy_version import __brand__
+
 
 # Setup Application
 app = QtGui.QApplication(sys.argv)
@@ -18,7 +18,7 @@ title = 'SHARPpy: Sounding and Hodograph Analysis and Research Program '
 title += 'in Python'
 mainWindow.setWindowTitle(title)
 mainWindow.setStyleSheet("QMainWindow {background-color: rgb(0, 0, 0);}")
-centralWidget = QtGui.QFrame()
+centralWidget = QtWidgets.QFrame()
 mainWindow.setCentralWidget(centralWidget)
 grid = QtGui.QGridLayout()
 grid.setHorizontalSpacing(0)
@@ -29,24 +29,24 @@ centralWidget.setLayout(grid)
 # Handle the Upper Left
 ## plot the main sounding
 #print prof.right_scp, prof.left_scp
-brand = __brand__
+brand = 'SHARPpy Beta'
 sound = plotSkewT(prof, pcl=prof.mupcl, title=plot_title, brand=brand)
 sound.setContentsMargins(0, 0, 0, 0)
 grid.addWidget(sound, 0, 0, 3, 1)
 
 # Handle the Upper Right
-urparent = QtGui.QFrame()
+urparent = QtWidgets.QFrame()
 urparent_grid = QtGui.QGridLayout()
 urparent_grid.setContentsMargins(0, 0, 0, 0)
 urparent.setLayout(urparent_grid)
-ur = QtGui.QFrame()
+ur = QtWidgets.QFrame()
 ur.setStyleSheet("QFrame {"
                  "  background-color: rgb(0, 0, 0);"
                  "  border-width: 0px;"
                  "  border-style: solid;"
                  "  border-color: rgb(255, 255, 255);"
                  "  margin: 0px;}")
-brand = QtGui.QLabel(brand)
+brand = QtGui.QLabel('SHARPpy Beta')
 brand.setAlignment(QtCore.Qt.AlignRight)
 brand.setStyleSheet("QFrame {"
                     "  background-color: rgb(0, 0, 0);"
@@ -83,7 +83,7 @@ urparent_grid.addWidget(ur, 1, 0, 50, 0)
 grid.addWidget(urparent, 0, 1, 3, 1)
 
 # Handle the Text Areas
-text = QtGui.QFrame()
+text = QtWidgets.QFrame()
 text.setStyleSheet("QWidget {"
                    "  background-color: rgb(0, 0, 0);"
                    "  border-width: 2px;"
@@ -94,8 +94,8 @@ grid3.setHorizontalSpacing(0)
 grid3.setContentsMargins(0, 0, 0, 0)
 text.setLayout(grid3)
 convective = plotText(prof)
-#convective = QtGui.QFrame()
-#kinematic = QtGui.QFrame()
+#convective = QtWidgets.QFrame()
+#kinematic = QtWidgets.QFrame()
 kinematic = plotKinematics(prof)
 SARS = plotAnalogues(prof)
 stp = plotSTP(prof)

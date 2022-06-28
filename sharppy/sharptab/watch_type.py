@@ -1,8 +1,51 @@
 from sharppy.sharptab import thermo, utils, interp, params, constants
 import numpy as np
+import logging
 
 ## Routines implemented in Python by Greg Blumberg - CIMMS and Kelton Halbert (OU SoM)
 ## wblumberg@ou.edu, greg.blumberg@noaa.gov, kelton.halbert@noaa.gov, keltonhalbert@ou.edu
+
+def heat_index(temp, rh):
+    '''
+        Heat Index Equation
+
+        Computes the heat index using the equation obtained by performing multiple linear
+        regression on the table in Steadman 1979.
+    
+        Referenced from: http://www.srh.noaa.gov/images/ffc/pdf/ta_htindx.PDF
+
+        Parameters
+        ----------
+        temp : number
+            temperature (F)
+        rh : number
+            relative humidity (%)
+
+        Returns
+        -------
+        heat_index : number
+            heat index value in (F)
+    '''
+    if temp < 40:
+        return temp
+
+    hi = 0.5 * ( temp + 61.0 + ((temp - 68.0) * 1.2) + (rh * 0.094))
+    avg = (hi + temp)/2.
+    if avg < 80:
+        return hi
+    #temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
+    #rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
+    heat_index = -42.379 + (2.04901523 * temp) + (10.14333127 * rh) - (0.22475541 * temp * rh) - (6.83783e-3 * np.power(temp,2)) \
+                 - (5.481717e-2 * np.power(rh, 2)) + (1.22874e-3 * rh * np.power(temp,2)) + (8.5282e-4 * temp * np.power(rh, 2)) \
+                 - (1.99e-6 * np.power(rh, 2) * np.power(temp, 2))
+
+    if rh < 13 and temp > 80 and temp < 112:
+        adjustment = ((13-rh)/4.) * np.sqrt((17 - np.abs(temp - 95))/17.)
+        heat_index = heat_index - adjustment
+    elif rh > 85 and temp > 80 and temp < 87:
+        adjustment = ((rh - 85)/10.) * ((87 - temp)/5.)
+        heat_index = heat_index + adjustment  
+    return heat_index
 
 def wind_chill(prof):
     '''
@@ -15,11 +58,13 @@ def wind_chill(prof):
 
         Parameters
         ----------
-        prof : Profile object
+        prof : profile object
+            Profile object
 
         Returns
         -------
-        wind_chill : wind chill value in (F)
+        wind_chill : number
+            wind chill value in (F)
     '''
     # Needs to be tested
 
@@ -48,17 +93,19 @@ def init_phase(prof):
 
         Parameters
         ----------
-        prof : Profile object (omega profile optional)
+        prof : profile object
+            Profile object (omega profile optional)
 
         Returns
         -------
-        plevel : the pressure level of the precipitation source (mb)
-        phase : the phase type of the precipitation (int)
-                phase == 0 for "Rain"
-                phase == 1 for "Freezing Rain" or "ZR/S Mix"
-                phase == 3 for "Snow"
-        tmp : the temperature at the level that is the precipitation source
-        st : a string naming the precipitation type
+        plevel : number
+            the pressure level of the precipitation source (mb)
+        phase : int
+            the phase type of the precipitation (int), phase = 0 for "Rain", phase = 1 for "Freezing Rain" or "ZR/S Mix", phase = 3 for "Snow"
+        tmp : number
+            the temperature at the level that is the precipitation source (C)
+        st : str
+            a string naming the precipitation type
 
     '''
     # Needs to be tested
@@ -137,22 +184,28 @@ def posneg_temperature(prof, start=-1):
 
         Parameters
         ----------
-        prof : Profile object
-        start : the pressure level the precpitation originates from (found by calling init_phase())
+        prof : profile object
+            Profile object
+        start : number
+            the pressure level the precipitation originates from (found by calling init_phase()) (mb)
 
         Returns
         -------
-        pos : the positive area (> 0 C) of the temperature profile in J/kg
-        neg : the negative area (< 0 C) of the temperature profile in J/kg
-        top : the top of the precipitation layer pressure in mb
-        bot : the bottom of the precipitation layer pressure in mb
+        pos : float
+            the positive area (> 0 C) of the wet-bulb profile (J/kg)
+        neg : float
+            the negative area (< 0 C) of the wet-bulb profile (J/kg)
+        top : float
+            the top of the precipitation layer pressure (mb)
+        bot : float
+            the bottom of the precipitation layer pressure (mb)
 
     '''
     # Needs to be tested
     
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -237,7 +290,6 @@ def posneg_wetbulb(prof, start=-1):
         Positive/Negative Wetbulb profile
         Adapted from SHARP code donated by Rich Thompson (SPC)
 
-        Description:
         This routine calculates the positive (above 0 C) and negative (below 0 C)
         areas of the wet bulb profile starting from a specified pressure (start).
         If the specified pressure is not given, this routine calls init_phase()
@@ -248,22 +300,28 @@ def posneg_wetbulb(prof, start=-1):
 
         Parameters
         ----------
-        prof : Profile object
-        start : the pressure level the precpitation originates from (found by calling init_phase())
+        prof : profile object
+            Profile object
+        start : number
+            the pressure level the precipitation originates from (found by calling init_phase()) (mb)
 
         Returns
         -------
-        pos : the positive area (> 0 C) of the wet-bulb profile in J/kg
-        neg : the negative area (< 0 C) of the wet-bulb profile in J/kg
-        top : the top of the precipitation layer pressure in mb
-        bot : the bottom of the precipitation layer pressure in mb
+        pos : float
+            the positive area (> 0 C) of the wet-bulb profile (J/kg)
+        neg : float
+            the negative area (< 0 C) of the wet-bulb profile (J/kg)
+        top : float
+            the top of the precipitation layer pressure (mb)
+        bot : float
+            the bottom of the precipitation layer pressure (mb)
 
     '''
     # Needs to be tested
 
     # If there is no sounding, don't compute anything
     if utils.QC(interp.temp(prof, 500)) == False and utils.QC(interp.temp(prof, 850)) == False:
-        return np.masked, np.masked, np.masked, np.masked
+        return np.ma.masked, np.ma.masked, np.ma.masked, np.ma.masked
 
     # Find lowest obs in layer
     lower = prof.pres[prof.get_sfc()]
@@ -347,31 +405,36 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
         Best Guess Precipitation type
         Adapted from SHARP code donated by Rich Thompson (SPC)
 
-        Description:
         This algorithm utilizes the output from the init_phase() and posneg_temperature()
         functions to make a best guess at the preciptation type one would observe
         at the surface given a thermodynamic profile.
 
         Precipitation Types Supported:
-        - None
-        - Rain
-        - Snow
-        - Sleet and Snow
-        - Sleet
-        - Freezing Rain/Drizzle
-        - Unknown
+        * None
+        * Rain
+        * Snow
+        * Sleet and Snow
+        * Sleet
+        * Freezing Rain/Drizzle
+        * Unknown
 
         Parameters
         ----------
-        prof : Profile object
-        init_phase : the initial phase of the precipitation (int) (see 2nd value returned from init_phase())
-        init_lvl : the inital level of the precipitation source (mb) (see 1st value returned from init_phase())
-        init_temp : the inital level of the precipitation source (C) (see 3rd value returned from init_phase())
-        tpos : the positive area (> 0 C) in the temperature profile (J/kg)
+        prof : profile object
+            Profile object
+        init_phase : int
+            the initial phase of the precipitation (see 2nd value returned from init_phase())
+        init_lvl : float
+            the initial level of the precipitation source (mb) (see 1st value returned from init_phase())
+        init_temp : float
+            the initial level of the precipitation source (C) (see 3rd value returned from init_phase())
+        tpos : float
+            the positive area (> 0 C) in the temperature profile (J/kg)
 
         Returns
         -------
-        precip_type : a string containing the best guess precipitation type
+        precip_type : str
+            the best guess precipitation type
     '''
     # Needs to be tested
 
@@ -428,41 +491,7 @@ def best_guess_precip(prof, init_phase, init_lvl, init_temp, tpos, tneg):
 
     return precip_type
 
-def precip_type(prof):
-    '''
-        OLD PROPOSED FUNCTION
-    '''
-    #
-    # This function looks at the current SHARPPY profile (prof)
-    # and makes a single guess of the precipitation type associated with
-    # that profile.
-    #
-    # it would be nice to produce probabilites of the preciptation type using
-    # different methods, but it's 12 AM now.
-    #
-    # it would also be nice to have BUFKIT's precpitation intensity and type algorithm
-
-    # Step 1: Check for ice in a cloud (is there a cloud with temps of -10 to -18 C?)
-
-    # if no ice in cloud, check surface temp
-    # if surface temp > 0 C, it's rain
-    # if surface temp < 0 C, it's freezing rain
-
-    # if there is ice in the cloud, what are the temperatures below it?
-    # if the temperature below is less than 0.5 C, it's snow, but ony if T_w <= 0 C
-    # otherwise if T_w > 0 C in the lowest 100 meters, and sfc T_w > 33 F, it's rain
-
-    # if the temperatures below the ice cloud are between 0.5 to 3 C, there will be melting
-    # if T_w or T are <= 0C, it's a mix (if warm layer is near 1 C) or sleet ( if warm layer is near 3 C)
-    # if T_w >= 0 C in lowest 100 m and T_w > 33F, it's rain or drizzle
-
-    # if the temperatures below the ice cloud are > 3 C, there's total melting
-    # if minimum cold layer temp is > -12 C and sfc_T <= 0 C, it's freezing rain
-    # if minimum cold layer temp is > -12 C and sfc_T > 0 C, it's rain.
-    # if minimum cold layer temp is < -12 C and sfc_T_w < 33 F, it's snow and sleet
-    return
-
-def possible_watch(prof):
+def possible_watch(prof, use_left=False):
     '''
         Possible Weather/Hazard/Watch Type
         
@@ -478,125 +507,131 @@ def possible_watch(prof):
         a source of strict guidance for weather forecasters.  As always, the raw data is to be 
         consulted.
 
-        This code base is currently under development.
-
         Wx Categories (ranked in terms of severity):
-        - PDS TOR
-        - TOR
-        - MRGL TOR
-        - SVR
-        - MRGL SVR
-        - FLASH FLOOD
-        - BLIZZARD
-        - WINTER STORM
-        - WIND CHILL
-        - FIRE WEATHER
-        - EXCESSIVE HEAT
-        - FREEZE
+        * PDS TOR
+        * TOR
+        * MRGL TOR
+        * SVR
+        * MRGL SVR
+        * FLASH FLOOD
+        * BLIZZARD
+        * EXCESSIVE HEAT
     
         Suggestions for severe/tornado thresholds were contributed by Rich Thompson - NOAA Storm Prediction Center
 
         Parameters
         ----------
-        prof : ConvectiveProfile object
+        prof : profile object
+            ConvectiveProfile object
+        use_left : bool
+            If True, uses the parameters computed from the left-mover bunkers vector to decide the watch type. If False,
+            uses parameters from the right-mover vector. The default is False.
 
         Returns
         -------
-        watch_types :  a list of strings containing the weather types in code
-        colors : a list of the HEX colors corresponding to each weather type
+        watch_types : numpy array
+            strings containing the weather types in code
     '''
         
     watch_types = []
-    colors = []
     
     lr1 = params.lapse_rate( prof, 0, 1000, pres=False )
-    stp_eff = prof.stp_cin
-    stp_fixed = prof.stp_fixed
-    srw_4_6km = utils.mag(prof.srw_4_6km[0],prof.srw_4_6km[1])
+    if use_left:
+        stp_eff = prof.left_stp_cin
+        stp_fixed = prof.left_stp_fixed
+        srw_4_6km = utils.mag(prof.left_srw_4_6km[0],prof.left_srw_4_6km[1])
+        esrh = prof.left_esrh[0]
+        srh1km = prof.left_srh1km[0]
+    else:
+        stp_eff = prof.right_stp_cin
+        stp_fixed = prof.right_stp_fixed
+        srw_4_6km = utils.mag(prof.right_srw_4_6km[0],prof.right_srw_4_6km[1])
+        esrh = prof.right_esrh[0]
+        srh1km = prof.right_srh1km[0]
+
+    if prof.latitude < 0:
+        stp_eff = -stp_eff
+        stp_fixed = -stp_fixed
+        esrh = -esrh
+        srh1km = -srh1km
+
     sfc_8km_shear = utils.mag(prof.sfc_8km_shear[0],prof.sfc_8km_shear[1])
-    right_esrh = prof.right_esrh[0]
-    srh1km = prof.srh1km[0]
-    if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and right_esrh >= 200 and srw_4_6km >= 15.0 and \
+
+    if stp_eff >= 3 and stp_fixed >= 3 and srh1km >= 200 and esrh >= 200 and srw_4_6km >= 15.0 and \
         sfc_8km_shear > 45.0 and prof.sfcpcl.lclhght < 1000. and prof.mlpcl.lclhght < 1200 and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("PDS TOR")
-        colors.append(constants.MAGENTA)
     elif (stp_eff >= 3 or stp_fixed >= 4) and prof.mlpcl.bminus > -125. and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and (srw_4_6km >= 15.0 or sfc_8km_shear >= 40) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and ((prof.low_rh + prof.mid_rh)/2. >= 60) and lr1 >= 5.0 and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0:
         watch_types.append("TOR")
-        colors.append("#FF0000")
     elif (stp_eff >= 1 or stp_fixed >= 1) and prof.mlpcl.bminus > -150 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
-        colors.append("#FF0000")
-    elif (stp_eff >= 0.5 and prof.right_esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
+    elif (stp_eff >= 0.5 and esrh >= 150) or (stp_fixed >= 0.5 and srh1km >= 150) and \
         prof.mlpcl.bminus > -50 and prof.ebotm == 0.:
         watch_types.append("MRGL TOR")
-        colors.append("#FF0000")
 
     #SVR LOGIC
-    if (stp_fixed >= 1.0 or prof.right_scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
+    if use_left:
+        scp = prof.left_scp
+    else:
+        scp = prof.right_scp
+
+    if (stp_fixed >= 1.0 or scp >= 4.0 or stp_eff >= 1.0) and prof.mupcl.bminus >= -50:
         watch_types.append("SVR")
-    elif prof.right_scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
+    elif scp >= 2.0 and (prof.ship >= 1.0 or prof.dcape >= 750) and prof.mupcl.bminus >= -50:
         watch_types.append("SVR")
     elif prof.sig_severe >= 30000 and prof.mmp >= 0.6 and prof.mupcl.bminus >= -50:
-        colors.append("#FFFF00")
         watch_types.append("SVR")
-    elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or prof.right_scp >= 0.5):
-        colors.append("#0099CC")
+    elif prof.mupcl.bminus >= -75.0 and (prof.wndg >= 0.5 or prof.ship >= 0.5 or scp >= 0.5):
         watch_types.append("MRGL SVR")
     
     # Flash Flood Watch PWV is larger than normal and cloud layer mean wind speeds are slow
     # This is trying to capture the ingredients of moisture and advection speed, but cannot
     # handle precipitation efficiency or vertical motion
+
+    # Likely is good for handling slow moving MCSes.
     pw_climo_flag = prof.pwv_flag
     pwat = prof.pwat
     upshear = utils.comp2vec(prof.upshear_downshear[0],prof.upshear_downshear[1])
     if pw_climo_flag >= 2 and upshear[1] < 25:
         watch_types.append("FLASH FLOOD")
-        colors.append("#5FFB17")
     #elif pwat > 1.3 and upshear[1] < 25:
     #    watch_types.append("FLASH FLOOD")
-    #    colors.append("#5FFB17")
     
     # Blizzard if sfc winds > 35 mph and precip type detects snow 
     # Still needs to be tied into the 
     sfc_wspd = utils.KTS2MPH(prof.wspd[prof.get_sfc()])
-    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0:
+    if sfc_wspd > 35. and prof.tmpc[prof.get_sfc()] <= 0 and "Snow" in prof.precip_type:
         watch_types.append("BLIZZARD")
-        colors.append("#3366FF")
     
     # Wind Chill (if wind chill gets below -20 F)
-    if wind_chill(prof) < -20.:
-        watch_types.append("WIND CHILL")
-        colors.append("#3366FF")
+    # TODO: Be reinstated in future releases if the logic becomes a little more solid.
+    #if wind_chill(prof) < -20.:
+    #    watch_types.append("WIND CHILL")
     
     # Fire WX (sfc RH < 30% and sfc_wind speed > 15 mph) (needs to be updated to include SPC Fire Wx Indices)
-    if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.dwpc[prof.get_sfc()]) < 30. :
-        watch_types.append("FIRE WEATHER")
-        colors.append("#FF9900")
+    # TODO: Be reinstated in future releases once the logic becomes a little more solid
+    #if sfc_wspd > 15. and thermo.relh(prof.pres[prof.get_sfc()], prof.tmpc[prof.get_sfc()], prof.dwpc[prof.get_sfc()]) < 30. :
+        #watch_types.append("FIRE WEATHER")
     
-    # Excessive Heat (if Max_temp > 105 F and sfc dewpoint > 75 F)
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) > 75. and thermo.ctof(params.max_temp(prof)) >= 105.:
+    # Excessive Heat (use the heat index calculation (and the max temperature algorithm))
+    temp = thermo.ctof(prof.tmpc[prof.get_sfc()])
+    rh = thermo.relh(prof.pres[prof.get_sfc()], temp, prof.dwpc[prof.get_sfc()])
+    hi = heat_index(temp, rh)
+    if hi > 105.:
         watch_types.append("EXCESSIVE HEAT")
-        colors.append("#CC33CC")
     
     # Freeze (checks to see if wetbulb is below freezing and temperature isn't and wind speeds are low)
-    # Still in testing.
-    if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
-        watch_types.append("FREEZE")
-        colors.append("#3366FF")
+    # Still in testing.  To be reinstated in future releases.
+    #if thermo.ctof(prof.dwpc[prof.get_sfc()]) <= 32. and thermo.ctof(prof.wetbulb[prof.get_sfc()]) <= 32 and prof.wspd[prof.get_sfc()] < 5.:
+    #    watch_types.append("FREEZE")
     
     watch_types.append("NONE")
-    colors.append("#FFCC33")
     
-    return np.asarray(watch_types), np.asarray(colors)
+    return np.asarray(watch_types)
 

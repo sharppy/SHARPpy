@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990424/2100F000    ags 
+  AGS 990424/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          9.7 g/Kg
 ----- Lapse Rates -----
 700-500mb   17 C 	6.7 C/km
 850-500mb   30 C	7.0 C/km
+
+----- Note -----
+Old Title:  RUC 990424/2100F000    ags 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010605/0100F000    lhx 
+  LHX 010605/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -63,3 +63,7 @@ Mean W:          8.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   24 C 	8.9 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 010605/0100F000    lhx 
+

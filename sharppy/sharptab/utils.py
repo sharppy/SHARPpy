@@ -6,6 +6,7 @@ from sharppy.sharptab.constants import MISSING, TOL
 
 __all__ = ['INT2STR','FLOAT2STR','MS2KTS', 'KTS2MS', 'MS2MPH']
 __all__ += ['MPH2MS', 'MPH2KTS', 'KTS2MPH', 'M2FT', 'FT2M']
+__all__ += ['IN2CM', 'CM2IN']
 __all__ += ['vec2comp', 'comp2vec', 'mag', 'QC']
 
 def INT2STR(val):
@@ -24,8 +25,10 @@ def INT2STR(val):
     Val rounded to the nearest int and converted to a string.
     
     '''
+    if np.isnan(val):
+        return '--'
     try:
-        return str( int( round( val, 0 ) ) )
+        return str( int( np.round( val, 0 ) ) )
     except:
         return str(val)
 
@@ -48,9 +51,14 @@ def FLOAT2STR(val, precision):
     to a string.
     '''
     try:
-        return str( round( val, precision ) )
+        new_val = str( np.round( val, precision ) )
     except:
-        return str( val )
+        new_val = str( val )
+
+    if new_val.strip() == 'nan':
+        return '--'
+    else:
+        return new_val
 
 def MS2KTS(val):
     '''
@@ -187,6 +195,35 @@ def FT2M(val):
     '''
     return val * 0.3048
 
+def IN2CM(val):
+    '''
+    Convert inches to centimeters
+
+    Parameters
+    ----------
+    val : float, numpy_array
+          Distance (inches)
+
+    Returns
+    -------
+        Val converted to centimeters (float)
+    '''
+    return val * 2.54
+
+def CM2IN(val):
+    '''
+    Convert centimeters to inches
+
+    Parameters
+    ----------
+    val : float, numpy_array
+          Distance (centimeters)
+
+    Returns
+    -------
+        Val converted to inches (float)
+    '''
+    return val / 2.54
 
 def _vec2comp(wdir, wspd):
     '''
@@ -295,6 +332,7 @@ def comp2vec(u, v, missing=MISSING):
     u.set_fill_value(missing)
     v.set_fill_value(missing)
     wdir = np.degrees(np.arctan2(-u, -v))
+
     if wdir.shape:
         u[u == missing] = ma.masked
         v[v == missing] = ma.masked

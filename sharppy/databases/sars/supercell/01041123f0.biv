@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010411/2300F000    biv 
+  BIV 010411/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.9 C/km
 850-500mb   29 C	6.7 C/km
+
+----- Note -----
+Old Title:  RUC 010411/2300F000    biv 
+

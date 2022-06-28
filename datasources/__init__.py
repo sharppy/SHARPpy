@@ -1,1 +1,1 @@
-all = [ 'data_source', 'available' ]
+__all__ = [ 'data_source', 'available' ]

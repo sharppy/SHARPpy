@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010621/0200F000    ict 
+  ICT 010621/0200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          13.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.3 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 010621/0200F000    ict 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990817/2100F000    gld 
+  GLD 990817/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -64,3 +64,7 @@ Mean W:          14.2 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.7 C/km
 850-500mb   36 C	8.3 C/km
+
+----- Note -----
+Old Title:  RUC 990817/2100F000    gld 
+

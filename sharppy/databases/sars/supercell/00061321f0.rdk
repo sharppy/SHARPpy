@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000613/2100F000    rdk 
+  RDK 000613/2100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          16.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.9 C/km
 850-500mb   32 C	7.3 C/km
+
+----- Note -----
+Old Title:  RUC 000613/2100F000    rdk 
+

@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000328/2300F000    dto 
+  DTO 000328/2300     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.7 C/km
 850-500mb   33 C	7.7 C/km
+
+----- Note -----
+Old Title:  RUC 000328/2300F000    dto 
+

@@ -2,10 +2,10 @@
 import os.path
 import subprocess
 release = True
-__version__ = '1.3.9'
-__version_name__ = 'Twisp'
-__upstream_version_name__ = "Xenia"
-__upstream_version__ = '1.3.0'
+__version__ = '1.4.0'
+__version_name__ = 'Klamathon'
+__upstream_version__ = '1.4.0'
+__upstream_version_name__ = "Andover"
 __brand__ = 'SHARPpy IMET'
 
 _repository_path = os.path.split(__file__)[0]
@@ -103,7 +103,7 @@ def get_version():
     version = __version__
     if not release:
         try:
-            import __git_version__
+            from . import __git_version__
             version += __git_version__.rev
         except ImportError:
             version += get_git_revision()

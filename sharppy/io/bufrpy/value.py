@@ -1,5 +1,5 @@
 from collections import namedtuple
-from descriptors import OpCode
+from .descriptors import OpCode
 import codecs
 
 class BufrValue(namedtuple('BufrValue', ['raw_value', 'value', 'descriptor'])):

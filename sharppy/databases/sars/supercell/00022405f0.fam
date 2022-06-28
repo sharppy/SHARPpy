@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000224/0500F000    fam 
+  FAM 000224/0500     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          9.1 g/Kg
 ----- Lapse Rates -----
 700-500mb   16 C 	6.3 C/km
 850-500mb   29 C	6.9 C/km
+
+----- Note -----
+Old Title:  RUC 000224/0500F000    fam 
+

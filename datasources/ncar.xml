@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?> 
+<sourcelist>
+    <datasource name="NCAR Ensemble" ensemble="true" observed="false">
+	<outlet name="sharp" url="http://sharp.weather.ou.edu/soundings/ncarens/20{date}_{cycle}/{srcid}.txt" format="pecan" >
+            <time range="48" delta="1" offset="0" delay="13" cycle="24" archive="1"/>
+            <points csv="ncarens.csv" />
+        </outlet>
+    </datasource>
+</sourcelist>

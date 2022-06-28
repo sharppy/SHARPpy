@@ -1,5 +1,5 @@
 %TITLE%
- RUC 990427/0100F000    okc 
+  OKC 990427/0100     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          8.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   20 C 	7.9 C/km
 850-500mb   33 C	7.8 C/km
+
+----- Note -----
+Old Title:  RUC 990427/0100F000    okc 
+

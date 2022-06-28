@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000701/0000F000    jln 
+  JLN 000701/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          15.3 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.9 C/km
 850-500mb   25 C	5.9 C/km
+
+----- Note -----
+Old Title:  RUC 000701/0000F000    jln 
+

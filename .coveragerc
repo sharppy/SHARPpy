@@ -1,0 +1,45 @@
+[run]
+source = sharppy
+         runsharp
+         datasources
+omit = 
+    */tests*
+    _*.py
+    sharppy/gui.py
+    sharppy/sounding.py
+    sharppy/_version.py
+    sharppy/_sharppy_version.py
+    sharppy/__git_version__.py
+    sharppy/viz/draggable.py
+    sharppy/viz/barbs.py
+    sharppy/viz/preferences.py
+    sharppy/viz/generic.py
+    sharppy/io/arw_decoder.py
+    runsharp/SHARPpy.py
+    datasources/available.py
+    sharppy/plot/*
+
+[report]
+exclude_lines = 
+    if __name__ == .__main__.:
+    logging.debug
+    def swapInset
+    def keyPressEvent
+    def focusPicker
+    def wheelEvent
+    def mouseReleaseEvent
+    def updateReadout
+    def setReadoutCursor
+    def setNoCursor
+    def resizeEvent
+    def mouseMoveEvent
+    def mouseDoubleClickEvent
+    def mousePressEvent
+    def pix_to
+    def modifySfc
+    def getReadoutVal
+    def showCursorMenu
+    class SfcModifyDialog
+    class PWDatabase
+    def get_profile
+    def calc_inputs

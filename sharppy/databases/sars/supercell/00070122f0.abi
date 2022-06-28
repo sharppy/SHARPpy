@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000701/2200F000    abi 
+  ABI 000701/2200     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -67,3 +67,7 @@ Mean W:          13.8 g/Kg
 ----- Lapse Rates -----
 700-500mb   15 C 	5.7 C/km
 850-500mb   30 C	6.8 C/km
+
+----- Note -----
+Old Title:  RUC 000701/2200F000    abi 
+

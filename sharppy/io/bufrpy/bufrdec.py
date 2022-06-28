@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-from util import ByteStream, ReadableStream, int2fxy, fxy2int
-from descriptors import ElementDescriptor, OperatorDescriptor, ReplicationDescriptor, SequenceDescriptor, OpCode
-from template import Template
-from value import _decode_raw_value, _calculate_read_length, BufrSubset, BufrValue
+from .util import ByteStream, ReadableStream, int2fxy, fxy2int
+from .descriptors import ElementDescriptor, OperatorDescriptor, ReplicationDescriptor, SequenceDescriptor, OpCode
+from .template import Template
+from .value import _decode_raw_value, _calculate_read_length, BufrSubset, BufrValue
 import itertools
 from collections import namedtuple, defaultdict
 import re

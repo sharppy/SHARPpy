@@ -1,5 +1,5 @@
 %TITLE%
- RUC 010411/0500F000    jct 
+  JCT 010411/0500     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -66,3 +66,7 @@ Mean W:          14.0 g/Kg
 ----- Lapse Rates -----
 700-500mb   22 C 	8.5 C/km
 850-500mb   31 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 010411/0500F000    jct 
+

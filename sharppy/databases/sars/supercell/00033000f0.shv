@@ -1,5 +1,5 @@
 %TITLE%
- RUC 000330/0000F000    shv 
+  SHV 000330/0000     
 
    LEVEL       HGHT       TEMP       DWPT       WDIR       WSPD
 -------------------------------------------------------------------
@@ -68,3 +68,7 @@ Mean W:          12.5 g/Kg
 ----- Lapse Rates -----
 700-500mb   19 C 	7.2 C/km
 850-500mb   30 C	7.1 C/km
+
+----- Note -----
+Old Title:  RUC 000330/0000F000    shv 
+

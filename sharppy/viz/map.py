@@ -1,16 +1,16 @@
 
 import numpy as np
 import sharppy
-from PySide import QtGui, QtCore
-
+from qtpy import QtGui, QtCore, QtWidgets
+from qtpy.QtWidgets import *
+from datetime import datetime
 import sys, os
 import re
-import urllib2
 
 class Mapper(object):
     data_dir = os.path.join(os.path.dirname(sharppy.__file__), 'databases', 'shapefiles')
-    min_lat = {'npstere':0., 'merc':-30., 'spstere':-90.}
-    max_lat = {'npstere':90., 'merc':30., 'spstere':0.}
+    min_lat = {'npstere':0., 'merc':-35., 'spstere':-90.}
+    max_lat = {'npstere':90., 'merc':35., 'spstere':0.}
 
     def __init__(self, lambda_0, phi_0, proj='npstere'):
         self.proj = proj
@@ -50,15 +50,15 @@ class Mapper(object):
         lb_lat, ub_lat = Mapper.min_lat[self.proj], Mapper.max_lat[self.proj]
 
         if self.proj == 'npstere':
-            for lon in xrange(0, 360, 20):
+            for lon in range(0, 360, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
-            for lat in xrange(int(lb_lat), int(ub_lat), 15):
+            for lat in range(int(lb_lat), int(ub_lat), 15):
                 lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
                 rx, ry = self(lat, lons)
                 x_min, x_max = rx.min(), rx.max()
@@ -66,32 +66,41 @@ class Mapper(object):
                 path.addEllipse(x_min, y_min, x_max - x_min, y_max - y_min)
 
         elif self.proj == 'merc':
-            for lon in xrange(-180, 180 + 20, 20):
+            for lon in range(-180, 180 + 20, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
-            for lat in xrange(int(lb_lat), int(ub_lat) + 10, 10):
+            lat_spc = 10
+            rnd_lat_lb = np.ceil(lb_lat / lat_spc) * lat_spc
+            rnd_lat_ub = np.floor(ub_lat / lat_spc) * lat_spc
+            lat_lines = list(range(int(rnd_lat_lb), int(rnd_lat_ub + lat_spc), lat_spc))
+            if rnd_lat_lb != lb_lat:
+                lat_lines = [int(lb_lat)] + lat_lines 
+            if rnd_lat_ub != ub_lat:
+                lat_lines = lat_lines + [int(ub_lat)]
+
+            for lat in lat_lines:
                 lons = np.linspace(-180, 180, 2)
                 lx, ly = self(lat, lons)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
         elif self.proj == 'spstere':
-            for lon in xrange(0, 360, 20):
+            for lon in range(0, 360, 20):
                 lats = np.linspace(lb_lat, ub_lat, 2)
                 lx, ly = self(lats, lon)
 
                 path.moveTo(lx[0], ly[0])
-                for x, y in zip(lx, ly)[1:]:
+                for x, y in zip(lx[1:], ly[1:]):
                     path.lineTo(x, y)
 
-            for lat in xrange(int(ub_lat), int(lb_lat), -15):
+            for lat in range(int(ub_lat), int(lb_lat), -15):
                 lons = np.arange(self.getLambda0(), self.getLambda0() + 360, 90)
                 rx, ry = self(lat, lons)
                 x_min, x_max = rx.min(), rx.max()
@@ -182,7 +191,7 @@ class Mapper(object):
                 breaks = []
             breaks = [ 0 ] + list(breaks) + [ -1 ]
  
-            for idx in xrange(len(breaks) - 1):
+            for idx in range(len(breaks) - 1):
                 if breaks[idx + 1] == -1:
                     seg_idxs = idxs[breaks[idx]:]
                 else:
@@ -219,7 +228,8 @@ class Mapper(object):
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
+                #b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
+                b = np.array(np.frombuffer(polystring,dtype='<f4'),'f8')
                 b.shape = (npts, 2)
 
                 if np.any(b[:, 0] > 180):
@@ -251,20 +261,20 @@ class Mapper(object):
         for bnd in self._bnds[name][self.proj]:
             path = QtGui.QPainterPath()
 
-            path_lats, path_lons = zip(*bnd)
+            path_lats, path_lons = list(zip(*bnd))
             path_x, path_y = self(np.array(path_lats), np.array(path_lons))
 
             path.moveTo(path_x[0], path_y[0])
-            for px, py in zip(path_x, path_y)[1:]:
+            for px, py in zip(path_x[1:], path_y[1:]):
                 path.lineTo(px, py)
 
             paths.append(path)
         return paths
 
-class MapWidget(QtGui.QWidget):
+class MapWidget(QWidget):
     clicked = QtCore.Signal(dict)
 
-    def __init__(self, data_source, init_time, async, **kwargs):
+    def __init__(self, data_source, init_time, async_object, **kwargs):
         config = kwargs.get('cfg', None)
         del kwargs['cfg']
 
@@ -280,18 +290,18 @@ class MapWidget(QtGui.QWidget):
         self.has_internet = True
 
         self.init_scale = 0.6
-        if config is None or not config.has_section('map'):
+        if config is None or not ('map', 'proj') in config:
             self.scale = self.init_scale
             self.map_center_x, self.map_center_y = 0., 0.
             std_lon = -97.5
             proj = 'npstere'
             init_from_config = False
         else:
-            proj = config.get('map', 'proj')
-            std_lon = float(config.get('map', 'std_lon'))
-            self.scale = float(config.get('map', 'scale'))
-            self.map_center_x = float(config.get('map', 'center_x'))
-            self.map_center_y = float(config.get('map', 'center_y'))
+            proj = config['map', 'proj']
+            std_lon = float(config['map', 'std_lon'])
+            self.scale = float(config['map', 'scale'])
+            self.map_center_x = float(config['map', 'center_x'])
+            self.map_center_y = float(config['map', 'center_y'])
             init_from_config = True
 
         self.mapper = Mapper(std_lon, 60., proj=proj)
@@ -305,42 +315,44 @@ class MapWidget(QtGui.QWidget):
         self.setMinimumSize(self.width(), self.height())
 
         self.clicked_stn = None
-        self.stn_readout = QtGui.QLabel(parent=self)
+        self.stn_readout = QtWidgets.QLabel(parent=self)
         self.stn_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 16px; color: #FFFFFF; }")
         self.stn_readout.setText("")
         self.stn_readout.show()
         self.stn_readout.move(self.width(), self.height())
 
-        self.load_readout = QtGui.QLabel(parent=self)
+        self.load_readout = QtWidgets.QLabel(parent=self)
         self.load_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
         self.load_readout.setText("Loading ...")
         self.load_readout.setFixedWidth(100)
         self.load_readout.show()
         self.load_readout.move(self.width(), self.height())
 
-        self.latlon_readout = QtGui.QLabel(parent=self)
+        self.latlon_readout = QtWidgets.QLabel(parent=self)
         self.latlon_readout.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 18px; color: #FFFFFF; }")
         self.latlon_readout.setText("")
         self.latlon_readout.setFixedWidth(150)
         self.latlon_readout.show()
         self.latlon_readout.move(10, 10)
 
-        self.no_internet = QtGui.QLabel(parent=self)
+        self.no_internet = QtWidgets.QLabel(parent=self)
         self.no_internet.setStyleSheet("QLabel { background-color:#000000; border-width: 0px; font-size: 32px; color: #FFFFFF; }")
         self.no_internet.setText("No Internet Connection")
         self.no_internet.show()
         txt_width = self.no_internet.fontMetrics().width(self.no_internet.text())
+
+        self._async = async_object
         self.no_internet.setFixedWidth(txt_width)
         self.no_internet.move(self.width(), self.height())
 
-        self.async = async
         self.setDataSource(data_source, init_time, init=True)
-
         self.setWindowTitle('SHARPpy')
 
         if not init_from_config:
             self.resetViewport()
             self.saveProjection(config)
+
+        self.pt_x, self.pt_y = None, None
 
         self.initMap()
         self.initUI()
@@ -349,6 +361,7 @@ class MapWidget(QtGui.QWidget):
         self.center_x, self.center_y = self.width() / 2, self.height() / 2
 
         self.plotBitMap = QtGui.QPixmap(self.width(), self.height())
+        self.backgroundBitMap = self.plotBitMap.copy()
         self.drawMap()
 
     def initMap(self):
@@ -364,13 +377,11 @@ class MapWidget(QtGui.QWidget):
         self.setCurrentTime(data_time, init=init)
 
     def setCurrentTime(self, data_time, init=False):
-        self.current_time = data_time
+                
         self.clicked_stn = None
         self.clicked.emit(None)
 
         self._showLoading()
-
-        getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
 
         def update(points):
             self.points = points[0]
@@ -402,14 +413,18 @@ class MapWidget(QtGui.QWidget):
             if not init:
                 self.drawMap()
                 self.update()
+       
+        self.current_time = data_time
+        getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
 
         if init:
             points = getPoints()
             update([ points ])
         else:
-            self.async.post(getPoints, update)
+            self._async.post(getPoints, update)
 
     def setProjection(self, proj):
+        old_proj = self.mapper.getProjection()
         self.mapper.setProjection(proj)
         self.resetViewport()
         self._showLoading()
@@ -421,7 +436,7 @@ class MapWidget(QtGui.QWidget):
             self.update()
             return
 
-        self.async.post(self.initMap, update)
+        self._async.post(self.initMap, update)
 
     def resetViewport(self, ctr_lat=None, ctr_lon=None):
         self.map_center_x = self.width() / 2
@@ -431,6 +446,7 @@ class MapWidget(QtGui.QWidget):
             self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / self.scale
         else:
             self.scale = self.init_scale
+            self.map_rot = 0.
             proj = self.mapper.getProjection()
             if proj == 'npstere':
                 self.map_center_y = -13 * self.height() / 10 + self.height() / 2 
@@ -440,9 +456,17 @@ class MapWidget(QtGui.QWidget):
                 self.map_center_y = 13 * self.height() / 10 + self.height() / 2
 
     def drawMap(self):
+        def mercRotate(qp, center_x, center_y, angle):
+            center_lat, center_lon = self.mapper(center_x - self.width() / 2, center_y - self.height() / 2, inverse=True)
+            center_lon -= angle
+            new_center_x, new_center_y = self.mapper(center_lat, center_lon)
+            new_center_x += self.width() / 2
+            new_center_y += self.height() / 2
+            qp.translate((new_center_x - center_x) / self.scale, (new_center_y - center_y) / self.scale)
+            return new_center_x, new_center_y
+
         qp = QtGui.QPainter()
         qp.begin(self.plotBitMap)
-#       qp.rotate(self.map_rot)
 
         self.plotBitMap.fill(QtCore.Qt.black)
 
@@ -450,11 +474,28 @@ class MapWidget(QtGui.QWidget):
         map_center_y = self.map_center_y + self.trans_y
 
         qp.translate(map_center_x, map_center_y)
+        proj = self.mapper.getProjection()
+
+        if proj == 'npstere':
+            qp.rotate(self.map_rot)
+        elif proj == 'merc':
+            new_center_x, new_center_y = mercRotate(qp, map_center_x, map_center_y, self.map_rot)
+        elif proj == 'spstere':
+            qp.rotate(-self.map_rot)
+
         qp.scale(1. / self.scale, 1. / self.scale)
+
+        self.drawPolitical(qp)
+        self.backgroundBitMap = self.plotBitMap.copy()
+        self.drawStations(qp)
+
+        qp.end()
+
+    def drawPolitical(self, qp):
         self.transform = qp.transform()
         window_rect = QtCore.QRect(0, 0, self.width(), self.height())
 
-        qp.setPen(QtGui.QPen(QtGui.QColor('#333333'))) #, self.scale, QtCore.Qt.DashLine
+        qp.setPen(QtGui.QPen(QtGui.QColor('#333333'), self.scale)) #, self.scale, QtCore.Qt.DashLine
         qp.drawPath(self._grid_path)
 
         # Modify the scale thresholds according to the ratio of the area of the plot to the default area
@@ -470,17 +511,17 @@ class MapWidget(QtGui.QWidget):
             comp = max_comp * min(max((zero_scale - self.scale) / (zero_scale - full_scale), 0), 1)
             color = '#' + ("{0:02x}".format(int(round(comp)))) * 3
 
-            qp.setPen(QtGui.QPen(QtGui.QColor(color)))
+            qp.setPen(QtGui.QPen(QtGui.QColor(color), self.scale))
             for cp in self._county_path:
                 if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                     qp.drawPath(cp)
 
-        qp.setPen(QtGui.QPen(QtGui.QColor('#999999')))
+        qp.setPen(QtGui.QPen(QtGui.QColor('#999999'), self.scale))
         for sp in self._state_path:
             if self.transform.mapRect(sp.boundingRect()).intersects(window_rect):
                 qp.drawPath(sp)
 
-        qp.setPen(QtGui.QPen(QtCore.Qt.white))
+        qp.setPen(QtGui.QPen(QtCore.Qt.white, self.scale))
         for cp in self._coast_path:
             if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                 qp.drawPath(cp)
@@ -489,11 +530,8 @@ class MapWidget(QtGui.QWidget):
             if self.transform.mapRect(cp.boundingRect()).intersects(window_rect):
                 qp.drawPath(cp)
 
-        self.drawStations(qp)
-        qp.end()
-
     def drawStations(self, qp):
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
+        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons + self.map_rot)
         lb_lat, ub_lat = self.mapper.getLatBounds()
         size = 3 * self.scale
 
@@ -511,15 +549,18 @@ class MapWidget(QtGui.QWidget):
                 clicked_id = stn_id
             else:
                if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
-                    qp.setPen(QtGui.QPen(color))
+                    qp.setPen(QtGui.QPen(color, self.scale))
                     qp.setBrush(QtGui.QBrush(color))
                     qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
         
         color = selected_color
-        if lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
-            qp.setPen(QtGui.QPen(color))
+        if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+            qp.setPen(QtGui.QPen(color, self.scale))
             qp.setBrush(QtGui.QBrush(color))
             qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
+
+        if self.cur_source.getName() == "Local WRF-ARW" and self.pt_x != None:
+            qp.drawEllipse(QtCore.QPointF(self.pt_x, self.pt_y), size, size)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
@@ -541,6 +582,24 @@ class MapWidget(QtGui.QWidget):
 
         self.initUI()
 
+    def keyPressEvent(self, e):
+        if e.key() == 61:
+            delta = -100
+        elif e.key() == 45:
+            delta = 100
+        scale_fac = 10 ** (delta / 1000.)
+
+        scaled_size = float(min(self.default_width, self.default_height)) / min(self.width(), self.height())
+        if self.scale * scale_fac > 2.5 * scaled_size:
+            scale_fac = 2.5 * scaled_size / self.scale
+
+        self.scale *= scale_fac
+        self.map_center_x = self.center_x - (self.center_x - self.map_center_x) / scale_fac
+        self.map_center_y = self.center_y - (self.center_y - self.map_center_y) / scale_fac
+
+        self.drawMap()
+        self.update()
+
     def mousePressEvent(self, e):
         self.init_drag_x, self.init_drag_y = e.x(), e.y()
 
@@ -556,6 +615,13 @@ class MapWidget(QtGui.QWidget):
         trans_inv, is_invertible = self.transform.inverted()
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        lon -= self.map_rot
+
+        if lon > 180: 
+            lon -= 360.
+        elif lon <= -180: 
+            lon += 360.
+
         self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
 
     def mouseReleaseEvent(self, e):
@@ -565,18 +631,29 @@ class MapWidget(QtGui.QWidget):
         self.trans_x, self.trans_y = 0, 0
 
         if not self.dragging and len(self.stn_lats) > 0:
-            stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
-            stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ])
+            lb_lat, ub_lat = self.mapper.getLatBounds()
+            idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
+
+            stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
+            stn_xs, stn_ys = list(zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys)  ]))
             stn_xs = np.array(stn_xs)
             stn_ys = np.array(stn_ys)
             dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
             stn_idx = np.argmin(dists)
             if dists[stn_idx] <= 5:
-                self.clicked_stn = self.stn_ids[stn_idx]
-                self.clicked.emit(self.points[stn_idx])
+                self.clicked_stn = self.stn_ids[idxs[stn_idx]]
+                self.clicked.emit(self.points[idxs[stn_idx]])
 
                 self.drawMap()
                 self.update()
+        if not self.dragging and self.cur_source.getName() == "Local WRF-ARW":
+            trans_inv, is_invertible = self.transform.inverted()
+            self.pt_x, self.pt_y = trans_inv.map(e.x(), e.y())
+            lat, lon = self.mapper(self.pt_x, self.pt_y, inverse=True)
+            lon -= self.map_rot
+            self.clicked.emit((lon, lat))
+            self.drawMap()
+            self.update()
 
         self.dragging = False
 
@@ -584,6 +661,15 @@ class MapWidget(QtGui.QWidget):
         trans_inv, is_invertible = self.transform.inverted()
         mouse_x, mouse_y = trans_inv.map(e.x(), e.y())
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
+        lon -= self.map_rot
+
+        self.map_rot += (lon - self.mapper.getLambda0())
+
+#       if self.map_rot > 180:
+#           self.map_rot -= 360
+#       if self.map_rot <= -180:
+#           self.map_rot += 360
+
         self.mapper.setLambda0(lon)
         self._showLoading()
 
@@ -594,7 +680,8 @@ class MapWidget(QtGui.QWidget):
             self.update()
             return
 
-        self.async.post(self.initMap, update)
+        update(None)
+#       self._async.post(self.initMap, update)
 
     def wheelEvent(self, e):
         max_speed = 75
@@ -617,13 +704,14 @@ class MapWidget(QtGui.QWidget):
         map_center_x = self.map_center_x + (self.default_width  - self.width() ) / 2.
         map_center_y = self.map_center_y + (self.default_height - self.height()) / 2.
 
-        if not config.has_section('map'):
-            config.add_section('map')
-        config.set('map', 'proj', self.mapper.getProjection())
-        config.set('map', 'std_lon', self.mapper.getLambda0())
-        config.set('map', 'scale', self.scale)
-        config.set('map', 'center_x', map_center_x)
-        config.set('map', 'center_y', map_center_y)
+        config['map', 'proj']     = self.mapper.getProjection()
+        config['map', 'std_lon']  = self.mapper.getLambda0()
+        config['map', 'scale']    = self.scale
+        config['map', 'center_x'] = map_center_x
+        config['map', 'center_y'] = map_center_y
+
+    def getBackground(self):
+        return self.backgroundBitMap
 
     def hasInternet(self, has_connection):
         self.has_internet = has_connection
@@ -638,16 +726,23 @@ class MapWidget(QtGui.QWidget):
 
     def _showLoading(self):
         self.load_readout.move(10, self.height() - 25)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
 
     def _hideLoading(self):
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
         self.load_readout.move(self.width(), self.height())
 
     def _checkStations(self, e):
-        stn_xs, stn_ys = self.mapper(self.stn_lats, self.stn_lons)
-        if len(stn_xs) == 0 or len(stn_ys) == 0:
+#       if len(self.stn_lats) == 0:
+#           return
+
+        lb_lat, ub_lat = self.mapper.getLatBounds()
+        idxs = np.array([ idx for idx, slat in enumerate(self.stn_lats) if lb_lat <= slat <= ub_lat ])
+        if len(idxs) == 0:
             return
 
-        stn_xs, stn_ys = zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ])
+        stn_xs, stn_ys = self.mapper(self.stn_lats[idxs], self.stn_lons[idxs] + self.map_rot)
+        stn_xs, stn_ys = list(zip(*[ self.transform.map(sx, sy) for sx, sy in zip(stn_xs, stn_ys) ]))
         stn_xs = np.array(stn_xs)
         stn_ys = np.array(stn_ys)
         dists = np.hypot(stn_xs - e.x(), stn_ys - e.y())
@@ -660,7 +755,7 @@ class MapWidget(QtGui.QWidget):
             align = 0
             if stn_x > self.width() / 2:
                 sgn_x = -1
-                label_x = stn_x - fm.width(self.stn_names[stn_idx])
+                label_x = stn_x - fm.width(self.stn_names[idxs[stn_idx]])
                 align |= QtCore.Qt.AlignRight
             else:
                 sgn_x = 1
@@ -676,9 +771,9 @@ class MapWidget(QtGui.QWidget):
                 label_y = stn_y
                 align |= QtCore.Qt.AlignTop
 
-            self.stn_readout.setText(self.stn_names[stn_idx])
+            self.stn_readout.setText(self.stn_names[idxs[stn_idx]])
             self.stn_readout.move(label_x + sgn_x * label_offset, label_y + sgn_y * label_offset)
-            self.stn_readout.setFixedWidth(fm.width(self.stn_names[stn_idx]))
+            self.stn_readout.setFixedWidth(fm.width(self.stn_names[idxs[stn_idx]]))
             self.stn_readout.setAlignment(align)
             self.setCursor(QtCore.Qt.PointingHandCursor)
         else:
