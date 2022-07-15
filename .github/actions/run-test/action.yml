@@ -11,8 +11,6 @@ runs:
     # Run pytest and publish results -----------------------
     - name: Run Pytest
       shell: bash -l {0}
-      # uses: GabrielBB/xvfb-action@v1
-      # with:
       run: |
         conda activate devel
         pip install -e .
@@ -26,6 +24,6 @@ runs:
 
     - name: Publish Test Results for Linux
       uses: EnricoMi/publish-unit-test-result-action@v1
-      if: startsWith(runner.os, 'ubu')
+      if: startsWith(runner.os, 'lin')
       with:
         files: "test-results.xml"

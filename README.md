@@ -2,8 +2,8 @@
 
 ###### Sounding/Hodograph Analysis and Research Program in Python
 
-[![Build status](https://travis-ci.org/sharppy/SHARPpy.svg?branch=master)](https://travis-ci.org/sharppy)
-[![Build Status](https://dev.azure.com/sharppy/SHARPpy/_apis/build/status/sharppy.SHARPpy?branchNammasterr)](https://dev.azure.com/sharppy/SHARPpy/_build/latest?definitionId=1?branchName=master)
+[![Test Status](https://github.com/NUCAPS/SHARPpy/actions/workflows/pytest.yml/badge.svg?branch=master)](https://github.com/NUCAPS/SHARPpy/actions/workflows/pytest.yml)
+[![Build Status](https://github.com/NUCAPS/SHARPpy/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/NUCAPS/SHARPpy/actions/workflows/build.yml)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/sharppy/badges/downloads.svg)](https://anaconda.org/conda-forge/sharppy)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/sharppy/badges/license.svg)](https://anaconda.org/conda-forge/sharppy)
 [![](https://img.shields.io/github/downloads/sharppy/SHARPpy/total.svg?style=popout)](https://github.com/sharppy/SHARPpy/releases)

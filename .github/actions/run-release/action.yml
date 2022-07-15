@@ -6,24 +6,18 @@ defaults:
 inputs:
   repo-token:
     required: true
+  tag:
+    required: true
 
 runs:
   using: composite
   steps:
     # Tag and release if pushed to main -----------------------
-    # - name: Get existing tag
-    #   id: tag_version
-    #   uses: mathieudutour/github-tag-action@v6.0
-    #   with:
-    #     github_token: ${{ inputs.repo-token }}
-    #     default_bump: false
-
     - name: Create release
       uses: ncipollo/release-action@v1
       with:
-        # artifacts: "SHARPpy-*.zip"
+        artifacts: "SHARPpy-*.zip"
         token: ${{ inputs.repo-token }}
         allowUpdates: true
-        # tag: ${{ steps.tag_version.outputs.new_tag }}
-        # name: Release ${{ steps.tag_version.outputs.new_tag }}
-        # body: ${{ steps.tag_version.outputs.changelog }}
+        name: SHARPpy release ${{ inputs.tag }}
+        tag: ${{ inputs.tag }}
