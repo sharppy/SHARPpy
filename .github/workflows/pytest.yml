@@ -1,0 +1,47 @@
+name: pytest
+on:
+  push:
+    # tags-ignore:
+    #   - v*.*.*
+
+jobs:
+  test:
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      matrix:
+        python-version: [3.9]
+        include:
+          - os: [ubuntu-latest]
+
+    # Control the os/python builds
+    name: Pytest ${{ matrix.os }} x ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+      # Installs environment
+    - name: Install Conda and Environment
+      uses: ./.github/actions/install-conda
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Run Pytest
+      uses: ./.github/actions/run-test
+
+    # Unused --------------------------
+    # - name: Checkout cache
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/conda_pkgs_dir
+    #     # path: ${{ env.pythonLocation }}
+    #     key: conda-${{ runner.os }}-${{ inputs.python-version}}-${{ hashFiles('environment.yml') }}
+    #   id: cache
+
+    # if: ${{ steps.cache.outputs.cache-hit != 'true' }}

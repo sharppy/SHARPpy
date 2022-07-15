@@ -19,11 +19,11 @@ del sharppy
 import sharppy
 
 # Get the working path for Azure-Pipelines build
-runsharp_path = os.path.dirname(sharppy.__file__) + '/../runsharp/'
+runsharp_path = os.path.dirname(sharppy.__file__) + '/..'
 
 # Analyze the SHARPpy package to get dependencies, etc.
 a = Analysis(['SHARPpy.py'],
-             pathex=[runsharp_path, '/Users/blumberg/SHARPpy/runsharp'],
+             pathex=[runsharp_path, runsharp_path+r'/runsharp'],
              hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'pkg_resources.py2_warn'],
              hookspath=None,
              runtime_hooks=None)
@@ -38,7 +38,7 @@ sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases/sars/supercell/") + "*")
 shapefiles = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases/shapefiles/") + "*")
 datasources = glob.glob("../datasources/*.csv") + glob.glob("../datasources/*.xml")
-rc_files = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "../rc/") + "*.png") 
+rc_files = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "../rc/") + "*.png")
 
 for hail in sars_hail:
     a.datas += [("sharppy/databases/sars/hail/" + hail.split("/")[-1], hail, "DATA")]
@@ -80,4 +80,3 @@ app = BUNDLE(exe,
 # Revert the _version.py file to its original version using git
 import subprocess
 subprocess.Popen(['git', 'checkout', '--', ver_fname])
-

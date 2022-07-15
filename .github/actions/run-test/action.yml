@@ -1,0 +1,29 @@
+name: Run Build
+defaults:
+  run:
+    shell: bash -l {0}
+
+runs:
+  using: composite
+
+  steps:
+
+    # Run pytest and publish results -----------------------
+    - name: Run Pytest
+      shell: bash -l {0}
+      run: |
+        conda activate devel
+        pip install -e .
+        pytest -v --junitxml=test-results.xml --color=yes
+
+    - name: Publish Pytest Results for Windows/Mac
+      if: startsWith(runner.os, 'win') || startsWith(runner.os, 'mac')
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      with:
+        files: "test-results.xml"
+
+    - name: Publish Test Results for Linux
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: startsWith(runner.os, 'lin')
+      with:
+        files: "test-results.xml"

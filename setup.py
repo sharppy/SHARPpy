@@ -38,7 +38,7 @@ install_requires = ['python-dateutil', 'requests', 'numpy>=1.15', 'qtpy']
 #    import qtpy
 #    print("Success importing PySide")
 #except:
-#    install_requires.append("PySide2==5.12.*")    
+#    install_requires.append("PySide2==5.12.*")
 
 entry_pts = {"console_scripts": ['sharppy = runsharp.full_gui:main'] }
 # Create some directory variables to shorten the lines.
@@ -67,13 +67,20 @@ for csv in CSVs:
     shutil.copy(csv, os.path.join(HOME_DSDIR, os.path.basename(csv)))
 
 if os.path.exists(os.path.join(HOME_DSDIR, "available.py")):
-    # Copy over available.py and data_source.py
+    # Copy over available.py
     shutil.copy(os.path.join(HOME_DSDIR, "available.py"),
                 os.path.join(HOME_DSDIR, "available.py.old"))
- 
+
 shutil.copy(os.path.join(SRC_DSDIR, "available.py"),
             os.path.join(HOME_DSDIR, "available.py"))
 
+if os.path.exists(os.path.join(HOME_DSDIR, "data_source.py")):
+    # Copy over data_source.py
+    shutil.copy(os.path.join(HOME_DSDIR, "data_source.py"),
+                os.path.join(HOME_DSDIR, "data_source.py.old"))
+
+shutil.copy(os.path.join(SRC_DSDIR, "data_source.py"),
+            os.path.join(HOME_DSDIR, "data_source.py"))
 
 ver = versioneer.get_version()
 ver = ver.split('-')[0]

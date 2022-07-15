@@ -47,7 +47,7 @@ class backgroundWinter(QtWidgets.QFrame):
 
         self.label_height = self.label_metrics.xHeight() + self.tpad
         self.ylast = self.label_height
- 
+
         self.plotBitMap = QtGui.QPixmap(self.width()-2, self.height()-2)
         self.plotBitMap.fill(self.bg_color)
         self.plotBackground()
@@ -275,7 +275,7 @@ class plotWinter(backgroundWinter):
             qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, 'OPRH (Omega*PW*RH): ' + tab.utils.FLOAT2STR(self.oprh,2))
 
     def drawPrecipType(self, qp):
-        big = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) + 5, bold=True)
+        big = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) + 5)
         big_metrics = QtGui.QFontMetrics( big )
         height = big_metrics.xHeight() + self.tpad
         pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
@@ -285,7 +285,7 @@ class plotWinter(backgroundWinter):
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, self.precip_type)
 
     def drawPrecipTypeTemp(self, qp):
-        small = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) -1 , bold=False)
+        small = QtGui.QFont('Helvetica', round(self.hgt * self.font_ratio) -1)
         small_metrics = QtGui.QFontMetrics( small )
         height = small_metrics.xHeight() + self.tpad
         pen = QtGui.QPen(self.fg_color, 2, QtCore.Qt.SolidLine)
@@ -376,7 +376,7 @@ class plotWinter(backgroundWinter):
         qp.drawText(rect1, QtCore.Qt.TextDontClip | QtCore.Qt.AlignLeft, string)
 
 if __name__ == '__main__':
-    app_frame = QtGui.QApplication([])    
+    app_frame = QtGui.QApplication([])
     tester = plotWinter()
-    tester.show()    
+    tester.show()
     app_frame.exec_()

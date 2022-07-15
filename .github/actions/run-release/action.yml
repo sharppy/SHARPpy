@@ -1,0 +1,24 @@
+name: Run Release
+defaults:
+  run:
+    shell: bash -l {0}
+
+inputs:
+  repo-token:
+    required: true
+  tag:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Tag and release if pushed to main -----------------------
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "SHARPpy-*.zip"
+        token: ${{ inputs.repo-token }}
+        allowUpdates: true
+        name: SHARPpy release ${{ inputs.tag }}
+        tag: ${{ inputs.tag }}
+        draft: true

@@ -1,0 +1,30 @@
+name: Install Conda
+defaults:
+  run:
+    shell: bash -l {0}
+
+inputs:
+  python-version:
+    required: true
+
+runs:
+  using: composite
+  steps:
+      # Install python
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniforge-variant: mambaforge
+        miniforge-version: latest
+        python-version: ${{ inputs.python-version }}
+        activate-environment: devel
+        use-only-tar-bz2: true
+
+    - name: Install requirements (all)
+      shell: bash -l {0}
+      run: conda env update -n devel -f environment.yml
+
+    - name: Install requirements (mac)
+      if: startsWith(runner.os, 'mac')
+      shell: bash -l {0}
+      run: conda env update -n devel python.app

@@ -1,4 +1,3 @@
-
 import numpy as np
 import sharppy
 from qtpy import QtGui, QtCore, QtWidgets
@@ -79,7 +78,7 @@ class Mapper(object):
             rnd_lat_ub = np.floor(ub_lat / lat_spc) * lat_spc
             lat_lines = list(range(int(rnd_lat_lb), int(rnd_lat_ub + lat_spc), lat_spc))
             if rnd_lat_lb != lb_lat:
-                lat_lines = [int(lb_lat)] + lat_lines 
+                lat_lines = [int(lb_lat)] + lat_lines
             if rnd_lat_ub != ub_lat:
                 lat_lines = lat_lines + [int(ub_lat)]
 
@@ -190,7 +189,7 @@ class Mapper(object):
             except IndexError:
                 breaks = []
             breaks = [ 0 ] + list(breaks) + [ -1 ]
- 
+
             for idx in range(len(breaks) - 1):
                 if breaks[idx + 1] == -1:
                     seg_idxs = idxs[breaks[idx]:]
@@ -310,6 +309,7 @@ class MapWidget(QWidget):
         self.stn_lons = np.array([])
         self.stn_ids = []
         self.stn_names = []
+        self.stn_qc_flags = [] # JTS
 
         self.default_width, self.default_height = self.width(), self.height()
         self.setMinimumSize(self.width(), self.height())
@@ -377,7 +377,7 @@ class MapWidget(QWidget):
         self.setCurrentTime(data_time, init=init)
 
     def setCurrentTime(self, data_time, init=False):
-                
+
         self.clicked_stn = None
         self.clicked.emit(None)
 
@@ -389,31 +389,71 @@ class MapWidget(QWidget):
             self.stn_lats = np.array([ p['lat'] for p in self.points ])
             self.stn_lons = np.array([ p['lon'] for p in self.points ])
             self.stn_ids = [ p['srcid'] for p in self.points ]
-            self.stn_names = []
-            for p in self.points:
-                if p['icao'] != "":
-                    id_str = " (%s)" % p['icao']
-                else:
-                    id_str = ""
-                if p['state'] != "":
-                    pol_str = ", %s" % p['state']
-                elif p['country'] != "":
-                    pol_str = ", %s" % p['country']
-                else:
-                    pol_str = ""
 
-                nm = p['name']
-                if id_str == "" and pol_str == "":
-                    nm = nm.upper()
-                name = "%s%s%s" % (nm, pol_str, id_str)
-                self.stn_names.append(name)
+            # JTS - Extract QC flag (priority header) info for NUCAPS data.
+            if self.cur_source.getName().startswith("NUCAPS"):
+                self.stn_qc_flags = [ p['priority'] for p in self.points ]
+
+            self.stn_names = []
+
+            # JTS - Text that displays when hovering mouse over profiles on the map.
+            for p in self.points:
+                if self.cur_source.getName().startswith("NUCAPS"):
+                    # Format the latitude string
+                    if p['lat'] != "":
+                        lat_str = " (%s," % p['lat']
+                    else:
+                        lat_str = ""
+
+                    # Format the longitude string
+                    if p['lon'] != "":
+                        lon_str = " %s)" % p['lon']
+                    else:
+                        lon_str = ""
+
+                    # Format the string that will be displayed to the user.
+                    nm_before = p['name']
+                    date = nm_before.split('_')[0]
+                    time = nm_before.split('_')[1]
+                    footprint_number = nm_before.split('_')[2]
+                    satID = nm_before.split('_')[3]
+
+                    year = date[0:2]
+                    month = date[2:4]
+                    day = date[4:6]
+                    hour = time[0:2]
+                    minute = time[2:4]
+                    second = time[4:6]
+
+                    nm_after = f'{month}-{day}-{year}_{hour}:{minute}:{second}Z_{footprint_number}_{satID}'
+                    nm_after = nm_after.upper()
+                    name = "%s%s%s" % (nm_after, lat_str, lon_str)
+                    self.stn_names.append(name)
+                else:
+                    if p['icao'] != "":
+                        id_str = " (%s)" % p['icao']
+                    else:
+                        id_str = ""
+
+                    if p['state'] != "":
+                        pol_str = ", %s" % p['state']
+                    elif p['country'] != "":
+                        pol_str = ", %s" % p['country']
+                    else:
+                        pol_str = ""
+
+                    nm = p['name']
+                    if id_str == "" and pol_str == "":
+                        nm = nm.upper()
+                    name = "%s%s%s" % (nm, pol_str, id_str)
+                    self.stn_names.append(name)
 
             self._hideLoading()
 
             if not init:
                 self.drawMap()
                 self.update()
-       
+
         self.current_time = data_time
         getPoints = lambda: self.cur_source.getAvailableAtTime(self.current_time)
 
@@ -449,7 +489,7 @@ class MapWidget(QWidget):
             self.map_rot = 0.
             proj = self.mapper.getProjection()
             if proj == 'npstere':
-                self.map_center_y = -13 * self.height() / 10 + self.height() / 2 
+                self.map_center_y = -13 * self.height() / 10 + self.height() / 2
             elif proj == 'merc':
                 self.map_center_y = self.height() / 2
             elif proj == 'spstere':
@@ -535,32 +575,67 @@ class MapWidget(QWidget):
         lb_lat, ub_lat = self.mapper.getLatBounds()
         size = 3 * self.scale
 
-        unselected_color = QtCore.Qt.red
-        selected_color = QtCore.Qt.green
+        # JTS - Apply QC coloring to NUCAPS.
+        if self.cur_source.getName().startswith("NUCAPS"):
+            unselected_color_nucaps = QtCore.Qt.red
+            selected_color_nucaps = QtCore.Qt.green
 
-        window_rect = QtCore.QRect(0, 0, self.width(), self.height())
-        clicked_x, clicked_y, clicked_lat, clicked_id = None, None, None, None
-        color = unselected_color
-        for stn_x, stn_y, stn_lat, stn_id in zip(stn_xs, stn_ys, self.stn_lats, self.stn_ids):
-            if self.clicked_stn == stn_id:
-                clicked_x = stn_x
-                clicked_y = stn_y
-                clicked_lat = stn_lat
-                clicked_id = stn_id
-            else:
-               if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
-                    qp.setPen(QtGui.QPen(color, self.scale))
-                    qp.setBrush(QtGui.QBrush(color))
-                    qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
-        
-        color = selected_color
-        if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
-            qp.setPen(QtGui.QPen(color, self.scale))
-            qp.setBrush(QtGui.QBrush(color))
-            qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
+            window_rect = QtCore.QRect(0, 0, self.width(), self.height())
+            clicked_x, clicked_y, clicked_lat, clicked_id = None, None, None, None
+            for stn_x, stn_y, stn_lat, stn_id, stn_qc_flag in zip(stn_xs, stn_ys, self.stn_lats, self.stn_ids, self.stn_qc_flags):
+                if self.clicked_stn == stn_id:
+                    clicked_x = stn_x
+                    clicked_y = stn_y
+                    clicked_lat = stn_lat
+                    clicked_id = stn_id
+                else:
+                    if stn_qc_flag == 'green':
+                        unselected_color_nucaps = QtCore.Qt.darkGreen
+                    elif  stn_qc_flag == 'yellow':
+                        unselected_color_nucaps = QtCore.Qt.yellow
+                    elif  stn_qc_flag == 'red':
+                        unselected_color_nucaps = QtCore.Qt.red
+                    else:
+                        unselected_color_nucaps = QtCore.Qt.white
 
-        if self.cur_source.getName() == "Local WRF-ARW" and self.pt_x != None:
-            qp.drawEllipse(QtCore.QPointF(self.pt_x, self.pt_y), size, size)
+                    if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
+                        qp.setPen(QtGui.QPen(unselected_color_nucaps, self.scale))
+                        qp.setBrush(QtGui.QBrush(unselected_color_nucaps))
+                        qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
+
+            if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+                qp.setPen(QtGui.QPen(selected_color_nucaps, self.scale))
+                qp.setBrush(QtGui.QBrush(selected_color_nucaps))
+                qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
+
+        else: # JTS - Non-NUCAPS data will not have the QC coloring applied.
+            unselected_color = QtCore.Qt.red
+            selected_color = QtCore.Qt.green
+
+            window_rect = QtCore.QRect(0, 0, self.width(), self.height())
+            clicked_x, clicked_y, clicked_lat, clicked_id = None, None, None, None
+
+            color = unselected_color
+            for stn_x, stn_y, stn_lat, stn_id in zip(stn_xs, stn_ys, self.stn_lats, self.stn_ids):
+                if self.clicked_stn == stn_id:
+                    clicked_x = stn_x
+                    clicked_y = stn_y
+                    clicked_lat = stn_lat
+                    clicked_id = stn_id
+                else:
+                    if lb_lat <= stn_lat and stn_lat <= ub_lat and window_rect.contains(*self.transform.map(stn_x, stn_y)):
+                        qp.setPen(QtGui.QPen(color, self.scale))
+                        qp.setBrush(QtGui.QBrush(color))
+                        qp.drawEllipse(QtCore.QPointF(stn_x, stn_y), size, size)
+
+            color = selected_color
+            if clicked_lat is not None and lb_lat <= clicked_lat and clicked_lat <= ub_lat and window_rect.contains(*self.transform.map(clicked_x, clicked_y)):
+                qp.setPen(QtGui.QPen(color, self.scale))
+                qp.setBrush(QtGui.QBrush(color))
+                qp.drawEllipse(QtCore.QPointF(clicked_x, clicked_y), size, size)
+
+            if self.cur_source.getName() == "Local WRF-ARW" and self.pt_x != None:
+                qp.drawEllipse(QtCore.QPointF(self.pt_x, self.pt_y), size, size)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
@@ -617,9 +692,9 @@ class MapWidget(QWidget):
         lat, lon = self.mapper(mouse_x, mouse_y, inverse=True)
         lon -= self.map_rot
 
-        if lon > 180: 
+        if lon > 180:
             lon -= 360.
-        elif lon <= -180: 
+        elif lon <= -180:
             lon += 360.
 
         self.latlon_readout.setText("%.3f; %.3f" % (lat, lon))
