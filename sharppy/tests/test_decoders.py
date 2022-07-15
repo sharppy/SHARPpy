@@ -4,7 +4,6 @@ import sharppy.io.buf_decoder as buf_decoder
 import sharppy.io.spc_decoder as spc_decoder
 import sharppy.io.pecan_decoder as pecan_decoder
 import sharppy.io.uwyo_decoder as uwyo_decoder
-import sharppy.io.nucaps_decoder as nucaps_decoder # JTS
 """
     Unit tests to test to see if decoders work on different file types
 """
@@ -21,18 +20,18 @@ def test_spc_decoder():
     dec = spc_decoder.SPCDecoder(files[0])
     profs = dec.getProfiles()
     profs._backgroundCopy("")
-
+    
     # Test Interpolation
     profs.interp()
     assert profs.isInterpolated() == True
     profs.resetInterpolation()
     assert profs.isInterpolated() == False
 
-    # Test setting storm motion vectors
+    # Test setting storm motion vectors 
     profs.modifyStormMotion('right', 0, 0)
     profs.modifyStormMotion('left', 0, 0)
     profs.resetStormMotion()
-
+    
     # Try modify
     profs.modify(0, tmpc=35)
     profs.modify(0, u=0)
@@ -41,35 +40,9 @@ def test_spc_decoder():
     profs.modify(-999, tmpc=tmp, idx_range=[0,1])
     profs.resetModification('tmpc')
     profs.resetModification('u')
-
-# JTS - Added test for NUCAPS decoder.
-def test_nucaps_decoder():
-    dec = nucaps_decoder.NUCAPSDecoder(files[0])
-    profs = dec.getProfiles()
-    profs._backgroundCopy("")
-
-    # Test Interpolation
-    profs.interp()
-    assert profs.isInterpolated() == True
-    profs.resetInterpolation()
-    assert profs.isInterpolated() == False
-
-    # Test setting storm motion vectors
-    profs.modifyStormMotion('right', 0, 0)
-    profs.modifyStormMotion('left', 0, 0)
-    profs.resetStormMotion()
-
-    # Try modify
-    profs.modify(0, tmpc=35)
-    profs.modify(0, u=0)
-    tmp = profs._profs[""][0].tmpc
-    tmp[0:2] = 35
-    profs.modify(-999, tmpc=tmp, idx_range=[0,1])
-    profs.resetModification('tmpc')
-    profs.resetModification('u')
-
-def test_bufkit_decoder():
-    # Load in a BUFKIT file
+   
+def test_bufkit_decoder(): 
+    # Load in a BUFKIT file     
     dec = buf_decoder.BufDecoder(files[1])
     profs = dec.getProfiles()
     stn_id = dec.getStnId()
@@ -83,7 +56,7 @@ def test_bufkit_decoder():
 def test_uwyo_decoder():
     # Try to load in the UWYO file
     try:
-        dec = uwyo_decoder.UWYODecoder(files[2])
+        dec = uwyo_decoder.UWYODecoder(files[2]) 
     except:
         print("FAILED")
 
@@ -101,4 +74,5 @@ def test_pecan_decoder():
     profs.advanceHighlight(-1)
     profs.advanceTime(1)
     profs.advanceTime(-1)
-    #print(profs)
+    #print(profs) 
+

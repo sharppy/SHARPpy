@@ -1,0 +1,39 @@
+name: pytest
+on:
+  push:
+
+jobs:
+  test:
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    # Control the os/python builds
+    name: Pytest ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 100
+
+      # Installs environment
+    - name: Install Conda and Environment
+      uses: ./.github/actions/install-conda
+      with:
+        python-version: 3.9
+
+    - name: Run Pytest
+      uses: ./.github/actions/run-test
+
+    # Unused --------------------------
+    # - name: Checkout cache
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/conda_pkgs_dir
+    #     # path: ${{ env.pythonLocation }}
+    #     key: conda-${{ runner.os }}-${{ inputs.python-version}}-${{ hashFiles('environment.yml') }}
+    #   id: cache
+
+    # if: ${{ steps.cache.outputs.cache-hit != 'true' }}

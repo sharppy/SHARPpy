@@ -4,17 +4,16 @@ channels:
   - conda-forge/label/testing
   - anaconda
 dependencies:
-  - python=3
+  - python=3.9
   - numpy>=1.15
   - pyside2>=5.12
+  - qtpy
   - sphinx
   - pytest
-  - qtpy
+  - pytest-xvfb
   - sphinx_rtd_theme
-  #- sphinx-gallery
-  #Sphinx-Gallery removed because it requires matplotlib/pyqt and conflicts with pyside2's Qt version
   - requests
-  - python-dateutil 
+  - python-dateutil
   - pyinstaller
   - setuptools
   - certifi
