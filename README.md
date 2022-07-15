@@ -12,98 +12,111 @@
 
 SHARPpy is a collection of open source sounding and hodograph analysis routines, a sounding plotting package, and an interactive, __cross-platform__ application for analyzing real-time soundings all written in Python. It was developed to provide the atmospheric science community a free and consistent source of sounding analysis routines. SHARPpy is constantly updated and vetted by professional meteorologists and climatologists within the scientific community to help maintain a standard source of sounding routines.
 
+The version of SHARPpy in this repository allows users to access [NUCAPS](https://weather.msfc.nasa.gov/nucaps/), a satellite sounding product.
+
 ### Important links:
 * HTML Documentation: http://sharppy.github.io/SHARPpy/index.html
 * GitHub repository: https://github.com/sharppy/SHARPpy
-* Issue tracker: https://github.com/sharppy/SHARPpy/issues
-* Google Groups: https://groups.google.com/forum/#!forum/sharppy
 
 **Table of Contents**
 
-- [Developer Requests](#developer-requests)
-- [Installing SHARPpy](#installing-sharppy)
-- [Running SHARPpy](#using_the_sharppy_application)
-- [Known GUI Issues](#known-gui-issues)
+- [Install Pre-requisites](#install-pre-requisites)
+- [Install SHARPpy](#install-sharppy)
+- [Running SHARPpy from the Command Line](#running-sharppy-from-the-command-line)
 - [SHARPpy Development Team](#sharppy-development-team)
 
 =======================================================================
-##### Developer Requests:
+## Install Pre-requisites
 <sup>[[Return to Top]](#sharppy)</sup>
 
-1.) Many people have put an immeasurable amount of time into developing this software package. 
-If SHARPpy is used to develop a weather product or contributes to research that leads to a 
-scientific publication, please acknowledge the SHARPpy project by citing the code. You can use 
-this ready-made citation entry or provide a link back to this website:
-    
- [Blumberg, W. G., K. T. Halbert, T. A. Supinie, P. T. Marsh, R. L. Thompson, and J. A. Hart, 2017: "SHARPpy: An Open Source Sounding Analysis Toolkit for the Atmospheric Sciences." Bull. Amer. Meteor. Soc. doi:10.1175/BAMS-D-15-00309.1, in press.](http://journals.ametsoc.org/doi/abs/10.1175/BAMS-D-15-00309.1)
+You will need Python 3 to run SHARPpy. For instructions, visit the following websites:
+* https://www.anaconda.com/products/individual for instructions on how to set-up Python.
 
-We wish to acknowledge Jeff Whitaker, who created the [Basemap](https://matplotlib.org/basemap/) package, and from which we have borrowed data and code to develop the SHARPpy data Picker.  We also wish to acknowledge [MetPy](https://github.com/Unidata/MetPy), who we have borrowed their Matplotlib skew-t code from to illustrate some SHARPpy examples. 
+You will need run a few simple commands in a command line program:
+* Linux/MacOS: Open the Terminal application.
+* Windows: Open the Anaconda Prompt application.
 
-2.) All bug reports and feature requests should be submitted through the Github issues page in order to assist the developers in tracking the issues noted by the users.  Before you open a new issue, please check to see if your issue (or a similar one) has already been opened.  If your issue already exists, please add a comment to the issue comment thread explaining your bug report or feature request with as much detail as possible.  More detail will help the developers fix the issue (in the case of a bug report).  The issues page for the SHARPpy project can be found here:
-
-https://github.com/sharppy/SHARPpy/issues
+Note: If you are installing Anaconda for **multiple users**, [ensure these additional steps are met](https://docs.anaconda.com/anaconda/install/multi-user/), which includes checking the permissions using an administrator account.
 
 =======================================================================
-### Installing SHARPpy
+## Install SHARPpy
 <sup>[[Return to Top]](#sharppy)</sup>
 
-SHARPpy code can be installed on _Windows_, _Mac OS X_, and _Linux_, as all these platforms can run Python programs.  SHARPpy may run on other operating systems, but this has not been tested by the developers.  Chances are if it can run Python, it can run SHARPpy.  
+For those wishing to run both the GUI and do scripting, we recommend you install the Python 3 Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from conda by using:
 
-If you would like to run SHARPpy from a binary (if you don't want to do scripting), look for the most recent release here: https://github.com/sharppy/SHARPpy/releases
+```bash
+conda install -c conda-forge sharppy
+```
+Skip to the 'Running SHARPpy from the Command Line' section.
 
-For those wishing to run both the GUI and do scripting, we recommend you install the _Python 3_ Anaconda Python Distribution from Continuum Analytics. You can install SHARPpy from `conda` by using:
+### Download options
+If you aren't downloading from conda forge, you can download sharppy using the following options.
 
-    conda install -c conda-forge sharppy
+### Option 1: Manual download (easy)
 
-The Anaconda Python Distribution can be downloaded here: https://www.anaconda.com/download/
+You can manually download the coding by clicking the "Code" button at the top right of the repository, then select "Download Zip." Unzip the files in the directory that you want to permanently store them.
 
-__Required Python Packages/Libraries:__
+### Option 2: Download using Git (intermediate)
 
-Since SHARPpy requires the qtpy and Numpy packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  qtpy can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
+If you have Git installed and are familiar with it, open the command line for your operating system (see above) to perform these steps.
 
-* qtpy
-* NumPy v1.15
-* PySide2 v5.13
-* requests
-* python-dateutil
+```bash
+git clone https://github.com/sharppy/SHARPpy
+```
 
-Since SHARPpy requires these packages, you will need to install them.  If you choose to use the Anaconda distribution, Numpy comes installed by default.  PySide, requests, and python-dateutil can be installed through the Anaconda package manager that comes with the Anaconda distribution by opening up your command line program (Terminal in Mac OS X/Linux and Command Prompt in Windows) and typing:
+### Install SHARPpy
 
-After installing all the required Python packages for SHARPpy, you now can install the SHARPpy package to your computer.  You'll need to download it to your computer first and open up a command line prompt.  You can download it as a ZIP file (link on the right) or clone the Git respository (you will need the git program) into a directory on your computer by typing this into your command line:
+Open the terminal (UNIX/Linux) or Anaconda Prompt (Windows) and change your directory to where you have downloaded SHARPpy (e.g. /home/{user}/SHARPpy).
 
-    git clone https://github.com/sharppy/SHARPpy.git
-    
-If you follow the route of cloning SHARPpy, you can update to the most recent SHARPpy package by typing the following within the folder you downloaded SHARPpy to:
+```bash
+cd /home/<user>/SHARPpy
+```
 
-    git pull origin master
-    
-Once the package has been downloaded to your computer, use your command line to navigate into the SHARPpy directory and type this command in to install SHARPpy:
+Next, we to create an isolated Anaconda environment just for running SHARPpy with all the necessary libraries (using conda env create {options}; it may take several minutes to install the libraries). If you are interested, you can open the environment.yml file to see which libraries are used.
 
-    python setup.py install
+```bash
+conda env create -f environment.yml
+```
 
-After installing the package, you can run the SHARPpy GUI and interact with the SHARPpy libraries through Python scripts.
+After creating the environment, we need to switch to this new environment (via conda activate {env_name}) which we have named devel.
 
-**REMINDER: You must re-run the "python setup.py install" script for updates to take hold**
+```bash
+conda activate devel
+```
+
+Run setup.py to update SHARPpy.
+
+```bash
+python setup.py install
+```
+
+Once the installation is complete, keep the terminal open and follow the steps in the next section to launch SHARPpy.
+
+### Running SHARPpy from the Command Line
+
+In the command line, type the command sharppy to launch the program.
+
+```bash
+sharppy
+```
+
+If successful, a window will open which will give you access to soundings from NUCAPS, RAOBS, and select models.  For instructions on using SHARPpy, see the “Display NUCAPS in SHARPpy” quick guide.
+
+### How to run SHARPpy next time you log on
+
+If you close the terminal window, you will have to repeat the following steps:
+
+1. Open the terminal (Unix/Linux) or Anaconda Prompt (Windows)
+2. Switch your environment to devel ("conda activate devel")
+3. Type sharppy and the window should launch.
+
+```bash
+conda activate devel
+sharppy
+```
 
 =======================================================================
-## Running SHARPpy
-<sup>[[Return to Top]](#sharppy)</sup>
-
-To run the pre-compiled binary program, double click on the icon.  It may take 20-30 seconds for the window to open so please be patient.
-
-To run SHARPpy from the command line after installing the code, run the following command:
-
-    $ sharppy
-
-Either of these will load the SHARPpy Sounding Picker GUI.
-
-### Known GUI Issues
-<sup>[[Return to Top]](#sharppy)</sup>
-
-Known Issues:
-- Moving through time with model profiles may be slow in the Windows binaries because of a backend bug. Running from the code should be fine.
-
-### SHARPpy Development Team
+## SHARPpy Development Team
 <sup>[[Return to Top]](#sharppy)</sup>
 
 SHARPpy is currently managed by the following co-developers (in no particular order):
@@ -111,5 +124,5 @@ SHARPpy is currently managed by the following co-developers (in no particular or
 - Kelton Halbert (UW-Madison)
 - Greg Blumberg (NASA GSFC)
 - Tim Supinie (OU School of Meteorology)
-
-
+- Rebekah Esmaili (Science and Technology Corp.)
+- Jeff Szkodzinski (Science and Technology Corp.)

@@ -2,7 +2,7 @@
 
 .. raw:: html
 
-    <style> .red {color:red} 
+    <style> .red {color:red}
     .green{color:green}
     .cyan{color:#00D7D7}
     .purple{color:purple}
@@ -51,7 +51,7 @@ Parcel LCL, LFC, and EL are denoted on the right-hand side in :green:`green`, :y
 
     An example of the Skew-T inset showing a model forecast sounding for May 31, 2013 at 18 UTC.  The 2-6 km max lapse rate layer clearly denotes the elevated mixed layer, while the omega profile indicates that rising motion is occuring within the lowest 6 km of the sounding in the forecast.
 
-If the Winter inset is selected, SHARPpy will label the the dendritic growth zone (DGZ), the wet-bulb zero (WBZ), and the freezing level (FRZ) on the Skew-T diagram.  If the Fire inset is selected, the convective boundary layer top will be denoted on the Skew-T. 
+If the Winter inset is selected, SHARPpy will label the the dendritic growth zone (DGZ), the wet-bulb zero (WBZ), and the freezing level (FRZ) on the Skew-T diagram.  If the Fire inset is selected, the convective boundary layer top will be denoted on the Skew-T.
 
 Wind Speed Profile
 ------------------
@@ -138,7 +138,7 @@ Theta-E w/ Pressure
     :scale: 30%
     :align: center
 
-See `Atkins and Wakimoto 1991 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0434%281991%29006%3C0470%3AWMAOTS%3E2.0.CO%3B2>`_ for more information on what to look for in this inset when forecasting wet microbursts. 
+See `Atkins and Wakimoto 1991 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0434%281991%29006%3C0470%3AWMAOTS%3E2.0.CO%3B2>`_ for more information on what to look for in this inset when forecasting wet microbursts.
 
 Storm-Relative Winds w/ Height
 ------------------------------
@@ -147,7 +147,7 @@ Storm-Relative Winds w/ Height
     :scale: 30%
     :align: center
 
-See `Rasmussen and Straka 1998 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0493%281998%29126%3C2406%3AVISMPI%3E2.0.CO%3B2>`_ for more information on how the anvil-level storm relative winds may be used to predict supercell morphology.  See `Thompson et al. 2003 <https://www.spc.noaa.gov/publications/thompson/ruc_waf.pdf>`_ for information on using the 4-6 km storm-relative winds to predict tornado environments. 
+See `Rasmussen and Straka 1998 <https://journals.ametsoc.org/doi/pdf/10.1175/1520-0493%281998%29126%3C2406%3AVISMPI%3E2.0.CO%3B2>`_ for more information on how the anvil-level storm relative winds may be used to predict supercell morphology.  See `Thompson et al. 2003 <https://www.spc.noaa.gov/publications/thompson/ruc_waf.pdf>`_ for information on using the 4-6 km storm-relative winds to predict tornado environments.
 
 Possible Hazard Type
 --------------------
@@ -163,3 +163,24 @@ Flowchart
     :scale: 30%
     :align: center
 
+NUCAPS
+--------------------
+The NOAA Unique Combined Atmospheric Processing System (NUCAPS) profiles are available twice a day using infrared and microwave sounders on board several polar orbiting satellites. NUCAPS measures vertical profiles of temperature, humidity, and trace gas concentrations. Research applications include short-term severe weather prediction, studying fire weather, and monitoring the long range transport of smoke.
+
+.. image:: tutorial_imgs/nucaps_picker.png
+
+The dropdown menu lists NUCAPS from several satellites and regions. In the image above, we are selecting NUCAPS from NOAA-20 over CONUS ("NUCAPS CONUS NOAA-20"). Then, select your date the date and time (the default is the most recent overpass). On the picker screen, NUCAPS is displayed as green (use freely), yellow (use with caution) and red dots (not recommended for use) to indicate retrieval quality (for more information, see the `quick guide <https://weather.msfc.nasa.gov/nucaps/qg/NUCAPS-QF-quick-guide.pdf>`_). To view the profiles, click on a dot (which will change color to light green) and then click the "Generate Profile" button. The Skew-T display will appear.
+
+Interpretting NUCAPS on the Skew-T diagram is similar to RAOB and model data. You may notice that NUCAPS is smoother than other sounder products. This is because NUCAPS (1) has a lower vertical resolution, (2) is a volume observation that spans ~50 km at nadir, and (3) estimates the atmospheric state when clouds are removed. While comparable to RAOBS and models, it is important to understand NUCAPS retrievals are not performing the same measurement. To easily make comparisons, see the :ref:`interacting with multiple soundings <interacting with multiple soundings>` section. Also note that NUCAPS cannot retrieve wind fields.
+
+.. image:: tutorial_imgs/nucaps_profile.png
+
+NUCAPS also retrieves cloud top fraction (displayed as CTP = %) and pressure (displayed as a yellow line), which are indicated with red arrows on the example plot below. Significantly cloudy scenes may pass quality control but can still introduce errors to the retrieval, particularly for surface values. In addition to understanding retrieval confidence, the cloud products can be used to identify the cloud layer.
+
+Additional resources on NUCAPS in forecasting applications and SHARPPy:
+
+* A `Esmaili et al., 2020 <https://doi.org/10.3390/rs12050886>`_ described how NUCAPS was used in the Hazardous Weather Testbed.
+
+* Satellite Book Club presentation on `YouTube <https://www.youtube.com/watch?v=7G1qe3nrKSQ>`_.
+
+* The `CIMSS Satellite Blog <https://cimss.ssec.wisc.edu/satellite-blog/?s=sharppy>`_ has several posts related to SHARPpy.
