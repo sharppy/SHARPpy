@@ -21,3 +21,4 @@ runs:
         allowUpdates: true
         name: SHARPpy release ${{ inputs.tag }}
         tag: ${{ inputs.tag }}
+        draft: true

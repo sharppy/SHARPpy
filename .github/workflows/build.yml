@@ -24,8 +24,8 @@ jobs:
       matrix:
         python-version: [3.9]
         include:
-          # - os: [macos-latest, windows-latest]
-          - os: [windows-latest]
+          - os: [macos-latest, windows-latest]
+          # - os: [windows-latest]
 
     # Control the os/python builds
     name: ${{ matrix.os }} Build and Release
@@ -47,6 +47,7 @@ jobs:
       uses: ./.github/actions/run-build
 
     - name: Create Release
+      # if: successful()
       uses: ./.github/actions/run-release
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}

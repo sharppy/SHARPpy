@@ -11,15 +11,6 @@ runs:
   using: composite
   steps:
       # Install python
-    # - name: Set up Python ${{ inputs.python-version }}
-    #   uses: conda-incubator/setup-miniconda@v2
-    #   with:
-    #     miniforge-variant: mambaforge
-    #     miniforge-version: latest
-    #     python-version: ${{ inputs.python-version }}
-    #     activate-environment: devel
-    #     use-only-tar-bz2: true
-
     - name: Set up Python ${{ inputs.python-version }}
       uses: conda-incubator/setup-miniconda@v2
       with:

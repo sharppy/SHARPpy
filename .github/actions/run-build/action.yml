@@ -13,15 +13,14 @@ runs:
       run: |
         conda activate devel
         pip install -e .
-        cd runsharp
+
         OS=${{runner.os}}
         echo ${OS:0:3}
         if [[ "${OS:0:3}" == "mac" ]]; then
-          pyinstaller SHARPpy-osx.spec --log-level DEBUG
+          pyinstaller runsharp/SHARPpy-osx.spec --log-level DEBUG
         elif [[ "${OS:0:3}" == "Win" ]]; then
-          pyinstaller SHARPpy-win7-64.spec --log-level DEBUG
+          pyinstaller runsharp/SHARPpy-win.spec --log-level DEBUG
         fi
-        cd ..
 
     # Archive the binaries -----------------------
     - name: Archive release on Windows
@@ -30,7 +29,7 @@ runs:
       with:
         type: 'zip'
         filename: 'SHARPpy-Windows.zip'
-        path: runsharp/dist/SHARPpy.exe
+        path: dist/SHARPpy.exe
 
     - name: Archive release on Mac
       uses: thedoctor0/zip-release@main
@@ -38,7 +37,7 @@ runs:
       with:
         type: 'zip'
         filename: 'SHARPpy-MacOS.zip'
-        path: runsharp/dist/SHARPpy.app
+        path: dist/SHARPpy.app
 
     # Unused -----------------------
       # commit: 'master'
