@@ -22,11 +22,14 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[WIN_PATH+r'\runsharp', WIN_PATH],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn'],
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'sharppy.io.nucaps_decoder', 'datasources.available', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn'],
              hookspath=None,
              runtime_hooks=None)
 
+print("PRINTING SCRIPTS AND BINARIES")
 print(a.scripts)
+print(a.binaries)
+print("-----")
 
 for b in a.binaries:
     if b[0] == '':
@@ -72,7 +75,7 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=False, icon='icons\\SHARPpy.ico')
+          console=True, icon='icons\\SHARPpy.ico')
 
 # Revert the _version.py file to its original version using git
 import subprocess
