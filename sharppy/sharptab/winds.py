@@ -225,7 +225,7 @@ def non_parcel_bunkers_motion_experimental(prof):
     mnu500m, mnv500m = mean_wind(prof, psfc, p500m)
     
     ## 5.5km-6.0km Mean Wind
-    mnu5500m_6000m, mnv5500m_6000m = mean_wind(prof, p5500m, p6000m)
+    mnu5500m_6000m, mnv5500m_6000m = mean_wind_npw(prof, p5500m, p6000m)
     
     # shear vector of the two mean winds
     shru = mnu5500m_6000m - mnu500m
