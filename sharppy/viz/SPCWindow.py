@@ -307,7 +307,6 @@ class SPCWidget(QWidget):
             self.sound.setAllObserved(self.coll_observed, update_gui=False)
             self.hodo.setAllObserved(self.coll_observed, update_gui=False)
 
-
         cur_dt = self.prof_collections[self.pc_idx].getCurrentDate()
         for prof_col in self.prof_collections:
             if not prof_col.getMeta('observed'):
@@ -378,7 +377,7 @@ class SPCWidget(QWidget):
 
     def updateProfs(self):
         logging.debug("Calling SPCWidget.updateProfs")
-        
+
         prof_col = self.prof_collections[self.pc_idx]
         self.default_prof = prof_col.getHighlightedProf()
 
@@ -476,7 +475,7 @@ class SPCWidget(QWidget):
         sheet = self.styleSheet()
         sheet = _modifySheet(sheet, 'background-color', bg_hex)
         self.setStyleSheet(sheet)
-        
+
         sheet = self.ur.styleSheet()
         sheet = _modifySheet(sheet, 'background-color', bg_hex)
         sheet = _modifySheet(sheet, 'border-color', fg_hex)
@@ -579,7 +578,7 @@ class SPCWidget(QWidget):
         if self.left_inset == "WINTER" or self.right_inset == "WINTER":
             self.sound.setDGZ(True)
             self.dgz = True
- 
+
         ## Do a check for setting the pbl
         if self.left_inset == "FIRE" or self.right_inset == "FIRE":
             self.sound.setPBLLevel(True)
@@ -698,12 +697,12 @@ class SPCWidget(QWidget):
             if self.left_inset == "WINTER" and self.dgz:
                 self.sound.setDGZ(False)
                 self.dgz = False
- 
+
             if self.left_inset == "FIRE" and self.pbl:
                 self.sound.setPBLLevel(False)
                 self.pbl = False
-            
-            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to
             #   delete something you want to remove from the layout.
             self.left_inset_ob.deleteLater()
             self.insets[self.left_inset] = SPCWidget.inset_generators[self.left_inset]()
@@ -725,7 +724,7 @@ class SPCWidget(QWidget):
                 self.sound.setPBLLevel(False)
                 self.pbl = False
 
-            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to 
+            # Delete and re-make the inset.  For some stupid reason, pyside/QT forces you to
             #   delete something you want to remove from the layout.
             self.right_inset_ob.deleteLater()
             self.insets[self.right_inset] = SPCWidget.inset_generators[self.right_inset]()
@@ -744,7 +743,7 @@ class SPCWidget(QWidget):
         if a.data() == "FIRE":
             self.sound.setPBLLevel(True)
             self.pbl = True
- 
+
         self.setFocus()
         self.update()
 
@@ -774,7 +773,7 @@ class SPCWindow(QMainWindow):
 
         bg_hex = self.spc_widget.config['preferences', 'bg_color']
         self.setStyleSheet("QMainWindow { background-color: " + bg_hex + "; }")
-        
+
         ## handle the attribute of the main window
         if platform.system() == 'Windows':
             self.setGeometry(10,30,1180,800)
@@ -866,10 +865,11 @@ class SPCWindow(QMainWindow):
         if any( mitem.title() == menu_name and mitem.menuAction().isVisible() for mitem in self.menu_items ):
             self.spc_widget.setProfileCollection(menu_name)
             return
-            
-        if not prof_col.getMeta('observed'):
-            self.allobserved.setDisabled(True)
-            self.allobserved.setChecked(False)
+
+        # JTS - keep "collect observed" option active, regardless of profile type.
+        # if not prof_col.getMeta('observed'):
+            # self.allobserved.setDisabled(True)
+            # self.allobserved.setChecked(False)
 
         self.createProfileMenu(prof_col)
 
@@ -965,6 +965,21 @@ class SPCWindow(QMainWindow):
         pc_date = prof_col.getMeta('run').strftime("%d/%H%MZ")
         pc_model = prof_col.getMeta('model')
 
+        # JTS - For NUCAPS case study data sources,
+        # construct pc_date string from pc_loc since obs times list is empty.
+        if pc_model == "NUCAPS Case Study NOAA-20" \
+            or pc_model == "NUCAPS Case Study Suomi-NPP" \
+            or pc_model == "NUCAPS Case Study Aqua" \
+            or pc_model == "NUCAPS Case Study MetOp-A" \
+            or pc_model == "NUCAPS Case Study MetOp-B" \
+            or pc_model == "NUCAPS Case Study MetOp-C":
+            date = pc_loc.split('_')[0]
+            time = pc_loc.split('_')[1]
+            day = date[4:6]
+            hour = time[0:2]
+            minute = time[2:4]
+            pc_date = f'{day}/{hour}{minute}Z'
+
         return "%s (%s %s)" % (pc_loc, pc_date, pc_model)
 
     def interpProf(self):
@@ -995,7 +1010,7 @@ class SPCWindow(QMainWindow):
             self.picker_window.raise_()
 
 if __name__ == '__main__':
-    app_frame = QApplication([])    
+    app_frame = QApplication([])
     tester = SPCWindow()
-    tester.show()    
+    tester.show()
     app_frame.exec_()

@@ -1,0 +1,50 @@
+name: Run Build
+defaults:
+  run:
+    shell: bash -l {0}
+
+runs:
+  using: composite
+  steps:
+
+    # Build Windows/Mac binaries -----------------------
+    - name: Build for ${{runner.os}}
+      shell: bash -l {0}
+      run: |
+        conda activate devel
+        pip install -e .
+
+        OS=${{runner.os}}
+        echo ${OS:0:3}
+        if [[ "${OS:0:3}" == "mac" ]]; then
+          pyinstaller runsharp/SHARPpy-osx.spec --log-level DEBUG
+        elif [[ "${OS:0:3}" == "Win" ]]; then
+          pyinstaller runsharp/SHARPpy-win.spec --log-level DEBUG
+        fi
+
+    # Archive the binaries -----------------------
+    - name: Archive release on Windows
+      uses: thedoctor0/zip-release@main
+      if: startsWith(runner.os, 'win')
+      with:
+        type: 'zip'
+        filename: 'SHARPpy-Windows.zip'
+        path: dist/SHARPpy.exe
+
+    - name: Archive release on Mac
+      uses: thedoctor0/zip-release@main
+      if: startsWith(runner.os, 'mac')
+      with:
+        type: 'zip'
+        filename: 'SHARPpy-MacOS.zip'
+        path: dist/SHARPpy.app
+
+    # Unused -----------------------
+      # commit: 'master'
+      # token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Publish those artifacts for this build so testers can view them.
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: screenshots
+      #     path: examples/data/

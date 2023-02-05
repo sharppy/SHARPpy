@@ -1057,34 +1057,22 @@ def loadData(data_source, loc, run, indexes, ntry=0, __text__=None, __prog__=Non
     """
     Loads the data from a remote source. Has hooks for progress bars.
     """
-    if archive_path is not None:  
-        arc_file = join(archive_path, '{date:s}_{model:s}_{site:s}.sharppy'.format(date=run.strftime('%Y%m%d%H'), model=data_source.getName().lower().replace(' ', '_'), site=loc['srcid'].lower()))
-    else:
-        archive = False
     
     if __text__ is not None:
         __text__.emit("Decoding File")
 
-    if exists(arc_file):
-        url = arc_file
-        decoder  = getDecoder('archive')
+    if data_source.getName() == "Local WRF-ARW":
+        url = data_source.getURLList(outlet="Local")[0].replace("file://", "")
+        decoder = ARWDecoder
+        dec = decoder((url, loc[0], loc[1]))
     else:
-        if data_source.getName() == "Local WRF-ARW":
-            url = data_source.getURLList(outlet="Local")[0].replace("file://", "")
-            decoder = ARWDecoder
-            dec = decoder((url, loc[0], loc[1]))
-        else:
-            decoder, url = data_source.getDecoderAndURL(loc, run, outlet_num=ntry)
-            logging.info("Using decoder: " + str(decoder))
-            logging.info("Data URL: " + url)
+        decoder, url = data_source.getDecoderAndURL(loc, run, outlet_num=ntry)
+        logging.info("Using decoder: " + str(decoder))
+        logging.info("Data URL: " + url)
     dec = decoder(url)
 
     if __text__ is not None:
         __text__.emit("Creating Profiles")
-
-    if archive:
-        with open(arc_file, 'wb') as out_file:
-            out_file.write(compress(dumps(dec.getProfiles(indexes=None).serialize(stringify_date=True)).encode("utf-8")))
 
     profs = dec.getProfiles(indexes=indexes)
     return profs

@@ -2,8 +2,8 @@
 import os.path
 import subprocess
 release = True
-__version__ = '1.4.0'
-__version_name__ = 'Klamathon'
+__version__ = '1.4.1'
+__version_name__ = 'Jellison'
 __upstream_version__ = '1.4.0'
 __upstream_version_name__ = "Andover"
 __brand__ = 'SHARPpy IMET'

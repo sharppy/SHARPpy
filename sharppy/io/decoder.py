@@ -18,7 +18,7 @@ import logging
 class abstract(object):
     def __init__(self, func):
         self._func = func
-    
+
     def __call__(self, *args, **kwargs):
         raise NotImplementedError("Function or method '%s' is abstract.  Override it in a subclass!" % self._func.__name__)
 
@@ -30,9 +30,9 @@ _decoders = {}
 def findDecoders():
     global _decoders
 
-    level = -1 if not is_py3() else 0 
+    level = -1 if not is_py3() else 0
 
-    built_ins = [ 'buf_decoder', 'spc_decoder', 'pecan_decoder', 'arw_decoder', 'uwyo_decoder','archive_decoder', 'ibufr_decoder', 'fsl_decoder', 'wmo_decoder' ]
+    built_ins = [ 'buf_decoder', 'spc_decoder', 'pecan_decoder', 'arw_decoder', 'uwyo_decoder', 'nucaps_decoder', 'ibufr_decoder', 'fsl_decoder', 'wmo_decoder' ] # JTS - Added NUCAPS.
     io = __import__('sharppy.io', globals(), locals(), built_ins, level)
 
     for dec in built_ins:
@@ -52,7 +52,7 @@ def findDecoders():
         dec_mod_name = os.path.basename(dec)[:-3]
         logging.debug("Found custom decoder '%s'." % dec_mod_name)
         dec_imp = imp.load_source(dec_mod_name, dec)
-        
+
         dec_name = dec_imp.__classname__
         fmt_name = dec_imp.__fmtname__
 

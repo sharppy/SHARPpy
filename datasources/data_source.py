@@ -11,7 +11,7 @@ except ImportError:
     from urllib.error import URLError
     from urllib.parse import quote, urlparse, urlunsplit
 
-import certifi 
+import certifi
 import platform, subprocess, re
 import imp
 import socket
@@ -20,9 +20,17 @@ import traceback
 
 import sharppy.io.decoder as decoder
 from sharppy.io.csv import loadCSV
+from sharppy.io.csv import loadNUCAPS_CSV
+
 import sutils.frozenutils as frozenutils
 
 HOME_DIR = os.path.join(os.path.expanduser("~"), ".sharppy", "datasources")
+NUCAPS_times_file = os.path.join(HOME_DIR, "nucapsTimes.txt") # JTS
+
+# Cleanup; Remove nucapsTimes.txt and cloudTopValues.txt when main GUI opens.
+if os.path.isfile(NUCAPS_times_file):
+    os.remove(NUCAPS_times_file)
+
 if not os.path.exists(HOME_DIR):
     os.makedirs(HOME_DIR)
 
@@ -43,11 +51,12 @@ class DataSourceError(Exception):
 
 def loadDataSources(ds_dir=HOME_DIR):
     """
-    Load the data source information from the XML files. 
+    Load the data source information from the XML files.
     Returns a dictionary associating data source names to DataSource objects.
     """
+
     files = glob.glob(os.path.join(ds_dir, '*.xml'))
-    if len(files) == 0:     
+    if len(files) == 0:
         if frozenutils.isFrozen():
             frozen_path = frozenutils.frozenPath()
             files = glob.glob(os.path.join(frozen_path, 'sharppy', 'datasources', '*.xml')) +  \
@@ -86,7 +95,7 @@ def _pingURL(hostname, timeout=1):
 
 def pingURLs(ds_dict):
     """
-    Try to ping all the URLs in any XML file. 
+    Try to ping all the URLs in any XML file.
     Takes a dictionary associating data source names to DataSource objects.
     Returns a dictionary associating URLs with a boolean specifying whether or not they were reachable.
     """
@@ -110,7 +119,7 @@ def pingURLs(ds_dict):
 
 class Outlet(object):
     """
-    An Outlet object contains all the information for a data outlet (for example, the observed 
+    An Outlet object contains all the information for a data outlet (for example, the observed
     sounding feed from SPC, which is distinct from the observed sounding feed from, say, Europe).
     """
     def __init__(self, ds_name, config):
@@ -121,7 +130,36 @@ class Outlet(object):
         self._time = config.find('time')
         point_csv = config.find('points')
         #self.start, self.end = self.getTimeSpan()
-        self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+
+        # JTS - Parse remote CSVs from FTP site for NUCAPS data sources.
+        # Read the NUCAPS data source, region, satellite ID, year, month, day and time info
+        # from the temporary file and assign to local variables.
+        if os.path.isfile(NUCAPS_times_file):
+            file = open(NUCAPS_times_file)
+            line = file.readlines()
+
+            # Remove the list surrounding the values.
+            line = line[0]
+            selected_ds = str(line.split(',')[0])
+
+            # If data source in xml matches selected data source, then grab the associated remote csv file.
+            if self._ds_name == selected_ds:
+                region = str(line.split(',')[1])
+                satID = str(line.split(',')[2])
+                YEAR = str(line.split(',')[3])
+                MONTH = str(line.split(',')[4])
+                DAY = str(line.split(',')[5])
+                TIME = str(line.split(',')[6])
+
+                remote_csv = f'https://geo.nsstc.nasa.gov/SPoRT/jpss-pg/nucaps/gridded/{region}/sharppy/{satID}/csv/{YEAR}{MONTH}{DAY}{TIME}/{satID}_{region}.csv'
+                self._csv_fields, self._points = loadNUCAPS_CSV(remote_csv)
+            else:
+                # Do nothing if data source name in xml does not match the selected data source.
+                self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+        else:
+            # Parse local CSVs stored in ~/.sharppy/datasources for non-NUCAPS data sources.
+            self._csv_fields, self._points = loadCSV(os.path.join(HOME_DIR, point_csv.get("csv")))
+
         for idx in range(len(self._points)):
             self._points[idx]['lat'] = float(self._points[idx]['lat'])
             self._points[idx]['lon'] = float(self._points[idx]['lon'])
@@ -148,12 +186,12 @@ class Outlet(object):
             s = datetime.utcnow()
         else:
             s = datetime.strptime(start, '%Y/%m/%d')
- 
+
         if end == "-" or end is None:
             e = None
         elif end == 'now':
-            e = datetime.utcnow() 
-        else:   
+            e = datetime.utcnow()
+        else:
             e = datetime.strptime(end, '%Y/%m/%d')
         return [s, e]
 
@@ -222,7 +260,7 @@ class Outlet(object):
         time_counter = daily_cycles.index(start.hour)
         archive_len = self.getArchiveLen()
         # TODO: Potentially include the option to specify the beginning date of the archive, if the data source
-        # is static? 
+        # is static?
 
         cycles = []
         cur_time = start
@@ -265,7 +303,7 @@ class Outlet(object):
                 self._is_available = True
 
             except URLError as err:
-                logging.exception(err) 
+                logging.exception(err)
                 stns_avail = []
                 self._is_available = False
         logging.debug("_is_available: "+ str(self._is_available))
@@ -293,7 +331,7 @@ class Outlet(object):
                 logging.exception(err)
                 custom_failed = True
                 self._is_available = False
-     
+
         if not self._custom_avail or custom_failed:
             times = self.getArchivedCycles(max_cycles=max_cycles)
         logging.debug("outlet.getAvailableTimes() times Found:" + str(times[~max_cycles:]))
@@ -392,7 +430,7 @@ class DataSource(object):
         return max(cycles)
 
     def getAvailableTimes(self, filename=None, outlet_num=None, max_cycles=100, dt=None):
-        logging.debug("data_source.getAvailableTimes() filename="+str(filename)+' outlent_num=' +str(outlet_num) + ' dt=' + str(dt))
+        logging.debug("data_source.getAvailableTimes() filename="+str(filename)+' outlet_num=' +str(outlet_num) + ' dt=' + str(dt))
         cycles = self._get('getAvailableTimes', outlet_num=outlet_num, filename=filename, max_cycles=max_cycles, dt=dt)
         return cycles[-max_cycles:]
 
@@ -418,15 +456,32 @@ class DataSource(object):
             outlet = self._getOutletWithProfile(stn, cycle_dt, outlet_num=outlet_num)
         url_base = self._outlets[outlet].getURL()
         logging.debug("URL: " + url_base)
-        fmt = {
-            'srcid':quote(stn['srcid']),
-            'cycle':"%02d" % cycle_dt.hour,
-            'date':cycle_dt.strftime("%y%m%d"),
-            'year':cycle_dt.strftime("%Y"),
-            'month':cycle_dt.strftime("%m"),
-            'day':cycle_dt.strftime("%d")
-        }
 
+        # JTS - Format the URL differently for NUCAPS.
+        if self._name == 'NUCAPS CONUS NOAA-20' \
+            or self._name == 'NUCAPS CONUS Aqua' \
+            or self._name == 'NUCAPS CONUS MetOp-A' \
+            or self._name == 'NUCAPS CONUS MetOp-B' \
+            or self._name == 'NUCAPS CONUS MetOp-C' \
+            or self._name == 'NUCAPS Caribbean NOAA-20' \
+            or self._name == 'NUCAPS Alaska NOAA-20':
+            fmt = {
+                'srcid':quote(stn['srcid']),
+                'cycle':"%02d%02d" % (cycle_dt.hour, cycle_dt.minute),
+                'date':cycle_dt.strftime("%y%m%d"),
+                'year':cycle_dt.strftime("%Y"),
+                'month':cycle_dt.strftime("%m"),
+                'day':cycle_dt.strftime("%d")
+            }
+        else:
+            fmt = {
+                'srcid':quote(stn['srcid']),
+                'cycle':"%02d" % cycle_dt.hour,
+                'date':cycle_dt.strftime("%y%m%d"),
+                'year':cycle_dt.strftime("%Y"),
+                'month':cycle_dt.strftime("%m"),
+                'day':cycle_dt.strftime("%d")
+            }
         url = url_base.format(**fmt)
         logging.debug("Formatted URL: " + url)
         return url

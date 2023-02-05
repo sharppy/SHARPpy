@@ -430,23 +430,3 @@ class ProfCollection(object):
         self._mod_wind[self._prof_idx] = False
         self._mod_therm[self._prof_idx] = False
         self._interp[self._prof_idx] = False
-        
-    def serialize(self, stringify_date=True):
-        serial = {'profiles': {},
-                  'meta'    : dict([(x, self._meta[x]) for x in list(set(self._meta.keys()).difference(set(['highlight'])))]),
-                  'highlighted': self._highlight}
-        if stringify_date:
-            serial['meta']['base_time'] = serial['meta']['base_time'].strftime('%Y-%m-%dT%H:%M:%SZ')
-        for key in self._profs:
-            serial['profiles'][key] = [prof.serialize(stringify_date=stringify_date) for prof in self._profs[key]]
-        
-        for x in range(len(self._dates)):
-            date = self._dates[x]
-            for mem in serial['profiles']:
-                if 'date' not in serial['profiles'][mem][x]:
-                    if stringify_date == True:
-                        serial['profiles'][x]['date'] = date.strftime('%Y-%m-%dT%H:%M:%SZ')
-                    else:
-                        serial['profiles'][x]['date'] = date
-        
-        return serial
