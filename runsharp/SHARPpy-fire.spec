@@ -4,8 +4,7 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'F:\Development\SHARPpy\runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', \
-                            'sharppy.io.buf_decoder', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six', 'sharppy.io.pecan_decoder', 'sharppy.io.uwyo_decoder'],
+             hiddenimports=['xml.etree.ElementTree', 'datasources.available', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'sharppy.io.nucaps_decoder', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six', 'sharppy.io.archive_decoder', 'sharppy.io.ibufr_decoder', 'sharppy.io.PyrepBUFR', 'sharppy.io.PyrepBUFR.tables', 'sharppy.io.PyrepBUFR.utility', 'sharppy.io.PyrepBUFR.utility.io'],
              hookspath=None,
              runtime_hooks=None)
 
@@ -20,27 +19,29 @@ a.datas += [("sharppy\\databases\\sars_supercell.txt", os.path.join(os.path.dirn
 a.datas += [("sharppy\\io\\wmo_stations.txt", os.path.join(os.path.dirname(sharppy.__file__), "io\\wmo_stations.txt"), "DATA")]
 a.datas += [("icons\\SHARPpy_imet.png", "icons\\SHARPpy_imet.png", "DATA")]
 a.datas += [("icons\\SHARPget_imet.png", "icons\\SHARPget_imet.png", "DATA")]
-a.datas += [("sharppy\\io\\bufrpy\\b_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\b_table"), "DATA")]
-a.datas += [("sharppy\\io\\bufrpy\\d_table", os.path.join(os.path.dirname(sharppy.__file__), "io\\bufrpy\\d_table"), "DATA")]
 
 sars_hail = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\hail\\") + "*")
 sars_supr = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\sars\supercell\\") + "*")
 shapefiles = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "databases\\shapefiles\\") + "*")
 datasources = glob.glob("..\\datasources\\" + "*")
+rc_files = glob.glob(os.path.join(os.path.dirname(sharppy.__file__), "../rc/") + "*.png")
 
 for hail in sars_hail:
     a.datas += [("sharppy\\databases\\sars\\hail\\" + hail.split("\\")[-1], hail, "DATA")]
 for supr in sars_supr:
     a.datas += [("sharppy\\databases\\sars\\supercell\\" + supr.split("\\")[-1], supr, "DATA")]
-
+for rc in rc_files:
+    a.datas += [("rc/" + rc.split("/")[-1], rc, "DATA")]
 for sf in shapefiles:
     a.datas += [("sharppy\\databases\\shapefiles\\" + sf.split("\\")[-1], sf, "DATA")]
 
 for ds in datasources:
+    if "__pycache__" in ds:
+        continue
     a.datas += [("sharppy\\datasources\\" + ds.split("\\")[-1], ds, "DATA")]
 
 for d in a.datas:
-    if 'pyconfig' in d[0]: 
+    if 'pyconfig' in d[0]:
         a.datas.remove(d)
         break
         

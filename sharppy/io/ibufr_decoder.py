@@ -2,13 +2,13 @@ import sharppy.sharptab.profile as profile
 import sharppy.sharptab.prof_collection as prof_collection
 from .decoder import Decoder
 
-from .bufrpy.bufrdec import decode_file
-from .bufrpy.table import get_table
-from .bufrpy.value import BufrValue
+from .PyrepBUFR import BUFRFile
+from .PyrepBUFR.utility import fill_nan
+from .PyrepBUFR.utility.io.reader import UpperAirSounding
 from datetime import datetime, timedelta
 from calendar import timegm
 from io import BytesIO
-from numpy import array, floor, diff
+from numpy import array, floor, diff, isfinite
 
 __fmtname__ = "ibufr"
 __classname__ = "IMETBufrDecoder"
@@ -44,75 +44,40 @@ class IMETBufrDecoder(Decoder):
         return sounding_time + timedelta(seconds=time_offset)
         
     def _parse(self):
-        binary_bufr = self._downloadFile()
-        bufr_start = 0
-        bufr_length = len(binary_bufr)
-        while binary_bufr[bufr_start:bufr_start+4].decode('ascii') != 'BUFR':
-            bufr_start += 1
-            if bufr_start > bufr_length - 4:
-                raise IOError('Not a BUFR file')
-        with BytesIO(binary_bufr[bufr_start:]) as bufr_file:
-            contents = decode_file(bufr_file, get_table())
+        with BytesIO(self._downloadFile()) as bufr_data:
+            bufr_file = BUFRFile(bufr_data)
+            contents = UpperAirSounding(bufr_file)
+            bufr_file.close()
+        
         profiles = []
         dates = []
-        location = None
-        for subset_num in range(len(contents.section4.subsets)):
-            meta_data = {}
-            data = {}
-            for x in data_fields:
-                data[data_fields[x][0]] = []
-            subset = contents.section4.subsets[subset_num]
-            for value_num in range(len(subset.values)):
-                value = subset.values[value_num]
-                if type(value) == BufrValue:
-                    value_name = value.descriptor.significance
-                    if value_name in meta_fields:
-                        meta_data[meta_fields[value_name][0]] = meta_fields[value_name][1](value.value)
-                elif type(value) == list:
-                    for x in range(len(value)):
-                        level_data = {}
-                        for field in data_fields:
-                            level_data[data_fields[field][0]] = missing_data
-                        for y in range(len(value[x])):
-                            value_name = value[x][y].descriptor.significance
-                            if value_name in data_fields:
-                                if value[x][y].value is not None:
-                                    level_data[data_fields[value_name][0]] = data_fields[value_name][1](value[x][y].value)
-                        if level_data['pres'] != missing_data and level_data['hght'] != missing_data:
-                            for field in level_data:
-                                data[field].append(level_data[field])
-            meta_data['date'] = datetime(meta_data['year'], meta_data['month'], meta_data['day'], meta_data['hour'], meta_data['minute'],meta_data['second'])
-            if TIME_ADJUST:
-                meta_data['date'] = self.__adjust_time__(meta_data['date'])
-            if location is None:
-                location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(meta_data['id'] if meta_data['id']!='' else 'Incident', abs(meta_data['lat']), 'N' if meta_data['lat'] > 0 else 'S', abs(meta_data['lon']), 'W' if meta_data['lon'] < 0 else 'E', meta_data['elev'])
-            
-            # Convert to array
-            for field in data:
-                data[field] = array(data[field])
-            
-            mask = (data['pres'] <= 1085.0)
-            mask *= ( ( (data['pres'] > 650) * (data['hght'] <= 5570) ) + \
-                      ( (data['pres'] <= 650) * (data['pres'] >= 350) * (data['hght'] >= 1940) * (data['hght'] <= 11760)) + \
-                      ( (data['pres'] < 350) * (data['hght'] >= 5570) ) )
-            
-            for field in data:
-                data[field] = data[field][mask]
-            
-            # Force height to be increasing and pressure to be decreasing
-            mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
-            while sum(mask) != len(mask):
-                for field in data:
-                    data[field] = data[field][mask]
-                mask = array([True]+list((diff(data['hght'], 1)>0)*(diff(data['pres'], 1)<0)))
+        location = '{0:s}(lat={1:.2f}{2:s},lon={3:.2f}{4:s},elev={5:.2f}m)'.format(contents.station_id if contents.station_id is not None else 'Incident', abs(contents.station_latitude), 'N' if contents.station_latitude > 0 else 'S', abs(contents.station_longitude), 'W' if contents.station_longitude < 0 else 'E', contents.station_elevation)
+        if TIME_ADJUST:
+            contents.sounding_datetime = self.__adjust_time__(contents.sounding_datetime)
 
-            if len(data['hght']) > MAX_UNTHINNED_LEVELS:
-                thinning = int(floor(len(data['hght']) / float(MAX_UNTHINNED_LEVELS)))
-            else:
-                thinning = 1
-            profiles.append(profile.create_profile(profile='raw', pres=data['pres'][::thinning], hght=data['hght'][::thinning], tmpc=data['temp'][::thinning], dwpc=data['dwpt'][::thinning],
-                wdir=data['wdir'][::thinning], wspd=data['wspd'][::thinning], location=location, date=meta_data['date'], latitude=35.))
-            dates.append(meta_data['date'])
+        mask = isfinite(contents.pressure) * isfinite(contents.height) * (contents.pressure <= 108500.0)
+        mask *= ( ( (contents.pressure >  65000) * (contents.height   <= 5570) ) + \
+                  ( (contents.pressure <= 65000) * (contents.pressure >= 35000) * (contents.height >= 1940) * (contents.height <= 11760)) + \
+                  ( (contents.pressure <  35000) * (contents.height   >= 5570) ) )
+
+        for field in ['pressure', 'height', 'dry_buld_temperature', 'dewpoint_temperature', 'wind_direction', 'wind_speed']:
+            setattr(contents, field, getattr(contents, field)[mask])
+        
+        # Force height to be increasing and pressure to be decreasing
+        mask = array([True]+list((diff(contents.height, 1)>0)*(diff(contents.pressure, 1)<0)))
+        while sum(mask) != len(mask):
+            for field in ['pressure', 'height', 'dry_buld_temperature', 'dewpoint_temperature', 'wind_direction', 'wind_speed']:
+                setattr(contents, field, getattr(contents, field)[mask])
+            mask = array([True]+list((diff(contents.height, 1)>0)*(diff(contents.pressure, 1)<0)))
+
+        if len(contents.height) > MAX_UNTHINNED_LEVELS:
+            thinning = int(floor(len(contents.height) / float(MAX_UNTHINNED_LEVELS)))
+        else:
+            thinning = 1
+
+        profiles.append(profile.create_profile(profile='raw', pres=(contents.pressure / 100.0)[::thinning], hght=contents.height[::thinning], tmpc=fill_nan(contents.dry_buld_temperature - 273.15, missing_data)[::thinning], dwpc=fill_nan(contents.dewpoint_temperature - 273.15, missing_data)[::thinning],
+            wdir=fill_nan(contents.wind_direction % 360, missing_data)[::thinning], wspd=fill_nan(contents.wind_speed * 1.94384, missing_data)[::thinning], location=location, date=contents.sounding_datetime, latitude=35.))
+        dates.append(contents.sounding_datetime)
 
         prof_coll = prof_collection.ProfCollection(
             {'':profiles}, 

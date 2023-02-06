@@ -24,9 +24,9 @@ long_description = "SHARPpy is a collection of open source sounding and hodograp
 license = "BSD"
 keywords = "meteorology soundings analysis"
 url = "https://github.com/sharppy/SHARPpy"
-packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.io.bufrpy', 'sharppy.sharptab', 'sharppy.viz', 'sutils', 'datasources', 'sharppy.plot', 'runsharp']
+packages = ['sharppy', 'sharppy.databases', 'sharppy.io', 'sharppy.io.PyrepBUFR', 'sharppy.io.PyrepBUFR.tables', 'sharppy.io.PyrepBUFR.utility', 'sharppy.io.PyrepBUFR.utility.io', 'sharppy.sharptab', 'sharppy.viz', 'sutils', 'datasources', 'sharppy.plot', 'runsharp']
 package_data = {"": ["*.md", "*.txt", "*.png", "databases/sars/hail/*", "databases/sars/supercell/*",
-                     "databases/shapefiles/*", "../rc/*", "../datasources/*.xml", "../datsources/*.csv", "*.csv", "*.xml", 'io/bufrpy/*_table'],}
+                     "databases/shapefiles/*", "../rc/*", "../datasources/*.xml", "../datsources/*.csv", "*.csv", "*.xml"],}
 include_package_data = True
 
 #install_requires = []
