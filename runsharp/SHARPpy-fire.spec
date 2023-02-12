@@ -4,7 +4,7 @@ import sharppy
 
 a = Analysis(['SHARPpy.py'],
              pathex=[r'C:\Users\nickolai.reimer\Development\SHARPpy\runsharp'],
-             hiddenimports=['xml.etree.ElementTree', 'datasources.available', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'sharppy.io.nucaps_decoder', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six', 'sharppy.io.archive_decoder', 'sharppy.io.ibufr_decoder', 'sharppy.io.PyrepBUFR', 'sharppy.io.PyrepBUFR.tables', 'sharppy.io.PyrepBUFR.utility', 'sharppy.io.PyrepBUFR.utility.io'],
+             hiddenimports=['xml.etree.ElementTree', 'datasources.available', 'sharppy.io.pecan_decoder', 'sharppy.io.spc_decoder', 'sharppy.io.buf_decoder', 'sharppy.io.uwyo_decoder', 'sharppy.io.nucaps_decoder', 'sharppy.sharptab.prof_collection', 'certifi', 'pkg_resources.py2_warn', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six', 'sharppy.io.archive_decoder', 'sharppy.io.bufr_decoder', 'sharppy.io.PyrepBUFR', 'sharppy.io.PyrepBUFR.tables', 'sharppy.io.PyrepBUFR.utility', 'sharppy.io.PyrepBUFR.utility.io'],
              hookspath=None,
              runtime_hooks=None)
 

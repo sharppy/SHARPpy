@@ -62,6 +62,10 @@ class BUFRFile(object):
                 continue_reading = False
         if len(self.messages) == 0:
             raise InvalidBUFRMessage('File contains no valid BUFR messages')
+    def __enter__(self):
+        return self
+    def __exit__(self, type, value, tb):
+        self.close()
     def __str__(self):
         output = ''
         for i, message in enumerate(self.messages):

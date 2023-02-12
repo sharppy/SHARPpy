@@ -35,7 +35,7 @@ import platform
 
 from os.path import expanduser, dirname, join, splitext, abspath, exists
 from os import listdir, getcwd
-import sharppy.io.ibufr_decoder
+import sharppy.io.bufr_decoder
 from datetime import datetime
 from json import dumps
 from bz2 import compress
@@ -346,11 +346,10 @@ class LocalPicker(QWidget):
         self.button_layout.addWidget(self.button)
         self.control_layout.addWidget(self.button_frame)
     def open_bufr(self):
-        #sharppy.io.ibufr_decoder.TIME_ADJUST = 1
         if self.adjust_time.isChecked():
-            sharppy.io.ibufr_decoder.TIME_ADJUST = int(self.adjust_time_hours.currentText())
+            sharppy.io.bufr_decoder.TIME_ADJUST = int(self.adjust_time_hours.currentText())
         else:
-            sharppy.io.ibufr_decoder.TIME_ADJUST = False
+            sharppy.io.bufr_decoder.TIME_ADJUST = False
         self.picker.skewApp(filename=join(self.search_directory, self.file_list.selectedItems()[0].text()))
     def update_files(self):
         self.file_list.clear()

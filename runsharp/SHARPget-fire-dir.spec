@@ -9,7 +9,7 @@ a = Analysis(['SHARPget.py'],
              pathex=[r'C:\Users\nickr\workspace\SHARPpy\runsharp'],
              binaries=None,
              datas=[],
-             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.ibufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', \
+             hiddenimports=['xml.etree.ElementTree', 'sharppy.io.archive_decoder', 'datasources.available', 'sharppy.io.bufr_decoder', 'sharppy.io.bufrpy', 'sharppy.io.spc_decoder', \
                             'sharppy.io.buf_decoder', 'sharppy.io.fsl_decoder', 'sharppy.io.wmo_decoder', 'dateutil', 'six'],
              hookspath=[],
              runtime_hooks=[],

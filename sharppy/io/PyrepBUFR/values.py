@@ -13,7 +13,8 @@ unit_substituions = {
     'Degree true': 'degree',
     'gpm': 'meter',
     '%': 'percent',
-    'PA': 'Pa'
+    'PA': 'Pa',
+    'M/S': 'm/s'
 }
 
 class BUFRValueBase(object):
@@ -89,18 +90,18 @@ class BUFRString(BUFRValue):
     def data(self):
         return_value = None
         if not self.is_missing:
-            return_value = self.__bytes__.decode('utf-8').split('\x00')[0].strip()
+            return_value = self.__bytes__.split(b'\x00')[0].decode('ascii').strip()
         return return_value
     @data.setter
     def data(self, value):
-        value = value.encode('ascii') + b'\x00'
-        value += ((self.element.bit_width // 8) - len(value)) * b' '
+        value = value.encode('ascii')[:(self.element.bit_width // 8)-1]
+        value += ((self.element.bit_width // 8) - len(value)) * b'\x00'
         self.__bytes__ = value
     @property
     def data_raw(self):
         return_value = None
         if not self.is_missing:
-            return_value = self.__bytes__.decode('utf-8').split('\x00')[0]
+            return_value = self.__bytes__.split(b'\x00')[0].decode('ascii')
         return return_value
 
 class BUFRLookupTable(BUFRValue):
