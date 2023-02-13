@@ -461,8 +461,8 @@ class Picker(QWidget):
         self.button = QPushButton('Generate Profiles')
         self.button.clicked.connect(self.complete_name)
         self.button.setDisabled(True)
-        self.archive_sounding = QCheckBox('Archive')
-        self.archive_sounding.setCheckState(Qt.CheckState.Checked)
+        # self.archive_sounding = QCheckBox('Archive')
+        # self.archive_sounding.setCheckState(Qt.CheckState.Checked)
 
         self.select_flag = False
         self.all_profs = QPushButton("Select All")
@@ -541,7 +541,7 @@ class Picker(QWidget):
         self.left_layout.addWidget(self.date_label)
         # self.left_layout.addWidget(self.profile_list)
         # self.left_layout.addWidget(self.all_profs)
-        self.left_layout.addWidget(self.archive_sounding)
+        # self.left_layout.addWidget(self.archive_sounding)
         self.left_layout.addWidget(self.button)
 
         # add the elements to the right side of the GUI
@@ -557,7 +557,8 @@ class Picker(QWidget):
         self.left_data_frame.setMaximumWidth(280)
 
     def add_archive_picker(self, picker):
-        self.archive_picker = picker
+        # self.archive_picker = picker
+        pass
     def create_map_view(self):
         """
         Create a clickable map that will be displayed in the GUI.
@@ -956,7 +957,7 @@ class Picker(QWidget):
 
             logging.info("Program is going to load the data...")
             ret = loadData(
-                self.data_sources[model], self.loc, run, prof_idx, ntry=ntry, archive=self.archive_sounding.isChecked(), archive_path=self.config['paths', 'archive_path'])
+                self.data_sources[model], self.loc, run, prof_idx, ntry=ntry)
 
             # failure variable makes sure the data actually exists online.
             if isinstance(ret[0], Exception):
@@ -967,8 +968,8 @@ class Picker(QWidget):
             else:
                 logging.info("Data was found and successfully decoded!")
                 prof_collection = ret[0]
-                if self.archive_picker is not None:
-                    self.archive_picker.update_date_list()
+                # if self.archive_picker is not None:
+                #     self.archive_picker.update_date_list()
 
             fhours = ["F%03d" % fh for idx, fh in enumerate(self.data_sources[self.model].getForecastHours()) if
                       idx in prof_idx]
@@ -1119,10 +1120,10 @@ class Main(QMainWindow):
             self.config['selector', 'default_tab'] = 0
         self.picker = Picker(self.config, parent=self)
         self.local_picker = LocalPicker(self.picker, parent=self)
-        self.archive_picker = ArchivePicker(self.picker, parent=self)
+        # self.archive_picker = ArchivePicker(self.picker, parent=self)
         self.imet_tabs.addTab(self.local_picker, 'Incident Sounding')
         self.imet_tabs.addTab(self.picker, 'Model Data')
-        self.imet_tabs.addTab(self.archive_picker, 'Archive')
+        # self.imet_tabs.addTab(self.archive_picker, 'Archive')
         self.imet_tabs.setCurrentIndex(int(self.config['selector', 'default_tab']))
         self.imet_tabs.currentChanged.connect(self.tab_changed)
         self.setCentralWidget(self.imet_tabs)
