@@ -1077,7 +1077,7 @@ class plotHodo(backgroundHodo):
             mw_spd = tab.utils.KTS2MS(mw_spd)
 
         mw_str = tab.utils.INT2STR(np.float64(self.mean_lcl_el_vec[0])) + '/' + tab.utils.INT2STR(mw_spd)
-        qp.drawText(mw_rect, QtCore.Qt.AlignCenter, mw_str)
+        qp.drawText(mw_rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, mw_str)
 
     def drawCorfidi(self, qp):
         '''
@@ -1141,8 +1141,8 @@ class plotHodo(backgroundHodo):
 
         up_stuff = tab.utils.INT2STR(np.float64(self.upshear[0])) + '/' + tab.utils.INT2STR(up_spd)
         dn_stuff = tab.utils.INT2STR(np.float64(self.downshear[0])) + '/' + tab.utils.INT2STR(dn_spd)
-        qp.drawText(up_rect, QtCore.Qt.AlignCenter, "UP=" + up_stuff)
-        qp.drawText(dn_rect, QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
+        qp.drawText(up_rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "UP=" + up_stuff)
+        qp.drawText(dn_rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, "DN=" + dn_stuff)
 
 
     def drawSMV(self, qp):
@@ -1234,8 +1234,8 @@ class plotHodo(backgroundHodo):
 
         rm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_right_vec[0])) + '/' + tab.utils.INT2STR(rm_spd)
         lm_stuff = tab.utils.INT2STR(np.float64(self.bunkers_left_vec[0])) + '/' + tab.utils.INT2STR(lm_spd)
-        qp.drawText(rm_rect, QtCore.Qt.AlignCenter, rm_stuff + " RM")
-        qp.drawText(lm_rect, QtCore.Qt.AlignCenter, lm_stuff + " LM")
+        qp.drawText(rm_rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, rm_stuff + " RM")
+        qp.drawText(lm_rect, QtCore.Qt.TextDontClip | QtCore.Qt.AlignCenter, lm_stuff + " LM")
 
     def drawCriticalAngle(self, qp):
         '''
