@@ -96,6 +96,9 @@ class AsyncThreads(QObject):
 
         callback(ret_val)
 
+        while not self.threads[thread_id].isFinished():
+            pass
+
         del self.threads[thread_id]
         del self.callbacks[thread_id]
 
