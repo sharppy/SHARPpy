@@ -452,9 +452,6 @@ def lhp(prof):
                  ((3200 - thk_hgz)/500.) +\
                  ((lr75 - 6.5)/2.))
 
-        if term_a < 0:
-            term_a = 0
-
         p_1km, p_3km, p_6km = interp.pres(prof, interp.to_msl(prof, [1000, 3000, 6000]))
         shear_el = utils.KTS2MS(utils.mag(*winds.wind_shear(prof, pbot=prof.pres[prof.sfc], ptop=prof.mupcl.elpres)))
         grw_el_dir = interp.vec(prof, prof.mupcl.elpres)[0]
@@ -471,10 +468,14 @@ def lhp(prof):
         term_b = (((shear_el - 25.)/5.) +\
                   ((grw_alpha_el + 5.)/20.) +\
                   ((srw_alpha_mid - 80.)/10.))
-        if term_b < 0:
-            term_b = 0
-
-        lhp = term_a * term_b + 5
+        
+        if term_a < 0 and term_b < 0:
+            lhp = 0
+        else:
+            lhp = term_a * term_b + 5
+        
+        if lhp < 0:
+            lhp = 0
 
     else:
         lhp = 0
